@@ -82,6 +82,7 @@ Antic
 Antic Didone
 Antic Slab
 Anton
+Anton SC
 Antonio
 Anuphan
 Anybody
@@ -101,6 +102,7 @@ Arimo
 Arizonia
 Armata
 Arsenal
+Arsenal SC
 Artifika
 Arvo
 Arya
@@ -160,12 +162,14 @@ Barriecito
 Barrio
 Basic
 Baskervville
+Baskervville SC
 Battambang
 Baumans
 Bayon
 Be Vietnam Pro
 Beau Rivage
 Bebas Neue
+Beiruti
 Belanosima
 Belgrano
 Bellefair
@@ -204,8 +208,10 @@ Blaka Hollow
 Blaka Ink
 Blinker
 Bodoni Moda
+Bodoni Moda SC
 Bokor
 Bona Nova
+Bona Nova SC
 Bonbon
 Bonheur Royale
 Boogaloo
@@ -234,6 +240,7 @@ Butterfly Kids
 Cabin
 Cabin Condensed
 Cabin Sketch
+Cactus Classical Serif
 Caesar Dressing
 Cagliostro
 Cairo
@@ -286,6 +293,7 @@ Chicle
 Chilanka
 Chivo
 Chivo Mono
+Chocolate Classical Sans
 Chokokutai
 Chonburi
 Cinzel
@@ -341,6 +349,7 @@ DM Serif Text
 Dai Banna SIL
 Damion
 Dancing Script
+Danfo
 Dangrek
 Darker Grotesque
 Darumadrop One
@@ -380,6 +389,7 @@ East Sea Dokdo
 Eater
 Economica
 Eczar
+Edu AU VIC WA NT Hand
 Edu NSW ACT Foundation
 Edu QLD Beginner
 Edu SA Beginner
@@ -455,14 +465,17 @@ Freckle Face
 Fredericka the Great
 Fredoka
 Freehand
+Freeman
 Fresca
 Frijole
 Fruktur
 Fugaz One
 Fuggles
+Fustat
 Fuzzy Bubbles
 GFS Didot
 GFS Neohellenic
+Ga Maamli
 Gabarito
 Gabriela
 Gaegu
@@ -606,10 +619,26 @@ Istok Web
 Italiana
 Italianno
 Itim
+Jacquard 12
+Jacquard 12 Charted
+Jacquard 24
+Jacquard 24 Charted
 Jacquarda Bastarda 9
+Jacquarda Bastarda 9 Charted
 Jacques Francois
 Jacques Francois Shadow
+Jaini
+Jaini Purva
 Jaldi
+Jaro
+Jersey 10
+Jersey 10 Charted
+Jersey 15
+Jersey 15 Charted
+Jersey 20
+Jersey 20 Charted
+Jersey 25
+Jersey 25 Charted
 JetBrains Mono
 Jim Nightshade
 Joan
@@ -638,6 +667,7 @@ Kaisei Opti
 Kaisei Tokumin
 Kalam
 Kalnia
+Kalnia Glaze
 Kameron
 Kanit
 Kantumruy Pro
@@ -683,6 +713,8 @@ Kumar One
 Kumar One Outline
 Kumbh Sans
 Kurale
+LXGW WenKai Mono TC
+LXGW WenKai TC
 La Belle Aurore
 Labrada
 Lacquer
@@ -763,6 +795,7 @@ Ma Shan Zheng
 Macondo
 Macondo Swash Caps
 Mada
+Madimi One
 Magra
 Maiden Orange
 Maitree
@@ -770,6 +803,7 @@ Major Mono Display
 Mako
 Mali
 Mallanna
+Maname
 Mandali
 Manjari
 Manrope
@@ -808,6 +842,7 @@ Metamorphous
 Metrophobic
 Michroma
 Micro 5
+Micro 5 Charted
 Milonga
 Miltonian
 Miltonian Tattoo
@@ -1070,6 +1105,8 @@ Noto Serif Gujarati
 Noto Serif Gurmukhi
 Noto Serif HK
 Noto Serif Hebrew
+Noto Serif JP
+Noto Serif KR
 Noto Serif Kannada
 Noto Serif Khitan Small Script
 Noto Serif Khmer
@@ -1082,7 +1119,9 @@ Noto Serif NP Hmong
 Noto Serif Old Uyghur
 Noto Serif Oriya
 Noto Serif Ottoman Siyaq
+Noto Serif SC
 Noto Serif Sinhala
+Noto Serif TC
 Noto Serif Tamil
 Noto Serif Tangut
 Noto Serif Telugu
@@ -1092,6 +1131,7 @@ Noto Serif Toto
 Noto Serif Vithkuqi
 Noto Serif Yezidi
 Noto Traditional Nushu
+Noto Znamenny Musical Notation
 Nova Cut
 Nova Flat
 Nova Mono
@@ -1108,6 +1148,7 @@ Odibee Sans
 Odor Mean Chey
 Offside
 Oi
+Ojuju
 Old Standard TT
 Oldenburg
 Ole
@@ -1175,14 +1216,67 @@ Pinyon Script
 Pirata One
 Pixelify Sans
 Plaster
+Platypi
 Play
 Playball
 Playfair
 Playfair Display
 Playfair Display SC
 Playpen Sans
+Playwrite AR
+Playwrite AT
+Playwrite AU NSW
+Playwrite AU QLD
+Playwrite AU SA
+Playwrite AU TAS
+Playwrite AU VIC
+Playwrite BE VLG
+Playwrite BE WAL
+Playwrite BR
+Playwrite CA
+Playwrite CL
+Playwrite CO
+Playwrite CU
+Playwrite CZ
+Playwrite DE Grund
+Playwrite DE LA
+Playwrite DE SAS
+Playwrite DE VA
+Playwrite DK Loopet
+Playwrite DK Uloopet
+Playwrite ES
+Playwrite ES Deco
+Playwrite FR Moderne
+Playwrite FR Trad
+Playwrite GB J
+Playwrite GB S
+Playwrite HR
+Playwrite HR Lijeva
+Playwrite HU
+Playwrite ID
+Playwrite IE
+Playwrite IN
+Playwrite IS
+Playwrite IT Moderna
+Playwrite IT Trad
+Playwrite MX
+Playwrite NG Modern
+Playwrite NL
+Playwrite NO
+Playwrite NZ
+Playwrite PE
+Playwrite PL
+Playwrite PT
+Playwrite RO
+Playwrite SK
+Playwrite TZ
+Playwrite US Modern
+Playwrite US Trad
+Playwrite VN
+Playwrite ZA
 Plus Jakarta Sans
 Podkova
+Poetsen One
 Poiret One
 Poller One
 Poltawski Nowy
@@ -1226,6 +1320,7 @@ Qwitcher Grypen
 REM
 Racing Sans One
 Radio Canada
+Radio Canada Big
 Radley
 Rajdhani
 Rakkas
@@ -1250,6 +1345,9 @@ Red Hat Text
 Red Rose
 Redacted
 Redacted Script
+Reddit Mono
+Reddit Sans
+Reddit Sans Condensed
 Redressed
 Reem Kufi
 Reem Kufi Fun
@@ -1349,6 +1447,8 @@ Schoolbell
 Scope One
 Seaweed Script
 Secular One
+Sedan
+Sedan SC
 Sedgwick Ave
 Sedgwick Ave Display
 Sen
@@ -1456,6 +1556,7 @@ Syncopate
 Syne
 Syne Mono
 Syne Tactile
+Tac One
 Tai Heritage Pro
 Tajawal
 Tangerine
@@ -1463,6 +1564,7 @@ Tapestry
 Taprom
 Tauri
 Taviraj
+Teachers
 Teko
 Tektur
 Telex
@@ -1480,6 +1582,7 @@ Tilt Prism
 Tilt Warp
 Timmana
 Tinos
+Tiny5
 Tiro Bangla
 Tiro Devanagari Hindi
 Tiro Devanagari Marathi
@@ -1507,6 +1610,8 @@ Twinkle Star
 Ubuntu
 Ubuntu Condensed
 Ubuntu Mono
+Ubuntu Sans
+Ubuntu Sans Mono
 Uchen
 Ultra
 Unbounded
@@ -1553,6 +1658,7 @@ Wendy One
 Whisper
 WindSong
 Wire One
+Wittgenstein
 Wix Madefor Display
 Wix Madefor Text
 Work Sans
@@ -1561,6 +1667,10 @@ Xanh Mono
 Yaldevi
 Yanone Kaffeesatz
 Yantramanav
+Yarndings 12
+Yarndings 12 Charted
+Yarndings 20
+Yarndings 20 Charted
 Yatra One
 Yellowtail
 Yeon Sung
@@ -1582,6 +1692,7 @@ Yusei Magic
 ZCOOL KuaiLe
 ZCOOL QingKe HuangYou
 ZCOOL XiaoWei
+Zain
 Zen Antique
 Zen Antique Soft
 Zen Dots

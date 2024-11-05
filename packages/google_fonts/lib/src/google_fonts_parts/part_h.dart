@@ -2952,8 +2952,8 @@ class PartH {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ef7aa8dcd3e6fb872ab0f4180c695d6bdc4780b8847960accb2bab54d96ca24d',
-        34936,
+        'c2ad9261f3908bcd3c5d2e892fbce71fac9ce0ac88f2c2f33e7044ecc93388b1',
+        37320,
       ),
     };
 

@@ -360,6 +360,135 @@ class PartO {
     );
   }
 
+  /// Applies the Ojuju font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Ojuju
+  static TextStyle ojuju({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b6e4be948f7ada14ce5a4c26e286f6e396b45d66a691d65a2457cbd2b72c5b22',
+        131956,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6fe9ab3e5938f7323eef8ac7bfeff80f0615faad3cdac4dc0b409cfe9ca82037',
+        132096,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6fd3d1940f26576b4761820301e18c53d3afd1d0a91c09a0ead4b0512856d23f',
+        132220,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cec688e3c8ae73c3f7568c89937942879e4290ed9b64dd2e875536195acb9505',
+        132468,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b3918cc9db14e489b03e4009f64af9f01540ed5bc5f7394df75d9fa176d9c947',
+        132472,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '712200b2c1d9dbc4cb3f6fc03c16bcc8c01e23a4787734bbed4d74d72d481cac',
+        132668,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '661486a3f86e504e9b6d644cadb0980de8aedc75cb242e1ed9aeaf5306a5d070',
+        132268,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Ojuju',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Ojuju font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Ojuju
+  static TextTheme ojujuTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: ojuju(textStyle: textTheme.displayLarge),
+      displayMedium: ojuju(textStyle: textTheme.displayMedium),
+      displaySmall: ojuju(textStyle: textTheme.displaySmall),
+      headlineLarge: ojuju(textStyle: textTheme.headlineLarge),
+      headlineMedium: ojuju(textStyle: textTheme.headlineMedium),
+      headlineSmall: ojuju(textStyle: textTheme.headlineSmall),
+      titleLarge: ojuju(textStyle: textTheme.titleLarge),
+      titleMedium: ojuju(textStyle: textTheme.titleMedium),
+      titleSmall: ojuju(textStyle: textTheme.titleSmall),
+      bodyLarge: ojuju(textStyle: textTheme.bodyLarge),
+      bodyMedium: ojuju(textStyle: textTheme.bodyMedium),
+      bodySmall: ojuju(textStyle: textTheme.bodySmall),
+      labelLarge: ojuju(textStyle: textTheme.labelLarge),
+      labelMedium: ojuju(textStyle: textTheme.labelMedium),
+      labelSmall: ojuju(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Old Standard TT font family from Google Fonts to the
   /// given [textStyle].
   ///

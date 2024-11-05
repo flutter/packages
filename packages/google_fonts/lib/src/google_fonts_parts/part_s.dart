@@ -3242,6 +3242,187 @@ class PartS {
     );
   }
 
+  /// Applies the Sedan font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Sedan
+  static TextStyle sedan({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e9df7ec17b4d4ecf42961f7c177514988d9eba10da0fd88b99cf587543526ad3',
+        54636,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e557a817ace195b610ed68862137bb4fcea3a03e267f83d071a4ab52cad7c21c',
+        56336,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Sedan',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Sedan font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Sedan
+  static TextTheme sedanTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: sedan(textStyle: textTheme.displayLarge),
+      displayMedium: sedan(textStyle: textTheme.displayMedium),
+      displaySmall: sedan(textStyle: textTheme.displaySmall),
+      headlineLarge: sedan(textStyle: textTheme.headlineLarge),
+      headlineMedium: sedan(textStyle: textTheme.headlineMedium),
+      headlineSmall: sedan(textStyle: textTheme.headlineSmall),
+      titleLarge: sedan(textStyle: textTheme.titleLarge),
+      titleMedium: sedan(textStyle: textTheme.titleMedium),
+      titleSmall: sedan(textStyle: textTheme.titleSmall),
+      bodyLarge: sedan(textStyle: textTheme.bodyLarge),
+      bodyMedium: sedan(textStyle: textTheme.bodyMedium),
+      bodySmall: sedan(textStyle: textTheme.bodySmall),
+      labelLarge: sedan(textStyle: textTheme.labelLarge),
+      labelMedium: sedan(textStyle: textTheme.labelMedium),
+      labelSmall: sedan(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Sedan SC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Sedan+SC
+  static TextStyle sedanSc({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'dfee2c2f4ced74a1fb56f393efd46a80c70adef0fa855853f4d730a950bed37e',
+        76244,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'SedanSC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Sedan SC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Sedan+SC
+  static TextTheme sedanScTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: sedanSc(textStyle: textTheme.displayLarge),
+      displayMedium: sedanSc(textStyle: textTheme.displayMedium),
+      displaySmall: sedanSc(textStyle: textTheme.displaySmall),
+      headlineLarge: sedanSc(textStyle: textTheme.headlineLarge),
+      headlineMedium: sedanSc(textStyle: textTheme.headlineMedium),
+      headlineSmall: sedanSc(textStyle: textTheme.headlineSmall),
+      titleLarge: sedanSc(textStyle: textTheme.titleLarge),
+      titleMedium: sedanSc(textStyle: textTheme.titleMedium),
+      titleSmall: sedanSc(textStyle: textTheme.titleSmall),
+      bodyLarge: sedanSc(textStyle: textTheme.bodyLarge),
+      bodyMedium: sedanSc(textStyle: textTheme.bodyMedium),
+      bodySmall: sedanSc(textStyle: textTheme.bodySmall),
+      labelLarge: sedanSc(textStyle: textTheme.labelLarge),
+      labelMedium: sedanSc(textStyle: textTheme.labelMedium),
+      labelSmall: sedanSc(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Sedgwick Ave font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -4084,85 +4265,85 @@ class PartS {
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fc60c55c891306bf15c932167a4c7011b3716849be776c661f5bb07924232b56',
-        390836,
+        '90bf9c6220bc060e20aacb776e82d4c22ab3c4370cf250a5edc305faef21b6c7',
+        392396,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5826cb6b3467d97f2b0764caa7127a4c47ea9c476461f90079b957c0fc11f828',
-        391104,
+        '9f63846abbc626d2d5e60ec98a1b73f6d8ba20409f22988334bccda437fe78af',
+        392684,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f823ae8224606e9cae450d538c7f497728c83da3511432efae99cb8686f4c8cc',
-        391276,
+        '3a286e0c72968c2b61cf74ac0bfd1b32f75102ba3c276943de8e2b7b7c536583',
+        392856,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f1aad5ddc12e5dcef7caab8d87d40dbbdd2e4e42175158d49029a20cdc646872',
-        391328,
+        '705df9f8f137434294bc5496c217465063b81b5eebacfe64a74b96fce1e39021',
+        392912,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e903d465cdeaafe7f1f1b35711229eeea424a565468eb1770515cfbdd8ba5c52',
-        391204,
+        '4402e33c77560354f4b103ad825d8c174b509cedc2798eaf192fb75dafd408b1',
+        392788,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f20594d6617c8996ea16198c35ce4e9327bfa8e0a7c7e05f985e6ec571e92e1d',
-        390664,
+        '4b4cd1a4dc146facd713bc6a2639b34506d6aebe84523b38431cbc01d5930213',
+        392284,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '9335425fdddc651cd5dd90a886841bd496ba68d780c0fea55ddd6fa8d419e8f8',
-        400664,
+        '413e2660a9bfc927111735ad4c3ef979bd1c043a044fc8dc569ae993724c3559',
+        402324,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '0595c30e9b545260bd8058915946f144d3cdfce339ea37e6eb3f14cd611d2647',
-        401240,
+        '4a3f01c881dd18ed23e4ceb5a3b7777d0c4be34fabdbff5095ce36aaa13e57c3',
+        402848,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'e05a3233f44d0b85b26a790845875639df2df6426ad9f6567e4be2f487bd0e94',
-        401476,
+        'd22c63dba7a5fb78961cc7e41acee7539333ec17b8e3c25e13048b07dfd20358',
+        403096,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'd1d6be97b88e28bf09b2b418573671eebf16a83516382b61847a8d1bc3e131c4',
-        401496,
+        'd237a6f40e2cc59a6db07b577c99580a0650c23771eea2350b6a935b3e013d48',
+        403108,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'f0fa381b21be3b6e42d6d2e37f5e5c8cc1679c6a12b5e842e734f5f97210b984',
-        401428,
+        '2d876733597f3abb181d1825999e8f231e2973c7339750da7d38abfa76306a2c',
+        403036,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '0e7850f59404079d1d22688fcc4272555e22c62bea63f56293f94f40f31f452b',
-        400844,
+        '2e8cfca616f28418f9ca37350cafd63ed1d28ec758bdfcb1048df413e54ccd33',
+        402500,
       ),
     };
 

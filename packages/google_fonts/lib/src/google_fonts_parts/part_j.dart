@@ -12,6 +12,354 @@ import '../google_fonts_variant.dart';
 
 /// Methods for fonts starting with 'J'.
 class PartJ {
+  /// Applies the Jacquard 12 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+12
+  static TextStyle jacquard12({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1e511767f13d9c25ca7c6de6617a206c2a00c5ddca714fedd1b3e2981eb6417b',
+        137188,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jacquard12',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jacquard 12 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+12
+  static TextTheme jacquard12TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jacquard12(textStyle: textTheme.displayLarge),
+      displayMedium: jacquard12(textStyle: textTheme.displayMedium),
+      displaySmall: jacquard12(textStyle: textTheme.displaySmall),
+      headlineLarge: jacquard12(textStyle: textTheme.headlineLarge),
+      headlineMedium: jacquard12(textStyle: textTheme.headlineMedium),
+      headlineSmall: jacquard12(textStyle: textTheme.headlineSmall),
+      titleLarge: jacquard12(textStyle: textTheme.titleLarge),
+      titleMedium: jacquard12(textStyle: textTheme.titleMedium),
+      titleSmall: jacquard12(textStyle: textTheme.titleSmall),
+      bodyLarge: jacquard12(textStyle: textTheme.bodyLarge),
+      bodyMedium: jacquard12(textStyle: textTheme.bodyMedium),
+      bodySmall: jacquard12(textStyle: textTheme.bodySmall),
+      labelLarge: jacquard12(textStyle: textTheme.labelLarge),
+      labelMedium: jacquard12(textStyle: textTheme.labelMedium),
+      labelSmall: jacquard12(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jacquard 12 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+12+Charted
+  static TextStyle jacquard12Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '29e32373b9891e04b3fe56cc0c87d5b6880933606e8c2cc485d175fe648a0411',
+        574260,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jacquard12Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jacquard 12 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+12+Charted
+  static TextTheme jacquard12ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jacquard12Charted(textStyle: textTheme.displayLarge),
+      displayMedium: jacquard12Charted(textStyle: textTheme.displayMedium),
+      displaySmall: jacquard12Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: jacquard12Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: jacquard12Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: jacquard12Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: jacquard12Charted(textStyle: textTheme.titleLarge),
+      titleMedium: jacquard12Charted(textStyle: textTheme.titleMedium),
+      titleSmall: jacquard12Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: jacquard12Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: jacquard12Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: jacquard12Charted(textStyle: textTheme.bodySmall),
+      labelLarge: jacquard12Charted(textStyle: textTheme.labelLarge),
+      labelMedium: jacquard12Charted(textStyle: textTheme.labelMedium),
+      labelSmall: jacquard12Charted(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jacquard 24 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+24
+  static TextStyle jacquard24({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '46e6352cc7f3334707381b814f3e94b6d65b212e784aef348aa3b9724c4d6847',
+        546524,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jacquard24',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jacquard 24 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+24
+  static TextTheme jacquard24TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jacquard24(textStyle: textTheme.displayLarge),
+      displayMedium: jacquard24(textStyle: textTheme.displayMedium),
+      displaySmall: jacquard24(textStyle: textTheme.displaySmall),
+      headlineLarge: jacquard24(textStyle: textTheme.headlineLarge),
+      headlineMedium: jacquard24(textStyle: textTheme.headlineMedium),
+      headlineSmall: jacquard24(textStyle: textTheme.headlineSmall),
+      titleLarge: jacquard24(textStyle: textTheme.titleLarge),
+      titleMedium: jacquard24(textStyle: textTheme.titleMedium),
+      titleSmall: jacquard24(textStyle: textTheme.titleSmall),
+      bodyLarge: jacquard24(textStyle: textTheme.bodyLarge),
+      bodyMedium: jacquard24(textStyle: textTheme.bodyMedium),
+      bodySmall: jacquard24(textStyle: textTheme.bodySmall),
+      labelLarge: jacquard24(textStyle: textTheme.labelLarge),
+      labelMedium: jacquard24(textStyle: textTheme.labelMedium),
+      labelSmall: jacquard24(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jacquard 24 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+24+Charted
+  static TextStyle jacquard24Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '222e7695bd07800b23170127d23ef098bef3addb30ee901af61acce11dcf8ae5',
+        2215016,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jacquard24Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jacquard 24 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquard+24+Charted
+  static TextTheme jacquard24ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jacquard24Charted(textStyle: textTheme.displayLarge),
+      displayMedium: jacquard24Charted(textStyle: textTheme.displayMedium),
+      displaySmall: jacquard24Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: jacquard24Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: jacquard24Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: jacquard24Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: jacquard24Charted(textStyle: textTheme.titleLarge),
+      titleMedium: jacquard24Charted(textStyle: textTheme.titleMedium),
+      titleSmall: jacquard24Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: jacquard24Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: jacquard24Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: jacquard24Charted(textStyle: textTheme.bodySmall),
+      labelLarge: jacquard24Charted(textStyle: textTheme.labelLarge),
+      labelMedium: jacquard24Charted(textStyle: textTheme.labelMedium),
+      labelSmall: jacquard24Charted(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Jacquarda Bastarda 9 font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -96,6 +444,99 @@ class PartJ {
       labelLarge: jacquardaBastarda9(textStyle: textTheme.labelLarge),
       labelMedium: jacquardaBastarda9(textStyle: textTheme.labelMedium),
       labelSmall: jacquardaBastarda9(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jacquarda Bastarda 9 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquarda+Bastarda+9+Charted
+  static TextStyle jacquardaBastarda9Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fa8dd5b700c2eefdf07f9940af3e6810310f38f480111540a6047c6961a1b929',
+        385712,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'JacquardaBastarda9Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jacquarda Bastarda 9 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jacquarda+Bastarda+9+Charted
+  static TextTheme jacquardaBastarda9ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge:
+          jacquardaBastarda9Charted(textStyle: textTheme.displayLarge),
+      displayMedium:
+          jacquardaBastarda9Charted(textStyle: textTheme.displayMedium),
+      displaySmall:
+          jacquardaBastarda9Charted(textStyle: textTheme.displaySmall),
+      headlineLarge:
+          jacquardaBastarda9Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium:
+          jacquardaBastarda9Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall:
+          jacquardaBastarda9Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: jacquardaBastarda9Charted(textStyle: textTheme.titleLarge),
+      titleMedium: jacquardaBastarda9Charted(textStyle: textTheme.titleMedium),
+      titleSmall: jacquardaBastarda9Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: jacquardaBastarda9Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: jacquardaBastarda9Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: jacquardaBastarda9Charted(textStyle: textTheme.bodySmall),
+      labelLarge: jacquardaBastarda9Charted(textStyle: textTheme.labelLarge),
+      labelMedium: jacquardaBastarda9Charted(textStyle: textTheme.labelMedium),
+      labelSmall: jacquardaBastarda9Charted(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -274,6 +715,180 @@ class PartJ {
     );
   }
 
+  /// Applies the Jaini font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jaini
+  static TextStyle jaini({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bf6e9eed88f53dd2f19bf53366c74547ef7822c1517f836c4bcf1c6dbf32494d',
+        447920,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jaini',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jaini font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jaini
+  static TextTheme jainiTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jaini(textStyle: textTheme.displayLarge),
+      displayMedium: jaini(textStyle: textTheme.displayMedium),
+      displaySmall: jaini(textStyle: textTheme.displaySmall),
+      headlineLarge: jaini(textStyle: textTheme.headlineLarge),
+      headlineMedium: jaini(textStyle: textTheme.headlineMedium),
+      headlineSmall: jaini(textStyle: textTheme.headlineSmall),
+      titleLarge: jaini(textStyle: textTheme.titleLarge),
+      titleMedium: jaini(textStyle: textTheme.titleMedium),
+      titleSmall: jaini(textStyle: textTheme.titleSmall),
+      bodyLarge: jaini(textStyle: textTheme.bodyLarge),
+      bodyMedium: jaini(textStyle: textTheme.bodyMedium),
+      bodySmall: jaini(textStyle: textTheme.bodySmall),
+      labelLarge: jaini(textStyle: textTheme.labelLarge),
+      labelMedium: jaini(textStyle: textTheme.labelMedium),
+      labelSmall: jaini(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jaini Purva font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jaini+Purva
+  static TextStyle jainiPurva({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c7d19b1d9bfb4ccc3dfe2280e386b093926a3a6344a76b1bfaad3da63e780efd',
+        446764,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'JainiPurva',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jaini Purva font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jaini+Purva
+  static TextTheme jainiPurvaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jainiPurva(textStyle: textTheme.displayLarge),
+      displayMedium: jainiPurva(textStyle: textTheme.displayMedium),
+      displaySmall: jainiPurva(textStyle: textTheme.displaySmall),
+      headlineLarge: jainiPurva(textStyle: textTheme.headlineLarge),
+      headlineMedium: jainiPurva(textStyle: textTheme.headlineMedium),
+      headlineSmall: jainiPurva(textStyle: textTheme.headlineSmall),
+      titleLarge: jainiPurva(textStyle: textTheme.titleLarge),
+      titleMedium: jainiPurva(textStyle: textTheme.titleMedium),
+      titleSmall: jainiPurva(textStyle: textTheme.titleSmall),
+      bodyLarge: jainiPurva(textStyle: textTheme.bodyLarge),
+      bodyMedium: jainiPurva(textStyle: textTheme.bodyMedium),
+      bodySmall: jainiPurva(textStyle: textTheme.bodySmall),
+      labelLarge: jainiPurva(textStyle: textTheme.labelLarge),
+      labelMedium: jainiPurva(textStyle: textTheme.labelMedium),
+      labelSmall: jainiPurva(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Jaldi font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -365,6 +980,789 @@ class PartJ {
       labelLarge: jaldi(textStyle: textTheme.labelLarge),
       labelMedium: jaldi(textStyle: textTheme.labelMedium),
       labelSmall: jaldi(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jaro font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jaro
+  static TextStyle jaro({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1915c1efa3219a57a2abb325d40239d8bc8519ef995caa3dbf442c83941e9e4a',
+        96564,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jaro',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jaro font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jaro
+  static TextTheme jaroTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jaro(textStyle: textTheme.displayLarge),
+      displayMedium: jaro(textStyle: textTheme.displayMedium),
+      displaySmall: jaro(textStyle: textTheme.displaySmall),
+      headlineLarge: jaro(textStyle: textTheme.headlineLarge),
+      headlineMedium: jaro(textStyle: textTheme.headlineMedium),
+      headlineSmall: jaro(textStyle: textTheme.headlineSmall),
+      titleLarge: jaro(textStyle: textTheme.titleLarge),
+      titleMedium: jaro(textStyle: textTheme.titleMedium),
+      titleSmall: jaro(textStyle: textTheme.titleSmall),
+      bodyLarge: jaro(textStyle: textTheme.bodyLarge),
+      bodyMedium: jaro(textStyle: textTheme.bodyMedium),
+      bodySmall: jaro(textStyle: textTheme.bodySmall),
+      labelLarge: jaro(textStyle: textTheme.labelLarge),
+      labelMedium: jaro(textStyle: textTheme.labelMedium),
+      labelSmall: jaro(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 10 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+10
+  static TextStyle jersey10({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '678469a94dc2be6d0b39eebe6c2a8ba4732b81a98db080adeb2d317be1fe92c5',
+        124008,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey10',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 10 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+10
+  static TextTheme jersey10TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey10(textStyle: textTheme.displayLarge),
+      displayMedium: jersey10(textStyle: textTheme.displayMedium),
+      displaySmall: jersey10(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey10(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey10(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey10(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey10(textStyle: textTheme.titleLarge),
+      titleMedium: jersey10(textStyle: textTheme.titleMedium),
+      titleSmall: jersey10(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey10(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey10(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey10(textStyle: textTheme.bodySmall),
+      labelLarge: jersey10(textStyle: textTheme.labelLarge),
+      labelMedium: jersey10(textStyle: textTheme.labelMedium),
+      labelSmall: jersey10(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 10 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+10+Charted
+  static TextStyle jersey10Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '24d96248b6d4c7ef22e00fdc85e87bdda7292a37497e66ce433a34fe2c9a90ce',
+        304284,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey10Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 10 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+10+Charted
+  static TextTheme jersey10ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey10Charted(textStyle: textTheme.displayLarge),
+      displayMedium: jersey10Charted(textStyle: textTheme.displayMedium),
+      displaySmall: jersey10Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey10Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey10Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey10Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey10Charted(textStyle: textTheme.titleLarge),
+      titleMedium: jersey10Charted(textStyle: textTheme.titleMedium),
+      titleSmall: jersey10Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey10Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey10Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey10Charted(textStyle: textTheme.bodySmall),
+      labelLarge: jersey10Charted(textStyle: textTheme.labelLarge),
+      labelMedium: jersey10Charted(textStyle: textTheme.labelMedium),
+      labelSmall: jersey10Charted(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 15 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+15
+  static TextStyle jersey15({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '19d94f1cad1efe165358b687a3111755181dab03971d06be8e6d6fd6e0bf779d',
+        247952,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey15',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 15 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+15
+  static TextTheme jersey15TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey15(textStyle: textTheme.displayLarge),
+      displayMedium: jersey15(textStyle: textTheme.displayMedium),
+      displaySmall: jersey15(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey15(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey15(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey15(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey15(textStyle: textTheme.titleLarge),
+      titleMedium: jersey15(textStyle: textTheme.titleMedium),
+      titleSmall: jersey15(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey15(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey15(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey15(textStyle: textTheme.bodySmall),
+      labelLarge: jersey15(textStyle: textTheme.labelLarge),
+      labelMedium: jersey15(textStyle: textTheme.labelMedium),
+      labelSmall: jersey15(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 15 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+15+Charted
+  static TextStyle jersey15Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '786e07a2e00e2fcbd775cc82b0fa5e46b8daf3509c79146d01bd19c760f2ddf7',
+        604076,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey15Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 15 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+15+Charted
+  static TextTheme jersey15ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey15Charted(textStyle: textTheme.displayLarge),
+      displayMedium: jersey15Charted(textStyle: textTheme.displayMedium),
+      displaySmall: jersey15Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey15Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey15Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey15Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey15Charted(textStyle: textTheme.titleLarge),
+      titleMedium: jersey15Charted(textStyle: textTheme.titleMedium),
+      titleSmall: jersey15Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey15Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey15Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey15Charted(textStyle: textTheme.bodySmall),
+      labelLarge: jersey15Charted(textStyle: textTheme.labelLarge),
+      labelMedium: jersey15Charted(textStyle: textTheme.labelMedium),
+      labelSmall: jersey15Charted(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 20 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+20
+  static TextStyle jersey20({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '90fcc7db286ddc92ed4fffbcdc5d653df9acea676af75bf1f338d1c0b66c3a1c',
+        401564,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey20',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 20 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+20
+  static TextTheme jersey20TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey20(textStyle: textTheme.displayLarge),
+      displayMedium: jersey20(textStyle: textTheme.displayMedium),
+      displaySmall: jersey20(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey20(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey20(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey20(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey20(textStyle: textTheme.titleLarge),
+      titleMedium: jersey20(textStyle: textTheme.titleMedium),
+      titleSmall: jersey20(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey20(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey20(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey20(textStyle: textTheme.bodySmall),
+      labelLarge: jersey20(textStyle: textTheme.labelLarge),
+      labelMedium: jersey20(textStyle: textTheme.labelMedium),
+      labelSmall: jersey20(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 20 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+20+Charted
+  static TextStyle jersey20Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e9cdda5dab80e154438a141e1047198185687af904f0f41c9dcc96b7aa1eaf55',
+        1006148,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey20Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 20 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+20+Charted
+  static TextTheme jersey20ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey20Charted(textStyle: textTheme.displayLarge),
+      displayMedium: jersey20Charted(textStyle: textTheme.displayMedium),
+      displaySmall: jersey20Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey20Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey20Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey20Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey20Charted(textStyle: textTheme.titleLarge),
+      titleMedium: jersey20Charted(textStyle: textTheme.titleMedium),
+      titleSmall: jersey20Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey20Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey20Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey20Charted(textStyle: textTheme.bodySmall),
+      labelLarge: jersey20Charted(textStyle: textTheme.labelLarge),
+      labelMedium: jersey20Charted(textStyle: textTheme.labelMedium),
+      labelSmall: jersey20Charted(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 25 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+25
+  static TextStyle jersey25({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8c93bb11a2b029747b5154b8aa01aa476a6b16d08b0ec5f712d74e9bf7ba6605',
+        656524,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey25',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 25 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+25
+  static TextTheme jersey25TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey25(textStyle: textTheme.displayLarge),
+      displayMedium: jersey25(textStyle: textTheme.displayMedium),
+      displaySmall: jersey25(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey25(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey25(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey25(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey25(textStyle: textTheme.titleLarge),
+      titleMedium: jersey25(textStyle: textTheme.titleMedium),
+      titleSmall: jersey25(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey25(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey25(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey25(textStyle: textTheme.bodySmall),
+      labelLarge: jersey25(textStyle: textTheme.labelLarge),
+      labelMedium: jersey25(textStyle: textTheme.labelMedium),
+      labelSmall: jersey25(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Jersey 25 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+25+Charted
+  static TextStyle jersey25Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '62268682dead055937f4e54f9de898fe0bc3b057342731ea521bcbcf0acb6d93',
+        900048,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Jersey25Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Jersey 25 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Jersey+25+Charted
+  static TextTheme jersey25ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: jersey25Charted(textStyle: textTheme.displayLarge),
+      displayMedium: jersey25Charted(textStyle: textTheme.displayMedium),
+      displaySmall: jersey25Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: jersey25Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: jersey25Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: jersey25Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: jersey25Charted(textStyle: textTheme.titleLarge),
+      titleMedium: jersey25Charted(textStyle: textTheme.titleMedium),
+      titleSmall: jersey25Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: jersey25Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: jersey25Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: jersey25Charted(textStyle: textTheme.bodySmall),
+      labelLarge: jersey25Charted(textStyle: textTheme.labelLarge),
+      labelMedium: jersey25Charted(textStyle: textTheme.labelMedium),
+      labelSmall: jersey25Charted(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -678,7 +2076,7 @@ class PartJ {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fd42d643e7d0327fc47c57282946d1a1339f3e74b3ae846ae8027cb1b90d6bae',
+        '9dae9653d3a7c1297ac6a3bdb83837e42555d9cf5b4755988726c0f0cb2e3c92',
         134032,
       ),
     };
@@ -1762,8 +3160,8 @@ class PartJ {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '33724608e254c44195e254d079b5b7806804b9dd4841a37578e69dfaeb792c39',
-        1366208,
+        'a083a3d69c7ef047913364d28dcd22c0f134b9e92800d60c31d065a6f8659b97',
+        1366296,
       ),
     };
 

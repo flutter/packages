@@ -1026,6 +1026,135 @@ class PartK {
     );
   }
 
+  /// Applies the Kalnia Glaze font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Kalnia+Glaze
+  static TextStyle kalniaGlaze({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a92c49cc39868aa26f1f252b6c81f27575ed20014c91d9dd0bbc04cb03db8ca6',
+        111068,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '30f428f0d5be3d7fc98613966b5ed850ad229e97bf2e4657dce17a7329db1999',
+        111636,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0edaf1b542826a904bfbdaee4d384e829cde3cef40906d4f4907581090ffe5c9',
+        111676,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'be4974ba22d1e073503393f954cfad81499eaf3fd4e420aeb622055f7dc7d51b',
+        111716,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3d80568ae654f369c19ea3b955a29a9265380003c59c435b37ba6b284d1d5aed',
+        111812,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9431fa2c3d86c4033cfd5b3acd4549f4d1a85803a487b1af9b4006a28e9910d1',
+        111772,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '15feb91c80633d47093a5385559b5c0f089f5f75c896dd1d490c43bdefc99b82',
+        111360,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'KalniaGlaze',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Kalnia Glaze font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Kalnia+Glaze
+  static TextTheme kalniaGlazeTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: kalniaGlaze(textStyle: textTheme.displayLarge),
+      displayMedium: kalniaGlaze(textStyle: textTheme.displayMedium),
+      displaySmall: kalniaGlaze(textStyle: textTheme.displaySmall),
+      headlineLarge: kalniaGlaze(textStyle: textTheme.headlineLarge),
+      headlineMedium: kalniaGlaze(textStyle: textTheme.headlineMedium),
+      headlineSmall: kalniaGlaze(textStyle: textTheme.headlineSmall),
+      titleLarge: kalniaGlaze(textStyle: textTheme.titleLarge),
+      titleMedium: kalniaGlaze(textStyle: textTheme.titleMedium),
+      titleSmall: kalniaGlaze(textStyle: textTheme.titleSmall),
+      bodyLarge: kalniaGlaze(textStyle: textTheme.bodyLarge),
+      bodyMedium: kalniaGlaze(textStyle: textTheme.bodyMedium),
+      bodySmall: kalniaGlaze(textStyle: textTheme.bodySmall),
+      labelLarge: kalniaGlaze(textStyle: textTheme.labelLarge),
+      labelMedium: kalniaGlaze(textStyle: textTheme.labelMedium),
+      labelSmall: kalniaGlaze(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Kameron font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -3151,8 +3280,8 @@ class PartK {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '01d4902ffdf55ab04c3f70fbe0cfe76c33d7d9afad4054c22b83f6a22dd4ce10',
-        3554600,
+        'c2711563585c8e2a2ca6c9b4380b832e4c280cdb5bc8f78e8e406769c8d7a9b6',
+        3555352,
       ),
     };
 
@@ -3935,28 +4064,28 @@ class PartK {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '803e7d55f020ba98b9a4a1495b26f3455ed9effea6f9df2e71624d2b9b89eb4e',
+        '6261ece2db7c0ce519f62a9cba501e50b3eed789c91436a955e4bc4a37ee3e3e',
         43452,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f6895ad9d7a1a3d34263ccae17c2984b130722a59a9fd315480268b7e8b2b5d1',
+        '509ceb17546005254d0b54de01ffe15dc4d7eb65b016516907212d43fa6d38b1',
         43548,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f63d9f0a20ca59c8ad62e6c3101e4cde3584c3484f6f566f5b401d09ba5a5f80',
+        '6df8ebd4dd045decffe4dc464e6a2690fd2f668a54c3071e1bf5829b88f04718',
         43540,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '08831ee6b573b7b36a13ce4c5631ccc00841ad710e480b2bc1c17771ff069234',
+        '917df0a9dfdb2f0c6a28a7770c5b92ad29fe443d40ef4d862cb62305c6060afd',
         43444,
       ),
     };
@@ -5851,8 +5980,8 @@ class PartK {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '7096016c2619f5795fdc65abea4d7d40d59794d08aaaafc6efc0bfc389a14c1c',
-        136988,
+        '55e647f9453578dbef5cf472811e7c89657fe5b8e93eca9631e85ff5914f6539',
+        137008,
       ),
     };
 

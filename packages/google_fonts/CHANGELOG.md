@@ -1,3 +1,117 @@
+## 6.3.0 - 2024-11-01
+### Added
+- `Anton SC`
+- `Arsenal SC`
+- `Baskervville SC`
+- `Beiruti`
+- `Bodoni Moda SC`
+- `Bona Nova SC`
+- `Cactus Classical Serif`
+- `Chocolate Classical Sans`
+- `Danfo`
+- `Edu AU VIC WA NT Hand`
+- `Freeman`
+- `Fustat`
+- `Ga Maamli`
+- `Jacquard 12`
+- `Jacquard 12 Charted`
+- `Jacquard 24`
+- `Jacquard 24 Charted`
+- `Jacquarda Bastarda 9 Charted`
+- `Jaini`
+- `Jaini Purva`
+- `Jaro`
+- `Jersey 10`
+- `Jersey 10 Charted`
+- `Jersey 15`
+- `Jersey 15 Charted`
+- `Jersey 20`
+- `Jersey 20 Charted`
+- `Jersey 25`
+- `Jersey 25 Charted`
+- `Kalnia Glaze`
+- `LXGW WenKai Mono TC`
+- `LXGW WenKai TC`
+- `Madimi One`
+- `Maname`
+- `Micro 5 Charted`
+- `Noto Serif JP`
+- `Noto Serif KR`
+- `Noto Serif SC`
+- `Noto Serif TC`
+- `Noto Znamenny Musical Notation`
+- `Ojuju`
+- `Platypi`
+- `Playwrite AR`
+- `Playwrite AT`
+- `Playwrite AU NSW`
+- `Playwrite AU QLD`
+- `Playwrite AU SA`
+- `Playwrite AU TAS`
+- `Playwrite AU VIC`
+- `Playwrite BE VLG`
+- `Playwrite BE WAL`
+- `Playwrite BR`
+- `Playwrite CA`
+- `Playwrite CL`
+- `Playwrite CO`
+- `Playwrite CU`
+- `Playwrite CZ`
+- `Playwrite DE Grund`
+- `Playwrite DE LA`
+- `Playwrite DE SAS`
+- `Playwrite DE VA`
+- `Playwrite DK Loopet`
+- `Playwrite DK Uloopet`
+- `Playwrite ES`
+- `Playwrite ES Deco`
+- `Playwrite FR Moderne`
+- `Playwrite FR Trad`
+- `Playwrite GB J`
+- `Playwrite GB S`
+- `Playwrite HR`
+- `Playwrite HR Lijeva`
+- `Playwrite HU`
+- `Playwrite ID`
+- `Playwrite IE`
+- `Playwrite IN`
+- `Playwrite IS`
+- `Playwrite IT Moderna`
+- `Playwrite IT Trad`
+- `Playwrite MX`
+- `Playwrite NG Modern`
+- `Playwrite NL`
+- `Playwrite NO`
+- `Playwrite NZ`
+- `Playwrite PE`
+- `Playwrite PL`
+- `Playwrite PT`
+- `Playwrite RO`
+- `Playwrite SK`
+- `Playwrite TZ`
+- `Playwrite US Modern`
+- `Playwrite US Trad`
+- `Playwrite VN`
+- `Playwrite ZA`
+- `Poetsen One`
+- `Radio Canada Big`
+- `Reddit Mono`
+- `Reddit Sans`
+- `Reddit Sans Condensed`
+- `Sedan`
+- `Sedan SC`
+- `Tac One`
+- `Teachers`
+- `Tiny5`
+- `Ubuntu Sans`
+- `Ubuntu Sans Mono`
+- `Wittgenstein`
+- `Yarndings 12`
+- `Yarndings 12 Charted`
+- `Yarndings 20`
+- `Yarndings 20 Charted`
+- `Zain`
+
 ## 6.2.1 - 2024-03-04
 ### Changed
 - Update lowest supported Flutter version to current stable (`3.19.2`)

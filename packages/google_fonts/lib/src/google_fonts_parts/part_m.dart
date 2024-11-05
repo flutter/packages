@@ -1211,6 +1211,93 @@ class PartM {
     );
   }
 
+  /// Applies the Madimi One font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Madimi+One
+  static TextStyle madimiOne({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5c99bfc920cf3248615c1e9f9d9770efcb3c3085856654bad2327cda3c15dd79',
+        77004,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'MadimiOne',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Madimi One font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Madimi+One
+  static TextTheme madimiOneTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: madimiOne(textStyle: textTheme.displayLarge),
+      displayMedium: madimiOne(textStyle: textTheme.displayMedium),
+      displaySmall: madimiOne(textStyle: textTheme.displaySmall),
+      headlineLarge: madimiOne(textStyle: textTheme.headlineLarge),
+      headlineMedium: madimiOne(textStyle: textTheme.headlineMedium),
+      headlineSmall: madimiOne(textStyle: textTheme.headlineSmall),
+      titleLarge: madimiOne(textStyle: textTheme.titleLarge),
+      titleMedium: madimiOne(textStyle: textTheme.titleMedium),
+      titleSmall: madimiOne(textStyle: textTheme.titleSmall),
+      bodyLarge: madimiOne(textStyle: textTheme.bodyLarge),
+      bodyMedium: madimiOne(textStyle: textTheme.bodyMedium),
+      bodySmall: madimiOne(textStyle: textTheme.bodySmall),
+      labelLarge: madimiOne(textStyle: textTheme.labelLarge),
+      labelMedium: madimiOne(textStyle: textTheme.labelMedium),
+      labelSmall: madimiOne(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Magra font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -1883,7 +1970,7 @@ class PartM {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'efd16b618025816beb489e3062ab30452f052d0d5bbb03710f42eceb0f999c37',
+        '87f24c359879c49fb9820d515b40484641bd2851002fa1ef61afe060fe8aa0a2',
         350548,
       ),
     };
@@ -1939,6 +2026,93 @@ class PartM {
     );
   }
 
+  /// Applies the Maname font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Maname
+  static TextStyle maname({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7f4f8b45497e2b8e5380737d40ddc9bb4301fe9a5e1ec4fc4c9fc97859165db0',
+        245828,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Maname',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Maname font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Maname
+  static TextTheme manameTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: maname(textStyle: textTheme.displayLarge),
+      displayMedium: maname(textStyle: textTheme.displayMedium),
+      displaySmall: maname(textStyle: textTheme.displaySmall),
+      headlineLarge: maname(textStyle: textTheme.headlineLarge),
+      headlineMedium: maname(textStyle: textTheme.headlineMedium),
+      headlineSmall: maname(textStyle: textTheme.headlineSmall),
+      titleLarge: maname(textStyle: textTheme.titleLarge),
+      titleMedium: maname(textStyle: textTheme.titleMedium),
+      titleSmall: maname(textStyle: textTheme.titleSmall),
+      bodyLarge: maname(textStyle: textTheme.bodyLarge),
+      bodyMedium: maname(textStyle: textTheme.bodyMedium),
+      bodySmall: maname(textStyle: textTheme.bodySmall),
+      labelLarge: maname(textStyle: textTheme.labelLarge),
+      labelMedium: maname(textStyle: textTheme.labelMedium),
+      labelSmall: maname(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Mandali font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -1970,7 +2144,7 @@ class PartM {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'b4c9245286adc2ac57082a6709f35231b209b74be5f5d90e55f83e4f943bc196',
+        'b547a68a72360554fae63a56f9cb4aadb6f734a81981a69390cab5c81558264e',
         360000,
       ),
     };
@@ -3109,8 +3283,8 @@ class PartM {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '30e5982f5ec8083bdd653f3c459c492742f14b97e7f03e24f44aa63637695e88',
-        31396,
+        'f5c2204df5073443754f4a94242b8156011db717d3fb4d5f787e92377f4425dc',
+        31400,
       ),
     };
 
@@ -3283,49 +3457,49 @@ class PartM {
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1ee44d0d4893d54a1cdc577b763f43a56a3cc41bb5a16569214afd4e99f432f9',
+        '5aedff049f47432d5bc55609bd160c14fddfc4e7bce3b99ab66c513944d2f5f2',
         116348,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0f01376b7fdfcd7e143d42ef7de46b048ebce6112082da9828b16135ad3eba43',
+        '5c1251c4a8136bedaa31d989e2cda1a560e456d2057e91de1d204ab98b1c6463',
         117716,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '12702ce43a0e0d4569dd9280751658fde77aacddf053f262491e03d2ddd3a8dd',
+        '8adbf3fa5b35501a50259ab0c6e6020f00e47e0d97c05056489e035ecd1baedd',
         117388,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '91f155cd5e60d1b1ddf47eb94c633905404dc913ac6b5fca67f1b43e154aa06f',
+        '5d76e2da471f54a8c54a7e3a9febc2654e89662413637194b3a3e0d8bb12ff4d',
         116792,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '34b0a43712bff324f47dd9e72665b0e575cdd986f4631025f6ef7ca14c15044e',
+        '3e4e26aa98302344d9038fcca7cafb7c53f045fcc3a62735bc8659e5031e6bb4',
         117084,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a5a6f886bbe3ee8d7d7a4357ed5ea5d5c3964dea884200904b8c41d033eda207',
+        '2f9c046a570d0136e3b46a7b526e199ee97813b795cc1954ac9d46dce261191a',
         117668,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ed9eaa5300e6fbaed75362821ed8c718b2c6accd7c0860cf86063a4d2c1f994d',
+        'd193d53d55ba7eef6866c0c460860547b6067f7e5c81641280eaeeae03cc764e',
         111108,
       ),
     };
@@ -3412,49 +3586,49 @@ class PartM {
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0e94b3386004ab870546eeda9ed5b5e4ac30937656139d17832dc75083aa456f',
+        '946a77a7d247e32a867bb2bf78b60f8f508316ec538db0bfd64404f1cf348a2e',
         103364,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '34adb2c35e44fb48087e3ff92e3d8b0ca521daffa44e49d2fa827f1a113e9e51',
+        'eff28d226dce152ac6d813d98dafd3a4c61e48c2488f3ec8733e619a95cd3149',
         103164,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5cc347978707d341149b2714ee7ac9a56862bdceeee0d0cd78b49051895352ed',
+        '0c2e9e43aa4c4eeeb72156224cc974c76aea6bfc823fbe06cba43ee0a68d7c83',
         103204,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '532ceb7947bcc2af5c0bd6dd898b3149f96fc7154f6d6f5f43e1901e11aec356',
+        '7cc76f594b6a70a789a3033dae000253f17bee5520916d58844f757e9eccad77',
         102412,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '408fb2a6bd2b8febcbcd0f36b448bea25c95a95682b8180f072b270317ca99ce',
+        '2e891003a14a61306190e57c296d138bb1e82d6d5b0e0d16ddd77014c051c258',
         102480,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0e9cad9a7439e58232072ee1ae67b8cbe63c0a9b81f4df4905a787f897ba8741',
+        '22000a4ef8aeefb782118341587a66ff946bed19ca74f6772abe15cd4d3f4052',
         102276,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'b18f2498080548788be265f2d48af87ba37135a2df98a20de4d8cbff7f6c428c',
+        '90b518ae39d6e75cdd97395592da90c6e586768e291de0b616459432194f52f2',
         101916,
       ),
     };
@@ -3973,35 +4147,35 @@ class PartM {
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a5e0354b42d07651d678594c629fb629d4a031716dbc3c8ffee382470388182c',
+        '6aabf01e4ab29617eccfa33ad2dcc824748fdb2d48dc942faaf00dd714d2ea11',
         55372,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ee95c1730eb3238973594274a76be25dce0def310133b001a71995dd3b9ea53d',
+        '0f5674fc63985fd29a6ed673d481601bea3f6dcb73c3c3fe7181d56cce36306c',
         55532,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4a66516990bccda86250fb0961fadf997f7476a7fc1dad34a2fafe2b43477a21',
+        '197f84b13c8d13b767e420a5f6614ec71bab53082e6c3e32ed20b49aba27aaf8',
         55424,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '49ec95140b3ab2a7576c30f8e11bf5e804ee80ce3c524d6ef782bc9a85abec44',
+        'eb06ab3ba78bcd2c455d522c684995a312593f327cc227050cd22b8f698b6001',
         55536,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '106cbf7828c0f8b762ede6e2964c6ca942db0168cdbb880e684179b3e10ef1a7',
+        '4fa0953f17de65bfe3ddae2e0eb9a0ae57e915b7f04e81361cf6f7b3b7bac2a2',
         55448,
       ),
     };
@@ -5788,6 +5962,93 @@ class PartM {
       labelLarge: micro5(textStyle: textTheme.labelLarge),
       labelMedium: micro5(textStyle: textTheme.labelMedium),
       labelSmall: micro5(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Micro 5 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Micro+5+Charted
+  static TextStyle micro5Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5291e426ab7d3a332f6d0f3541740a5dfa1e9c077f35ffabd7104b242dd65a8e',
+        92512,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Micro5Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Micro 5 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Micro+5+Charted
+  static TextTheme micro5ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: micro5Charted(textStyle: textTheme.displayLarge),
+      displayMedium: micro5Charted(textStyle: textTheme.displayMedium),
+      displaySmall: micro5Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: micro5Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: micro5Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: micro5Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: micro5Charted(textStyle: textTheme.titleLarge),
+      titleMedium: micro5Charted(textStyle: textTheme.titleMedium),
+      titleSmall: micro5Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: micro5Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: micro5Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: micro5Charted(textStyle: textTheme.bodySmall),
+      labelLarge: micro5Charted(textStyle: textTheme.labelLarge),
+      labelMedium: micro5Charted(textStyle: textTheme.labelMedium),
+      labelSmall: micro5Charted(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -7608,15 +7869,29 @@ class PartM {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'fe05c5b3ab9c76bec018d18bc3c6c475a2a2dadebd2258f9611718e3c3fa2a7d',
-        87412,
+        '7c9567d0d5f0258199d59666d6b27175b1b23eaa7cbab0b4bd5b32a4c0761c6e',
+        84852,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3ddd5400c894a0a4489aaa4821521dc5f08936442a17cb2340cc5d570562d29d',
+        84804,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a8d9aadf90bccf80385466de7756916877d4e8d478d2c05cabd0803e5a5c10f3',
+        85140,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '57989ae9eeb0094c3fc9c4d326db303a56bf1003eb828a38d6812fc5c17653b8',
-        87368,
+        'e16ebc35d763f9e01097a8f509af98611e0af06958dc29a6f8a9c7e4ac41b2f9',
+        84984,
       ),
     };
 

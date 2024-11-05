@@ -12,6 +12,93 @@ import '../google_fonts_variant.dart';
 
 /// Methods for fonts starting with 'T'.
 class PartT {
+  /// Applies the Tac One font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Tac+One
+  static TextStyle tacOne({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7aa586ffeaa8475c3d3554a697a8b8bbe7e764ae2523277bb1392bd2ac802bb5',
+        102404,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'TacOne',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Tac One font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Tac+One
+  static TextTheme tacOneTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: tacOne(textStyle: textTheme.displayLarge),
+      displayMedium: tacOne(textStyle: textTheme.displayMedium),
+      displaySmall: tacOne(textStyle: textTheme.displaySmall),
+      headlineLarge: tacOne(textStyle: textTheme.headlineLarge),
+      headlineMedium: tacOne(textStyle: textTheme.headlineMedium),
+      headlineSmall: tacOne(textStyle: textTheme.headlineSmall),
+      titleLarge: tacOne(textStyle: textTheme.titleLarge),
+      titleMedium: tacOne(textStyle: textTheme.titleMedium),
+      titleSmall: tacOne(textStyle: textTheme.titleSmall),
+      bodyLarge: tacOne(textStyle: textTheme.bodyLarge),
+      bodyMedium: tacOne(textStyle: textTheme.bodyMedium),
+      bodySmall: tacOne(textStyle: textTheme.bodySmall),
+      labelLarge: tacOne(textStyle: textTheme.labelLarge),
+      labelMedium: tacOne(textStyle: textTheme.labelMedium),
+      labelSmall: tacOne(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Tai Heritage Pro font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -793,6 +880,156 @@ class PartT {
       labelLarge: taviraj(textStyle: textTheme.labelLarge),
       labelMedium: taviraj(textStyle: textTheme.labelMedium),
       labelSmall: taviraj(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Teachers font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Teachers
+  static TextStyle teachers({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e36d767907f71b35fb86874c563093f5e3c01d68a2086331bf6083dfaf79b1c1',
+        30664,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6b3b4f878b7c8f5acb13aa4fe6a65e6ad77cda1a81dc98ec2c69ac1af31c1bf4',
+        30748,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7f11e8d08270b82fe70f1ab0fefcbd27fb0a90513dd83407ba81ad58f53ce9fc',
+        30732,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '46b3803504a157d9d46294487fe36e3f84ec29d6dee1e09776ba5f57f1138852',
+        30628,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '11261a77b4297d0bd59e8b058bb47ce51aeaf0236bebec78c537b5cfc00e863c',
+        30716,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ad0f6ec0b3e9da4676d346185ca12edd5894cacbb1e279709537a9c7d6821e1e',
+        31616,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ab752f683f89b25b55e3d72795df409a4fdbc59d95e1ad53a9113f27b6846b41',
+        31740,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '08b09edf5c27bd0f0422853de5a25c8a0d5308b3cf6e5cfbf8fd81d06c625f84',
+        31728,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5f7989a5b279fb164ca9b9a5513c0b458bc3b0b0832411a52b3d8e0a227a01d2',
+        31604,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'dc42993d1ef697641a118f972d55789fe4338eb4aa5e07d328e96a8a92bdb0a9',
+        31736,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Teachers',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Teachers font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Teachers
+  static TextTheme teachersTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: teachers(textStyle: textTheme.displayLarge),
+      displayMedium: teachers(textStyle: textTheme.displayMedium),
+      displaySmall: teachers(textStyle: textTheme.displaySmall),
+      headlineLarge: teachers(textStyle: textTheme.headlineLarge),
+      headlineMedium: teachers(textStyle: textTheme.headlineMedium),
+      headlineSmall: teachers(textStyle: textTheme.headlineSmall),
+      titleLarge: teachers(textStyle: textTheme.titleLarge),
+      titleMedium: teachers(textStyle: textTheme.titleMedium),
+      titleSmall: teachers(textStyle: textTheme.titleSmall),
+      bodyLarge: teachers(textStyle: textTheme.bodyLarge),
+      bodyMedium: teachers(textStyle: textTheme.bodyMedium),
+      bodySmall: teachers(textStyle: textTheme.bodySmall),
+      labelLarge: teachers(textStyle: textTheme.labelLarge),
+      labelMedium: teachers(textStyle: textTheme.labelMedium),
+      labelSmall: teachers(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -2545,6 +2782,93 @@ class PartT {
       labelLarge: tinos(textStyle: textTheme.labelLarge),
       labelMedium: tinos(textStyle: textTheme.labelMedium),
       labelSmall: tinos(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Tiny5 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Tiny5
+  static TextStyle tiny5({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f04e9245d5909c7bd2b7276fea75dfd4bbfe2ce2d2dd89e8a9495a7d5432dac4',
+        74284,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Tiny5',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Tiny5 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Tiny5
+  static TextTheme tiny5TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: tiny5(textStyle: textTheme.displayLarge),
+      displayMedium: tiny5(textStyle: textTheme.displayMedium),
+      displaySmall: tiny5(textStyle: textTheme.displaySmall),
+      headlineLarge: tiny5(textStyle: textTheme.headlineLarge),
+      headlineMedium: tiny5(textStyle: textTheme.headlineMedium),
+      headlineSmall: tiny5(textStyle: textTheme.headlineSmall),
+      titleLarge: tiny5(textStyle: textTheme.titleLarge),
+      titleMedium: tiny5(textStyle: textTheme.titleMedium),
+      titleSmall: tiny5(textStyle: textTheme.titleSmall),
+      bodyLarge: tiny5(textStyle: textTheme.bodyLarge),
+      bodyMedium: tiny5(textStyle: textTheme.bodyMedium),
+      bodySmall: tiny5(textStyle: textTheme.bodySmall),
+      labelLarge: tiny5(textStyle: textTheme.labelLarge),
+      labelMedium: tiny5(textStyle: textTheme.labelMedium),
+      labelSmall: tiny5(textStyle: textTheme.labelSmall),
     );
   }
 

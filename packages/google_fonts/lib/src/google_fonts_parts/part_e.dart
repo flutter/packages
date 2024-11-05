@@ -646,6 +646,114 @@ class PartE {
     );
   }
 
+  /// Applies the Edu AU VIC WA NT Hand font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Edu+AU+VIC+WA+NT+Hand
+  static TextStyle eduAuVicWaNtHand({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '51999db0d64452b52d46a2088f3c3f00747dbbf6189e1fa9fbc54f3551a4de5d',
+        189236,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6b028a1c11852f19aa8ff7355fef9bb369d95d3236dbc1fa10cfe028088d7f9c',
+        189316,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e40602b7fddf78df5efb8ccbc709b4edce2514fb72396b81211ef521118fa156',
+        189284,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eb258821054ee40ab44702bfcfb8679eab02e676cfb2e7873224418474e78bbc',
+        189024,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'EduAUVICWANTHand',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Edu AU VIC WA NT Hand font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Edu+AU+VIC+WA+NT+Hand
+  static TextTheme eduAuVicWaNtHandTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: eduAuVicWaNtHand(textStyle: textTheme.displayLarge),
+      displayMedium: eduAuVicWaNtHand(textStyle: textTheme.displayMedium),
+      displaySmall: eduAuVicWaNtHand(textStyle: textTheme.displaySmall),
+      headlineLarge: eduAuVicWaNtHand(textStyle: textTheme.headlineLarge),
+      headlineMedium: eduAuVicWaNtHand(textStyle: textTheme.headlineMedium),
+      headlineSmall: eduAuVicWaNtHand(textStyle: textTheme.headlineSmall),
+      titleLarge: eduAuVicWaNtHand(textStyle: textTheme.titleLarge),
+      titleMedium: eduAuVicWaNtHand(textStyle: textTheme.titleMedium),
+      titleSmall: eduAuVicWaNtHand(textStyle: textTheme.titleSmall),
+      bodyLarge: eduAuVicWaNtHand(textStyle: textTheme.bodyLarge),
+      bodyMedium: eduAuVicWaNtHand(textStyle: textTheme.bodyMedium),
+      bodySmall: eduAuVicWaNtHand(textStyle: textTheme.bodySmall),
+      labelLarge: eduAuVicWaNtHand(textStyle: textTheme.labelLarge),
+      labelMedium: eduAuVicWaNtHand(textStyle: textTheme.labelMedium),
+      labelSmall: eduAuVicWaNtHand(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Edu NSW ACT Foundation font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -1506,14 +1614,14 @@ class PartE {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e76795ae5c03a28fafcf6b411aaa2f0a56d6bf5a5dda52c3d04bab781d6db9c7',
-        35636,
+        'b7bc1b06fa9a799ffb0c6a69b0d860b03d61783e535fc3c66b97a9be9cc8365a',
+        35956,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5829bef92683b79a8b784c27e88cce276ff185e119ab76121b6dfa78380c4f01',
+        'e9c93d2befdb49aa4d140260f06b38dcc48d6cda6ffcf0e0510fcb60666af9f4',
         36248,
       ),
     };

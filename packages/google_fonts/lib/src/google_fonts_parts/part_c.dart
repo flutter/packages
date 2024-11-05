@@ -350,6 +350,93 @@ class PartC {
     );
   }
 
+  /// Applies the Cactus Classical Serif font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Cactus+Classical+Serif
+  static TextStyle cactusClassicalSerif({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7c4c5956bc710af86f1a17732a2588b05030aa478c1e2ab87ebc5ff081c257c2',
+        27841232,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'CactusClassicalSerif',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Cactus Classical Serif font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Cactus+Classical+Serif
+  static TextTheme cactusClassicalSerifTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: cactusClassicalSerif(textStyle: textTheme.displayLarge),
+      displayMedium: cactusClassicalSerif(textStyle: textTheme.displayMedium),
+      displaySmall: cactusClassicalSerif(textStyle: textTheme.displaySmall),
+      headlineLarge: cactusClassicalSerif(textStyle: textTheme.headlineLarge),
+      headlineMedium: cactusClassicalSerif(textStyle: textTheme.headlineMedium),
+      headlineSmall: cactusClassicalSerif(textStyle: textTheme.headlineSmall),
+      titleLarge: cactusClassicalSerif(textStyle: textTheme.titleLarge),
+      titleMedium: cactusClassicalSerif(textStyle: textTheme.titleMedium),
+      titleSmall: cactusClassicalSerif(textStyle: textTheme.titleSmall),
+      bodyLarge: cactusClassicalSerif(textStyle: textTheme.bodyLarge),
+      bodyMedium: cactusClassicalSerif(textStyle: textTheme.bodyMedium),
+      bodySmall: cactusClassicalSerif(textStyle: textTheme.bodySmall),
+      labelLarge: cactusClassicalSerif(textStyle: textTheme.labelLarge),
+      labelMedium: cactusClassicalSerif(textStyle: textTheme.labelMedium),
+      labelSmall: cactusClassicalSerif(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Caesar Dressing font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -935,8 +1022,8 @@ class PartC {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6dd49e329203fbf18ec411890f63422cb7fb34ccea6fd4b794b751e6c6463f5e',
-        152624,
+        '1171e21c236a2407f9142bc1554c6d5f86831e0543ef292f2e8357a17647fa50',
+        200328,
       ),
     };
 
@@ -5602,6 +5689,94 @@ class PartC {
     );
   }
 
+  /// Applies the Chocolate Classical Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Chocolate+Classical+Sans
+  static TextStyle chocolateClassicalSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4a55146d29efe895f55e00af260207781e2a84a41417d6494c752403ec6a4cfc',
+        9967132,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ChocolateClassicalSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Chocolate Classical Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Chocolate+Classical+Sans
+  static TextTheme chocolateClassicalSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: chocolateClassicalSans(textStyle: textTheme.displayLarge),
+      displayMedium: chocolateClassicalSans(textStyle: textTheme.displayMedium),
+      displaySmall: chocolateClassicalSans(textStyle: textTheme.displaySmall),
+      headlineLarge: chocolateClassicalSans(textStyle: textTheme.headlineLarge),
+      headlineMedium:
+          chocolateClassicalSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: chocolateClassicalSans(textStyle: textTheme.headlineSmall),
+      titleLarge: chocolateClassicalSans(textStyle: textTheme.titleLarge),
+      titleMedium: chocolateClassicalSans(textStyle: textTheme.titleMedium),
+      titleSmall: chocolateClassicalSans(textStyle: textTheme.titleSmall),
+      bodyLarge: chocolateClassicalSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: chocolateClassicalSans(textStyle: textTheme.bodyMedium),
+      bodySmall: chocolateClassicalSans(textStyle: textTheme.bodySmall),
+      labelLarge: chocolateClassicalSans(textStyle: textTheme.labelLarge),
+      labelMedium: chocolateClassicalSans(textStyle: textTheme.labelMedium),
+      labelSmall: chocolateClassicalSans(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Chokokutai font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -7350,7 +7525,7 @@ class PartC {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c342204943ee759242ea7b16351a9b35d9dd31cd91bb9adefd8ed59e7d6c9b6d',
+        'b9650bddc65f965f89c8d9d4a7f1449317d935bbd563904c77a0319b7005a156',
         43400,
       ),
     };
@@ -9607,15 +9782,15 @@ class PartC {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'dbc41e1b280c0a6540d428aa8cd5ea13cffe84191c790d303a0507ed31a458d1',
-        55160,
+        '141fb6fcffd6837676f741b63f118b65d4f54f13c59249b52003a503e2e1f55a',
+        55244,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '07b6cc05a4db88b09d577f6e7f9fe6f4df382f2ee735c0960bc60ab1dbe3025e',
-        63024,
+        '9b60518b55e987f13de9687eda994db5536551ee60ed77f4926b035896ffdac9',
+        63116,
       ),
     };
 
@@ -10412,8 +10587,8 @@ class PartC {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'f12c0f0875b596c276b63a55e548b1d68c75d869e264eb1a84c1e3a775dd22f3',
-        39420,
+        '00538f7625533f2449b6c1f0a705af04aed7088eab512f6b5d40896f40fa6953',
+        46364,
       ),
     };
 
@@ -10499,8 +10674,8 @@ class PartC {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e3d8c39fcf3ecc0503fa4fee5c468b9013b6cdd6073a1be59431b138ef0ee4ac',
-        45272,
+        '20c0220ef9ccb50de02353bd22e239da29a7837b3a1953abc354a10d94b290cc',
+        45212,
       ),
     };
 

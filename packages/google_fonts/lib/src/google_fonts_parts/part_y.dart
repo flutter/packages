@@ -378,6 +378,354 @@ class PartY {
     );
   }
 
+  /// Applies the Yarndings 12 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+12
+  static TextStyle yarndings12({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4cfbf942b910cc002aebedb31a6a6f08ccb8ea52dacb8a316d7859ed2c9a30d9',
+        47788,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Yarndings12',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Yarndings 12 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+12
+  static TextTheme yarndings12TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: yarndings12(textStyle: textTheme.displayLarge),
+      displayMedium: yarndings12(textStyle: textTheme.displayMedium),
+      displaySmall: yarndings12(textStyle: textTheme.displaySmall),
+      headlineLarge: yarndings12(textStyle: textTheme.headlineLarge),
+      headlineMedium: yarndings12(textStyle: textTheme.headlineMedium),
+      headlineSmall: yarndings12(textStyle: textTheme.headlineSmall),
+      titleLarge: yarndings12(textStyle: textTheme.titleLarge),
+      titleMedium: yarndings12(textStyle: textTheme.titleMedium),
+      titleSmall: yarndings12(textStyle: textTheme.titleSmall),
+      bodyLarge: yarndings12(textStyle: textTheme.bodyLarge),
+      bodyMedium: yarndings12(textStyle: textTheme.bodyMedium),
+      bodySmall: yarndings12(textStyle: textTheme.bodySmall),
+      labelLarge: yarndings12(textStyle: textTheme.labelLarge),
+      labelMedium: yarndings12(textStyle: textTheme.labelMedium),
+      labelSmall: yarndings12(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Yarndings 12 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+12+Charted
+  static TextStyle yarndings12Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f0b64b4062ab1548493eb66001cf6f4986ce581ef4997b817e7cf7439238d4ce',
+        141812,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Yarndings12Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Yarndings 12 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+12+Charted
+  static TextTheme yarndings12ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: yarndings12Charted(textStyle: textTheme.displayLarge),
+      displayMedium: yarndings12Charted(textStyle: textTheme.displayMedium),
+      displaySmall: yarndings12Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: yarndings12Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: yarndings12Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: yarndings12Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: yarndings12Charted(textStyle: textTheme.titleLarge),
+      titleMedium: yarndings12Charted(textStyle: textTheme.titleMedium),
+      titleSmall: yarndings12Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: yarndings12Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: yarndings12Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: yarndings12Charted(textStyle: textTheme.bodySmall),
+      labelLarge: yarndings12Charted(textStyle: textTheme.labelLarge),
+      labelMedium: yarndings12Charted(textStyle: textTheme.labelMedium),
+      labelSmall: yarndings12Charted(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Yarndings 20 font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+20
+  static TextStyle yarndings20({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '31ec2c165b7ee327cdd917ba05df000e5195365621586ae934be418addf159a1',
+        107312,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Yarndings20',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Yarndings 20 font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+20
+  static TextTheme yarndings20TextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: yarndings20(textStyle: textTheme.displayLarge),
+      displayMedium: yarndings20(textStyle: textTheme.displayMedium),
+      displaySmall: yarndings20(textStyle: textTheme.displaySmall),
+      headlineLarge: yarndings20(textStyle: textTheme.headlineLarge),
+      headlineMedium: yarndings20(textStyle: textTheme.headlineMedium),
+      headlineSmall: yarndings20(textStyle: textTheme.headlineSmall),
+      titleLarge: yarndings20(textStyle: textTheme.titleLarge),
+      titleMedium: yarndings20(textStyle: textTheme.titleMedium),
+      titleSmall: yarndings20(textStyle: textTheme.titleSmall),
+      bodyLarge: yarndings20(textStyle: textTheme.bodyLarge),
+      bodyMedium: yarndings20(textStyle: textTheme.bodyMedium),
+      bodySmall: yarndings20(textStyle: textTheme.bodySmall),
+      labelLarge: yarndings20(textStyle: textTheme.labelLarge),
+      labelMedium: yarndings20(textStyle: textTheme.labelMedium),
+      labelSmall: yarndings20(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Yarndings 20 Charted font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+20+Charted
+  static TextStyle yarndings20Charted({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0ca297eb1d28c6c182596d22f8badffb7c262e80b018fb723e922036d3f19b75',
+        298448,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Yarndings20Charted',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Yarndings 20 Charted font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Yarndings+20+Charted
+  static TextTheme yarndings20ChartedTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: yarndings20Charted(textStyle: textTheme.displayLarge),
+      displayMedium: yarndings20Charted(textStyle: textTheme.displayMedium),
+      displaySmall: yarndings20Charted(textStyle: textTheme.displaySmall),
+      headlineLarge: yarndings20Charted(textStyle: textTheme.headlineLarge),
+      headlineMedium: yarndings20Charted(textStyle: textTheme.headlineMedium),
+      headlineSmall: yarndings20Charted(textStyle: textTheme.headlineSmall),
+      titleLarge: yarndings20Charted(textStyle: textTheme.titleLarge),
+      titleMedium: yarndings20Charted(textStyle: textTheme.titleMedium),
+      titleSmall: yarndings20Charted(textStyle: textTheme.titleSmall),
+      bodyLarge: yarndings20Charted(textStyle: textTheme.bodyLarge),
+      bodyMedium: yarndings20Charted(textStyle: textTheme.bodyMedium),
+      bodySmall: yarndings20Charted(textStyle: textTheme.bodySmall),
+      labelLarge: yarndings20Charted(textStyle: textTheme.labelLarge),
+      labelMedium: yarndings20Charted(textStyle: textTheme.labelMedium),
+      labelSmall: yarndings20Charted(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Yatra One font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -583,8 +931,8 @@ class PartY {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2df96f5b33472f315b4b95c979fbc86e16cf6cb3be06d844568b067525f83c3c',
-        1698764,
+        '6a8e4215f3fe6645a9acd68f7df1d9aa3d551639bbad884c9650a420dd7eb4b6',
+        1699040,
       ),
     };
 

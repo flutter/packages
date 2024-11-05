@@ -12,6 +12,208 @@ import '../google_fonts_variant.dart';
 
 /// Methods for fonts starting with 'L'.
 class PartL {
+  /// Applies the LXGW WenKai Mono TC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/LXGW+WenKai+Mono+TC
+  static TextStyle lxgwWenKaiMonoTc({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '34885aabb423d39cf7684f3b044d878fe5b8323c325dd25d95944c2b4b8eca38',
+        13712524,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b359700d584c8a61131c84f68ffbcd2068c18c6283c7701a941d66d4ae4f26c7',
+        13073792,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c97f791f608f9fdd28487f62c28a49ca51fd3509d22880f2b0c92dd9360937d6',
+        12836756,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'LXGWWenKaiMonoTC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the LXGW WenKai Mono TC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/LXGW+WenKai+Mono+TC
+  static TextTheme lxgwWenKaiMonoTcTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: lxgwWenKaiMonoTc(textStyle: textTheme.displayLarge),
+      displayMedium: lxgwWenKaiMonoTc(textStyle: textTheme.displayMedium),
+      displaySmall: lxgwWenKaiMonoTc(textStyle: textTheme.displaySmall),
+      headlineLarge: lxgwWenKaiMonoTc(textStyle: textTheme.headlineLarge),
+      headlineMedium: lxgwWenKaiMonoTc(textStyle: textTheme.headlineMedium),
+      headlineSmall: lxgwWenKaiMonoTc(textStyle: textTheme.headlineSmall),
+      titleLarge: lxgwWenKaiMonoTc(textStyle: textTheme.titleLarge),
+      titleMedium: lxgwWenKaiMonoTc(textStyle: textTheme.titleMedium),
+      titleSmall: lxgwWenKaiMonoTc(textStyle: textTheme.titleSmall),
+      bodyLarge: lxgwWenKaiMonoTc(textStyle: textTheme.bodyLarge),
+      bodyMedium: lxgwWenKaiMonoTc(textStyle: textTheme.bodyMedium),
+      bodySmall: lxgwWenKaiMonoTc(textStyle: textTheme.bodySmall),
+      labelLarge: lxgwWenKaiMonoTc(textStyle: textTheme.labelLarge),
+      labelMedium: lxgwWenKaiMonoTc(textStyle: textTheme.labelMedium),
+      labelSmall: lxgwWenKaiMonoTc(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the LXGW WenKai TC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/LXGW+WenKai+TC
+  static TextStyle lxgwWenKaiTc({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '76ff9db2601e25bf67f9c8fe5f5728d578bb8fa08444bb1636fccaeaf4fc172e',
+        13714320,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4a77556591713bcd16147a22c45bb6743e6330389f8ff9ea2c821bbcd1a374a4',
+        13061396,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fd419f3fae37f8854f7f5ada63993e9ae2553cc309799326e36633163036c758',
+        12832752,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'LXGWWenKaiTC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the LXGW WenKai TC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/LXGW+WenKai+TC
+  static TextTheme lxgwWenKaiTcTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: lxgwWenKaiTc(textStyle: textTheme.displayLarge),
+      displayMedium: lxgwWenKaiTc(textStyle: textTheme.displayMedium),
+      displaySmall: lxgwWenKaiTc(textStyle: textTheme.displaySmall),
+      headlineLarge: lxgwWenKaiTc(textStyle: textTheme.headlineLarge),
+      headlineMedium: lxgwWenKaiTc(textStyle: textTheme.headlineMedium),
+      headlineSmall: lxgwWenKaiTc(textStyle: textTheme.headlineSmall),
+      titleLarge: lxgwWenKaiTc(textStyle: textTheme.titleLarge),
+      titleMedium: lxgwWenKaiTc(textStyle: textTheme.titleMedium),
+      titleSmall: lxgwWenKaiTc(textStyle: textTheme.titleSmall),
+      bodyLarge: lxgwWenKaiTc(textStyle: textTheme.bodyLarge),
+      bodyMedium: lxgwWenKaiTc(textStyle: textTheme.bodyMedium),
+      bodySmall: lxgwWenKaiTc(textStyle: textTheme.bodySmall),
+      labelLarge: lxgwWenKaiTc(textStyle: textTheme.labelLarge),
+      labelMedium: lxgwWenKaiTc(textStyle: textTheme.labelMedium),
+      labelSmall: lxgwWenKaiTc(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the La Belle Aurore font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -1743,21 +1945,21 @@ class PartL {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6a3fb462a967e44088d64703e6c4bce48dbf8d2896edc064c48953c3591a491f',
+        'c033388d5fa91a646e4358f44bf753b82b410ff47cc026e19889cca98c04f76b',
         36732,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '0fa708fe39ee0d046d91e8f871bdd90ff2a884bb1b7c55d6dcc1e86eda2c23dd',
+        '16115038ba59a9790a93405ae435a49c91274f518b8e23c1dd7ab8e61eeb8878',
         17920,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4c68d3c141d7077dea89c9a5b09b6d95afea5d4602b75bb8daef7b0d9983ec76',
+        '66e08b4d07505af1f67710e8945e5243722e2874f094c5c5890cc4d9b00ce50c',
         36552,
       ),
     };
@@ -4525,22 +4727,22 @@ class PartL {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a054e492650f48d2c3b0e11f609df807fa8659bdb6e09bb4e615e925ef0727ba',
-        123184,
+        '986e0903155ebfff814e89163c122fa58085080995c3a1f897637acc7c13e214',
+        128960,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8ee94f3cf7576b61e262dac2718765894e064147df3fe51a275339c1176723a1',
-        96272,
+        'ad6e4881b1b1de0b0df602e3f41cda4d1be4dad8a20796a680ce94e6314b6cd1',
+        128980,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '8b46219d77eaab1b3082b4ae85a9679c26bf80867fbc5b3e830e4f9dc863b9c5',
-        126732,
+        '3994e4dae848db5d581054e995954e45318ef363acd50c763f388d5ce37fbe12',
+        127632,
       ),
     };
 

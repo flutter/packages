@@ -1119,6 +1119,170 @@ class PartW {
     );
   }
 
+  /// Applies the Wittgenstein font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Wittgenstein
+  static TextStyle wittgenstein({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7e809181bda250bddf271f7555cacc57f437e7644b48b0d975587952a5d70ee0',
+        68196,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd449db2cf9ee537944146ed2755bcda8a8b8a688026839e80fab2c1550c25a3c',
+        68384,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '23a1bdeeffde6bd9cf519c2746728d530a161d3faa314929ab14c069e625c7cb',
+        68368,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ea85b308046bd65b0d7ca6f976a862e749d9dcb7b46a6782d5a58bc191767739',
+        68296,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e3436a7ea7704850e0dd477f204425e227fefbdb811d75800ca877e4da9fcd01',
+        68344,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8ac645c23d410e97b8500e4b431bff288c38c4a7f26f97edda922f259ad94d0d',
+        68024,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'd336202665297bbcd04dc55547aaceda72ef7ddd786cfe24d105ab47f1fd82e9',
+        61436,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '0a5d264f1d1d6e8b800d5f50b142ef98e92944a2633519d395b8ee82f900f592',
+        61692,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'c9f9ac7c497db3a5205ed350ba460135cfac7f20467eff826b8f54e800681f3b',
+        61672,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '3af0d3f356a515be037f48cc4474a9f55d6fc6f02b4e2f7771f651174290e77c',
+        61540,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'cc2a9615e6652c241ebcb261b6f2b0f26bce5c2bc7df4c1e538ddb751e7e0d2b',
+        61660,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '70f6ae9854685b5e10aa2e9e41e6ac9fb5e2987cf0e3a86b67ebedca1ce3c602',
+        61536,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Wittgenstein',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Wittgenstein font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Wittgenstein
+  static TextTheme wittgensteinTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: wittgenstein(textStyle: textTheme.displayLarge),
+      displayMedium: wittgenstein(textStyle: textTheme.displayMedium),
+      displaySmall: wittgenstein(textStyle: textTheme.displaySmall),
+      headlineLarge: wittgenstein(textStyle: textTheme.headlineLarge),
+      headlineMedium: wittgenstein(textStyle: textTheme.headlineMedium),
+      headlineSmall: wittgenstein(textStyle: textTheme.headlineSmall),
+      titleLarge: wittgenstein(textStyle: textTheme.titleLarge),
+      titleMedium: wittgenstein(textStyle: textTheme.titleMedium),
+      titleSmall: wittgenstein(textStyle: textTheme.titleSmall),
+      bodyLarge: wittgenstein(textStyle: textTheme.bodyLarge),
+      bodyMedium: wittgenstein(textStyle: textTheme.bodyMedium),
+      bodySmall: wittgenstein(textStyle: textTheme.bodySmall),
+      labelLarge: wittgenstein(textStyle: textTheme.labelLarge),
+      labelMedium: wittgenstein(textStyle: textTheme.labelMedium),
+      labelSmall: wittgenstein(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Wix Madefor Display font family from Google Fonts to the
   /// given [textStyle].
   ///

@@ -2338,8 +2338,8 @@ class PartA {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4d6d1a876ec561e28b937360e72c7a923c4e70d6b296d0e02ab975f905541542',
-        63888,
+        '50c90d138a25d665d208166151c88c6d281fc7bb7ff827aa44fead9cc487f008',
+        275544,
       ),
     };
 
@@ -2425,8 +2425,8 @@ class PartA {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9d0fb3f76a4356859b1290a86bdcaa2d07b4924e58af54062df6a7e4c4f62689',
-        88900,
+        '393fe2ab24967a1f8b76b6347a7701c2df6b34ef4cf61e4ff76d0148a339f62b',
+        338552,
       ),
     };
 
@@ -6638,8 +6638,36 @@ class PartA {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5f20dc30b8de25a3b4110660e82f540abb5e93fcb0a316430d07a0c0fb2a65da',
-        25804,
+        '262a69303323471ba5b45a8c345984be137c9624b962ccb6b04136465cb0a516',
+        65856,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1279770d0dd96c9669fc0db923457dd80e13a53628488d9e95b5469ae9cdb1fb',
+        66156,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd26100ec43c48cbe7b49eb9af762fedeab94ec864427b81ca4093e0c72e59e1a',
+        66180,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b7ff02ac9a209ab0157709412989ebefc97cba79b189b5cd4f9e996ec38b82e5',
+        66356,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b594a3c5027823dcc91220c67cd56312ecda0b41c56f58ea0c37690695807111',
+        66692,
       ),
     };
 
@@ -9124,6 +9152,93 @@ class PartA {
     );
   }
 
+  /// Applies the Anton SC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Anton+SC
+  static TextStyle antonSc({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '11c2d64658fcb6548d763397e46cda1b2ecf72daa70d4971db4bf5a6977858cb',
+        99896,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'AntonSC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Anton SC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Anton+SC
+  static TextTheme antonScTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: antonSc(textStyle: textTheme.displayLarge),
+      displayMedium: antonSc(textStyle: textTheme.displayMedium),
+      displaySmall: antonSc(textStyle: textTheme.displaySmall),
+      headlineLarge: antonSc(textStyle: textTheme.headlineLarge),
+      headlineMedium: antonSc(textStyle: textTheme.headlineMedium),
+      headlineSmall: antonSc(textStyle: textTheme.headlineSmall),
+      titleLarge: antonSc(textStyle: textTheme.titleLarge),
+      titleMedium: antonSc(textStyle: textTheme.titleMedium),
+      titleSmall: antonSc(textStyle: textTheme.titleSmall),
+      bodyLarge: antonSc(textStyle: textTheme.bodyLarge),
+      bodyMedium: antonSc(textStyle: textTheme.bodyMedium),
+      bodySmall: antonSc(textStyle: textTheme.bodySmall),
+      labelLarge: antonSc(textStyle: textTheme.labelLarge),
+      labelMedium: antonSc(textStyle: textTheme.labelMedium),
+      labelSmall: antonSc(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Antonio font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -11278,6 +11393,114 @@ class PartA {
       labelLarge: arsenal(textStyle: textTheme.labelLarge),
       labelMedium: arsenal(textStyle: textTheme.labelMedium),
       labelSmall: arsenal(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Arsenal SC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Arsenal+SC
+  static TextStyle arsenalSc({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fe4e1da8eea8a5b3f0f5b03b2474de25632416f40d7cc8a42c635da7678ffa3e',
+        94588,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '763ec672284a4efccc89ef0218e9c8ab65be9024bb469d30438163bbb8e930d9',
+        99980,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c30cc2a89ce6c8c9045f1a16f3eb060c250010f2f7f2ab8a3895a01656945987',
+        95404,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'c7ee10cfed6f2f48eaa7f5d16e5452abe693a973c41c98b26eae8c28a307a3dd',
+        100116,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ArsenalSC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Arsenal SC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Arsenal+SC
+  static TextTheme arsenalScTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: arsenalSc(textStyle: textTheme.displayLarge),
+      displayMedium: arsenalSc(textStyle: textTheme.displayMedium),
+      displaySmall: arsenalSc(textStyle: textTheme.displaySmall),
+      headlineLarge: arsenalSc(textStyle: textTheme.headlineLarge),
+      headlineMedium: arsenalSc(textStyle: textTheme.headlineMedium),
+      headlineSmall: arsenalSc(textStyle: textTheme.headlineSmall),
+      titleLarge: arsenalSc(textStyle: textTheme.titleLarge),
+      titleMedium: arsenalSc(textStyle: textTheme.titleMedium),
+      titleSmall: arsenalSc(textStyle: textTheme.titleSmall),
+      bodyLarge: arsenalSc(textStyle: textTheme.bodyLarge),
+      bodyMedium: arsenalSc(textStyle: textTheme.bodyMedium),
+      bodySmall: arsenalSc(textStyle: textTheme.bodySmall),
+      labelLarge: arsenalSc(textStyle: textTheme.labelLarge),
+      labelMedium: arsenalSc(textStyle: textTheme.labelMedium),
+      labelSmall: arsenalSc(textStyle: textTheme.labelSmall),
     );
   }
 

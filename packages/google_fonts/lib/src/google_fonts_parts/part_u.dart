@@ -343,6 +343,334 @@ class PartU {
     );
   }
 
+  /// Applies the Ubuntu Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Ubuntu+Sans
+  static TextStyle ubuntuSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '456e8ddd69cc26ab70382c44351e1e3e6f84becd99eabfa7eca8a6dc52f1745e',
+        231352,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b52962e0624a9bf2723c1cc07eae58321deedd9c46de2929c314c0a7c5c6795d',
+        231720,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '158e0717cf71b225fb5503cec3295931eaa979fecfa123a81c9f32d23577f4ab',
+        231552,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1d29b1107b28d7f3668cba2cdd82373158ab5a4c80cf114821b9df5708c8f62f',
+        231492,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2ccbfe8d006fae65f64be92a2a22fcd09a8b1a70c91a3a8fdb42cc126ae92595',
+        231616,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd40d4dab8a79ebe8b50b3bff19ea2c83e8a4960b9f0af4a54164ed2aebba993d',
+        231720,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7a6841cbcffdbe34a9f0fcabcda674ed18bc5f8652769ef881ea5eb81556d008',
+        231640,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e48af3f6854249ce196dc9b3ee5590f8d0ea59c0f32385ab2d3b6201c738280a',
+        231708,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '1deae8bc6a928b8556e29f930ae4540d05eb2d66c31ab963f6ec5bb9c26d2108',
+        247600,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'b848bdabe67baae980b99fa57d1b15d6f41e43081c66a8c2baeee2f4f5ac1691',
+        247852,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '15dde3082ac90c527111e7df0b09c5f620b0ec50c701bf53663a629c23211a0d',
+        247880,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '6ab62d78bd013f188a618dab210e56b0d17207f7851dfdb03f28adc7544c44e7',
+        247656,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'a1508989ec5550113af63c62ef69509f45870bc87d1970452b81927804a63db9',
+        247916,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ffc18f999ca6669ffcc72063d71f84037078fe430c0c4fa9f4279293a56aa873',
+        247948,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'fc093bcf9990d65879599725f22ede6dd2de5dc7a2edf0aa1ab23c12caa57e21',
+        247912,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'cbab83a00e5076c876007d74c2265f819a8fbaf0e1b535cbbc9e722489543af9',
+        247976,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'UbuntuSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Ubuntu Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Ubuntu+Sans
+  static TextTheme ubuntuSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: ubuntuSans(textStyle: textTheme.displayLarge),
+      displayMedium: ubuntuSans(textStyle: textTheme.displayMedium),
+      displaySmall: ubuntuSans(textStyle: textTheme.displaySmall),
+      headlineLarge: ubuntuSans(textStyle: textTheme.headlineLarge),
+      headlineMedium: ubuntuSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: ubuntuSans(textStyle: textTheme.headlineSmall),
+      titleLarge: ubuntuSans(textStyle: textTheme.titleLarge),
+      titleMedium: ubuntuSans(textStyle: textTheme.titleMedium),
+      titleSmall: ubuntuSans(textStyle: textTheme.titleSmall),
+      bodyLarge: ubuntuSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: ubuntuSans(textStyle: textTheme.bodyMedium),
+      bodySmall: ubuntuSans(textStyle: textTheme.bodySmall),
+      labelLarge: ubuntuSans(textStyle: textTheme.labelLarge),
+      labelMedium: ubuntuSans(textStyle: textTheme.labelMedium),
+      labelSmall: ubuntuSans(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Ubuntu Sans Mono font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Ubuntu+Sans+Mono
+  static TextStyle ubuntuSansMono({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '44ae840b720f3e95bb69bd2449082c72d90272356c78fdbb5721b3ff5a6a97cc',
+        111100,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '46ab71e7ebab7516438f265d25c1c6084ec116cff1aad24afea1422a9e5b7ba3',
+        111160,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4a13175b837a6e9f77c7b9be8b4a77ba7bbc039d5535d9d2768bb0a050018e84',
+        111156,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5224a9bb27672470392ad5693ffe40f876408fc46ff7eea839c0b9e8ab9f144e',
+        110672,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'b14f0b3b545240386bab1ad28b993d68f1c0aa27098185c50ada7533e9f349dd',
+        114212,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'ccb0866ed261b703fc6d4df8a8d8fa990cedb3ef5649630a563d4b63f6d1c3b3',
+        114352,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '12b9aa6477f74260d5d0ab35cd4289652ab60b666165c81ebdce14ba641e81e6',
+        114328,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'a28c516b044902577d4dfd449666ed7cae623f4101840acb970fe2d464ce4fdc',
+        114048,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'UbuntuSansMono',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Ubuntu Sans Mono font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Ubuntu+Sans+Mono
+  static TextTheme ubuntuSansMonoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: ubuntuSansMono(textStyle: textTheme.displayLarge),
+      displayMedium: ubuntuSansMono(textStyle: textTheme.displayMedium),
+      displaySmall: ubuntuSansMono(textStyle: textTheme.displaySmall),
+      headlineLarge: ubuntuSansMono(textStyle: textTheme.headlineLarge),
+      headlineMedium: ubuntuSansMono(textStyle: textTheme.headlineMedium),
+      headlineSmall: ubuntuSansMono(textStyle: textTheme.headlineSmall),
+      titleLarge: ubuntuSansMono(textStyle: textTheme.titleLarge),
+      titleMedium: ubuntuSansMono(textStyle: textTheme.titleMedium),
+      titleSmall: ubuntuSansMono(textStyle: textTheme.titleSmall),
+      bodyLarge: ubuntuSansMono(textStyle: textTheme.bodyLarge),
+      bodyMedium: ubuntuSansMono(textStyle: textTheme.bodyMedium),
+      bodySmall: ubuntuSansMono(textStyle: textTheme.bodySmall),
+      labelLarge: ubuntuSansMono(textStyle: textTheme.labelLarge),
+      labelMedium: ubuntuSansMono(textStyle: textTheme.labelMedium),
+      labelSmall: ubuntuSansMono(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Uchen font family from Google Fonts to the
   /// given [textStyle].
   ///

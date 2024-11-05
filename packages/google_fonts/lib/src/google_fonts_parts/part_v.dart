@@ -2011,8 +2011,8 @@ class PartV {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '13f3d355b65d2763edee28f1ce8ae0b51c76942915fc4631c77d5a827ed09e33',
-        239228,
+        '8f7eabfaaf1511f97145e74e643557c5b4c9e168f2809708eefdc758bdc33d1b',
+        263700,
       ),
     };
 

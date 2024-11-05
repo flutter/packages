@@ -4197,50 +4197,50 @@ class PartF {
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2ecf3c85ff388bfbae62cd2258158b836cbed8b56c2c2dc4f058c4b3f6aea645',
-        66688,
+        '33488e351a7c447ba9eed47e97bd00421f45618c2aa8e856b96f5bb4ff24b4f4',
+        66772,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '780e5e6276a39dfe7a542388cc3d3fbc6f5d0688e95e2dcbb06a292d07fc9376',
-        66824,
+        '059b1c5a1bc1fd493f68ad442e7a699204e7e89e42160213967aaf8382bf8e5c',
+        66908,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '47ea7ca19b18a0c60402e856754aefab86a571511b84dce3d3c3c113efc87c49',
-        66716,
+        '8e7bc48c7ace98ae1f62a8f9593eb3f5211ebcbf88bd0674567d5f76552a0f42',
+        66800,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '64655ee277752b5c236e04ea1edbdac30da63b2e76ec8c824af6b557ab17771d',
-        66860,
+        '90f2cba3ff80ae8c2b5231ccc18a241b033302fdaff2e584c0e2b5a747b050c1',
+        66944,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '40fa8d517ccae20f9567908549402815d27dcb06710f9746cc2478fe54ef7e28',
-        66892,
+        'aaaa156ba929925ecdb11e859dc3e9e328d945a82a2807eae01630a7dd845605',
+        66976,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'bd80c140851cd0b1d6f55369fe980905c33838291b72f7e5858b920822236750',
-        67024,
+        '5a3adf25500cfbefc9b4909b712882d29222ee81dae431d49ed3216912da0084',
+        67108,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '25fbdcc4865e7e82cb814371c687016dda71402f303dec6171e6380e4b656819',
-        66824,
+        '58b51f999bfab76ad615de38aceee49f9bbcc4d9c87718d29345eed8104962e0',
+        66908,
       ),
     };
 
@@ -4877,6 +4877,93 @@ class PartF {
     );
   }
 
+  /// Applies the Freeman font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Freeman
+  static TextStyle freeman({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1d8f92b89ee9637bc61954d1c6c3f7ff861c103ade73bf0eb8c320d27de120ec',
+        142976,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Freeman',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Freeman font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Freeman
+  static TextTheme freemanTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: freeman(textStyle: textTheme.displayLarge),
+      displayMedium: freeman(textStyle: textTheme.displayMedium),
+      displaySmall: freeman(textStyle: textTheme.displaySmall),
+      headlineLarge: freeman(textStyle: textTheme.headlineLarge),
+      headlineMedium: freeman(textStyle: textTheme.headlineMedium),
+      headlineSmall: freeman(textStyle: textTheme.headlineSmall),
+      titleLarge: freeman(textStyle: textTheme.titleLarge),
+      titleMedium: freeman(textStyle: textTheme.titleMedium),
+      titleSmall: freeman(textStyle: textTheme.titleSmall),
+      bodyLarge: freeman(textStyle: textTheme.bodyLarge),
+      bodyMedium: freeman(textStyle: textTheme.bodyMedium),
+      bodySmall: freeman(textStyle: textTheme.bodySmall),
+      labelLarge: freeman(textStyle: textTheme.labelLarge),
+      labelMedium: freeman(textStyle: textTheme.labelMedium),
+      labelSmall: freeman(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Fresca font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -5316,6 +5403,135 @@ class PartF {
       labelLarge: fuggles(textStyle: textTheme.labelLarge),
       labelMedium: fuggles(textStyle: textTheme.labelMedium),
       labelSmall: fuggles(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Fustat font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Fustat
+  static TextStyle fustat({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2528c74210c15b7c2f64b82ac397a0a43a69f629a3096da8470befc864476f21',
+        87776,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ed9fdd365a1d2d5217f19367c9617f4013628abfbbad6a6d5c7221fe0ac8b162',
+        87888,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '732bbdc48aea7a3979c6b97451286ff407a360c645ea63c4afbe6c647fd085d7',
+        87656,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '60551c7a5572108b59fc7a702f06fe44ffb8129cdaaea939fd12eca5545d3809',
+        87848,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '607f588a22d646dda525069d6a40a294545c478ea7c90e9dbfb5c08e99ab0888',
+        87896,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5dc881cfd482fc20194959d955f17442529542899fe3f1c21d462ee05140dbdc',
+        87876,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e5a7532a2f32de6818337c791c641cfcbd5ab06506b97853da5bc592a825bdbc',
+        87684,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Fustat',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Fustat font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Fustat
+  static TextTheme fustatTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: fustat(textStyle: textTheme.displayLarge),
+      displayMedium: fustat(textStyle: textTheme.displayMedium),
+      displaySmall: fustat(textStyle: textTheme.displaySmall),
+      headlineLarge: fustat(textStyle: textTheme.headlineLarge),
+      headlineMedium: fustat(textStyle: textTheme.headlineMedium),
+      headlineSmall: fustat(textStyle: textTheme.headlineSmall),
+      titleLarge: fustat(textStyle: textTheme.titleLarge),
+      titleMedium: fustat(textStyle: textTheme.titleMedium),
+      titleSmall: fustat(textStyle: textTheme.titleSmall),
+      bodyLarge: fustat(textStyle: textTheme.bodyLarge),
+      bodyMedium: fustat(textStyle: textTheme.bodyMedium),
+      bodySmall: fustat(textStyle: textTheme.bodySmall),
+      labelLarge: fustat(textStyle: textTheme.labelLarge),
+      labelMedium: fustat(textStyle: textTheme.labelMedium),
+      labelSmall: fustat(textStyle: textTheme.labelSmall),
     );
   }
 

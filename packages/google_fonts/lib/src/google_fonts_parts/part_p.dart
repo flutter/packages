@@ -3742,8 +3742,8 @@ class PartP {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e8a3225c84c1e95d8814d62d3f1495bac69f7265209866e1069a72bc629e8e6b',
-        105364,
+        'fb38ad9d5c7955562c70cc3431f136f099921c9107e3ba33861e08d36ee230fb',
+        108032,
       ),
     };
 
@@ -4077,6 +4077,170 @@ class PartP {
       labelLarge: plaster(textStyle: textTheme.labelLarge),
       labelMedium: plaster(textStyle: textTheme.labelMedium),
       labelSmall: plaster(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Platypi font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Platypi
+  static TextStyle platypi({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5db68b2d3d825df679c926f70f9f234429df67ce3f787ca7356cc63857aa7ac6',
+        101656,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2c754a31101517fe27928a505b4c65ba266125ec7df6ffd6f4b5eaff30d10851',
+        101792,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c761ef5be4637a23fc002ac6cc6e290b62f390018e20457f58fcb91d48b60808',
+        101792,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7d6ed224367abc226725252d5ceca4baa5be95094ebe671d168b978edbbd60b4',
+        101816,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e28bac16ae0f9f679e6dd2b96ff68cf1321fac3b9e110cfe4179b1eaeef3dcb8',
+        101868,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd12692680ccd6a44fd72cbb065e1243ddefc1702ccd3ae0cf4dabe7c6823ad52',
+        101780,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '57d25567e281c1873d6cf28b342e46b167e5a9336da363e195fd8e637ecbf3cb',
+        99264,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5fec4264fb7ff33fe0d2cde7d2e09caff19f58769c8c371f2cdd9ce503aa2a76',
+        99368,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '801aa8ea498cbc65081a76abba210a430cf04bd6f00f2500897eb1ee0af2d016',
+        99512,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '120f1f427d40e02d78ce40d4fbf0dd350c93e1b717bb678d2ede548c4025b6fe',
+        99568,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '048d58e4d0e701378c7d03c6a3b2f6ed6e67602d1bfb8c30c166dd431134d586',
+        99440,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e4463312989c011568c8eacb71f68b4336f5ecd9d7814e84c5048f915951820f',
+        99576,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Platypi',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Platypi font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Platypi
+  static TextTheme platypiTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: platypi(textStyle: textTheme.displayLarge),
+      displayMedium: platypi(textStyle: textTheme.displayMedium),
+      displaySmall: platypi(textStyle: textTheme.displaySmall),
+      headlineLarge: platypi(textStyle: textTheme.headlineLarge),
+      headlineMedium: platypi(textStyle: textTheme.headlineMedium),
+      headlineSmall: platypi(textStyle: textTheme.headlineSmall),
+      titleLarge: platypi(textStyle: textTheme.titleLarge),
+      titleMedium: platypi(textStyle: textTheme.titleMedium),
+      titleSmall: platypi(textStyle: textTheme.titleSmall),
+      bodyLarge: platypi(textStyle: textTheme.bodyLarge),
+      bodyMedium: platypi(textStyle: textTheme.bodyMedium),
+      bodySmall: platypi(textStyle: textTheme.bodySmall),
+      labelLarge: platypi(textStyle: textTheme.labelLarge),
+      labelMedium: platypi(textStyle: textTheme.labelMedium),
+      labelSmall: platypi(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -4756,56 +4920,56 @@ class PartP {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '66d7d8e3d7f630ec45b2154c0f525fc5e2d62aaf0e82fef423c52bff8a9695f4',
+        '39b4f52bc2f64e1d45b1f4978ca908f5ec8f3d26e02ad87fe27ac2e4260646ff',
         227520,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'aff3f876dfdff81fdcd199545c14527ac8c7e17bd005d0d2dc4302bc80118fc9',
+        '4899b7b1a226b575c66bd69161dd339d2043b49e5aee327bd2d6e6dbd300416d',
         227900,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd4880b1f63cbe827c0572081a281b39161f0313db0bd324d32b35396e1be1710',
+        'a905ac31f7ea8e234926ff0dce174bd7dd12463c198e5aac00748aee49f64c28',
         228000,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '41dddd26334ee717fe50549fcbaa4a16e708294b292e3f6a2505d85b4f6e229b',
+        'b5ce5395db293172e367b66f49872aa65fdb01df8cf3b109394aac44eff4d77a',
         227764,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '09803ea4e7ddcf8b3369a3bd8faf2e666b889c93970ac9c67519097bf268629c',
+        'a0ed54cf8d371973eb96cebc0f783dacdfa5d3bc55065a5340f645177b0147df',
         227876,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'bc9f4ec210afcc505bbb85161f53224ecd1f49703da10231f4713aaf03c6a459',
+        '35cded958f82e015bb2915c5eefc1bb4c8bea7544d0194de0e00966103ef2da7',
         228252,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '1e1bafb009fd3e8389e78d626b67d57cf0f1266473bb7a6ffd5412d22b0560f2',
+        '4ccc144b483dee78559c236029600d1916ab068b93958be0aedf81050ff1eef3',
         228244,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'd13c1ea482ad51787d28b37e46d27c8a83c1f236be0898f46e54772a2af7656a',
+        'a833342d73a1bcbe794c43f19bef5e817b9270d5c89b01cc4281a48aa70cc5dd',
         228112,
       ),
     };
@@ -4858,6 +5022,5598 @@ class PartP {
       labelLarge: playpenSans(textStyle: textTheme.labelLarge),
       labelMedium: playpenSans(textStyle: textTheme.labelMedium),
       labelSmall: playpenSans(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite AR font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AR
+  static TextStyle playwriteAr({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7c50b740293f311b1f9df4afbfd95cfcac98af03ba5b55c6a53678fc3247dc86',
+        130748,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6d8ef4a79d87e8fb513fac1beac470de19d4bd76c4af3e931008609c3b2b603f',
+        131004,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fd8ed96d707ae01849d4848a4404273475cfc7ee8d007f0f3a5fd39278239798',
+        131040,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2ab0c75d54df2445301d3435234cb3a6ce4c16372b7e4a3ef9d87fa3da8f6360',
+        130840,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteAR',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite AR font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AR
+  static TextTheme playwriteArTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteAr(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteAr(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteAr(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteAr(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteAr(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteAr(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteAr(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteAr(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteAr(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteAr(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteAr(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteAr(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteAr(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteAr(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteAr(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite AT font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AT
+  static TextStyle playwriteAt({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '40e63f6b1c3aa22d99a34573dcd36bf5f5d9ce5a3126a974466147eb5f5acba2',
+        114676,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3188468004521deadb0c66039d4f539b996aca48fdff6377d6fdc256c3feadf9',
+        114920,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4e4ff1bfbfb900bc49e9c21222feb5c35ac9659b497e328c15f63434271a5f36',
+        114832,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5717ca105819444b5a6cda98952840b0197b87da4ef9c14c510b4de9a6c21b0c',
+        114620,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '3855d1773076f20dc93345cf4154460002a485825ee3700b86c1fffe1a2a077d',
+        116816,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '41e97aea404da6c861a198041a7b03686975bd1568f919a7010a2c7901504271',
+        116812,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '9ba4761aa48e0f146bdaafaea70fb561c27de46dc60eca6ff9556bc1e0a2f2e9',
+        116680,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5343b57be023b651a0c6ec1cd9f943025061f757cc7ba7278ece5a9f646b2022',
+        116392,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteAT',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite AT font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AT
+  static TextTheme playwriteAtTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteAt(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteAt(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteAt(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteAt(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteAt(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteAt(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteAt(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteAt(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteAt(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteAt(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteAt(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteAt(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteAt(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteAt(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteAt(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite AU NSW font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+NSW
+  static TextStyle playwriteAuNsw({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1433040d49eae21c6cc82f1ecda2c069da2ec3258ab87432945d0bda90533ae5',
+        86844,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1d9bf3e49692e759c7876f74abfa6bc8f67926d1e11895b31ddc19ba57af7834',
+        86940,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f2d0d230c4f11628881785601b112844f304628b13beac01b44523bd36295025',
+        86820,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7bfafd2cd9b28f21e3fe9cf21d66fa58feae75d2ebdd6963e0580c79e2de592f',
+        86656,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteAUNSW',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite AU NSW font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+NSW
+  static TextTheme playwriteAuNswTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteAuNsw(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteAuNsw(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteAuNsw(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteAuNsw(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteAuNsw(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteAuNsw(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteAuNsw(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteAuNsw(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteAuNsw(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteAuNsw(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteAuNsw(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteAuNsw(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteAuNsw(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteAuNsw(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteAuNsw(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite AU QLD font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+QLD
+  static TextStyle playwriteAuQld({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6bbcf838cae21cfac8d6f7bbe512bce94001d6df5f9b5fbd251e2b40b620ab6a',
+        94676,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0ff05055de0c603c2be850bad437970c2c4013a1b26dc4e4e1c07e6373808ca3',
+        94784,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '772b4078dd358823621358410a6a394b09774e4525f74264096afe0eb96ab81c',
+        94688,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '70ad2918228a610d274408baa5456ea820100c7670df568091a80b2f15291b5f',
+        94508,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteAUQLD',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite AU QLD font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+QLD
+  static TextTheme playwriteAuQldTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteAuQld(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteAuQld(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteAuQld(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteAuQld(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteAuQld(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteAuQld(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteAuQld(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteAuQld(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteAuQld(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteAuQld(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteAuQld(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteAuQld(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteAuQld(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteAuQld(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteAuQld(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite AU SA font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+SA
+  static TextStyle playwriteAuSa({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '54e95136f484e19b70c6b559070bb16ce95ff07dd59f8e5851b16f331ebf0fd4',
+        86528,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd5058a2ea56b499418491670730992545af75e19f6fb665e53a934e25ad5bc1e',
+        86580,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '01da0e2db6a75a6fcc9096306ada88ad0ef9755e94317227bee55fd880ef70af',
+        86472,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cde24d44bac23bcb91d766e0067bcceaea5d402dcac4a0219d2d127573a9cc96',
+        86328,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteAUSA',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite AU SA font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+SA
+  static TextTheme playwriteAuSaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteAuSa(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteAuSa(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteAuSa(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteAuSa(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteAuSa(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteAuSa(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteAuSa(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteAuSa(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteAuSa(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteAuSa(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteAuSa(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteAuSa(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteAuSa(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteAuSa(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteAuSa(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite AU TAS font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+TAS
+  static TextStyle playwriteAuTas({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5e1d0dc5390a1b8d5713ba35cf50ada2e977d413f9129e68d89fc978a2280328',
+        86796,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9e33f62eb3fe619e6b61d1d81a224db95dac426bfff18df5797b4d0209cfa12f',
+        86964,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c41123d7e8facb443b92a4c2f22b6ad36de176990a565636f39c699dbc5bb621',
+        86872,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9b8823fe6eb668f4d2bd126e385a4ba0df6e1f142140539d8da3b138d4fa1a58',
+        86720,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteAUTAS',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite AU TAS font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+TAS
+  static TextTheme playwriteAuTasTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteAuTas(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteAuTas(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteAuTas(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteAuTas(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteAuTas(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteAuTas(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteAuTas(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteAuTas(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteAuTas(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteAuTas(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteAuTas(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteAuTas(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteAuTas(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteAuTas(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteAuTas(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite AU VIC font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+VIC
+  static TextStyle playwriteAuVic({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ab7941b79d92430e43e9fe51dfa93e9fdac16c7982117cad096430d63c772e4a',
+        100912,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b30e1cd09c0f1c3ff67756fd0aadaf88dedde3a6513cdd684a2788c466925d3c',
+        101096,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '48b138f6d78847af198c62da452832f238a88fb47250c9eb826e1b6208195d8d',
+        101012,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fe96911ce50b557f314e8c9f2e707b18bfbab1acd418f421aca7ab0812f878cf',
+        100820,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteAUVIC',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite AU VIC font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+AU+VIC
+  static TextTheme playwriteAuVicTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteAuVic(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteAuVic(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteAuVic(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteAuVic(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteAuVic(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteAuVic(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteAuVic(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteAuVic(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteAuVic(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteAuVic(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteAuVic(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteAuVic(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteAuVic(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteAuVic(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteAuVic(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite BE VLG font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+BE+VLG
+  static TextStyle playwriteBeVlg({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '583d7cf4014470aa1486bd53df9b11dd404fe07b4ba3891b2f58293677b5b5d0',
+        126208,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5b0bb54658cec11611aea6d238955887cd53fef5717d1384a69bff48b05a1430',
+        126304,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8e04f43167ddf468a5fa785efba8b207443e8d49266bcc3041827c0e2198ee1c',
+        126164,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3b5722ae5bf99f2dc3974fe75eaeb6f99ba6dbcb7f8af481af4753dfab1268a5',
+        125884,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteBEVLG',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite BE VLG font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+BE+VLG
+  static TextTheme playwriteBeVlgTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteBeVlg(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteBeVlg(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteBeVlg(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteBeVlg(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteBeVlg(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteBeVlg(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteBeVlg(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteBeVlg(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteBeVlg(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteBeVlg(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteBeVlg(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteBeVlg(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteBeVlg(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteBeVlg(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteBeVlg(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite BE WAL font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+BE+WAL
+  static TextStyle playwriteBeWal({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a42dc2172d4bb7dcaa44be7cb3143bc75ec222291cbfdc40c67565d12655aec8',
+        128360,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3ea18c9e9320857f332e42be89fe0b95e511fddc3dc52c275c5166393374c5f1',
+        128580,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ff4366437692d42eaf1a60d0fdd7b5b90e6652019a8ce3bfb22ba2fec2902caa',
+        128632,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c31992cf1ad241ad88616099f53d97b99ca931a422323e3eb9f6c04280e0d6bf',
+        128452,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteBEWAL',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite BE WAL font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+BE+WAL
+  static TextTheme playwriteBeWalTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteBeWal(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteBeWal(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteBeWal(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteBeWal(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteBeWal(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteBeWal(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteBeWal(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteBeWal(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteBeWal(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteBeWal(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteBeWal(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteBeWal(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteBeWal(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteBeWal(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteBeWal(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite BR font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+BR
+  static TextStyle playwriteBr({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '151a5055d6219cc933ee7f5766131634ed85552bdab786064209382329894acb',
+        130120,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '52e0d1becccb209bd473b83914e9aa238bb8c2029d5673a3cf1565d3ab474eba',
+        130348,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9970c4e0243ae74a1c8e43665c9dbedf11bc3f7b8bf5d1aa167e3468cb470e0a',
+        130448,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b3933e897a580bb9207af3f15e9c80b8452dae202ad5a47e46c881d536937100',
+        130176,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteBR',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite BR font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+BR
+  static TextTheme playwriteBrTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteBr(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteBr(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteBr(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteBr(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteBr(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteBr(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteBr(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteBr(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteBr(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteBr(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteBr(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteBr(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteBr(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteBr(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteBr(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite CA font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CA
+  static TextStyle playwriteCa({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'dbac9fc12812ce949b008d176a9d6317cadff4e44d252bdf9adf301ef2f14783',
+        131288,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6c6ab11cd990498aa45a7f801825965f4b0c99bb7486fa0c0fb3a04b80ecebb7',
+        131392,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd74d01eca01512995fd76fdbfd24781c507097fc7020e5223ca2da2c00dc8e22',
+        131380,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c6e9ee3bcf2875a43d3d80d84e0560665769fa4cc80886536a4f1908ff2921be',
+        131136,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteCA',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite CA font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CA
+  static TextTheme playwriteCaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteCa(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteCa(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteCa(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteCa(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteCa(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteCa(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteCa(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteCa(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteCa(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteCa(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteCa(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteCa(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteCa(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteCa(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteCa(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite CL font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CL
+  static TextStyle playwriteCl({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c28fb6b95c649720e0b89ded5c720e964bfabd167cefe2b6e6e8ef1b530f66d4',
+        129680,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd4e1f95a919c358c6dd38ddf3310aeb63813fb3c293ae441c0a1a27096e7d93c',
+        129936,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd0b7c8076149a6b54b7d36e04a7a173e7d042ffaaa289fe756a90835f3b2c704',
+        130020,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eb80d95e21c4ffc10ee88aaceb7f46ddeb773a943fbdb9ebcb23124254682fec',
+        129768,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteCL',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite CL font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CL
+  static TextTheme playwriteClTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteCl(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteCl(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteCl(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteCl(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteCl(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteCl(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteCl(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteCl(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteCl(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteCl(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteCl(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteCl(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteCl(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteCl(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteCl(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite CO font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CO
+  static TextStyle playwriteCo({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c8aa3f27f5079df3a3ea572b6027f94073477d948290e5e0f7ecb0d3519cc41b',
+        130476,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c99bb92396e0b0579feb8a0f93befa236a8af7f1baae67cffcc9cf136abe3604',
+        130504,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3d76b351a5ee556819cf8659d086a9a39829b23bda2c909c237f089a153c5548',
+        130372,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bc61ff92af68ef77c486a6993a22ea0fdd30d262c396b2cfaed334a7eb318e19',
+        130096,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteCO',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite CO font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CO
+  static TextTheme playwriteCoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteCo(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteCo(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteCo(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteCo(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteCo(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteCo(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteCo(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteCo(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteCo(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteCo(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteCo(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteCo(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteCo(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteCo(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteCo(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite CU font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CU
+  static TextStyle playwriteCu({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3846c5907fa43b99e88d5b2d1e3196a46e28f08609ab1b099352270650cda5c8',
+        131560,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fcf107cd65f0e5f1f162b7c987d2041fa2e69964c84a864aa1a491b76d2e743b',
+        131656,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4f718e6d79634482404c422dfbe3905836801c8ed6a87cb5d88ef7e07def8751',
+        131488,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd5ef5fb59d542d93670c610e6a481a0253c394955382ca2937ae715e419800ce',
+        131248,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteCU',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite CU font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CU
+  static TextTheme playwriteCuTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteCu(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteCu(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteCu(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteCu(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteCu(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteCu(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteCu(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteCu(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteCu(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteCu(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteCu(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteCu(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteCu(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteCu(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteCu(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite CZ font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CZ
+  static TextStyle playwriteCz({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9359620cb180555ba61a0cb09844e05ee99361bbbef4c7180d53551358456b27',
+        128332,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '670cea612543102de256ee7b472c8d947f735f427872d02cccd2cfd3c9cf91d3',
+        128440,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7fef6c9eafd3bd07b94ba08b1b5c4b34155484da80721684ec5a35248ecdca9d',
+        128308,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7af58e5d0d4299d7d7db80f27ca5828973c7d1cf867c4e1d083bffbf693a0079',
+        128080,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteCZ',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite CZ font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+CZ
+  static TextTheme playwriteCzTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteCz(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteCz(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteCz(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteCz(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteCz(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteCz(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteCz(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteCz(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteCz(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteCz(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteCz(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteCz(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteCz(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteCz(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteCz(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite DE Grund font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+Grund
+  static TextStyle playwriteDeGrund({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4f46d13ec955eb4f82380b990f07d200a34bddcf443d39be1f34f3c6fbbdec3f',
+        56900,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cdd2205aad7bc4357ce34030bc75c3107a965e8b8337eb107dcf9f6e101787aa',
+        57012,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c43b749008e6dd5e2454daf635ca23b68e60ef54a48e08fe8e54385dc3b95839',
+        56936,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4b0b1372c0ae884bf41c2489d90eb899e773abd519e009abebd22a8b0a29c26b',
+        56888,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteDEGrund',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite DE Grund font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+Grund
+  static TextTheme playwriteDeGrundTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteDeGrund(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteDeGrund(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteDeGrund(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteDeGrund(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDeGrund(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDeGrund(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteDeGrund(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteDeGrund(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteDeGrund(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteDeGrund(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteDeGrund(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteDeGrund(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteDeGrund(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteDeGrund(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteDeGrund(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite DE LA font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+LA
+  static TextStyle playwriteDeLa({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '11eb618a0066a0445f80e3f05bf1f13d57255a5211f933cd93d17a1c25ff1256',
+        125648,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '72977cfbbe0c67bbf6530bfe5c8d7fc788dfa936606a08448583f8436d8a840d',
+        125732,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5ee62a03bc4403ede0a66d6523a3375be4d0a9e2b928eb777c0007f979ada643',
+        125692,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4af7832973f02a392f2586fd681efb4e7caf3a8e7f91e1df0c463c2b07cbd957',
+        125488,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteDELA',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite DE LA font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+LA
+  static TextTheme playwriteDeLaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteDeLa(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteDeLa(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteDeLa(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteDeLa(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDeLa(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDeLa(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteDeLa(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteDeLa(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteDeLa(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteDeLa(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteDeLa(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteDeLa(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteDeLa(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteDeLa(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteDeLa(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite DE SAS font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+SAS
+  static TextStyle playwriteDeSas({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fdeac3f85d6b9f1cde44cb0585f4a3d517037cfe03e55da0cdf558f081c05189',
+        118732,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ab08b09ad5a4560a2e686eb2f11eabc86d789efdff55e5273713cdb02e7ab8f1',
+        118792,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0a1fea655c88050c069e429d883c31faa2dd15218b20dc775321c3fbc644d934',
+        118724,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f9ffcd52016593ee3fcd6358bd18169ba62e05d61841f9cb0163913d0ffdbf0d',
+        118556,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteDESAS',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite DE SAS font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+SAS
+  static TextTheme playwriteDeSasTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteDeSas(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteDeSas(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteDeSas(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteDeSas(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDeSas(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDeSas(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteDeSas(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteDeSas(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteDeSas(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteDeSas(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteDeSas(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteDeSas(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteDeSas(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteDeSas(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteDeSas(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite DE VA font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+VA
+  static TextStyle playwriteDeVa({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9caf2f8df2b7497392d45ea9cb14c749bf4ed9c57e803ae494a08ff8ff3748fb',
+        111384,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '24d3b0eb97bc7d8800d9b05fb064bc3afd85cb0e3097554413868f07d345d3c0',
+        111448,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1619c73dce27045e75fb276a6f084821ecdcfed2abba3567dd3a28fbdf334642',
+        111320,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '003914b74e56ce1c558adc38dc3b39078b3c9bbf2a33ebf72d03fd7b2f47080e',
+        111128,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteDEVA',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite DE VA font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DE+VA
+  static TextTheme playwriteDeVaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteDeVa(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteDeVa(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteDeVa(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteDeVa(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDeVa(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDeVa(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteDeVa(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteDeVa(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteDeVa(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteDeVa(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteDeVa(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteDeVa(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteDeVa(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteDeVa(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteDeVa(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite DK Loopet font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DK+Loopet
+  static TextStyle playwriteDkLoopet({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a04968650bb12f374a84d6c6a7909774f8a1091a7ca2fd0c84d1d4c2fbc7227e',
+        99936,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '51bd11fec0aff39ce61af4c0d1d945d2a7206d732d19aed094d2a552e4e16783',
+        100008,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'efaea4b9705ef9957d06b23a27cb63f33512c8322f263d47e9ca3b15ed396f1a',
+        99876,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7713dc20509165d065aa1c2295c1952dfdc46949c3cf44fd755145ab2ad39c82',
+        99580,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteDKLoopet',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite DK Loopet font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DK+Loopet
+  static TextTheme playwriteDkLoopetTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteDkLoopet(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteDkLoopet(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteDkLoopet(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteDkLoopet(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDkLoopet(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDkLoopet(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteDkLoopet(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteDkLoopet(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteDkLoopet(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteDkLoopet(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteDkLoopet(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteDkLoopet(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteDkLoopet(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteDkLoopet(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteDkLoopet(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite DK Uloopet font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DK+Uloopet
+  static TextStyle playwriteDkUloopet({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0b02eaf972af2500303435429c6c83bcfd9cf0012d86fa7aa70bc39668fcc8f6',
+        92124,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '515a327aa7c17ce4b68a46d42b4b6fa27d3e8aac1f840b260c2224c01cc57710',
+        92192,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2b402228e930ad845d32d97d03f30fea30d56247952536200bf4abc44aa73776',
+        92060,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bd150289c163f988a7044bf69b6e007f1ef487167029fc0a91a5a5701dd73474',
+        91764,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteDKUloopet',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite DK Uloopet font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+DK+Uloopet
+  static TextTheme playwriteDkUloopetTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteDkUloopet(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteDkUloopet(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteDkUloopet(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteDkUloopet(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteDkUloopet(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteDkUloopet(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteDkUloopet(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteDkUloopet(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteDkUloopet(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteDkUloopet(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteDkUloopet(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteDkUloopet(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteDkUloopet(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteDkUloopet(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteDkUloopet(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite ES font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ES
+  static TextStyle playwriteEs({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b6b0b72d23731e5681f73f5a9785a7c6db216d1cea5b1ea10cab2367e51e8bb8',
+        105892,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '70f152bfee6a76610e9516b0589e6a5bbcc720209af48c814b25e50536a0e958',
+        106108,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '999268e41d072f83925c39bb11782b4487ab90b2b656a1239f7538839a05b4ac',
+        106148,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ba110602d376b573b65827a0064a91b175e1f49b75f034a524d5801b89f1fc2d',
+        105972,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteES',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite ES font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ES
+  static TextTheme playwriteEsTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteEs(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteEs(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteEs(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteEs(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteEs(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteEs(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteEs(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteEs(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteEs(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteEs(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteEs(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteEs(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteEs(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteEs(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteEs(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite ES Deco font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ES+Deco
+  static TextStyle playwriteEsDeco({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fb152b3061f7de771f40e70545bbaa0e14a87e68e0b4ef0ab5469cb6f3688463',
+        127760,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ab7c84c32a82c88de1262b0ab72e51b4d63310650fd54711085935610b2c94fa',
+        127996,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1baacb9fe7dd60d447c9db428bf287240251fc272b3f27302be2a9bf034f240f',
+        128044,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7ea2e781ab16a5e7b4c04f3fbde8057c60e9ca3e4e5e41643a906991c2de5c56',
+        127840,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteESDeco',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite ES Deco font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ES+Deco
+  static TextTheme playwriteEsDecoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteEsDeco(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteEsDeco(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteEsDeco(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteEsDeco(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteEsDeco(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteEsDeco(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteEsDeco(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteEsDeco(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteEsDeco(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteEsDeco(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteEsDeco(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteEsDeco(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteEsDeco(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteEsDeco(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteEsDeco(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite FR Moderne font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+FR+Moderne
+  static TextStyle playwriteFrModerne({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fba3b92146abdef81e652d3a74857a498d6d49704955e9f2d425f0ceb5849425',
+        84476,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '10e1fa7de17e2248c5eb1251047e50a44f05d53b16286c64756ebe294edbc46e',
+        84608,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6e87bea1e57662d4445a901b71d80d0ca744fc7da1344d39311eb0b10b6f516d',
+        84552,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '49f65986b50ec81d67082f46810c582b7556aa851ac28d5101e5ead8ee849df9',
+        84360,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteFRModerne',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite FR Moderne font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+FR+Moderne
+  static TextTheme playwriteFrModerneTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteFrModerne(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteFrModerne(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteFrModerne(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteFrModerne(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteFrModerne(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteFrModerne(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteFrModerne(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteFrModerne(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteFrModerne(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteFrModerne(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteFrModerne(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteFrModerne(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteFrModerne(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteFrModerne(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteFrModerne(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite FR Trad font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+FR+Trad
+  static TextStyle playwriteFrTrad({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4dca36dd03b6fca1a3d71d620a157493bde021abebb5ab4ab77e51c2349f7985',
+        130156,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e0c1e261fb2bb0eaf2308ee7347342b456231f56f4df93e7e127943ff1fe34da',
+        130332,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4a982625a6a329c959819998796c925f4a46909fc75f11fb4db4f404c2687dc7',
+        130396,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fc1d12a427927718146abe448369b1a3e691c37b07be16424d3124991d14a49e',
+        130188,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteFRTrad',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite FR Trad font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+FR+Trad
+  static TextTheme playwriteFrTradTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteFrTrad(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteFrTrad(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteFrTrad(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteFrTrad(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteFrTrad(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteFrTrad(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteFrTrad(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteFrTrad(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteFrTrad(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteFrTrad(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteFrTrad(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteFrTrad(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteFrTrad(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteFrTrad(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteFrTrad(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite GB J font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+GB+J
+  static TextStyle playwriteGbJ({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '488157fb3bc45204394f31bffac93b19f601a87e4b06d74626b524fae5d02b4b',
+        92892,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd413c9b926b0f39654742dc0f24308082152ca77b9bdb8c7882a6c0bc4b976c8',
+        93116,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2c1dc828641cb0d216c95aa7a23f8a744605b09002faabf70edb60334172d33c',
+        93100,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5de1603070b4c81d09cbd6f679d924e471a6d808a879de5e361bcd542244ae73',
+        92872,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2ab5dd7a61b9b4d4dde0fad050d088c95787e72b7e6b0be6dd8d24f68158a578',
+        94456,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '36701c5ffe9376b22829ecf3bd4841eb6742c2719678b377e46b31989ba6792d',
+        94608,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e537ad11be77510fbbbd1c1f523d5e67d38f08e112317eabe293f4799ed29e65',
+        94516,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'da134e1ad46f05818131c27048c3ae09ad2dc4d8c2c63ce5ebeeeffedd0401ba',
+        94300,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteGBJ',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite GB J font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+GB+J
+  static TextTheme playwriteGbJTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteGbJ(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteGbJ(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteGbJ(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteGbJ(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteGbJ(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteGbJ(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteGbJ(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteGbJ(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteGbJ(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteGbJ(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteGbJ(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteGbJ(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteGbJ(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteGbJ(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteGbJ(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite GB S font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+GB+S
+  static TextStyle playwriteGbS({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7fff91f57812770f7c6d8dc56b3b310253c88c038e194a436edfdf66bad4267c',
+        85052,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bddc1027a85e07edf59272977a7dc872fa7bfe156b108ab9273fad95a21c3e62',
+        85276,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '79db519bbd52f1d1904290f60bcccff7544ed33d2839789f7d7beb70f88f88ad',
+        85160,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eec6f6cb22a0603cdc209b74f1cef7d83a8640cc56f47d1ed4ec3ba43b15294e',
+        84988,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '5c5f4c8e4979f8d26bd42cfe26dfe53dda21105956d9813602bb1d9cb2578186',
+        86480,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'c9446117879d33ce2107f4933fc06402f9774b9333964b2dc24eaaab9c333750',
+        86704,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '4542445b0ae62a7044f11b2c7a8947f28762fe098cb402b1488b75ba1f42a617',
+        86616,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'c740bb71ea4c6d376a548321717e66a5f6486a1394597a48b1ba1681bf727348',
+        86360,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteGBS',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite GB S font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+GB+S
+  static TextTheme playwriteGbSTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteGbS(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteGbS(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteGbS(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteGbS(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteGbS(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteGbS(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteGbS(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteGbS(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteGbS(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteGbS(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteGbS(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteGbS(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteGbS(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteGbS(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteGbS(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite HR font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+HR
+  static TextStyle playwriteHr({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd0b2898b9db15c666144c29b7eaf3e051ff445b7e51348de991b281a4d2ea0d5',
+        121664,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '55c9207e354bc70dd28b3a03a437a36c9765c155664cde97a2aae1a8a109c45a',
+        121720,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cc770b28305b89f6378c239d0f2f89837003170d6fc5e08073980f366ee5afe8',
+        121588,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b811a3b8fb252cd6565c116951cf2cfadaf311906905bb59011a74f3225e7a5f',
+        121288,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteHR',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite HR font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+HR
+  static TextTheme playwriteHrTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteHr(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteHr(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteHr(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteHr(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteHr(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteHr(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteHr(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteHr(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteHr(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteHr(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteHr(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteHr(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteHr(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteHr(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteHr(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite HR Lijeva font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+HR+Lijeva
+  static TextStyle playwriteHrLijeva({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd90c42789f546304e47a393e2496256ccf9fff7a190425d58ab7d6635132645a',
+        119468,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6f3ad98ca19d6b0b7da0f0c8c022b553b1782c2c7194828a5683ba3ac363b9cf',
+        119744,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4c1d8d9f41db466d3e473f6a62f5b4b6d9679c1bcbdc5edca1062f9931f9c2bd',
+        119692,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '46accac62c013ae9e386de4dde5e1e5cdb8978c94140544a9febcb950fd5a871',
+        119436,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteHRLijeva',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite HR Lijeva font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+HR+Lijeva
+  static TextTheme playwriteHrLijevaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteHrLijeva(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteHrLijeva(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteHrLijeva(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteHrLijeva(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteHrLijeva(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteHrLijeva(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteHrLijeva(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteHrLijeva(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteHrLijeva(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteHrLijeva(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteHrLijeva(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteHrLijeva(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteHrLijeva(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteHrLijeva(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteHrLijeva(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite HU font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+HU
+  static TextStyle playwriteHu({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '07dd5dda2d6dd3893ae77e7da10318f296e2c83c486e887eea0b916ee63e4247',
+        119648,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ecd8d70481fb977ed408c232130b74bbf0939781657e86722bce440aa0db3889',
+        119880,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c3596e447e590b0d198f7b69c59b50ef8a72e7608cd651cae02217b19518683d',
+        119816,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '28a34a60ca4f411b9184f6195ba5ca54b0f85302661e0f7a522acd1cc8393dc5',
+        119644,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteHU',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite HU font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+HU
+  static TextTheme playwriteHuTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteHu(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteHu(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteHu(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteHu(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteHu(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteHu(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteHu(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteHu(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteHu(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteHu(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteHu(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteHu(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteHu(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteHu(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteHu(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite ID font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ID
+  static TextStyle playwriteId({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '682fea84fa944a084a28d57a13c7230449c4ac603d854f1f3276e5a5900bfb0e',
+        126640,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a4c08ab223b3eb3938c53f792648b68b3d92c3af2cc3af2e69db4b987ec78537',
+        126860,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd7d17290222f1ac9cf5559c252961574885e212a8da1aed3d1bcf4faa169db57',
+        126944,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e4ca5c2ae6baf230bff0769125bb5dacd4ef993be74d0151ccac8d10167f270d',
+        126760,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteID',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite ID font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ID
+  static TextTheme playwriteIdTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteId(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteId(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteId(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteId(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteId(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteId(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteId(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteId(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteId(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteId(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteId(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteId(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteId(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteId(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteId(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite IE font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IE
+  static TextStyle playwriteIe({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7290bac54f307801548afd59e12c7137720d19118fcedc442ca5779dee423c99',
+        122796,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ac8c2dcd4308e343df2d75c1fdb5a5ba6e293e09468608ca32d3b1aa04ff84c4',
+        122900,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9bce00f483043ff3ddc0fec48fc6d2a4df905806c545d44c6f484050cd1604f6',
+        122632,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ce307af43dd9d683bfd414287815d1d00359323c6c0c967135905b2a591157f6',
+        122444,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteIE',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite IE font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IE
+  static TextTheme playwriteIeTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteIe(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteIe(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteIe(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteIe(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteIe(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteIe(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteIe(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteIe(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteIe(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteIe(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteIe(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteIe(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteIe(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteIe(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteIe(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite IN font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IN
+  static TextStyle playwriteIn({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '86cebcce9f70ba94bba20532a5de3f37e22e71fe5f3bec5bdd0600ddcfcd969d',
+        131744,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e5323563241ce0bb3dbd94ae18efa9da0631ce8f86f10d928699906390d47593',
+        131940,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6e8469276909d92760e6b422131eb05d11669036b7b1e09c38543324a6ae09cf',
+        131808,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'cd46fec8400d9a3b26bd134e45cafd78a5e5a0cbd5cda9a3c8672fcd2be2302f',
+        131652,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteIN',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite IN font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IN
+  static TextTheme playwriteInTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteIn(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteIn(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteIn(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteIn(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteIn(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteIn(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteIn(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteIn(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteIn(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteIn(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteIn(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteIn(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteIn(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteIn(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteIn(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite IS font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IS
+  static TextStyle playwriteIs({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8236c351f6fff3104639925ac2e6d87920cd57265a9edd0099156754612f9e9a',
+        87740,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5a116ed50c5dc78f2abb1fb20665d97f8f08f5c2dc09cb7565b46ef98335ff12',
+        87936,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '769f2c498bdf5444dd471adf0638dca58d14265e1406bbe4187ffa8b374f061f',
+        87720,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a242f5d9244525d98dde49ae21a5e7ae76844c82672f0ccf7d502b55ddd2a050',
+        87592,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteIS',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite IS font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IS
+  static TextTheme playwriteIsTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteIs(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteIs(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteIs(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteIs(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteIs(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteIs(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteIs(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteIs(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteIs(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteIs(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteIs(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteIs(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteIs(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteIs(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteIs(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite IT Moderna font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IT+Moderna
+  static TextStyle playwriteItModerna({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8515588d42ac92439b46cabeb8f561bc404bfaa24b2f3a57f8144a724ad666f2',
+        92332,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6a90f54e991f649024e00e17536b09e80eb5d683473da5894d537f851adb3db3',
+        92548,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9fac411b0f6118976ef41367f80e4d5c98af09c294b1fd489a0f38e196a9e434',
+        92536,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0fdec7dc8900d931a45b640949c6df7ed21e3bda8452ea0a96355acaba444140',
+        92320,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteITModerna',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite IT Moderna font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IT+Moderna
+  static TextTheme playwriteItModernaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteItModerna(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteItModerna(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteItModerna(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteItModerna(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteItModerna(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteItModerna(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteItModerna(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteItModerna(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteItModerna(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteItModerna(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteItModerna(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteItModerna(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteItModerna(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteItModerna(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteItModerna(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite IT Trad font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IT+Trad
+  static TextStyle playwriteItTrad({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fa92bee6c23b5836486e9e25bb51b273282a080e655f647456c421eb4f7869d7',
+        125196,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f99a7a8474ebab5e45196df6226f916a25e799506ba4c097e4d3f273fb6e6d21',
+        125392,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a3fb7acc74bcb0ed8368f1fcbf8fecb326bad7a5cc0f80962de160d09abddd86',
+        125312,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '37dcc7f9d34b750e5eb4267ad2f9249cc46ac9fc3a438c48964fe1a0764f7552',
+        125168,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteITTrad',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite IT Trad font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+IT+Trad
+  static TextTheme playwriteItTradTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteItTrad(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteItTrad(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteItTrad(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteItTrad(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteItTrad(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteItTrad(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteItTrad(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteItTrad(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteItTrad(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteItTrad(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteItTrad(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteItTrad(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteItTrad(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteItTrad(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteItTrad(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite MX font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+MX
+  static TextStyle playwriteMx({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eaff42d862ca29c06cf77b5f9766d2f1852a230c656b17b3213f5e3df3bda572',
+        131432,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '16455ff53b064aa7657e8fda6eeb2939c7018e01b7e72d0fb0848bc820ac9c3a',
+        131476,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7d1b88e13a3debadf188b4961876bb65dd9e4dc8cb5277660d3b9eb85559fda8',
+        131336,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '20ec88d2c820937e9b196e1a8052c112a7a5d5a1d5199ea6a1c27e0895fc6f73',
+        131064,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteMX',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite MX font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+MX
+  static TextTheme playwriteMxTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteMx(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteMx(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteMx(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteMx(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteMx(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteMx(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteMx(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteMx(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteMx(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteMx(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteMx(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteMx(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteMx(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteMx(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteMx(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite NG Modern font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NG+Modern
+  static TextStyle playwriteNgModern({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a172f4b9f242d78814f2122732db5c745dd1b12e0aca9d803c7b87e4d8373e18',
+        84984,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0ee8f57553294473f159cbf81c9cf2897bf19d5ec2e0e30e82832504eb0fd38d',
+        85160,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '686c0fa59873126ddee74b2cc7973218bc874ee698eb29a5ddf7f78b4396c038',
+        85128,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4d2d36923c11899c693eb71ca1ed7de2d415e6c9a8b954900a52c0d21154d3d0',
+        85008,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteNGModern',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite NG Modern font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NG+Modern
+  static TextTheme playwriteNgModernTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteNgModern(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteNgModern(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteNgModern(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteNgModern(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteNgModern(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteNgModern(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteNgModern(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteNgModern(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteNgModern(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteNgModern(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteNgModern(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteNgModern(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteNgModern(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteNgModern(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteNgModern(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite NL font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NL
+  static TextStyle playwriteNl({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '12277654914a4fdd1573eebc735adb39635fc4efb4ea1e400e9554941a582a12',
+        127516,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd82961e21322ff28fb69bf117267f0649c2aae23af27132adac34288302d68c7',
+        127552,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8b50e67457c6fa1fe036040114c9ec17d3736b6e027060448dbc559741b22b41',
+        127464,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd895f4437ddcbeb5426e387e13474524304694566eb19a970bf430ae51af399c',
+        127248,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteNL',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite NL font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NL
+  static TextTheme playwriteNlTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteNl(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteNl(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteNl(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteNl(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteNl(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteNl(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteNl(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteNl(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteNl(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteNl(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteNl(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteNl(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteNl(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteNl(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteNl(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite NO font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NO
+  static TextStyle playwriteNo({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4ed0b26b6455e4d0230978f9f20e59b418d31de78b82e780c5b01a6efc8b4cc7',
+        106580,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '54a9962c7f4d01fcb4478121cf087c6f9cb710e9b4ec79eaa5838c24fd7013ce',
+        106704,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f81a503b81961155cb8225458d94d1e53665525817732cde907c7fdc96c85910',
+        106512,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8ad4f64b66da50b3583982696af63b9cfa295bec687d8f938a03a99ec3e47bd7',
+        106316,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteNO',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite NO font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NO
+  static TextTheme playwriteNoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteNo(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteNo(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteNo(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteNo(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteNo(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteNo(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteNo(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteNo(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteNo(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteNo(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteNo(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteNo(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteNo(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteNo(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteNo(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite NZ font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NZ
+  static TextStyle playwriteNz({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6f9b315038d50d76b15cae196b6cdf6f2f381ff8f2552a399ae58607e2c72a08',
+        87008,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9922abcc9189b318feaae6bacd644d8f06cfb8aa5a042262d070f81e92dbedf7',
+        87160,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3daa1d9d82981d787b1db23528f5dc17e8a88ec3ccceeca0c98259e9d0a7fa79',
+        87108,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd73af67235326ee1b4a4c6fb43304646bf249e29815c64c3753c66fca1b119f8',
+        86864,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteNZ',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite NZ font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+NZ
+  static TextTheme playwriteNzTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteNz(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteNz(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteNz(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteNz(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteNz(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteNz(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteNz(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteNz(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteNz(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteNz(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteNz(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteNz(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteNz(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteNz(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteNz(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite PE font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+PE
+  static TextStyle playwritePe({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5d71c9185dd776afe583670ee99d62d6cfd6af05a6f4f76645def82a86994893',
+        129856,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4627906ee29b01c653ec1cca96f945590edffd05d3c6fa6665a5f95a2a5bae12',
+        129976,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2eb123d3535a2f39c5be158908fe4d637633830d97421bb484b1ff691478aedf',
+        129956,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0f646cef569940bb5d328beb357ec8ec0ad4cd8401c79ad32ed75359dc5358fe',
+        129712,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywritePE',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite PE font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+PE
+  static TextTheme playwritePeTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwritePe(textStyle: textTheme.displayLarge),
+      displayMedium: playwritePe(textStyle: textTheme.displayMedium),
+      displaySmall: playwritePe(textStyle: textTheme.displaySmall),
+      headlineLarge: playwritePe(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwritePe(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwritePe(textStyle: textTheme.headlineSmall),
+      titleLarge: playwritePe(textStyle: textTheme.titleLarge),
+      titleMedium: playwritePe(textStyle: textTheme.titleMedium),
+      titleSmall: playwritePe(textStyle: textTheme.titleSmall),
+      bodyLarge: playwritePe(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwritePe(textStyle: textTheme.bodyMedium),
+      bodySmall: playwritePe(textStyle: textTheme.bodySmall),
+      labelLarge: playwritePe(textStyle: textTheme.labelLarge),
+      labelMedium: playwritePe(textStyle: textTheme.labelMedium),
+      labelSmall: playwritePe(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite PL font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+PL
+  static TextStyle playwritePl({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '15330fc25ae8ff6533940582391478acfe55782c04d322fe56e264dc582c4444',
+        115184,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '80f979d64d51559ab1ae87f51465bae02648634fe31d7be9616161c360c55c58',
+        115412,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3d03be6bddcae90b18a43edd7b59569636a273dc4632a8ee55fb7beb6472cd04',
+        115404,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c6192fe004930360c84dcf1256c3f7c132eb2d1b23031d7d461c12cbddd312bc',
+        115180,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywritePL',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite PL font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+PL
+  static TextTheme playwritePlTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwritePl(textStyle: textTheme.displayLarge),
+      displayMedium: playwritePl(textStyle: textTheme.displayMedium),
+      displaySmall: playwritePl(textStyle: textTheme.displaySmall),
+      headlineLarge: playwritePl(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwritePl(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwritePl(textStyle: textTheme.headlineSmall),
+      titleLarge: playwritePl(textStyle: textTheme.titleLarge),
+      titleMedium: playwritePl(textStyle: textTheme.titleMedium),
+      titleSmall: playwritePl(textStyle: textTheme.titleSmall),
+      bodyLarge: playwritePl(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwritePl(textStyle: textTheme.bodyMedium),
+      bodySmall: playwritePl(textStyle: textTheme.bodySmall),
+      labelLarge: playwritePl(textStyle: textTheme.labelLarge),
+      labelMedium: playwritePl(textStyle: textTheme.labelMedium),
+      labelSmall: playwritePl(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite PT font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+PT
+  static TextStyle playwritePt({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd7291dbbca91ede9625d1ae9bbe191ae5582ba2e01583485a5196d3bc23f746b',
+        128496,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ca9fd432d776d181f11373d986f10f622f779c6aaae53e6c0e45920ddc2e4e8b',
+        128728,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4619c31cb17241d2a96c5b986a0d17e1c3b9ff163c2051b6e07ca5eddf66d7a5',
+        128768,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '202ed8f1afb8b29863c99aab42adbdcee2335fe485086479170b731fe08abab2',
+        128572,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywritePT',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite PT font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+PT
+  static TextTheme playwritePtTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwritePt(textStyle: textTheme.displayLarge),
+      displayMedium: playwritePt(textStyle: textTheme.displayMedium),
+      displaySmall: playwritePt(textStyle: textTheme.displaySmall),
+      headlineLarge: playwritePt(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwritePt(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwritePt(textStyle: textTheme.headlineSmall),
+      titleLarge: playwritePt(textStyle: textTheme.titleLarge),
+      titleMedium: playwritePt(textStyle: textTheme.titleMedium),
+      titleSmall: playwritePt(textStyle: textTheme.titleSmall),
+      bodyLarge: playwritePt(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwritePt(textStyle: textTheme.bodyMedium),
+      bodySmall: playwritePt(textStyle: textTheme.bodySmall),
+      labelLarge: playwritePt(textStyle: textTheme.labelLarge),
+      labelMedium: playwritePt(textStyle: textTheme.labelMedium),
+      labelSmall: playwritePt(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite RO font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+RO
+  static TextStyle playwriteRo({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0e2b4e49cd9cd8398bf7c4f0e896f7253c75d06cc4f3878a6d8bed6843b09c58',
+        129356,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b62ecbee72f00dc18ca874f89228c66941acb5c4b645e6d25c4fb27f9e537e26',
+        129448,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3072adbf919134175ab756a4fccdb385e46aef5f1d09081261d0d7c11c9f7599',
+        129256,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '792020a23b996031e6ce1a6fd78b27032cd583f710b728e8cb5726f2d95ea298',
+        128932,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteRO',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite RO font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+RO
+  static TextTheme playwriteRoTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteRo(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteRo(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteRo(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteRo(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteRo(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteRo(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteRo(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteRo(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteRo(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteRo(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteRo(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteRo(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteRo(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteRo(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteRo(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite SK font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+SK
+  static TextStyle playwriteSk({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '45ed29b9bac82bad68161275f9cb001ce02b36338fa6f867b15476e24c0cc108',
+        128332,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a8b9c99b4042dce8fd9c10fca37ebbe359c7a9e9aa80ca6b7681c19aa9b92715',
+        128440,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f544125dea593da639c685a05ddd0278a595c57cf0548230c99912f46d061cd5',
+        128308,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0469a3ac6d8fc3bcf0aef5624cf666210788eca3cfc68ee4329ebfc103fd37c3',
+        128080,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteSK',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite SK font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+SK
+  static TextTheme playwriteSkTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteSk(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteSk(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteSk(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteSk(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteSk(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteSk(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteSk(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteSk(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteSk(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteSk(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteSk(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteSk(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteSk(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteSk(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteSk(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite TZ font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+TZ
+  static TextStyle playwriteTz({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'be5732dd33105f5d9dc394c25a6b79fb691b690d0455079502dac5d330640873',
+        127360,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b76b03447ccc51eb8bdc5b6fd4f5e50f5d696755b16301987e136c167111e39b',
+        127484,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'af0c7e0330f1011921530e59798b8081eecffbc05ef44e4d158c3147a225d37c',
+        127324,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b879491da3ac01e438aaef37e4634b5eae8c5563616ec637832dee42cf924b8b',
+        127156,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteTZ',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite TZ font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+TZ
+  static TextTheme playwriteTzTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteTz(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteTz(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteTz(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteTz(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteTz(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteTz(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteTz(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteTz(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteTz(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteTz(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteTz(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteTz(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteTz(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteTz(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteTz(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite US Modern font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+US+Modern
+  static TextStyle playwriteUsModern({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f76cfde5ae99a600fcb3e10abbc45e79d5c03eb614136e8861548cd88c51ec26',
+        89896,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6977e07ed213df1cdb1e1c2e6cf3cc8456420cdc9f73af80aa6b4e71270c267b',
+        90080,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8a455354a359040561ecb5f583b4419d23b0208ddf3b1cd789ebba601dc79038',
+        90068,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6b1ac91ba70e9f17e0c31e47d26c1a83186725003c52f268d3f425b7624b2636',
+        89952,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteUSModern',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite US Modern font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+US+Modern
+  static TextTheme playwriteUsModernTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteUsModern(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteUsModern(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteUsModern(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteUsModern(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteUsModern(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteUsModern(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteUsModern(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteUsModern(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteUsModern(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteUsModern(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteUsModern(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteUsModern(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteUsModern(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteUsModern(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteUsModern(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite US Trad font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+US+Trad
+  static TextStyle playwriteUsTrad({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c2dca45a444f3959ae6e8b97917853dd651d582c53f46345c01ca3cec89a855b',
+        129756,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '30a6cc85737e5769065877df2be19db01a6235a797dddb3344b356ca48a929dc',
+        129920,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '64b693cca1ae4eae6d940da6c73f72f49bd1435269875b763be8dcc62e00ec1f',
+        129856,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ccb02bf5271764f92782778dac71c62348d5578659a6b53856b7fb0efa9faad1',
+        129584,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteUSTrad',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite US Trad font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+US+Trad
+  static TextTheme playwriteUsTradTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteUsTrad(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteUsTrad(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteUsTrad(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteUsTrad(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteUsTrad(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteUsTrad(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteUsTrad(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteUsTrad(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteUsTrad(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteUsTrad(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteUsTrad(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteUsTrad(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteUsTrad(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteUsTrad(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteUsTrad(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite VN font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+VN
+  static TextStyle playwriteVn({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ab8748e8103683109a519a931237427caebdede9b65cafa0d44e669949ee6c26',
+        127612,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fb8ea4db91860e649a23b40c1fb61d699fdac775604688dc9469facf796ec41c',
+        127780,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bcb45ac5da5bc3ce5cc6a7fe59f4583072751d6e65a44a78d7980a4d3c3c7cfd',
+        127792,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c1d84f3598fd5d5798481b8c15990e85128a47a4b3176f6c024717a3ab02ee81',
+        127556,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteVN',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite VN font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+VN
+  static TextTheme playwriteVnTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteVn(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteVn(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteVn(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteVn(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteVn(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteVn(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteVn(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteVn(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteVn(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteVn(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteVn(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteVn(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteVn(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteVn(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteVn(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Playwrite ZA font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ZA
+  static TextStyle playwriteZa({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fc4ad44cd5758999ccd52a15666af92d80f96ebf480598bda4571f2343e6b1ec',
+        122612,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b807430b3414ff76b0e03eddd8e770c357ff887dff07ae142d333fef9055ac3f',
+        122724,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c2df3ef0488052b90436e254eab0da25ed2d16807e0c5e959033168148c24935',
+        122612,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '51b8ac276bdae0f23312d3985f357b79c93997ee3bdc88736aa39b245bca1f1b',
+        122476,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PlaywriteZA',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Playwrite ZA font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Playwrite+ZA
+  static TextTheme playwriteZaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: playwriteZa(textStyle: textTheme.displayLarge),
+      displayMedium: playwriteZa(textStyle: textTheme.displayMedium),
+      displaySmall: playwriteZa(textStyle: textTheme.displaySmall),
+      headlineLarge: playwriteZa(textStyle: textTheme.headlineLarge),
+      headlineMedium: playwriteZa(textStyle: textTheme.headlineMedium),
+      headlineSmall: playwriteZa(textStyle: textTheme.headlineSmall),
+      titleLarge: playwriteZa(textStyle: textTheme.titleLarge),
+      titleMedium: playwriteZa(textStyle: textTheme.titleMedium),
+      titleSmall: playwriteZa(textStyle: textTheme.titleSmall),
+      bodyLarge: playwriteZa(textStyle: textTheme.bodyLarge),
+      bodyMedium: playwriteZa(textStyle: textTheme.bodyMedium),
+      bodySmall: playwriteZa(textStyle: textTheme.bodySmall),
+      labelLarge: playwriteZa(textStyle: textTheme.labelLarge),
+      labelMedium: playwriteZa(textStyle: textTheme.labelMedium),
+      labelSmall: playwriteZa(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -5151,6 +10907,93 @@ class PartP {
       labelLarge: podkova(textStyle: textTheme.labelLarge),
       labelMedium: podkova(textStyle: textTheme.labelMedium),
       labelSmall: podkova(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Poetsen One font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Poetsen+One
+  static TextStyle poetsenOne({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '597d44dfb3a81f513c1f2edbe5de791a7b8e5b846c017b9417c1808c8cbc0426',
+        112560,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'PoetsenOne',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Poetsen One font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Poetsen+One
+  static TextTheme poetsenOneTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: poetsenOne(textStyle: textTheme.displayLarge),
+      displayMedium: poetsenOne(textStyle: textTheme.displayMedium),
+      displaySmall: poetsenOne(textStyle: textTheme.displaySmall),
+      headlineLarge: poetsenOne(textStyle: textTheme.headlineLarge),
+      headlineMedium: poetsenOne(textStyle: textTheme.headlineMedium),
+      headlineSmall: poetsenOne(textStyle: textTheme.headlineSmall),
+      titleLarge: poetsenOne(textStyle: textTheme.titleLarge),
+      titleMedium: poetsenOne(textStyle: textTheme.titleMedium),
+      titleSmall: poetsenOne(textStyle: textTheme.titleSmall),
+      bodyLarge: poetsenOne(textStyle: textTheme.bodyLarge),
+      bodyMedium: poetsenOne(textStyle: textTheme.bodyMedium),
+      bodySmall: poetsenOne(textStyle: textTheme.bodySmall),
+      labelLarge: poetsenOne(textStyle: textTheme.labelLarge),
+      labelMedium: poetsenOne(textStyle: textTheme.labelMedium),
+      labelSmall: poetsenOne(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -5878,127 +11721,127 @@ class PartP {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ad9ae03d8549de3f511f393127a1d1b6b22bdaccdb12ed14be14099ec839221b',
-        157864,
+        '62fbc976e89f481e5cfbdd8c5ba3fb2d54d34f321d26e09d0aee1e92322f4c03',
+        157916,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '93e1999eddc7ab5b50ba4b350b1cebf75ee119f1bd62f74bfca9933d8f7a2e05',
-        183040,
+        '2f3c36836267be3cd724b1fdac2eea7c01592c2b710db1e870496228d513d997',
+        183088,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'b9f58caa28112f0c392f47e478df266027816bc8e05fa3f8a2153de7639f0742',
-        157668,
+        '5e69d1e6141575a4e9376c58d0c7df89225d9d824b31f2190da9737b6dfb004c',
+        157716,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w200,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'e420a773415c3d6eba38a52fa18270850a33df744c8c4b49996968f1e4b6807e',
-        182180,
+        'a72b549384105f91114dd04de46734ceba741969117aeee0a91540f215ba1abc',
+        182224,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'bb36435e8f368d57e2807b02653757e2f39311982461de642a31966a6c3956fc',
-        156144,
+        'c2cc8d8186b7df39bad617387a8c35ac03820abc2646973434ead86fe89041a7',
+        156188,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '4c6fcf2be5739f54cf2b72ce3257cf919694e3533a2059584ce08e376207be5d',
-        180484,
+        '79f1f2616c610d0e7225d8d223e6c1492f55d9bd1a70ca24c7cf7193f2f582f7',
+        180524,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '705290b12f58c6d70aafcaaf461dbc3d2f7f19d0f4362af1843b107d95d4960a',
-        154584,
+        '2dd6eb23c4972b346197d272c4e2479b89ed240ece4d2b0e0cd89f0c1caa2710',
+        154628,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '9944daf2dac6d1c49aef7e4d0e4de71a79d4d65efabcb43945498db8ae119005',
-        178076,
+        '269c0b1ed19ae25d8b499778df368bb5c7a32dc1b1343048b1c54544cc3f6387',
+        178112,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a05eb17c43309b14b916303c48995b19407a7cdcf47bc6d8085d464722627918',
-        152824,
+        'c0ba5609d6562c76ab7db73fa9c9b283d210598cb318a45d4085f540e4753d60',
+        152860,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '5dff9130f23647877185ba17e2fe31d83c889f9ac0505b0831a671256ec87ef4',
-        176472,
+        '2ba6604eb5ff37f0512176b1a1fa03e455aca7cf8f6f1b2f403427c6081267ab',
+        176504,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a24a61e9a408f85504dcdcd11edc4995adceb4ab585c0011f39cfbe193248b71',
-        151480,
+        'ec23e010878cf0841f910ef94f62294e40c7d77ce99be250dba2911d0a1a61cd',
+        151516,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w600,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '00e34c6ab7c020708797444bf9ed8e085cd48805ba92df15a1524e1b52d920ec',
-        174592,
+        '0d37ac5823b014e3e50552370ee3868fedafcda8e309129fa769e2f2a5908947',
+        174628,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '9ecfd020e9cc0b676025df8390c0dc8cc2062523540887dd04bec0ef4d5a449c',
-        150252,
+        'ed709f2ba2be295030614990104cb4c9c62bc2a2445c25ccb19a1500158a5a8b',
+        150292,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'db69b13e2e486582c4431f84cf547907b7fd4fa2858b1619777087bd96f65332',
-        172684,
+        '080843be82e9e08f0d19a3678b6cc92748afb93bed4dadf920197a6d3d86fea0',
+        172720,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '87d223678cfaeac6f207cfd6f38e16a3dcaf6a1a04bd9d35be56321812672f43',
-        149028,
+        '959b003f035e38fa3f274632c1f7b54983688f9e8860c1bd0335fd1b309dec74',
+        149072,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        '5a916637aaa600bd00e94027737e027dfc6b585767a752677acd96489750b23a',
-        169940,
+        '0ab5746e65950113cc97c59d11c1b2ff29222c6ecead29819220b1621c129e6f',
+        169984,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '58bae164452a59c75685191f42f83865d0a9eb41a72af48fa7ddcd15379e7c8d',
-        147656,
+        '3b2ce657fc4350b5a66ba61a748986d01abfe385401cb581ed35c44a7a1d5d88',
+        147708,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'df356ffaef0d9c67439829eceeadd432df5a0d0a33cc42ef28f16092226fc84e',
-        167640,
+        '05aeab4a2bc04c13ad70ca2edfe9ac52af313012b26efe68d69e82fedad9a3f9',
+        167692,
       ),
     };
 

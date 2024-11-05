@@ -273,6 +273,128 @@ class PartZ {
     );
   }
 
+  /// Applies the Zain font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Zain
+  static TextStyle zain({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b1ee3e90ad2dd8b9c6aafa58b553c797d8f596c58858513d313f08056ffdc18a',
+        121108,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b4d5695e7af332bbac4ab16564f09386bb1b7d652371770df97122c3c1207438',
+        124048,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'aa066604575042eb63781e50b0ebf338ca5aa80cdbf6419c5490770b3aeb137c',
+        121408,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0e63f63bf8d98a7db527a6fb069ffb6fa47cd76258ddaff631be9cb4482e4f2d',
+        123304,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '63cbbf82162fa95315c0f8e5890faf320ea476f0bb37012005696109dbf13d2b',
+        121704,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd0d9070c8c9807bf8d9135d2e24eb7687c748101f5f14df5bc88be91a2eb74c9',
+        121556,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Zain',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Zain font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Zain
+  static TextTheme zainTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: zain(textStyle: textTheme.displayLarge),
+      displayMedium: zain(textStyle: textTheme.displayMedium),
+      displaySmall: zain(textStyle: textTheme.displaySmall),
+      headlineLarge: zain(textStyle: textTheme.headlineLarge),
+      headlineMedium: zain(textStyle: textTheme.headlineMedium),
+      headlineSmall: zain(textStyle: textTheme.headlineSmall),
+      titleLarge: zain(textStyle: textTheme.titleLarge),
+      titleMedium: zain(textStyle: textTheme.titleMedium),
+      titleSmall: zain(textStyle: textTheme.titleSmall),
+      bodyLarge: zain(textStyle: textTheme.bodyLarge),
+      bodyMedium: zain(textStyle: textTheme.bodyMedium),
+      bodySmall: zain(textStyle: textTheme.bodySmall),
+      labelLarge: zain(textStyle: textTheme.labelLarge),
+      labelMedium: zain(textStyle: textTheme.labelMedium),
+      labelSmall: zain(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Zen Antique font family from Google Fonts to the
   /// given [textStyle].
   ///
