@@ -25,7 +25,7 @@ double? parseDouble(String? rawDouble) {
       .replaceFirst('pt', '')
       .trim();
 
-  return double.tryParse(rawDouble);
+  return double.tryParse(rawDouble) ?? 0.0;
 }
 
 /// Convert [degrees] to radians.
@@ -58,7 +58,6 @@ const double kPointsToPixelFactor = kCssPixelsPerInch / kCssPointsPerInch;
 /// Passing `null` will return `null`.
 double? parseDoubleWithUnits(
   String? rawDouble, {
-  bool tryParse = false,
   required SvgTheme theme,
 }) {
   double unit = 1.0;
