@@ -175,9 +175,7 @@ void main() {
   test('Parse SVG with "none" value', () {
     final TestColorMapper mapper = TestColorMapper();
     final SvgParser parser = SvgParser(
-      '''<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-      <rect x="100" y="10" width="80" height="80" fill="red" stroke-width="none" />
-      </svg>''',
+      '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><rect x="100" y="10" width="80" height="80" fill="red" stroke-width="none" /></svg>',
       const SvgTheme(),
       'test_key',
       true,
