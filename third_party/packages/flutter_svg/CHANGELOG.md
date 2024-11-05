@@ -1,3 +1,8 @@
+## 2.0.13
+
+* Relaxes the dependency constraints on vector_graphics, vector_graphics_codec,
+  and vector_graphics_compiler.
+
 ## 2.0.12
 
 * Adds `missing_code_block_language_in_doc_comment` lint.
