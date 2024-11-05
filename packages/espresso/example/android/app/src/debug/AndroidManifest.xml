@@ -4,4 +4,6 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Flutter needs it to communicate with the running application -->
+     <application android:usesCleartextTraffic="true"/>
 </manifest>
