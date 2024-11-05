@@ -1,3 +1,7 @@
+## 2.0.12
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 2.0.11
 
 * Transfers the package source from https://github.com/dnfield/flutter_svg
