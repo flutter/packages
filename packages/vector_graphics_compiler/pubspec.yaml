@@ -5,7 +5,7 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 # See https://github.com/flutter/flutter/issues/157626 before publishing a new
 # version.
 publish_to: none
-version: 1.1.12
+version: 1.1.13
 
 executables:
   vector_graphics_compiler:
@@ -36,7 +36,7 @@ dev_dependencies:
     sdk: flutter
   test: ^1.20.1
   # See https://github.com/flutter/flutter/issues/157626
-  vector_graphics: ">=1.1.11+1 <= 1.1.12"
+  vector_graphics: ^1.1.13
   vector_math: ^2.1.2
 
 platforms:
