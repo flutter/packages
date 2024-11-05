@@ -1,6 +1,10 @@
-## 4.0.1
+## 4.1.0
 
 * Updates internal API wrapper to use `ProxyApi`s.
+
+## 4.0.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
 
 ## 4.0.0
 
