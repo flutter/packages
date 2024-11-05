@@ -1,3 +1,7 @@
+## 0.8.12+2
+
+* Removes use of PHAsset when using PHPickerViewController in image_picker to remove needing permissions.
+
 ## 0.8.12+1
 
 * Updates Pigeon for non-nullable collection type support.
