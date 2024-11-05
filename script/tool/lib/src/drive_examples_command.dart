@@ -385,13 +385,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     final List<File> failures = <File>[];
 
     final String enableExperiment = getStringArg(kEnableExperiment);
-    final Directory? logsDirectory = ciLogsDirectory(platform, driver.fileSystem);
+    final String screenshotBasename =
+        '${exampleName.replaceAll(platform.pathSeparator, '_')}-drive';
+    final Directory? screenshotDirectory = ciLogsDirectory(platform, driver.fileSystem)
+        ?.childDirectory(screenshotBasename);
 
     for (final File target in targets) {
-      Directory? screenshotDirectory;
-      if (logsDirectory != null) {
-        screenshotDirectory = logsDirectory.childDirectory('$exampleName-drive');
-      }
       final int exitCode = await processRunner.runAndStream(
           flutterCommand,
           <String>[
@@ -428,7 +427,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     required List<File> testFiles,
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
-    final Directory? logsDirectory = testFiles.isNotEmpty ? ciLogsDirectory(platform, testFiles.first.fileSystem) : null;
+    final Directory? logsDirectory = ciLogsDirectory(platform, testFiles.first.fileSystem);
 
     // Workaround for https://github.com/flutter/flutter/issues/135673
     // Once that is fixed on stable, this logic can be removed and the command

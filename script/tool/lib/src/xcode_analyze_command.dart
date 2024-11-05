@@ -118,7 +118,7 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
         workspace: '${targetPlatform.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
-        platform: platform,
+        hostPlatform: platform,
         extraFlags: <String>[
           ...extraFlags,
           'GCC_TREAT_WARNINGS_AS_ERRORS=YES',

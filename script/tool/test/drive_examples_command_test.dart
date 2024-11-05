@@ -1664,7 +1664,7 @@ void main() {
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--web-renderer=canvaskit',
-                    '--screenshot=/path/to/logs/a_package/example/with_web-drive',
+                    '--screenshot=/path/to/logs/a_package/example_with_web-drive',
                     '--driver',
                     'test_driver/integration_test.dart',
                     '--target',

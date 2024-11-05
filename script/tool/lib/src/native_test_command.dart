@@ -483,7 +483,7 @@ this command.
         workspace: '${targetPlatform.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
-        platform: platform,
+        hostPlatform: platform,
         extraFlags: <String>[
           if (testTarget != null) '-only-testing:$testTarget',
           ...extraFlags,
