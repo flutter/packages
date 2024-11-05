@@ -1,3 +1,7 @@
+## 4.0.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 4.0.0
 
 * Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.
