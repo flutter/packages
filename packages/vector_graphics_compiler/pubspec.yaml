@@ -31,7 +31,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.20.1
-  # See https://github.com/flutter/flutter/issues/157626
   vector_graphics: ^1.1.13
   vector_math: ^2.1.2
 
