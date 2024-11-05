@@ -1,3 +1,7 @@
+## 1.1.14
+
+* Relaxes dependency constraint on vector_graphics_codec.
+
 ## 1.1.13
 
 * Fix execution on the web with WebAssembly.
