@@ -30,7 +30,13 @@ class AndroidWebViewProxy {
 
   /// Constructs [WebView].
   final WebView Function({
-    void Function(WebView, int, int, int, int)? onScrollChanged,
+    void Function(
+      WebView,
+      int left,
+      int top,
+      int oldLeft,
+      int oldTop,
+    )? onScrollChanged,
   }) newWebView;
 
   /// Constructs [JavaScriptChannel].
