@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 200 200"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Example text 06 - Text anchor</desc>
+  <g fill="black">
+    <text x="100" y="50"
+        font-family="Roboto" font-size="10" font-style="normal" text-anchor="start">
+      Text anchor start</text>
+
+    <text x="100" y="100"
+        font-family="Roboto" font-size="10" font-style="normal" text-anchor="middle">
+      Text anchor middle</text>
+
+    <text x="100" y="150"
+        font-family="Roboto" font-size="10" font-style="normal" text-anchor="end">
+      Text anchor end</text>
+  </g>
+</svg>
