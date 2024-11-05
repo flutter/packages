@@ -499,7 +499,7 @@
   id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
   OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
       .andReturn(PHAuthorizationStatusNotDetermined);
-  OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
+  OCMReject([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
@@ -529,10 +529,18 @@
                       quality:nil
                  fullMetadata:YES
                    completion:^(NSString *result, FlutterError *error) {
+                     // Does not error due to access denied
                      XCTAssertNil(result);
-                     XCTAssertEqualObjects(error.code, @"photo_access_denied");
-                     XCTAssertEqualObjects(error.message, @"The user did not allow photo access.");
+                     XCTAssertEqualObjects(error.code, @"multiple_request");
+                     XCTAssertEqualObjects(error.message, @"Cancelled by a second request");
                      [resultExpectation fulfill];
+                   }];
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                            camera:FLTSourceCameraFront]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *result, FlutterError *error){
                    }];
   [self waitForExpectationsWithTimeout:30 handler:nil];
 }

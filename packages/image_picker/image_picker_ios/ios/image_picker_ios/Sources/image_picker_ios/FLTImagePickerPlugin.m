@@ -113,11 +113,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   pickerViewController.presentationController.delegate = self;
   self.callContext = context;
 
-  if (context.requestFullMetadata) {
-    [self checkPhotoAuthorizationWithPHPicker:pickerViewController];
-  } else {
-    [self showPhotoLibraryWithPHPicker:pickerViewController];
-  }
+  [self showPhotoLibraryWithPHPicker:pickerViewController];
 }
 
 - (void)launchUIImagePickerWithSource:(nonnull FLTSourceSpecification *)source
