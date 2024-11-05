@@ -1,6 +1,10 @@
-## 2.0.12
+## 2.0.13
 
 * Makes the package WASM compatible.
+
+## 2.0.12
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
 
 ## 2.0.11
 

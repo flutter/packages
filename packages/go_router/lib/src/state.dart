@@ -102,7 +102,7 @@ class GoRouterState {
   ///
   /// To access GoRouterState from a widget.
   ///
-  /// ```
+  /// ```dart
   /// GoRoute(
   ///   path: '/:id'
   ///   builder: (_, __) => MyWidget(),
