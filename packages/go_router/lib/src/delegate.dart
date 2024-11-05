@@ -13,6 +13,7 @@ import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
+import 'state.dart';
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
@@ -168,6 +169,11 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       return true;
     }());
   }
+
+  /// The top [GoRouterState], the state of the route that was
+  /// last used in either [GoRouter.go] or [GoRouter.push].
+  GoRouterState? get state => currentConfiguration.last
+      .buildState(_configuration, currentConfiguration);
 
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;

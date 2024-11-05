@@ -146,7 +146,7 @@ class SvgPicture extends StatelessWidget {
   /// bundled, the app has to specify which ones to include. For instance a
   /// package named `fancy_backgrounds` could have:
   ///
-  /// ```
+  /// ```none
   /// lib/backgrounds/background1.svg
   /// lib/backgrounds/background2.svg
   /// lib/backgrounds/background3.svg
