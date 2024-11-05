@@ -151,6 +151,48 @@ but reversed.  For more information look at the annotation `@FlutterApi()` which
 denotes APIs that live in Flutter but are invoked from the host platform. 
 [Example](./example/README.md#FlutterApi_Example).
 
+### Wrapping a Native Class with ProxyApis
+
+**Supported Languages: Kotlin, Swift**
+
+Unlike the typical pigeon APIs that are distinguished by whether communication originates from Dart
+or native code, this API will handle bidirectional communication between Dart and the host platform.
+This API adds deliberate support to wrap a native class/type. The sections below provide details on
+how to use ProxyApis to wrap a native type.
+
+#### Annotation
+
+To generate ProxyApis, the generated files for the host platform language must be able to reference
+the native class. The pigeon file annotation provides support to declare the full class name in
+Kotlin or the import library for Swift:
+
+Kotlin:
+
+```dart
+@ProxyApi(
+   kotlinOptions: KotlinProxyApiOptions(
+      fullClassName: 'some.class.package.SomeNativeClass',
+   ),
+)
+abstract class SomeNativeClass {
+}
+```
+
+Swift:
+
+```dart
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'SomeNativeLibrary'))
+abstract class SomeNativeClass {
+}
+```
+
+#### API Structure
+
+The generated code creates:
+
+* A Dart class that represents the native class.
+* A ProxyApiRegistrar 
+
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with 
