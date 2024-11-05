@@ -109,7 +109,7 @@ class Xcode {
       }
       return resultExit;
     } finally {
-      resultBundleTemp?.deleteSync();
+      resultBundleTemp?.deleteSync(recursive: true);
     }
   }
 
