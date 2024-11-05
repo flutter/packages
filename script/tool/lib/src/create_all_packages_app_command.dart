@@ -245,18 +245,8 @@ dependencies {}
         if (gradleFileIsKotlin)
           'compileSdk': <String>['compileSdk = 34']
         else ...<String, List<String>>{
-          // minSdkVersion 21 is required by camera_android.
-          'minSdkVersion': <String>['minSdkVersion 21'],
           'compileSdkVersion': <String>['compileSdk 34'],
         }
-      },
-      additions: <String, List<String>>{
-        'defaultConfig {': <String>[
-          if (gradleFileIsKotlin)
-            '        multiDexEnabled = true'
-          else
-            '        multiDexEnabled true'
-        ],
       },
       regexReplacements: <RegExp, List<String>>{
         // Tests for https://github.com/flutter/flutter/issues/43383
@@ -289,7 +279,7 @@ dependencies {}
     final VersionConstraint dartSdkConstraint =
         originalPubspec.environment?[dartSdkKey] ??
             VersionConstraint.compatibleWith(
-              Version.parse('2.12.0'),
+              Version.parse('3.0.0'),
             );
 
     final Map<String, PathDependency> pluginDeps =
@@ -313,15 +303,15 @@ dependencies {}
     // An application cannot depend directly on multiple federated
     // implementations of the same plugin for the same platform, which means the
     // app cannot directly depend on both camera_android and
-    // camera_android_androidx. Since camera_android is endorsed, it will be
-    // included transitively already, so exclude it from the direct dependency
-    // list to allow including camera_android_androidx to ensure that they don't
-    // conflict at build time (if they did, it would be impossible to use
-    // camera_android_androidx while camera_android is endorsed).
+    // camera_android_androidx. Since camera_android_androidx is endorsed, it
+    // will be included transitively already, so exclude it from the direct
+    // dependency list to allow including camera_android to ensure that they
+    // don't conflict at build time (if they did, it would be impossible to use
+    // camera_android while camera_android_androidx is endorsed).
     // This is special-cased here, rather than being done via the normal
     // exclusion config file mechanism, because it still needs to be in the
     // depenedency overrides list to ensure that the version from path is used.
-    pubspec.dependencies.remove('camera_android');
+    pubspec.dependencies.remove('camera_android_camerax');
 
     app.pubspecFile.writeAsStringSync(_pubspecToString(pubspec));
   }
