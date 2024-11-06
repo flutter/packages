@@ -37,14 +37,14 @@ class Surface extends JavaObject {
 
   static int getRotationDegrees(int surfaceRotationConstant) {
     switch (surfaceRotationConstant) {
-      case Surface.rotation0:
+      case Surface.rotation0: // TODO(camsim99): figure out why this is flipped
         return 0;
       case Surface.rotation90:
-        return 90;
+        return 270;
       case Surface.rotation180:
         return 180;
       case Surface.rotation270:
-        return 270;
+        return 90;
       default:
         // TODO(camsim99): throw exception
         return 0;
