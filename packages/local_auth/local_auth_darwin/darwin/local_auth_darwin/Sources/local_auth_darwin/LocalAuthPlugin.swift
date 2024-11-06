@@ -124,7 +124,7 @@ class StickyAuthState {
 }
 
 public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
-  private let authContext: AuthContextProtocol
+  private var authContext: AuthContextProtocol
   private let alertController: AlertControllerProtocol
   private var lastCallState: StickyAuthState?
 
@@ -134,7 +134,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   ) {
     self.authContext = authContext
     self.alertController = alertController
-
+      
+    super.init()
     #if os(iOS)
       NotificationCenter.default.addObserver(
         self, selector: #selector(applicationDidBecomeActive),
@@ -299,9 +300,14 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         alertController.showAlert(
           message: strings.goToSettingsDescription,
           dismissTitle: strings.cancelButton,
-          openSettingsTitle: strings.goToSettingsButton,
-          completion: completion
-        )
+          openSettingsTitle: strings.goToSettingsButton
+        ) { success in
+          let result: Result<AuthResultDetails, Error> =
+            success
+            ? .success(AuthResultDetails(result: .success, errorMessage: nil, errorDetails: nil))
+            : .failure(NSError(domain: "AuthError", code: 1, userInfo: nil))
+          completion(result)
+        }
         return
       }
       result =
@@ -312,9 +318,14 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       alertController.showAlert(
         message: strings.lockOut,
         dismissTitle: strings.cancelButton,
-        openSettingsTitle: nil,
-        completion: completion
-      )
+        openSettingsTitle: nil
+      ) { success in
+        let result: Result<AuthResultDetails, Error> =
+          success
+          ? .success(AuthResultDetails(result: .success, errorMessage: nil, errorDetails: nil))
+          : .failure(NSError(domain: "AuthError", code: 2, userInfo: nil))
+        completion(result)
+      }
       return
     default:
       break
