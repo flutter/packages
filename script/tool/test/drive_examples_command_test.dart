@@ -309,7 +309,7 @@ void main() {
 
       setMockFlutterDevicesOutput();
       final List<String> output =
-      await runCapturingPrint(runner, <String>['drive-examples', '--ios']);
+          await runCapturingPrint(runner, <String>['drive-examples', '--ios']);
 
       expect(
         output,
@@ -1552,7 +1552,7 @@ void main() {
         mockPlatform.environment.remove('FLUTTER_LOGS_DIR');
 
         final RepositoryPackage package =
-        createFakePackage('a_package', packagesDir, extraFiles: <String>[
+            createFakePackage('a_package', packagesDir, extraFiles: <String>[
           'example/integration_test/foo_test.dart',
           'example/test_driver/integration_test.dart',
           'example/web/index.html',

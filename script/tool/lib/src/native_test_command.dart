@@ -497,7 +497,8 @@ this command.
         case xcodebuildNoTestExitCode:
           _printNoExampleTestsMessage(example, targetPlatform);
         case 0:
-          printSuccess('Successfully ran $targetPlatform xctest for $exampleName');
+          printSuccess(
+              'Successfully ran $targetPlatform xctest for $exampleName');
           // If this is the first test, assume success until something fails.
           if (overallResult == RunState.skipped) {
             overallResult = RunState.succeeded;
