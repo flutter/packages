@@ -28,7 +28,9 @@ class MockAuthContext: AuthContextProtocol {
         reply(evaluatePolicyResult.0, evaluatePolicyResult.1)
     }
 
-    init() {}
+    init(biometryType: LABiometryType = .none) {
+            self.biometryType = biometryType
+        }
 }
 
 class MockAlertController: AlertControllerProtocol {

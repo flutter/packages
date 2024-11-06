@@ -102,6 +102,6 @@ abstract class LocalAuthApi {
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   @async
-  @ObjCSelector('authenticateWithOptions:strings:')
+  // @ObjCSelector('authenticateWithOptions:strings:')
   AuthResultDetails authenticate(AuthOptions options, AuthStrings strings);
 }

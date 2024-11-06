@@ -170,31 +170,29 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
   func deviceCanSupportBiometrics() throws -> Bool {
     var authError: NSError?
+
     if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
-      if authError == nil {
-        return true
-      }
+      return true
     }
-    if let error = authError {
-      if error.code == LAError.biometryNotEnrolled.rawValue {
-        return true
-      }
+
+    if let error = authError, error.code == LAError.biometryNotEnrolled.rawValue {
+      return true
     }
 
     return false
   }
 
-  func getEnrolledBiometrics() throws -> [AuthBiometricWrapper] {
-    var enrolledBiometrics: [AuthBiometricWrapper] = []
+  func getEnrolledBiometrics() throws -> [AuthBiometric] {
+    var enrolledBiometrics: [AuthBiometric] = []
 
     if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
       if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
         if authContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) {
-          enrolledBiometrics.append(AuthBiometricWrapper(value: .face))
+          enrolledBiometrics.append(.face)
         } else if authContext.canEvaluatePolicy(
           .deviceOwnerAuthenticationWithBiometrics, error: nil)
         {
-          enrolledBiometrics.append(AuthBiometricWrapper(value: .fingerprint))
+          enrolledBiometrics.append(.fingerprint)
         }
       }
     }
@@ -298,7 +296,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       LAError.biometryNotEnrolled.rawValue:
       if options.useErrorDialogs {
         alertController.showAlert(
-          message: strings.goToSettingsDescription,
+          message: strings.goToSettingsDescription ?? "",
           dismissTitle: strings.cancelButton,
           openSettingsTitle: strings.goToSettingsButton
         ) { success in
