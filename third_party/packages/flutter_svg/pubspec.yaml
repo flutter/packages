@@ -14,7 +14,7 @@ dependencies:
   http: ^1.0.0
   vector_graphics: ^1.1.13
   vector_graphics_codec: ^1.1.11+1
-  vector_graphics_compiler: ^1.1.13
+  vector_graphics_compiler: ^1.1.14
 
 dev_dependencies:
   flutter_test:
