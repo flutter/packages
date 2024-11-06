@@ -136,7 +136,6 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     self.alertController = alertController
 
     #if os(iOS)
-      // Observa o evento de retorno ao primeiro plano no iOS
       NotificationCenter.default.addObserver(
         self, selector: #selector(applicationDidBecomeActive),
         name: UIApplication.didBecomeActiveNotification, object: nil)
