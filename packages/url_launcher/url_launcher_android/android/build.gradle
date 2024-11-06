@@ -25,10 +25,7 @@ android {
     buildFeatures {
         buildConfig true
     }
-    // Conditional for compatibility with AGP <4.2.
-    if (project.android.hasProperty("namespace")) {
-        namespace 'io.flutter.plugins.urllauncher'
-    }
+    namespace 'io.flutter.plugins.urllauncher'
     compileSdk 34
 
     defaultConfig {
@@ -37,8 +34,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     lintOptions {
@@ -65,7 +62,7 @@ dependencies {
 
     // Java language implementation
     implementation "androidx.core:core:1.13.1"
-    implementation 'androidx.annotation:annotation:1.8.2'
+    implementation 'androidx.annotation:annotation:1.9.1'
     implementation 'androidx.browser:browser:1.8.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.1.1'

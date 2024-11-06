@@ -12,11 +12,8 @@ import 'package:pigeon/pigeon.dart';
 ))
 class FileSelectorConfig {
   FileSelectorConfig(
-      {this.utis = const <String?>[], this.allowMultiSelection = false});
-  // TODO(stuartmorgan): Declare these as non-nullable generics once
-  // https://github.com/flutter/flutter/issues/97848 is fixed. In practice,
-  // the values will never be null, and the native implementation assumes that.
-  List<String?> utis;
+      {this.utis = const <String>[], this.allowMultiSelection = false});
+  List<String> utis;
   bool allowMultiSelection;
 }
 

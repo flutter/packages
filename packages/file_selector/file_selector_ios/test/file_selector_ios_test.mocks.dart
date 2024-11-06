@@ -33,12 +33,12 @@ class MockTestFileSelectorApi extends _i1.Mock
   }
 
   @override
-  _i3.Future<List<String?>> openFile(_i4.FileSelectorConfig? config) =>
+  _i3.Future<List<String>> openFile(_i4.FileSelectorConfig? config) =>
       (super.noSuchMethod(
         Invocation.method(
           #openFile,
           [config],
         ),
-        returnValue: _i3.Future<List<String?>>.value(<String?>[]),
-      ) as _i3.Future<List<String?>>);
+        returnValue: _i3.Future<List<String>>.value(<String>[]),
+      ) as _i3.Future<List<String>>);
 }

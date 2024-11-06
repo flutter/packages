@@ -202,7 +202,6 @@ class GradleCheckCommand extends PackageLoopingCommand {
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
   static String exampleRootSettingsArtifactHubString = '''
-// See $artifactHubDocumentationString for more info.
 buildscript {
   repositories {
     maven {
@@ -216,6 +215,18 @@ buildscript {
 apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
 ''';
 
+  /// String printed as a valid example of settings.gradle repository
+  /// configuration that enables artifact hub env variable.
+  /// GP stands for the gradle plugin method of flutter tooling inclusion.
+  @visibleForTesting
+  static String exampleSettingsArtifactHubStringGP = '''
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    // ...other plugins
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
+}
+  ''';
+
   /// Validates that [gradleLines] reads and uses a artifiact hub repository
   /// when ARTIFACT_HUB_REPOSITORY is set.
   ///
@@ -228,6 +239,10 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
         r'classpath.*gradle\.plugin\.com\.google\.cloud\.artifactregistry:artifactregistry-gradle-plugin');
     final RegExp artifactRegistryPluginApplyRegex = RegExp(
         r'apply.*plugin.*com\.google\.cloud\.artifactregistry\.gradle-plugin');
+    final RegExp artifactRegistryPluginApplyRegexGP = RegExp(
+        r'id.*com\.google\.cloud\.artifactregistry\.gradle-plugin.*version.*\b\d+\.\d+\.\d+\b');
+    final RegExp artifactRegistryPluginApplyDeclarativeRegex =
+        RegExp(r'\bpluginManagement\b');
 
     final bool documentationPresent = gradleLines
         .any((String line) => documentationPresentRegex.hasMatch(line));
@@ -235,17 +250,36 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
         .any((String line) => artifactRegistryDefinitionRegex.hasMatch(line));
     final bool artifactRegistryPluginApplied = gradleLines
         .any((String line) => artifactRegistryPluginApplyRegex.hasMatch(line));
+    final bool declarativeArtifactRegistryApplied = gradleLines.any(
+        (String line) => artifactRegistryPluginApplyRegexGP.hasMatch(line));
+    final bool declarativePluginBlockApplied = gradleLines.any((String line) =>
+        artifactRegistryPluginApplyDeclarativeRegex.hasMatch(line));
 
-    if (!(documentationPresent &&
-        artifactRegistryDefined &&
-        artifactRegistryPluginApplied)) {
-      printError('Failed Artifact Hub validation. Include the following in '
-          'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
+    final bool imperativeArtifactRegistryApplied =
+        artifactRegistryDefined && artifactRegistryPluginApplied;
+
+    final bool validArtifactConfiguration = documentationPresent &&
+        (imperativeArtifactRegistryApplied ||
+            declarativeArtifactRegistryApplied);
+
+    if (!validArtifactConfiguration) {
+      printError('Failed Artifact Hub validation.');
+      if (!documentationPresent) {
+        printError(
+            'The link to the Artifact Hub documentation is missing. Include the following in '
+            'example root settings.gradle:\n// See $artifactHubDocumentationString for more info.');
+      }
+      if (artifactRegistryDefined ||
+          artifactRegistryPluginApplied ||
+          !declarativePluginBlockApplied) {
+        printError('Include the following in '
+            'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
+      } else if (!declarativeArtifactRegistryApplied) {
+        printError('Include the following in '
+            'example root settings.gradle:\n$exampleSettingsArtifactHubStringGP');
+      }
     }
-
-    return documentationPresent &&
-        artifactRegistryDefined &&
-        artifactRegistryPluginApplied;
+    return validArtifactConfiguration;
   }
 
   /// Validates the top-level build.gradle for an example app (e.g.,
@@ -298,31 +332,13 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
     final RegExpMatch? namespaceMatch =
         namespaceRegex.firstMatch(gradleContents);
 
-    // For plugins, make sure the namespace is conditionalized so that it
-    // doesn't break client apps using AGP 4.1 and earlier (which don't have
-    // a namespace property, and will fail to build if it's set).
-    const String namespaceConditional =
-        'if (project.android.hasProperty("namespace"))';
-    String exampleSetNamespace = "namespace 'dev.flutter.foo'";
-    if (!isExample) {
-      exampleSetNamespace = '''
-$namespaceConditional {
-    $exampleSetNamespace
-}''';
-    }
-    // Wrap the namespace command in an `android` block, adding the indentation
-    // to make it line up correctly.
-    final String exampleAndroidNamespaceBlock = '''
-    android {
-        ${exampleSetNamespace.split('\n').join('\n        ')}
-    }
-''';
-
     if (namespaceMatch == null) {
-      final String errorMessage = '''
+      const String errorMessage = '''
 build.gradle must set a "namespace":
 
-$exampleAndroidNamespaceBlock
+    android {
+        namespace 'dev.flutter.foo'
+    }
 
 The value must match the "package" attribute in AndroidManifest.xml, if one is
 present. For more information, see:
@@ -333,18 +349,6 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
           '$indentation${errorMessage.split('\n').join('\n$indentation')}');
       return false;
     } else {
-      if (!isExample && !gradleContents.contains(namespaceConditional)) {
-        final String errorMessage = '''
-build.gradle for a plugin must conditionalize "namespace":
-
-$exampleAndroidNamespaceBlock
-''';
-
-        printError(
-            '$indentation${errorMessage.split('\n').join('\n$indentation')}');
-        return false;
-      }
-
       return _validateNamespaceMatchesManifest(package,
           isExample: isExample, namespace: namespaceMatch.group(1)!);
     }
@@ -398,15 +402,15 @@ build.gradle must set an explicit Java compatibility version.
 This can be done either via "sourceCompatibility"/"targetCompatibility":
     android {
         compileOptions {
-            sourceCompatibility JavaVersion.VERSION_1_8
-            targetCompatibility JavaVersion.VERSION_1_8
+            sourceCompatibility JavaVersion.VERSION_11
+            targetCompatibility JavaVersion.VERSION_11
         }
     }
 
 or "toolchain":
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(8)
+            languageVersion = JavaLanguageVersion.of(11)
         }
     }
 

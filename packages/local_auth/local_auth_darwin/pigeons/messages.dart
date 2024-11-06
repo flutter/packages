@@ -86,13 +86,6 @@ class AuthResultDetails {
 /// Pigeon equivalent of the subset of BiometricType used by iOS.
 enum AuthBiometric { face, fingerprint }
 
-// TODO(stuartmorgan): Enums need be wrapped in a data class because thay can't
-// be used as collection arguments. See https://github.com/flutter/flutter/issues/133728
-class AuthBiometricWrapper {
-  AuthBiometricWrapper({required this.value});
-  final AuthBiometric value;
-}
-
 @HostApi()
 abstract class LocalAuthApi {
   /// Returns true if this device supports authentication.
@@ -104,7 +97,7 @@ abstract class LocalAuthApi {
 
   /// Returns the biometric types that are enrolled, and can thus be used
   /// without additional setup.
-  List<AuthBiometricWrapper> getEnrolledBiometrics();
+  List<AuthBiometric> getEnrolledBiometrics();
 
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.

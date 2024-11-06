@@ -23,12 +23,7 @@ class CreationOptions {
   String? uri;
   String? packageName;
   String? formatHint;
-  Map<String?, String?> httpHeaders;
-}
-
-class MixWithOthersMessage {
-  MixWithOthersMessage(this.mixWithOthers);
-  bool mixWithOthers;
+  Map<String, String> httpHeaders;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')

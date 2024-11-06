@@ -1,3 +1,29 @@
+## 2.14.11
+
+* Updates internal Pigeon API to use newer features.
+
+## 2.14.10
+
+* Adds 'PlatformBitmap' type.
+* Updates type unsafe implementations.
+
+## 2.14.9
+
+* Adds `PlatformCap` for `PlatformPolyline.startCap` and `endCap`.
+
+## 2.14.8
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.14.7
+
+* Adds `PlatformPatternItem` pigeon class to convert `PlatformPolyline.pattern`.
+
+## 2.14.6
+
+* Converts 'PlatformCameraUpdate' to pigeon.
+
 ## 2.14.5
 
 * Converts `JointType` to enum.

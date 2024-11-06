@@ -886,3 +886,14 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+
+  - package-ecosystem: "gradle"
+    directory: "/third_party/packages/flutter_svg/example/android/app"
+    commit-message:
+      prefix: "[flutter_svg]"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-minor", "version-update:semver-patch"]

@@ -33,19 +33,16 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    // Conditional for compatibility with AGP <4.2.
-    if (project.android.hasProperty("namespace")) {
-        namespace 'io.flutter.plugins.sharedpreferences'
-    }
+    namespace 'io.flutter.plugins.sharedpreferences'
     compileSdk 34
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 
     sourceSets {

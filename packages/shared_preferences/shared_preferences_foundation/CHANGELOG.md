@@ -1,3 +1,7 @@
+## 2.5.3
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 2.5.2
 
 * Fixes getting all preferences when suite name is used.

@@ -98,7 +98,8 @@ class RouteBuilder {
   Widget build(
     BuildContext context,
     RouteMatchList matchList,
-    bool routerNeglect,
+    bool routerNeglect, // TODO(tolo): This parameter is not used and should be
+    // removed in the next major version.
   ) {
     if (matchList.isEmpty && !matchList.isError) {
       // The build method can be called before async redirect finishes. Build a

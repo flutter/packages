@@ -64,7 +64,7 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
   }
 
   func displayOpenPanel(
-    options: OpenPanelOptions, completion: @escaping (Result<[String?], Error>) -> Void
+    options: OpenPanelOptions, completion: @escaping (Result<[String], Error>) -> Void
   ) {
     let panel = NSOpenPanel()
     configure(openPanel: panel, with: options)
@@ -101,26 +101,22 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     if let acceptedTypes = options.allowedFileTypes {
       if #available(macOS 11, *), !forceLegacyTypes {
         var allowedTypes: [UTType] = []
-        // The array values are non-null by convention even though Pigeon can't currently express
-        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
-        allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0!) }))
+        allowedTypes.append(contentsOf: acceptedTypes.utis.compactMap({ UTType($0) }))
         allowedTypes.append(
           contentsOf: acceptedTypes.extensions.compactMap({
-            UTType.init(filenameExtension: $0!)
+            UTType.init(filenameExtension: $0)
           }))
         allowedTypes.append(
           contentsOf: acceptedTypes.mimeTypes.compactMap({
-            UTType.init(mimeType: $0!)
+            UTType.init(mimeType: $0)
           }))
         if !allowedTypes.isEmpty {
           panel.allowedContentTypes = allowedTypes
         }
       } else {
         var allowedTypes: [String] = []
-        // The array values are non-null by convention even though Pigeon can't currently express
-        // that via the types; see messages.dart and https://github.com/flutter/flutter/issues/97848
-        allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0! }))
-        allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0! }))
+        allowedTypes.append(contentsOf: acceptedTypes.extensions.map({ $0 }))
+        allowedTypes.append(contentsOf: acceptedTypes.utis.map({ $0 }))
         if !allowedTypes.isEmpty {
           panel.allowedFileTypes = allowedTypes
         }

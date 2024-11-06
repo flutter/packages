@@ -25,7 +25,7 @@ public class LegacySharedPreferencesPlugin: NSObject, FlutterPlugin, LegacyUserD
     LegacyUserDefaultsApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
-  func getAll(prefix: String, allowList: [String]?) -> [String?: Any?] {
+  func getAll(prefix: String, allowList: [String]?) -> [String: Any] {
     return getAllPrefs(prefix: prefix, allowList: allowList)
   }
 
