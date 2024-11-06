@@ -11,102 +11,191 @@ import LocalAuthentication
   import Flutter
 #endif
 
-enum LocalAuthError: Error {
-  case biometryNotAvailable
-  case biometryNotEnrolled
-  case biometryLockout
-  case passcodeNotSet
-  case systemCancel
-  case userCancel
-  case authenticationFailed
+//TODO (Mairramer): Put in a new file?
+protocol AuthContextProtocol {
+  var biometryType: LABiometryType { get }
+  var localizedFallbackTitle: String? { get set }
 
-  init?(from laError: LAError) {
-    switch laError.code {
-    case .biometryNotAvailable: self = .biometryNotAvailable
-    case .biometryNotEnrolled: self = .biometryNotEnrolled
-    case .biometryLockout: self = .biometryLockout
-    case .passcodeNotSet: self = .passcodeNotSet
-    case .systemCancel: self = .systemCancel
-    case .userCancel: self = .userCancel
-    case .authenticationFailed: self = .authenticationFailed
-    default: return nil
-    }
+  func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
+  func evaluatePolicy(
+    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
+}
+
+class DefaultAuthContext: AuthContextProtocol {
+  private let context = LAContext()
+
+  var biometryType: LABiometryType {
+    context.biometryType
+  }
+
+  var localizedFallbackTitle: String? {
+    get { context.localizedFallbackTitle }
+    set { context.localizedFallbackTitle = newValue }
+  }
+
+  func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+    context.canEvaluatePolicy(policy, error: error)
+  }
+
+  func evaluatePolicy(
+    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void
+  ) {
+    context.evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
   }
 }
 
-enum BiometricState {
-  case none
-  case faceID
-  case touchID
+//TODO (Mairramer): Put in a new file?
+protocol AlertControllerProtocol {
+  func showAlert(
+    message: String, dismissTitle: String, openSettingsTitle: String?,
+    completion: @escaping (Bool) -> Void)
 }
 
-struct StickyAuthState {
+#if os(iOS)
+  import UIKit
+
+  class DefaultAlertController: AlertControllerProtocol {
+    func showAlert(
+      message: String, dismissTitle: String, openSettingsTitle: String?,
+      completion: @escaping (Bool) -> Void
+    ) {
+      let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+      let dismissAction = UIAlertAction(title: dismissTitle, style: .default) { _ in
+        completion(false)
+      }
+      alert.addAction(dismissAction)
+
+      if let openSettingsTitle = openSettingsTitle {
+        let openSettingsAction = UIAlertAction(title: openSettingsTitle, style: .default) { _ in
+          if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+          }
+          completion(true)
+        }
+        alert.addAction(openSettingsAction)
+      }
+
+      UIApplication.shared.delegate?.window??.rootViewController?.present(alert, animated: true)
+    }
+  }
+
+#elseif os(macOS)
+  import AppKit
+
+  class DefaultAlertController: AlertControllerProtocol {
+    func showAlert(
+      message: String, dismissTitle: String, openSettingsTitle: String?,
+      completion: @escaping (Bool) -> Void
+    ) {
+      let alert = NSAlert()
+      alert.messageText = message
+      alert.addButton(withTitle: dismissTitle)
+
+      if let openSettingsTitle = openSettingsTitle {
+        alert.addButton(withTitle: openSettingsTitle)
+      }
+
+      alert.beginSheetModal(for: NSApplication.shared.keyWindow!) { response in
+        if response == .alertSecondButtonReturn,
+          let url = URL(
+            string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Biometric")
+        {
+          NSWorkspace.shared.open(url)
+        }
+        completion(response == .alertSecondButtonReturn)
+      }
+    }
+  }
+#endif
+
+class StickyAuthState {
   let options: AuthOptions
   let strings: AuthStrings
   let resultHandler: (Result<AuthResultDetails, Error>) -> Void
+
+  init(
+    options: AuthOptions, strings: AuthStrings,
+    resultHandler: @escaping (Result<AuthResultDetails, Error>) -> Void
+  ) {
+    self.options = options
+    self.strings = strings
+    self.resultHandler = resultHandler
+  }
 }
 
 public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
+  private let authContext: AuthContextProtocol
+  private let alertController: AlertControllerProtocol
   private var lastCallState: StickyAuthState?
+
+  init(
+    authContext: AuthContextProtocol = DefaultAuthContext(),
+    alertController: AlertControllerProtocol = DefaultAlertController()
+  ) {
+    self.authContext = authContext
+    self.alertController = alertController
+
+    #if os(iOS)
+      // Observa o evento de retorno ao primeiro plano no iOS
+      NotificationCenter.default.addObserver(
+        self, selector: #selector(applicationDidBecomeActive),
+        name: UIApplication.didBecomeActiveNotification, object: nil)
+    #endif
+  }
+
+  deinit {
+    #if os(iOS)
+      NotificationCenter.default.removeObserver(
+        self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    #endif
+  }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin()
     #if os(iOS)
+      // iOS-specific implementation
       let messenger = registrar.messenger()
       LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
     #elseif os(macOS)
+      // macOS-specific implementation
       let messenger = registrar.messenger
       LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
     #endif
   }
 
-  func getBiometricState() -> BiometricState {
-    let context = LAContext()
-    var error: NSError?
-
-    let canEvaluate = context.canEvaluatePolicy(
-      .deviceOwnerAuthenticationWithBiometrics, error: &error)
-
-    if canEvaluate {
-      switch context.biometryType {
-      case .faceID: return .faceID
-      case .touchID: return .touchID
-      default: return .none
-      }
-    }
-    return .none
-  }
-
   func isDeviceSupported() throws -> Bool {
-    let context = LAContext()
     var error: NSError?
-    return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+    return authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
   }
 
   func deviceCanSupportBiometrics() throws -> Bool {
-    let context = LAContext()
     var authError: NSError?
-
-    if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
-      return authError == nil
+    if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
+      if authError == nil {
+        return true
+      }
     }
-
-    if let error = authError, error.code == LAError.biometryNotEnrolled.rawValue {
-      return true
+    if let error = authError {
+      if error.code == LAError.biometryNotEnrolled.rawValue {
+        return true
+      }
     }
 
     return false
   }
 
   func getEnrolledBiometrics() throws -> [AuthBiometricWrapper] {
-    let context = LAContext()
     var enrolledBiometrics: [AuthBiometricWrapper] = []
 
-    if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
-      if context.biometryType == .faceID {
-        enrolledBiometrics.append(AuthBiometricWrapper(value: .face))
-      } else if context.biometryType == .touchID {
-        enrolledBiometrics.append(AuthBiometricWrapper(value: .fingerprint))
+    if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
+      if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
+        if authContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) {
+          enrolledBiometrics.append(AuthBiometricWrapper(value: .face))
+        } else if authContext.canEvaluatePolicy(
+          .deviceOwnerAuthenticationWithBiometrics, error: nil)
+        {
+          enrolledBiometrics.append(AuthBiometricWrapper(value: .fingerprint))
+        }
       }
     }
 
@@ -114,42 +203,32 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   }
 
   func authenticate(
-    options: AuthOptions,
-    strings: AuthStrings,
+    options: AuthOptions, strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
-    let context = LAContext()
-    var authError: NSError?
-    lastCallState = nil
-    context.localizedFallbackTitle = strings.localizedFallbackTitle
+    self.authContext.localizedFallbackTitle = strings.localizedFallbackTitle
+    self.lastCallState = StickyAuthState(
+      options: options, strings: strings, resultHandler: completion)
 
     let policy: LAPolicy =
       options.biometricOnly ? .deviceOwnerAuthenticationWithBiometrics : .deviceOwnerAuthentication
+    var authError: NSError?
 
-    if context.canEvaluatePolicy(policy, error: &authError) {
-      context.evaluatePolicy(policy, localizedReason: strings.reason) {
-        [weak self] success, error in
+    if authContext.canEvaluatePolicy(policy, error: &authError) {
+      authContext.evaluatePolicy(policy, localizedReason: strings.reason) { success, error in
         DispatchQueue.main.async {
-          self?.handleAuthReply(
-            success: success,
-            error: error as NSError?,
-            options: options,
-            strings: strings,
-            completion: completion
-          )
+          self.handleAuthReply(
+            success: success, error: error as NSError?, options: options, strings: strings,
+            completion: completion)
         }
       }
     } else {
-      handleError(
-        authError: authError ?? NSError(domain: "", code: 0, userInfo: nil),
-        options: options,
-        strings: strings,
-        completion: completion
-      )
+      let error = authError ?? NSError(domain: "", code: 0, userInfo: nil)
+      handleError(authError: error, options: options, strings: strings, completion: completion)
     }
   }
 
-  private func handleAuthReply(
+  func handleAuthReply(
     success: Bool,
     error: NSError?,
     options: AuthOptions,
@@ -160,58 +239,53 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
     if success {
       handleSucceeded(succeeded: true, completion: completion)
-      return
-    }
-
-    guard let error = error else {
-      handleError(
-        authError: NSError(domain: "", code: 0, userInfo: nil),
-        options: options,
-        strings: strings,
-        completion: completion
-      )
-      return
-    }
-
-    switch error.code {
-    case LAError.biometryNotAvailable.rawValue,
-      LAError.biometryNotEnrolled.rawValue,
-      LAError.biometryLockout.rawValue,
-      LAError.userFallback.rawValue,
-      LAError.passcodeNotSet.rawValue,
-      LAError.authenticationFailed.rawValue:
-      handleError(authError: error, options: options, strings: strings, completion: completion)
-
-    case LAError.systemCancel.rawValue:
-      if options.sticky {
-        lastCallState = StickyAuthState(
-          options: options,
-          strings: strings,
-          resultHandler: completion
-        )
-      } else {
-        handleSucceeded(succeeded: false, completion: completion)
+    } else {
+      guard let error = error else {
+        handleError(
+          authError: NSError(domain: "", code: 0, userInfo: nil), options: options,
+          strings: strings, completion: completion)
+        return
       }
 
-    default:
-      handleError(authError: error, options: options, strings: strings, completion: completion)
+      switch error.code {
+      case LAError.biometryNotAvailable.rawValue,
+        LAError.biometryNotEnrolled.rawValue,
+        LAError.biometryLockout.rawValue,
+        LAError.userFallback.rawValue,
+        LAError.passcodeNotSet.rawValue,
+        LAError.authenticationFailed.rawValue:
+        handleError(authError: error, options: options, strings: strings, completion: completion)
+        return
+
+      case LAError.systemCancel.rawValue:
+        if options.sticky {
+          lastCallState = StickyAuthState(
+            options: options, strings: strings, resultHandler: completion)
+        } else {
+          handleSucceeded(succeeded: false, completion: completion)
+        }
+        return
+
+      default:
+        handleError(authError: error, options: options, strings: strings, completion: completion)
+      }
     }
   }
 
-  private func handleSucceeded(
-    succeeded: Bool,
-    completion: @escaping (Result<AuthResultDetails, Error>) -> Void
+  func handleSucceeded(
+    succeeded: Bool, completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     let result: AuthResult = succeeded ? .success : .failure
+
     let resultDetails = AuthResultDetails(
       result: result,
       errorMessage: nil,
-      errorDetails: nil
-    )
+      errorDetails: nil)
+
     completion(.success(resultDetails))
   }
 
-  private func handleError(
+  func handleError(
     authError: NSError,
     options: AuthOptions,
     strings: AuthStrings,
@@ -223,26 +297,26 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     case LAError.passcodeNotSet.rawValue,
       LAError.biometryNotEnrolled.rawValue:
       if options.useErrorDialogs {
-        showAlert(
+        alertController.showAlert(
           message: strings.goToSettingsDescription,
-          dismissButtonTitle: strings.cancelButton,
-          openSettingsButtonTitle: strings.goToSettingsButton,
+          dismissTitle: strings.cancelButton,
+          openSettingsTitle: strings.goToSettingsButton,
           completion: completion
         )
         return
       }
       result =
         authError.code == LAError.passcodeNotSet.rawValue ? .errorPasscodeNotSet : .errorNotEnrolled
+      break
 
     case LAError.biometryLockout.rawValue:
-      showAlert(
+      alertController.showAlert(
         message: strings.lockOut,
-        dismissButtonTitle: strings.cancelButton,
-        openSettingsButtonTitle: nil,
+        dismissTitle: strings.cancelButton,
+        openSettingsTitle: nil,
         completion: completion
       )
       return
-
     default:
       break
     }
@@ -250,78 +324,15 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     let resultDetails = AuthResultDetails(
       result: result,
       errorMessage: authError.localizedDescription,
-      errorDetails: authError.domain
-    )
+      errorDetails: authError.domain)
     completion(.success(resultDetails))
   }
 
-  #if os(iOS)
-    private func topViewController() -> UIViewController? {
-      var topController = UIApplication.shared.keyWindow?.rootViewController
-      while let presentedController = topController?.presentedViewController {
-        topController = presentedController
-      }
-      return topController
-    }
-  #endif
-
-  private func showAlert(
-    message: String,
-    dismissButtonTitle: String,
-    openSettingsButtonTitle: String?,
-    completion: @escaping (Result<AuthResultDetails, Error>) -> Void
-  ) {
-    #if os(iOS)
-      guard let topVC = topViewController() else {
-        handleSucceeded(succeeded: false, completion: completion)
-        return
-      }
-
-      let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-      let defaultAction = UIAlertAction(title: dismissButtonTitle, style: .default) {
-        [weak self] _ in
-        self?.handleSucceeded(succeeded: false, completion: completion)
-      }
-      alert.addAction(defaultAction)
-
-      if let settingsTitle = openSettingsButtonTitle {
-        let settingsAction = UIAlertAction(title: settingsTitle, style: .default) { [weak self] _ in
-          if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url)
-          }
-          self?.handleSucceeded(succeeded: false, completion: completion)
-        }
-        alert.addAction(settingsAction)
-      }
-
-      topVC.present(alert, animated: true)
-
-    #elseif os(macOS)
-      let alert = NSAlert()
-      alert.messageText = message
-      alert.addButton(withTitle: dismissButtonTitle)
-
-      if let settingsTitle = openSettingsButtonTitle {
-        alert.addButton(withTitle: settingsTitle)
-      }
-
-      if let window = NSApplication.shared.keyWindow {
-        alert.beginSheetModal(for: window) { [weak self] response in
-          switch response {
-          case .alertFirstButtonReturn:
-            self?.handleSucceeded(succeeded: false, completion: completion)
-          case .alertSecondButtonReturn:
-            if let url = URL(
-              string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Biometric")
-            {
-              NSWorkspace.shared.open(url)
-            }
-            self?.handleSucceeded(succeeded: false, completion: completion)
-          default:
-            break
-          }
-        }
-      }
-    #endif
+  @objc private func applicationDidBecomeActive() {
+    guard let lastCallState = lastCallState else { return }
+    authenticate(
+      options: lastCallState.options, strings: lastCallState.strings,
+      completion: lastCallState.resultHandler
+    )
   }
 }
