@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 1000 300"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Example text04 - Font style</desc>
+
+  <text x="100" y="50"
+      font-family="Roboto" font-size="55" font-style="normal" fill="blue" >
+    Normal text</text>
+  <text x="100" y="100"
+      font-family="Roboto" font-size="55" font-style="italic" fill="blue" >
+    Italic text</text>
+
+  <text x="100" y="150"
+      font-family="Roboto" font-size="55" font-style="oblique" fill="blue" >
+    Oblique text</text>
+
+  <text x="100" y="200"
+      font-family="Roboto" font-size="55" font-weight="bold" font-style="italic" fill="blue" >
+    Italic bold text</text>
+</svg>

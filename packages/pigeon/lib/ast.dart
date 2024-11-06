@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 import 'generator_tools.dart';
 import 'kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
+import 'swift_generator.dart' show SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -142,6 +143,7 @@ class AstProxyApi extends Api {
     required this.fields,
     this.superClass,
     this.interfaces = const <TypeDeclaration>{},
+    this.swiftOptions,
     this.kotlinOptions,
   });
 
@@ -156,6 +158,10 @@ class AstProxyApi extends Api {
 
   /// Name of the classes this class considers to be implemented.
   Set<TypeDeclaration> interfaces;
+
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
 
   /// Options that control how Kotlin code will be generated for a specific
   /// ProxyApi.

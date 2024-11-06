@@ -1,3 +1,11 @@
+## 1.0.46
+
+* Updates Java compatibility version to 11.
+
+## 1.0.45
+
+* Updates to the latest version of Pigeon.
+
 ## 1.0.44
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.

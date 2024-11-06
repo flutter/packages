@@ -60,6 +60,35 @@ void defineTests() {
     );
 
     testWidgets(
+      'Block with custom tag',
+      (WidgetTester tester) async {
+        const String textBefore = 'Before ';
+        const String textAfter = ' After';
+        const String blockContent = 'Custom content rendered in a ColoredBox';
+
+        await tester.pumpWidget(
+          boilerplate(
+            Markdown(
+              data:
+                  '$textBefore\n{{custom}}\n$blockContent\n{{/custom}}\n$textAfter',
+              extensionSet: md.ExtensionSet.none,
+              blockSyntaxes: <md.BlockSyntax>[CustomTagBlockSyntax()],
+              builders: <String, MarkdownElementBuilder>{
+                'custom': CustomTagBlockBuilder(),
+              },
+            ),
+          ),
+        );
+
+        final ColoredBox container =
+            tester.widgetList(find.byType(ColoredBox)).first as ColoredBox;
+        expect(container.color, Colors.red);
+        expect(container.child, isInstanceOf<Text>());
+        expect((container.child! as Text).data, blockContent);
+      },
+    );
+
+    testWidgets(
       'link for wikistyle',
       (WidgetTester tester) async {
         await tester.pumpWidget(
@@ -379,4 +408,55 @@ class NoteSyntax extends md.BlockSyntax {
 
   @override
   RegExp get pattern => RegExp(r'^\[!NOTE] ');
+}
+
+class CustomTagBlockBuilder extends MarkdownElementBuilder {
+  @override
+  bool isBlockElement() => true;
+
+  @override
+  Widget visitElementAfterWithContext(
+    BuildContext context,
+    md.Element element,
+    TextStyle? preferredStyle,
+    TextStyle? parentStyle,
+  ) {
+    if (element.tag == 'custom') {
+      final String content = element.attributes['content']!;
+      return ColoredBox(
+          color: Colors.red, child: Text(content, style: preferredStyle));
+    }
+    return const SizedBox.shrink();
+  }
+}
+
+class CustomTagBlockSyntax extends md.BlockSyntax {
+  @override
+  bool canParse(md.BlockParser parser) {
+    return parser.current.content.startsWith('{{custom}}');
+  }
+
+  @override
+  RegExp get pattern => RegExp(r'\{\{custom\}\}([\s\S]*?)\{\{/custom\}\}');
+
+  @override
+  md.Node parse(md.BlockParser parser) {
+    parser.advance();
+
+    final StringBuffer buffer = StringBuffer();
+    while (
+        !parser.current.content.startsWith('{{/custom}}') && !parser.isDone) {
+      buffer.writeln(parser.current.content);
+      parser.advance();
+    }
+
+    if (!parser.isDone) {
+      parser.advance();
+    }
+
+    final String content = buffer.toString().trim();
+    final md.Element element = md.Element.empty('custom');
+    element.attributes['content'] = content;
+    return element;
+  }
 }

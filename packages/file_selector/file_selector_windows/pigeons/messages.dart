@@ -16,25 +16,18 @@ class TypeGroup {
   TypeGroup(this.label, {required this.extensions});
 
   String label;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The C++ code treats all of it as non-nullable.
-  List<String?> extensions;
+  List<String> extensions;
 }
 
 class SelectionOptions {
   SelectionOptions({
     this.allowMultiple = false,
     this.selectFolders = false,
-    this.allowedTypes = const <TypeGroup?>[],
+    this.allowedTypes = const <TypeGroup>[],
   });
   bool allowMultiple;
   bool selectFolders;
-
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The C++ code treats the values as non-nullable.
-  List<TypeGroup?> allowedTypes;
+  List<TypeGroup> allowedTypes;
 }
 
 /// The result from an open or save dialog.
@@ -44,10 +37,7 @@ class FileDialogResult {
   /// The selected paths.
   ///
   /// Empty if the dialog was canceled.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The Dart code treats the values as non-nullable.
-  List<String?> paths;
+  List<String> paths;
 
   /// The type group index (into the list provided in [SelectionOptions]) of
   /// the group that was selected when the dialog was confirmed.

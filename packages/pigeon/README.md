@@ -86,7 +86,7 @@ to the api to allow for multiple instances to be created and operate in parallel
 1) Make a ".dart" file outside of your "lib" directory for defining the
    communication interface.
 1) Run pigeon on your ".dart" file to generate the required Dart and
-   host-language code: `flutter pub get` then `flutter pub run pigeon`
+   host-language code: `flutter pub get` then `dart run pigeon`
    with suitable arguments. [Example](./example/README.md#Invocation).
 1) Add the generated Dart code to `./lib` for compilation.
 1) Implement the host-language code and add it to your build (see below).

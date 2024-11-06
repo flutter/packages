@@ -1,3 +1,15 @@
+## 22.6.0
+
+* [swift] Adds `includeErrorClass` to `SwiftOptions`.
+
+## 22.5.0
+
+* [swift] Adds implementation for `@ProxyApi`.
+
+## 22.4.2
+
+* Updates `README.md` to replace the deprecated `flutter pub run pigeon` command with `dart run pigeon`.
+
 ## 22.4.1
 
 * [dart] Fixes bug where special handling of ints is ignored if no custom types are used.
@@ -209,8 +221,6 @@
     `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
-
-
 
 ## 12.0.1
 

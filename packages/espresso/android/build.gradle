@@ -22,10 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    // Conditional for compatibility with AGP <4.2.
-    if (project.android.hasProperty("namespace")) {
-        namespace 'com.example.espresso'
-    }
+    namespace 'com.example.espresso'
     compileSdk 34
 
     defaultConfig {
@@ -34,8 +31,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     lintOptions {
@@ -60,7 +57,7 @@ android {
 }
 
 dependencies {
-    implementation 'com.google.guava:guava:31.1-android'
+    implementation 'com.google.guava:guava:33.3.1-android'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     androidTestImplementation 'org.hamcrest:hamcrest:2.2'

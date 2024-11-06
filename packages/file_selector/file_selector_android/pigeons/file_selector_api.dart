@@ -25,8 +25,8 @@ class FileResponse {
 }
 
 class FileTypes {
-  late List<String?> mimeTypes;
-  late List<String?> extensions;
+  late List<String> mimeTypes;
+  late List<String> extensions;
 }
 
 /// An API to call to native code to select files or directories.
@@ -41,7 +41,7 @@ abstract class FileSelectorApi {
   /// Opens a file dialog for loading files and returns a list of file responses
   /// chosen by the user.
   @async
-  List<FileResponse?> openFiles(
+  List<FileResponse> openFiles(
     String? initialDirectory,
     FileTypes allowedTypes,
   );

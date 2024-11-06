@@ -10,6 +10,6 @@ OneTimePurchaseOfferDetailsWrapper _$OneTimePurchaseOfferDetailsWrapperFromJson(
         Map json) =>
     OneTimePurchaseOfferDetailsWrapper(
       formattedPrice: json['formattedPrice'] as String? ?? '',
-      priceAmountMicros: json['priceAmountMicros'] as int? ?? 0,
+      priceAmountMicros: (json['priceAmountMicros'] as num?)?.toInt() ?? 0,
       priceCurrencyCode: json['priceCurrencyCode'] as String? ?? '',
     );

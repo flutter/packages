@@ -624,21 +624,33 @@ void main() {
       verify(mockVideoView.setVideoUri(videoUrl));
     });
 
-    test('stop ad sets video uri to null', () async {
+    test('stop ad creates and sets a new VideoView', () async {
       late final void Function(
         ima.VideoAdPlayer,
         ima.AdMediaInfo,
       ) stopAdCallback;
 
-      final MockVideoView mockVideoView = MockVideoView();
+      final MockFrameLayout mockFrameLayout = MockFrameLayout();
+      late final MockVideoView mockVideoView = MockVideoView();
+      late final MockVideoView mockVideoView2 = MockVideoView();
+      int newViewVideoCallCount = 0;
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newFrameLayout: () => MockFrameLayout(),
+        newFrameLayout: () => mockFrameLayout,
         newVideoView: ({
           dynamic onError,
           dynamic onPrepared,
           dynamic onCompletion,
         }) {
-          return mockVideoView;
+          switch (newViewVideoCallCount) {
+            case 0:
+              newViewVideoCallCount++;
+              return mockVideoView;
+            case 1:
+              newViewVideoCallCount++;
+              return mockVideoView2;
+            default:
+              fail('newVideoView was called too many times');
+          }
         },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
@@ -666,7 +678,8 @@ void main() {
 
       stopAdCallback(MockVideoAdPlayer(), MockAdMediaInfo());
 
-      verify(mockVideoView.setVideoUri(null));
+      verify(mockFrameLayout.removeView(mockVideoView));
+      verify(mockFrameLayout.addView(mockVideoView2));
     });
   });
 }

@@ -62,14 +62,14 @@ data class MessageData(
     val name: String? = null,
     val description: String? = null,
     val code: Code,
-    val data: Map<String?, String?>
+    val data: Map<String, String>
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): MessageData {
       val name = pigeonVar_list[0] as String?
       val description = pigeonVar_list[1] as String?
       val code = pigeonVar_list[2] as Code
-      val data = pigeonVar_list[3] as Map<String?, String?>
+      val data = pigeonVar_list[3] as Map<String, String>
       return MessageData(name, description, code, data)
     }
   }

@@ -1,5 +1,19 @@
-## 2.1.0-wip
+## 3.1.1
 
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
+## 3.1.0
+
+* Add `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`
+metrics to benchmark results. These values are derived from the Flutter `FrameTiming` API.
+* Expose a new library `metrics.dart` that contains definitions for the benchmark metrics.
+* Add p50, p90, and p95 metrics for benchmark scores.
+
+## 3.0.0
+
+* **Breaking change:** removed the `initialPage` parameter from the `serveWebBenchmark`
+method and `runBenchmarks` method. Replaced this parameter with `benchmarkPath`, which
+allows for passing the combined value of the URL path segments, fragment, and query parameters.
 * Restructure the `testing/test_app` to make the example benchmarks easier to follow.
 
 ## 2.0.2

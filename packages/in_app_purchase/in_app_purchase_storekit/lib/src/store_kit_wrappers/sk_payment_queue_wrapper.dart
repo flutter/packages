@@ -416,8 +416,8 @@ class SKPaymentWrapper {
   }
 
   /// Creates a Map object describes the payment object.
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
+  Map<String, Object?> toMap() {
+    return <String, Object?>{
       'productIdentifier': productIdentifier,
       'applicationUsername': applicationUsername,
       'requestData': requestData,

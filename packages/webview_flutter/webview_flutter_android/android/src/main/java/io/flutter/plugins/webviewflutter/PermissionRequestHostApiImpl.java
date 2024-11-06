@@ -4,10 +4,8 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import android.os.Build;
 import android.webkit.PermissionRequest;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.PermissionRequestHostApi;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.Objects;
  * <p>This class may handle instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
-@RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class PermissionRequestHostApiImpl implements PermissionRequestHostApi {
   // To ease adding additional methods, this value is added prematurely.
   @SuppressWarnings({"unused", "FieldCanBeLocal"})

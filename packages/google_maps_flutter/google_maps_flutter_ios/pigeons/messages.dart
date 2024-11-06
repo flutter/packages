@@ -87,10 +87,7 @@ class PlatformCluster {
   final String clusterManagerId;
   final PlatformLatLng position;
   final PlatformLatLngBounds bounds;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  final List<String?> markerIds;
+  final List<String> markerIds;
 }
 
 /// Pigeon equivalent of the ClusterManager class.
@@ -214,16 +211,13 @@ class PlatformMapViewCreationParams {
 
   final PlatformCameraPosition initialCameraPosition;
   final PlatformMapConfiguration mapConfiguration;
-  // TODO(stuartmorgan): Make the generic types non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  final List<PlatformCircle?> initialCircles;
-  final List<PlatformMarker?> initialMarkers;
-  final List<PlatformPolygon?> initialPolygons;
-  final List<PlatformPolyline?> initialPolylines;
-  final List<PlatformHeatmap?> initialHeatmaps;
-  final List<PlatformTileOverlay?> initialTileOverlays;
-  final List<PlatformClusterManager?> initialClusterManagers;
+  final List<PlatformCircle> initialCircles;
+  final List<PlatformMarker> initialMarkers;
+  final List<PlatformPolygon> initialPolygons;
+  final List<PlatformPolyline> initialPolylines;
+  final List<PlatformHeatmap> initialHeatmaps;
+  final List<PlatformTileOverlay> initialTileOverlays;
+  final List<PlatformClusterManager> initialClusterManagers;
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -314,60 +308,39 @@ abstract class MapsApi {
   void updateMapConfiguration(PlatformMapConfiguration configuration);
 
   /// Updates the set of circles on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('updateCirclesByAdding:changing:removing:')
-  void updateCircles(List<PlatformCircle?> toAdd,
-      List<PlatformCircle?> toChange, List<String?> idsToRemove);
+  void updateCircles(List<PlatformCircle> toAdd, List<PlatformCircle> toChange,
+      List<String> idsToRemove);
 
   /// Updates the set of heatmaps on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('updateHeatmapsByAdding:changing:removing:')
-  void updateHeatmaps(List<PlatformHeatmap?> toAdd,
-      List<PlatformHeatmap?> toChange, List<String?> idsToRemove);
+  void updateHeatmaps(List<PlatformHeatmap> toAdd,
+      List<PlatformHeatmap> toChange, List<String> idsToRemove);
 
   /// Updates the set of custer managers for clusters on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('updateClusterManagersByAdding:removing:')
   void updateClusterManagers(
-      List<PlatformClusterManager?> toAdd, List<String?> idsToRemove);
+      List<PlatformClusterManager> toAdd, List<String> idsToRemove);
 
   /// Updates the set of markers on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('updateMarkersByAdding:changing:removing:')
-  void updateMarkers(List<PlatformMarker?> toAdd,
-      List<PlatformMarker?> toChange, List<String?> idsToRemove);
+  void updateMarkers(List<PlatformMarker> toAdd, List<PlatformMarker> toChange,
+      List<String> idsToRemove);
 
   /// Updates the set of polygonss on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('updatePolygonsByAdding:changing:removing:')
-  void updatePolygons(List<PlatformPolygon?> toAdd,
-      List<PlatformPolygon?> toChange, List<String?> idsToRemove);
+  void updatePolygons(List<PlatformPolygon> toAdd,
+      List<PlatformPolygon> toChange, List<String> idsToRemove);
 
   /// Updates the set of polylines on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('updatePolylinesByAdding:changing:removing:')
-  void updatePolylines(List<PlatformPolyline?> toAdd,
-      List<PlatformPolyline?> toChange, List<String?> idsToRemove);
+  void updatePolylines(List<PlatformPolyline> toAdd,
+      List<PlatformPolyline> toChange, List<String> idsToRemove);
 
   /// Updates the set of tile overlays on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('updateTileOverlaysByAdding:changing:removing:')
-  void updateTileOverlays(List<PlatformTileOverlay?> toAdd,
-      List<PlatformTileOverlay?> toChange, List<String?> idsToRemove);
+  void updateTileOverlays(List<PlatformTileOverlay> toAdd,
+      List<PlatformTileOverlay> toChange, List<String> idsToRemove);
 
   /// Gets the screen coordinate for the given map location.
   @ObjCSelector('screenCoordinatesForLatLng:')
@@ -523,9 +496,6 @@ abstract class MapsInspectorApi {
   PlatformHeatmap? getHeatmapInfo(String heatmapId);
   @ObjCSelector('zoomRange')
   PlatformZoomRange getZoomRange();
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   @ObjCSelector('clustersWithIdentifier:')
-  List<PlatformCluster?> getClusters(String clusterManagerId);
+  List<PlatformCluster> getClusters(String clusterManagerId);
 }
