@@ -908,7 +908,7 @@ void main() {
     group('camera image stream', () {
       setUp(
         () {
-          cameraService.jsUtil = jsUtil;
+          cameraService = cameraService..jsUtil = jsUtil;
         },
       );
       testWidgets(
@@ -943,7 +943,8 @@ void main() {
       );
       testWidgets(
         'returns Camera Image of Size '
-        'when videoElement is of Size',
+        'when videoElement is of Size '
+        'when browser supports OffscreenCanvas',
         (WidgetTester widgetTester) async {
           const Size size = Size(10, 10);
           final Completer<void> completer = Completer<void>();
@@ -954,6 +955,9 @@ void main() {
                 })
                 ..load();
           await completer.future;
+          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
+            true,
+          );
           final CameraImageData cameraImageData = cameraService.takeFrame(
             videoElement,
           );
@@ -964,6 +968,37 @@ void main() {
               cameraImageData.height.toDouble(),
             ),
           );
+          verify(cameraService.hasPropertyOffScreenCanvas).called(1);
+        },
+      );
+      testWidgets(
+        'returns Camera Image of Size '
+        'when videoElement is of Size '
+        'when browser does not supports OffscreenCanvas',
+        (WidgetTester widgetTester) async {
+          const Size size = Size(10, 10);
+          final Completer<void> loadVideo = Completer<void>();
+          final web.VideoElement videoElement =
+              getVideoElementWithBlankStream(size)
+                ..onLoadedMetadata.listen((_) {
+                  loadVideo.complete();
+                })
+                ..load();
+          await loadVideo.future;
+          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
+            false,
+          );
+          final CameraImageData cameraImageData = cameraService.takeFrame(
+            videoElement,
+          );
+          expect(
+            size,
+            Size(
+              cameraImageData.width.toDouble(),
+              cameraImageData.height.toDouble(),
+            ),
+          );
+          verify(cameraService.hasPropertyOffScreenCanvas).called(1);
         },
       );
     });
