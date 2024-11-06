@@ -33,6 +33,9 @@ class MockPlatform extends Mock implements Platform {
 
   @override
   Map<String, String> environment = <String, String>{};
+
+  @override
+  String get pathSeparator => isWindows ? r'\' : '/';
 }
 
 class MockProcess extends Mock implements io.Process {

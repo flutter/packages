@@ -1,6 +1,11 @@
-## 2.0.13
+## 2.0.14
 
 * Makes the package WASM compatible.
+
+## 2.0.13
+
+* Relaxes the dependency constraints on vector_graphics, vector_graphics_codec,
+  and vector_graphics_compiler.
 
 ## 2.0.12
 
