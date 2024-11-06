@@ -1711,7 +1711,8 @@ void main() {
     });
     group('cameraFrameStream', () {
       testWidgets(
-        'bytes is a multiple of 4',
+        'CameraImageData bytes is a multiple of 4 '
+        'when browser supports OffscreenCanvas',
         (WidgetTester tester) async {
           final VideoElement videoElement = getVideoElementWithBlankStream(
             const Size(10, 10),
@@ -1722,18 +1723,22 @@ void main() {
             cameraService: cameraService,
           )..videoElement = videoElement;
 
+          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
+            true,
+          );
+
           when(
             () => cameraService.takeFrame(videoElement),
           ).thenAnswer(
             (_) => CameraImageData(
               format: const CameraImageFormat(
-                ImageFormatGroup.jpeg,
-                raw: '',
+                ImageFormatGroup.unknown,
+                raw: 0,
               ),
               planes: <CameraImagePlane>[
                 CameraImagePlane(
                   bytes: Uint8List(32),
-                  bytesPerRow: 0,
+                  bytesPerRow: videoElement.width * 4,
                 ),
               ],
               height: 10,
@@ -1754,7 +1759,56 @@ void main() {
             ),
           );
         },
-        timeout: const Timeout(Duration(seconds: 2)),
+      );
+      testWidgets(
+        'CameraImageData bytes is a multiple of 4 '
+        'when browser does not supports OffscreenCanvas',
+        (WidgetTester tester) async {
+          final VideoElement videoElement = getVideoElementWithBlankStream(
+            const Size(10, 10),
+          );
+
+          final Camera camera = Camera(
+            textureId: textureId,
+            cameraService: cameraService,
+          )..videoElement = videoElement;
+
+          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
+            false,
+          );
+
+          when(
+            () => cameraService.takeFrame(videoElement),
+          ).thenAnswer(
+            (_) => CameraImageData(
+              format: const CameraImageFormat(
+                ImageFormatGroup.unknown,
+                raw: 0,
+              ),
+              planes: <CameraImagePlane>[
+                CameraImagePlane(
+                  bytes: Uint8List(32),
+                  bytesPerRow: videoElement.width * 4,
+                ),
+              ],
+              height: 10,
+              width: 10,
+            ),
+          );
+
+          final CameraImageData cameraImageData =
+              await camera.cameraFrameStream().first;
+          expect(
+            cameraImageData,
+            equals(
+              isA<CameraImageData>().having(
+                (CameraImageData e) => e.planes.first.bytes.length % 4,
+                'bytes',
+                equals(0),
+              ),
+            ),
+          );
+        },
       );
     });
   });
