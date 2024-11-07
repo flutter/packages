@@ -4,6 +4,7 @@
 
 import 'dart:async';
 
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,6 +13,20 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'package:integration_test/integration_test.dart';
 
 import 'shared.dart';
+
+const double _kTestCameraZoomLevel = 10;
+const double _kTestZoombByAmount = 2;
+const LatLng _kTestMapCenter = LatLng(65, 25.5);
+const CameraPosition _kTestCameraPosition = CameraPosition(
+  target: _kTestMapCenter,
+  zoom: _kTestCameraZoomLevel,
+  bearing: 1.0,
+  tilt: 1.0,
+);
+final LatLngBounds _testCameraBounds = LatLngBounds(
+    northeast: const LatLng(50, -65), southwest: const LatLng(28.5, -123));
+final ValueVariant<CameraUpdateType> _cameraUpdateTypeVariants =
+    ValueVariant<CameraUpdateType>(CameraUpdateType.values.toSet());
 
 /// Integration Tests that use the [GoogleMapsInspectorPlatform].
 void main() {
@@ -612,6 +627,186 @@ void runTests() {
       expect(clusters.length, 0);
     }
   });
+
+  testWidgets('testAnimateCamera', (WidgetTester tester) async {
+    final Key key = GlobalKey();
+    final Completer<GoogleMapController> controllerCompleter =
+        Completer<GoogleMapController>();
+    final GoogleMapsInspectorPlatform inspector =
+        GoogleMapsInspectorPlatform.instance!;
+
+    final StreamController<void> cameraFiredStream = StreamController<void>();
+    final StreamQueue<void> cameraFiredQueue =
+        StreamQueue<void>(cameraFiredStream.stream);
+
+    bool cameraIdleFired = false;
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: GoogleMap(
+        key: key,
+        initialCameraPosition: kInitialCameraPosition,
+        onCameraIdle: () {
+          cameraIdleFired = true;
+          cameraFiredStream.add(null);
+        },
+        onMapCreated: (GoogleMapController controller) {
+          controllerCompleter.complete(controller);
+        },
+      ),
+    ));
+
+    final GoogleMapController controller = await controllerCompleter.future;
+
+    await tester.pumpAndSettle();
+    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+    // in `mapRendered`.
+    // https://github.com/flutter/flutter/issues/54758
+    await Future<void>.delayed(const Duration(seconds: 1));
+
+    // Drain any event that might have been added from the initial setup or
+    // resetting the camera position.
+    if (cameraIdleFired) {
+      await cameraFiredQueue.next;
+      cameraIdleFired = false;
+    }
+
+    final CameraUpdate cameraUpdate =
+        _getCameraUpdateForType(_cameraUpdateTypeVariants.currentValue!);
+    await controller.animateCamera(cameraUpdate);
+
+    // Check that position is not updated immediately to the target.
+    final CameraPosition beforeFinishedPosition =
+        await inspector.getCameraPosition(mapId: controller.mapId);
+    await _checkCameraUpdateByType(
+        _cameraUpdateTypeVariants.currentValue!,
+        beforeFinishedPosition,
+        null,
+        controller,
+        (Matcher matcher) => isNot(matcher));
+
+    // Check that position is animated after the animation is done.
+    expect(cameraIdleFired, isFalse);
+    await cameraFiredQueue.next;
+    expect(cameraIdleFired, isTrue);
+    final CameraPosition afterFinishedPosition =
+        await inspector.getCameraPosition(mapId: controller.mapId);
+    await _checkCameraUpdateByType(
+        _cameraUpdateTypeVariants.currentValue!,
+        afterFinishedPosition,
+        beforeFinishedPosition,
+        controller,
+        (Matcher matcher) => matcher);
+
+    await tester.pumpAndSettle();
+  }, variant: _cameraUpdateTypeVariants);
+
+  testWidgets(
+    'testAnimateCameraWithConfiguration',
+    (WidgetTester tester) async {
+      final Key key = GlobalKey();
+      final Completer<GoogleMapController> controllerCompleter =
+          Completer<GoogleMapController>();
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      final StreamController<void> cameraFiredStream = StreamController<void>();
+      final StreamQueue<void> cameraFiredQueue =
+          StreamQueue<void>(cameraFiredStream.stream);
+
+      // We set the duration to 100ms and check that the animation is completed
+      // faster than the normal animation (~300ms on Android) to make sure the
+      // configuration is really used.
+      const int cameraAnimationDurationMS = 100;
+
+      // The threshold is set to 200ms because the normal camera animation should
+      // take more than 200ms on android.
+      const int animationCheckThreshold = 200;
+
+      // Stopwatch to measure the time taken for the animation to complete.
+      final Stopwatch stopwatch = Stopwatch();
+
+      const CameraUpdateAnimationConfiguration configuration =
+          CameraUpdateAnimationConfiguration(
+        duration: Duration(milliseconds: cameraAnimationDurationMS),
+      );
+
+      bool cameraIdleFired = false;
+
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          key: key,
+          initialCameraPosition: kInitialCameraPosition,
+          onCameraIdle: () {
+            stopwatch.stop();
+            cameraIdleFired = true;
+            cameraFiredStream.add(null);
+          },
+          onMapCreated: (GoogleMapController controller) {
+            controllerCompleter.complete(controller);
+          },
+        ),
+      ));
+
+      final GoogleMapController controller = await controllerCompleter.future;
+
+      await tester.pumpAndSettle();
+      // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+      // in `mapRendered`.
+      // https://github.com/flutter/flutter/issues/54758
+      await Future<void>.delayed(const Duration(seconds: 1));
+
+      // Drain any event that might have been added from the initial setup or
+      // resetting the camera position.
+      if (cameraIdleFired) {
+        await cameraFiredQueue.next;
+        cameraIdleFired = false;
+      }
+
+      // Start stopwatch to check the time taken for the animation to complete.
+      // Stopwatch is stopped on camera idle callback.
+      stopwatch.reset();
+      stopwatch.start();
+
+      final CameraUpdate cameraUpdate =
+          _getCameraUpdateForType(_cameraUpdateTypeVariants.currentValue!);
+      await controller.animateCamera(cameraUpdate,
+          configuration: configuration);
+
+      // Check that position is not updated immediately to the target.
+      final CameraPosition beforeFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
+      await _checkCameraUpdateByType(
+          _cameraUpdateTypeVariants.currentValue!,
+          beforeFinishedPosition,
+          null,
+          controller,
+          (Matcher matcher) => isNot(matcher));
+
+      // Wait for the camera idle callback to fire.
+      expect(cameraIdleFired, isFalse);
+      await cameraFiredQueue.next;
+      expect(cameraIdleFired, isTrue);
+
+      // Check that the animation is completed faster than the normal animation.
+      expect(stopwatch.elapsedMilliseconds, lessThan(animationCheckThreshold));
+
+      // Check that position is animated after the animation is done.
+      final CameraPosition afterFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
+      await _checkCameraUpdateByType(
+          _cameraUpdateTypeVariants.currentValue!,
+          afterFinishedPosition,
+          beforeFinishedPosition,
+          controller,
+          (Matcher matcher) => matcher);
+
+      await tester.pumpAndSettle();
+    },
+    variant: _cameraUpdateTypeVariants,
+    skip: kIsWeb,
+  );
 }
 
 Marker _copyMarkerWithClusterManagerId(
@@ -635,4 +830,95 @@ Marker _copyMarkerWithClusterManagerId(
     onDragEnd: marker.onDragEnd,
     clusterManagerId: clusterManagerId,
   );
+}
+
+CameraUpdate _getCameraUpdateForType(CameraUpdateType type) {
+  switch (type) {
+    case CameraUpdateType.newCameraPosition:
+      return CameraUpdate.newCameraPosition(_kTestCameraPosition);
+    case CameraUpdateType.newLatLng:
+      return CameraUpdate.newLatLng(_kTestMapCenter);
+    case CameraUpdateType.newLatLngBounds:
+      return CameraUpdate.newLatLngBounds(_testCameraBounds, 0);
+    case CameraUpdateType.newLatLngZoom:
+      return CameraUpdate.newLatLngZoom(_kTestMapCenter, _kTestCameraZoomLevel);
+    case CameraUpdateType.scrollBy:
+      return CameraUpdate.scrollBy(10, 10);
+    case CameraUpdateType.zoomBy:
+      return CameraUpdate.zoomBy(_kTestZoombByAmount, const Offset(1, 1));
+    case CameraUpdateType.zoomTo:
+      return CameraUpdate.zoomTo(_kTestCameraZoomLevel);
+    case CameraUpdateType.zoomIn:
+      return CameraUpdate.zoomIn();
+    case CameraUpdateType.zoomOut:
+      return CameraUpdate.zoomOut();
+  }
+}
+
+Future<void> _checkCameraUpdateByType(
+  CameraUpdateType type,
+  CameraPosition currentPosition,
+  CameraPosition? oldPosition,
+  GoogleMapController controller,
+  Matcher Function(Matcher matcher) wrapMatcher,
+) async {
+  // The target might differ a bit from the expected target; this is why we use
+  // a threshold for the target.
+  const double latLngThreshold = 0.05;
+
+  switch (type) {
+    case CameraUpdateType.newCameraPosition:
+      expect(currentPosition.bearing,
+          wrapMatcher(equals(_kTestCameraPosition.bearing)));
+      expect(
+          currentPosition.zoom, wrapMatcher(equals(_kTestCameraPosition.zoom)));
+      expect(
+          currentPosition.tilt, wrapMatcher(equals(_kTestCameraPosition.tilt)));
+      expect(
+          currentPosition.target.latitude,
+          wrapMatcher(
+              closeTo(_kTestCameraPosition.target.latitude, latLngThreshold)));
+      expect(
+          currentPosition.target.longitude,
+          wrapMatcher(
+              closeTo(_kTestCameraPosition.target.longitude, latLngThreshold)));
+    case CameraUpdateType.newLatLng:
+      expect(currentPosition.target.latitude,
+          wrapMatcher(closeTo(_kTestMapCenter.latitude, latLngThreshold)));
+      expect(currentPosition.target.longitude,
+          wrapMatcher(closeTo(_kTestMapCenter.longitude, latLngThreshold)));
+    case CameraUpdateType.newLatLngBounds:
+      final LatLngBounds bounds = await controller.getVisibleRegion();
+      expect(
+          bounds.northeast.longitude,
+          wrapMatcher(
+              closeTo(_testCameraBounds.northeast.longitude, latLngThreshold)));
+      expect(
+          bounds.southwest.longitude,
+          wrapMatcher(
+              closeTo(_testCameraBounds.southwest.longitude, latLngThreshold)));
+    case CameraUpdateType.newLatLngZoom:
+      expect(currentPosition.target.latitude,
+          wrapMatcher(closeTo(_kTestMapCenter.latitude, latLngThreshold)));
+      expect(currentPosition.target.longitude,
+          wrapMatcher(closeTo(_kTestMapCenter.longitude, latLngThreshold)));
+      expect(currentPosition.zoom, wrapMatcher(equals(_kTestCameraZoomLevel)));
+    case CameraUpdateType.scrollBy:
+      // For scrollBy, just check that the location has changed.
+      if (oldPosition != null) {
+        expect(currentPosition.target.latitude,
+            isNot(equals(oldPosition.target.latitude)));
+        expect(currentPosition.target.longitude,
+            isNot(equals(oldPosition.target.longitude)));
+      }
+    case CameraUpdateType.zoomBy:
+      expect(currentPosition.zoom,
+          wrapMatcher(equals(kInitialZoomLevel + _kTestZoombByAmount)));
+    case CameraUpdateType.zoomTo:
+      expect(currentPosition.zoom, wrapMatcher(equals(_kTestCameraZoomLevel)));
+    case CameraUpdateType.zoomIn:
+      expect(currentPosition.zoom, wrapMatcher(equals(kInitialZoomLevel + 1)));
+    case CameraUpdateType.zoomOut:
+      expect(currentPosition.zoom, wrapMatcher(equals(kInitialZoomLevel - 1)));
+  }
 }

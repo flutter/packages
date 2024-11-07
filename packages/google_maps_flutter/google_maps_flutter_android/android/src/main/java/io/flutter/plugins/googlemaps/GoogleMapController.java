@@ -937,12 +937,21 @@ class GoogleMapController
   }
 
   @Override
-  public void animateCamera(@NonNull Messages.PlatformCameraUpdate cameraUpdate) {
+  public void animateCamera(
+      @NonNull Messages.PlatformCameraUpdate cameraUpdate,
+      @Nullable Messages.PlatformCameraUpdateAnimationConfiguration configuration) {
     if (googleMap == null) {
       throw new FlutterError(
           "GoogleMap uninitialized", "animateCamera called prior to map initialization", null);
     }
-    googleMap.animateCamera(Convert.cameraUpdateFromPigeon(cameraUpdate, density));
+    if (configuration != null && configuration.getDurationMilliseconds() != null) {
+      googleMap.animateCamera(
+          Convert.cameraUpdateFromPigeon(cameraUpdate, density),
+          configuration.getDurationMilliseconds().intValue(),
+          null);
+    } else {
+      googleMap.animateCamera(Convert.cameraUpdateFromPigeon(cameraUpdate, density));
+    }
   }
 
   @Override
@@ -1059,6 +1068,11 @@ class GoogleMapController
   @Override
   public @NonNull Boolean isTrafficEnabled() {
     return Objects.requireNonNull(googleMap).isTrafficEnabled();
+  }
+
+  @Override
+  public @NonNull Messages.PlatformCameraPosition getCameraPosition() {
+    return Convert.cameraPositionToPigeon(Objects.requireNonNull(googleMap).getCameraPosition());
   }
 
   @Override

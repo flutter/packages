@@ -656,6 +656,8 @@
 }
 
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+               andConfiguration:
+                   (nullable FGMPlatformCameraUpdateAnimationConfiguration *)configuration
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate);
   if (!update) {
@@ -664,7 +666,14 @@
                                  details:nil];
     return;
   }
-  [self.controller.mapView animateWithCameraUpdate:update];
+  if (configuration.durationMilliseconds) {
+    [CATransaction begin];
+    [CATransaction setAnimationDuration:[configuration.durationMilliseconds doubleValue] / 1000];
+    [self.controller.mapView animateWithCameraUpdate:update];
+    [CATransaction commit];
+  } else {
+    [self.controller.mapView animateWithCameraUpdate:update];
+  }
 }
 
 - (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
@@ -820,6 +829,11 @@
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return [FGMPlatformZoomRange makeWithMin:@(self.controller.mapView.minZoom)
                                        max:@(self.controller.mapView.maxZoom)];
+}
+
+- (nullable FGMPlatformCameraPosition *)cameraPosition:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return FGMGetPigeonCameraPositionForPosition(self.controller.mapView.camera);
 }
 
 @end
