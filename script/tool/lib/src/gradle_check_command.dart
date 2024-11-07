@@ -327,12 +327,16 @@ plugins {
   /// compatibility with apps that use AGP 8+.
   bool _validateNamespace(RepositoryPackage package, String gradleContents,
       {required bool isExample}) {
-    final RegExp namespaceRegex =
+    final RegExp namespaceBlockRegex =
         RegExp('^\\s*namespace\\s+[\'"](.*?)[\'"]', multiLine: true);
-    final RegExpMatch? namespaceMatch =
-        namespaceRegex.firstMatch(gradleContents);
+    final RegExpMatch? namespaceBlockMatch =
+        namespaceBlockRegex.firstMatch(gradleContents);
+    final RegExp namespaceDeclarationRegex =
+        RegExp('namespace = (\'|")(.*)(\'|")');
+    final RegExpMatch? namespaceDeclarationMatch =
+        namespaceDeclarationRegex.firstMatch(gradleContents);
 
-    if (namespaceMatch == null) {
+    if (namespaceBlockMatch == null && namespaceDeclarationMatch == null) {
       const String errorMessage = '''
 build.gradle must set a "namespace":
 
@@ -350,7 +354,9 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
       return false;
     } else {
       return _validateNamespaceMatchesManifest(package,
-          isExample: isExample, namespace: namespaceMatch.group(1)!);
+          isExample: isExample,
+          namespace: (namespaceBlockMatch?.group(1) ??
+              namespaceDeclarationMatch?.group(2))!);
     }
   }
 
