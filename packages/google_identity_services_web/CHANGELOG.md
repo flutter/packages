@@ -5,6 +5,9 @@
 ## 0.3.1+4
 
 * Restores support for Dart `^3.3.0`.
+* Clean up documentation of callbacks in `CodeClientConfig`,
+  `TokenClientConfig`, `onGoogleLibraryLoad`, and `revoke` to indicate they only
+  accept Dart functions and not JS functions.
 
 ## 0.3.1+3
 
