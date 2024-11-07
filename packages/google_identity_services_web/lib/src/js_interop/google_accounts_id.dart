@@ -164,7 +164,8 @@ extension GoogleAccountsIdExtension on GoogleAccountsId {
   /// ID is the `sub` property of the [CredentialResponse.credential] payload.
   ///
   /// The optional [callback] is a function that gets called to report on the
-  /// success of the revocation call.
+  /// success of the revocation call. It must be a Dart function and not a JS
+  /// function.
   ///
   /// Method: google.accounts.id.revoke
   /// https://developers.google.com/identity/gsi/web/reference/js-reference#google.accounts.id.revoke

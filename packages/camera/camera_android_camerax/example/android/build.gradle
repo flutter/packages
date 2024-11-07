@@ -1,8 +1,5 @@
 buildscript {
-    // This version should intentionally be a 1.7.* version and lower than the
-    // version of kotlin-bom defined in packages/camera/camera_android_camerax/android/build.gradle.
-    // This tests that the kotlin version resolution continues to work.
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.9.0'
     repositories {
         google()
         mavenCentral()
