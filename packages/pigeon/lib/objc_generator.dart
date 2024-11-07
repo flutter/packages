@@ -1515,7 +1515,7 @@ String _propertyTypeForDartType(TypeDeclaration type,
 }
 
 String _capitalize(String str) =>
-    (str.isEmpty) ? '' : str[0].toUpperCase() + str.substring(1);
+    str.isEmpty ? '' : str[0].toUpperCase() + str.substring(1);
 
 /// Returns the components of the objc selector that will be generated from
 /// [func], ie the strings between the semicolons.  [lastSelectorComponent] is

@@ -167,3 +167,39 @@ extension SK2PriceLocaleMessage: Equatable {
     return lhs.currencyCode == rhs.currencyCode && lhs.currencySymbol == rhs.currencySymbol
   }
 }
+
+@available(iOS 15.0, macOS 12.0, *)
+extension Product.PurchaseResult {
+  func convertToPigeon() -> SK2ProductPurchaseResultMessage {
+    switch self {
+    case .success(_):
+      return SK2ProductPurchaseResultMessage.success
+    case .userCancelled:
+      return SK2ProductPurchaseResultMessage.userCancelled
+    case .pending:
+      return SK2ProductPurchaseResultMessage.pending
+    @unknown default:
+      fatalError()
+    }
+  }
+}
+
+@available(iOS 15.0, macOS 12.0, *)
+extension Transaction {
+  func convertToPigeon(receipt: String?) -> SK2TransactionMessage {
+
+    let dateFromatter: DateFormatter = DateFormatter()
+    dateFromatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+    return SK2TransactionMessage(
+      id: Int64(id),
+      originalId: Int64(originalID),
+      productId: productID,
+      purchaseDate: dateFromatter.string(from: purchaseDate),
+      purchasedQuantity: Int64(purchasedQuantity),
+      appAccountToken: appAccountToken?.uuidString,
+      restoring: receipt != nil,
+      receiptData: receipt
+    )
+  }
+}

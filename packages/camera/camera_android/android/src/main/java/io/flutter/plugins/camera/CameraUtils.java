@@ -6,12 +6,17 @@ package io.flutter.plugins.camera;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
+import io.flutter.plugins.camera.features.autofocus.FocusMode;
+import io.flutter.plugins.camera.features.exposurelock.ExposureMode;
+import io.flutter.plugins.camera.features.flash.FlashMode;
+import io.flutter.plugins.camera.features.resolution.ResolutionPreset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,59 +33,6 @@ public final class CameraUtils {
    */
   static CameraManager getCameraManager(Context context) {
     return (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-  }
-
-  /**
-   * Serializes the {@link PlatformChannel.DeviceOrientation} to a string value.
-   *
-   * @param orientation The orientation to serialize.
-   * @return The serialized orientation.
-   * @throws UnsupportedOperationException when the provided orientation not have a corresponding
-   *     string value.
-   */
-  static String serializeDeviceOrientation(PlatformChannel.DeviceOrientation orientation) {
-    if (orientation == null)
-      throw new UnsupportedOperationException("Could not serialize null device orientation.");
-    switch (orientation) {
-      case PORTRAIT_UP:
-        return "portraitUp";
-      case PORTRAIT_DOWN:
-        return "portraitDown";
-      case LANDSCAPE_LEFT:
-        return "landscapeLeft";
-      case LANDSCAPE_RIGHT:
-        return "landscapeRight";
-      default:
-        throw new UnsupportedOperationException(
-            "Could not serialize device orientation: " + orientation.toString());
-    }
-  }
-
-  /**
-   * Deserializes a string value to its corresponding {@link PlatformChannel.DeviceOrientation}
-   * value.
-   *
-   * @param orientation The string value to deserialize.
-   * @return The deserialized orientation.
-   * @throws UnsupportedOperationException when the provided string value does not have a
-   *     corresponding {@link PlatformChannel.DeviceOrientation}.
-   */
-  static PlatformChannel.DeviceOrientation deserializeDeviceOrientation(String orientation) {
-    if (orientation == null)
-      throw new UnsupportedOperationException("Could not deserialize null device orientation.");
-    switch (orientation) {
-      case "portraitUp":
-        return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
-      case "portraitDown":
-        return PlatformChannel.DeviceOrientation.PORTRAIT_DOWN;
-      case "landscapeLeft":
-        return PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT;
-      case "landscapeRight":
-        return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
-      default:
-        throw new UnsupportedOperationException(
-            "Could not deserialize device orientation: " + orientation);
-    }
   }
 
   /**
@@ -142,5 +94,187 @@ public final class CameraUtils {
       cameras.add(details);
     }
     return cameras;
+  }
+
+  /**
+   * Converts a DeviceOrientation from the systemchannels package to a PlatformDeviceOrientation
+   * from Pigeon.
+   *
+   * @param orientation A DeviceOrientation.
+   * @return The corresponding PlatformDeviceOrientation.
+   */
+  @NonNull
+  public static Messages.PlatformDeviceOrientation orientationToPigeon(
+      @NonNull PlatformChannel.DeviceOrientation orientation) {
+    switch (orientation) {
+      case PORTRAIT_UP:
+        return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+      case PORTRAIT_DOWN:
+        return Messages.PlatformDeviceOrientation.PORTRAIT_DOWN;
+      case LANDSCAPE_LEFT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_LEFT;
+      case LANDSCAPE_RIGHT:
+        return Messages.PlatformDeviceOrientation.LANDSCAPE_RIGHT;
+    }
+    return Messages.PlatformDeviceOrientation.PORTRAIT_UP;
+  }
+
+  /**
+   * Converts a PlatformDeviceOrientation from Pigeon to DeviceOrientation from PlatformChannel.
+   *
+   * @param orientation A PlatformDeviceOrientation
+   * @return The corresponding DeviceOrientation. Defaults to PORTRAIT_UP.
+   */
+  @NonNull
+  public static PlatformChannel.DeviceOrientation orientationFromPigeon(
+      @NonNull Messages.PlatformDeviceOrientation orientation) {
+    switch (orientation) {
+      case PORTRAIT_UP:
+        return PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+      case PORTRAIT_DOWN:
+        return PlatformChannel.DeviceOrientation.PORTRAIT_DOWN;
+      case LANDSCAPE_LEFT:
+        return PlatformChannel.DeviceOrientation.LANDSCAPE_LEFT;
+      case LANDSCAPE_RIGHT:
+        return PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
+    }
+    throw new IllegalStateException("Unreachable code");
+  }
+
+  /**
+   * Converts a FocusMode from the autofocus package to a PlatformFocusMode from Pigeon.
+   *
+   * @param focusMode A FocusMode.
+   * @return The corresponding PlatformFocusMode.
+   */
+  @NonNull
+  public static Messages.PlatformFocusMode focusModeToPigeon(@NonNull FocusMode focusMode) {
+    switch (focusMode) {
+      case auto:
+        return Messages.PlatformFocusMode.AUTO;
+      case locked:
+        return Messages.PlatformFocusMode.LOCKED;
+    }
+    return Messages.PlatformFocusMode.AUTO;
+  }
+
+  /**
+   * Converts a PlatformFocusMode from Pigeon to a FocusMode from the autofocus package.
+   *
+   * @param focusMode A PlatformFocusMode.
+   * @return The corresponding FocusMode.
+   */
+  @NonNull
+  public static FocusMode focusModeFromPigeon(@NonNull Messages.PlatformFocusMode focusMode) {
+    switch (focusMode) {
+      case AUTO:
+        return FocusMode.auto;
+      case LOCKED:
+        return FocusMode.locked;
+    }
+    throw new IllegalStateException("Unreachable code");
+  }
+
+  /**
+   * Converts an ExposureMode from the exposurelock package to a PlatformExposureMode from Pigeon.
+   *
+   * @param exposureMode An ExposureMode.
+   * @return The corresponding PlatformExposureMode.
+   */
+  @NonNull
+  public static Messages.PlatformExposureMode exposureModeToPigeon(
+      @NonNull ExposureMode exposureMode) {
+    switch (exposureMode) {
+      case auto:
+        return Messages.PlatformExposureMode.AUTO;
+      case locked:
+        return Messages.PlatformExposureMode.LOCKED;
+    }
+    return Messages.PlatformExposureMode.AUTO;
+  }
+
+  /**
+   * Converts a PlatformExposureMode to ExposureMode from the exposurelock package.
+   *
+   * @param mode A PlatformExposureMode.
+   * @return The corresponding ExposureMode.
+   */
+  @NonNull
+  public static ExposureMode exposureModeFromPigeon(@NonNull Messages.PlatformExposureMode mode) {
+    switch (mode) {
+      case AUTO:
+        return ExposureMode.auto;
+      case LOCKED:
+        return ExposureMode.locked;
+    }
+    throw new IllegalStateException("Unreachable code");
+  }
+
+  /**
+   * Converts a PlatformResolutionPreset from Pigeon to a ResolutionPreset from the resolution
+   * package.
+   *
+   * @param preset A PlatformResolutionPreset.
+   * @return The corresponding ResolutionPreset.
+   */
+  @NonNull
+  public static ResolutionPreset resolutionPresetFromPigeon(
+      @NonNull Messages.PlatformResolutionPreset preset) {
+    switch (preset) {
+      case LOW:
+        return ResolutionPreset.low;
+      case MEDIUM:
+        return ResolutionPreset.medium;
+      case HIGH:
+        return ResolutionPreset.high;
+      case VERY_HIGH:
+        return ResolutionPreset.veryHigh;
+      case ULTRA_HIGH:
+        return ResolutionPreset.ultraHigh;
+      case MAX:
+        return ResolutionPreset.max;
+    }
+    throw new IllegalStateException("Unreachable code");
+  }
+
+  /**
+   * Converts a PlatformImageFormatGroup from Pigeon to an Integer representing an image format.
+   *
+   * @param format A PlatformImageFormatGroup.
+   * @return The corresponding integer code. Defaults to YUV_420_888.
+   */
+  @NonNull
+  public static Integer imageFormatGroupFromPigeon(
+      @NonNull Messages.PlatformImageFormatGroup format) {
+    switch (format) {
+      case YUV420:
+        return ImageFormat.YUV_420_888;
+      case JPEG:
+        return ImageFormat.JPEG;
+      case NV21:
+        return ImageFormat.NV21;
+    }
+    throw new IllegalStateException("Unreachable code");
+  }
+
+  /**
+   * Converts a PlatformFlashMode from Pigeon to a FlashMode from the flash package.
+   *
+   * @param mode A PlatformFlashMode.
+   * @return The corresponding FlashMode.
+   */
+  @NonNull
+  public static FlashMode flashModeFromPigeon(@NonNull Messages.PlatformFlashMode mode) {
+    switch (mode) {
+      case AUTO:
+        return FlashMode.auto;
+      case OFF:
+        return FlashMode.off;
+      case ALWAYS:
+        return FlashMode.always;
+      case TORCH:
+        return FlashMode.torch;
+    }
+    throw new IllegalStateException("Unreachable code");
   }
 }

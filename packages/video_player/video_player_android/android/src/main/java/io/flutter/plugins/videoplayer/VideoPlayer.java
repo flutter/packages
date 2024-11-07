@@ -97,7 +97,8 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceDestroyed() {
-    exoPlayer.stop();
+    // Intentionally do not call pause/stop here, because the surface has already been released
+    // at this point (see https://github.com/flutter/flutter/issues/156451).
     savedStateDuring = ExoPlayerState.save(exoPlayer);
     exoPlayer.release();
   }

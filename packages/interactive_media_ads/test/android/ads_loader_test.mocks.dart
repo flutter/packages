@@ -654,10 +654,64 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
       ) as _i6.Future<void>);
 
   @override
-  _i6.Future<void> init() => (super.noSuchMethod(
+  _i6.Future<void> init(_i2.AdsRenderingSettings? settings) =>
+      (super.noSuchMethod(
         Invocation.method(
           #init,
+          [settings],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> focus() => (super.noSuchMethod(
+        Invocation.method(
+          #focus,
           [],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<_i2.AdProgressInfo?> getAdProgressInfo() => (super.noSuchMethod(
+        Invocation.method(
+          #getAdProgressInfo,
+          [],
+        ),
+        returnValue: _i6.Future<_i2.AdProgressInfo?>.value(),
+        returnValueForMissingStub: _i6.Future<_i2.AdProgressInfo?>.value(),
+      ) as _i6.Future<_i2.AdProgressInfo?>);
+
+  @override
+  _i6.Future<_i2.Ad?> getCurrentAd() => (super.noSuchMethod(
+        Invocation.method(
+          #getCurrentAd,
+          [],
+        ),
+        returnValue: _i6.Future<_i2.Ad?>.value(),
+        returnValueForMissingStub: _i6.Future<_i2.Ad?>.value(),
+      ) as _i6.Future<_i2.Ad?>);
+
+  @override
+  _i6.Future<void> removeAdErrorListener(_i2.AdErrorListener? errorListener) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeAdErrorListener,
+          [errorListener],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> removeAdEventListener(
+          _i2.AdEventListener? adEventListener) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeAdEventListener,
+          [adEventListener],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
@@ -895,6 +949,16 @@ class MockFrameLayout extends _i1.Mock implements _i2.FrameLayout {
   _i6.Future<void> addView(_i2.View? view) => (super.noSuchMethod(
         Invocation.method(
           #addView,
+          [view],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> removeView(_i2.View? view) => (super.noSuchMethod(
+        Invocation.method(
+          #removeView,
           [view],
         ),
         returnValue: _i6.Future<void>.value(),

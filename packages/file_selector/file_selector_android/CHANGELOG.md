@@ -1,3 +1,7 @@
+## 0.5.1+10
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.
+
 ## 0.5.1+9
 
 * Updates Java compatibility version to 11.

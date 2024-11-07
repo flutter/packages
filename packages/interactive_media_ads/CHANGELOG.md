@@ -1,3 +1,28 @@
+## 0.2.2+15
+
+* Adds remaining methods for internal wrapper of the Android native `BaseManager`.
+
+## 0.2.2+14
+
+* Adds internal wrapper for iOS native `IMACompanionAdSlot` and `IMACompanionDelegate`.
+
+## 0.2.2+13
+
+* Adds internal wrapper for Android native `Ad`.
+
+## 0.2.2+12
+
+* Adds internal wrapper for iOS native `IMACompanionAd`.
+
+## 0.2.2+11
+
+* Adds internal wrapper for Android native `UniversalAdId`.
+
+## 0.2.2+10
+
+* Fixes bug where Android would show the last frame of the previous Ad before playing the current
+  one.
+
 ## 0.2.2+9
 
 * Adds internal wrapper for Android native `CompanionAd`.

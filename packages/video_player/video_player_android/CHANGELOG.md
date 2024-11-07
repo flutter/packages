@@ -1,3 +1,34 @@
+## 2.7.16
+
+* Updates internal Pigeon API to use newer features.
+
+## 2.7.15
+
+* Changes the rotation correction calculation for Android API 29+ to use
+  the one that is reported by the video's format instead of the unapplied
+  rotation degrees that Exoplayer does not report on Android API 21+.
+* Changes the rotation correction calculation for Android APIs 21-28 to 0
+  because the Impeller backend used on those API versions correctly rotates
+  the video being played automatically.
+
+## 2.7.14
+
+* Removes SSL workaround for API 19, which is no longer supported.
+
+## 2.7.13
+
+* When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
+  active (i.e. it was previously disposed or never created), the resulting
+  platform exception is more informative than a "NullPointerException".
+
+## 2.7.12
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/156451) where
+  additional harmless but annoying warnings in the form of native stack traces
+  would be printed when the app was backgrounded. There may be additional
+  warnings that are not yet fixed, but this should address the
+  most common case.
+
 ## 2.7.11
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/156158) where a
