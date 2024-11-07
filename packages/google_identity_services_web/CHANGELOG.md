@@ -1,13 +1,13 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Clean up documentation of callbacks in `CodeClientConfig`,
+  `TokenClientConfig`, `onGoogleLibraryLoad`, and `revoke` to indicate they only
+  accept Dart functions and not JS functions.
 
 ## 0.3.1+4
 
 * Restores support for Dart `^3.3.0`.
-* Clean up documentation of callbacks in `CodeClientConfig`,
-  `TokenClientConfig`, `onGoogleLibraryLoad`, and `revoke` to indicate they only
-  accept Dart functions and not JS functions.
 
 ## 0.3.1+3
 
