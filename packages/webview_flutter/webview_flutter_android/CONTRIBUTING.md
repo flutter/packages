@@ -56,13 +56,19 @@ to be added.
 
 Tests location: `android/src/test/java/io/flutter/plugins/webviewflutter/`
 
-#### Dart Unit Testing
+## Important Notes
 
-Tests for the platform implementations use [mockito] to generate mock objects of the native Dart
-wrappers. To generate the mock objects in `test/`, run
-`dart run build_runner build --delete-conflicting-outputs`.
+* To avoid a potentially breaking change, the code in `android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.g.kt`
+needs to be updated after the pigeon generator is ran. Please add
 
-#### 
+```kotlin
+val instance: Any? = getInstance(identifier)
+if (instance is WebViewProxyApi.WebViewPlatformView) {
+  instance.destroy()
+}
+```
+
+to `AndroidWebkitLibraryPigeonInstanceManager.remove`.
 
 ## Recommended Process for Adding a New Feature
 
