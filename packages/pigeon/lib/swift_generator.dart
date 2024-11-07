@@ -28,6 +28,7 @@ class SwiftOptions {
     this.copyrightHeader,
     this.fileSpecificClassNameComponent,
     this.errorClassName,
+    this.includeErrorClass = true,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -39,6 +40,12 @@ class SwiftOptions {
   /// The name of the error class used for passing custom error parameters.
   final String? errorClassName;
 
+  /// Whether to include the error class in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Swift file in the same directory.
+  final bool includeErrorClass;
+
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
@@ -47,6 +54,7 @@ class SwiftOptions {
       fileSpecificClassNameComponent:
           map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
+      includeErrorClass: map['includeErrorClass'] as bool? ?? true,
     );
   }
 
@@ -58,6 +66,7 @@ class SwiftOptions {
       if (fileSpecificClassNameComponent != null)
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
+      'includeErrorClass': includeErrorClass,
     };
     return result;
   }
@@ -1303,7 +1312,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         .any((Api api) => api.methods.isNotEmpty);
     final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
 
-    _writePigeonError(generatorOptions, indent);
+    if (generatorOptions.includeErrorClass) {
+      _writePigeonError(generatorOptions, indent);
+    }
 
     if (hasHostApi || hasProxyApi) {
       _writeWrapResult(indent);

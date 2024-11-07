@@ -5715,6 +5715,78 @@ void main() {
     );
   });
 
+  testWidgets(
+      'should return the current GoRouterState when router.currentState is called',
+      (WidgetTester tester) async {
+    final List<RouteBase> routes = <RouteBase>[
+      GoRoute(
+          name: 'home',
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen()),
+      GoRoute(
+          name: 'books',
+          path: '/books',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('books')),
+      GoRoute(
+          name: 'boats',
+          path: '/boats',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('boats')),
+      ShellRoute(
+        builder: (BuildContext context, GoRouterState state, Widget child) =>
+            child,
+        routes: <RouteBase>[
+          GoRoute(
+            name: 'tulips',
+            path: '/tulips',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('tulips'),
+          ),
+        ],
+      )
+    ];
+
+    final GoRouter router = await createRouter(routes, tester);
+    await tester.pumpAndSettle();
+
+    GoRouterState? state = router.state;
+    expect(state?.name, 'home');
+    expect(state?.fullPath, '/');
+
+    router.go('/books');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'books');
+    expect(state?.fullPath, '/books');
+
+    router.push('/boats');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'boats');
+    expect(state?.fullPath, '/boats');
+
+    router.pop();
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'books');
+    expect(state?.fullPath, '/books');
+
+    router.go('/tulips');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'tulips');
+    expect(state?.fullPath, '/tulips');
+
+    router.go('/books');
+    router.push('/tulips');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'tulips');
+    expect(state?.fullPath, '/tulips');
+  });
+
   testWidgets('should allow route paths without leading /',
       (WidgetTester tester) async {
     final List<GoRoute> routes = <GoRoute>[

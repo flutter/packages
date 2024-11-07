@@ -750,9 +750,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
-    final List<PlatformLatLng?> points =
+    final List<PlatformLatLng> points =
         polygon.points.map(_platformLatLngFromLatLng).toList();
-    final List<List<PlatformLatLng?>?> holes =
+    final List<List<PlatformLatLng>> holes =
         polygon.holes.map((List<LatLng> hole) {
       return hole.map(_platformLatLngFromLatLng).toList();
     }).toList();
@@ -771,9 +771,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    final List<PlatformLatLng?> points =
+    final List<PlatformLatLng> points =
         polyline.points.map(_platformLatLngFromLatLng).toList();
-    final List<PlatformPatternItem?> pattern =
+    final List<PlatformPatternItem> pattern =
         polyline.patterns.map(platformPatternItemFromPatternItem).toList();
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
