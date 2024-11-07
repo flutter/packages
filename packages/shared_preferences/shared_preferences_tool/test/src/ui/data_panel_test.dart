@@ -47,17 +47,15 @@ void main() {
     }) {
       const String selectedKey = 'selectedTestKey';
       when(notifierMock.value).thenReturn(
-        AsyncState<SharedPreferencesState>.data(
-          SharedPreferencesState(
-            allKeys: const <String>[selectedKey],
-            editing: editing,
-            selectedKey: state == null
-                ? null
-                : SelectedSharedPreferencesKey(
-                    key: selectedKey,
-                    value: state,
-                  ),
-          ),
+        SharedPreferencesState(
+          allKeys: const AsyncState<List<String>>.data(<String>[selectedKey]),
+          editing: editing,
+          selectedKey: state == null
+              ? null
+              : SelectedSharedPreferencesKey(
+                  key: selectedKey,
+                  value: state,
+                ),
         ),
       );
     }

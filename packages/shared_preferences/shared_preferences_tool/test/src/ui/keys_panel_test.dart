@@ -41,36 +41,33 @@ void main() {
       );
     }
 
-    void stubAsyncState(AsyncState<SharedPreferencesState> state) {
-      when(notifierMock.value).thenReturn(state);
-    }
-
     void stubDataState({
-      List<String> allKeys = const <String>[],
+      AsyncState<List<String>> allKeys =
+          const AsyncState<List<String>>.data(<String>[]),
       SelectedSharedPreferencesKey? selectedKey,
       bool editing = false,
     }) {
-      stubAsyncState(
-        AsyncState<SharedPreferencesState>.data(
-          SharedPreferencesState(
-            allKeys: allKeys,
-            selectedKey: selectedKey,
-            editing: editing,
-          ),
+      when(notifierMock.value).thenReturn(
+        SharedPreferencesState(
+          allKeys: allKeys,
+          selectedKey: selectedKey,
+          editing: editing,
         ),
       );
     }
 
     testWidgets('should show loading state', (WidgetTester tester) async {
-      stubAsyncState(const AsyncState<SharedPreferencesState>.loading());
+      stubDataState(
+        allKeys: const AsyncState<List<String>>.loading(),
+      );
       await pumpKeysPanel(tester);
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('should show error state', (WidgetTester tester) async {
-      stubAsyncState(
-        const AsyncState<SharedPreferencesState>.error(
+      stubDataState(
+        allKeys: const AsyncState<List<String>>.error(
           'error',
           StackTrace.empty,
         ),
@@ -84,7 +81,7 @@ void main() {
         (WidgetTester tester) async {
       const List<String> allKeys = <String>['key1', 'key2'];
       stubDataState(
-        allKeys: allKeys,
+        allKeys: const AsyncState<List<String>>.data(allKeys),
       );
 
       await pumpKeysPanel(tester);
@@ -99,8 +96,9 @@ void main() {
       (WidgetTester tester) async {
         const String selectedKey = 'selectedKey';
         const List<String> keys = <String>['key1', selectedKey, 'key2'];
+
         stubDataState(
-          allKeys: keys,
+          allKeys: const AsyncState<List<String>>.data(keys),
           selectedKey: const SelectedSharedPreferencesKey(
             key: selectedKey,
             value: AsyncState<SharedPreferencesData>.loading(),
@@ -193,7 +191,9 @@ void main() {
       'should select key on key clicked',
       (WidgetTester tester) async {
         const String keyToSelect = 'keyToSelect';
-        stubDataState(allKeys: <String>[keyToSelect]);
+        stubDataState(
+          allKeys: const AsyncState<List<String>>.data(<String>[keyToSelect]),
+        );
         await pumpKeysPanel(tester);
 
         await tester.tap(find.text(keyToSelect));

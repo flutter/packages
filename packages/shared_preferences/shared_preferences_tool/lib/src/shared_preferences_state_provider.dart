@@ -5,6 +5,7 @@
 import 'package:devtools_app_shared/service.dart';
 import 'package:devtools_extensions/devtools_extensions.dart';
 import 'package:flutter/widgets.dart';
+import 'package:vm_service/vm_service.dart';
 
 import 'async_state.dart';
 import 'shared_preferences_state.dart';
@@ -50,7 +51,7 @@ class _SharedPreferencesStateInheritedModel
     required this.state,
   });
 
-  final AsyncState<SharedPreferencesState> state;
+  final SharedPreferencesState state;
 
   @override
   bool updateShouldNotify(
@@ -67,41 +68,18 @@ class _SharedPreferencesStateInheritedModel
     return dependencies.any(
       (_StateInheritedModelAspect aspect) => switch (aspect) {
         _StateInheritedModelAspect.keysList =>
-          state.keysListState != oldWidget.state.keysListState,
+          state.allKeys != oldWidget.state.allKeys,
         _StateInheritedModelAspect.selectedKey =>
-          state.selectedKeyState != oldWidget.state.selectedKeyState,
+          state.selectedKey != oldWidget.state.selectedKey,
         _StateInheritedModelAspect.selectedKeyData =>
-          state.selectedKeyDataState != oldWidget.state.selectedKeyDataState,
+          state.selectedKey?.value != oldWidget.state.selectedKey?.value,
         _StateInheritedModelAspect.editing =>
-          state.editingState != oldWidget.state.editingState,
+          state.editing != oldWidget.state.editing,
         _StateInheritedModelAspect.legacyApi =>
-          state.legacyApiState != oldWidget.state.legacyApiState,
+          state.legacyApi != oldWidget.state.legacyApi,
       },
     );
   }
-}
-
-extension on AsyncState<SharedPreferencesState> {
-  AsyncState<List<String>> get keysListState => mapWhenData(
-        (SharedPreferencesState data) => data.allKeys,
-      );
-
-  SelectedSharedPreferencesKey? get selectedKeyState => dataOrNull?.selectedKey;
-
-  AsyncState<SharedPreferencesData?> get selectedKeyDataState =>
-      flatMapWhenData(
-        (SharedPreferencesState data) {
-          if (data.selectedKey
-              case final SelectedSharedPreferencesKey selectedKey?) {
-            return selectedKey.value;
-          }
-
-          return const AsyncState<SharedPreferencesData?>.data(null);
-        },
-      );
-
-  bool get editingState => dataOrNull?.editing ?? false;
-  bool get legacyApiState => dataOrNull?.legacyApi ?? false;
 }
 
 @visibleForTesting
@@ -127,11 +105,11 @@ class InnerSharedPreferencesStateProvider extends StatelessWidget {
   Widget build(BuildContext context) {
     return _StateInheritedWidget(
       notifier: notifier,
-      child: ValueListenableBuilder<AsyncState<SharedPreferencesState>>(
+      child: ValueListenableBuilder<SharedPreferencesState>(
         valueListenable: notifier,
         builder: (
           BuildContext context,
-          AsyncState<SharedPreferencesState> value,
+          SharedPreferencesState value,
           _,
         ) {
           return _SharedPreferencesStateInheritedModel(
@@ -165,7 +143,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
           aspect: _StateInheritedModelAspect.keysList,
         )!
         .state
-        .keysListState;
+        .allKeys;
   }
 
   /// Returns the selected key from the closest
@@ -181,7 +159,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
           aspect: _StateInheritedModelAspect.selectedKey,
         )!
         .state
-        .selectedKeyState;
+        .selectedKey;
   }
 
   /// Returns the selected key from the closest
@@ -198,7 +176,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
   /// Use of this method will cause the given [context] to rebuild whenever the
   /// selected key data changes, including loading and error states.
   /// This will not cause a rebuild when any other part of the state changes.
-  static AsyncState<SharedPreferencesData?> selectedKeyDataOf(
+  static AsyncState<SharedPreferencesData>? selectedKeyDataOf(
     BuildContext context,
   ) {
     return context
@@ -207,7 +185,8 @@ class SharedPreferencesStateProvider extends StatefulWidget {
           aspect: _StateInheritedModelAspect.selectedKeyData,
         )!
         .state
-        .selectedKeyDataState;
+        .selectedKey
+        ?.value;
   }
 
   /// Returns whether the selected key is being edited from the closest
@@ -222,7 +201,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
           aspect: _StateInheritedModelAspect.editing,
         )!
         .state
-        .editingState;
+        .editing;
   }
 
   /// Returns whether the legacy api is selected or not from the closest
@@ -237,7 +216,7 @@ class SharedPreferencesStateProvider extends StatefulWidget {
           aspect: _StateInheritedModelAspect.legacyApi,
         )!
         .state
-        .legacyApiState;
+        .legacyApi;
   }
 
   /// The required child widget.
@@ -255,20 +234,15 @@ class _SharedPreferencesStateProviderState
   @override
   void initState() {
     super.initState();
-    final EvalOnDartLibrary asyncEval = EvalOnDartLibrary(
-      'package:shared_preferences/src/shared_preferences_async.dart',
-      serviceManager.service!,
-      serviceManager: serviceManager,
-    );
-    final EvalOnDartLibrary legacyEval = EvalOnDartLibrary(
-      'package:shared_preferences/src/shared_preferences_legacy.dart',
-      serviceManager.service!,
+    final VmService service = serviceManager.service!;
+    final EvalOnDartLibrary extensionEval = EvalOnDartLibrary(
+      'package:shared_preferences/src/devtools_extension.dart',
+      service,
       serviceManager: serviceManager,
     );
     final SharedPreferencesToolEval toolEval = SharedPreferencesToolEval(
-      asyncEval,
-      legacyEval,
-      serviceManager.connectedApp?.isFlutterWebAppNow ?? false,
+      service,
+      extensionEval,
     );
     _notifier = SharedPreferencesStateNotifier(toolEval);
     _notifier.fetchAllKeys();

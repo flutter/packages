@@ -3,9 +3,26 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences_tool/src/async_state.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_state.dart';
 
 void main() {
+  group('SharedPreferencesState', () {
+    test('should be possible to set selected key to null', () {
+      const SharedPreferencesState state = SharedPreferencesState(
+        selectedKey: SelectedSharedPreferencesKey(
+          key: 'key',
+          value: AsyncState<SharedPreferencesData>.loading(),
+        ),
+      );
+
+      expect(
+        state.copyWith(selectedKey: null),
+        equals(const SharedPreferencesState()),
+      );
+    });
+  });
+
   group('SharedPreferencesData', () {
     test('value as string should return formatted value', () {
       const SharedPreferencesData stringData =
@@ -32,22 +49,22 @@ void main() {
   test('should return pretty type', () {
     const SharedPreferencesData stringData =
         SharedPreferencesData.string(value: 'value');
-    expect(stringData.prettyType, 'String');
+    expect(stringData.kind, 'String');
 
     const SharedPreferencesData intData = SharedPreferencesData.int(value: 1);
-    expect(intData.prettyType, 'int');
+    expect(intData.kind, 'int');
 
     const SharedPreferencesData doubleData =
         SharedPreferencesData.double(value: 1.0);
-    expect(doubleData.prettyType, 'double');
+    expect(doubleData.kind, 'double');
 
     const SharedPreferencesData boolData =
         SharedPreferencesData.bool(value: true);
-    expect(boolData.prettyType, 'bool');
+    expect(boolData.kind, 'bool');
 
     const SharedPreferencesData stringListData =
         SharedPreferencesData.stringList(value: <String>['value1', 'value2']);
-    expect(stringListData.prettyType, 'List<String>');
+    expect(stringListData.kind, 'List<String>');
   });
 
   test('should change value', () {

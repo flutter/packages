@@ -2,157 +2,266 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:devtools_app_shared/service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:shared_preferences_tool/src/shared_preferences_state.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_tool_eval.dart';
 import 'package:vm_service/vm_service.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[
   MockSpec<EvalOnDartLibrary>(),
-  MockSpec<InstanceRef>(),
-  MockSpec<Instance>(),
+  MockSpec<VmService>(),
 ])
 import 'shared_preferences_tool_eval_test.mocks.dart';
 
 void main() {
   group('SharedPreferencesToolEval', () {
-    Future<void> testFetchKeys({required bool isWeb}) async {
-      final MockEvalOnDartLibrary asyncEval = MockEvalOnDartLibrary();
-      final MockEvalOnDartLibrary legacyEval = MockEvalOnDartLibrary();
-      final SharedPreferencesToolEval sharedPreferencesToolEval =
-          SharedPreferencesToolEval(
-        asyncEval,
-        legacyEval,
-        isWeb,
-      );
-      addTearDown(sharedPreferencesToolEval.dispose);
-      final MockInstance keysInstance = MockInstance();
-      final List<String> legacyKeys = <String>['key1', 'key2'];
-      final List<String> asyncKeys = <String>['key3', 'key4'];
-      final MockInstance legacyKeysInstance = MockInstance();
+    late MockEvalOnDartLibrary eval;
+    late MockVmService vmService;
+    late SharedPreferencesToolEval sharedPreferencesToolEval;
 
-      asyncEval.stubEvalInstance('SharedPreferencesAsync()', MockInstance());
-      legacyEval.stubEvalInstance(
-          'SharedPreferences.getInstance()', MockInstance());
-      asyncEval.stubPrefsGetInstance('getKeys()', isWeb, keysInstance);
-      keysInstance.stubElements(asyncEval, asyncKeys);
-      legacyEval.stubLegacyPrefsGetInstance(
-        'getKeys()',
-        isWeb,
-        legacyKeysInstance,
+    void stubEvalMethod({
+      required String eventKind,
+      required String method,
+      required Map<String, Object?> response,
+    }) {
+      final StreamController<Event> eventStream = StreamController<Event>();
+      when(vmService.onExtensionEvent).thenAnswer((_) => eventStream.stream);
+      when(
+        eval.eval(
+          'DevtoolsExtension().$method',
+          isAlive: anyNamed('isAlive'),
+        ),
+      ).thenAnswer((_) async {
+        eventStream.add(
+          Event(
+            extensionKind: 'shared_preferences:$eventKind',
+            extensionData: ExtensionData.parse(response),
+          ),
+        );
+        return null;
+      });
+    }
+
+    setUp(() {
+      eval = MockEvalOnDartLibrary();
+      vmService = MockVmService();
+      sharedPreferencesToolEval = SharedPreferencesToolEval(vmService, eval);
+    });
+
+    test('should fetch all keys', () async {
+      final List<String> expectedAsyncKeys = <String>['key1', 'key2'];
+      const List<String> expectedLegacyKeys = <String>['key3', 'key4'];
+      stubEvalMethod(
+        eventKind: 'all_keys',
+        method: 'requestAllKeys()',
+        response: <String, Object?>{
+          'asyncKeys': expectedAsyncKeys,
+          'legacyKeys': expectedLegacyKeys,
+        },
       );
-      legacyKeysInstance.stubElements(legacyEval, legacyKeys);
+
       final KeysResult allKeys = await sharedPreferencesToolEval.fetchAllKeys();
 
-      expect(allKeys.asyncKeys, equals(asyncKeys));
-      expect(allKeys.legacyKeys, equals(legacyKeys));
-    }
-
-    test('should fetch legacy and async keys', () async {
-      await testFetchKeys(isWeb: false);
+      expect(
+        allKeys.asyncKeys,
+        equals(expectedAsyncKeys),
+      );
+      expect(
+        allKeys.legacyKeys,
+        equals(expectedLegacyKeys),
+      );
     });
 
-    test('should fetch legacy and async keys on web', () async {
-      await testFetchKeys(isWeb: true);
+    test('should fetch int value', () async {
+      const String key = 'testKey';
+      const int expectedValue = 42;
+      stubEvalMethod(
+        eventKind: 'value',
+        method: "requestValue('$key', false)",
+        response: <String, Object?>{
+          'value': expectedValue,
+          'kind': 'int',
+        },
+      );
+
+      final SharedPreferencesData data =
+          await sharedPreferencesToolEval.fetchValue(key, false);
+
+      expect(
+        data,
+        equals(
+          const SharedPreferencesData.int(
+            value: expectedValue,
+          ),
+        ),
+      );
+    });
+
+    test('should fetch bool value', () async {
+      const String key = 'testKey';
+      const bool expectedValue = true;
+      stubEvalMethod(
+        eventKind: 'value',
+        method: "requestValue('$key', false)",
+        response: <String, Object?>{
+          'value': expectedValue,
+          'kind': 'bool',
+        },
+      );
+
+      final SharedPreferencesData data =
+          await sharedPreferencesToolEval.fetchValue(key, false);
+
+      expect(
+        data,
+        equals(
+          const SharedPreferencesData.bool(
+            value: expectedValue,
+          ),
+        ),
+      );
+    });
+
+    test('should fetch double value', () async {
+      const String key = 'testKey';
+      const double expectedValue = 11.1;
+      stubEvalMethod(
+        eventKind: 'value',
+        method: "requestValue('$key', false)",
+        response: <String, Object?>{
+          'value': expectedValue,
+          'kind': 'double',
+        },
+      );
+
+      final SharedPreferencesData data =
+          await sharedPreferencesToolEval.fetchValue(key, false);
+
+      expect(
+        data,
+        equals(
+          const SharedPreferencesData.double(
+            value: expectedValue,
+          ),
+        ),
+      );
+    });
+
+    test('should fetch string value', () async {
+      const String key = 'testKey';
+      const String expectedValue = 'value';
+      stubEvalMethod(
+        eventKind: 'value',
+        method: "requestValue('$key', false)",
+        response: <String, Object?>{
+          'value': expectedValue,
+          'kind': 'String',
+        },
+      );
+
+      final SharedPreferencesData data =
+          await sharedPreferencesToolEval.fetchValue(key, false);
+
+      expect(
+        data,
+        equals(
+          const SharedPreferencesData.string(
+            value: expectedValue,
+          ),
+        ),
+      );
+    });
+
+    test('should fetch string list value', () async {
+      const String key = 'testKey';
+      const List<String> expectedValue = <String>['value1', 'value2'];
+      stubEvalMethod(
+        eventKind: 'value',
+        method: "requestValue('$key', true)",
+        response: <String, Object?>{
+          'value': expectedValue,
+          'kind': 'List<String>',
+        },
+      );
+
+      final SharedPreferencesData data =
+          await sharedPreferencesToolEval.fetchValue(key, true);
+
+      expect(
+        data,
+        equals(
+          const SharedPreferencesData.stringList(
+            value: expectedValue,
+          ),
+        ),
+      );
+    });
+
+    test('should throw error on unsupported value', () {
+      const String key = 'testKey';
+      stubEvalMethod(
+        eventKind: 'value',
+        method: "requestValue('$key', true)",
+        response: <String, Object?>{
+          'value': 'error',
+          'kind': 'SomeClass',
+        },
+      );
+
+      expect(
+        () => sharedPreferencesToolEval.fetchValue(key, true),
+        throwsUnsupportedError,
+      );
+    });
+
+    test('should change value', () async {
+      const String key = 'testKey';
+      const String method = "requestValueChange('$key', 'true', 'bool', false)";
+      stubEvalMethod(
+        eventKind: 'change_value',
+        method: method,
+        response: <String, Object?>{},
+      );
+
+      await sharedPreferencesToolEval.changeValue(
+        key,
+        const SharedPreferencesData.bool(value: true),
+        false,
+      );
+
+      verify(
+        eval.eval(
+          'DevtoolsExtension().$method',
+          isAlive: anyNamed('isAlive'),
+        ),
+      ).called(1);
+    });
+
+    test('should delete key', () async {
+      const String key = 'testKey';
+      const String method = "requestRemoveKey('$key', false)";
+      stubEvalMethod(
+        eventKind: 'remove',
+        method: method,
+        response: <String, Object?>{},
+      );
+
+      await sharedPreferencesToolEval.deleteKey(
+        key,
+        false,
+      );
+
+      verify(
+        eval.eval(
+          'DevtoolsExtension().$method',
+          isAlive: anyNamed('isAlive'),
+        ),
+      ).called(1);
     });
   });
-}
-
-extension on MockEvalOnDartLibrary {
-  void stubSafeGetInstance(InstanceRef ref, Instance instance) {
-    when(safeGetInstance(ref, any)).thenAnswer((_) async => instance);
-  }
-
-  void stubEvalInstance(String expression, Instance instance) {
-    when(
-      evalInstance(
-        expression,
-        isAlive: anyNamed('isAlive'),
-      ),
-    ).thenAnswer((_) async => instance);
-  }
-
-  void stubAsyncEval(String expression, bool isWeb, InstanceRef ref) {
-    if (!isWeb) {
-      when(asyncEval(
-        'await $expression',
-        isAlive: anyNamed('isAlive'),
-      )).thenAnswer((_) async => ref);
-      return;
-    }
-
-    // Web stubbing
-    final InstanceRef valueHolderRef = MockInstanceRef();
-    final Instance holderInstance = MockInstance();
-    when(valueHolderRef.id).thenReturn('fakeId');
-    stubSafeGetInstance(valueHolderRef, holderInstance);
-    when(safeEval('[]', isAlive: anyNamed('isAlive')))
-        .thenAnswer((_) async => valueHolderRef);
-    when(holderInstance.elements).thenReturn(<InstanceRef>[ref]);
-    when(safeEval(
-      '$expression.then(valueHolder.add);',
-      isAlive: anyNamed('isAlive'),
-      scope: anyNamed('scope'),
-    )).thenAnswer((_) async => MockInstanceRef());
-  }
-
-  void stubLegacyMethodCall(String method, bool isWeb, InstanceRef ref) {
-    stubAsyncEval(
-      'SharedPreferences.getInstance().then((prefs) => prefs.$method)',
-      isWeb,
-      ref,
-    );
-  }
-
-  void stubMethodCall(String method, bool isWeb, InstanceRef ref) {
-    stubAsyncEval(
-      'SharedPreferencesAsync().$method',
-      isWeb,
-      ref,
-    );
-  }
-
-  void stubPrefsGetInstance(String method, bool isWeb, Instance instance) {
-    final MockInstanceRef instanceRef = MockInstanceRef();
-    stubSafeGetInstance(instanceRef, instance);
-
-    stubMethodCall(
-      method,
-      isWeb,
-      instanceRef,
-    );
-  }
-
-  void stubLegacyPrefsGetInstance(
-      String method, bool isWeb, Instance instance) {
-    final MockInstanceRef instanceRef = MockInstanceRef();
-    stubSafeGetInstance(instanceRef, instance);
-
-    stubLegacyMethodCall(
-      method,
-      isWeb,
-      instanceRef,
-    );
-  }
-}
-
-extension on Instance {
-  void stubElements(MockEvalOnDartLibrary eval, List<String> valuesAsString) {
-    when(elements).thenAnswer(
-      (_) => valuesAsString.map(
-        (String key) {
-          final MockInstanceRef valueInstanceRef = MockInstanceRef();
-          final MockInstance valueInstance = MockInstance();
-
-          eval.stubSafeGetInstance(valueInstanceRef, valueInstance);
-
-          when(valueInstance.valueAsString).thenReturn(key);
-
-          return valueInstanceRef;
-        },
-      ).toList(),
-    );
-  }
 }

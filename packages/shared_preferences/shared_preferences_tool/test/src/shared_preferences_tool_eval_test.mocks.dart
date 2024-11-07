@@ -3,16 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
+import 'dart:async' as _i4;
 import 'dart:ui' as _i8;
 
 import 'package:devtools_app_shared/src/service/eval_on_dart_library.dart'
-    as _i4;
+    as _i5;
 import 'package:devtools_app_shared/src/service/service_manager.dart' as _i3;
 import 'package:flutter/foundation.dart' as _i7;
 import 'package:flutter/widgets.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i2;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:vm_service/vm_service.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -79,10 +79,325 @@ class _FakeInstanceRef_4 extends _i2.SmartFake implements _i1.InstanceRef {
         );
 }
 
+class _FakeBreakpoint_5 extends _i2.SmartFake implements _i1.Breakpoint {
+  _FakeBreakpoint_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeSuccess_6 extends _i2.SmartFake implements _i1.Success {
+  _FakeSuccess_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeResponse_7 extends _i2.SmartFake implements _i1.Response {
+  _FakeResponse_7(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeAllocationProfile_8 extends _i2.SmartFake
+    implements _i1.AllocationProfile {
+  _FakeAllocationProfile_8(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeCpuSamples_9 extends _i2.SmartFake implements _i1.CpuSamples {
+  _FakeCpuSamples_9(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeClassList_10 extends _i2.SmartFake implements _i1.ClassList {
+  _FakeClassList_10(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFlagList_11 extends _i2.SmartFake implements _i1.FlagList {
+  _FakeFlagList_11(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeInboundReferences_12 extends _i2.SmartFake
+    implements _i1.InboundReferences {
+  _FakeInboundReferences_12(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeInstanceSet_13 extends _i2.SmartFake implements _i1.InstanceSet {
+  _FakeInstanceSet_13(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeIsolate_14 extends _i2.SmartFake implements _i1.Isolate {
+  _FakeIsolate_14(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeIsolateGroup_15 extends _i2.SmartFake implements _i1.IsolateGroup {
+  _FakeIsolateGroup_15(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeEvent_16 extends _i2.SmartFake implements _i1.Event {
+  _FakeEvent_16(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeMemoryUsage_17 extends _i2.SmartFake implements _i1.MemoryUsage {
+  _FakeMemoryUsage_17(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeScriptList_18 extends _i2.SmartFake implements _i1.ScriptList {
+  _FakeScriptList_18(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeObj_19 extends _i2.SmartFake implements _i1.Obj {
+  _FakeObj_19(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePerfettoCpuSamples_20 extends _i2.SmartFake
+    implements _i1.PerfettoCpuSamples {
+  _FakePerfettoCpuSamples_20(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePerfettoTimeline_21 extends _i2.SmartFake
+    implements _i1.PerfettoTimeline {
+  _FakePerfettoTimeline_21(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePortList_22 extends _i2.SmartFake implements _i1.PortList {
+  _FakePortList_22(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeRetainingPath_23 extends _i2.SmartFake implements _i1.RetainingPath {
+  _FakeRetainingPath_23(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeProcessMemoryUsage_24 extends _i2.SmartFake
+    implements _i1.ProcessMemoryUsage {
+  _FakeProcessMemoryUsage_24(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeStack_25 extends _i2.SmartFake implements _i1.Stack {
+  _FakeStack_25(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeProtocolList_26 extends _i2.SmartFake implements _i1.ProtocolList {
+  _FakeProtocolList_26(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeSourceReport_27 extends _i2.SmartFake implements _i1.SourceReport {
+  _FakeSourceReport_27(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeVersion_28 extends _i2.SmartFake implements _i1.Version {
+  _FakeVersion_28(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeVM_29 extends _i2.SmartFake implements _i1.VM {
+  _FakeVM_29(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeTimeline_30 extends _i2.SmartFake implements _i1.Timeline {
+  _FakeTimeline_30(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeTimelineFlags_31 extends _i2.SmartFake implements _i1.TimelineFlags {
+  _FakeTimelineFlags_31(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeTimestamp_32 extends _i2.SmartFake implements _i1.Timestamp {
+  _FakeTimestamp_32(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeUriList_33 extends _i2.SmartFake implements _i1.UriList {
+  _FakeUriList_33(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeReloadReport_34 extends _i2.SmartFake implements _i1.ReloadReport {
+  _FakeReloadReport_34(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeFuture_35<T1> extends _i2.SmartFake implements _i4.Future<T1> {
+  _FakeFuture_35(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [EvalOnDartLibrary].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
+class MockEvalOnDartLibrary extends _i2.Mock implements _i5.EvalOnDartLibrary {
   @override
   bool get oneRequestAtATime => (super.noSuchMethod(
         Invocation.getter(#oneRequestAtATime),
@@ -93,6 +408,13 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
   @override
   bool get disableBreakpoints => (super.noSuchMethod(
         Invocation.getter(#disableBreakpoints),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool get logExceptions => (super.noSuchMethod(
+        Invocation.getter(#logExceptions),
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
@@ -113,11 +435,11 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
   @override
   String get libraryName => (super.noSuchMethod(
         Invocation.getter(#libraryName),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#libraryName),
         ),
-        returnValueForMissingStub: _i5.dummyValue<String>(
+        returnValueForMissingStub: _i6.dummyValue<String>(
           this,
           Invocation.getter(#libraryName),
         ),
@@ -137,7 +459,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
       ) as _i1.VmService);
 
   @override
-  set allPendingRequestsDone(_i6.Completer<void>? _allPendingRequestsDone) =>
+  set allPendingRequestsDone(_i4.Completer<void>? _allPendingRequestsDone) =>
       super.noSuchMethod(
         Invocation.setter(
           #allPendingRequestsDone,
@@ -177,9 +499,9 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
       );
 
   @override
-  _i6.Future<_i1.InstanceRef?> eval(
+  _i4.Future<_i1.InstanceRef?> eval(
     String? expression, {
-    required _i4.Disposable? isAlive,
+    required _i5.Disposable? isAlive,
     Map<String, String>? scope,
     bool? shouldLogError = true,
   }) =>
@@ -193,16 +515,16 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             #shouldLogError: shouldLogError,
           },
         ),
-        returnValue: _i6.Future<_i1.InstanceRef?>.value(),
-        returnValueForMissingStub: _i6.Future<_i1.InstanceRef?>.value(),
-      ) as _i6.Future<_i1.InstanceRef?>);
+        returnValue: _i4.Future<_i1.InstanceRef?>.value(),
+        returnValueForMissingStub: _i4.Future<_i1.InstanceRef?>.value(),
+      ) as _i4.Future<_i1.InstanceRef?>);
 
   @override
-  _i6.Future<_i1.InstanceRef?> invoke(
+  _i4.Future<_i1.InstanceRef?> invoke(
     _i1.InstanceRef? instanceRef,
     String? name,
     List<String>? argRefs, {
-    required _i4.Disposable? isAlive,
+    required _i5.Disposable? isAlive,
     bool? shouldLogError = true,
   }) =>
       (super.noSuchMethod(
@@ -218,14 +540,14 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             #shouldLogError: shouldLogError,
           },
         ),
-        returnValue: _i6.Future<_i1.InstanceRef?>.value(),
-        returnValueForMissingStub: _i6.Future<_i1.InstanceRef?>.value(),
-      ) as _i6.Future<_i1.InstanceRef?>);
+        returnValue: _i4.Future<_i1.InstanceRef?>.value(),
+        returnValueForMissingStub: _i4.Future<_i1.InstanceRef?>.value(),
+      ) as _i4.Future<_i1.InstanceRef?>);
 
   @override
-  _i6.Future<_i1.Class?> getClass(
+  _i4.Future<_i1.Class?> getClass(
     _i1.ClassRef? instance,
-    _i4.Disposable? isAlive,
+    _i5.Disposable? isAlive,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -235,14 +557,14 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             isAlive,
           ],
         ),
-        returnValue: _i6.Future<_i1.Class?>.value(),
-        returnValueForMissingStub: _i6.Future<_i1.Class?>.value(),
-      ) as _i6.Future<_i1.Class?>);
+        returnValue: _i4.Future<_i1.Class?>.value(),
+        returnValueForMissingStub: _i4.Future<_i1.Class?>.value(),
+      ) as _i4.Future<_i1.Class?>);
 
   @override
-  _i6.Future<_i1.Class> safeGetClass(
+  _i4.Future<_i1.Class> safeGetClass(
     _i1.ClassRef? instance,
-    _i4.Disposable? isAlive,
+    _i5.Disposable? isAlive,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -252,7 +574,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             isAlive,
           ],
         ),
-        returnValue: _i6.Future<_i1.Class>.value(_FakeClass_2(
+        returnValue: _i4.Future<_i1.Class>.value(_FakeClass_2(
           this,
           Invocation.method(
             #safeGetClass,
@@ -262,7 +584,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             ],
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i1.Class>.value(_FakeClass_2(
+        returnValueForMissingStub: _i4.Future<_i1.Class>.value(_FakeClass_2(
           this,
           Invocation.method(
             #safeGetClass,
@@ -272,12 +594,12 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             ],
           ),
         )),
-      ) as _i6.Future<_i1.Class>);
+      ) as _i4.Future<_i1.Class>);
 
   @override
-  _i6.Future<_i1.Func?> getFunc(
+  _i4.Future<_i1.Func?> getFunc(
     _i1.FuncRef? instance,
-    _i4.Disposable? isAlive,
+    _i5.Disposable? isAlive,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -287,14 +609,14 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             isAlive,
           ],
         ),
-        returnValue: _i6.Future<_i1.Func?>.value(),
-        returnValueForMissingStub: _i6.Future<_i1.Func?>.value(),
-      ) as _i6.Future<_i1.Func?>);
+        returnValue: _i4.Future<_i1.Func?>.value(),
+        returnValueForMissingStub: _i4.Future<_i1.Func?>.value(),
+      ) as _i4.Future<_i1.Func?>);
 
   @override
-  _i6.Future<_i1.Instance?> getInstance(
-    _i6.FutureOr<_i1.InstanceRef>? instanceRefFuture,
-    _i4.Disposable? isAlive,
+  _i4.Future<_i1.Instance?> getInstance(
+    _i4.FutureOr<_i1.InstanceRef>? instanceRefFuture,
+    _i5.Disposable? isAlive,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -304,14 +626,14 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             isAlive,
           ],
         ),
-        returnValue: _i6.Future<_i1.Instance?>.value(),
-        returnValueForMissingStub: _i6.Future<_i1.Instance?>.value(),
-      ) as _i6.Future<_i1.Instance?>);
+        returnValue: _i4.Future<_i1.Instance?>.value(),
+        returnValueForMissingStub: _i4.Future<_i1.Instance?>.value(),
+      ) as _i4.Future<_i1.Instance?>);
 
   @override
-  _i6.Future<_i1.Instance> safeGetInstance(
-    _i6.FutureOr<_i1.InstanceRef>? instanceRefFuture,
-    _i4.Disposable? isAlive,
+  _i4.Future<_i1.Instance> safeGetInstance(
+    _i4.FutureOr<_i1.InstanceRef>? instanceRefFuture,
+    _i5.Disposable? isAlive,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -321,7 +643,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             isAlive,
           ],
         ),
-        returnValue: _i6.Future<_i1.Instance>.value(_FakeInstance_3(
+        returnValue: _i4.Future<_i1.Instance>.value(_FakeInstance_3(
           this,
           Invocation.method(
             #safeGetInstance,
@@ -332,7 +654,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i1.Instance>.value(_FakeInstance_3(
+            _i4.Future<_i1.Instance>.value(_FakeInstance_3(
           this,
           Invocation.method(
             #safeGetInstance,
@@ -342,12 +664,12 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             ],
           ),
         )),
-      ) as _i6.Future<_i1.Instance>);
+      ) as _i4.Future<_i1.Instance>);
 
   @override
-  _i6.Future<int> getHashCode(
+  _i4.Future<int> getHashCode(
     _i1.InstanceRef? instance, {
-    required _i4.Disposable? isAlive,
+    required _i5.Disposable? isAlive,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -355,14 +677,14 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
           [instance],
           {#isAlive: isAlive},
         ),
-        returnValue: _i6.Future<int>.value(0),
-        returnValueForMissingStub: _i6.Future<int>.value(0),
-      ) as _i6.Future<int>);
+        returnValue: _i4.Future<int>.value(0),
+        returnValueForMissingStub: _i4.Future<int>.value(0),
+      ) as _i4.Future<int>);
 
   @override
-  _i6.Future<_i1.Instance> evalInstance(
+  _i4.Future<_i1.Instance> evalInstance(
     String? expression, {
-    required _i4.Disposable? isAlive,
+    required _i5.Disposable? isAlive,
     Map<String, String>? scope,
   }) =>
       (super.noSuchMethod(
@@ -374,7 +696,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             #scope: scope,
           },
         ),
-        returnValue: _i6.Future<_i1.Instance>.value(_FakeInstance_3(
+        returnValue: _i4.Future<_i1.Instance>.value(_FakeInstance_3(
           this,
           Invocation.method(
             #evalInstance,
@@ -386,7 +708,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i1.Instance>.value(_FakeInstance_3(
+            _i4.Future<_i1.Instance>.value(_FakeInstance_3(
           this,
           Invocation.method(
             #evalInstance,
@@ -397,12 +719,12 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             },
           ),
         )),
-      ) as _i6.Future<_i1.Instance>);
+      ) as _i4.Future<_i1.Instance>);
 
   @override
-  _i6.Future<_i1.InstanceRef?> asyncEval(
+  _i4.Future<_i1.InstanceRef?> asyncEval(
     String? expression, {
-    required _i4.Disposable? isAlive,
+    required _i5.Disposable? isAlive,
     Map<String, String>? scope,
   }) =>
       (super.noSuchMethod(
@@ -414,14 +736,14 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             #scope: scope,
           },
         ),
-        returnValue: _i6.Future<_i1.InstanceRef?>.value(),
-        returnValueForMissingStub: _i6.Future<_i1.InstanceRef?>.value(),
-      ) as _i6.Future<_i1.InstanceRef?>);
+        returnValue: _i4.Future<_i1.InstanceRef?>.value(),
+        returnValueForMissingStub: _i4.Future<_i1.InstanceRef?>.value(),
+      ) as _i4.Future<_i1.InstanceRef?>);
 
   @override
-  _i6.Future<_i1.InstanceRef> safeEval(
+  _i4.Future<_i1.InstanceRef> safeEval(
     String? expression, {
-    required _i4.Disposable? isAlive,
+    required _i5.Disposable? isAlive,
     Map<String, String>? scope,
   }) =>
       (super.noSuchMethod(
@@ -433,7 +755,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             #scope: scope,
           },
         ),
-        returnValue: _i6.Future<_i1.InstanceRef>.value(_FakeInstanceRef_4(
+        returnValue: _i4.Future<_i1.InstanceRef>.value(_FakeInstanceRef_4(
           this,
           Invocation.method(
             #safeEval,
@@ -445,7 +767,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
           ),
         )),
         returnValueForMissingStub:
-            _i6.Future<_i1.InstanceRef>.value(_FakeInstanceRef_4(
+            _i4.Future<_i1.InstanceRef>.value(_FakeInstanceRef_4(
           this,
           Invocation.method(
             #safeEval,
@@ -456,12 +778,12 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             },
           ),
         )),
-      ) as _i6.Future<_i1.InstanceRef>);
+      ) as _i4.Future<_i1.InstanceRef>);
 
   @override
-  _i6.Future<T?> addRequest<T>(
-    _i4.Disposable? isAlive,
-    _i6.Future<T?> Function()? request,
+  _i4.Future<T?> addRequest<T>(
+    _i5.Disposable? isAlive,
+    _i4.Future<T?> Function()? request,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -471,14 +793,14 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             request,
           ],
         ),
-        returnValue: _i6.Future<T?>.value(),
-        returnValueForMissingStub: _i6.Future<T?>.value(),
-      ) as _i6.Future<T?>);
+        returnValue: _i4.Future<T?>.value(),
+        returnValueForMissingStub: _i4.Future<T?>.value(),
+      ) as _i4.Future<T?>);
 
   @override
-  _i6.Future<T?> getObjHelper<T extends _i1.Obj>(
+  _i4.Future<T?> getObjHelper<T extends _i1.Obj>(
     _i1.ObjRef? instance,
-    _i4.Disposable? isAlive, {
+    _i5.Disposable? isAlive, {
     int? offset,
     int? count,
   }) =>
@@ -494,9 +816,9 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
             #count: count,
           },
         ),
-        returnValue: _i6.Future<T?>.value(),
-        returnValueForMissingStub: _i6.Future<T?>.value(),
-      ) as _i6.Future<T?>);
+        returnValue: _i4.Future<T?>.value(),
+        returnValueForMissingStub: _i4.Future<T?>.value(),
+      ) as _i4.Future<T?>);
 
   @override
   void addAutoDisposeListener(
@@ -518,7 +840,7 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
 
   @override
   void autoDisposeStreamSubscription(
-          _i6.StreamSubscription<dynamic>? subscription) =>
+          _i4.StreamSubscription<dynamic>? subscription) =>
       super.noSuchMethod(
         Invocation.method(
           #autoDisposeStreamSubscription,
@@ -594,688 +916,2219 @@ class MockEvalOnDartLibrary extends _i2.Mock implements _i4.EvalOnDartLibrary {
       );
 }
 
-/// A class which mocks [InstanceRef].
+/// A class which mocks [VmService].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockInstanceRef extends _i2.Mock implements _i1.InstanceRef {
+class MockVmService extends _i2.Mock implements _i1.VmService {
   @override
-  set kind(String? _kind) => super.noSuchMethod(
-        Invocation.setter(
-          #kind,
-          _kind,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<String> get onSend => (super.noSuchMethod(
+        Invocation.getter(#onSend),
+        returnValue: _i4.Stream<String>.empty(),
+        returnValueForMissingStub: _i4.Stream<String>.empty(),
+      ) as _i4.Stream<String>);
 
   @override
-  set identityHashCode(int? _identityHashCode) => super.noSuchMethod(
-        Invocation.setter(
-          #identityHashCode,
-          _identityHashCode,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<String> get onReceive => (super.noSuchMethod(
+        Invocation.getter(#onReceive),
+        returnValue: _i4.Stream<String>.empty(),
+        returnValueForMissingStub: _i4.Stream<String>.empty(),
+      ) as _i4.Stream<String>);
 
   @override
-  set classRef(_i1.ClassRef? _classRef) => super.noSuchMethod(
-        Invocation.setter(
-          #classRef,
-          _classRef,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Future<void> get onDone => (super.noSuchMethod(
+        Invocation.getter(#onDone),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  set valueAsString(String? _valueAsString) => super.noSuchMethod(
-        Invocation.setter(
-          #valueAsString,
-          _valueAsString,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onVMEvent => (super.noSuchMethod(
+        Invocation.getter(#onVMEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set valueAsStringIsTruncated(bool? _valueAsStringIsTruncated) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #valueAsStringIsTruncated,
-          _valueAsStringIsTruncated,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onIsolateEvent => (super.noSuchMethod(
+        Invocation.getter(#onIsolateEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set length(int? _length) => super.noSuchMethod(
-        Invocation.setter(
-          #length,
-          _length,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onDebugEvent => (super.noSuchMethod(
+        Invocation.getter(#onDebugEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set name(String? _name) => super.noSuchMethod(
-        Invocation.setter(
-          #name,
-          _name,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onProfilerEvent => (super.noSuchMethod(
+        Invocation.getter(#onProfilerEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set typeClass(_i1.ClassRef? _typeClass) => super.noSuchMethod(
-        Invocation.setter(
-          #typeClass,
-          _typeClass,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onGCEvent => (super.noSuchMethod(
+        Invocation.getter(#onGCEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set parameterizedClass(_i1.ClassRef? _parameterizedClass) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #parameterizedClass,
-          _parameterizedClass,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onExtensionEvent => (super.noSuchMethod(
+        Invocation.getter(#onExtensionEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set returnType(_i1.InstanceRef? _returnType) => super.noSuchMethod(
-        Invocation.setter(
-          #returnType,
-          _returnType,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onTimelineEvent => (super.noSuchMethod(
+        Invocation.getter(#onTimelineEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set parameters(List<_i1.Parameter>? _parameters) => super.noSuchMethod(
-        Invocation.setter(
-          #parameters,
-          _parameters,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onLoggingEvent => (super.noSuchMethod(
+        Invocation.getter(#onLoggingEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set typeParameters(List<_i1.InstanceRef>? _typeParameters) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #typeParameters,
-          _typeParameters,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onServiceEvent => (super.noSuchMethod(
+        Invocation.getter(#onServiceEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set pattern(_i1.InstanceRef? _pattern) => super.noSuchMethod(
-        Invocation.setter(
-          #pattern,
-          _pattern,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onHeapSnapshotEvent => (super.noSuchMethod(
+        Invocation.getter(#onHeapSnapshotEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set closureFunction(_i1.FuncRef? _closureFunction) => super.noSuchMethod(
-        Invocation.setter(
-          #closureFunction,
-          _closureFunction,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onStdoutEvent => (super.noSuchMethod(
+        Invocation.getter(#onStdoutEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set closureContext(_i1.ContextRef? _closureContext) => super.noSuchMethod(
-        Invocation.setter(
-          #closureContext,
-          _closureContext,
-        ),
-        returnValueForMissingStub: null,
-      );
+  _i4.Stream<_i1.Event> get onStderrEvent => (super.noSuchMethod(
+        Invocation.getter(#onStderrEvent),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
 
   @override
-  set closureReceiver(_i1.InstanceRef? _closureReceiver) => super.noSuchMethod(
-        Invocation.setter(
-          #closureReceiver,
-          _closureReceiver,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set portId(int? _portId) => super.noSuchMethod(
-        Invocation.setter(
-          #portId,
-          _portId,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set allocationLocation(_i1.InstanceRef? _allocationLocation) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #allocationLocation,
-          _allocationLocation,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set debugName(String? _debugName) => super.noSuchMethod(
-        Invocation.setter(
-          #debugName,
-          _debugName,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set label(String? _label) => super.noSuchMethod(
-        Invocation.setter(
-          #label,
-          _label,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  String get type => (super.noSuchMethod(
-        Invocation.getter(#type),
-        returnValue: _i5.dummyValue<String>(
-          this,
-          Invocation.getter(#type),
-        ),
-        returnValueForMissingStub: _i5.dummyValue<String>(
-          this,
-          Invocation.getter(#type),
-        ),
-      ) as String);
-
-  @override
-  set id(String? _id) => super.noSuchMethod(
-        Invocation.setter(
-          #id,
-          _id,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set fixedId(bool? _fixedId) => super.noSuchMethod(
-        Invocation.setter(
-          #fixedId,
-          _fixedId,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set json(Map<String, dynamic>? _json) => super.noSuchMethod(
-        Invocation.setter(
-          #json,
-          _json,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  Map<String, dynamic> toJson() => (super.noSuchMethod(
+  _i4.Stream<_i1.Event> onEvent(String? streamId) => (super.noSuchMethod(
         Invocation.method(
-          #toJson,
+          #onEvent,
+          [streamId],
+        ),
+        returnValue: _i4.Stream<_i1.Event>.empty(),
+        returnValueForMissingStub: _i4.Stream<_i1.Event>.empty(),
+      ) as _i4.Stream<_i1.Event>);
+
+  @override
+  _i4.Future<_i1.Breakpoint> addBreakpoint(
+    String? isolateId,
+    String? scriptId,
+    int? line, {
+    int? column,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addBreakpoint,
+          [
+            isolateId,
+            scriptId,
+            line,
+          ],
+          {#column: column},
+        ),
+        returnValue: _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #addBreakpoint,
+            [
+              isolateId,
+              scriptId,
+              line,
+            ],
+            {#column: column},
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #addBreakpoint,
+            [
+              isolateId,
+              scriptId,
+              line,
+            ],
+            {#column: column},
+          ),
+        )),
+      ) as _i4.Future<_i1.Breakpoint>);
+
+  @override
+  _i4.Future<_i1.Breakpoint> addBreakpointWithScriptUri(
+    String? isolateId,
+    String? scriptUri,
+    int? line, {
+    int? column,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addBreakpointWithScriptUri,
+          [
+            isolateId,
+            scriptUri,
+            line,
+          ],
+          {#column: column},
+        ),
+        returnValue: _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #addBreakpointWithScriptUri,
+            [
+              isolateId,
+              scriptUri,
+              line,
+            ],
+            {#column: column},
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #addBreakpointWithScriptUri,
+            [
+              isolateId,
+              scriptUri,
+              line,
+            ],
+            {#column: column},
+          ),
+        )),
+      ) as _i4.Future<_i1.Breakpoint>);
+
+  @override
+  _i4.Future<_i1.Breakpoint> addBreakpointAtEntry(
+    String? isolateId,
+    String? functionId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addBreakpointAtEntry,
+          [
+            isolateId,
+            functionId,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #addBreakpointAtEntry,
+            [
+              isolateId,
+              functionId,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #addBreakpointAtEntry,
+            [
+              isolateId,
+              functionId,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Breakpoint>);
+
+  @override
+  _i4.Future<_i1.Success> clearCpuSamples(String? isolateId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #clearCpuSamples,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #clearCpuSamples,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #clearCpuSamples,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> clearVMTimeline() => (super.noSuchMethod(
+        Invocation.method(
+          #clearVMTimeline,
           [],
         ),
-        returnValue: <String, dynamic>{},
-        returnValueForMissingStub: <String, dynamic>{},
-      ) as Map<String, dynamic>);
-}
-
-/// A class which mocks [Instance].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockInstance extends _i2.Mock implements _i1.Instance {
-  @override
-  set kind(String? _kind) => super.noSuchMethod(
-        Invocation.setter(
-          #kind,
-          _kind,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set identityHashCode(int? _identityHashCode) => super.noSuchMethod(
-        Invocation.setter(
-          #identityHashCode,
-          _identityHashCode,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set classRef(_i1.ClassRef? _classRef) => super.noSuchMethod(
-        Invocation.setter(
-          #classRef,
-          _classRef,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set valueAsString(String? _valueAsString) => super.noSuchMethod(
-        Invocation.setter(
-          #valueAsString,
-          _valueAsString,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set valueAsStringIsTruncated(bool? _valueAsStringIsTruncated) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #valueAsStringIsTruncated,
-          _valueAsStringIsTruncated,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set length(int? _length) => super.noSuchMethod(
-        Invocation.setter(
-          #length,
-          _length,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set offset(int? _offset) => super.noSuchMethod(
-        Invocation.setter(
-          #offset,
-          _offset,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set count(int? _count) => super.noSuchMethod(
-        Invocation.setter(
-          #count,
-          _count,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set name(String? _name) => super.noSuchMethod(
-        Invocation.setter(
-          #name,
-          _name,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set typeClass(_i1.ClassRef? _typeClass) => super.noSuchMethod(
-        Invocation.setter(
-          #typeClass,
-          _typeClass,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set parameterizedClass(_i1.ClassRef? _parameterizedClass) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #parameterizedClass,
-          _parameterizedClass,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set returnType(_i1.InstanceRef? _returnType) => super.noSuchMethod(
-        Invocation.setter(
-          #returnType,
-          _returnType,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set parameters(List<_i1.Parameter>? _parameters) => super.noSuchMethod(
-        Invocation.setter(
-          #parameters,
-          _parameters,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set typeParameters(List<_i1.InstanceRef>? _typeParameters) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #typeParameters,
-          _typeParameters,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set fields(List<_i1.BoundField>? _fields) => super.noSuchMethod(
-        Invocation.setter(
-          #fields,
-          _fields,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set elements(List<dynamic>? _elements) => super.noSuchMethod(
-        Invocation.setter(
-          #elements,
-          _elements,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set associations(List<_i1.MapAssociation>? _associations) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #associations,
-          _associations,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set bytes(String? _bytes) => super.noSuchMethod(
-        Invocation.setter(
-          #bytes,
-          _bytes,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set mirrorReferent(_i1.ObjRef? _mirrorReferent) => super.noSuchMethod(
-        Invocation.setter(
-          #mirrorReferent,
-          _mirrorReferent,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set pattern(_i1.InstanceRef? _pattern) => super.noSuchMethod(
-        Invocation.setter(
-          #pattern,
-          _pattern,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set closureFunction(_i1.FuncRef? _closureFunction) => super.noSuchMethod(
-        Invocation.setter(
-          #closureFunction,
-          _closureFunction,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set closureContext(_i1.ContextRef? _closureContext) => super.noSuchMethod(
-        Invocation.setter(
-          #closureContext,
-          _closureContext,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set closureReceiver(_i1.InstanceRef? _closureReceiver) => super.noSuchMethod(
-        Invocation.setter(
-          #closureReceiver,
-          _closureReceiver,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set isCaseSensitive(bool? _isCaseSensitive) => super.noSuchMethod(
-        Invocation.setter(
-          #isCaseSensitive,
-          _isCaseSensitive,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set isMultiLine(bool? _isMultiLine) => super.noSuchMethod(
-        Invocation.setter(
-          #isMultiLine,
-          _isMultiLine,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set propertyKey(_i1.ObjRef? _propertyKey) => super.noSuchMethod(
-        Invocation.setter(
-          #propertyKey,
-          _propertyKey,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set propertyValue(_i1.ObjRef? _propertyValue) => super.noSuchMethod(
-        Invocation.setter(
-          #propertyValue,
-          _propertyValue,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set target(_i1.ObjRef? _target) => super.noSuchMethod(
-        Invocation.setter(
-          #target,
-          _target,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set typeArguments(_i1.TypeArgumentsRef? _typeArguments) => super.noSuchMethod(
-        Invocation.setter(
-          #typeArguments,
-          _typeArguments,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set parameterIndex(int? _parameterIndex) => super.noSuchMethod(
-        Invocation.setter(
-          #parameterIndex,
-          _parameterIndex,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set targetType(_i1.InstanceRef? _targetType) => super.noSuchMethod(
-        Invocation.setter(
-          #targetType,
-          _targetType,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set bound(_i1.InstanceRef? _bound) => super.noSuchMethod(
-        Invocation.setter(
-          #bound,
-          _bound,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set portId(int? _portId) => super.noSuchMethod(
-        Invocation.setter(
-          #portId,
-          _portId,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set allocationLocation(_i1.InstanceRef? _allocationLocation) =>
-      super.noSuchMethod(
-        Invocation.setter(
-          #allocationLocation,
-          _allocationLocation,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set debugName(String? _debugName) => super.noSuchMethod(
-        Invocation.setter(
-          #debugName,
-          _debugName,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set label(String? _label) => super.noSuchMethod(
-        Invocation.setter(
-          #label,
-          _label,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set callback(_i1.InstanceRef? _callback) => super.noSuchMethod(
-        Invocation.setter(
-          #callback,
-          _callback,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set callbackAddress(_i1.InstanceRef? _callbackAddress) => super.noSuchMethod(
-        Invocation.setter(
-          #callbackAddress,
-          _callbackAddress,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set allEntries(_i1.InstanceRef? _allEntries) => super.noSuchMethod(
-        Invocation.setter(
-          #allEntries,
-          _allEntries,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set value(_i1.InstanceRef? _value) => super.noSuchMethod(
-        Invocation.setter(
-          #value,
-          _value,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set token(_i1.InstanceRef? _token) => super.noSuchMethod(
-        Invocation.setter(
-          #token,
-          _token,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set detach(_i1.InstanceRef? _detach) => super.noSuchMethod(
-        Invocation.setter(
-          #detach,
-          _detach,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  String get type => (super.noSuchMethod(
-        Invocation.getter(#type),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
           this,
-          Invocation.getter(#type),
-        ),
-        returnValueForMissingStub: _i5.dummyValue<String>(
+          Invocation.method(
+            #clearVMTimeline,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
           this,
-          Invocation.getter(#type),
-        ),
-      ) as String);
+          Invocation.method(
+            #clearVMTimeline,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
 
   @override
-  set id(String? _id) => super.noSuchMethod(
-        Invocation.setter(
-          #id,
-          _id,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set fixedId(bool? _fixedId) => super.noSuchMethod(
-        Invocation.setter(
-          #fixedId,
-          _fixedId,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set size(int? _size) => super.noSuchMethod(
-        Invocation.setter(
-          #size,
-          _size,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  set json(Map<String, dynamic>? _json) => super.noSuchMethod(
-        Invocation.setter(
-          #json,
-          _json,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  Map<String, dynamic> toJson() => (super.noSuchMethod(
+  _i4.Future<_i1.Response> invoke(
+    String? isolateId,
+    String? targetId,
+    String? selector,
+    List<String>? argumentIds, {
+    bool? disableBreakpoints,
+  }) =>
+      (super.noSuchMethod(
         Invocation.method(
-          #toJson,
+          #invoke,
+          [
+            isolateId,
+            targetId,
+            selector,
+            argumentIds,
+          ],
+          {#disableBreakpoints: disableBreakpoints},
+        ),
+        returnValue: _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #invoke,
+            [
+              isolateId,
+              targetId,
+              selector,
+              argumentIds,
+            ],
+            {#disableBreakpoints: disableBreakpoints},
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #invoke,
+            [
+              isolateId,
+              targetId,
+              selector,
+              argumentIds,
+            ],
+            {#disableBreakpoints: disableBreakpoints},
+          ),
+        )),
+      ) as _i4.Future<_i1.Response>);
+
+  @override
+  _i4.Future<_i1.Response> evaluate(
+    String? isolateId,
+    String? targetId,
+    String? expression, {
+    Map<String, String>? scope,
+    bool? disableBreakpoints,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #evaluate,
+          [
+            isolateId,
+            targetId,
+            expression,
+          ],
+          {
+            #scope: scope,
+            #disableBreakpoints: disableBreakpoints,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #evaluate,
+            [
+              isolateId,
+              targetId,
+              expression,
+            ],
+            {
+              #scope: scope,
+              #disableBreakpoints: disableBreakpoints,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #evaluate,
+            [
+              isolateId,
+              targetId,
+              expression,
+            ],
+            {
+              #scope: scope,
+              #disableBreakpoints: disableBreakpoints,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Response>);
+
+  @override
+  _i4.Future<_i1.Response> evaluateInFrame(
+    String? isolateId,
+    int? frameIndex,
+    String? expression, {
+    Map<String, String>? scope,
+    bool? disableBreakpoints,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #evaluateInFrame,
+          [
+            isolateId,
+            frameIndex,
+            expression,
+          ],
+          {
+            #scope: scope,
+            #disableBreakpoints: disableBreakpoints,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #evaluateInFrame,
+            [
+              isolateId,
+              frameIndex,
+              expression,
+            ],
+            {
+              #scope: scope,
+              #disableBreakpoints: disableBreakpoints,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #evaluateInFrame,
+            [
+              isolateId,
+              frameIndex,
+              expression,
+            ],
+            {
+              #scope: scope,
+              #disableBreakpoints: disableBreakpoints,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Response>);
+
+  @override
+  _i4.Future<_i1.AllocationProfile> getAllocationProfile(
+    String? isolateId, {
+    bool? reset,
+    bool? gc,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllocationProfile,
+          [isolateId],
+          {
+            #reset: reset,
+            #gc: gc,
+          },
+        ),
+        returnValue:
+            _i4.Future<_i1.AllocationProfile>.value(_FakeAllocationProfile_8(
+          this,
+          Invocation.method(
+            #getAllocationProfile,
+            [isolateId],
+            {
+              #reset: reset,
+              #gc: gc,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.AllocationProfile>.value(_FakeAllocationProfile_8(
+          this,
+          Invocation.method(
+            #getAllocationProfile,
+            [isolateId],
+            {
+              #reset: reset,
+              #gc: gc,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.AllocationProfile>);
+
+  @override
+  _i4.Future<_i1.CpuSamples> getAllocationTraces(
+    String? isolateId, {
+    int? timeOriginMicros,
+    int? timeExtentMicros,
+    String? classId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAllocationTraces,
+          [isolateId],
+          {
+            #timeOriginMicros: timeOriginMicros,
+            #timeExtentMicros: timeExtentMicros,
+            #classId: classId,
+          },
+        ),
+        returnValue: _i4.Future<_i1.CpuSamples>.value(_FakeCpuSamples_9(
+          this,
+          Invocation.method(
+            #getAllocationTraces,
+            [isolateId],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+              #classId: classId,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.CpuSamples>.value(_FakeCpuSamples_9(
+          this,
+          Invocation.method(
+            #getAllocationTraces,
+            [isolateId],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+              #classId: classId,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.CpuSamples>);
+
+  @override
+  _i4.Future<_i1.ClassList> getClassList(String? isolateId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getClassList,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.ClassList>.value(_FakeClassList_10(
+          this,
+          Invocation.method(
+            #getClassList,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.ClassList>.value(_FakeClassList_10(
+          this,
+          Invocation.method(
+            #getClassList,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.ClassList>);
+
+  @override
+  _i4.Future<_i1.CpuSamples> getCpuSamples(
+    String? isolateId,
+    int? timeOriginMicros,
+    int? timeExtentMicros,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getCpuSamples,
+          [
+            isolateId,
+            timeOriginMicros,
+            timeExtentMicros,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.CpuSamples>.value(_FakeCpuSamples_9(
+          this,
+          Invocation.method(
+            #getCpuSamples,
+            [
+              isolateId,
+              timeOriginMicros,
+              timeExtentMicros,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.CpuSamples>.value(_FakeCpuSamples_9(
+          this,
+          Invocation.method(
+            #getCpuSamples,
+            [
+              isolateId,
+              timeOriginMicros,
+              timeExtentMicros,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.CpuSamples>);
+
+  @override
+  _i4.Future<_i1.FlagList> getFlagList() => (super.noSuchMethod(
+        Invocation.method(
+          #getFlagList,
           [],
         ),
-        returnValue: <String, dynamic>{},
-        returnValueForMissingStub: <String, dynamic>{},
-      ) as Map<String, dynamic>);
+        returnValue: _i4.Future<_i1.FlagList>.value(_FakeFlagList_11(
+          this,
+          Invocation.method(
+            #getFlagList,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.FlagList>.value(_FakeFlagList_11(
+          this,
+          Invocation.method(
+            #getFlagList,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.FlagList>);
+
+  @override
+  _i4.Future<_i1.InboundReferences> getInboundReferences(
+    String? isolateId,
+    String? targetId,
+    int? limit,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getInboundReferences,
+          [
+            isolateId,
+            targetId,
+            limit,
+          ],
+        ),
+        returnValue:
+            _i4.Future<_i1.InboundReferences>.value(_FakeInboundReferences_12(
+          this,
+          Invocation.method(
+            #getInboundReferences,
+            [
+              isolateId,
+              targetId,
+              limit,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.InboundReferences>.value(_FakeInboundReferences_12(
+          this,
+          Invocation.method(
+            #getInboundReferences,
+            [
+              isolateId,
+              targetId,
+              limit,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.InboundReferences>);
+
+  @override
+  _i4.Future<_i1.InstanceSet> getInstances(
+    String? isolateId,
+    String? objectId,
+    int? limit, {
+    bool? includeSubclasses,
+    bool? includeImplementers,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getInstances,
+          [
+            isolateId,
+            objectId,
+            limit,
+          ],
+          {
+            #includeSubclasses: includeSubclasses,
+            #includeImplementers: includeImplementers,
+          },
+        ),
+        returnValue: _i4.Future<_i1.InstanceSet>.value(_FakeInstanceSet_13(
+          this,
+          Invocation.method(
+            #getInstances,
+            [
+              isolateId,
+              objectId,
+              limit,
+            ],
+            {
+              #includeSubclasses: includeSubclasses,
+              #includeImplementers: includeImplementers,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.InstanceSet>.value(_FakeInstanceSet_13(
+          this,
+          Invocation.method(
+            #getInstances,
+            [
+              isolateId,
+              objectId,
+              limit,
+            ],
+            {
+              #includeSubclasses: includeSubclasses,
+              #includeImplementers: includeImplementers,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.InstanceSet>);
+
+  @override
+  _i4.Future<_i1.InstanceRef> getInstancesAsList(
+    String? isolateId,
+    String? objectId, {
+    bool? includeSubclasses,
+    bool? includeImplementers,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getInstancesAsList,
+          [
+            isolateId,
+            objectId,
+          ],
+          {
+            #includeSubclasses: includeSubclasses,
+            #includeImplementers: includeImplementers,
+          },
+        ),
+        returnValue: _i4.Future<_i1.InstanceRef>.value(_FakeInstanceRef_4(
+          this,
+          Invocation.method(
+            #getInstancesAsList,
+            [
+              isolateId,
+              objectId,
+            ],
+            {
+              #includeSubclasses: includeSubclasses,
+              #includeImplementers: includeImplementers,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.InstanceRef>.value(_FakeInstanceRef_4(
+          this,
+          Invocation.method(
+            #getInstancesAsList,
+            [
+              isolateId,
+              objectId,
+            ],
+            {
+              #includeSubclasses: includeSubclasses,
+              #includeImplementers: includeImplementers,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.InstanceRef>);
+
+  @override
+  _i4.Future<_i1.Isolate> getIsolate(String? isolateId) => (super.noSuchMethod(
+        Invocation.method(
+          #getIsolate,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.Isolate>.value(_FakeIsolate_14(
+          this,
+          Invocation.method(
+            #getIsolate,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Isolate>.value(_FakeIsolate_14(
+          this,
+          Invocation.method(
+            #getIsolate,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Isolate>);
+
+  @override
+  _i4.Future<_i1.IsolateGroup> getIsolateGroup(String? isolateGroupId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getIsolateGroup,
+          [isolateGroupId],
+        ),
+        returnValue: _i4.Future<_i1.IsolateGroup>.value(_FakeIsolateGroup_15(
+          this,
+          Invocation.method(
+            #getIsolateGroup,
+            [isolateGroupId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.IsolateGroup>.value(_FakeIsolateGroup_15(
+          this,
+          Invocation.method(
+            #getIsolateGroup,
+            [isolateGroupId],
+          ),
+        )),
+      ) as _i4.Future<_i1.IsolateGroup>);
+
+  @override
+  _i4.Future<_i1.Event> getIsolatePauseEvent(String? isolateId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getIsolatePauseEvent,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.Event>.value(_FakeEvent_16(
+          this,
+          Invocation.method(
+            #getIsolatePauseEvent,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Event>.value(_FakeEvent_16(
+          this,
+          Invocation.method(
+            #getIsolatePauseEvent,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Event>);
+
+  @override
+  _i4.Future<_i1.MemoryUsage> getMemoryUsage(String? isolateId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMemoryUsage,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.MemoryUsage>.value(_FakeMemoryUsage_17(
+          this,
+          Invocation.method(
+            #getMemoryUsage,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.MemoryUsage>.value(_FakeMemoryUsage_17(
+          this,
+          Invocation.method(
+            #getMemoryUsage,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.MemoryUsage>);
+
+  @override
+  _i4.Future<_i1.MemoryUsage> getIsolateGroupMemoryUsage(
+          String? isolateGroupId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getIsolateGroupMemoryUsage,
+          [isolateGroupId],
+        ),
+        returnValue: _i4.Future<_i1.MemoryUsage>.value(_FakeMemoryUsage_17(
+          this,
+          Invocation.method(
+            #getIsolateGroupMemoryUsage,
+            [isolateGroupId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.MemoryUsage>.value(_FakeMemoryUsage_17(
+          this,
+          Invocation.method(
+            #getIsolateGroupMemoryUsage,
+            [isolateGroupId],
+          ),
+        )),
+      ) as _i4.Future<_i1.MemoryUsage>);
+
+  @override
+  _i4.Future<_i1.ScriptList> getScripts(String? isolateId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getScripts,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.ScriptList>.value(_FakeScriptList_18(
+          this,
+          Invocation.method(
+            #getScripts,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.ScriptList>.value(_FakeScriptList_18(
+          this,
+          Invocation.method(
+            #getScripts,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.ScriptList>);
+
+  @override
+  _i4.Future<_i1.Obj> getObject(
+    String? isolateId,
+    String? objectId, {
+    int? offset,
+    int? count,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getObject,
+          [
+            isolateId,
+            objectId,
+          ],
+          {
+            #offset: offset,
+            #count: count,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Obj>.value(_FakeObj_19(
+          this,
+          Invocation.method(
+            #getObject,
+            [
+              isolateId,
+              objectId,
+            ],
+            {
+              #offset: offset,
+              #count: count,
+            },
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Obj>.value(_FakeObj_19(
+          this,
+          Invocation.method(
+            #getObject,
+            [
+              isolateId,
+              objectId,
+            ],
+            {
+              #offset: offset,
+              #count: count,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Obj>);
+
+  @override
+  _i4.Future<_i1.PerfettoCpuSamples> getPerfettoCpuSamples(
+    String? isolateId, {
+    int? timeOriginMicros,
+    int? timeExtentMicros,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPerfettoCpuSamples,
+          [isolateId],
+          {
+            #timeOriginMicros: timeOriginMicros,
+            #timeExtentMicros: timeExtentMicros,
+          },
+        ),
+        returnValue:
+            _i4.Future<_i1.PerfettoCpuSamples>.value(_FakePerfettoCpuSamples_20(
+          this,
+          Invocation.method(
+            #getPerfettoCpuSamples,
+            [isolateId],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.PerfettoCpuSamples>.value(_FakePerfettoCpuSamples_20(
+          this,
+          Invocation.method(
+            #getPerfettoCpuSamples,
+            [isolateId],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.PerfettoCpuSamples>);
+
+  @override
+  _i4.Future<_i1.PerfettoTimeline> getPerfettoVMTimeline({
+    int? timeOriginMicros,
+    int? timeExtentMicros,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getPerfettoVMTimeline,
+          [],
+          {
+            #timeOriginMicros: timeOriginMicros,
+            #timeExtentMicros: timeExtentMicros,
+          },
+        ),
+        returnValue:
+            _i4.Future<_i1.PerfettoTimeline>.value(_FakePerfettoTimeline_21(
+          this,
+          Invocation.method(
+            #getPerfettoVMTimeline,
+            [],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.PerfettoTimeline>.value(_FakePerfettoTimeline_21(
+          this,
+          Invocation.method(
+            #getPerfettoVMTimeline,
+            [],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.PerfettoTimeline>);
+
+  @override
+  _i4.Future<_i1.PortList> getPorts(String? isolateId) => (super.noSuchMethod(
+        Invocation.method(
+          #getPorts,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.PortList>.value(_FakePortList_22(
+          this,
+          Invocation.method(
+            #getPorts,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.PortList>.value(_FakePortList_22(
+          this,
+          Invocation.method(
+            #getPorts,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.PortList>);
+
+  @override
+  _i4.Future<_i1.RetainingPath> getRetainingPath(
+    String? isolateId,
+    String? targetId,
+    int? limit,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getRetainingPath,
+          [
+            isolateId,
+            targetId,
+            limit,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.RetainingPath>.value(_FakeRetainingPath_23(
+          this,
+          Invocation.method(
+            #getRetainingPath,
+            [
+              isolateId,
+              targetId,
+              limit,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.RetainingPath>.value(_FakeRetainingPath_23(
+          this,
+          Invocation.method(
+            #getRetainingPath,
+            [
+              isolateId,
+              targetId,
+              limit,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.RetainingPath>);
+
+  @override
+  _i4.Future<_i1.ProcessMemoryUsage> getProcessMemoryUsage() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getProcessMemoryUsage,
+          [],
+        ),
+        returnValue:
+            _i4.Future<_i1.ProcessMemoryUsage>.value(_FakeProcessMemoryUsage_24(
+          this,
+          Invocation.method(
+            #getProcessMemoryUsage,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.ProcessMemoryUsage>.value(_FakeProcessMemoryUsage_24(
+          this,
+          Invocation.method(
+            #getProcessMemoryUsage,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.ProcessMemoryUsage>);
+
+  @override
+  _i4.Future<_i1.Stack> getStack(
+    String? isolateId, {
+    int? limit,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getStack,
+          [isolateId],
+          {#limit: limit},
+        ),
+        returnValue: _i4.Future<_i1.Stack>.value(_FakeStack_25(
+          this,
+          Invocation.method(
+            #getStack,
+            [isolateId],
+            {#limit: limit},
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Stack>.value(_FakeStack_25(
+          this,
+          Invocation.method(
+            #getStack,
+            [isolateId],
+            {#limit: limit},
+          ),
+        )),
+      ) as _i4.Future<_i1.Stack>);
+
+  @override
+  _i4.Future<_i1.ProtocolList> getSupportedProtocols() => (super.noSuchMethod(
+        Invocation.method(
+          #getSupportedProtocols,
+          [],
+        ),
+        returnValue: _i4.Future<_i1.ProtocolList>.value(_FakeProtocolList_26(
+          this,
+          Invocation.method(
+            #getSupportedProtocols,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.ProtocolList>.value(_FakeProtocolList_26(
+          this,
+          Invocation.method(
+            #getSupportedProtocols,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.ProtocolList>);
+
+  @override
+  _i4.Future<_i1.SourceReport> getSourceReport(
+    String? isolateId,
+    List<String>? reports, {
+    String? scriptId,
+    int? tokenPos,
+    int? endTokenPos,
+    bool? forceCompile,
+    bool? reportLines,
+    List<String>? libraryFilters,
+    List<String>? librariesAlreadyCompiled,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getSourceReport,
+          [
+            isolateId,
+            reports,
+          ],
+          {
+            #scriptId: scriptId,
+            #tokenPos: tokenPos,
+            #endTokenPos: endTokenPos,
+            #forceCompile: forceCompile,
+            #reportLines: reportLines,
+            #libraryFilters: libraryFilters,
+            #librariesAlreadyCompiled: librariesAlreadyCompiled,
+          },
+        ),
+        returnValue: _i4.Future<_i1.SourceReport>.value(_FakeSourceReport_27(
+          this,
+          Invocation.method(
+            #getSourceReport,
+            [
+              isolateId,
+              reports,
+            ],
+            {
+              #scriptId: scriptId,
+              #tokenPos: tokenPos,
+              #endTokenPos: endTokenPos,
+              #forceCompile: forceCompile,
+              #reportLines: reportLines,
+              #libraryFilters: libraryFilters,
+              #librariesAlreadyCompiled: librariesAlreadyCompiled,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.SourceReport>.value(_FakeSourceReport_27(
+          this,
+          Invocation.method(
+            #getSourceReport,
+            [
+              isolateId,
+              reports,
+            ],
+            {
+              #scriptId: scriptId,
+              #tokenPos: tokenPos,
+              #endTokenPos: endTokenPos,
+              #forceCompile: forceCompile,
+              #reportLines: reportLines,
+              #libraryFilters: libraryFilters,
+              #librariesAlreadyCompiled: librariesAlreadyCompiled,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.SourceReport>);
+
+  @override
+  _i4.Future<_i1.Version> getVersion() => (super.noSuchMethod(
+        Invocation.method(
+          #getVersion,
+          [],
+        ),
+        returnValue: _i4.Future<_i1.Version>.value(_FakeVersion_28(
+          this,
+          Invocation.method(
+            #getVersion,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Version>.value(_FakeVersion_28(
+          this,
+          Invocation.method(
+            #getVersion,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.Version>);
+
+  @override
+  _i4.Future<_i1.VM> getVM() => (super.noSuchMethod(
+        Invocation.method(
+          #getVM,
+          [],
+        ),
+        returnValue: _i4.Future<_i1.VM>.value(_FakeVM_29(
+          this,
+          Invocation.method(
+            #getVM,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.VM>.value(_FakeVM_29(
+          this,
+          Invocation.method(
+            #getVM,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.VM>);
+
+  @override
+  _i4.Future<_i1.Timeline> getVMTimeline({
+    int? timeOriginMicros,
+    int? timeExtentMicros,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getVMTimeline,
+          [],
+          {
+            #timeOriginMicros: timeOriginMicros,
+            #timeExtentMicros: timeExtentMicros,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Timeline>.value(_FakeTimeline_30(
+          this,
+          Invocation.method(
+            #getVMTimeline,
+            [],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Timeline>.value(_FakeTimeline_30(
+          this,
+          Invocation.method(
+            #getVMTimeline,
+            [],
+            {
+              #timeOriginMicros: timeOriginMicros,
+              #timeExtentMicros: timeExtentMicros,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Timeline>);
+
+  @override
+  _i4.Future<_i1.TimelineFlags> getVMTimelineFlags() => (super.noSuchMethod(
+        Invocation.method(
+          #getVMTimelineFlags,
+          [],
+        ),
+        returnValue: _i4.Future<_i1.TimelineFlags>.value(_FakeTimelineFlags_31(
+          this,
+          Invocation.method(
+            #getVMTimelineFlags,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.TimelineFlags>.value(_FakeTimelineFlags_31(
+          this,
+          Invocation.method(
+            #getVMTimelineFlags,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.TimelineFlags>);
+
+  @override
+  _i4.Future<_i1.Timestamp> getVMTimelineMicros() => (super.noSuchMethod(
+        Invocation.method(
+          #getVMTimelineMicros,
+          [],
+        ),
+        returnValue: _i4.Future<_i1.Timestamp>.value(_FakeTimestamp_32(
+          this,
+          Invocation.method(
+            #getVMTimelineMicros,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Timestamp>.value(_FakeTimestamp_32(
+          this,
+          Invocation.method(
+            #getVMTimelineMicros,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i1.Timestamp>);
+
+  @override
+  _i4.Future<_i1.Success> pause(String? isolateId) => (super.noSuchMethod(
+        Invocation.method(
+          #pause,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #pause,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #pause,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> kill(String? isolateId) => (super.noSuchMethod(
+        Invocation.method(
+          #kill,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #kill,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #kill,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.UriList> lookupResolvedPackageUris(
+    String? isolateId,
+    List<String>? uris, {
+    bool? local,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #lookupResolvedPackageUris,
+          [
+            isolateId,
+            uris,
+          ],
+          {#local: local},
+        ),
+        returnValue: _i4.Future<_i1.UriList>.value(_FakeUriList_33(
+          this,
+          Invocation.method(
+            #lookupResolvedPackageUris,
+            [
+              isolateId,
+              uris,
+            ],
+            {#local: local},
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.UriList>.value(_FakeUriList_33(
+          this,
+          Invocation.method(
+            #lookupResolvedPackageUris,
+            [
+              isolateId,
+              uris,
+            ],
+            {#local: local},
+          ),
+        )),
+      ) as _i4.Future<_i1.UriList>);
+
+  @override
+  _i4.Future<_i1.UriList> lookupPackageUris(
+    String? isolateId,
+    List<String>? uris,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #lookupPackageUris,
+          [
+            isolateId,
+            uris,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.UriList>.value(_FakeUriList_33(
+          this,
+          Invocation.method(
+            #lookupPackageUris,
+            [
+              isolateId,
+              uris,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.UriList>.value(_FakeUriList_33(
+          this,
+          Invocation.method(
+            #lookupPackageUris,
+            [
+              isolateId,
+              uris,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.UriList>);
+
+  @override
+  _i4.Future<_i1.Success> registerService(
+    String? service,
+    String? alias,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #registerService,
+          [
+            service,
+            alias,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #registerService,
+            [
+              service,
+              alias,
+            ],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #registerService,
+            [
+              service,
+              alias,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.ReloadReport> reloadSources(
+    String? isolateId, {
+    bool? force,
+    bool? pause,
+    String? rootLibUri,
+    String? packagesUri,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #reloadSources,
+          [isolateId],
+          {
+            #force: force,
+            #pause: pause,
+            #rootLibUri: rootLibUri,
+            #packagesUri: packagesUri,
+          },
+        ),
+        returnValue: _i4.Future<_i1.ReloadReport>.value(_FakeReloadReport_34(
+          this,
+          Invocation.method(
+            #reloadSources,
+            [isolateId],
+            {
+              #force: force,
+              #pause: pause,
+              #rootLibUri: rootLibUri,
+              #packagesUri: packagesUri,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.ReloadReport>.value(_FakeReloadReport_34(
+          this,
+          Invocation.method(
+            #reloadSources,
+            [isolateId],
+            {
+              #force: force,
+              #pause: pause,
+              #rootLibUri: rootLibUri,
+              #packagesUri: packagesUri,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.ReloadReport>);
+
+  @override
+  _i4.Future<_i1.Success> removeBreakpoint(
+    String? isolateId,
+    String? breakpointId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeBreakpoint,
+          [
+            isolateId,
+            breakpointId,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #removeBreakpoint,
+            [
+              isolateId,
+              breakpointId,
+            ],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #removeBreakpoint,
+            [
+              isolateId,
+              breakpointId,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> requestHeapSnapshot(String? isolateId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #requestHeapSnapshot,
+          [isolateId],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #requestHeapSnapshot,
+            [isolateId],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #requestHeapSnapshot,
+            [isolateId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> resume(
+    String? isolateId, {
+    String? step,
+    int? frameIndex,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #resume,
+          [isolateId],
+          {
+            #step: step,
+            #frameIndex: frameIndex,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #resume,
+            [isolateId],
+            {
+              #step: step,
+              #frameIndex: frameIndex,
+            },
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #resume,
+            [isolateId],
+            {
+              #step: step,
+              #frameIndex: frameIndex,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Breakpoint> setBreakpointState(
+    String? isolateId,
+    String? breakpointId,
+    bool? enable,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setBreakpointState,
+          [
+            isolateId,
+            breakpointId,
+            enable,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #setBreakpointState,
+            [
+              isolateId,
+              breakpointId,
+              enable,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Breakpoint>.value(_FakeBreakpoint_5(
+          this,
+          Invocation.method(
+            #setBreakpointState,
+            [
+              isolateId,
+              breakpointId,
+              enable,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Breakpoint>);
+
+  @override
+  _i4.Future<_i1.Success> setExceptionPauseMode(
+    String? isolateId,
+    String? mode,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setExceptionPauseMode,
+          [
+            isolateId,
+            mode,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setExceptionPauseMode,
+            [
+              isolateId,
+              mode,
+            ],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setExceptionPauseMode,
+            [
+              isolateId,
+              mode,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> setIsolatePauseMode(
+    String? isolateId, {
+    String? exceptionPauseMode,
+    bool? shouldPauseOnExit,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setIsolatePauseMode,
+          [isolateId],
+          {
+            #exceptionPauseMode: exceptionPauseMode,
+            #shouldPauseOnExit: shouldPauseOnExit,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setIsolatePauseMode,
+            [isolateId],
+            {
+              #exceptionPauseMode: exceptionPauseMode,
+              #shouldPauseOnExit: shouldPauseOnExit,
+            },
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setIsolatePauseMode,
+            [isolateId],
+            {
+              #exceptionPauseMode: exceptionPauseMode,
+              #shouldPauseOnExit: shouldPauseOnExit,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Response> setFlag(
+    String? name,
+    String? value,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setFlag,
+          [
+            name,
+            value,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #setFlag,
+            [
+              name,
+              value,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #setFlag,
+            [
+              name,
+              value,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Response>);
+
+  @override
+  _i4.Future<_i1.Success> setLibraryDebuggable(
+    String? isolateId,
+    String? libraryId,
+    bool? isDebuggable,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLibraryDebuggable,
+          [
+            isolateId,
+            libraryId,
+            isDebuggable,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setLibraryDebuggable,
+            [
+              isolateId,
+              libraryId,
+              isDebuggable,
+            ],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setLibraryDebuggable,
+            [
+              isolateId,
+              libraryId,
+              isDebuggable,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> setName(
+    String? isolateId,
+    String? name,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setName,
+          [
+            isolateId,
+            name,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setName,
+            [
+              isolateId,
+              name,
+            ],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setName,
+            [
+              isolateId,
+              name,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> setTraceClassAllocation(
+    String? isolateId,
+    String? classId,
+    bool? enable,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setTraceClassAllocation,
+          [
+            isolateId,
+            classId,
+            enable,
+          ],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setTraceClassAllocation,
+            [
+              isolateId,
+              classId,
+              enable,
+            ],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setTraceClassAllocation,
+            [
+              isolateId,
+              classId,
+              enable,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> setVMName(String? name) => (super.noSuchMethod(
+        Invocation.method(
+          #setVMName,
+          [name],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setVMName,
+            [name],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setVMName,
+            [name],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> setVMTimelineFlags(List<String>? recordedStreams) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setVMTimelineFlags,
+          [recordedStreams],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setVMTimelineFlags,
+            [recordedStreams],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #setVMTimelineFlags,
+            [recordedStreams],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> streamCancel(String? streamId) => (super.noSuchMethod(
+        Invocation.method(
+          #streamCancel,
+          [streamId],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #streamCancel,
+            [streamId],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #streamCancel,
+            [streamId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> streamCpuSamplesWithUserTag(List<String>? userTags) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #streamCpuSamplesWithUserTag,
+          [userTags],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #streamCpuSamplesWithUserTag,
+            [userTags],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #streamCpuSamplesWithUserTag,
+            [userTags],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Success> streamListen(String? streamId) => (super.noSuchMethod(
+        Invocation.method(
+          #streamListen,
+          [streamId],
+        ),
+        returnValue: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #streamListen,
+            [streamId],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i1.Success>.value(_FakeSuccess_6(
+          this,
+          Invocation.method(
+            #streamListen,
+            [streamId],
+          ),
+        )),
+      ) as _i4.Future<_i1.Success>);
+
+  @override
+  _i4.Future<_i1.Response> callMethod(
+    String? method, {
+    String? isolateId,
+    Map<String, dynamic>? args,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #callMethod,
+          [method],
+          {
+            #isolateId: isolateId,
+            #args: args,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #callMethod,
+            [method],
+            {
+              #isolateId: isolateId,
+              #args: args,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #callMethod,
+            [method],
+            {
+              #isolateId: isolateId,
+              #args: args,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Response>);
+
+  @override
+  _i4.Future<_i1.Response> callServiceExtension(
+    String? method, {
+    String? isolateId,
+    Map<String, dynamic>? args,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #callServiceExtension,
+          [method],
+          {
+            #isolateId: isolateId,
+            #args: args,
+          },
+        ),
+        returnValue: _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #callServiceExtension,
+            [method],
+            {
+              #isolateId: isolateId,
+              #args: args,
+            },
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i1.Response>.value(_FakeResponse_7(
+          this,
+          Invocation.method(
+            #callServiceExtension,
+            [method],
+            {
+              #isolateId: isolateId,
+              #args: args,
+            },
+          ),
+        )),
+      ) as _i4.Future<_i1.Response>);
+
+  @override
+  _i4.Future<void> dispose() => (super.noSuchMethod(
+        Invocation.method(
+          #dispose,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<T> wrapFuture<T>(
+    String? name,
+    _i4.Future<T>? future,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #wrapFuture,
+          [
+            name,
+            future,
+          ],
+        ),
+        returnValue: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #wrapFuture,
+                  [
+                    name,
+                    future,
+                  ],
+                ),
+              ),
+              (T v) => _i4.Future<T>.value(v),
+            ) ??
+            _FakeFuture_35<T>(
+              this,
+              Invocation.method(
+                #wrapFuture,
+                [
+                  name,
+                  future,
+                ],
+              ),
+            ),
+        returnValueForMissingStub: _i6.ifNotNull(
+              _i6.dummyValueOrNull<T>(
+                this,
+                Invocation.method(
+                  #wrapFuture,
+                  [
+                    name,
+                    future,
+                  ],
+                ),
+              ),
+              (T v) => _i4.Future<T>.value(v),
+            ) ??
+            _FakeFuture_35<T>(
+              this,
+              Invocation.method(
+                #wrapFuture,
+                [
+                  name,
+                  future,
+                ],
+              ),
+            ),
+      ) as _i4.Future<T>);
+
+  @override
+  void registerServiceCallback(
+    String? service,
+    _i1.ServiceCallback? cb,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #registerServiceCallback,
+          [
+            service,
+            cb,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
 }

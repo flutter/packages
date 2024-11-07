@@ -8,20 +8,22 @@ import 'package:flutter/foundation.dart';
 
 import 'async_state.dart';
 
+const Object _undefined = Object();
+
 @immutable
 
 /// A class that represents the state of the shared preferences tool.
 class SharedPreferencesState {
   /// Default constructor for [SharedPreferencesState].
   const SharedPreferencesState({
-    this.allKeys = const <String>[],
+    this.allKeys = const AsyncState<List<String>>.loading(),
     this.selectedKey,
     this.editing = false,
     this.legacyApi = false,
   });
 
   /// A list of all keys in the shared preferences of the target debug session using the selected API.
-  final List<String> allKeys;
+  final AsyncState<List<String>> allKeys;
 
   /// The user selected key and its value in the shared preferences
   /// of the target debug session.
@@ -35,25 +37,35 @@ class SharedPreferencesState {
 
   /// Creates a copy of this [SharedPreferencesState] but replacing the given
   /// fields with the new values.
-  SharedPreferencesState copyWith({
-    List<String>? allKeys,
+  SharedPreferencesState Function({
+    AsyncState<List<String>> allKeys,
     SelectedSharedPreferencesKey? selectedKey,
-    bool? editing,
-    bool? legacyApi,
-  }) {
-    return SharedPreferencesState(
-      allKeys: allKeys ?? this.allKeys,
-      selectedKey: selectedKey ?? this.selectedKey,
-      editing: editing ?? this.editing,
-      legacyApi: legacyApi ?? this.legacyApi,
-    );
-  }
+    bool editing,
+    bool legacyApi,
+  }) get copyWith => ({
+        Object allKeys = _undefined,
+        Object? selectedKey = _undefined,
+        Object editing = _undefined,
+        Object legacyApi = _undefined,
+      }) {
+        return SharedPreferencesState(
+          allKeys: allKeys == _undefined
+              ? this.allKeys
+              : allKeys as AsyncState<List<String>>,
+          selectedKey: selectedKey == _undefined
+              ? this.selectedKey
+              : selectedKey as SelectedSharedPreferencesKey?,
+          editing: editing == _undefined ? this.editing : editing as bool,
+          legacyApi:
+              legacyApi == _undefined ? this.legacyApi : legacyApi as bool,
+        );
+      };
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is SharedPreferencesState &&
-            listEquals(other.allKeys, allKeys) &&
+            other.allKeys == allKeys &&
             other.selectedKey == selectedKey &&
             other.editing == editing &&
             other.legacyApi == legacyApi);
@@ -150,8 +162,8 @@ sealed class SharedPreferencesData implements _SharedPreferencesData<Object> {
     };
   }
 
-  /// The type of the value formatted in a pretty way.
-  String get prettyType {
+  /// The kind of the value as string.
+  String get kind {
     return switch (this) {
       SharedPreferencesDataString() => 'String',
       SharedPreferencesDataInt() => 'int',

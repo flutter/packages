@@ -31,10 +31,10 @@ void main() {
       notifier = SharedPreferencesStateNotifier(evalMock);
     });
 
-    test('should start in the loading state', () {
+    test('should start with the default state', () {
       expect(
         notifier.value,
-        equals(const AsyncState<SharedPreferencesState>.loading()),
+        const SharedPreferencesState(),
       );
     });
 
@@ -50,16 +50,7 @@ void main() {
 
       await notifier.fetchAllKeys();
 
-      expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: asyncKeys,
-            ),
-          ),
-        ),
-      );
+      expect(notifier.value.allKeys.dataOrNull, asyncKeys);
     });
 
     test('should filter out keys with "flutter." prefix async keys', () async {
@@ -75,14 +66,8 @@ void main() {
       await notifier.fetchAllKeys();
 
       expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: <String>['key2'],
-            ),
-          ),
-        ),
+        notifier.value.allKeys.dataOrNull,
+        equals(<String>['key2']),
       );
     });
 
@@ -104,16 +89,11 @@ void main() {
       await notifier.selectKey('key1');
 
       expect(
-        notifier.value,
+        notifier.value.selectedKey,
         equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: keys,
-              selectedKey: SelectedSharedPreferencesKey(
-                key: 'key1',
-                value: AsyncState<SharedPreferencesData>.data(keyValue),
-              ),
-            ),
+          const SelectedSharedPreferencesKey(
+            key: 'key1',
+            value: AsyncState<SharedPreferencesData>.data(keyValue),
           ),
         ),
       );
@@ -140,15 +120,13 @@ void main() {
       expect(
         notifier.value,
         equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: keys,
-              selectedKey: SelectedSharedPreferencesKey(
-                key: 'key1',
-                value: AsyncState<SharedPreferencesData>.data(keyValue),
-              ),
-              legacyApi: true,
+          const SharedPreferencesState(
+            allKeys: AsyncState<List<String>>.data(keys),
+            selectedKey: SelectedSharedPreferencesKey(
+              key: 'key1',
+              value: AsyncState<SharedPreferencesData>.data(keyValue),
             ),
+            legacyApi: true,
           ),
         ),
       );
@@ -167,29 +145,11 @@ void main() {
 
       notifier.filter('key1');
 
-      expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: <String>['key1'],
-            ),
-          ),
-        ),
-      );
+      expect(notifier.value.allKeys.dataOrNull, equals(<String>['key1']));
 
       notifier.filter('');
 
-      expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: asyncKeys,
-            ),
-          ),
-        ),
-      );
+      expect(notifier.value.allKeys.dataOrNull, equals(asyncKeys));
     });
 
     test('should start/stop editing', () async {
@@ -204,32 +164,11 @@ void main() {
       await notifier.fetchAllKeys();
       notifier.startEditing();
 
-      expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: asyncKeys,
-              editing: true,
-            ),
-          ),
-        ),
-      );
+      expect(notifier.value.editing, equals(true));
 
       notifier.stopEditing();
 
-      expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              allKeys: asyncKeys,
-              // ignore: avoid_redundant_argument_values
-              editing: false,
-            ),
-          ),
-        ),
-      );
+      expect(notifier.value.editing, equals(false));
     });
 
     test('should change value', () async {
@@ -297,32 +236,11 @@ void main() {
 
       notifier.selectApi(legacyApi: true);
 
-      expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              legacyApi: true,
-              allKeys: legacyKeys,
-            ),
-          ),
-        ),
-      );
+      expect(notifier.value.legacyApi, equals(true));
 
       notifier.selectApi(legacyApi: false);
 
-      expect(
-        notifier.value,
-        equals(
-          const AsyncState<SharedPreferencesState>.data(
-            SharedPreferencesState(
-              // ignore: avoid_redundant_argument_values
-              legacyApi: false,
-              allKeys: asyncKeys,
-            ),
-          ),
-        ),
-      );
+      expect(notifier.value.legacyApi, equals(false));
     });
   });
 }

@@ -34,23 +34,23 @@ class _DataPanelState extends State<DataPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncState<SharedPreferencesData?> selectedKeyData =
+    final AsyncState<SharedPreferencesData>? selectedKeyData =
         SharedPreferencesStateProvider.selectedKeyDataOf(context);
 
     return RoundedOutlinedBorder(
       clip: true,
       child: switch (selectedKeyData) {
-        AsyncStateData<SharedPreferencesData?>(data: null) => const Center(
+        null => const Center(
             child: Text('Select a key to view its data.'),
           ),
-        AsyncStateLoading<SharedPreferencesData?>() => const Center(
+        AsyncStateLoading<SharedPreferencesData>() => const Center(
             child: CircularProgressIndicator(),
           ),
-        final AsyncStateError<SharedPreferencesData?> value => ErrorPanel(
+        final AsyncStateError<SharedPreferencesData> value => ErrorPanel(
             error: value.error,
             stackTrace: value.stackTrace,
           ),
-        AsyncStateData<SharedPreferencesData?>(
+        AsyncStateData<SharedPreferencesData>(
           data: final SharedPreferencesData data,
         ) =>
           Column(
@@ -175,15 +175,13 @@ class _ConfirmRemoveDialog extends StatelessWidget {
         DialogTextButton(
           child: const Text('REMOVE'),
           onPressed: () async {
+            Navigator.of(context).pop();
             try {
               await notifier.deleteSelectedKey();
             } catch (error) {
               if (context.mounted) {
                 context.showSnackBar('Error: $error');
               }
-            }
-            if (context.mounted) {
-              Navigator.of(context).pop();
             }
           },
         ),
@@ -212,7 +210,7 @@ class _Content extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Text('Type: ${data.prettyType}'),
+              Text('Type: ${data.kind}'),
               const SizedBox(height: denseSpacing),
               if (editing) ...<Widget>[
                 const Text('Value:'),

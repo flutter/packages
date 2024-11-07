@@ -2,7 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:devtools_app_shared/service.dart';
+
 import 'package:vm_service/vm_service.dart';
 
 import 'shared_preferences_state.dart';
@@ -23,14 +27,12 @@ class SharedPreferencesToolEval {
   /// Do not call this constructor directly.
   /// Use [SharedPreferencesStateNotifierProvider] instead.
   SharedPreferencesToolEval(
-    this._asyncEval,
-    this._legacyEval,
-    this._isWeb,
+    this._service,
+    this._eval,
   );
 
-  final EvalOnDartLibrary _asyncEval;
-  final EvalOnDartLibrary _legacyEval;
-  final bool _isWeb;
+  final VmService _service;
+  final EvalOnDartLibrary _eval;
 
   Disposable? _allKeysDisposable;
   Disposable? _valueDisposable;
@@ -42,11 +44,44 @@ class SharedPreferencesToolEval {
   Future<KeysResult> fetchAllKeys() async {
     _allKeysDisposable?.dispose();
     _allKeysDisposable = Disposable();
+    final Map<String, Object?> data = await _evalMethod(
+      method: 'requestAllKeys()',
+      eventKind: 'all_keys',
+      isAlive: _allKeysDisposable,
+    );
+
+    List<String> castList(String key) {
+      return (data[key]! as List<Object?>).cast();
+    }
 
     return (
-      asyncKeys: await _fetchAsyncKeys(),
-      legacyKeys: await _fetchLegacyKeys(),
+      asyncKeys: castList('asyncKeys'),
+      legacyKeys: castList('legacyKeys'),
     );
+  }
+
+  Future<Map<String, Object?>> _evalMethod({
+    required String method,
+    required String eventKind,
+    Disposable? isAlive,
+  }) async {
+    final Completer<Map<String, Object?>> completer =
+        Completer<Map<String, Object?>>();
+
+    late final StreamSubscription<Event> streamSubscription;
+    streamSubscription = _service.onExtensionEvent.listen((Event event) {
+      if (event.extensionKind == 'shared_preferences:$eventKind') {
+        streamSubscription.cancel();
+        completer.complete(event.extensionData!.data);
+      }
+    });
+
+    await _eval.eval(
+      'DevtoolsExtension().$method',
+      isAlive: isAlive,
+    );
+
+    return completer.future;
   }
 
   /// Fetches the value of the shared preference with the given [key].
@@ -56,39 +91,36 @@ class SharedPreferencesToolEval {
     _valueDisposable?.dispose();
     _valueDisposable = Disposable();
 
-    final Instance valueInstance =
-        await (legacy ? _getLegacyValue(key) : _getAsyncValue(key));
+    final Map<String, Object?> data = await _evalMethod(
+      method: "requestValue('$key', $legacy)",
+      eventKind: 'value',
+      isAlive: _valueDisposable,
+    );
 
-    return switch (valueInstance.kind) {
-      InstanceKind.kInt => SharedPreferencesData.int(
-          value: int.parse(valueInstance.valueAsString!),
+    final Object value = data['value']!;
+    final Object? kind = data['kind'];
+
+    // we need to check the kind because sometimes a double
+    // gets interpreted as an int. If this was not and issue
+    // we'd only need to do a simple pattern matching on value.
+    return switch (kind) {
+      'int' => SharedPreferencesData.int(
+          value: value as int,
         ),
-      InstanceKind.kBool => SharedPreferencesData.bool(
-          value: bool.parse(valueInstance.valueAsString!),
+      'bool' => SharedPreferencesData.bool(
+          value: value as bool,
         ),
-      InstanceKind.kDouble => SharedPreferencesData.double(
-          value: double.parse(valueInstance.valueAsString!),
+      'double' => SharedPreferencesData.double(
+          value: value as double,
         ),
-      InstanceKind.kString => SharedPreferencesData.string(
-          value: valueInstance.valueAsString!,
+      'String' => SharedPreferencesData.string(
+          value: value as String,
         ),
-      InstanceKind.kList => SharedPreferencesData.stringList(
-          value: await _asyncEval.evalInstance(
-            // Converting to set to avoid a bug on web targets.
-            // If we don't do this the elements list is empty, even though the
-            // length is greater than 0.
-            'Set.from(instance)',
-            isAlive: _valueDisposable,
-            scope: <String, String>{
-              'instance': valueInstance.id!,
-            },
-          ).then((Instance instance) => instance.elements!
-              .cast<InstanceRef>()
-              .map((InstanceRef ref) => ref.valueAsString!)
-              .toList()),
+      String() when kind.contains('List') => SharedPreferencesData.stringList(
+          value: (value as List<Object?>).cast(),
         ),
       _ => throw UnsupportedError(
-          'Unsupported value type: ${valueInstance.kind}',
+          'Unsupported value type: $kind',
         ),
     };
   }
@@ -102,21 +134,15 @@ class SharedPreferencesToolEval {
   ) async {
     _changeValueDisposable?.dispose();
     _changeValueDisposable = Disposable();
-    final String method = switch (value) {
-      final SharedPreferencesDataString data =>
-        "setString('$key', '${data.value}')",
-      final SharedPreferencesDataInt data => "setInt('$key', ${data.value})",
-      final SharedPreferencesDataDouble data =>
-        "setDouble('$key', ${data.value})",
-      final SharedPreferencesDataBool data => "setBool('$key', ${data.value})",
-      final SharedPreferencesDataStringList data =>
-        "setStringList('$key', [${data.value.map((String str) => "'$str'").join(', ')}])",
-    };
-    if (legacy) {
-      await _legacyEval.legacyPrefsEval(method, _isWeb, _changeValueDisposable);
-    } else {
-      await _asyncEval.prefsEval(method, _isWeb, _changeValueDisposable);
-    }
+
+    final String serializedValue = jsonEncode(value.value);
+    final String kind = value.kind;
+    await _evalMethod(
+      method:
+          "requestValueChange('$key', '$serializedValue', '$kind', $legacy)",
+      eventKind: 'change_value',
+      isAlive: _changeValueDisposable,
+    );
   }
 
   /// Deletes the key from the shared preferences of the target debug session.
@@ -124,12 +150,11 @@ class SharedPreferencesToolEval {
     _removeValueDisposable?.dispose();
     _removeValueDisposable = Disposable();
 
-    final String method = "remove('$key')";
-    if (legacy) {
-      await _legacyEval.legacyPrefsEval(method, _isWeb, _removeValueDisposable);
-    } else {
-      await _asyncEval.prefsEval(method, _isWeb, _removeValueDisposable);
-    }
+    await _evalMethod(
+      method: "requestRemoveKey('$key', $legacy)",
+      eventKind: 'remove',
+      isAlive: _removeValueDisposable,
+    );
   }
 
   /// Disposes all the disposables used in this class.
@@ -138,201 +163,6 @@ class SharedPreferencesToolEval {
     _valueDisposable?.dispose();
     _changeValueDisposable?.dispose();
     _removeValueDisposable?.dispose();
-    _asyncEval.dispose();
-  }
-
-  Future<List<String>> _fetchAsyncKeys() async {
-    if (_isWeb) {
-      try {
-        final Instance checkLibraryLoaded = await _asyncEval.evalInstance(
-          'SharedPreferencesAsync()',
-          isAlive: _allKeysDisposable,
-        );
-        // Check if the library has been loaded for web targets
-        if (checkLibraryLoaded.valueAsString?.contains('has not been loaded') ??
-            false) {
-          return <String>[];
-        }
-      } on LibraryNotFound catch (_) {
-        // If the library is not found we also return an empty list.
-        return <String>[];
-      }
-    }
-
-    final Instance keysInstance = await _asyncEval.prefsGetInstance(
-      'getKeys()',
-      _isWeb,
-      _allKeysDisposable,
-    );
-    return Future.wait(<Future<String>>[
-      for (final InstanceRef keyRef
-          in keysInstance.elements!.cast<InstanceRef>())
-        _asyncEval.safeGetInstance(keyRef, _allKeysDisposable).then(
-              (Instance keyInstance) => keyInstance.valueAsString!,
-            ),
-    ]);
-  }
-
-  Future<List<String>> _fetchLegacyKeys() async {
-    if (_isWeb) {
-      try {
-        final Instance checkLibraryLoaded = await _legacyEval.evalInstance(
-          'SharedPreferences.getInstance()',
-          isAlive: _allKeysDisposable,
-        );
-        // Check if the library has been loaded for web targets
-        if (checkLibraryLoaded.valueAsString?.contains('has not been loaded') ??
-            false) {
-          return <String>[];
-        }
-      } on LibraryNotFound catch (_) {
-        // If the library is not found we also return an empty list.
-        return <String>[];
-      }
-    }
-
-    final Instance keysSetInstance = await _legacyEval.legacyPrefsGetInstance(
-      'getKeys()',
-      _isWeb,
-      _allKeysDisposable,
-    );
-    return Future.wait(<Future<String>>[
-      for (final InstanceRef keyRef
-          in keysSetInstance.elements!.cast<InstanceRef>())
-        _legacyEval.safeGetInstance(keyRef, _allKeysDisposable).then(
-              (Instance keyInstance) => keyInstance.valueAsString!,
-            ),
-    ]);
-  }
-
-  Future<Instance> _getAsyncValue(String key) async {
-    return _asyncEval.prefsGetInstance(
-      "getAll(allowList: {'$key'}).then((map) => map.values.firstOrNull)",
-      _isWeb,
-      _valueDisposable,
-    );
-  }
-
-  Future<Instance> _getLegacyValue(String key) async {
-    return _legacyEval.legacyPrefsGetInstance(
-      "get('$key')",
-      _isWeb,
-      _valueDisposable,
-    );
-  }
-}
-
-extension on EvalOnDartLibrary {
-  Future<InstanceRef?> prefsEval(
-    String method,
-    bool isWeb,
-    Disposable? isAlive,
-  ) async {
-    return evalFuture(
-      'SharedPreferencesAsync().$method',
-      isWeb,
-      isAlive,
-    );
-  }
-
-  Future<Instance> prefsGetInstance(
-    String method,
-    bool isWeb,
-    Disposable? isAlive,
-  ) async {
-    return safeGetInstance(
-      (await prefsEval(method, isWeb, isAlive))!,
-      isAlive,
-    );
-  }
-
-  /// This only works on non-web platforms due to the `asyncEval` call.
-  /// This is ok, this won't ever be called on web platforms.
-  Future<InstanceRef?> legacyPrefsEval(
-    String method,
-    bool isWeb,
-    Disposable? isAlive,
-  ) {
-    return evalFuture(
-      'SharedPreferences.getInstance().then((prefs) => prefs.$method)',
-      isWeb,
-      isAlive,
-    );
-  }
-
-  Future<Instance> legacyPrefsGetInstance(
-    String method,
-    bool isWeb,
-    Disposable? isAlive,
-  ) async {
-    return safeGetInstance(
-      (await legacyPrefsEval(method, isWeb, isAlive))!,
-      isAlive,
-    );
-  }
-
-  /// Evaluates the given [expression].
-  ///
-  /// Returns the [InstanceRef] of the result.
-  /// The [isAlive] parameter is used to dispose the evaluation if the
-  /// caller is disposed.
-  ///
-  /// This method is actually a workaround for the asyncEval method, which is
-  /// not working for web targets, check this issue https://github.com/flutter/devtools/issues/7766.
-  ///
-  /// It does the normal asyncEval on platforms other than web.
-  Future<InstanceRef?> evalFuture(
-    String expression,
-    bool isWeb,
-    Disposable? isAlive,
-  ) async {
-    // If not running on a web target, returns the normal async eval.
-    if (!isWeb) {
-      return asyncEval(
-        'await $expression',
-        isAlive: isAlive,
-      );
-    }
-
-    // Create a empty list in memory to hold the future value instance.
-    // It could've been anything that can handle values passed by reference.
-    final InstanceRef valueHolderRef = await safeEval(
-      '[]',
-      isAlive: isAlive,
-    );
-
-    // Add the future value instance to the list once the future completes
-    await safeEval(
-      '$expression.then(valueHolder.add);',
-      isAlive: isAlive,
-      scope: <String, String>{
-        'valueHolder': valueHolderRef.id!,
-      },
-    );
-
-    // The maximum number of retries to get the future value instance.
-    // Means a max of 1 second of waiting.
-    const int maxRetries = 20;
-    int retryCount = 0;
-
-    // Wait until the shared preferences instance is added to the list.
-    while (retryCount < maxRetries) {
-      retryCount++;
-
-      final Instance holderInstance =
-          await safeGetInstance(valueHolderRef, isAlive);
-
-      // If the elements list is not empty it means the future has resolved.
-      if (holderInstance.elements case final List<dynamic> elements
-          when elements.isNotEmpty) {
-        final Object? prefsInstance = elements.firstOrNull;
-        // We return null if the future is a Future<void>
-        return prefsInstance != null ? prefsInstance as InstanceRef : null;
-      }
-
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-    }
-
-    throw StateError('Failed to get future value instance.');
+    _eval.dispose();
   }
 }
