@@ -51,7 +51,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Callback handler for transaction status changes for StoreKit2 transactions
   @visibleForTesting
-  static SK2TransactionObserverWrapper get sk2transactionObserver =>
+  static SK2TransactionObserverWrapper get sk2TransactionObserver =>
       _sk2transactionObserver;
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].

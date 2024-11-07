@@ -352,7 +352,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
       {SK2ProductPurchaseOptionsMessage? options}) {
     final SK2TransactionMessage transaction = createPendingTransaction(id);
 
-    InAppPurchaseStoreKitPlatform.sk2transactionObserver
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver
         .onTransactionsUpdated(<SK2TransactionMessage>[transaction]);
     return Future<SK2ProductPurchaseResultMessage>.value(
         SK2ProductPurchaseResultMessage.success);
@@ -386,7 +386,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
   @override
   Future<void> restorePurchases() async {
-    InAppPurchaseStoreKitPlatform.sk2transactionObserver
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver
         .onTransactionsUpdated(transactionList);
   }
 }
