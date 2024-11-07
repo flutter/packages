@@ -1,3 +1,7 @@
+## 4.0.2
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
 ## 4.0.1
 
 * Adds `missing_code_block_language_in_doc_comment` lint.
