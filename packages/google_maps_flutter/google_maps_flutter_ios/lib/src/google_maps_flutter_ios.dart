@@ -352,6 +352,18 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate, {
+    required CameraUpdateAnimationConfiguration configuration,
+    required int mapId,
+  }) {
+    return _hostApi(mapId).animateCamera(
+        PlatformCameraUpdate(json: cameraUpdate.toJson()),
+        configuration: PlatformCameraUpdateAnimationConfiguration(
+            durationMilliseconds: configuration.duration?.inMilliseconds));
+  }
+
+  @override
   Future<void> moveCamera(
     CameraUpdate cameraUpdate, {
     required int mapId,

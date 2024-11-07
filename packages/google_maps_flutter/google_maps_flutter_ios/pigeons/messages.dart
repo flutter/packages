@@ -101,6 +101,13 @@ class PlatformCameraUpdateZoomTo {
   final double zoom;
 }
 
+/// Pigeon representation of a CameraUpdateAnimationConfiguration.
+class PlatformCameraUpdateAnimationConfiguration {
+  PlatformCameraUpdateAnimationConfiguration({this.durationMilliseconds});
+
+  final int? durationMilliseconds;
+}
+
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
   PlatformCircle({
@@ -613,9 +620,11 @@ abstract class MapsApi {
   @ObjCSelector('moveCameraWithUpdate:')
   void moveCamera(PlatformCameraUpdate cameraUpdate);
 
-  /// Moves the camera according to [cameraUpdate], animating the update.
-  @ObjCSelector('animateCameraWithUpdate:')
-  void animateCamera(PlatformCameraUpdate cameraUpdate);
+  /// Moves the camera according to [cameraUpdate], animating the update using a
+  /// duration in milliseconds if provided.
+  @ObjCSelector('animateCameraWithUpdate:andConfiguration:')
+  void animateCamera(PlatformCameraUpdate cameraUpdate,
+      {PlatformCameraUpdateAnimationConfiguration? configuration});
 
   /// Gets the current map zoom level.
   @ObjCSelector('currentZoomLevel')
@@ -752,4 +761,6 @@ abstract class MapsInspectorApi {
   PlatformZoomRange getZoomRange();
   @ObjCSelector('clustersWithIdentifier:')
   List<PlatformCluster> getClusters(String clusterManagerId);
+  @ObjCSelector('cameraPosition')
+  PlatformCameraPosition getCameraPosition();
 }
