@@ -1,6 +1,6 @@
 ## 0.12.4+3
 
-* Fix callback types for `TokenClientConfig`.
+* Fixes callback types for `TokenClientConfig`.
 
 ## 0.12.4+2
 
