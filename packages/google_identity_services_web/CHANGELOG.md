@@ -1,4 +1,4 @@
-## NEXT
+## 0.3.1+5
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * Clean up documentation of callbacks in `CodeClientConfig`,
