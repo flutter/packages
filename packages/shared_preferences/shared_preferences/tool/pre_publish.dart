@@ -4,16 +4,23 @@
 
 import 'dart:io';
 
+// ignore: depend_on_referenced_packages
+import 'package:path/path.dart' as p;
+
 Future<void> _runCommand({
   required String message,
   required String executable,
   required List<String> arguments,
 }) async {
   stdout.write(message);
+  final Directory rootDir = Directory(
+    p.dirname(Platform.script.path),
+  ).parent.parent;
+
   final ProcessResult pubGetResult = await Process.run(
     executable,
     arguments,
-    workingDirectory: '../shared_preferences_tool',
+    workingDirectory: p.join(rootDir.path, 'shared_preferences_tool'),
   );
 
   stdout.write(pubGetResult.stdout);
