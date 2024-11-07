@@ -4,6 +4,7 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -25,12 +26,26 @@ class AnimateCamera extends StatefulWidget {
   State createState() => AnimateCameraState();
 }
 
+// Animation duration for a animation configuration.
+const int _durationSeconds = 10;
+
 class AnimateCameraState extends State<AnimateCamera> {
   GoogleMapController? mapController;
+  CameraUpdateAnimationConfiguration? _cameraUpdateAnimationConfiguration;
 
   // ignore: use_setters_to_change_properties
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  void _toggleAnimationConfiguration() {
+    setState(() {
+      _cameraUpdateAnimationConfiguration =
+          _cameraUpdateAnimationConfiguration != null
+              ? null
+              : const CameraUpdateAnimationConfiguration(
+                  duration: Duration(seconds: _durationSeconds));
+    });
   }
 
   @override
@@ -66,6 +81,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                           zoom: 17.0,
                         ),
                       ),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('newCameraPosition'),
@@ -76,6 +92,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                       CameraUpdate.newLatLng(
                         const LatLng(56.1725505, 10.1850512),
                       ),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('newLatLng'),
@@ -90,6 +107,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                         ),
                         10.0,
                       ),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('newLatLngBounds'),
@@ -101,6 +119,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                         const LatLng(37.4231613, -122.087159),
                         11.0,
                       ),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('newLatLngZoom'),
@@ -109,6 +128,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                   onPressed: () {
                     mapController?.animateCamera(
                       CameraUpdate.scrollBy(150.0, -225.0),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('scrollBy'),
@@ -124,6 +144,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                         -0.5,
                         const Offset(30.0, 20.0),
                       ),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('zoomBy with focus'),
@@ -132,6 +153,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                   onPressed: () {
                     mapController?.animateCamera(
                       CameraUpdate.zoomBy(-0.5),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('zoomBy'),
@@ -140,6 +162,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                   onPressed: () {
                     mapController?.animateCamera(
                       CameraUpdate.zoomIn(),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('zoomIn'),
@@ -148,6 +171,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                   onPressed: () {
                     mapController?.animateCamera(
                       CameraUpdate.zoomOut(),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('zoomOut'),
@@ -156,6 +180,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                   onPressed: () {
                     mapController?.animateCamera(
                       CameraUpdate.zoomTo(16.0),
+                      configuration: _cameraUpdateAnimationConfiguration,
                     );
                   },
                   child: const Text('zoomTo'),
@@ -163,7 +188,25 @@ class AnimateCameraState extends State<AnimateCamera> {
               ],
             ),
           ],
-        )
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            const Text(
+              'With configuration\n(10 second duration)',
+              textAlign: TextAlign.right,
+            ),
+            const SizedBox(width: 5),
+            Switch(
+              value: _cameraUpdateAnimationConfiguration != null,
+              onChanged: kIsWeb
+                  ? null
+                  : (bool value) {
+                      _toggleAnimationConfiguration();
+                    },
+            ),
+          ],
+        ),
       ],
     );
   }

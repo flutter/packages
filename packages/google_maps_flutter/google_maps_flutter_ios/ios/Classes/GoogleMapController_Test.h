@@ -7,6 +7,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+- (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+               andConfiguration:
+                   (nullable FGMPlatformCameraUpdateAnimationConfiguration *)configuration
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
+@end
+
 @interface FLTGoogleMapController (Test)
 
 /// Initializes a map controller with a concrete map view.
@@ -19,6 +26,10 @@ NS_ASSUME_NONNULL_BEGIN
                  viewIdentifier:(int64_t)viewId
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+
+@property(nonatomic, strong, readonly) GMSMapView *mapView;
+@property(nonatomic, strong, readonly) FGMMapCallHandler *callHandler;
+@property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 
 @end
 

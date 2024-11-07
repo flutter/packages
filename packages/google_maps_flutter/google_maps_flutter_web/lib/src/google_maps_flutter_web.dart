@@ -132,6 +132,15 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     return moveCamera(cameraUpdate, mapId: mapId);
   }
 
+  @override
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate, {
+    required CameraUpdateAnimationConfiguration configuration,
+    required int mapId,
+  }) {
+    return animateCamera(cameraUpdate, mapId: mapId);
+  }
+
   /// Applies the given `cameraUpdate` to the current viewport.
   @override
   Future<void> moveCamera(
@@ -362,6 +371,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorWeb(
       (int mapId) => _map(mapId).configuration,
       (int mapId) => _map(mapId).clusterManagersController,
+      (int mapId) => _map(mapId),
     );
   }
 }
