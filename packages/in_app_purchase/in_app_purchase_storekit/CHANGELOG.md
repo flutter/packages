@@ -1,3 +1,7 @@
+## 0.3.18+4
+
+* Updates README to remove contributor-focused documentation.
+
 ## 0.3.18+3
 
 * Updates Pigeon for non-nullable collection type support.
