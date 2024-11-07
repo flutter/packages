@@ -313,9 +313,6 @@ extension TokenClientExtension on TokenClient {
 @staticInterop
 abstract class OverridableTokenClientConfig {
   /// Constructs an OverridableTokenClientConfig object in JavaScript.
-  ///
-  /// The [callback] property must be wrapped in [allowInterop] before it's
-  /// passed to this constructor.
   factory OverridableTokenClientConfig({
     /// A list of scopes that identify the resources that your application could
     /// access on the user's behalf. These values inform the consent screen that
