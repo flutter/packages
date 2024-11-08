@@ -28,7 +28,7 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		3A858B24A41D64C4BF302405 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB20D00B3AAB343668A80A59 /* Pods_RunnerTests.framework */; };
-		E62C10892C07DA2A000E3CCC /* FLALocalAuthPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62C10882C07DA2A000E3CCC /* FLALocalAuthPluginTests.swift */; };
+		E62C10892C07DA2A000E3CCC /* LocalAuthPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62C10882C07DA2A000E3CCC /* LocalAuthPluginTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,7 +87,7 @@
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		CB20D00B3AAB343668A80A59 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC8BF0B04B7666C6A6EA0D26 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
-		E62C10882C07DA2A000E3CCC /* FLALocalAuthPluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLALocalAuthPluginTests.swift; path = ../../../darwin/Tests/FLALocalAuthPluginTests.swift; sourceTree = "<group>"; };
+		E62C10882C07DA2A000E3CCC /* LocalAuthPluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LocalAuthPluginTests.swift; path = ../../../darwin/Tests/LocalAuthPluginTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,7 +113,7 @@
 		331C80D6294CF71000263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				E62C10882C07DA2A000E3CCC /* FLALocalAuthPluginTests.swift */,
+				E62C10882C07DA2A000E3CCC /* LocalAuthPluginTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -429,7 +429,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E62C10892C07DA2A000E3CCC /* FLALocalAuthPluginTests.swift in Sources */,
+				E62C10892C07DA2A000E3CCC /* LocalAuthPluginTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
