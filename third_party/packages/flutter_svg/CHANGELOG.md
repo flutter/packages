@@ -1,6 +1,6 @@
 ## 2.0.15
 
-* Changes internal `File` implementation in favor of `package:file`'s `File` implementation.
+* Changes `File` implementation in favor of `package:file`'s `File` implementation.
 
 ## 2.0.14
 
