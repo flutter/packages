@@ -165,7 +165,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
   func isDeviceSupported() throws -> Bool {
     var error: NSError?
-    return authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error)
+    return authContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
   }
 
   func deviceCanSupportBiometrics() throws -> Bool {
@@ -244,7 +244,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     } else {
       guard let error = error else {
         handleError(
-          authError: NSError(domain: "", code: 0, userInfo: nil),
+          authError: NSError(domain: error!.domain, code: error!.code, userInfo: error?.userInfo),
           options: options,
           strings: strings,
           completion: completion
@@ -282,13 +282,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     let result: AuthResult = succeeded ? .success : .failure
-
-    let resultDetails = AuthResultDetails(
-      result: result,
-      errorMessage: nil,
-      errorDetails: nil
-    )
-
+    let resultDetails = AuthResultDetails(result: result, errorMessage: nil, errorDetails: nil)
     completion(.success(resultDetails))
   }
 
@@ -301,19 +295,18 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     var result: AuthResult = .errorNotAvailable
 
     switch authError.code {
-    case LAError.passcodeNotSet.rawValue,
-      LAError.biometryNotEnrolled.rawValue:
+    case LAError.passcodeNotSet.rawValue, LAError.biometryNotEnrolled.rawValue:
       if options.useErrorDialogs {
         alertController.showAlert(
           message: strings.goToSettingsDescription ?? "",
           dismissTitle: strings.cancelButton,
           openSettingsTitle: strings.goToSettingsButton
         ) { success in
-          // Realizando a chamada de volta após o alerta
           let result: Result<AuthResultDetails, Error> =
             success
             ? .success(AuthResultDetails(result: .success, errorMessage: nil, errorDetails: nil))
-            : .failure(NSError(domain: "AuthError", code: 1, userInfo: nil))
+            : .failure(
+              NSError(domain: authError.domain, code: authError.code, userInfo: authError.userInfo))
           completion(result)
         }
         return
@@ -330,7 +323,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         let result: Result<AuthResultDetails, Error> =
           success
           ? .success(AuthResultDetails(result: .success, errorMessage: nil, errorDetails: nil))
-          : .failure(NSError(domain: "AuthError", code: 2, userInfo: nil))
+          : .failure(
+            NSError(domain: authError.domain, code: authError.code, userInfo: authError.userInfo))
         completion(result)
       }
       return
@@ -344,8 +338,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       errorMessage: authError.localizedDescription,
       errorDetails: authError.domain
     )
-      
-    completion(.failure(authError))
+
+    completion(.success(resultDetails))
   }
 
   @objc private func applicationDidBecomeActive() {

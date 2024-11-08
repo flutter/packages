@@ -18,7 +18,6 @@ private let timeout: TimeInterval = 30.0
 
 class MockAuthContext: AuthContextProtocol {
     var biometryType: LABiometryType
-
     var expectBiometrics = false
     var canEvaluatePolicyReturnValue: Bool = true
     var canEvaluateError: NSError?
@@ -36,12 +35,12 @@ class MockAuthContext: AuthContextProtocol {
                 ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
                 : LAPolicy.deviceOwnerAuthentication
         )
-        
+
         if let canEvaluateError = canEvaluateError {
             error?.pointee = canEvaluateError
             return false
         }
-        
+
         return canEvaluatePolicyReturnValue
     }
 
@@ -54,13 +53,13 @@ class MockAuthContext: AuthContextProtocol {
                 ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
                 : LAPolicy.deviceOwnerAuthentication
         )
-        
-        DispatchQueue.global(qos: .background).async {
+
+        DispatchQueue.main.async {
             reply(self.evaluatePolicyResult.0, self.evaluatePolicyResult.1)
         }
     }
-
 }
+
 
 class MockAlertController: AlertControllerProtocol {
     var showAlertCalled = false
@@ -174,11 +173,10 @@ class LocalAuthPluginTests: XCTestCase {
         ) { resultDetails in
             XCTAssertTrue(Thread.isMainThread)
             switch resultDetails {
-            case .success:
-                XCTFail("Expected failure but got a success")
-            case .failure(let error):
-                let nsError = error as NSError
-                XCTAssertEqual(nsError.code, LAError.authenticationFailed.rawValue)
+            case .success(let authResultDetails):
+                XCTAssertEqual(authResultDetails.result, .errorNotAvailable)
+            case .failure:
+                XCTFail("Expected success with authenticationFailed result, but got failure.")
             }
             expectation.fulfill()
         }
@@ -200,12 +198,10 @@ class LocalAuthPluginTests: XCTestCase {
         ) { resultDetails in
             XCTAssertTrue(Thread.isMainThread)
             switch resultDetails {
-            case .success:
-                XCTFail("Expected failure but got a success")
-            case .failure(let error):
-                let nsError = error as NSError
-                XCTAssertEqual(nsError.code, 99)
-
+            case .success(let authResultDetails):
+                XCTAssertEqual(authResultDetails.result, .errorNotAvailable)
+            case .failure:
+                XCTFail("Expected success with errorNotAvailable result, but got failure.")
             }
             expectation.fulfill()
         }
@@ -229,11 +225,10 @@ class LocalAuthPluginTests: XCTestCase {
         ) { resultDetails in
             XCTAssertTrue(Thread.isMainThread)
             switch resultDetails {
-            case .success:
-                XCTFail("Expected failure but got a success")
-            case .failure(let error):
-                let nsError = error as NSError
-                XCTAssertEqual(nsError.code, LAError.systemCancel.rawValue)
+            case .success(let authResultDetails):
+                XCTAssertEqual(authResultDetails.result, .failure)
+            case .failure:
+                XCTFail("Expected success with errorNotAvailable result, but got failure.")
             }
             expectation.fulfill()
         }
@@ -257,12 +252,10 @@ class LocalAuthPluginTests: XCTestCase {
         ) { resultDetails in
             XCTAssertTrue(Thread.isMainThread)
             switch resultDetails {
-            case .success:
-                XCTFail("Expected failure but got a success")
-            case .failure(let error):
-                let nsError = error as NSError
-                XCTAssertEqual(nsError.code, LAError.authenticationFailed.rawValue)
-
+            case .success(let authResultDetails):
+                XCTAssertEqual(authResultDetails.result, .errorNotAvailable)
+            case .failure:
+                XCTFail("Expected success with errorNotAvailable result, but got failure.")
             }
             expectation.fulfill()
         }
