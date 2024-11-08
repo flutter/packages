@@ -1,6 +1,10 @@
-## 0.3.18+4
+## 0.3.18+5
 
 * Updates README to remove contributor-focused documentation.
+
+## 0.3.18+4
+
+* Adds StoreKit 2 support for restoring purchases.
 
 ## 0.3.18+3
 

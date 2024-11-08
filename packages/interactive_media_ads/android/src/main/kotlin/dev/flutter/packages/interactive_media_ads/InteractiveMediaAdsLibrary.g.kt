@@ -1861,8 +1861,36 @@ abstract class PigeonApiBaseManager(
   /** Stops the ad and all tracking, then releases all assets that were loaded to play the ad. */
   abstract fun destroy(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager)
 
-  /** Initializes the ad experience using default rendering settings */
-  abstract fun init(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager)
+  /** Initializes the ad experience on the manager. */
+  abstract fun init(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
+      settings: com.google.ads.interactivemedia.v3.api.AdsRenderingSettings?
+  )
+
+  /** Generic focus endpoint that puts focus on the skip button if present. */
+  abstract fun focus(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager)
+
+  /** Returns the latest AdProgressInfo for the current playing ad. */
+  abstract fun getAdProgressInfo(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager
+  ): com.google.ads.interactivemedia.v3.api.AdProgressInfo?
+
+  /** Get currently playing ad. */
+  abstract fun getCurrentAd(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager
+  ): com.google.ads.interactivemedia.v3.api.Ad?
+
+  /** Removes a listener for error events. */
+  abstract fun removeAdErrorListener(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
+      errorListener: com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+  )
+
+  /** Removes a listener for ad events. */
+  abstract fun removeAdEventListener(
+      pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseManager,
+      adEventListener: com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+  )
 
   companion object {
     @Suppress("LocalVariableName")
@@ -1949,9 +1977,128 @@ abstract class PigeonApiBaseManager(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
+            val settingsArg =
+                args[1] as com.google.ads.interactivemedia.v3.api.AdsRenderingSettings?
             val wrapped: List<Any?> =
                 try {
-                  api.init(pigeon_instanceArg)
+                  api.init(pigeon_instanceArg, settingsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.BaseManager.focus",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
+            val wrapped: List<Any?> =
+                try {
+                  api.focus(pigeon_instanceArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.BaseManager.getAdProgressInfo",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getAdProgressInfo(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.BaseManager.getCurrentAd",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getCurrentAd(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdErrorListener",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
+            val errorListenerArg =
+                args[1] as com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+            val wrapped: List<Any?> =
+                try {
+                  api.removeAdErrorListener(pigeon_instanceArg, errorListenerArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.interactive_media_ads.BaseManager.removeAdEventListener",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseManager
+            val adEventListenerArg =
+                args[1] as com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+            val wrapped: List<Any?> =
+                try {
+                  api.removeAdEventListener(pigeon_instanceArg, adEventListenerArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
