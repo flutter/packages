@@ -447,7 +447,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     bool passed = true;
     for (final String target in individualRunTargets) {
       final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
-        await processRunner.run(
+        printError('Test is taking longer than expected, taking screenshot.');
+        await processRunner.runAndStream(
             flutterCommand,
             <String>[
               'screenshot',
@@ -455,6 +456,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
               if (logsDirectory != null) '--out=${logsDirectory.path}',
               target,
             ],
+            exitOnError: true,
             workingDir: example.directory);
       });
       final int exitCode = await processRunner.runAndStream(
