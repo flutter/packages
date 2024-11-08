@@ -7,11 +7,6 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   swiftOut: 'darwin/Classes/messages.g.swift',
-  // objcHeaderOut: 'darwin/Classes/messages.g.h',
-  // objcSourceOut: 'darwin/Classes/messages.g.m',
-  // objcOptions: ObjcOptions(
-  //   prefix: 'FLAD', // Avoid runtime collisions with old local_auth_ios classes.
-  // ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
@@ -102,6 +97,5 @@ abstract class LocalAuthApi {
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   @async
-  // @ObjCSelector('authenticateWithOptions:strings:')
   AuthResultDetails authenticate(AuthOptions options, AuthStrings strings);
 }

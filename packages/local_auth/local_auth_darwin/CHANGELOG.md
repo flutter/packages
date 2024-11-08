@@ -1,3 +1,7 @@
+## 1.4.2
+
+* Converts implementation to Swift.
+
 ## 1.4.1
 
 * Updates to the current version of Pigeon.
