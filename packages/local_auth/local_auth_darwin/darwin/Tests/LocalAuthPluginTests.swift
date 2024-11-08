@@ -54,7 +54,7 @@ class MockAuthContext: AuthContextProtocol {
         : LAPolicy.deviceOwnerAuthentication
     )
 
-    DispatchQueue.main.async {
+    DispatchQueue.global(qos: .background).async {
       reply(self.evaluatePolicyResult.0, self.evaluatePolicyResult.1)
     }
   }
