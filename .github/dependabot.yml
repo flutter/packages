@@ -7,19 +7,24 @@ updates:
     directory: "/.ci"
     schedule:
       interval: "weekly"
+    groups:
+      all-docker:
+        patterns: [ "*" ]
     reviewers:
       - "stuartmorgan"
       - "ditman"
     labels:
       - "autosubmit"
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+    groups:
+      all-github-actions:
+        patterns: [ "*" ]
     reviewers:
-      - "keyonghan"
-      - "yusuf-goog"
-      - "ricardoamador"
+      - "stuartmorgan"
     labels:
       - "team"
       - "team: infra"
