@@ -23,7 +23,7 @@ class ShortcutItem {
 
   /// Localized subtitle of the item.
   ///
-  /// This is ignored on Android, since it's not supported.
+  /// May be ignored on platforms that don't support localized subtitles.
   final String? localizedSubtitle;
 
   /// Name of native resource (xcassets etc; NOT a Flutter asset) to be
