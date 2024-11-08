@@ -63,15 +63,13 @@ void main() {
   }
 
   /// Returns a list of [count] relative paths to pass to [createFakePlugin]
-  /// or [createFakePackage] with name [packageName] such that each path will
-  /// be 99 characters long relative to [packagesDir].
+  /// or [createFakePackage] such that each path will be 99 characters long
+  /// relative to the package directory.
   ///
   /// This is for each of testing batching, since it means each file will
   /// consume 100 characters of the batch length.
-  List<String> get99CharacterPathExtraFiles(String packageName, int count) {
-    final int padding = 99 -
-        packageName.length -
-        1 - // the path separator after the package name
+  List<String> get99CharacterPathExtraFiles(int count) {
+    const int padding = 99 -
         1 - // the path separator after the padding
         10; // the file name
     const int filenameBase = 10000;
@@ -100,10 +98,7 @@ void main() {
     expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          ProcessCall(
-              'dart',
-              <String>['format', ...getPackagesDirRelativePaths(plugin, files)],
-              packagesDir.path),
+          ProcessCall('dart', const <String>['format', ...files], plugin.path),
         ]));
   });
 
@@ -135,12 +130,7 @@ void main() {
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall(
-              'dart',
-              <String>[
-                'format',
-                ...getPackagesDirRelativePaths(plugin, formattedFiles)
-              ],
-              packagesDir.path),
+              'dart', const <String>['format', ...formattedFiles], plugin.path),
         ]));
   });
 
@@ -719,12 +709,7 @@ void main() {
               ],
               packagesDir.path),
           ProcessCall(
-              'dart',
-              <String>[
-                'format',
-                ...getPackagesDirRelativePaths(plugin, dartFiles)
-              ],
-              packagesDir.path),
+              'dart', const <String>['format', ...dartFiles], plugin.path),
           ProcessCall(
               'java',
               <String>[
@@ -899,11 +884,10 @@ void main() {
     const int batchSize = (windowsCommandLineMax ~/ 100) - 1;
 
     // Make the file list one file longer than would fit in the batch.
-    final List<String> batch1 =
-        get99CharacterPathExtraFiles(pluginName, batchSize + 1);
+    final List<String> batch1 = get99CharacterPathExtraFiles(batchSize + 1);
     final String extraFile = batch1.removeLast();
 
-    createFakePlugin(
+    final RepositoryPackage package = createFakePlugin(
       pluginName,
       packagesDir,
       extraFiles: <String>[...batch1, extraFile],
@@ -921,9 +905,9 @@ void main() {
               'dart',
               <String>[
                 'format',
-                '$pluginName\\$extraFile',
+                extraFile,
               ],
-              packagesDir.path),
+              package.path),
         ));
   });
 
@@ -936,8 +920,7 @@ void main() {
     const int batchSize = (windowsCommandLineMax ~/ 100) - 1;
 
     // Make the file list one file longer than would fit in a Windows batch.
-    final List<String> batch =
-        get99CharacterPathExtraFiles(pluginName, batchSize + 1);
+    final List<String> batch = get99CharacterPathExtraFiles(batchSize + 1);
 
     createFakePlugin(
       pluginName,
@@ -956,11 +939,10 @@ void main() {
     const int batchSize = (nonWindowsCommandLineMax ~/ 100) - 1;
 
     // Make the file list one file longer than would fit in the batch.
-    final List<String> batch1 =
-        get99CharacterPathExtraFiles(pluginName, batchSize + 1);
+    final List<String> batch1 = get99CharacterPathExtraFiles(batchSize + 1);
     final String extraFile = batch1.removeLast();
 
-    createFakePlugin(
+    final RepositoryPackage package = createFakePlugin(
       pluginName,
       packagesDir,
       extraFiles: <String>[...batch1, extraFile],
@@ -978,9 +960,9 @@ void main() {
               'dart',
               <String>[
                 'format',
-                '$pluginName/$extraFile',
+                extraFile,
               ],
-              packagesDir.path),
+              package.path),
         ));
   });
 }
