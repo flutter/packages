@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -445,6 +446,17 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
     bool passed = true;
     for (final String target in individualRunTargets) {
+      final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
+        await processRunner.run(
+            flutterCommand,
+            <String>[
+              'screenshot',
+              ...deviceFlags,
+              if (logsDirectory != null) '--out=${logsDirectory.path}',
+              target,
+            ],
+            workingDir: example.directory);
+      });
       final int exitCode = await processRunner.runAndStream(
           flutterCommand,
           <String>[
@@ -456,6 +468,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             target,
           ],
           workingDir: example.directory);
+
+      timeoutTimer.cancel();
       passed = passed && (exitCode == 0);
     }
     return passed;
