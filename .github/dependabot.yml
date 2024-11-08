@@ -3,19 +3,6 @@
 
 version: 2
 updates:
-  - package-ecosystem: "docker"
-    directory: "/.ci"
-    schedule:
-      interval: "weekly"
-    groups:
-      all-docker:
-        patterns: [ "*" ]
-    reviewers:
-      - "stuartmorgan"
-      - "ditman"
-    labels:
-      - "autosubmit"
-
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
