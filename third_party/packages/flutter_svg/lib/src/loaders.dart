@@ -1,5 +1,6 @@
 import 'dart:convert' show utf8;
 
+import 'package:file/file.dart';
 import 'package:flutter/foundation.dart' hide compute;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -10,7 +11,6 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart' as vg;
 import '../svg.dart' show svg;
 import 'default_theme.dart';
 import 'utilities/compute.dart';
-import 'utilities/file.dart';
 
 /// A theme used when decoding an SVG picture.
 @immutable
