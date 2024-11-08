@@ -1,6 +1,6 @@
 ## 1.1.15
 
-* Fixes an issue where empty tag could throw and broke SVG.
+* Fixes a bug where empty tags caused the parser to crash.
 
 ## 1.1.14
 
