@@ -268,7 +268,6 @@ class LocalAuthPluginTests: XCTestCase {
         plugin = LocalAuthPlugin(authContext: mockAuthContext, alertController: mockAlertController)
 
         let strings = createAuthStrings()
-        mockAuthContext.canEvaluatePolicyReturnValue = false
         mockAuthContext.evaluatePolicyResult = (
             false, NSError(domain: "error", code: LAError.biometryNotEnrolled.rawValue)
         )
