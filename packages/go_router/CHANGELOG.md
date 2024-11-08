@@ -1,3 +1,7 @@
+## 14.5.0
+
+- Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
+
 ## 14.4.1
 
 - Adds `missing_code_block_language_in_doc_comment` lint.
