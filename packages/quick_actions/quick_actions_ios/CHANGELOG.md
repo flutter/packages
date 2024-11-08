@@ -1,7 +1,7 @@
-## NEXT
+## 1.1.2
 
+* Adds localizedSubtitle field for iOS quick actions.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Add localizedSubtitle field
 
 ## 1.1.1
 

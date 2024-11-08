@@ -1,6 +1,6 @@
-## NEXT
+## 1.0.9
 
-* Add localizedSubtitle field for iOS
+* Adds localizedSubtitle field for iOS quick actions.
 
 ## 1.0.8
 
