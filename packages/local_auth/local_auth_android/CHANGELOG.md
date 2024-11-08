@@ -1,3 +1,28 @@
+## 1.0.46
+
+* Updates Java compatibility version to 11.
+
+## 1.0.45
+
+* Updates to the latest version of Pigeon.
+
+## 1.0.44
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 1.0.43
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 1.0.42
+
+* Updates AGP version to 8.5.0.
+
+## 1.0.41
+
+* Updates espresso to 3.6.1.
+
 ## 1.0.40
 
 * Updates androidx.core version to 1.13.1.

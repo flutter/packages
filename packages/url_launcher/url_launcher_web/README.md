@@ -12,7 +12,7 @@ However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
 [1]: https://pub.dev/packages/url_launcher
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 
 ## Limitations on the Web platform
 
@@ -31,3 +31,13 @@ In such cases, you can use the `webOnlyWindowName` parameter, setting it to
 that the `uri` is synchronously ready.
 
 Read more: MDN > [Transient activation](https://developer.mozilla.org/en-US/docs/Glossary/Transient_activation).
+
+### Method `launchUrl` always returns `true` for allowed schemes
+
+The `launchUrl` method always returns `true` on the web platform for allowed
+schemes. This is because URLs are opened in a new window using the `noopener`
+window feature. When the `noopener` feature is used, the browser does not 
+return any information that can be used to determine if the link was 
+successfully opened.
+
+Read more: MDN > [window.open](https://developer.mozilla.org/en-US/docs/Web/API/Window/open#noopener).

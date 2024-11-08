@@ -643,30 +643,6 @@ void main() {
         ]);
       });
 
-      test('Should pass maxVideoDuration when starting recording a video',
-          () async {
-        // Arrange
-        final MethodChannelMock channel = MethodChannelMock(
-          channelName: 'plugins.flutter.io/camera',
-          methods: <String, dynamic>{'startVideoRecording': null},
-        );
-
-        // Act
-        await camera.startVideoRecording(
-          cameraId,
-          maxVideoDuration: const Duration(seconds: 10),
-        );
-
-        // Assert
-        expect(channel.log, <Matcher>[
-          isMethodCall('startVideoRecording', arguments: <String, Object?>{
-            'cameraId': cameraId,
-            'maxVideoDuration': 10000,
-            'enableStream': false,
-          }),
-        ]);
-      });
-
       test('Should stop a video recording and return the file', () async {
         // Arrange
         final MethodChannelMock channel = MethodChannelMock(

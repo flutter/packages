@@ -1,0 +1,8 @@
+# This list should be kept as short as possible, and things should remain here
+# only as long as necessary, since in general the goal is for all of the latest
+# versions of packages to be mutually compatible, and compilable with Wasm.
+
+# This is only used for wasm compilation. Once all packages in the repo have
+# been migrated, remove this file and use `exclude_all_packages_app.yaml` only.
+
+[] # Needed so the contents of this file are an empty array, not `null`!

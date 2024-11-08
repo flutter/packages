@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 const ValueKey<String> textKey = ValueKey<String>('textKey');
 const ValueKey<String> aboutPageKey = ValueKey<String>('aboutPageKey');
@@ -33,8 +34,8 @@ class _HomePageState extends State<HomePage> {
         actions: <Widget>[
           IconButton(
             key: aboutPageKey,
-            icon: const Icon(Icons.alternate_email),
-            onPressed: () => Navigator.of(context).pushNamed('about'),
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => context.go('/about'),
           ),
         ],
       ),

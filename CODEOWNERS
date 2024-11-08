@@ -40,11 +40,18 @@ packages/shared_preferences/**                           @tarrinneal
 packages/standard_message_codec/**                       @jonahwilliams
 packages/two_dimensional_scrollables/**                  @Piinks
 packages/url_launcher/**                                 @stuartmorgan
+packages/vector_graphics/**                              @jonahwilliams
+packages/vector_graphics_codec/**                        @jonahwilliams
+packages/vector_graphics_compiler/**                     @jonahwilliams
 packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
 packages/xdg_directories/**                              @stuartmorgan
 third_party/packages/cupertino_icons/**                  @MitchellGoodwin
+third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
+third_party/packages/flutter_svg/**                      @domesticmouse
+third_party/packages/flutter_svg_test/**                 @domesticmouse
+third_party/packages/path_parsing/**                     @domesticmouse
 
 # Plugin platform implementation rules. These should stay last, since the last
 # matching entry takes precedence.
@@ -76,7 +83,7 @@ packages/path_provider/path_provider_android/**          @camsim99
 packages/quick_actions/quick_actions_android/**          @camsim99
 packages/shared_preferences/shared_preferences_android/**  @reidbaker
 packages/url_launcher/url_launcher_android/**            @gmackall
-packages/video_player/video_player_android/**            @camsim99
+packages/video_player/video_player_android/**            @camsim99 @matanlurey
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**      @bparrishMines
 

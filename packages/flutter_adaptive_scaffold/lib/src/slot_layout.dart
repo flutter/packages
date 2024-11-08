@@ -15,17 +15,15 @@ class SlotLayout extends StatefulWidget {
   /// Creates a [SlotLayout] widget.
   const SlotLayout({required this.config, super.key});
 
-  /// Given a context and a config, it returns the [SlotLayoutConfig] that will g
+  /// Given a context and a config, it returns the [SlotLayoutConfig] that will
   /// be chosen from the config under the context's conditions.
   static SlotLayoutConfig? pickWidget(
       BuildContext context, Map<Breakpoint, SlotLayoutConfig?> config) {
-    SlotLayoutConfig? chosenWidget;
-    config.forEach((Breakpoint breakpoint, SlotLayoutConfig? pickedWidget) {
-      if (breakpoint.isActive(context)) {
-        chosenWidget = pickedWidget;
-      }
-    });
-    return chosenWidget;
+    final Breakpoint? breakpoint =
+        Breakpoint.activeBreakpointIn(context, config.keys.toList());
+    return breakpoint != null && config.containsKey(breakpoint)
+        ? config[breakpoint]
+        : null;
   }
 
   /// Maps [Breakpoint]s to [SlotLayoutConfig]s to determine what Widget to
@@ -74,12 +72,20 @@ class SlotLayout extends StatefulWidget {
     WidgetBuilder? builder,
     Widget Function(Widget, Animation<double>)? inAnimation,
     Widget Function(Widget, Animation<double>)? outAnimation,
+    Duration? inDuration,
+    Duration? outDuration,
+    Curve? inCurve,
+    Curve? outCurve,
     required Key key,
   }) =>
       SlotLayoutConfig._(
         builder: builder,
         inAnimation: inAnimation,
         outAnimation: outAnimation,
+        inDuration: inDuration,
+        outDuration: outDuration,
+        inCurve: inCurve,
+        outCurve: outCurve,
         key: key,
       );
 
@@ -96,7 +102,11 @@ class _SlotLayoutState extends State<SlotLayout>
     chosenWidget = SlotLayout.pickWidget(context, widget.config);
     bool hasAnimation = false;
     return AnimatedSwitcher(
-        duration: const Duration(milliseconds: 1000),
+        duration:
+            chosenWidget?.inDuration ?? const Duration(milliseconds: 1000),
+        reverseDuration: chosenWidget?.outDuration,
+        switchInCurve: chosenWidget?.inCurve ?? Curves.linear,
+        switchOutCurve: chosenWidget?.outCurve ?? Curves.linear,
         layoutBuilder: (Widget? currentChild, List<Widget> previousChildren) {
           final Stack elements = Stack(
             children: <Widget>[
@@ -137,6 +147,10 @@ class SlotLayoutConfig extends StatelessWidget {
     required this.builder,
     this.inAnimation,
     this.outAnimation,
+    this.inDuration,
+    this.outDuration,
+    this.inCurve,
+    this.outCurve,
   });
 
   /// The child Widget that [SlotLayout] eventually returns with an animation.
@@ -159,6 +173,22 @@ class SlotLayoutConfig extends StatelessWidget {
   ///  * [AnimatedWidget] and [ImplicitlyAnimatedWidget], which are commonly used
   ///   as the returned widget.
   final Widget Function(Widget, Animation<double>)? outAnimation;
+
+  /// The duration of the transition from the old child to the new one during
+  /// a switch in [SlotLayout].
+  final Duration? inDuration;
+
+  /// The duration of the transition from the new child to the old one during
+  /// a switch in [SlotLayout].
+  final Duration? outDuration;
+
+  /// The animation curve to use when transitioning in a new child during a
+  /// switch in [SlotLayout].
+  final Curve? inCurve;
+
+  /// The animation curve to use when transitioning a previous slot out during
+  /// a switch in [SlotLayout].
+  final Curve? outCurve;
 
   /// An empty [SlotLayoutConfig] to be placed in a slot to indicate that the slot
   /// should show nothing.

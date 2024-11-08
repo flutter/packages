@@ -13,6 +13,7 @@ Displays native macOS open and save panels.
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/file_selector/file_selector_macos' }
   s.source_files     = 'file_selector_macos/Sources/file_selector_macos/**/*.swift'
+  s.resource_bundles = {'file_selector_macos_privacy' => ['file_selector_macos/Sources/file_selector_macos/Resources/PrivacyInfo.xcprivacy']}
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx, '10.14'

@@ -2,82 +2,63 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
-import 'dart:html' as html;
-import 'dart:io';
-
-// FIX (dit): Remove these integration tests, or make them run. They currently never fail.
-// (They won't run because they use `dart:io`. If you remove all `dart:io` bits from
-// this file, they start failing with `fail()`, for example.)
-
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/web.dart' as web;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_web/webview_flutter_web.dart';
+
+import 'wrapped_webview.dart';
 
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
-  unawaited(server.forEach((HttpRequest request) {
-    if (request.uri.path == '/hello.txt') {
-      request.response.writeln('Hello, world.');
-    } else {
-      fail('unexpected request: ${request.method} ${request.uri}');
-    }
-    request.response.close();
-  }));
-  final String prefixUrl = 'http://${server.address.address}:${server.port}';
-  final String primaryUrl = '$prefixUrl/hello.txt';
+  const String fakeUrl = 'about:blank';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
-    final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams());
+    final WebWebViewController controller = WebWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
     await controller.loadRequest(
-      LoadRequestParams(uri: Uri.parse(primaryUrl)),
+      LoadRequestParams(uri: Uri.parse(fakeUrl)),
     );
 
     await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: Builder(builder: (BuildContext context) {
-          return WebWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        }),
-      ),
+      wrappedWebView(controller),
     );
+    // Pump 2 frames so the framework injects the platform view into the DOM.
+    // The duration of the second pump is set so the browser has some idle time
+    // to actually show the contents of the iFrame.
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
-    // Assert an iframe has been rendered to the DOM with the correct src attribute.
-    final html.IFrameElement? element =
-        html.document.querySelector('iframe') as html.IFrameElement?;
+    // Assert an iFrame has been rendered to the DOM with the correct src attribute.
+    final web.HTMLIFrameElement? element =
+        web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
-    expect(element!.src, primaryUrl);
+    expect(element!.src, fakeUrl);
   });
 
   testWidgets('loadHtmlString', (WidgetTester tester) async {
-    final WebWebViewController controller =
-        WebWebViewController(const PlatformWebViewControllerCreationParams());
+    final WebWebViewController controller = WebWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
     await controller.loadHtmlString(
       'data:text/html;charset=utf-8,${Uri.encodeFull('test html')}',
     );
 
     await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: Builder(builder: (BuildContext context) {
-          return WebWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(context);
-        }),
-      ),
+      wrappedWebView(controller),
     );
+    // Pump 2 frames so the framework injects the platform view into the DOM.
+    // The duration of the second pump is set so the browser has some idle time
+    // to actually show the contents of the iFrame.
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
-    // Assert an iframe has been rendered to the DOM with the correct src attribute.
-    final html.IFrameElement? element =
-        html.document.querySelector('iframe') as html.IFrameElement?;
+    // Assert an iFrame has been rendered to the DOM with the correct src attribute.
+    final web.HTMLIFrameElement? element =
+        web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(
       element!.src,

@@ -1511,14 +1511,17 @@ class MockCameraPlatform extends Mock
       super.noSuchMethod(Invocation.method(#prepareForVideoRecording, null));
 
   @override
-  Future<XFile> startVideoRecording(int cameraId,
-          {Duration? maxVideoDuration}) =>
-      Future<XFile>.value(mockVideoRecordingXFile);
+  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) {
+    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
+    return startVideoCapturing(VideoCaptureOptions(cameraId));
+  }
 
   @override
-  Future<void> startVideoCapturing(VideoCaptureOptions options) {
-    return startVideoRecording(options.cameraId,
-        maxVideoDuration: options.maxDuration);
+  Future<void> startVideoCapturing(VideoCaptureOptions options) async {}
+
+  @override
+  Future<XFile> stopVideoRecording(int cameraId) {
+    return Future<XFile>.value(mockVideoRecordingXFile);
   }
 
   @override

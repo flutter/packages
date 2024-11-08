@@ -91,7 +91,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   public void openFile(
       @Nullable String initialDirectory,
       @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes,
-      @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
+      @NonNull
+          GeneratedFileSelectorApi.NullableResult<GeneratedFileSelectorApi.FileResponse> result) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -192,7 +193,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Override
   @TargetApi(21)
   public void getDirectoryPath(
-      @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {
+      @Nullable String initialDirectory,
+      @NonNull GeneratedFileSelectorApi.NullableResult<String> result) {
     if (!sdkChecker.sdkIsAtLeast(android.os.Build.VERSION_CODES.LOLLIPOP)) {
       result.error(
           new UnsupportedOperationException(

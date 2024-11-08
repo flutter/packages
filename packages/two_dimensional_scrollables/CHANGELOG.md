@@ -1,3 +1,11 @@
+## 0.3.3
+
+* Fixes an issue where collapsing nodes in the TreeView didn't work correctly.
+
+## 0.3.2
+
+* Fixes a bug where the TreeView would not update correctly when the animation duration is zero.
+
 ## 0.3.1
 
 * Adds generics to the callbacks and builders of TreeView.

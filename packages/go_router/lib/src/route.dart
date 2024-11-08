@@ -77,7 +77,7 @@ typedef ExitCallback = FutureOr<bool> Function(
 /// with the sub routes.
 ///
 /// For example these routes:
-/// ```
+/// ```none
 /// /         => HomePage()
 ///   family/f1 => FamilyPage('f1')
 ///     person/p2 => PersonPage('f1', 'p2') ← showing this page, Back pops ↑
@@ -85,7 +85,7 @@ typedef ExitCallback = FutureOr<bool> Function(
 ///
 /// Can be represented as:
 ///
-/// ```
+/// ```dart
 /// final GoRouter _router = GoRouter(
 ///   routes: <GoRoute>[
 ///     GoRoute(
@@ -122,17 +122,19 @@ typedef ExitCallback = FutureOr<bool> Function(
 ///     ),
 ///   ],
 /// );
+/// ```
 ///
 /// If there are multiple routes that match the location, the first match is used.
 /// To make predefined routes to take precedence over dynamic routes eg. '/:id'
-/// consider adding the dynamic route at the end of the routes
+/// consider adding the dynamic route at the end of the routes.
+///
 /// For example:
-/// ```
+/// ```dart
 /// final GoRouter _router = GoRouter(
 ///   routes: <GoRoute>[
 ///     GoRoute(
 ///       path: '/',
-///       redirect: (_) => '/family/${Families.data[0].id}',
+///       redirect: (_, __) => '/family/${Families.data[0].id}',
 ///     ),
 ///     GoRoute(
 ///       path: '/family',
@@ -145,9 +147,10 @@ typedef ExitCallback = FutureOr<bool> Function(
 ///   ],
 /// );
 /// ```
-/// In the above example, if /family route is matched, it will be used.
-/// else /:username route will be used.
-/// ///
+///
+/// In the above example, if `/family` route is matched, it will be used.
+/// else `/:username` route will be used.
+///
 /// See [main.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 @immutable
 abstract class RouteBase with Diagnosticable {
@@ -164,12 +167,12 @@ abstract class RouteBase with Diagnosticable {
   /// the GoRoute constructor.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// final GoRouter _router = GoRouter(
   ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
-  ///       redirect: (_) => '/family/${Families.data[0].id}',
+  ///       redirect: (_, __) => '/family/${Families.data[0].id}',
   ///     ),
   ///     GoRoute(
   ///       path: '/family/:fid',
@@ -183,16 +186,16 @@ abstract class RouteBase with Diagnosticable {
   /// redirect takes priority over sub-route's.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// final GoRouter _router = GoRouter(
   ///   routes: <GoRoute>[
   ///     GoRoute(
   ///       path: '/',
-  ///       redirect: (_) => '/page1', // this takes priority over the sub-route.
+  ///       redirect: (_, __) => '/page1', // this takes priority over the sub-route.
   ///       routes: <GoRoute>[
   ///         GoRoute(
   ///           path: 'child',
-  ///           redirect: (_) => '/page2',
+  ///           redirect: (_, __) => '/page2',
   ///         ),
   ///       ],
   ///     ),
@@ -327,7 +330,7 @@ class GoRoute extends RouteBase {
   /// The path of this go route.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// GoRoute(
   ///   path: '/',
   ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
@@ -352,7 +355,7 @@ class GoRoute extends RouteBase {
   /// A page builder for this route.
   ///
   /// Typically a MaterialPage, as in:
-  /// ```
+  /// ```dart
   /// GoRoute(
   ///   path: '/',
   ///   pageBuilder: (BuildContext context, GoRouterState state) => MaterialPage<void>(
@@ -369,7 +372,7 @@ class GoRoute extends RouteBase {
   /// A custom builder for this route.
   ///
   /// For example:
-  /// ```
+  /// ```dart
   /// GoRoute(
   ///   path: '/',
   ///   builder: (BuildContext context, GoRouterState state) => FamilyPage(
@@ -391,7 +394,7 @@ class GoRoute extends RouteBase {
   /// This method can be useful it one wants to launch a dialog for user to
   /// confirm if they want to exit the screen.
   ///
-  /// ```
+  /// ```dart
   /// final GoRouter _router = GoRouter(
   ///   routes: <GoRoute>[
   ///     GoRoute(
@@ -432,8 +435,10 @@ class GoRoute extends RouteBase {
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
-  RegExpMatch? matchPatternAsPrefix(String loc) =>
-      _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  RegExpMatch? matchPatternAsPrefix(String loc) {
+    return _pathRE.matchAsPrefix('/$loc') as RegExpMatch? ??
+        _pathRE.matchAsPrefix(loc) as RegExpMatch?;
+  }
 
   /// Extract the path parameters from a match.
   Map<String, String> extractPathParams(RegExpMatch match) =>
@@ -540,7 +545,7 @@ class ShellRouteContext {
 /// passed to the /b/details route so that it displays on the root Navigator
 /// instead of the ShellRoute's Navigator:
 ///
-/// ```
+/// ```dart
 /// final GlobalKey<NavigatorState> _rootNavigatorKey =
 ///     GlobalKey<NavigatorState>();
 ///
@@ -599,7 +604,7 @@ class ShellRouteContext {
 ///
 /// For example:
 ///
-/// ```
+/// ```dart
 /// ShellRoute(
 ///   builder: (BuildContext context, GoRouterState state, Widget child) {
 ///     return Scaffold(
@@ -737,7 +742,7 @@ class ShellRoute extends ShellRouteBase {
 /// accomplished by using the method [StatefulNavigationShell.goBranch], for
 /// example:
 ///
-/// ```
+/// ```dart
 /// void _onItemTapped(int index) {
 ///   navigationShell.goBranch(index: index);
 /// }
@@ -777,6 +782,8 @@ class ShellRoute extends ShellRouteBase {
 /// * [Custom StatefulShellRoute example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/others/custom_stateful_shell_route.dart)
 /// which demonstrates how to customize the container for the branch Navigators
 /// and how to implement animated transitions when switching branches.
+///
+/// {@category Configuration}
 class StatefulShellRoute extends ShellRouteBase {
   /// Constructs a [StatefulShellRoute] from a list of [StatefulShellBranch]es,
   /// each representing a separate nested navigation tree (branch).
@@ -1055,7 +1062,7 @@ typedef ShellNavigationContainerBuilder = Widget Function(BuildContext context,
 /// where the List of Widgets represent the Navigators for each branch.
 ///
 /// Example:
-/// ```
+/// ```dart
 /// builder: (BuildContext context, GoRouterState state,
 ///     StatefulNavigationShell navigationShell) {
 ///   return StatefulNavigationShell(

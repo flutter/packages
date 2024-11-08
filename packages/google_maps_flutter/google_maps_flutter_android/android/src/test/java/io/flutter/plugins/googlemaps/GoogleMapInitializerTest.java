@@ -6,7 +6,6 @@ package io.flutter.plugins.googlemaps;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -18,9 +17,6 @@ import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.MapsInitializer.Renderer;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +26,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.P)
+@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoogleMapInitializerTest {
   private GoogleMapInitializer googleMapInitializer;
 
@@ -46,53 +42,33 @@ public class GoogleMapInitializerTest {
   @Test
   public void initializer_OnMapsSdkInitializedWithLatestRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LATEST);
-    MethodChannel.Result result = mock(MethodChannel.Result.class);
-    googleMapInitializer.onMethodCall(
-        new MethodCall(
-            "initializer#preferRenderer",
-            new HashMap<String, Object>() {
-              {
-                put("value", "latest");
-              }
-            }),
-        result);
+    @SuppressWarnings("unchecked")
+    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
+    googleMapInitializer.initializeWithPreferredRenderer(
+        Messages.PlatformRendererType.LATEST, result);
     googleMapInitializer.onMapsSdkInitialized(Renderer.LATEST);
-    verify(result, times(1)).success("latest");
-    verify(result, never()).error(any(), any(), any());
+    verify(result, times(1)).success(Messages.PlatformRendererType.LATEST);
+    verify(result, never()).error(any());
   }
 
   @Test
   public void initializer_OnMapsSdkInitializedWithLegacyRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LEGACY);
-    MethodChannel.Result result = mock(MethodChannel.Result.class);
-    googleMapInitializer.onMethodCall(
-        new MethodCall(
-            "initializer#preferRenderer",
-            new HashMap<String, Object>() {
-              {
-                put("value", "legacy");
-              }
-            }),
-        result);
+    @SuppressWarnings("unchecked")
+    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
+    googleMapInitializer.initializeWithPreferredRenderer(
+        Messages.PlatformRendererType.LEGACY, result);
     googleMapInitializer.onMapsSdkInitialized(Renderer.LEGACY);
-    verify(result, times(1)).success("legacy");
-    verify(result, never()).error(any(), any(), any());
+    verify(result, times(1)).success(Messages.PlatformRendererType.LEGACY);
+    verify(result, never()).error(any());
   }
 
   @Test
-  public void initializer_onMethodCallWithUnknownRenderer() {
-    doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LEGACY);
-    MethodChannel.Result result = mock(MethodChannel.Result.class);
-    googleMapInitializer.onMethodCall(
-        new MethodCall(
-            "initializer#preferRenderer",
-            new HashMap<String, Object>() {
-              {
-                put("value", "wrong_renderer");
-              }
-            }),
-        result);
-    verify(result, never()).success(any());
-    verify(result, times(1)).error(eq("Invalid renderer type"), any(), any());
+  public void initializer_onMethodCallWithNoRendererPreference() {
+    doNothing().when(googleMapInitializer).initializeWithRendererRequest(null);
+    @SuppressWarnings("unchecked")
+    Messages.Result<Messages.PlatformRendererType> result = mock(Messages.Result.class);
+    googleMapInitializer.initializeWithPreferredRenderer(null, result);
+    verify(result, never()).error(any());
   }
 }

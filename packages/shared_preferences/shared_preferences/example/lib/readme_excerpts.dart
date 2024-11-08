@@ -41,6 +41,47 @@ Future<void> readmeSnippets() async {
   // #enddocregion Clear
 }
 
+Future<void> readmeSnippetsAsync() async {
+  // #docregion Async
+  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+
+  await asyncPrefs.setBool('repeat', true);
+  await asyncPrefs.setString('action', 'Start');
+
+  final bool? repeat = await asyncPrefs.getBool('repeat');
+  final String? action = await asyncPrefs.getString('action');
+
+  await asyncPrefs.remove('repeat');
+
+  // Any time a filter option is included as a method parameter, strongly consider
+  // using it to avoid potentially unwanted side effects.
+  await asyncPrefs.clear(allowList: <String>{'action', 'repeat'});
+  // #enddocregion Async
+}
+
+Future<void> readmeSnippetsWithCache() async {
+  // #docregion WithCache
+  final SharedPreferencesWithCache prefsWithCache =
+      await SharedPreferencesWithCache.create(
+    cacheOptions: const SharedPreferencesWithCacheOptions(
+      // When an allowlist is included, any keys that aren't included cannot be used.
+      allowList: <String>{'repeat', 'action'},
+    ),
+  );
+
+  await prefsWithCache.setBool('repeat', true);
+  await prefsWithCache.setString('action', 'Start');
+
+  final bool? repeat = prefsWithCache.getBool('repeat');
+  final String? action = prefsWithCache.getString('action');
+
+  await prefsWithCache.remove('repeat');
+
+  // Since the filter options are set at creation, they aren't needed during clear.
+  await prefsWithCache.clear();
+  // #enddocregion WithCache
+}
+
 // Uses test-only code. invalid_use_of_visible_for_testing_member is suppressed
 // for the whole file since otherwise there's no way to avoid it showing up in
 // the excerpt, and that is definitely not something people should be copying

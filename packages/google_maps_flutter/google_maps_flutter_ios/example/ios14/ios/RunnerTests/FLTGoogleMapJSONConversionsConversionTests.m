@@ -5,7 +5,6 @@
 @import google_maps_flutter_ios;
 @import google_maps_flutter_ios.Test;
 @import XCTest;
-@import MapKit;
 @import GoogleMaps;
 
 #import <OCMock/OCMock.h>
@@ -15,6 +14,28 @@
 @end
 
 @implementation FLTGoogleMapJSONConversionsTests
+
+- (void)testGetValueOrNilWithValue {
+  NSString *key = @"key";
+  NSString *value = @"value";
+  NSDictionary<NSString *, id> *dict = @{key : value};
+
+  XCTAssertEqual(FGMGetValueOrNilFromDict(dict, key), value);
+}
+
+- (void)testGetValueOrNilWithNoEntry {
+  NSString *key = @"key";
+  NSDictionary<NSString *, id> *dict = @{};
+
+  XCTAssertNil(FGMGetValueOrNilFromDict(dict, key));
+}
+
+- (void)testGetValueOrNilWithNSNull {
+  NSString *key = @"key";
+  NSDictionary<NSString *, id> *dict = @{key : [NSNull null]};
+
+  XCTAssertNil(FGMGetValueOrNilFromDict(dict, key));
+}
 
 - (void)testLocationFromLatLong {
   NSArray<NSNumber *> *latlong = @[ @1, @2 ];
@@ -76,40 +97,41 @@
   XCTAssertEqual(holes[1][1].coordinate.longitude, 8);
 }
 
-- (void)testDictionaryFromPosition {
-  id mockPosition = OCMClassMock([GMSCameraPosition class]);
-  NSValue *locationValue = [NSValue valueWithMKCoordinate:CLLocationCoordinate2DMake(1, 2)];
-  [(GMSCameraPosition *)[[mockPosition stub] andReturnValue:locationValue] target];
-  [[[mockPosition stub] andReturnValue:@(2.0)] zoom];
-  [[[mockPosition stub] andReturnValue:@(3.0)] bearing];
-  [[[mockPosition stub] andReturnValue:@(75.0)] viewingAngle];
-  NSDictionary *dictionary = [FLTGoogleMapJSONConversions dictionaryFromPosition:mockPosition];
-  NSArray *targetArray = @[ @1, @2 ];
-  XCTAssertEqualObjects(dictionary[@"target"], targetArray);
-  XCTAssertEqualObjects(dictionary[@"zoom"], @2.0);
-  XCTAssertEqualObjects(dictionary[@"bearing"], @3.0);
-  XCTAssertEqualObjects(dictionary[@"tilt"], @75.0);
+- (void)testGetPigeonCameraPositionForPosition {
+  GMSCameraPosition *position =
+      [[GMSCameraPosition alloc] initWithTarget:CLLocationCoordinate2DMake(1, 2)
+                                           zoom:2.0
+                                        bearing:3.0
+                                   viewingAngle:75.0];
+  FGMPlatformCameraPosition *pigeonPosition = FGMGetPigeonCameraPositionForPosition(position);
+  XCTAssertEqualWithAccuracy(pigeonPosition.target.latitude, position.target.latitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.target.longitude, position.target.longitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.zoom, position.zoom, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.bearing, position.bearing, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPosition.tilt, position.viewingAngle, DBL_EPSILON);
 }
 
-- (void)testDictionaryFromPoint {
+- (void)testPigeonPointForGCPoint {
   CGPoint point = CGPointMake(10, 20);
-  NSDictionary *dictionary = [FLTGoogleMapJSONConversions dictionaryFromPoint:point];
-  const CGFloat accuracy = 0.0001;
-  XCTAssertEqualWithAccuracy([dictionary[@"x"] floatValue], point.x, accuracy);
-  XCTAssertEqualWithAccuracy([dictionary[@"y"] floatValue], point.y, accuracy);
+  FGMPlatformPoint *pigeonPoint = FGMGetPigeonPointForCGPoint(point);
+  XCTAssertEqualWithAccuracy(pigeonPoint.x, point.x, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPoint.y, point.y, DBL_EPSILON);
 }
 
-- (void)testDictionaryFromCoordinateBounds {
-  XCTAssertNil([FLTGoogleMapJSONConversions dictionaryFromCoordinateBounds:nil]);
-
+- (void)testPigeonLatLngBoundsForCoordinateBounds {
   GMSCoordinateBounds *bounds =
       [[GMSCoordinateBounds alloc] initWithCoordinate:CLLocationCoordinate2DMake(10, 20)
                                            coordinate:CLLocationCoordinate2DMake(30, 40)];
-  NSDictionary *dictionary = [FLTGoogleMapJSONConversions dictionaryFromCoordinateBounds:bounds];
-  NSArray *southwest = @[ @10, @20 ];
-  NSArray *northeast = @[ @30, @40 ];
-  XCTAssertEqualObjects(dictionary[@"southwest"], southwest);
-  XCTAssertEqualObjects(dictionary[@"northeast"], northeast);
+  FGMPlatformLatLngBounds *pigeonBounds = FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds);
+  XCTAssertEqualWithAccuracy(pigeonBounds.southwest.latitude, bounds.southWest.latitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonBounds.southwest.longitude, bounds.southWest.longitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonBounds.northeast.latitude, bounds.northEast.latitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonBounds.northeast.longitude, bounds.northEast.longitude,
+                             DBL_EPSILON);
 }
 
 - (void)testCameraPostionFromDictionary {
@@ -129,19 +151,32 @@
   XCTAssertEqualWithAccuracy(cameraPosition.viewingAngle, 5, accuracy);
 }
 
-- (void)testPointFromDictionary {
-  XCTAssertNil([FLTGoogleMapJSONConversions cameraPostionFromDictionary:nil]);
+- (void)testGetCameraPostionForPigeonCameraPosition {
+  FGMPlatformCameraPosition *pigeonCameraPosition = [FGMPlatformCameraPosition
+      makeWithBearing:1.0
+               target:[FGMPlatformLatLng makeWithLatitude:2.0 longitude:3.0]
+                 tilt:4.0
+                 zoom:5.0];
 
-  NSDictionary *dictionary = @{
-    @"x" : @1,
-    @"y" : @2,
-  };
+  GMSCameraPosition *cameraPosition =
+      FGMGetCameraPositionForPigeonCameraPosition(pigeonCameraPosition);
 
-  CGPoint point = [FLTGoogleMapJSONConversions pointFromDictionary:dictionary];
+  XCTAssertEqualWithAccuracy(cameraPosition.target.latitude, pigeonCameraPosition.target.latitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.target.longitude, pigeonCameraPosition.target.longitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.zoom, pigeonCameraPosition.zoom, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.bearing, pigeonCameraPosition.bearing, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(cameraPosition.viewingAngle, pigeonCameraPosition.tilt, DBL_EPSILON);
+}
 
-  const CGFloat accuracy = 0.001;
-  XCTAssertEqualWithAccuracy(point.x, 1, accuracy);
-  XCTAssertEqualWithAccuracy(point.y, 2, accuracy);
+- (void)testCGPointForPigeonPoint {
+  FGMPlatformPoint *pigeonPoint = [FGMPlatformPoint makeWithX:1.0 y:2.0];
+
+  CGPoint point = FGMGetCGPointForPigeonPoint(pigeonPoint);
+
+  XCTAssertEqualWithAccuracy(pigeonPoint.x, point.x, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(pigeonPoint.y, point.y, DBL_EPSILON);
 }
 
 - (void)testCoordinateBoundsFromLatLongs {
@@ -158,26 +193,26 @@
   XCTAssertEqualWithAccuracy(bounds.northEast.longitude, 4, accuracy);
 }
 
-- (void)testMapViewTypeFromTypeValue {
-  XCTAssertEqual(kGMSTypeNormal, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@1]);
-  XCTAssertEqual(kGMSTypeSatellite, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@2]);
-  XCTAssertEqual(kGMSTypeTerrain, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@3]);
-  XCTAssertEqual(kGMSTypeHybrid, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@4]);
-  XCTAssertEqual(kGMSTypeNone, [FLTGoogleMapJSONConversions mapViewTypeFromTypeValue:@5]);
+- (void)testMapViewTypeFromPigeonType {
+  XCTAssertEqual(kGMSTypeNormal, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNormal));
+  XCTAssertEqual(kGMSTypeSatellite, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeSatellite));
+  XCTAssertEqual(kGMSTypeTerrain, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeTerrain));
+  XCTAssertEqual(kGMSTypeHybrid, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeHybrid));
+  XCTAssertEqual(kGMSTypeNone, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNone));
 }
 
-- (void)testCameraUpdateFromChannelValueNewCameraPosition {
+- (void)testCameraUpdateFromArrayNewCameraPosition {
   NSArray *channelValue = @[
     @"newCameraPosition", @{@"target" : @[ @1, @2 ], @"zoom" : @3, @"bearing" : @4, @"tilt" : @5}
   ];
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValue];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValue];
   [[classMockCameraUpdate expect]
       setCamera:[FLTGoogleMapJSONConversions cameraPostionFromDictionary:channelValue[1]]];
   [classMockCameraUpdate stopMocking];
 }
 
-// TODO(cyanglaz): Fix the test for CameraUpdateFromChannelValue with the "NewLatlng" key.
+// TODO(cyanglaz): Fix the test for cameraUpdateFromArray with the "NewLatlng" key.
 // 2 approaches have been tried and neither worked for the tests.
 //
 // 1. Use OCMock to vefiry that [GMSCameraUpdate setTarget:] is triggered with the correct value.
@@ -191,10 +226,10 @@
 // verified.
 //
 // The code in below test uses the 2nd approach.
-- (void)skip_testCameraUpdateFromChannelValueNewLatLong {
+- (void)skip_testCameraUpdateFromArrayNewLatLong {
   NSArray *channelValue = @[ @"newLatLng", @[ @1, @2 ] ];
 
-  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValue];
+  GMSCameraUpdate *update = [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValue];
 
   GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
   options.frame = CGRectZero;
@@ -208,7 +243,7 @@
                              accuracy);  // mapView.camera.target.longitude is still 6.
 }
 
-- (void)testCameraUpdateFromChannelValueNewLatLngBounds {
+- (void)testCameraUpdateFromArrayNewLatLngBounds {
   NSArray<NSNumber *> *latlong1 = @[ @1, @2 ];
   NSArray<NSNumber *> *latlong2 = @[ @(3), @(4) ];
   GMSCoordinateBounds *bounds =
@@ -216,73 +251,73 @@
 
   NSArray *channelValue = @[ @"newLatLngBounds", @[ latlong1, latlong2 ], @20 ];
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValue];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValue];
 
   [[classMockCameraUpdate expect] fitBounds:bounds withPadding:20];
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testCameraUpdateFromChannelValueNewLatLngZoom {
+- (void)testCameraUpdateFromArrayNewLatLngZoom {
   NSArray *channelValue = @[ @"newLatLngZoom", @[ @1, @2 ], @3 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValue];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValue];
 
   [[classMockCameraUpdate expect] setTarget:CLLocationCoordinate2DMake(1, 2) zoom:3];
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testCameraUpdateFromChannelValueScrollBy {
+- (void)testCameraUpdateFromArrayScrollBy {
   NSArray *channelValue = @[ @"scrollBy", @1, @2 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValue];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValue];
 
   [[classMockCameraUpdate expect] scrollByX:1 Y:2];
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testCameraUpdateFromChannelValueZoomBy {
+- (void)testCameraUpdateFromArrayZoomBy {
   NSArray *channelValueNoPoint = @[ @"zoomBy", @1 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValueNoPoint];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValueNoPoint];
 
   [[classMockCameraUpdate expect] zoomBy:1];
 
   NSArray *channelValueWithPoint = @[ @"zoomBy", @1, @[ @2, @3 ] ];
 
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValueWithPoint];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValueWithPoint];
 
   [[classMockCameraUpdate expect] zoomBy:1 atPoint:CGPointMake(2, 3)];
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testCameraUpdateFromChannelValueZoomIn {
+- (void)testCameraUpdateFromArrayZoomIn {
   NSArray *channelValueNoPoint = @[ @"zoomIn" ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValueNoPoint];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValueNoPoint];
 
   [[classMockCameraUpdate expect] zoomIn];
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testCameraUpdateFromChannelValueZoomOut {
+- (void)testCameraUpdateFromArrayZoomOut {
   NSArray *channelValueNoPoint = @[ @"zoomOut" ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValueNoPoint];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValueNoPoint];
 
   [[classMockCameraUpdate expect] zoomOut];
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testCameraUpdateFromChannelValueZoomTo {
+- (void)testCameraUpdateFromArrayZoomTo {
   NSArray *channelValueNoPoint = @[ @"zoomTo", @1 ];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  [FLTGoogleMapJSONConversions cameraUpdateFromChannelValue:channelValueNoPoint];
+  [FLTGoogleMapJSONConversions cameraUpdateFromArray:channelValueNoPoint];
 
   [[classMockCameraUpdate expect] zoomTo:1];
   [classMockCameraUpdate stopMocking];
@@ -300,6 +335,56 @@
 
   XCTAssertEqual(firstSpanLength.doubleValue, 10);
   XCTAssertEqual(secondSpanLength.doubleValue, 6.4);
+}
+
+- (void)testWeightedLatLngFromArray {
+  NSArray *weightedLatLng = @[ @[ @1, @2 ], @3 ];
+
+  GMUWeightedLatLng *weightedLocation =
+      [FLTGoogleMapJSONConversions weightedLatLngFromArray:weightedLatLng];
+
+  // The location gets projected to different values
+  XCTAssertEqual([weightedLocation intensity], 3);
+}
+
+- (void)testWeightedLatLngFromArrayThrowsForInvalidInput {
+  NSArray *weightedLatLng = @[];
+
+  XCTAssertThrows([FLTGoogleMapJSONConversions weightedLatLngFromArray:weightedLatLng]);
+}
+
+- (void)testWeightedDataFromArray {
+  NSNumber *intensity1 = @3;
+  NSNumber *intensity2 = @6;
+  NSArray *data = @[ @[ @[ @1, @2 ], intensity1 ], @[ @[ @4, @5 ], intensity2 ] ];
+
+  NSArray<GMUWeightedLatLng *> *weightedData =
+      [FLTGoogleMapJSONConversions weightedDataFromArray:data];
+  XCTAssertEqual([weightedData[0] intensity], [intensity1 floatValue]);
+  XCTAssertEqual([weightedData[1] intensity], [intensity2 floatValue]);
+}
+
+- (void)testGradientFromDictionary {
+  NSNumber *startPoint = @0.6;
+  NSNumber *colorMapSize = @200;
+  NSDictionary *gradientData = @{
+    @"colors" : @[
+      // Color.fromARGB(255, 0, 255, 255)
+      @4278255615,
+    ],
+    @"startPoints" : @[ startPoint ],
+    @"colorMapSize" : colorMapSize,
+  };
+
+  GMUGradient *gradient = [FLTGoogleMapJSONConversions gradientFromDictionary:gradientData];
+  CGFloat red, green, blue, alpha;
+  [[gradient colors][0] getRed:&red green:&green blue:&blue alpha:&alpha];
+  XCTAssertEqual(red, 0);
+  XCTAssertEqual(green, 1);
+  XCTAssertEqual(blue, 1);
+  XCTAssertEqual(alpha, 1);
+  XCTAssertEqualWithAccuracy([[gradient startPoints][0] doubleValue], [startPoint doubleValue], 0);
+  XCTAssertEqual([gradient mapSize], [colorMapSize intValue]);
 }
 
 @end

@@ -13,6 +13,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Flutter Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher_macos' }
   s.source_files     = 'url_launcher_macos/Sources/url_launcher_macos/**/*.swift'
+  s.resource_bundles = {'url_launcher_macos_privacy' => ['url_launcher_macos/Sources/url_launcher_macos/Resources/PrivacyInfo.xcprivacy']}
   s.dependency 'FlutterMacOS'
 
   s.platform = :osx, '10.14'

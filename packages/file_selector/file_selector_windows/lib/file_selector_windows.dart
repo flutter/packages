@@ -23,13 +23,11 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
-          allowMultiple: false,
-          selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
         initialDirectory,
         confirmButtonText);
-    return result.paths.isEmpty ? null : XFile(result.paths.first!);
+    return result.paths.isEmpty ? null : XFile(result.paths.first);
   }
 
   @override
@@ -41,7 +39,6 @@ class FileSelectorWindows extends FileSelectorPlatform {
     final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
           allowMultiple: true,
-          selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
         initialDirectory,
@@ -73,8 +70,6 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }) async {
     final FileDialogResult result = await _hostApi.showSaveDialog(
         SelectionOptions(
-          allowMultiple: false,
-          selectFolders: false,
           allowedTypes: _typeGroupsFromXTypeGroups(acceptedTypeGroups),
         ),
         options.initialDirectory,
@@ -83,7 +78,7 @@ class FileSelectorWindows extends FileSelectorPlatform {
     final int? groupIndex = result.typeGroupIndex;
     return result.paths.isEmpty
         ? null
-        : FileSaveLocation(result.paths.first!,
+        : FileSaveLocation(result.paths.first,
             activeFilter:
                 groupIndex == null ? null : acceptedTypeGroups?[groupIndex]);
   }
@@ -95,13 +90,12 @@ class FileSelectorWindows extends FileSelectorPlatform {
   }) async {
     final FileDialogResult result = await _hostApi.showOpenDialog(
         SelectionOptions(
-          allowMultiple: false,
           selectFolders: true,
           allowedTypes: <TypeGroup>[],
         ),
         initialDirectory,
         confirmButtonText);
-    return result.paths.isEmpty ? null : result.paths.first!;
+    return result.paths.isEmpty ? null : result.paths.first;
   }
 
   @override

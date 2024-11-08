@@ -11,6 +11,7 @@ import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AllNullableTypesWithoutRecursion;
 import com.example.alternate_language_test_plugin.CoreTests.AllTypes;
 import com.example.alternate_language_test_plugin.CoreTests.AnEnum;
+import com.example.alternate_language_test_plugin.CoreTests.AnotherEnum;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterIntegrationCoreApi;
 import com.example.alternate_language_test_plugin.CoreTests.FlutterSmallApi;
 import com.example.alternate_language_test_plugin.CoreTests.HostIntegrationCoreApi;
@@ -18,6 +19,8 @@ import com.example.alternate_language_test_plugin.CoreTests.NullableResult;
 import com.example.alternate_language_test_plugin.CoreTests.Result;
 import com.example.alternate_language_test_plugin.CoreTests.VoidResult;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -114,8 +117,76 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @NonNull Map<String, Object> echoMap(@NonNull Map<String, Object> aMap) {
-    return aMap;
+  public @NonNull List<AnEnum> echoEnumList(@NonNull List<AnEnum> enumList) {
+    return enumList;
+  }
+
+  @Override
+  public @NonNull List<AllNullableTypes> echoClassList(@NonNull List<AllNullableTypes> classList) {
+    return classList;
+  }
+
+  @NonNull
+  @Override
+  public List<AnEnum> echoNonNullEnumList(@NonNull List<AnEnum> enumList) {
+    return enumList;
+  }
+
+  @NonNull
+  @Override
+  public List<AllNullableTypes> echoNonNullClassList(@NonNull List<AllNullableTypes> classList) {
+    return classList;
+  }
+
+  @Override
+  public @NonNull Map<Object, Object> echoMap(@NonNull Map<Object, Object> map) {
+    return map;
+  }
+
+  @Override
+  public @NonNull Map<String, String> echoStringMap(@NonNull Map<String, String> stringMap) {
+    return stringMap;
+  }
+
+  @Override
+  public @NonNull Map<Long, Long> echoIntMap(@NonNull Map<Long, Long> intMap) {
+    return intMap;
+  }
+
+  @Override
+  public @NonNull Map<AnEnum, AnEnum> echoEnumMap(@NonNull Map<AnEnum, AnEnum> enumMap) {
+    return enumMap;
+  }
+
+  @Override
+  public @NonNull Map<Long, AllNullableTypes> echoClassMap(
+      @NonNull Map<Long, AllNullableTypes> classMap) {
+    return classMap;
+  }
+
+  @NonNull
+  @Override
+  public Map<String, String> echoNonNullStringMap(@NonNull Map<String, String> stringMap) {
+    return stringMap;
+  }
+
+  @NonNull
+  @Override
+  public Map<Long, Long> echoNonNullIntMap(@NonNull Map<Long, Long> intMap) {
+    return intMap;
+  }
+
+  @NonNull
+  @Override
+  public Map<AnEnum, AnEnum> echoNonNullEnumMap(@NonNull Map<AnEnum, AnEnum> enumMap) {
+    return enumMap;
+  }
+
+  @NonNull
+  @Override
+  public Map<Long, AllNullableTypes> echoNonNullClassMap(
+      @NonNull Map<Long, AllNullableTypes> classMap) {
+    return classMap;
   }
 
   @Override
@@ -126,6 +197,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   @Override
   public @NonNull AnEnum echoEnum(@NonNull AnEnum anEnum) {
     return anEnum;
+  }
+
+  @Override
+  public @NonNull AnotherEnum echoAnotherEnum(@NonNull AnotherEnum anotherEnum) {
+    return anotherEnum;
   }
 
   @Override
@@ -152,7 +228,11 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   public @NonNull AllClassesWrapper createNestedNullableString(@Nullable String nullableString) {
     AllNullableTypes innerObject =
         new AllNullableTypes.Builder().setANullableString(nullableString).build();
-    return new AllClassesWrapper.Builder().setAllNullableTypes(innerObject).build();
+    return new AllClassesWrapper.Builder()
+        .setAllNullableTypes(innerObject)
+        .setClassList(new ArrayList<AllTypes>())
+        .setClassMap(new HashMap<Long, AllTypes>())
+        .build();
   }
 
   @Override
@@ -215,13 +295,89 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public @Nullable Map<String, Object> echoNullableMap(@Nullable Map<String, Object> aNullableMap) {
-    return aNullableMap;
+  public @Nullable List<AnEnum> echoNullableEnumList(@Nullable List<AnEnum> enumList) {
+    return enumList;
+  }
+
+  @Override
+  public @Nullable List<AllNullableTypes> echoNullableClassList(
+      @Nullable List<AllNullableTypes> classList) {
+    return classList;
+  }
+
+  @Nullable
+  @Override
+  public List<AnEnum> echoNullableNonNullEnumList(@Nullable List<AnEnum> enumList) {
+    return enumList;
+  }
+
+  @Nullable
+  @Override
+  public List<AllNullableTypes> echoNullableNonNullClassList(
+      @Nullable List<AllNullableTypes> classList) {
+    return classList;
+  }
+
+  @Override
+  public @Nullable Map<Object, Object> echoNullableMap(@Nullable Map<Object, Object> map) {
+    return map;
+  }
+
+  @Override
+  public @Nullable Map<String, String> echoNullableStringMap(
+      @Nullable Map<String, String> stringMap) {
+    return stringMap;
+  }
+
+  @Override
+  public @Nullable Map<Long, Long> echoNullableIntMap(@Nullable Map<Long, Long> intMap) {
+    return intMap;
+  }
+
+  @Override
+  public @Nullable Map<AnEnum, AnEnum> echoNullableEnumMap(@Nullable Map<AnEnum, AnEnum> enumMap) {
+    return enumMap;
+  }
+
+  @Override
+  public @Nullable Map<Long, AllNullableTypes> echoNullableClassMap(
+      @Nullable Map<Long, AllNullableTypes> classMap) {
+    return classMap;
+  }
+
+  @Nullable
+  @Override
+  public Map<String, String> echoNullableNonNullStringMap(@Nullable Map<String, String> stringMap) {
+    return stringMap;
+  }
+
+  @Nullable
+  @Override
+  public Map<Long, Long> echoNullableNonNullIntMap(@Nullable Map<Long, Long> intMap) {
+    return intMap;
+  }
+
+  @Nullable
+  @Override
+  public Map<AnEnum, AnEnum> echoNullableNonNullEnumMap(@Nullable Map<AnEnum, AnEnum> enumMap) {
+    return enumMap;
+  }
+
+  @Nullable
+  @Override
+  public Map<Long, AllNullableTypes> echoNullableNonNullClassMap(
+      @Nullable Map<Long, AllNullableTypes> classMap) {
+    return classMap;
   }
 
   @Override
   public @Nullable AnEnum echoNullableEnum(@Nullable AnEnum anEnum) {
     return anEnum;
+  }
+
+  @Override
+  public @Nullable AnotherEnum echoAnotherNullableEnum(@Nullable AnotherEnum anotherEnum) {
+    return anotherEnum;
   }
 
   @Override
@@ -308,14 +464,57 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void echoAsyncEnumList(
+      @NonNull List<AnEnum> enumList, @NonNull Result<List<AnEnum>> result) {
+    result.success(enumList);
+  }
+
+  @Override
+  public void echoAsyncClassList(
+      @NonNull List<AllNullableTypes> classList, @NonNull Result<List<AllNullableTypes>> result) {
+    result.success(classList);
+  }
+
+  @Override
   public void echoAsyncMap(
-      @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
-    result.success(aMap);
+      @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result) {
+    result.success(map);
+  }
+
+  @Override
+  public void echoAsyncStringMap(
+      @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result) {
+    result.success(stringMap);
+  }
+
+  @Override
+  public void echoAsyncIntMap(
+      @NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result) {
+    result.success(intMap);
+  }
+
+  @Override
+  public void echoAsyncEnumMap(
+      @NonNull Map<AnEnum, AnEnum> enumMap, @NonNull Result<Map<AnEnum, AnEnum>> result) {
+    result.success(enumMap);
+  }
+
+  @Override
+  public void echoAsyncClassMap(
+      @NonNull Map<Long, AllNullableTypes> classMap,
+      @NonNull Result<Map<Long, AllNullableTypes>> result) {
+    result.success(classMap);
   }
 
   @Override
   public void echoAsyncEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result) {
     result.success(anEnum);
+  }
+
+  @Override
+  public void echoAnotherAsyncEnum(
+      @NonNull AnotherEnum anotherEnum, @NonNull Result<AnotherEnum> result) {
+    result.success(anotherEnum);
   }
 
   @Override
@@ -360,15 +559,60 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void echoAsyncNullableEnumList(
+      @Nullable List<AnEnum> enumList, @NonNull NullableResult<List<AnEnum>> result) {
+    result.success(enumList);
+  }
+
+  @Override
+  public void echoAsyncNullableClassList(
+      @Nullable List<AllNullableTypes> classList,
+      @NonNull NullableResult<List<AllNullableTypes>> result) {
+    result.success(classList);
+  }
+
+  @Override
   public void echoAsyncNullableMap(
-      @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result) {
-    result.success(aMap);
+      @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result) {
+    result.success(map);
+  }
+
+  @Override
+  public void echoAsyncNullableStringMap(
+      @Nullable Map<String, String> stringMap,
+      @NonNull NullableResult<Map<String, String>> result) {
+    result.success(stringMap);
+  }
+
+  @Override
+  public void echoAsyncNullableIntMap(
+      @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result) {
+    result.success(intMap);
+  }
+
+  @Override
+  public void echoAsyncNullableEnumMap(
+      @Nullable Map<AnEnum, AnEnum> enumMap, @NonNull NullableResult<Map<AnEnum, AnEnum>> result) {
+    result.success(enumMap);
+  }
+
+  @Override
+  public void echoAsyncNullableClassMap(
+      @Nullable Map<Long, AllNullableTypes> classMap,
+      @NonNull NullableResult<Map<Long, AllNullableTypes>> result) {
+    result.success(classMap);
   }
 
   @Override
   public void echoAsyncNullableEnum(
       @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result) {
     result.success(anEnum);
+  }
+
+  @Override
+  public void echoAnotherAsyncNullableEnum(
+      @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result) {
+    result.success(anotherEnum);
   }
 
   @Override
@@ -470,16 +714,110 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoMap(
-      @NonNull Map<String, Object> aMap, @NonNull Result<Map<String, Object>> result) {
+  public void callFlutterEchoEnumList(
+      @NonNull List<AnEnum> enumList, @NonNull Result<List<AnEnum>> result) {
     assert flutterApi != null;
-    flutterApi.echoMap(aMap, result);
+    flutterApi.echoEnumList(enumList, result);
+  }
+
+  @Override
+  public void callFlutterEchoClassList(
+      @NonNull List<AllNullableTypes> classNullableTypes,
+      @NonNull Result<List<AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoClassList(classNullableTypes, result);
+  }
+
+  @Override
+  public void callFlutterEchoNonNullEnumList(
+      @NonNull List<AnEnum> enumList, @NonNull Result<List<AnEnum>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNonNullEnumList(enumList, result);
+  }
+
+  @Override
+  public void callFlutterEchoNonNullClassList(
+      @NonNull List<AllNullableTypes> classList, @NonNull Result<List<AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNonNullClassList(classList, result);
+  }
+
+  @Override
+  public void callFlutterEchoMap(
+      @NonNull Map<Object, Object> map, @NonNull Result<Map<Object, Object>> result) {
+    assert flutterApi != null;
+    flutterApi.echoMap(map, result);
+  }
+
+  @Override
+  public void callFlutterEchoStringMap(
+      @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result) {
+    assert flutterApi != null;
+    flutterApi.echoStringMap(stringMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoIntMap(
+      @NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result) {
+    assert flutterApi != null;
+    flutterApi.echoIntMap(intMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoEnumMap(
+      @NonNull Map<AnEnum, AnEnum> enumMap, @NonNull Result<Map<AnEnum, AnEnum>> result) {
+    assert flutterApi != null;
+    flutterApi.echoEnumMap(enumMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoClassMap(
+      @NonNull Map<Long, AllNullableTypes> classMap,
+      @NonNull Result<Map<Long, AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoClassMap(classMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNonNullStringMap(
+      @NonNull Map<String, String> stringMap, @NonNull Result<Map<String, String>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNonNullStringMap(stringMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNonNullIntMap(
+      @NonNull Map<Long, Long> intMap, @NonNull Result<Map<Long, Long>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNonNullIntMap(intMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNonNullEnumMap(
+      @NonNull Map<AnEnum, AnEnum> enumMap, @NonNull Result<Map<AnEnum, AnEnum>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNonNullEnumMap(enumMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNonNullClassMap(
+      @NonNull Map<Long, AllNullableTypes> classMap,
+      @NonNull Result<Map<Long, AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNonNullClassMap(classMap, result);
   }
 
   @Override
   public void callFlutterEchoEnum(@NonNull AnEnum anEnum, @NonNull Result<AnEnum> result) {
     assert flutterApi != null;
     flutterApi.echoEnum(anEnum, result);
+  }
+
+  @Override
+  public void callFlutterEchoAnotherEnum(
+      @NonNull AnotherEnum anotherEnum, @NonNull Result<AnotherEnum> result) {
+    assert flutterApi != null;
+    flutterApi.echoAnotherEnum(anotherEnum, result);
   }
 
   @Override
@@ -525,10 +863,101 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
-  public void callFlutterEchoNullableMap(
-      @Nullable Map<String, Object> aMap, @NonNull NullableResult<Map<String, Object>> result) {
+  public void callFlutterEchoNullableEnumList(
+      @Nullable List<AnEnum> enumList, @NonNull NullableResult<List<AnEnum>> result) {
     assert flutterApi != null;
-    flutterApi.echoNullableMap(aMap, result);
+    flutterApi.echoNullableEnumList(enumList, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableClassList(
+      @Nullable List<AllNullableTypes> classList,
+      @NonNull NullableResult<List<AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableClassList(classList, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableNonNullEnumList(
+      @Nullable List<AnEnum> enumList, @NonNull NullableResult<List<AnEnum>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableNonNullEnumList(enumList, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableNonNullClassList(
+      @Nullable List<AllNullableTypes> classList,
+      @NonNull NullableResult<List<AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableNonNullClassList(classList, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableMap(
+      @Nullable Map<Object, Object> map, @NonNull NullableResult<Map<Object, Object>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableMap(map, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableStringMap(
+      @Nullable Map<String, String> stringMap,
+      @NonNull NullableResult<Map<String, String>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableStringMap(stringMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableIntMap(
+      @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableIntMap(intMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableEnumMap(
+      @Nullable Map<AnEnum, AnEnum> enumMap, @NonNull NullableResult<Map<AnEnum, AnEnum>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableEnumMap(enumMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableClassMap(
+      @Nullable Map<Long, AllNullableTypes> classMap,
+      @NonNull NullableResult<Map<Long, AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableClassMap(classMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableNonNullStringMap(
+      @Nullable Map<String, String> stringMap,
+      @NonNull NullableResult<Map<String, String>> result) {
+
+    assert flutterApi != null;
+    flutterApi.echoNullableNonNullStringMap(stringMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableNonNullIntMap(
+      @Nullable Map<Long, Long> intMap, @NonNull NullableResult<Map<Long, Long>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableNonNullIntMap(intMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableNonNullEnumMap(
+      @Nullable Map<AnEnum, AnEnum> enumMap, @NonNull NullableResult<Map<AnEnum, AnEnum>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableNonNullEnumMap(enumMap, result);
+  }
+
+  @Override
+  public void callFlutterEchoNullableNonNullClassMap(
+      @Nullable Map<Long, AllNullableTypes> classMap,
+      @NonNull NullableResult<Map<Long, AllNullableTypes>> result) {
+    assert flutterApi != null;
+    flutterApi.echoNullableNonNullClassMap(classMap, result);
   }
 
   @Override
@@ -536,6 +965,13 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
       @Nullable AnEnum anEnum, @NonNull NullableResult<AnEnum> result) {
     assert flutterApi != null;
     flutterApi.echoNullableEnum(anEnum, result);
+  }
+
+  @Override
+  public void callFlutterEchoAnotherNullableEnum(
+      @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result) {
+    assert flutterApi != null;
+    flutterApi.echoAnotherNullableEnum(anotherEnum, result);
   }
 
   @Override
@@ -575,6 +1011,10 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
           }
         };
     flutterSmallApiOne.echoString(aString, resultCallbackOne);
+  }
+
+  public @NonNull CoreTests.UnusedClass testIfUnusedClassIsGenerated() {
+    return new CoreTests.UnusedClass();
   }
 }
 

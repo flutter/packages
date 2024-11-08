@@ -5,19 +5,14 @@
 #ifndef PACKAGES_CAMERA_CAMERA_WINDOWS_WINDOWS_CAMERA_H_
 #define PACKAGES_CAMERA_CAMERA_WINDOWS_WINDOWS_CAMERA_H_
 
-#include <flutter/method_channel.h>
-#include <flutter/standard_method_codec.h>
-
 #include <functional>
 #include <optional>
+#include <variant>
 
 #include "capture_controller.h"
+#include "messages.g.h"
 
 namespace camera_windows {
-
-using flutter::EncodableMap;
-using flutter::MethodChannel;
-using flutter::MethodResult;
 
 // A set of result types that are stored
 // for processing asynchronous commands.
@@ -50,11 +45,33 @@ class Camera : public CaptureControllerListener {
   // Tests if this camera has the specified camera ID.
   virtual bool HasCameraId(int64_t camera_id) const = 0;
 
-  // Adds a pending result.
+  // Adds a pending result for a void return.
   //
   // Returns an error result if the result has already been added.
-  virtual bool AddPendingResult(PendingResultType type,
-                                std::unique_ptr<MethodResult<>> result) = 0;
+  virtual bool AddPendingVoidResult(
+      PendingResultType type,
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+
+  // Adds a pending result for a string return.
+  //
+  // Returns an error result if the result has already been added.
+  virtual bool AddPendingIntResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<int64_t> reply)> result) = 0;
+
+  // Adds a pending result for a string return.
+  //
+  // Returns an error result if the result has already been added.
+  virtual bool AddPendingStringResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<std::string> reply)> result) = 0;
+
+  // Adds a pending result for a size return.
+  //
+  // Returns an error result if the result has already been added.
+  virtual bool AddPendingSizeResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<PlatformSize> reply)> result) = 0;
 
   // Checks if a pending result of the specified type already exists.
   virtual bool HasPendingResultByType(PendingResultType type) const = 0;
@@ -68,8 +85,7 @@ class Camera : public CaptureControllerListener {
   // Returns false if initialization fails.
   virtual bool InitCamera(flutter::TextureRegistrar* texture_registrar,
                           flutter::BinaryMessenger* messenger,
-                          ResolutionPreset resolution_preset,
-                          const RecordSettings& record_settings) = 0;
+                          const PlatformMediaSettings& media_settings) = 0;
 };
 
 // Concrete implementation of the |Camera| interface.
@@ -108,10 +124,6 @@ class CameraImpl : public Camera {
   void OnTakePictureSucceeded(const std::string& file_path) override;
   void OnTakePictureFailed(CameraResult result,
                            const std::string& error) override;
-  void OnVideoRecordSucceeded(const std::string& file_path,
-                              int64_t video_duration) override;
-  void OnVideoRecordFailed(CameraResult result,
-                           const std::string& error) override;
   void OnCaptureError(CameraResult result, const std::string& error) override;
 
   // Camera
@@ -121,16 +133,25 @@ class CameraImpl : public Camera {
   bool HasCameraId(int64_t camera_id) const override {
     return camera_id_ == camera_id;
   }
-  bool AddPendingResult(PendingResultType type,
-                        std::unique_ptr<MethodResult<>> result) override;
+  bool AddPendingVoidResult(
+      PendingResultType type,
+      std::function<void(std::optional<FlutterError> reply)> result) override;
+  bool AddPendingIntResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<int64_t> reply)> result) override;
+  bool AddPendingStringResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<std::string> reply)> result) override;
+  bool AddPendingSizeResult(
+      PendingResultType type,
+      std::function<void(ErrorOr<PlatformSize> reply)> result) override;
   bool HasPendingResultByType(PendingResultType type) const override;
   camera_windows::CaptureController* GetCaptureController() override {
     return capture_controller_.get();
   }
   bool InitCamera(flutter::TextureRegistrar* texture_registrar,
                   flutter::BinaryMessenger* messenger,
-                  ResolutionPreset resolution_preset,
-                  const RecordSettings& record_settings) override;
+                  const PlatformMediaSettings& media_settings) override;
 
   // Initializes the camera and its associated capture controller.
   //
@@ -141,10 +162,17 @@ class CameraImpl : public Camera {
   bool InitCamera(
       std::unique_ptr<CaptureControllerFactory> capture_controller_factory,
       flutter::TextureRegistrar* texture_registrar,
-      flutter::BinaryMessenger* messenger, ResolutionPreset resolution_preset,
-      const RecordSettings& record_settings);
+      flutter::BinaryMessenger* messenger,
+      const PlatformMediaSettings& media_settings);
 
  private:
+  // A generic type for any pending asyncronous result.
+  using AsyncResult =
+      std::variant<std::function<void(std::optional<FlutterError> reply)>,
+                   std::function<void(ErrorOr<int64_t> reply)>,
+                   std::function<void(ErrorOr<std::string> reply)>,
+                   std::function<void(ErrorOr<PlatformSize> reply)>>;
+
   // Loops through all pending results and calls their error handler with given
   // error ID and description. Pending results are cleared in the process.
   //
@@ -157,17 +185,50 @@ class CameraImpl : public Camera {
   // Sends camera closing message to the cameras method channel.
   void OnCameraClosing();
 
-  // Initializes method channel instance and returns pointer it.
-  MethodChannel<>* GetMethodChannel();
+  // Returns the FlutterApi instance used to communicate camera events.
+  CameraEventApi* GetEventApi();
 
-  // Finds pending result by type.
-  // Returns nullptr if type is not present.
-  std::unique_ptr<MethodResult<>> GetPendingResultByType(
+  // Finds pending void result by type.
+  //
+  // Returns an empty function if type is not present.
+  std::function<void(std::optional<FlutterError> reply)>
+  GetPendingVoidResultByType(PendingResultType type);
+
+  // Finds pending int result by type.
+  //
+  // Returns an empty function if type is not present.
+  std::function<void(ErrorOr<int64_t> reply)> GetPendingIntResultByType(
       PendingResultType type);
 
-  std::map<PendingResultType, std::unique_ptr<MethodResult<>>> pending_results_;
+  // Finds pending string result by type.
+  //
+  // Returns an empty function if type is not present.
+  std::function<void(ErrorOr<std::string> reply)> GetPendingStringResultByType(
+      PendingResultType type);
+
+  // Finds pending size result by type.
+  //
+  // Returns an empty function if type is not present.
+  std::function<void(ErrorOr<PlatformSize> reply)> GetPendingSizeResultByType(
+      PendingResultType type);
+
+  // Finds pending result by type.
+  //
+  // Returns a nullopt if type is not present.
+  //
+  // This should not be used directly in most code, it's just a helper for the
+  // typed versions above.
+  std::optional<AsyncResult> GetPendingResultByType(PendingResultType type);
+
+  // Adds pending result by type.
+  //
+  // This should not be used directly in most code, it's just a helper for the
+  // typed versions in the public interface.
+  bool AddPendingResult(PendingResultType type, AsyncResult result);
+
+  std::map<PendingResultType, AsyncResult> pending_results_;
   std::unique_ptr<CaptureController> capture_controller_;
-  std::unique_ptr<MethodChannel<>> camera_channel_;
+  std::unique_ptr<CameraEventApi> event_api_;
   flutter::BinaryMessenger* messenger_ = nullptr;
   int64_t camera_id_ = -1;
   std::string device_id_;

@@ -1,5 +1,30 @@
-## NEXT
+## 0.2.6
 
+* Reverts streaming frame support, as the implementation was incorrect and never
+  exposed.
+
+## 0.2.5+1
+
+* Updates C++ to Dart communication to use Pigeon.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.2.5
+
+* Adds support for streaming frames.
+
+## 0.2.4+1
+
+* Updates to pigeon 21.
+
+## 0.2.4
+
+* Removes `maxVideoDuration`/`maxDuration`, as the feature was never exposed at
+  the app-facing package level, and is deprecated at the platform interface
+  level.
+
+## 0.2.3
+
+* Converts native platform calls to Pigeon.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.2.2

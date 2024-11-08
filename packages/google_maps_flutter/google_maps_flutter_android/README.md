@@ -78,8 +78,18 @@ Google Play the latest renderer will not be available and the legacy renderer wi
 WARNING: `AndroidMapRenderer.legacy` is known to crash apps and is no longer supported by the Google Maps team
 and therefore cannot be supported by the Flutter team.
 
+## Supported Heatmap Options
+
+| Field                        | Supported |
+| ---------------------------- | :-------: |
+| Heatmap.dissipating          |     x     |
+| Heatmap.maxIntensity         |     ✓     |
+| Heatmap.minimumZoomIntensity |     x     |
+| Heatmap.maximumZoomIntensity |     x     |
+| HeatmapGradient.colorMapSize |     ✓     |
+
 [1]: https://pub.dev/packages/google_maps_flutter
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://docs.flutter.dev/development/platform-integration/android/platform-views
 [4]: https://github.com/flutter/flutter/issues/103686
 [5]: https://developers.google.com/maps/documentation/android-sdk/renderer

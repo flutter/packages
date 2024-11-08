@@ -4,7 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
+import 'package:shared_preferences_foundation/src/shared_preferences_foundation.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
@@ -14,7 +14,7 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Map<String?, Object?> getAll(
+  Map<String, Object> getAll(
     String prefix,
     List<String?>? allowList,
   ) {
@@ -22,11 +22,11 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
     if (allowList != null) {
       allowSet = Set<String>.from(allowList);
     }
-    return <String?, Object?>{
-      for (final String key in items.keys)
-        if (key.startsWith(prefix) &&
-            (allowSet == null || allowSet.contains(key)))
-          key: items[key]
+    return <String, Object>{
+      for (final MapEntry<String, Object> entry in items.entries)
+        if (entry.key.startsWith(prefix) &&
+            (allowSet == null || allowSet.contains(entry.key)))
+          entry.key: entry.value
     };
   }
 
@@ -98,10 +98,10 @@ void main() {
 
   setUp(() {
     api = _MockSharedPreferencesApi();
-    TestUserDefaultsApi.setup(api);
+    TestUserDefaultsApi.setUp(api);
   });
 
-  test('registerWith', () {
+  test('registerWith', () async {
     SharedPreferencesFoundation.registerWith();
     expect(SharedPreferencesStorePlatform.instance,
         isA<SharedPreferencesFoundation>());
@@ -261,7 +261,7 @@ void main() {
     expect(api.items['flutter.StringList'], <String>['hi']);
   });
 
-  test('setValue with unsupported type', () {
+  test('setValue with unsupported type', () async {
     final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});

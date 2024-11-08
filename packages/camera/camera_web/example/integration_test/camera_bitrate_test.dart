@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html';
+import 'dart:js_interop';
 import 'dart:math';
 import 'dart:ui';
 
@@ -13,6 +13,7 @@ import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
 
@@ -22,7 +23,7 @@ void main() {
   const Size videoSize = Size(320, 240);
 
   /// Draw some seconds of random video frames on canvas in realtime.
-  Future<void> simulateCamera(CanvasElement canvasElement) async {
+  Future<void> simulateCamera(HTMLCanvasElement canvasElement) async {
     const int fps = 15;
     const int seconds = 3;
     const int frameDuration = 1000 ~/ fps;
@@ -34,8 +35,10 @@ void main() {
       final int h = videoSize.height ~/ 20;
       for (int y = 0; y < videoSize.height; y += h) {
         for (int x = 0; x < videoSize.width; x += w) {
-          canvasElement.context2D.setFillColorRgb(
-              random.nextInt(255), random.nextInt(255), random.nextInt(255));
+          final int r = random.nextInt(255);
+          final int g = random.nextInt(255);
+          final int b = random.nextInt(255);
+          canvasElement.context2D.fillStyle = 'rgba($r, $g, $b, 1)'.toJS;
           canvasElement.context2D.fillRect(x, y, w, h);
         }
       }
@@ -53,19 +56,25 @@ void main() {
     bool isVideoTypeSupported(String type) => type == supportedVideoType;
 
     Future<int> recordVideo(int videoBitrate) async {
-      final Window window = MockWindow();
-      final Navigator navigator = MockNavigator();
-      final MediaDevices mediaDevices = MockMediaDevices();
+      final MockWindow mockWindow = MockWindow();
+      final MockNavigator mockNavigator = MockNavigator();
+      final MockMediaDevices mockMediaDevices = MockMediaDevices();
 
-      when(() => window.navigator).thenReturn(navigator);
-      when(() => navigator.mediaDevices).thenReturn(mediaDevices);
+      final Window window = createJSInteropWrapper(mockWindow) as Window;
+      final Navigator navigator =
+          createJSInteropWrapper(mockNavigator) as Navigator;
+      final MediaDevices mediaDevices =
+          createJSInteropWrapper(mockMediaDevices) as MediaDevices;
 
-      final CanvasElement canvasElement = CanvasElement(
-        width: videoSize.width.toInt(),
-        height: videoSize.height.toInt(),
-      )..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
+      mockWindow.navigator = navigator;
+      mockNavigator.mediaDevices = mediaDevices;
 
-      final VideoElement videoElement = VideoElement();
+      final HTMLCanvasElement canvasElement = HTMLCanvasElement()
+        ..width = videoSize.width.toInt()
+        ..height = videoSize.height.toInt()
+        ..context2D.clearRect(0, 0, videoSize.width, videoSize.height);
+
+      final HTMLVideoElement videoElement = HTMLVideoElement();
 
       final MockCameraService cameraService = MockCameraService();
 

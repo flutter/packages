@@ -1,6 +1,14 @@
-## NEXT
+## 5.0.0
 
-* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+* Updates `package:lints` dependency to version 5.0.0, with the following changes:
+    * adds `invalid_runtime_check_with_js_interop_types`
+    * adds `unnecessary_library_name`
+    * removes `avoid_null_checks_in_equality_operators`
+* Removes the following lints (see https://github.com/dart-lang/lints/issues/205):
+    * `prefer_const_constructors`
+    * `prefer_const_declarations`
+    * `prefer_const_literals_to_create_immutables`
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 4.0.0
 

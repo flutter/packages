@@ -455,7 +455,12 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi class.
-@ProxyApi()
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.example.test_plugin.ProxyApiSuperClass',
+  ),
+  swiftOptions: SwiftProxyApiOptions(name: 'ProxyApiSuperClass'),
+)
 abstract class ProxyApiSuperClass {
   ProxyApiSuperClass();
 
@@ -466,4 +471,17 @@ abstract class ProxyApiSuperClass {
 @ProxyApi()
 abstract class ProxyApiInterface {
   late void Function()? anInterfaceMethod;
+}
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(minAndroidApi: 25),
+  swiftOptions: SwiftProxyApiOptions(
+    minIosApi: '15.0.0',
+    minMacosApi: '10.0.0',
+  ),
+)
+abstract class ClassWithApiRequirement {
+  ClassWithApiRequirement();
+
+  void aMethod();
 }

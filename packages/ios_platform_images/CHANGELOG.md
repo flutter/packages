@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 0.2.4
 
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.

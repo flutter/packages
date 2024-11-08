@@ -32,8 +32,6 @@ const int defaultChromeDebugPort = 10000;
 /// can be different (and typically is) from the production entry point of the
 /// app.
 ///
-/// If [useCanvasKit] is true, builds the app in CanvasKit mode.
-///
 /// [benchmarkServerPort] is the port this benchmark server serves the app on.
 /// By default uses [defaultBenchmarkServerPort].
 ///
@@ -42,6 +40,16 @@ const int defaultChromeDebugPort = 10000;
 ///
 /// If [headless] is true, runs Chrome without UI. In particular, this is
 /// useful in environments (e.g. CI) that doesn't have a display.
+///
+/// If [treeShakeIcons] is false, '--no-tree-shake-icons' will be passed as a
+/// build argument when building the benchmark app.
+///
+/// [compilationOptions] specify the compiler and renderer to use for the
+/// benchmark app. This can either use dart2wasm & skwasm or
+/// dart2js & canvaskit.
+///
+/// [benchmarkPath] specifies the path for the URL that will be loaded upon
+/// opening the benchmark app in Chrome.
 Future<BenchmarkResults> serveWebBenchmark({
   required io.Directory benchmarkAppDirectory,
   required String entryPoint,
@@ -49,8 +57,8 @@ Future<BenchmarkResults> serveWebBenchmark({
   int chromeDebugPort = defaultChromeDebugPort,
   bool headless = true,
   bool treeShakeIcons = true,
-  String initialPage = defaultInitialPage,
-  CompilationOptions compilationOptions = const CompilationOptions(),
+  CompilationOptions compilationOptions = const CompilationOptions.js(),
+  String benchmarkPath = defaultInitialPath,
 }) async {
   // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
   Logger.root.level = Level.INFO;
@@ -59,10 +67,10 @@ Future<BenchmarkResults> serveWebBenchmark({
     benchmarkAppDirectory: benchmarkAppDirectory,
     entryPoint: entryPoint,
     benchmarkServerPort: benchmarkServerPort,
+    benchmarkPath: benchmarkPath,
     chromeDebugPort: chromeDebugPort,
     headless: headless,
     compilationOptions: compilationOptions,
     treeShakeIcons: treeShakeIcons,
-    initialPage: initialPage,
   ).run();
 }

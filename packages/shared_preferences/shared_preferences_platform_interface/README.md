@@ -9,9 +9,16 @@ same interface.
 # Usage
 
 To implement a new platform-specific implementation of `shared_preferences`, extend
-[`SharedPreferencesPlatform`][2] with an implementation that performs the
-platform-specific behavior, and when you register your plugin, set the default
-`SharedPreferencesLoader` by calling the `SharedPreferencesPlatform.loader` setter.
+[`SharedPreferencesPlatform`][2] and [`SharedPreferencesAsyncPlatform`][3] with
+implementations that perform the platform-specific behaviors, and when you register
+your plugin, set the default `SharedPreferencesStorePlatform` and
+`SharedPreferencesAsyncPlatform` by calling the `SharedPreferencesPlatform.instance`
+and `SharedPreferencesAsyncPlatform.instance` setters.
+
+Please note that the plugin tooling only registers the native and/or Dart classes
+listed in your package's `pubspec.yaml`, so if you intend to implement more than
+one class, you will need to manually register the second class
+(as can be seen in the Android and iOS implementations).
 
 # Note on breaking changes
 
@@ -23,3 +30,4 @@ on why a less-clean interface is preferable to a breaking change.
 
 [1]: ../shared_preferences
 [2]: lib/shared_preferences_platform_interface.dart
+[3]: lib/shared_preferences_async_platform_interface.dart

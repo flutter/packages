@@ -1,3 +1,8 @@
+## 2.6.2
+
+* Updates Pigeon for non-nullable collection type support.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
 ## 2.6.1
 
 * Adds files to make include directory permanent.

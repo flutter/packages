@@ -6,7 +6,6 @@ package io.flutter.plugins.googlemaps;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -21,11 +20,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,7 +34,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.P)
+@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoogleMapControllerTest {
 
   private Context context;
@@ -47,12 +43,13 @@ public class GoogleMapControllerTest {
   AutoCloseable mockCloseable;
   @Mock BinaryMessenger mockMessenger;
   @Mock GoogleMap mockGoogleMap;
-  @Mock MethodChannel mockMethodChannel;
+  @Mock Messages.MapsCallbackApi flutterApi;
   @Mock ClusterManagersController mockClusterManagersController;
   @Mock MarkersController mockMarkersController;
   @Mock PolygonsController mockPolygonsController;
   @Mock PolylinesController mockPolylinesController;
   @Mock CirclesController mockCirclesController;
+  @Mock HeatmapsController mockHeatmapsController;
   @Mock TileOverlaysController mockTileOverlaysController;
 
   @Before
@@ -78,7 +75,7 @@ public class GoogleMapControllerTest {
             0,
             context,
             mockMessenger,
-            mockMethodChannel,
+            flutterApi,
             activity::getLifecycle,
             null,
             mockClusterManagersController,
@@ -86,6 +83,7 @@ public class GoogleMapControllerTest {
             mockPolygonsController,
             mockPolylinesController,
             mockCirclesController,
+            mockHeatmapsController,
             mockTileOverlaysController);
     googleMapController.init();
     return googleMapController;
@@ -104,19 +102,19 @@ public class GoogleMapControllerTest {
   }
 
   @Test
-  public void DisposeReleaseTheMap() throws InterruptedException {
+  public void DisposeReleaseTheMap() {
     GoogleMapController googleMapController = getGoogleMapController();
     googleMapController.onMapReady(mockGoogleMap);
-    assertTrue(googleMapController != null);
+    assertNotNull(googleMapController);
     googleMapController.dispose();
     assertNull(googleMapController.getView());
   }
 
   @Test
-  public void OnDestroyReleaseTheMap() throws InterruptedException {
+  public void OnDestroyReleaseTheMap() {
     GoogleMapController googleMapController = getGoogleMapController();
     googleMapController.onMapReady(mockGoogleMap);
-    assertTrue(googleMapController != null);
+    assertNotNull(googleMapController);
     googleMapController.onDestroy(activity);
     assertNull(googleMapController.getView());
   }
@@ -195,9 +193,9 @@ public class GoogleMapControllerTest {
   @Test
   public void SetInitialClusterManagers() {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
-    Map<String, Object> initialClusterManager = new HashMap<>();
-    initialClusterManager.put("clusterManagerId", "cm_1");
-    List<Object> initialClusterManagers = new ArrayList<>();
+    Messages.PlatformClusterManager initialClusterManager =
+        new Messages.PlatformClusterManager.Builder().setIdentifier("cm_1").build();
+    List<Messages.PlatformClusterManager> initialClusterManagers = new ArrayList<>();
     initialClusterManagers.add(initialClusterManager);
     googleMapController.setInitialClusterManagers(initialClusterManagers);
     googleMapController.onMapReady(mockGoogleMap);
@@ -222,5 +220,32 @@ public class GoogleMapControllerTest {
 
     googleMapController.onClusterItemClick(markerBuilder);
     verify(mockMarkersController, times(1)).onMarkerTap(markerBuilder.markerId());
+  }
+
+  @Test
+  public void SetInitialHeatmaps() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+
+    List<Messages.PlatformHeatmap> initialHeatmaps = List.of(new Messages.PlatformHeatmap());
+    googleMapController.setInitialHeatmaps(initialHeatmaps);
+    googleMapController.onMapReady(mockGoogleMap);
+
+    // Verify if the HeatmapsController.addHeatmaps method is called with initial heatmaps.
+    verify(mockHeatmapsController, times(1)).addHeatmaps(initialHeatmaps);
+  }
+
+  @Test
+  public void UpdateHeatmaps() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+
+    final List<Messages.PlatformHeatmap> toAdd = List.of(new Messages.PlatformHeatmap());
+    final List<Messages.PlatformHeatmap> toChange = List.of(new Messages.PlatformHeatmap());
+    final List<String> idsToRemove = List.of("hm_1");
+
+    googleMapController.updateHeatmaps(toAdd, toChange, idsToRemove);
+
+    verify(mockHeatmapsController, times(1)).addHeatmaps(toAdd);
+    verify(mockHeatmapsController, times(1)).changeHeatmaps(toChange);
+    verify(mockHeatmapsController, times(1)).removeHeatmaps(idsToRemove);
   }
 }

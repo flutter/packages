@@ -12,7 +12,6 @@ import static org.hamcrest.Matchers.any;
 
 import android.util.Log;
 import android.view.View;
-import androidx.test.annotation.ExperimentalTestApi;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.flutter.action.FlutterViewAction;
@@ -100,7 +99,6 @@ public final class EspressoFlutter {
      * @param widgetActions one or more actions that shall be performed. Cannot be {@code null}.
      * @return this interaction for further perform/verification calls.
      */
-    @ExperimentalTestApi()
     public WidgetInteraction perform(@Nonnull final WidgetAction... widgetActions) {
       checkNotNull(widgetActions);
       for (WidgetAction widgetAction : widgetActions) {
@@ -117,7 +115,6 @@ public final class EspressoFlutter {
      * @param assertion a widget assertion that shall be made on the matched Flutter widget. Cannot
      *     be {@code null}.
      */
-    @ExperimentalTestApi()
     public WidgetInteraction check(@Nonnull WidgetAssertion assertion) {
       checkNotNull(
           assertion,
@@ -133,7 +130,6 @@ public final class EspressoFlutter {
       return this;
     }
 
-    @ExperimentalTestApi()
     @SuppressWarnings("unchecked")
     private <T> T performInternal(FlutterAction<T> flutterAction) {
       checkNotNull(

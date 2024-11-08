@@ -62,15 +62,14 @@ data class MessageData(
     val name: String? = null,
     val description: String? = null,
     val code: Code,
-    val data: Map<String?, String?>
+    val data: Map<String, String>
 ) {
   companion object {
-    @Suppress("LocalVariableName")
-    fun fromList(__pigeon_list: List<Any?>): MessageData {
-      val name = __pigeon_list[0] as String?
-      val description = __pigeon_list[1] as String?
-      val code = __pigeon_list[2] as Code
-      val data = __pigeon_list[3] as Map<String?, String?>
+    fun fromList(pigeonVar_list: List<Any?>): MessageData {
+      val name = pigeonVar_list[0] as String?
+      val description = pigeonVar_list[1] as String?
+      val code = pigeonVar_list[2] as Code
+      val data = pigeonVar_list[3] as Map<String, String>
       return MessageData(name, description, code, data)
     }
   }
@@ -85,14 +84,14 @@ data class MessageData(
   }
 }
 
-private object MessagesPigeonCodec : StandardMessageCodec() {
+private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
+        return (readValue(buffer) as Long?)?.let { Code.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Int?)?.let { Code.ofRaw(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { MessageData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -100,13 +99,13 @@ private object MessagesPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is MessageData -> {
-        stream.write(129)
-        writeValue(stream, value.toList())
-      }
       is Code -> {
-        stream.write(130)
+        stream.write(129)
         writeValue(stream, value.raw)
+      }
+      is MessageData -> {
+        stream.write(130)
+        writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
     }
@@ -123,7 +122,7 @@ interface ExampleHostApi {
 
   companion object {
     /** The codec used by ExampleHostApi. */
-    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /** Sets up an instance of `ExampleHostApi` to handle messages through the `binaryMessenger`. */
     @JvmOverloads
     fun setUp(
@@ -162,8 +161,8 @@ interface ExampleHostApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val aArg = args[0].let { num -> if (num is Int) num.toLong() else num as Long }
-            val bArg = args[1].let { num -> if (num is Int) num.toLong() else num as Long }
+            val aArg = args[0] as Long
+            val bArg = args[1] as Long
             val wrapped: List<Any?> =
                 try {
                   listOf(api.add(aArg, bArg))
@@ -210,7 +209,7 @@ class MessageFlutterApi(
 ) {
   companion object {
     /** The codec used by MessageFlutterApi. */
-    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec }
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
   }
 
   fun flutterMethod(aStringArg: String?, callback: (Result<String>) -> Unit) {

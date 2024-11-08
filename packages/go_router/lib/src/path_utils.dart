@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'misc/errors.dart';
 import 'route.dart';
 
 final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
@@ -103,55 +102,14 @@ Map<String, String> extractPathParameters(
 
 /// Concatenates two paths.
 ///
-/// e.g: pathA = /a, pathB = c/d,  concatenatePaths(pathA, pathB) = /a/c/d.
+/// e.g: pathA = /a, pathB = /c/d, concatenatePaths(pathA, pathB) = /a/c/d.
+/// or: pathA = a, pathB = c/d, concatenatePaths(pathA, pathB) = /a/c/d.
 String concatenatePaths(String parentPath, String childPath) {
-  // at the root, just return the path
-  if (parentPath.isEmpty) {
-    assert(childPath.startsWith('/'));
-    assert(childPath == '/' || !childPath.endsWith('/'));
-    return childPath;
-  }
-
-  // not at the root, so append the parent path
-  assert(childPath.isNotEmpty);
-  assert(!childPath.startsWith('/'));
-  assert(!childPath.endsWith('/'));
-  return '${parentPath == '/' ? '' : parentPath}/$childPath';
-}
-
-/// Normalizes the location string.
-String canonicalUri(String loc) {
-  if (loc.isEmpty) {
-    throw GoException('Location cannot be empty.');
-  }
-  String canon = Uri.parse(loc).toString();
-  canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
-  final Uri uri = Uri.parse(canon);
-
-  // remove trailing slash except for when you shouldn't, e.g.
-  // /profile/ => /profile
-  // / => /
-  // /login?from=/ => /login?from=/
-  canon = uri.path.endsWith('/') &&
-          uri.path != '/' &&
-          !uri.hasQuery &&
-          !uri.hasFragment
-      ? canon.substring(0, canon.length - 1)
-      : canon;
-
-  // replace '/?', except for first occurrence, from path only
-  // /login/?from=/ => /login?from=/
-  // /?from=/ => /?from=/
-  final int pathStartIndex = uri.host.isNotEmpty
-      ? uri.toString().indexOf(uri.host) + uri.host.length
-      : uri.hasScheme
-          ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
-          : 0;
-  if (pathStartIndex < canon.length) {
-    canon = canon.replaceFirst('/?', '?', pathStartIndex + 1);
-  }
-
-  return canon;
+  final Iterable<String> segments = <String>[
+    ...parentPath.split('/'),
+    ...childPath.split('/')
+  ].where((String segment) => segment.isNotEmpty);
+  return '/${segments.join('/')}';
 }
 
 /// Builds an absolute path for the provided route.

@@ -1,5 +1,11 @@
-## NEXT
+## 0.3.3+5
 
+* Updates README to link to the published example.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.3.3+4
+
+* Makes the example app compatible with the `web`.
 * Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 0.3.3+3

@@ -1,3 +1,36 @@
+## 2.13.1
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 2.13.0
+
+* Updates map configuration and platform view creation parameters to use Pigeon.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.12.0
+
+* Adds support for marker clustering.
+
+## 2.11.0
+
+* Adds support for heatmap layers.
+
+## 2.10.0
+
+* Converts Obj-C->Dart calls to Pigeon.
+
+## 2.9.0
+
+* Converts additional platform calls to Pigeon.
+
+## 2.8.2
+
+* Converts inspector interface platform calls to Pigeon.
+
+## 2.8.1
+
+* Improves Objective-C type handling.
+
 ## 2.8.0
 
 * Adds compatibility with SDK version 9.x for apps targetting iOS 15+.

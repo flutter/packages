@@ -14,6 +14,7 @@ import 'package:stream_transform/stream_transform.dart';
 import '../../google_maps_flutter_platform_interface.dart';
 import '../types/tile_overlay_updates.dart';
 import '../types/utils/map_configuration_serialization.dart';
+import 'serialization.dart';
 
 /// Error thrown when an unknown map ID is provided to a method channel API.
 class UnknownMapIDError extends Error {
@@ -364,6 +365,17 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) {
+    return channel(mapId).invokeMethod<void>(
+      'heatmaps#update',
+      serializeMapsObjectUpdates(heatmapUpdates, serializeHeatmap),
+    );
+  }
+
+  @override
   Future<void> updateTileOverlays({
     required Set<TileOverlay> newTileOverlays,
     required int mapId,
@@ -518,7 +530,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   /// This implementation uses hybrid composition to render the Google Maps
   /// Widget on Android. This comes at the cost of some performance on Android
   /// versions below 10. See
-  /// https://flutter.dev/docs/development/platform-integration/platform-views#performance for more
+  /// https://docs.flutter.dev/platform-integration/android/platform-views#performance for more
   /// information.
   ///
   /// If set to true, the google map widget should be built with
@@ -542,6 +554,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       'polygonsToAdd': serializePolygonSet(mapObjects.polygons),
       'polylinesToAdd': serializePolylineSet(mapObjects.polylines),
       'circlesToAdd': serializeCircleSet(mapObjects.circles),
+      'heatmapsToAdd': serializeHeatmapSet(mapObjects.heatmaps),
       'tileOverlaysToAdd': serializeTileOverlaySet(mapObjects.tileOverlays),
     };
 

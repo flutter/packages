@@ -13,8 +13,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'image_test_mocks.dart';
 import 'utils.dart';
 
-bool isRunningInStable = io.Platform.environment['CHANNEL'] == 'stable';
-
 void main() => defineTests();
 
 void defineTests() {
@@ -169,9 +167,8 @@ void defineTests() {
 
         await expectLater(
             find.byType(Container),
-            matchesGoldenFile(isRunningInStable
-                ? 'assets/images/golden/image_test/resource_asset_logo_old.png'
-                : 'assets/images/golden/image_test/resource_asset_logo.png'));
+            matchesGoldenFile(
+                'assets/images/golden/image_test/resource_asset_logo.png'));
       },
       skip: kIsWeb, // Goldens are platform-specific.
     );
@@ -416,9 +413,8 @@ void defineTests() {
 
         await expectLater(
             find.byType(Container),
-            matchesGoldenFile(isRunningInStable
-                ? 'assets/images/golden/image_test/custom_builder_asset_logo_old.png'
-                : 'assets/images/golden/image_test/custom_builder_asset_logo.png'));
+            matchesGoldenFile(
+                'assets/images/golden/image_test/custom_builder_asset_logo.png'));
       },
       skip: kIsWeb, // Goldens are platform-specific.
     );

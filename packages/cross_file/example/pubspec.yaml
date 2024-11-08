@@ -3,7 +3,7 @@ description: Demonstrates how to use cross files.
 publish_to: none
 
 environment:
-  sdk: ^3.2.0
+  sdk: ^3.3.0
 
 dependencies:
   cross_file:

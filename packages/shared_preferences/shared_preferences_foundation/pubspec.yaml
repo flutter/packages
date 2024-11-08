@@ -2,11 +2,11 @@ name: shared_preferences_foundation
 description: iOS and macOS implementation of the shared_preferences plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/shared_preferences/shared_preferences_foundation
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+shared_preferences%22
-version: 2.4.0
+version: 2.5.3
 
 environment:
-  sdk: ^3.2.3
-  flutter: ">=3.16.6"
+  sdk: ^3.3.0
+  flutter: ">=3.19.0"
 
 flutter:
   plugin:
@@ -24,12 +24,12 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences_platform_interface: ^2.3.0
+  shared_preferences_platform_interface: ^2.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^10.1.6
+  pigeon: ^22.4.1
 
 topics:
   - persistence

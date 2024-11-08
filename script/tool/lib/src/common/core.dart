@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 /// The signature for a print handler for commands that allow overriding the
@@ -36,6 +37,9 @@ const String kEnableExperiment = 'enable-experiment';
 /// A String to add to comments on temporarily-added changes that should not
 /// land (e.g., dependency overrides in federated plugin combination PRs).
 const String kDoNotLandWarning = 'DO NOT MERGE';
+
+/// Key for enabling web WASM compilation
+const String kWebWasmFlag = 'wasm';
 
 /// Target platforms supported by Flutter.
 // ignore: public_member_api_docs
@@ -79,6 +83,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 19, 0): Version(3, 3, 0),
   Version(3, 19, 6): Version(3, 3, 4),
   Version(3, 22, 0): Version(3, 4, 0),
+  Version(3, 22, 3): Version(3, 4, 4),
+  Version(3, 24, 0): Version(3, 5, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
@@ -92,7 +98,7 @@ bool isPackage(FileSystemEntity entity) {
     return false;
   }
   // According to
-  // https://dart.dev/guides/libraries/create-library-packages#what-makes-a-library-package
+  // https://dart.dev/guides/libraries/create-packages#what-makes-a-library-package
   // a package must also have a `lib/` directory, but in practice that's not
   // always true. Some special cases (espresso, flutter_template_images, etc.)
   // don't have any source, so this deliberately doesn't check that there's a
@@ -122,3 +128,13 @@ const int exitCommandFoundErrors = 1;
 
 /// A exit code for [ToolExit] for a failure to run due to invalid arguments.
 const int exitInvalidArguments = 2;
+
+/// The directory to which to write logs and other artifacts, if set in CI.
+Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
+  final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
+  Directory? logsDirectory;
+  if (logsDirectoryPath != null) {
+    logsDirectory = fileSystem.directory(logsDirectoryPath);
+  }
+  return logsDirectory;
+}

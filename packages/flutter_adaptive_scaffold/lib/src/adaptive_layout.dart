@@ -58,8 +58,8 @@ enum _SlotIds {
 ///         key: const Key('Primary Navigation Medium'),
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(destinations: destinations),
 ///       ),
-///       Breakpoints.large: SlotLayout.from(
-///         key: const Key('Primary Navigation Large'),
+///       Breakpoints.mediumLarge: SlotLayout.from(
+///         key: const Key('Primary Navigation MediumLarge'),
 ///         inAnimation: leftOutIn,
 ///         builder: (_) => AdaptiveScaffold.toNavigationRail(extended: true, destinations: destinations),
 ///       ),
@@ -293,7 +293,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
     });
 
     Rect? hinge;
-    for (final DisplayFeature e in MediaQuery.of(context).displayFeatures) {
+    for (final DisplayFeature e in MediaQuery.displayFeaturesOf(context)) {
       if (e.type == DisplayFeatureType.hinge ||
           e.type == DisplayFeatureType.fold) {
         if (e.bounds.left != 0) {

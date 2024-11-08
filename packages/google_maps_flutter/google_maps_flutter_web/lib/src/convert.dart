@@ -32,6 +32,11 @@ double _getCssOpacity(Color color) {
   return color.opacity;
 }
 
+// Converts a [Color] into a valid CSS value rgba(R, G, B, A).
+String _getCssColorWithAlpha(Color color) {
+  return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${(color.alpha / 255).toStringAsFixed(2)})';
+}
+
 // Converts options from the plugin into gmaps.MapOptions that can be used by the JS SDK.
 // The following options are not handled here, for various reasons:
 // The following are not available in web, because the map doesn't rotate there:
@@ -195,12 +200,13 @@ LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
   );
 }
 
-CameraPosition _gmViewportToCameraPosition(gmaps.GMap map) {
+CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
-    target: gmLatLngToLatLng(map.center ?? _nullGmapsLatLng),
-    bearing: map.heading?.toDouble() ?? 0,
-    tilt: map.tilt?.toDouble() ?? 0,
-    zoom: map.zoom?.toDouble() ?? 0,
+    target:
+        gmLatLngToLatLng(map.isCenterDefined() ? map.center : _nullGmapsLatLng),
+    bearing: map.isHeadingDefined() ? map.heading.toDouble() : 0,
+    tilt: map.isTiltDefined() ? map.tilt.toDouble() : 0,
+    zoom: map.isZoomDefined() ? map.zoom.toDouble() : 0,
   );
 }
 
@@ -252,8 +258,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
       // XSS attacks through the contents of the marker InfoWindow.
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
-      // ignore: unsafe_html
-      snippet.innerHTML = sanitizeHtml(markerSnippet);
+      snippet.innerHTMLString = sanitizeHtml(markerSnippet);
     }
 
     container.appendChild(snippet);
@@ -474,8 +479,35 @@ gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
   return circleOptions;
 }
 
+visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
+  final Iterable<Color>? gradientColors =
+      heatmap.gradient?.colors.map((HeatmapGradientColor e) => e.color);
+  final visualization.HeatmapLayerOptions heatmapOptions =
+      visualization.HeatmapLayerOptions()
+        ..data = heatmap.data
+            .map(
+              (WeightedLatLng e) => visualization.WeightedLocation()
+                ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
+                ..weight = e.weight,
+            )
+            .toList()
+            .toJS
+        ..dissipating = heatmap.dissipating
+        ..gradient = gradientColors == null
+            ? null
+            : <Color>[
+                // Web needs a first color with 0 alpha
+                gradientColors.first.withAlpha(0),
+                ...gradientColors,
+              ].map(_getCssColorWithAlpha).toList()
+        ..maxIntensity = heatmap.maxIntensity
+        ..opacity = heatmap.opacity
+        ..radius = heatmap.radius.radius;
+  return heatmapOptions;
+}
+
 gmaps.PolygonOptions _polygonOptionsFromPolygon(
-    gmaps.GMap googleMap, Polygon polygon) {
+    gmaps.Map googleMap, Polygon polygon) {
   // Convert all points to GmLatLng
   final List<gmaps.LatLng> path =
       polygon.points.map(_latLngToGmLatLng).toList();
@@ -496,7 +528,7 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
   }
 
   return gmaps.PolygonOptions()
-    ..paths = paths
+    ..paths = paths.map((List<gmaps.LatLng> e) => e.toJS).toList().toJS
     ..strokeColor = _getCssColor(polygon.strokeColor)
     ..strokeOpacity = _getCssOpacity(polygon.strokeColor)
     ..strokeWeight = polygon.strokeWidth
@@ -550,12 +582,12 @@ bool _isPolygonClockwise(List<gmaps.LatLng> path) {
 }
 
 gmaps.PolylineOptions _polylineOptionsFromPolyline(
-    gmaps.GMap googleMap, Polyline polyline) {
+    gmaps.Map googleMap, Polyline polyline) {
   final List<gmaps.LatLng> paths =
       polyline.points.map(_latLngToGmLatLng).toList();
 
   return gmaps.PolylineOptions()
-    ..path = paths
+    ..path = paths.toJS
     ..strokeWeight = polyline.width
     ..strokeColor = _getCssColor(polyline.color)
     ..strokeOpacity = _getCssOpacity(polyline.color)
@@ -569,8 +601,8 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
 //  this.width = 10,
 }
 
-// Translates a [CameraUpdate] into operations on a [gmaps.GMap].
-void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
+// Translates a [CameraUpdate] into operations on a [gmaps.Map].
+void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
   // Casts [value] to a JSON dictionary (string -> nullable object). [value]
   // must be a non-null JSON dictionary.
   Map<String, Object?> asJsonObject(dynamic value) {
@@ -587,19 +619,19 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
     case 'newCameraPosition':
       final Map<String, Object?> position = asJsonObject(json[1]);
       final List<Object?> latLng = asJsonList(position['target']);
-      map.heading = position['bearing'] as num?;
-      map.zoom = position['zoom'] as num?;
+      map.heading = position['bearing']! as num;
+      map.zoom = position['zoom']! as num;
       map.panTo(
-        gmaps.LatLng(latLng[0] as num?, latLng[1] as num?),
+        gmaps.LatLng(latLng[0]! as num, latLng[1]! as num),
       );
-      map.tilt = position['tilt'] as num?;
+      map.tilt = position['tilt']! as num;
     case 'newLatLng':
       final List<Object?> latLng = asJsonList(json[1]);
-      map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
+      map.panTo(gmaps.LatLng(latLng[0]! as num, latLng[1]! as num));
     case 'newLatLngZoom':
       final List<Object?> latLng = asJsonList(json[1]);
-      map.zoom = json[2] as num?;
-      map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
+      map.zoom = json[2]! as num;
+      map.panTo(gmaps.LatLng(latLng[0]! as num, latLng[1]! as num));
     case 'newLatLngBounds':
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
@@ -607,13 +639,13 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
       final double padding = json[2] as double;
       map.fitBounds(
         gmaps.LatLngBounds(
-          gmaps.LatLng(latLng1[0] as num?, latLng1[1] as num?),
-          gmaps.LatLng(latLng2[0] as num?, latLng2[1] as num?),
+          gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
+          gmaps.LatLng(latLng2[0]! as num, latLng2[1]! as num),
         ),
-        padding,
+        padding.toJS,
       );
     case 'scrollBy':
-      map.panBy(json[1] as num?, json[2] as num?);
+      map.panBy(json[1]! as num, json[2]! as num);
     case 'zoomBy':
       gmaps.LatLng? focusLatLng;
       final double zoomDelta = json[1] as double? ?? 0;
@@ -631,44 +663,45 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
           // print('Error computing new focus LatLng. JS Error: ' + e.toString());
         }
       }
-      map.zoom = (map.zoom ?? 0) + newZoomDelta;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) + newZoomDelta;
       if (focusLatLng != null) {
         map.panTo(focusLatLng);
       }
     case 'zoomIn':
-      map.zoom = (map.zoom ?? 0) + 1;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) + 1;
     case 'zoomOut':
-      map.zoom = (map.zoom ?? 0) - 1;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) - 1;
     case 'zoomTo':
-      map.zoom = json[1] as num?;
+      map.zoom = json[1]! as num;
     default:
       throw UnimplementedError('Unimplemented CameraMove: ${json[0]}.');
   }
 }
 
 // original JS by: Byron Singh (https://stackoverflow.com/a/30541162)
-gmaps.LatLng _pixelToLatLng(gmaps.GMap map, int x, int y) {
+gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   final gmaps.LatLngBounds? bounds = map.bounds;
   final gmaps.Projection? projection = map.projection;
-  final num? zoom = map.zoom;
 
   assert(
       bounds != null, 'Map Bounds required to compute LatLng of screen x/y.');
   assert(projection != null,
       'Map Projection required to compute LatLng of screen x/y');
-  assert(zoom != null,
+  assert(map.isZoomDefined(),
       'Current map zoom level required to compute LatLng of screen x/y');
+
+  final num zoom = map.zoom;
 
   final gmaps.LatLng ne = bounds!.northEast;
   final gmaps.LatLng sw = bounds.southWest;
 
-  final gmaps.Point topRight = projection!.fromLatLngToPoint!(ne)!;
-  final gmaps.Point bottomLeft = projection.fromLatLngToPoint!(sw)!;
+  final gmaps.Point topRight = projection!.fromLatLngToPoint(ne)!;
+  final gmaps.Point bottomLeft = projection.fromLatLngToPoint(sw)!;
 
-  final int scale = 1 << (zoom!.toInt()); // 2 ^ zoom
+  final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
   final gmaps.Point point =
-      gmaps.Point((x / scale) + bottomLeft.x!, (y / scale) + topRight.y!);
+      gmaps.Point((x / scale) + bottomLeft.x, (y / scale) + topRight.y);
 
-  return projection.fromPointToLatLng!(point)!;
+  return projection.fromPointToLatLng(point)!;
 }
