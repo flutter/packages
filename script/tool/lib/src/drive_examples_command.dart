@@ -453,7 +453,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             <String>[
               'screenshot',
               ...deviceFlags,
-              if (logsDirectory != null) '--out=${logsDirectory.path}',
+              if (logsDirectory != null) '--out=${logsDirectory.childFile('timeout_screenshot.png').path}',
               target,
             ],
             exitOnError: true,
