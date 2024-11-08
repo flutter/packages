@@ -448,28 +448,33 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     for (final String target in individualRunTargets) {
       final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
         printError('Test is taking longer than expected, taking screenshot.');
+        final String screenshotBasename =
+            'test-timeout-screenshot_${target.replaceAll(platform.pathSeparator, '_')}.png';
         await processRunner.runAndStream(
-            flutterCommand,
-            <String>[
-              'screenshot',
-              ...deviceFlags,
-              if (logsDirectory != null) '--out=${logsDirectory.childFile('timeout_screenshot.png').path}',
-              target,
-            ],
-            exitOnError: true,
-            workingDir: example.directory);
-      });
-      final int exitCode = await processRunner.runAndStream(
           flutterCommand,
           <String>[
-            'test',
+            'screenshot',
             ...deviceFlags,
-            if (enableExperiment.isNotEmpty)
-              '--enable-experiment=$enableExperiment',
-            if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
+            if (logsDirectory != null)
+              '--out=${logsDirectory.childFile(screenshotBasename).path}',
             target,
           ],
-          workingDir: example.directory);
+          exitOnError: true,
+          workingDir: example.directory,
+        );
+      });
+      final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'test',
+          ...deviceFlags,
+          if (enableExperiment.isNotEmpty)
+            '--enable-experiment=$enableExperiment',
+          if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
+          target,
+        ],
+        workingDir: example.directory,
+      );
 
       timeoutTimer.cancel();
       passed = passed && (exitCode == 0);
