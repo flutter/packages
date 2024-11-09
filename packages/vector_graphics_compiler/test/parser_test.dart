@@ -704,12 +704,15 @@ void main() {
   });
 
   test('stroke-width with invalid value', () {
-    const String svg = '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="invalid"/></svg>';
+    const String svg =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="invalid"/></svg>';
 
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
 
     expect(instructions.paints, const <Paint>[
-      Paint(stroke: Stroke(color: Color(0xff0000ff), width: 1.0), fill: Fill(color: Color(0xffff0000))),
+      Paint(
+          stroke: Stroke(color: Color(0xff0000ff), width: 1.0),
+          fill: Fill(color: Color(0xffff0000))),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -728,11 +731,16 @@ void main() {
   test('stroke-width with unit value', () {
     const SvgTheme theme = SvgTheme();
 
-    const String svg_px = '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1px"/></svg>';
-    const String svg_pt = '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1pt"/></svg>';
-    const String svg_ex = '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1ex"/></svg>';
-    const String svg_em = '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1em"/></svg>';
-    const String svg_rem = '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1rem"/></svg>';
+    const String svg_px =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1px"/></svg>';
+    const String svg_pt =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1pt"/></svg>';
+    const String svg_ex =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1ex"/></svg>';
+    const String svg_em =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1em"/></svg>';
+    const String svg_rem =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1rem"/></svg>';
 
     final VectorInstructions instructionsPx = parseWithoutOptimizers(svg_px);
     final VectorInstructions instructionsPt = parseWithoutOptimizers(svg_pt);
@@ -741,23 +749,36 @@ void main() {
     final VectorInstructions instructionsRem = parseWithoutOptimizers(svg_rem);
 
     expect(instructionsPx.paints, <Paint>[
-      const Paint(stroke: Stroke(color: Color(0xff0000ff), width: 1.0), fill: Fill(color: Color(0xffff0000))),
+      const Paint(
+          stroke: Stroke(color: Color(0xff0000ff), width: 1.0),
+          fill: Fill(color: Color(0xffff0000))),
     ]);
-    
+
     expect(instructionsPt.paints, <Paint>[
-      const Paint(stroke: Stroke(color: Color(0xff0000ff), width: 1 + 1 / 3), fill: Fill(color: Color(0xffff0000))),
+      const Paint(
+          stroke: Stroke(color: Color(0xff0000ff), width: 1 + 1 / 3),
+          fill: Fill(color: Color(0xffff0000))),
     ]);
 
     expect(instructionsEx.paints, <Paint>[
-      Paint(stroke: Stroke(color: const Color(0xff0000ff), width: 1.0 * theme.xHeight), fill: const Fill(color: Color(0xffff0000))),
+      Paint(
+          stroke: Stroke(
+              color: const Color(0xff0000ff), width: 1.0 * theme.xHeight),
+          fill: const Fill(color: Color(0xffff0000))),
     ]);
 
     expect(instructionsEm.paints, <Paint>[
-      Paint(stroke: Stroke(color: const Color(0xff0000ff), width: 1.0 * theme.fontSize), fill: const Fill(color: Color(0xffff0000))),
+      Paint(
+          stroke: Stroke(
+              color: const Color(0xff0000ff), width: 1.0 * theme.fontSize),
+          fill: const Fill(color: Color(0xffff0000))),
     ]);
-    
+
     expect(instructionsRem.paints, <Paint>[
-      Paint(stroke: Stroke(color: const Color(0xff0000ff), width: 1.0 * theme.fontSize), fill: const Fill(color: Color(0xffff0000))),
+      Paint(
+          stroke: Stroke(
+              color: const Color(0xff0000ff), width: 1.0 * theme.fontSize),
+          fill: const Fill(color: Color(0xffff0000))),
     ]);
   });
 
