@@ -172,23 +172,6 @@ void main() {
     expect(parseDoubleWithUnits('1pt', theme: const SvgTheme()), 1 + 1 / 3);
   });
 
-  test('Parse SVG with "none" value', () {
-    final TestColorMapper mapper = TestColorMapper();
-    final SvgParser parser = SvgParser(
-      '<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg"><rect x="100" y="10" width="80" height="80" fill="red" stroke-width="none" /></svg>',
-      const SvgTheme(),
-      'test_key',
-      true,
-      mapper,
-    )
-      ..enableMaskingOptimizer = false
-      ..enableClippingOptimizer = false
-      ..enableOverdrawOptimizer = false;
-
-    final VectorInstructions instructions = parser.parse();
-    expect(instructions.paints.length, 1);
-  });
-
   test('Parse a transform with scientific notation', () {
     expect(
       parseTransform('translate(9e-6,6.5e-4)'),

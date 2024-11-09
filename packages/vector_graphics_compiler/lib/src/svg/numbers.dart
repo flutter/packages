@@ -12,7 +12,8 @@ import 'theme.dart';
 /// which is stripped off when parsed to a `double`.
 ///
 /// Passing `null` will return `null`.
-double? parseDouble(String? rawDouble) {
+double? parseDouble(String? rawDouble, {bool tryParse = false}) {
+  assert(tryParse != null); // ignore: unnecessary_null_comparison
   if (rawDouble == null) {
     return null;
   }
@@ -25,7 +26,10 @@ double? parseDouble(String? rawDouble) {
       .replaceFirst('pt', '')
       .trim();
 
-  return double.tryParse(rawDouble) ?? 0.0;
+  if (tryParse) {
+    return double.tryParse(rawDouble);
+  }
+  return double.parse(rawDouble);
 }
 
 /// Convert [degrees] to radians.
@@ -58,6 +62,7 @@ const double kPointsToPixelFactor = kCssPixelsPerInch / kCssPointsPerInch;
 /// Passing `null` will return `null`.
 double? parseDoubleWithUnits(
   String? rawDouble, {
+  bool tryParse = false,
   required SvgTheme theme,
 }) {
   double unit = 1.0;
@@ -76,6 +81,7 @@ double? parseDoubleWithUnits(
   }
   final double? value = parseDouble(
     rawDouble,
+    tryParse: tryParse,
   );
 
   return value != null ? value * unit : null;

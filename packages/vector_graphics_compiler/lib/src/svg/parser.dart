@@ -980,6 +980,7 @@ class SvgParser {
   }) {
     return numbers.parseDoubleWithUnits(
       rawDouble,
+      tryParse: tryParse,
       theme: theme,
     );
   }
