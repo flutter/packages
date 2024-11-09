@@ -11,103 +11,6 @@ import LocalAuthentication
   import Flutter
 #endif
 
-//TODO (Mairramer): Put in a new file?
-protocol AuthContextProtocol {
-  var biometryType: LABiometryType { get }
-  var localizedFallbackTitle: String? { get set }
-
-  func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
-  func evaluatePolicy(
-    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
-}
-
-class DefaultAuthContext: AuthContextProtocol {
-  private let context = LAContext()
-
-  var biometryType: LABiometryType {
-    context.biometryType
-  }
-
-  var localizedFallbackTitle: String? {
-    get { context.localizedFallbackTitle }
-    set { context.localizedFallbackTitle = newValue }
-  }
-
-  func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
-    context.canEvaluatePolicy(policy, error: error)
-  }
-
-  func evaluatePolicy(
-    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void
-  ) {
-    context.evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
-  }
-}
-
-//TODO (Mairramer): Put in a new file?
-protocol AlertControllerProtocol {
-  func showAlert(
-    message: String, dismissTitle: String, openSettingsTitle: String?,
-    completion: @escaping (Bool) -> Void)
-}
-
-#if os(iOS)
-  import UIKit
-
-  class DefaultAlertController: AlertControllerProtocol {
-    func showAlert(
-      message: String, dismissTitle: String, openSettingsTitle: String?,
-      completion: @escaping (Bool) -> Void
-    ) {
-      let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-      let dismissAction = UIAlertAction(title: dismissTitle, style: .default) { _ in
-        completion(false)
-      }
-      alert.addAction(dismissAction)
-
-      if let openSettingsTitle = openSettingsTitle {
-        let openSettingsAction = UIAlertAction(title: openSettingsTitle, style: .default) { _ in
-          if let url = URL(string: UIApplication.openSettingsURLString) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-          }
-          completion(true)
-        }
-        alert.addAction(openSettingsAction)
-      }
-
-      UIApplication.shared.delegate?.window??.rootViewController?.present(alert, animated: true)
-    }
-  }
-
-#elseif os(macOS)
-  import AppKit
-
-  class DefaultAlertController: AlertControllerProtocol {
-    func showAlert(
-      message: String, dismissTitle: String, openSettingsTitle: String?,
-      completion: @escaping (Bool) -> Void
-    ) {
-      let alert = NSAlert()
-      alert.messageText = message
-      alert.addButton(withTitle: dismissTitle)
-
-      if let openSettingsTitle = openSettingsTitle {
-        alert.addButton(withTitle: openSettingsTitle)
-      }
-
-      alert.beginSheetModal(for: NSApplication.shared.keyWindow!) { response in
-        if response == .alertSecondButtonReturn,
-          let url = URL(
-            string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Biometric")
-        {
-          NSWorkspace.shared.open(url)
-        }
-        completion(response == .alertSecondButtonReturn)
-      }
-    }
-  }
-#endif
-
 class StickyAuthState {
   let options: AuthOptions
   let strings: AuthStrings
@@ -124,13 +27,13 @@ class StickyAuthState {
 }
 
 public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
-  private var authContext: AuthContextProtocol
-  private let alertController: AlertControllerProtocol
+  private var authContext: AuthContext
+  private let alertController: AlertController
   private var lastCallState: StickyAuthState?
 
   init(
-    authContext: AuthContextProtocol = DefaultAuthContext(),
-    alertController: AlertControllerProtocol = DefaultAlertController()
+    authContext: AuthContext = DefaultAuthContext(),
+    alertController: AlertController = DefaultAlertController()
   ) {
     self.authContext = authContext
     self.alertController = alertController

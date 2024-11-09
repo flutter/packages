@@ -16,7 +16,7 @@ import XCTest
 // Set a long timeout to avoid flake due to slow CI.
 private let timeout: TimeInterval = 30.0
 
-class MockAuthContext: AuthContextProtocol {
+class MockAuthContext: AuthContext {
   var biometryType: LABiometryType
   var expectBiometrics = false
   var canEvaluatePolicyReturnValue: Bool = true
@@ -60,7 +60,7 @@ class MockAuthContext: AuthContextProtocol {
   }
 }
 
-class MockAlertController: AlertControllerProtocol {
+class MockAlertController: AlertController {
   var showAlertCalled = false
   var showAlertCompletionResult: Bool = false
 
