@@ -1214,6 +1214,19 @@ class SvgParser {
     }
   }
 
+  double? _parseWidth(String? rawWidth) {
+    try {
+      return parseDoubleWithUnits(rawWidth)!;
+    } on FormatException catch (e) {
+      switch (e.message) {
+        case 'Invalid double':
+          return 1.0;
+        default:
+          return 1.0;
+      }
+    }
+  }
+
   List<double>? _parseDashArray(String? rawDashArray) {
     if (rawDashArray == null || rawDashArray == '') {
       return null;
@@ -1584,7 +1597,7 @@ class SvgParser {
       cap: _parseCap(rawStrokeCap, null),
       join: _parseJoin(rawLineJoin, null),
       miterLimit: parseDouble(rawMiterLimit),
-      width: parseDoubleWithUnits(rawStrokeWidth),
+      width: _parseWidth(rawStrokeWidth),
       dashArray: _parseDashArray(rawStrokeDashArray),
       dashOffset: _parseDashOffset(rawStrokeDashOffset),
       hasPattern: hasPattern,
