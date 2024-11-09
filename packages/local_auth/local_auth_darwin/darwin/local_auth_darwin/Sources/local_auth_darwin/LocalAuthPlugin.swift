@@ -209,8 +209,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     self.authContext.localizedFallbackTitle = strings.localizedFallbackTitle
-    self.lastCallState = StickyAuthState(
-      options: options, strings: strings, resultHandler: completion)
+    self.lastCallState = nil
 
     let policy: LAPolicy =
       options.biometricOnly ? .deviceOwnerAuthenticationWithBiometrics : .deviceOwnerAuthentication
@@ -343,10 +342,10 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   }
 
   @objc private func applicationDidBecomeActive() {
-    guard let lastCallState = lastCallState else { return }
+    guard self.lastCallState != nil else { return }
     authenticate(
-      options: lastCallState.options, strings: lastCallState.strings,
-      completion: lastCallState.resultHandler
+      options: self.lastCallState!.options, strings: self.lastCallState!.strings,
+      completion: self.lastCallState!.resultHandler
     )
   }
 }
