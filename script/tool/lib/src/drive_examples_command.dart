@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -445,17 +446,35 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
     bool passed = true;
     for (final String target in individualRunTargets) {
-      final int exitCode = await processRunner.runAndStream(
+      final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
+        printError('Test is taking a long time, taking screenshot...');
+        final String screenshotBasename =
+            'test-timeout-screenshot_${target.replaceAll(platform.pathSeparator, '_')}.png';
+        await processRunner.runAndStream(
           flutterCommand,
           <String>[
-            'test',
+            'screenshot',
             ...deviceFlags,
-            if (enableExperiment.isNotEmpty)
-              '--enable-experiment=$enableExperiment',
-            if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
-            target,
+            if (logsDirectory != null)
+              '--out=${logsDirectory.childFile(screenshotBasename).path}',
           ],
-          workingDir: example.directory);
+          workingDir: example.directory,
+        );
+      });
+      final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'test',
+          ...deviceFlags,
+          if (enableExperiment.isNotEmpty)
+            '--enable-experiment=$enableExperiment',
+          if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
+          target,
+        ],
+        workingDir: example.directory,
+      );
+
+      timeoutTimer.cancel();
       passed = passed && (exitCode == 0);
     }
     return passed;
