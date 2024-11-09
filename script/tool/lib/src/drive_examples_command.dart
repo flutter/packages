@@ -447,7 +447,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     bool passed = true;
     for (final String target in individualRunTargets) {
       final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
-        printError('Test is taking longer than expected, taking screenshot.');
+        printError('Test is taking a long time, taking screenshot...');
         final String screenshotBasename =
             'test-timeout-screenshot_${target.replaceAll(platform.pathSeparator, '_')}.png';
         await processRunner.runAndStream(
@@ -457,9 +457,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             ...deviceFlags,
             if (logsDirectory != null)
               '--out=${logsDirectory.childFile(screenshotBasename).path}',
-            target,
           ],
-          exitOnError: true,
           workingDir: example.directory,
         );
       });
