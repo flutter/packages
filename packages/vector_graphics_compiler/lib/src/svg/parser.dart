@@ -1216,7 +1216,7 @@ class SvgParser {
 
   double? _parseWidth(String? rawWidth) {
     try {
-      return parseDoubleWithUnits(rawWidth)!;
+      return parseDoubleWithUnits(rawWidth);
     } on FormatException catch (e) {
       switch (e.message) {
         case 'Invalid double':
