@@ -1,6 +1,6 @@
 ## 1.1.13
 
-* Fixes an issue when parse double with 'none' value
+* Fixes an issue when parsing stroke-width with an invalid value
 
 ## 1.1.12
 
