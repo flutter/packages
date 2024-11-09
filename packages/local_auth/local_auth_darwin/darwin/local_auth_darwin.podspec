@@ -20,10 +20,9 @@ Downloaded by pub (not CocoaPods).
   s.ios.deployment_target = '12.0'
   s.osx.deployment_target = '10.14'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
-  s.resource_bundles = {'local_auth_darwin_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.resource_bundles = {'local_auth_darwin_privacy' => ['local_auth_darwin/Sources/local_auth_darwin/Resources/PrivacyInfo.xcprivacy']}
   s.swift_version = '5.0'
   s.xcconfig = {
-    'DEFINES_MODULE' => 'YES',
     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
