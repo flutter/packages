@@ -712,7 +712,7 @@ void main() {
 
     expect(instructions.paints, const <Paint>[
       Paint(
-          stroke: Stroke(color: Color(0xff0000ff), width: 1.0),
+          stroke: Stroke(color: Color(0xff0000ff)),
           fill: Fill(color: Color(0xffff0000))),
     ]);
 
