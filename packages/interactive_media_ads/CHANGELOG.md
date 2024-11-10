@@ -1,3 +1,7 @@
+## 0.2.2+15
+
+* Adds remaining methods for internal wrapper of the Android native `BaseManager`.
+
 ## 0.2.2+14
 
 * Adds internal wrapper for iOS native `IMACompanionAdSlot` and `IMACompanionDelegate`.

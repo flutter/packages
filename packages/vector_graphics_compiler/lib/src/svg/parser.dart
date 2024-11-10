@@ -895,7 +895,10 @@ class SvgParser {
       return false;
     }
     final ParentNode parent = _parentDrawables.last.drawable;
-    final Path path = pathFunc(this)!;
+    final Path? path = pathFunc(this);
+    if (path == null) {
+      return false;
+    }
     final PathNode drawable = PathNode(path, _currentAttributes);
     checkForIri(drawable);
 

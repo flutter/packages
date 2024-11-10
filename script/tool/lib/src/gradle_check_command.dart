@@ -327,12 +327,16 @@ plugins {
   /// compatibility with apps that use AGP 8+.
   bool _validateNamespace(RepositoryPackage package, String gradleContents,
       {required bool isExample}) {
-    final RegExp namespaceRegex =
-        RegExp('^\\s*namespace\\s+[\'"](.*?)[\'"]', multiLine: true);
-    final RegExpMatch? namespaceMatch =
-        namespaceRegex.firstMatch(gradleContents);
+    // Regex to validate that either of the following namespace definitions
+    // are found (where the single quotes can be single or double):
+    //  - namespace 'dev.flutter.foo'
+    //  - namespace = 'dev.flutter.foo'
+    final RegExp nameSpaceRegex =
+        RegExp('^\\s*namespace\\s+=?\\s*[\'"](.*?)[\'"]', multiLine: true);
+    final RegExpMatch? nameSpaceRegexMatch =
+        nameSpaceRegex.firstMatch(gradleContents);
 
-    if (namespaceMatch == null) {
+    if (nameSpaceRegexMatch == null) {
       const String errorMessage = '''
 build.gradle must set a "namespace":
 
@@ -350,7 +354,7 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
       return false;
     } else {
       return _validateNamespaceMatchesManifest(package,
-          isExample: isExample, namespace: namespaceMatch.group(1)!);
+          isExample: isExample, namespace: nameSpaceRegexMatch.group(1)!);
     }
   }
 

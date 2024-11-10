@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/numbers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+
 import 'test_svg_strings.dart';
 
 void main() {
@@ -2026,6 +2027,19 @@ void main() {
             objectId: 239, paintId: 45, debugString: 'path964'),
       ],
     );
+  });
+
+  test('Parse empty tag', () {
+    const String svgStr = '''
+     <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+        <polygon
+            fill="#0a287d"
+            points=""
+            id="triangle"/>
+     </svg>
+    ''';
+
+    expect(parseWithoutOptimizers(svgStr), isA<VectorInstructions>());
   });
 }
 
