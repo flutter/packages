@@ -1,3 +1,7 @@
+## 1.1.16
+
+* Fixes an issue when parsing stroke-width with an invalid value
+
 ## 1.1.15
 
 * Fixes a bug where empty tags caused the parser to crash.
