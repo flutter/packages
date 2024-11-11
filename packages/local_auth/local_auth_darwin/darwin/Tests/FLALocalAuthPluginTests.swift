@@ -16,46 +16,67 @@ import XCTest
 // Set a long timeout to avoid flake due to slow CI.
 private let timeout: TimeInterval = 30.0
 
-class MockAuthContext: AuthContext {
-  var biometryType: LABiometryType
+ class MockAuthContext: AuthContext {
+   var biometryType: LABiometryType
+   var expectBiometrics = false
+   var canEvaluatePolicyReturnValue: Bool = true
+   var canEvaluateError: NSError?
+   var evaluatePolicyResult: (Bool, NSError?) = (true, nil)
+   var localizedFallbackTitle: String?
+
+   init(biometryType: LABiometryType = .none) {
+     self.biometryType = biometryType
+   }
+
+   func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+     XCTAssertEqual(
+       policy,
+       expectBiometrics
+         ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
+         : LAPolicy.deviceOwnerAuthentication
+     )
+
+     if let canEvaluateError = canEvaluateError {
+       error?.pointee = canEvaluateError
+       return false
+     }
+
+     return canEvaluatePolicyReturnValue
+   }
+
+   func evaluatePolicy(
+     _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, (any Error)?) -> Void
+   ) {
+     XCTAssertEqual(
+       policy,
+       expectBiometrics
+         ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
+         : LAPolicy.deviceOwnerAuthentication
+     )
+
+     DispatchQueue.global(qos: .background).async {
+       reply(self.evaluatePolicyResult.0, self.evaluatePolicyResult.1)
+     }
+   }
+ }
+
+final class StubAuthContext: NSObject, AuthContextProtocol {
+  var biometryType: LABiometryType = .none
   var expectBiometrics = false
-  var canEvaluatePolicyReturnValue: Bool = true
-  var canEvaluateError: NSError?
-  var evaluatePolicyResult: (Bool, NSError?) = (true, nil)
-  var localizedFallbackTitle: String?
+  var evaluateResponse = false
+  var evaluateError: NSError?
 
-  init(biometryType: LABiometryType = .none) {
-    self.biometryType = biometryType
-  }
-
-  func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
-    XCTAssertEqual(
-      policy,
-      expectBiometrics
-        ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
-        : LAPolicy.deviceOwnerAuthentication
-    )
-
-    if let canEvaluateError = canEvaluateError {
-      error?.pointee = canEvaluateError
-      return false
+  func canEvaluatePolicy(_ policy: LAPolicy) throws {
+    if let error = evaluateError {
+      throw error
     }
-
-    return canEvaluatePolicyReturnValue
   }
 
   func evaluatePolicy(
-    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, (any Error)?) -> Void
+    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void
   ) {
-    XCTAssertEqual(
-      policy,
-      expectBiometrics
-        ? LAPolicy.deviceOwnerAuthenticationWithBiometrics
-        : LAPolicy.deviceOwnerAuthentication
-    )
-
     DispatchQueue.global(qos: .background).async {
-      reply(self.evaluatePolicyResult.0, self.evaluatePolicyResult.1)
+      reply(self.evaluateResponse, self.evaluateError)
     }
   }
 }
