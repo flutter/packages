@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.espresso_example.example"
+    namespace = "com.example.espresso_example"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.espresso_example.example"
+        applicationId = "com.example.espresso_example"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

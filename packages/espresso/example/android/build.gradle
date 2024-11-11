@@ -16,3 +16,17 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+// Build the plugin project with warnings enabled. This is here rather than
+// in the plugin itself to avoid breaking clients that have different
+// warnings (e.g., deprecation warnings from a newer SDK than this project
+// builds with).
+gradle.projectsEvaluated {
+    project(":espresso") {
+        tasks.withType(JavaCompile) {
+            // Ignore classfile warnings due to https://bugs.openjdk.org/browse/JDK-8190452
+            // TODO(stuartmorgan): Remove that ignore once the build uses Java 11+.
+            options.compilerArgs << "-Xlint:all" << "-Werror" << "-Xlint:-classfile"
+        }
+    }
+}
