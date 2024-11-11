@@ -41,6 +41,7 @@ void main() {
 
       // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
       mockPlatform.environment['CHANNEL'] = 'master';
+      mockPlatform.environment['FLUTTER_LOGS_DIR'] = '/path/to/logs';
     });
 
     void setMockFlutterDevicesOutput({
@@ -329,6 +330,57 @@ void main() {
                   'test',
                   '-d',
                   _fakeIOSDevice,
+                  '--debug-logs-dir=/path/to/logs',
+                  'integration_test',
+                ],
+                pluginExampleDirectory.path),
+          ]));
+    });
+
+    test('handles missing CI debug logs directory', () async {
+      mockPlatform.environment.remove('FLUTTER_LOGS_DIR');
+
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/bar_test.dart',
+          'example/integration_test/foo_test.dart',
+          'example/integration_test/ignore_me.dart',
+          'example/android/android.java',
+          'example/ios/ios.m',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformAndroid: const PlatformDetails(PlatformSupport.inline),
+          platformIOS: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      setMockFlutterDevicesOutput();
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['drive-examples', '--ios']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform),
+                const <String>['devices', '--machine'], null),
+            ProcessCall(
+                getFlutterCommand(mockPlatform),
+                const <String>[
+                  'test',
+                  '-d',
+                  _fakeIOSDevice,
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -396,6 +448,7 @@ void main() {
                   'test',
                   '-d',
                   'linux',
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -463,6 +516,7 @@ void main() {
                   'test',
                   '-d',
                   'macos',
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -510,6 +564,7 @@ void main() {
                     'test',
                     '-d',
                     'macos',
+                    '--debug-logs-dir=/path/to/logs',
                     'integration_test/first_test.dart',
                   ],
                   pluginExampleDirectory.path),
@@ -519,6 +574,7 @@ void main() {
                     'test',
                     '-d',
                     'macos',
+                    '--debug-logs-dir=/path/to/logs',
                     'integration_test/second_test.dart',
                   ],
                   pluginExampleDirectory.path),
@@ -565,6 +621,7 @@ void main() {
                     'test',
                     '-d',
                     'linux',
+                    '--debug-logs-dir=/path/to/logs',
                     'integration_test/first_test.dart',
                   ],
                   pluginExampleDirectory.path),
@@ -574,6 +631,7 @@ void main() {
                     'test',
                     '-d',
                     'linux',
+                    '--debug-logs-dir=/path/to/logs',
                     'integration_test/second_test.dart',
                   ],
                   pluginExampleDirectory.path),
@@ -620,6 +678,7 @@ void main() {
                     'test',
                     '-d',
                     'windows',
+                    '--debug-logs-dir=/path/to/logs',
                     'integration_test/first_test.dart',
                   ],
                   pluginExampleDirectory.path),
@@ -629,6 +688,7 @@ void main() {
                     'test',
                     '-d',
                     'windows',
+                    '--debug-logs-dir=/path/to/logs',
                     'integration_test/second_test.dart',
                   ],
                   pluginExampleDirectory.path),
@@ -700,6 +760,7 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--web-renderer=canvaskit',
+                  '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -751,6 +812,7 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--wasm',
+                  '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -805,6 +867,7 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--web-renderer=html',
+                  '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -854,6 +917,7 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--web-renderer=canvaskit',
+                  '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -907,6 +971,7 @@ void main() {
                   '--browser-name=chrome',
                   '--web-renderer=canvaskit',
                   '--chrome-binary=/path/to/chrome',
+                  '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -977,6 +1042,7 @@ void main() {
                   'test',
                   '-d',
                   'windows',
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -1023,6 +1089,7 @@ void main() {
                   'test',
                   '-d',
                   _fakeAndroidDevice,
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -1069,6 +1136,7 @@ void main() {
                   'test',
                   '-d',
                   _fakeAndroidDevice,
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -1197,6 +1265,7 @@ void main() {
                   '-d',
                   _fakeIOSDevice,
                   '--enable-experiment=exp1',
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -1353,6 +1422,7 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--web-renderer=canvaskit',
+                  '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -1368,6 +1438,7 @@ void main() {
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--web-renderer=canvaskit',
+                  '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
                   '--target',
@@ -1425,6 +1496,7 @@ void main() {
                   'test',
                   '-d',
                   _fakeIOSDevice,
+                  '--debug-logs-dir=/path/to/logs',
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
@@ -1433,6 +1505,52 @@ void main() {
 
     group('packages', () {
       test('can be driven', () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, extraFiles: <String>[
+          'example/integration_test/foo_test.dart',
+          'example/test_driver/integration_test.dart',
+          'example/web/index.html',
+        ]);
+        final Directory exampleDirectory = getExampleDir(package);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'drive-examples',
+          '--web',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package'),
+            contains('No issues found!'),
+          ]),
+        );
+
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  getFlutterCommand(mockPlatform),
+                  const <String>[
+                    'drive',
+                    '-d',
+                    'web-server',
+                    '--web-port=7357',
+                    '--browser-name=chrome',
+                    '--web-renderer=canvaskit',
+                    '--screenshot=/path/to/logs/a_package_example-drive',
+                    '--driver',
+                    'test_driver/integration_test.dart',
+                    '--target',
+                    'integration_test/foo_test.dart'
+                  ],
+                  exampleDirectory.path),
+            ]));
+      });
+
+      test('drive handles missing CI screenshot directory', () async {
+        mockPlatform.environment.remove('FLUTTER_LOGS_DIR');
+
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir, extraFiles: <String>[
           'example/integration_test/foo_test.dart',
@@ -1546,6 +1664,7 @@ void main() {
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--web-renderer=canvaskit',
+                    '--screenshot=/path/to/logs/a_package_example_with_web-drive',
                     '--driver',
                     'test_driver/integration_test.dart',
                     '--target',

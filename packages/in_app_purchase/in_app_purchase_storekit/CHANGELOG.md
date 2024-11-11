@@ -1,3 +1,7 @@
+## 0.3.18+4
+
+* Adds StoreKit 2 support for restoring purchases.
+
 ## 0.3.18+3
 
 * Updates Pigeon for non-nullable collection type support.
