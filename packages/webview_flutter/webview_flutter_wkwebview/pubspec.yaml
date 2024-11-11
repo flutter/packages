@@ -32,7 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^18.0.0
+  pigeon: ^22.6.0
 
 topics:
   - html
