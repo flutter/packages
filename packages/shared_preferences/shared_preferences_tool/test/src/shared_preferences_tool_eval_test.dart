@@ -14,14 +14,13 @@ import 'package:vm_service/vm_service.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[
   MockSpec<EvalOnDartLibrary>(),
-  MockSpec<VmService>(),
 ])
 import 'shared_preferences_tool_eval_test.mocks.dart';
 
 void main() {
   group('SharedPreferencesToolEval', () {
     late MockEvalOnDartLibrary eval;
-    late MockVmService vmService;
+    late _FakeVmService vmService;
     late SharedPreferencesToolEval sharedPreferencesToolEval;
 
     void stubEvalMethod({
@@ -30,7 +29,7 @@ void main() {
       required Map<String, Object?> response,
     }) {
       final StreamController<Event> eventStream = StreamController<Event>();
-      when(vmService.onExtensionEvent).thenAnswer((_) => eventStream.stream);
+      vmService.onExtensionEvent = eventStream.stream;
       when(
         eval.eval(
           'DevtoolsExtension().$method',
@@ -49,7 +48,7 @@ void main() {
 
     setUp(() {
       eval = MockEvalOnDartLibrary();
-      vmService = MockVmService();
+      vmService = _FakeVmService();
       sharedPreferencesToolEval = SharedPreferencesToolEval(vmService, eval);
     });
 
@@ -264,4 +263,11 @@ void main() {
       ).called(1);
     });
   });
+}
+
+class _FakeVmService extends VmService {
+  _FakeVmService() : super(const Stream<Object?>.empty(), (String _) {});
+
+  @override
+  late Stream<Event> onExtensionEvent;
 }

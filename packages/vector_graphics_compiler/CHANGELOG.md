@@ -1,3 +1,7 @@
+## 1.1.15
+
+* Fixes a bug where empty tags caused the parser to crash.
+
 ## 1.1.14
 
 * Makes the package WASM compatible.
