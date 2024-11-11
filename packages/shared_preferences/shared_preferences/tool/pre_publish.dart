@@ -4,7 +4,6 @@
 
 import 'dart:io';
 
-// ignore: depend_on_referenced_packages
 import 'package:path/path.dart' as p;
 
 Future<void> _runCommand({
