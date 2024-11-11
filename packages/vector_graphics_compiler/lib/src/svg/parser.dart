@@ -1217,7 +1217,6 @@ class SvgParser {
     }
   }
 
-
   List<double>? _parseDashArray(String? rawDashArray) {
     if (rawDashArray == null || rawDashArray == '') {
       return null;
