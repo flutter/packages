@@ -4,14 +4,17 @@
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
+#import "FGMCATransactionWrapper.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FGMMapCallHandler : NSObject <FGMMapsApi>
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
-               andConfiguration:
-                   (nullable FGMPlatformCameraUpdateAnimationConfiguration *)configuration
+                    andDuration:(nullable NSNumber *)durationMilliseconds
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
+
+@property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
+
 @end
 
 @interface FLTGoogleMapController (Test)
@@ -27,9 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
-@property(nonatomic, strong, readonly) GMSMapView *mapView;
 @property(nonatomic, strong, readonly) FGMMapCallHandler *callHandler;
-@property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 
 @end
 

@@ -361,20 +361,19 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     CameraUpdate cameraUpdate, {
     required int mapId,
   }) {
-    return _hostApi(mapId)
-        .animateCamera(_platformCameraUpdateFromCameraUpdate(cameraUpdate));
+    return _hostApi(mapId).animateCamera(
+        _platformCameraUpdateFromCameraUpdate(cameraUpdate), null);
   }
 
   @override
   Future<void> animateCameraWithConfiguration(
-    CameraUpdate cameraUpdate, {
-    required CameraUpdateAnimationConfiguration configuration,
+    CameraUpdate cameraUpdate,
+    CameraUpdateAnimationConfiguration configuration, {
     required int mapId,
   }) {
     return _hostApi(mapId).animateCamera(
         _platformCameraUpdateFromCameraUpdate(cameraUpdate),
-        configuration: PlatformCameraUpdateAnimationConfiguration(
-            durationMilliseconds: configuration.duration?.inMilliseconds));
+        configuration.duration?.inMilliseconds);
   }
 
   @override

@@ -23,7 +23,6 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         CameraPositionCallback,
         CameraTargetBounds,
         CameraUpdate,
-        CameraUpdateAnimationConfiguration,
         Cap,
         Circle,
         CircleId,

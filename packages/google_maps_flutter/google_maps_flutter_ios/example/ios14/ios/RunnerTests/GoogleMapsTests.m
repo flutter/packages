@@ -9,6 +9,7 @@
 
 #import <OCMock/OCMock.h>
 #import <google_maps_flutter_ios/GoogleMapController_Test.h>
+#import "FGMCATransactionWrapper.h"
 #import "PartiallyMockedMapView.h"
 
 @interface FLTGoogleMapFactory (Test)
@@ -105,38 +106,20 @@
                                    creationParameters:[self emptyCreationParameters]
                                             registrar:registrar];
 
+  id mapViewMock = OCMPartialMock(mapView);
+  id mockTransactionWrapper = OCMProtocolMock(@protocol(FGMCATransactionProtocol));
+  controller.callHandler.transactionWrapper = mockTransactionWrapper;
+
   NSArray *zoomToArray = @[ @"zoomTo", @(10.0) ];
   FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithJson:zoomToArray];
-
   FlutterError *error = nil;
 
-  id mockDartCallbackHandler = OCMClassMock([FGMMapsCallbackApi class]);
-
-  controller.dartCallbackHandler = mockDartCallbackHandler;
-
-  XCTestExpectation *cameraIdleExpectation =
-      [self expectationWithDescription:@"Camera becomes idle"];
-  OCMStub([mockDartCallbackHandler didIdleCameraWithCompletion:[OCMArg invokeBlock]])
-      .andDo(^(NSInvocation *invocation) {
-        // Fulfill the expectation when the camera idle callback is invoked
-        [cameraIdleExpectation fulfill];
-      });
-
-  [controller.callHandler animateCameraWithUpdate:cameraUpdate andConfiguration:nil error:&error];
-
-  XCTAssertNotEqual(controller.mapView.camera.zoom, 10.0,
-                    "Camera zoom should not be updated immediately.");
-
-  [self
-      waitForExpectationsWithTimeout:5.0
-                             handler:^(NSError *_Nullable error) {
-                               if (error) {
-                                 XCTFail(@"Failed to receive camera idle event in time: %@", error);
-                               }
-                             }];
-
-  XCTAssertEqual(controller.mapView.camera.zoom, 10.0,
-                 "Camera zoom should be updated to 10.0 after animation.");
+  OCMReject([mockTransactionWrapper begin]);
+  OCMReject([mockTransactionWrapper commit]);
+  OCMExpect([mapViewMock animateWithCameraUpdate:[OCMArg any]]);
+  [controller.callHandler animateCameraWithUpdate:cameraUpdate andDuration:nil error:&error];
+  OCMVerifyAll(mapViewMock);
+  OCMVerifyAll(mockTransactionWrapper);
 }
 
 - (void)testAnimateCameraWithUpdateAndDuration {
@@ -157,50 +140,25 @@
                                    creationParameters:[self emptyCreationParameters]
                                             registrar:registrar];
 
+  id mapViewMock = OCMPartialMock(mapView);
+  id mockTransactionWrapper = OCMProtocolMock(@protocol(FGMCATransactionProtocol));
+  controller.callHandler.transactionWrapper = mockTransactionWrapper;
+
   NSArray *zoomToArray = @[ @"zoomTo", @(10.0) ];
   FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithJson:zoomToArray];
-
-  // Define a configuration with a animation duration of 100ms
-  FGMPlatformCameraUpdateAnimationConfiguration *config =
-      [FGMPlatformCameraUpdateAnimationConfiguration makeWithDurationMilliseconds:@(100)];
-
   FlutterError *error = nil;
 
-  id mockDartCallbackHandler = OCMClassMock([FGMMapsCallbackApi class]);
-
-  controller.dartCallbackHandler = mockDartCallbackHandler;
-
-  XCTestExpectation *cameraIdleExpectation =
-      [self expectationWithDescription:@"Camera becomes idle"];
-
-  OCMStub([mockDartCallbackHandler didIdleCameraWithCompletion:[OCMArg invokeBlock]])
-      .andDo(^(NSInvocation *invocation) {
-        // Fulfill the expectation when the camera idle callback is invoked
-        [cameraIdleExpectation fulfill];
-      });
-
-  // Trigger the camera animation with configuration
+  NSNumber *durationMilliseconds = @100;
+  OCMExpect([mockTransactionWrapper begin]);
+  OCMExpect(
+      [mockTransactionWrapper setAnimationDuration:[durationMilliseconds doubleValue] / 1000]);
+  OCMExpect([mockTransactionWrapper commit]);
+  OCMExpect([mapViewMock animateWithCameraUpdate:[OCMArg any]]);
   [controller.callHandler animateCameraWithUpdate:cameraUpdate
-                                 andConfiguration:config
+                                      andDuration:durationMilliseconds
                                             error:&error];
-
-  XCTAssertNotEqual(controller.mapView.camera.zoom, 10.0,
-                    "Camera zoom should not be updated immediately.");
-
-  // Wait for the camera idle event with a timeout of 150ms.
-  // This timeout is shorter than the default animation duration (~300ms) to verify that the
-  // specified configuration duration is being applied.
-  [self
-      waitForExpectationsWithTimeout:0.15
-                             handler:^(NSError *_Nullable error) {
-                               if (error) {
-                                 XCTFail(@"Failed to receive camera idle event in time: %@", error);
-                               }
-                             }];
-
-  // Assert that the camera zoom is updated after the animation completes
-  XCTAssertEqual(controller.mapView.camera.zoom, 10.0,
-                 "Camera zoom should be updated to 10.0 after animation.");
+  OCMVerifyAll(mapViewMock);
+  OCMVerifyAll(mockTransactionWrapper);
 }
 
 /// Creates an empty creation paramaters object for tests where the values don't matter, just that
