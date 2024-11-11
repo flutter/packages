@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Move all the JavaScript types to extend `JSObject`.
+
 ## 0.3.1+5
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

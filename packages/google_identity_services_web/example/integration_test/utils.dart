@@ -23,6 +23,22 @@ typedef ExpectConfigValueFn = void Function(String name, Object? matcher);
 /// Creates a [ExpectConfigValueFn] for the `config` [JSObject].
 ExpectConfigValueFn createExpectConfigValue(JSObject config) {
   return (String name, Object? matcher) {
+    if (matcher is String) {
+      matcher = matcher.toJS;
+    }
+    if (matcher is bool) {
+      matcher = matcher.toJS;
+    }
+    if (matcher is List) {
+      final List<Object?> old = matcher;
+      matcher = isA<JSAny?>().having(
+          (JSAny? p0) => (p0 as JSArray<JSAny>?)
+              ?.toDart
+              .map((JSAny? e) => e.dartify())
+              .toList(),
+          'Array with matching values',
+          old);
+    }
     expect(config[name], matcher, reason: name);
   };
 }
@@ -32,6 +48,12 @@ ExpectConfigValueFn createExpectConfigValue(JSObject config) {
 /// See: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof
 Matcher isAJs(String thing) => isA<JSAny?>()
     .having((JSAny? p0) => p0.typeofEquals(thing), 'typeof "$thing"', isTrue);
+
+final Matcher isJSArray = isA<JSAny?>()
+    .having((JSAny? p0) => _isArray(p0).toDart, 'Array.isArray', isTrue);
+
+@JS('Array.isArray')
+external JSBoolean _isArray(JSAny? object);
 
 /// Installs mock-gis.js in the page.
 /// Returns a future that completes when the 'load' event of the script fires.
