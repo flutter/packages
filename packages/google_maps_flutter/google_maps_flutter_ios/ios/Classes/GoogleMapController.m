@@ -85,6 +85,8 @@
 @property(nonatomic, copy) NSObject<FlutterBinaryMessenger> *messenger;
 /// The suffix this instance was registered under with Pigeon.
 @property(nonatomic, copy) NSString *pigeonSuffix;
+/// The transaction wrapper to use for camera animations.
+@property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
 @end
 
 #pragma mark -
@@ -525,6 +527,7 @@
     _controller = controller;
     _messenger = messenger;
     _pigeonSuffix = suffix;
+    _transactionWrapper = [[FGMCATransactionWrapper alloc] init];
   }
   return self;
 }
@@ -656,8 +659,7 @@
 }
 
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
-               andConfiguration:
-                   (nullable FGMPlatformCameraUpdateAnimationConfiguration *)configuration
+                    andDuration:(nullable NSNumber *)durationMilliseconds
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate);
   if (!update) {
@@ -666,11 +668,11 @@
                                  details:nil];
     return;
   }
-  if (configuration.durationMilliseconds) {
-    [CATransaction begin];
-    [CATransaction setAnimationDuration:[configuration.durationMilliseconds doubleValue] / 1000];
+  if (durationMilliseconds) {
+    [self.transactionWrapper begin];
+    [self.transactionWrapper setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
     [self.controller.mapView animateWithCameraUpdate:update];
-    [CATransaction commit];
+    [self.transactionWrapper commit];
   } else {
     [self.controller.mapView animateWithCameraUpdate:update];
   }

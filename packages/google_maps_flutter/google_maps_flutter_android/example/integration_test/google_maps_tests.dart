@@ -1538,108 +1538,146 @@ void googleMapsTests() {
     await tester.pumpAndSettle();
   }, variant: _cameraUpdateTypeVariants);
 
-  testWidgets('testAnimateCameraWithConfiguration',
-      (WidgetTester tester) async {
-    final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
-    final GoogleMapsInspectorPlatform inspector =
-        GoogleMapsInspectorPlatform.instance!;
+  testWidgets(
+    'testAnimateCameraWithConfiguration',
+    (WidgetTester tester) async {
+      final Key key = GlobalKey();
+      final Completer<ExampleGoogleMapController> controllerCompleter =
+          Completer<ExampleGoogleMapController>();
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
 
-    final StreamController<void> cameraFiredStream = StreamController<void>();
-    final StreamQueue<void> cameraFiredQueue =
-        StreamQueue<void>(cameraFiredStream.stream);
+      final StreamController<void> cameraFiredStream = StreamController<void>();
+      final StreamQueue<void> cameraFiredQueue =
+          StreamQueue<void>(cameraFiredStream.stream);
 
-    // We set the duration to 100ms and check that the animation is completed
-    // faster than the normal animation (~300ms on Android) to make sure the
-    // configuration is really used.
-    const int cameraAnimationDurationMS = 100;
+      const int shortCameraAnimationDurationMS = 10;
+      const int longCameraAnimationDurationMS = 1000;
 
-    // The threshold is set to 200ms because the normal camera animation should
-    // take more than 200ms on android.
-    const int animationCheckThreshold = 200;
+      /// Calculate the midpoint duration of the animation test, which will
+      /// serve as a reference to verify that animations complete more quickly
+      /// with shorter durations and more slowly with longer durations.
+      const int animationDurationMiddlePoint =
+          (shortCameraAnimationDurationMS + longCameraAnimationDurationMS) ~/ 2;
 
-    // Stopwatch to measure the time taken for the animation to complete.
-    final Stopwatch stopwatch = Stopwatch();
+      // Stopwatch to measure the time taken for the animation to complete.
+      final Stopwatch stopwatch = Stopwatch();
 
-    const CameraUpdateAnimationConfiguration configuration =
-        CameraUpdateAnimationConfiguration(
-      duration: Duration(milliseconds: cameraAnimationDurationMS),
-    );
+      bool cameraIdleFired = false;
 
-    bool cameraIdleFired = false;
+      await tester.pumpWidget(Directionality(
+        textDirection: TextDirection.ltr,
+        child: ExampleGoogleMap(
+          key: key,
+          initialCameraPosition: _kInitialCameraPosition,
+          onCameraIdle: () {
+            stopwatch.stop();
+            cameraIdleFired = true;
+            cameraFiredStream.add(null);
+          },
+          onMapCreated: (ExampleGoogleMapController controller) {
+            controllerCompleter.complete(controller);
+          },
+        ),
+      ));
 
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: ExampleGoogleMap(
-        key: key,
-        initialCameraPosition: _kInitialCameraPosition,
-        onCameraIdle: () {
-          stopwatch.stop();
-          cameraIdleFired = true;
-          cameraFiredStream.add(null);
-        },
-        onMapCreated: (ExampleGoogleMapController controller) {
-          controllerCompleter.complete(controller);
-        },
-      ),
-    ));
+      final ExampleGoogleMapController controller =
+          await controllerCompleter.future;
 
-    final ExampleGoogleMapController controller =
-        await controllerCompleter.future;
+      await tester.pumpAndSettle();
+      // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+      // in `mapRendered`.
+      // https://github.com/flutter/flutter/issues/54758
+      await Future<void>.delayed(const Duration(seconds: 1));
 
-    await tester.pumpAndSettle();
-    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
-    // in `mapRendered`.
-    // https://github.com/flutter/flutter/issues/54758
-    await Future<void>.delayed(const Duration(seconds: 1));
+      // Drain any event that might have been added from the initial setup or
+      // resetting the camera position.
+      if (cameraIdleFired) {
+        await cameraFiredQueue.next;
+        cameraIdleFired = false;
+      }
 
-    // Drain any event that might have been added from the initial setup or
-    // resetting the camera position.
-    if (cameraIdleFired) {
+      // Start stopwatch to check the time taken for the animation to complete.
+      // Stopwatch is stopped on camera idle callback.
+      stopwatch.reset();
+      stopwatch.start();
+
+      // First phase with shorter animation duration.
+      final CameraUpdate cameraUpdateShort =
+          _getCameraUpdateForType(_cameraUpdateTypeVariants.currentValue!);
+      await controller.animateCamera(
+        cameraUpdateShort,
+        duration: const Duration(milliseconds: shortCameraAnimationDurationMS),
+      );
+
+      // Wait for the camera idle callback to fire.
+      expect(cameraIdleFired, isFalse);
       await cameraFiredQueue.next;
-      cameraIdleFired = false;
-    }
+      expect(cameraIdleFired, isTrue);
 
-    // Start stopwatch to check the time taken for the animation to complete.
-    // Stopwatch is stopped on camera idle callback.
-    stopwatch.reset();
-    stopwatch.start();
+      // For short animation duration, check that the animation is completed
+      // faster than the middle point of the animation test durations.
+      expect(stopwatch.elapsedMilliseconds,
+          lessThan(animationDurationMiddlePoint));
 
-    final CameraUpdate cameraUpdate =
-        _getCameraUpdateForType(_cameraUpdateTypeVariants.currentValue!);
-    await controller.animateCamera(cameraUpdate, configuration: configuration);
+      // Reset camera to initial position before second phase.
+      await controller
+          .moveCamera(CameraUpdate.newCameraPosition(_kInitialCameraPosition));
+      await tester.pumpAndSettle();
 
-    // Check that position is not updated immediately to the target.
-    final CameraPosition beforeFinishedPosition =
-        await inspector.getCameraPosition(mapId: controller.mapId);
-    await _checkCameraUpdateByType(
-        _cameraUpdateTypeVariants.currentValue!,
-        beforeFinishedPosition,
-        null,
-        controller,
-        (Matcher matcher) => isNot(matcher));
+      // Drain camera idle event.
+      if (cameraIdleFired) {
+        await cameraFiredQueue.next;
+        cameraIdleFired = false;
+      }
 
-    // Wait for the camera idle callback to fire.
-    expect(cameraIdleFired, isFalse);
-    await cameraFiredQueue.next;
-    expect(cameraIdleFired, isTrue);
+      // Start stopwatch to check the time taken for the animation to complete.
+      // Stopwatch is stopped on camera idle callback.
+      stopwatch.reset();
+      stopwatch.start();
 
-    // Check that the animation is completed faster than the normal animation.
-    expect(stopwatch.elapsedMilliseconds, lessThan(animationCheckThreshold));
+      // Second phase with longer animation duration.
+      final CameraUpdate cameraUpdateLong =
+          _getCameraUpdateForType(_cameraUpdateTypeVariants.currentValue!);
+      await controller.animateCamera(
+        cameraUpdateLong,
+        duration: const Duration(milliseconds: longCameraAnimationDurationMS),
+      );
 
-    // Check that position is animated after the animation is done.
-    final CameraPosition afterFinishedPosition =
-        await inspector.getCameraPosition(mapId: controller.mapId);
-    await _checkCameraUpdateByType(
-        _cameraUpdateTypeVariants.currentValue!,
-        afterFinishedPosition,
-        beforeFinishedPosition,
-        controller,
-        (Matcher matcher) => matcher);
+      // Check that position is not updated immediately to the target.
+      final CameraPosition beforeFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
+      await _checkCameraUpdateByType(
+          _cameraUpdateTypeVariants.currentValue!,
+          beforeFinishedPosition,
+          null,
+          controller,
+          (Matcher matcher) => isNot(matcher));
 
-    await tester.pumpAndSettle();
-  }, variant: _cameraUpdateTypeVariants);
+      // Wait for the camera idle callback to fire.
+      expect(cameraIdleFired, isFalse);
+      await cameraFiredQueue.next;
+      expect(cameraIdleFired, isTrue);
+
+      // For short animation duration, check that the animation is completed
+      // shower than the middle point of the animation test durations.
+      expect(stopwatch.elapsedMilliseconds,
+          greaterThan(animationDurationMiddlePoint));
+
+      // Check that position is animated after the animation is done.
+      final CameraPosition afterFinishedPosition =
+          await inspector.getCameraPosition(mapId: controller.mapId);
+      await _checkCameraUpdateByType(
+          _cameraUpdateTypeVariants.currentValue!,
+          afterFinishedPosition,
+          beforeFinishedPosition,
+          controller,
+          (Matcher matcher) => matcher);
+
+      await tester.pumpAndSettle();
+    },
+    variant: _cameraUpdateTypeVariants,
+  );
 }
 
 class _DebugTileProvider implements TileProvider {
@@ -1710,26 +1748,21 @@ Marker _copyMarkerWithClusterManagerId(
 }
 
 CameraUpdate _getCameraUpdateForType(CameraUpdateType type) {
-  switch (type) {
-    case CameraUpdateType.newCameraPosition:
-      return CameraUpdate.newCameraPosition(_kTestCameraPosition);
-    case CameraUpdateType.newLatLng:
-      return CameraUpdate.newLatLng(_kTestMapCenter);
-    case CameraUpdateType.newLatLngBounds:
-      return CameraUpdate.newLatLngBounds(_testCameraBounds, 0);
-    case CameraUpdateType.newLatLngZoom:
-      return CameraUpdate.newLatLngZoom(_kTestMapCenter, _kTestCameraZoomLevel);
-    case CameraUpdateType.scrollBy:
-      return CameraUpdate.scrollBy(10, 10);
-    case CameraUpdateType.zoomBy:
-      return CameraUpdate.zoomBy(_kTestZoombByAmount, const Offset(1, 1));
-    case CameraUpdateType.zoomTo:
-      return CameraUpdate.zoomTo(_kTestCameraZoomLevel);
-    case CameraUpdateType.zoomIn:
-      return CameraUpdate.zoomIn();
-    case CameraUpdateType.zoomOut:
-      return CameraUpdate.zoomOut();
-  }
+  return switch (type) {
+    CameraUpdateType.newCameraPosition =>
+      CameraUpdate.newCameraPosition(_kTestCameraPosition),
+    CameraUpdateType.newLatLng => CameraUpdate.newLatLng(_kTestMapCenter),
+    CameraUpdateType.newLatLngBounds =>
+      CameraUpdate.newLatLngBounds(_testCameraBounds, 0),
+    CameraUpdateType.newLatLngZoom =>
+      CameraUpdate.newLatLngZoom(_kTestMapCenter, _kTestCameraZoomLevel),
+    CameraUpdateType.scrollBy => CameraUpdate.scrollBy(10, 10),
+    CameraUpdateType.zoomBy =>
+      CameraUpdate.zoomBy(_kTestZoombByAmount, const Offset(1, 1)),
+    CameraUpdateType.zoomTo => CameraUpdate.zoomTo(_kTestCameraZoomLevel),
+    CameraUpdateType.zoomIn => CameraUpdate.zoomIn(),
+    CameraUpdateType.zoomOut => CameraUpdate.zoomOut(),
+  };
 }
 
 Future<void> _checkCameraUpdateByType(
@@ -1739,8 +1772,8 @@ Future<void> _checkCameraUpdateByType(
   ExampleGoogleMapController controller,
   Matcher Function(Matcher matcher) wrapMatcher,
 ) async {
-  // The target might differ a bit from the expected target; this is why we use
-  // a threshold for the target.
+  // As the target might differ a bit from the expected target, a threshold is
+  // used.
   const double latLngThreshold = 0.05;
 
   switch (type) {
