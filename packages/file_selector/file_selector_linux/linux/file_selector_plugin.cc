@@ -134,11 +134,15 @@ static FfsFileSelectorApiShowFileChooserResponse* handle_show_file_chooser(
     return ffs_file_selector_api_show_file_chooser_response_new_error(
         kBadArgumentsError, "Unable to create dialog from arguments", nullptr);
   }
+  return show_file_chooser(GTK_FILE_CHOOSER_NATIVE(dialog),
+                           gtk_native_dialog_run);
+}
 
-  gint response = gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog));
-  g_autoptr(FlValue) result = nullptr;
+FfsFileSelectorApiShowFileChooserResponse* show_file_chooser(
+    GtkFileChooserNative* dialog, gint (*run_dialog)(GtkNativeDialog*)) {
+  gint response = run_dialog(GTK_NATIVE_DIALOG(dialog));
+  g_autoptr(FlValue) result = fl_value_new_list();
   if (response == GTK_RESPONSE_ACCEPT) {
-    result = fl_value_new_list();
     g_autoptr(GSList) filenames =
         gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
     for (GSList* link = filenames; link != nullptr; link = link->next) {
