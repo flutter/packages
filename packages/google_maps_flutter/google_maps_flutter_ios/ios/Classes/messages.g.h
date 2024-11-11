@@ -76,7 +76,6 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformCameraUpdateZoomBy;
 @class FGMPlatformCameraUpdateZoom;
 @class FGMPlatformCameraUpdateZoomTo;
-@class FGMPlatformCameraUpdateAnimationConfiguration;
 @class FGMPlatformCircle;
 @class FGMPlatformHeatmap;
 @class FGMPlatformInfoWindow;
@@ -202,12 +201,6 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithZoom:(double )zoom;
 @property(nonatomic, assign) double  zoom;
-@end
-
-/// Pigeon representation of a CameraUpdateAnimationConfiguration.
-@interface FGMPlatformCameraUpdateAnimationConfiguration : NSObject
-+ (instancetype)makeWithDurationMilliseconds:(nullable NSNumber *)durationMilliseconds;
-@property(nonatomic, strong, nullable) NSNumber * durationMilliseconds;
 @end
 
 /// Pigeon equivalent of the Circle class.
@@ -684,7 +677,7 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
 - (void)moveCameraWithUpdate:(FGMPlatformCameraUpdate *)cameraUpdate error:(FlutterError *_Nullable *_Nonnull)error;
 /// Moves the camera according to [cameraUpdate], animating the update using a
 /// duration in milliseconds if provided.
-- (void)animateCameraWithUpdate:(FGMPlatformCameraUpdate *)cameraUpdate andConfiguration:(nullable FGMPlatformCameraUpdateAnimationConfiguration *)configuration error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)animateCameraWithUpdate:(FGMPlatformCameraUpdate *)cameraUpdate andDuration:(nullable NSNumber *)durationMilliseconds error:(FlutterError *_Nullable *_Nonnull)error;
 /// Gets the current map zoom level.
 ///
 /// @return `nil` only when `error != nil`.

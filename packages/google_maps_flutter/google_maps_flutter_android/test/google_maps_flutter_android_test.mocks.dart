@@ -96,9 +96,9 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> updateCircles(
-    List<_i2.PlatformCircle?>? toAdd,
-    List<_i2.PlatformCircle?>? toChange,
-    List<String?>? idsToRemove,
+    List<_i2.PlatformCircle>? toAdd,
+    List<_i2.PlatformCircle>? toChange,
+    List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -115,9 +115,9 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> updateHeatmaps(
-    List<_i2.PlatformHeatmap?>? toAdd,
-    List<_i2.PlatformHeatmap?>? toChange,
-    List<String?>? idsToRemove,
+    List<_i2.PlatformHeatmap>? toAdd,
+    List<_i2.PlatformHeatmap>? toChange,
+    List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -134,8 +134,8 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> updateClusterManagers(
-    List<_i2.PlatformClusterManager?>? toAdd,
-    List<String?>? idsToRemove,
+    List<_i2.PlatformClusterManager>? toAdd,
+    List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -151,9 +151,9 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> updateMarkers(
-    List<_i2.PlatformMarker?>? toAdd,
-    List<_i2.PlatformMarker?>? toChange,
-    List<String?>? idsToRemove,
+    List<_i2.PlatformMarker>? toAdd,
+    List<_i2.PlatformMarker>? toChange,
+    List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -170,9 +170,9 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> updatePolygons(
-    List<_i2.PlatformPolygon?>? toAdd,
-    List<_i2.PlatformPolygon?>? toChange,
-    List<String?>? idsToRemove,
+    List<_i2.PlatformPolygon>? toAdd,
+    List<_i2.PlatformPolygon>? toChange,
+    List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -189,9 +189,9 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> updatePolylines(
-    List<_i2.PlatformPolyline?>? toAdd,
-    List<_i2.PlatformPolyline?>? toChange,
-    List<String?>? idsToRemove,
+    List<_i2.PlatformPolyline>? toAdd,
+    List<_i2.PlatformPolyline>? toChange,
+    List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -208,9 +208,9 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> updateTileOverlays(
-    List<_i2.PlatformTileOverlay?>? toAdd,
-    List<_i2.PlatformTileOverlay?>? toChange,
-    List<String?>? idsToRemove,
+    List<_i2.PlatformTileOverlay>? toAdd,
+    List<_i2.PlatformTileOverlay>? toChange,
+    List<String>? idsToRemove,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -313,14 +313,16 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
 
   @override
   _i4.Future<void> animateCamera(
-    _i2.PlatformCameraUpdate? cameraUpdate, {
-    _i2.PlatformCameraUpdateAnimationConfiguration? configuration,
-  }) =>
+    _i2.PlatformCameraUpdate? cameraUpdate,
+    int? durationMilliseconds,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #animateCamera,
-          [cameraUpdate],
-          {#configuration: configuration},
+          [
+            cameraUpdate,
+            durationMilliseconds,
+          ],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
