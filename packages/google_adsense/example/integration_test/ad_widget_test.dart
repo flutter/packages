@@ -73,19 +73,4 @@ void main() async {
       // TODO(sokoloff06): Validate response is rendered
     });
   });
-  test('Widget-level client id overrides initialization client id', () {
-    // Given
-    const String initClient = 'client1';
-    const String widgetClient = 'client2';
-
-    // When
-    adsense.initialize(initClient);
-    final AdUnitWidget adUnitWidget1 =
-        adsense.adUnit(adSlot: testSlot, adClient: widgetClient);
-    final AdUnitWidget adUnitWidget2 = adsense.adUnit(adSlot: testSlot);
-
-    // Then
-    expect(adUnitWidget1.adClient, widgetClient);
-    expect(adUnitWidget2.adClient, initClient);
-  });
 }

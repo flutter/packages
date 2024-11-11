@@ -20,8 +20,6 @@ void main() {
     expect(
         () => adSense.adUnit(
               adSlot: 'test-slot',
-              adClient: 'test-client',
-              isAdTest: true,
               adUnitParams: <String, String>{'key': 'value'},
             ),
         throwsA(isA<UnsupportedError>()));

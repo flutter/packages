@@ -47,7 +47,7 @@ class AdSense {
       String? cssText}) {
     return AdUnitWidgetWeb(
         adSlot: adSlot,
-        adClient: adClient.isNotEmpty ? adClient : _adClient,
+        adClient: _adClient,
         isAdTest: isAdTest,
         additionalParams: adUnitParams,
         cssText: cssText);

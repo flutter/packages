@@ -27,7 +27,6 @@ class AdSense {
   /// `adUnitParams`: see [AdUnitParams] for the non-extensive list of some possible keys.
   AdUnitWidget adUnit(
       {required String adSlot,
-      String adClient = '',
       bool isAdTest = kDebugMode,
       Map<String, String> adUnitParams = const <String, String>{},
       String? cssText}) {
