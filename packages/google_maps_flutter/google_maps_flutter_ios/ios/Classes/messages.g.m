@@ -138,12 +138,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
-@interface FGMPlatformCameraUpdateAnimationConfiguration ()
-+ (FGMPlatformCameraUpdateAnimationConfiguration *)fromList:(NSArray<id> *)list;
-+ (nullable FGMPlatformCameraUpdateAnimationConfiguration *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
 @interface FGMPlatformCircle ()
 + (FGMPlatformCircle *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformCircle *)nullableFromList:(NSArray<id> *)list;
@@ -546,27 +540,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     @(self.zoom),
-  ];
-}
-@end
-
-@implementation FGMPlatformCameraUpdateAnimationConfiguration
-+ (instancetype)makeWithDurationMilliseconds:(nullable NSNumber *)durationMilliseconds {
-  FGMPlatformCameraUpdateAnimationConfiguration* pigeonResult = [[FGMPlatformCameraUpdateAnimationConfiguration alloc] init];
-  pigeonResult.durationMilliseconds = durationMilliseconds;
-  return pigeonResult;
-}
-+ (FGMPlatformCameraUpdateAnimationConfiguration *)fromList:(NSArray<id> *)list {
-  FGMPlatformCameraUpdateAnimationConfiguration *pigeonResult = [[FGMPlatformCameraUpdateAnimationConfiguration alloc] init];
-  pigeonResult.durationMilliseconds = GetNullableObjectAtIndex(list, 0);
-  return pigeonResult;
-}
-+ (nullable FGMPlatformCameraUpdateAnimationConfiguration *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FGMPlatformCameraUpdateAnimationConfiguration fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    self.durationMilliseconds ?: [NSNull null],
   ];
 }
 @end
@@ -1597,62 +1570,60 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 142: 
       return [FGMPlatformCameraUpdateZoomTo fromList:[self readValue]];
     case 143: 
-      return [FGMPlatformCameraUpdateAnimationConfiguration fromList:[self readValue]];
-    case 144: 
       return [FGMPlatformCircle fromList:[self readValue]];
-    case 145: 
+    case 144: 
       return [FGMPlatformHeatmap fromList:[self readValue]];
-    case 146: 
+    case 145: 
       return [FGMPlatformInfoWindow fromList:[self readValue]];
-    case 147: 
+    case 146: 
       return [FGMPlatformCluster fromList:[self readValue]];
-    case 148: 
+    case 147: 
       return [FGMPlatformClusterManager fromList:[self readValue]];
-    case 149: 
+    case 148: 
       return [FGMPlatformMarker fromList:[self readValue]];
-    case 150: 
+    case 149: 
       return [FGMPlatformPolygon fromList:[self readValue]];
-    case 151: 
+    case 150: 
       return [FGMPlatformPolyline fromList:[self readValue]];
-    case 152: 
+    case 151: 
       return [FGMPlatformPatternItem fromList:[self readValue]];
-    case 153: 
+    case 152: 
       return [FGMPlatformTile fromList:[self readValue]];
-    case 154: 
+    case 153: 
       return [FGMPlatformTileOverlay fromList:[self readValue]];
-    case 155: 
+    case 154: 
       return [FGMPlatformEdgeInsets fromList:[self readValue]];
-    case 156: 
+    case 155: 
       return [FGMPlatformLatLng fromList:[self readValue]];
-    case 157: 
+    case 156: 
       return [FGMPlatformLatLngBounds fromList:[self readValue]];
-    case 158: 
+    case 157: 
       return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
-    case 159: 
+    case 158: 
       return [FGMPlatformMapViewCreationParams fromList:[self readValue]];
-    case 160: 
+    case 159: 
       return [FGMPlatformMapConfiguration fromList:[self readValue]];
-    case 161: 
+    case 160: 
       return [FGMPlatformPoint fromList:[self readValue]];
-    case 162: 
+    case 161: 
       return [FGMPlatformSize fromList:[self readValue]];
-    case 163: 
+    case 162: 
       return [FGMPlatformTileLayer fromList:[self readValue]];
-    case 164: 
+    case 163: 
       return [FGMPlatformZoomRange fromList:[self readValue]];
-    case 165: 
+    case 164: 
       return [FGMPlatformBitmap fromList:[self readValue]];
-    case 166: 
+    case 165: 
       return [FGMPlatformBitmapDefaultMarker fromList:[self readValue]];
-    case 167: 
+    case 166: 
       return [FGMPlatformBitmapBytes fromList:[self readValue]];
-    case 168: 
+    case 167: 
       return [FGMPlatformBitmapAsset fromList:[self readValue]];
-    case 169: 
+    case 168: 
       return [FGMPlatformBitmapAssetImage fromList:[self readValue]];
-    case 170: 
+    case 169: 
       return [FGMPlatformBitmapAssetMap fromList:[self readValue]];
-    case 171: 
+    case 170: 
       return [FGMPlatformBitmapBytesMap fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1710,92 +1681,89 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateZoomTo class]]) {
     [self writeByte:142];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCameraUpdateAnimationConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCircle class]]) {
     [self writeByte:143];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCircle class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
     [self writeByte:144];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformInfoWindow class]]) {
     [self writeByte:145];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformInfoWindow class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
     [self writeByte:146];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
     [self writeByte:147];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
     [self writeByte:148];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
     [self writeByte:149];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
     [self writeByte:150];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPatternItem class]]) {
     [self writeByte:151];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPatternItem class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
     [self writeByte:152];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
     [self writeByte:153];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformEdgeInsets class]]) {
     [self writeByte:154];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformEdgeInsets class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
     [self writeByte:155];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
     [self writeByte:156];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
     [self writeByte:157];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
     [self writeByte:158];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
     [self writeByte:159];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
     [self writeByte:160];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformSize class]]) {
     [self writeByte:161];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformSize class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
     [self writeByte:162];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
     [self writeByte:163];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmap class]]) {
     [self writeByte:164];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
     [self writeByte:165];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapBytes class]]) {
     [self writeByte:166];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapBytes class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAsset class]]) {
     [self writeByte:167];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAsset class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
     [self writeByte:168];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
     [self writeByte:169];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
-    [self writeByte:170];
-    [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
-    [self writeByte:171];
+    [self writeByte:170];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -2111,13 +2079,13 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
         binaryMessenger:binaryMessenger
         codec:FGMGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(animateCameraWithUpdate:andConfiguration:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(animateCameraWithUpdate:andConfiguration:error:)", api);
+      NSCAssert([api respondsToSelector:@selector(animateCameraWithUpdate:andDuration:error:)], @"FGMMapsApi api (%@) doesn't respond to @selector(animateCameraWithUpdate:andDuration:error:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FGMPlatformCameraUpdate *arg_cameraUpdate = GetNullableObjectAtIndex(args, 0);
-        FGMPlatformCameraUpdateAnimationConfiguration *arg_configuration = GetNullableObjectAtIndex(args, 1);
+        NSNumber *arg_durationMilliseconds = GetNullableObjectAtIndex(args, 1);
         FlutterError *error;
-        [api animateCameraWithUpdate:arg_cameraUpdate andConfiguration:arg_configuration error:&error];
+        [api animateCameraWithUpdate:arg_cameraUpdate andDuration:arg_durationMilliseconds error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {

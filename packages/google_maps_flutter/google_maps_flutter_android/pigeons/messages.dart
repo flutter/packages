@@ -103,13 +103,6 @@ class PlatformCameraUpdateZoomTo {
   final double zoom;
 }
 
-/// Pigeon representation of a CameraUpdateAnimationConfiguration.
-class PlatformCameraUpdateAnimationConfiguration {
-  PlatformCameraUpdateAnimationConfiguration({this.durationMilliseconds});
-
-  final int? durationMilliseconds;
-}
-
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
   PlatformCircle({
@@ -653,8 +646,8 @@ abstract class MapsApi {
 
   /// Moves the camera according to [cameraUpdate], animating the update using a
   /// duration in milliseconds if provided.
-  void animateCamera(PlatformCameraUpdate cameraUpdate,
-      {PlatformCameraUpdateAnimationConfiguration? configuration});
+  void animateCamera(
+      PlatformCameraUpdate cameraUpdate, int? durationMilliseconds);
 
   /// Gets the current map zoom level.
   double getZoomLevel();
