@@ -75,7 +75,7 @@ class MockAlertController: AlertController {
   }
 }
 
-class LocalAuthPluginTests: XCTestCase {
+class FLALocalAuthPluginTests: XCTestCase {
   var plugin: LocalAuthPlugin!
   var mockAuthContext: MockAuthContext!
   var mockAlertController: MockAlertController!
