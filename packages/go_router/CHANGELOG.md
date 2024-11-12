@@ -1,6 +1,18 @@
+## 14.5.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
+## 14.4.1
+
+- Adds `missing_code_block_language_in_doc_comment` lint.
+
+## 14.4.0
+
+- Adds current state getter on `GoRouter` that returns the current `GoRouterState`.
+
 ## 14.3.0
 
-- Added missing implementation for the routerNeglect parameter in GoRouter.
+- Adds missing implementation for the routerNeglect parameter in GoRouter.
 
 ## 14.2.9
 

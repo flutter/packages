@@ -128,13 +128,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
-          if (useWasm)
-            '--wasm'
-          // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
-          else if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
-            '--web-renderer=canvaskit'
-          else
-            '--web-renderer=html',
+          if (useWasm) '--wasm',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
         ],
@@ -228,8 +222,12 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         }
         for (final File driver in drivers) {
           final List<File> failingTargets = await _driveTests(
-              example, driver, testTargets,
-              deviceFlags: deviceFlags);
+            example,
+            driver,
+            testTargets,
+            deviceFlags: deviceFlags,
+            exampleName: exampleName,
+          );
           for (final File failingTarget in failingTargets) {
             errors.add(
                 getRelativePosixPath(failingTarget, from: package.directory));
@@ -376,10 +374,16 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     File driver,
     List<File> targets, {
     required List<String> deviceFlags,
+    required String exampleName,
   }) async {
     final List<File> failures = <File>[];
 
     final String enableExperiment = getStringArg(kEnableExperiment);
+    final String screenshotBasename =
+        '${exampleName.replaceAll(platform.pathSeparator, '_')}-drive';
+    final Directory? screenshotDirectory =
+        ciLogsDirectory(platform, driver.fileSystem)
+            ?.childDirectory(screenshotBasename);
 
     for (final File target in targets) {
       final int exitCode = await processRunner.runAndStream(
@@ -389,6 +393,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             ...deviceFlags,
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
+            if (screenshotDirectory != null)
+              '--screenshot=${screenshotDirectory.path}',
             '--driver',
             getRelativePosixPath(driver, from: example.directory),
             '--target',
@@ -416,6 +422,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     required List<File> testFiles,
   }) async {
     final String enableExperiment = getStringArg(kEnableExperiment);
+    final Directory? logsDirectory =
+        ciLogsDirectory(platform, testFiles.first.fileSystem);
 
     // Workaround for https://github.com/flutter/flutter/issues/135673
     // Once that is fixed on stable, this logic can be removed and the command
@@ -438,6 +446,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             ...deviceFlags,
             if (enableExperiment.isNotEmpty)
               '--enable-experiment=$enableExperiment',
+            if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
             target,
           ],
           workingDir: example.directory);
