@@ -146,7 +146,7 @@ class AdsManager {
 
   /// Initializes the ad experience using default rendering settings.
   Future<void> init() {
-    return platform.init(AdsManagerInitParams());
+    return platform.init(PlatformAdsRenderingSettings());
   }
 
   /// Starts playing the ads.

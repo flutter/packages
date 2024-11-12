@@ -32,7 +32,7 @@ class AndroidAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> init(AdsManagerInitParams params) {
+  Future<void> init(PlatformAdsRenderingSettings settings) {
     return _manager.init(null);
   }
 
