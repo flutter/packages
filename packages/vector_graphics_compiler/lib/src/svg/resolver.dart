@@ -288,7 +288,8 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
 
   @override
   Node visitPatternNode(PatternNode patternNode, AffineMatrix data) {
-    final AttributedNode? resolvedPattern = patternNode.resolver(patternNode.patternId);
+    final AttributedNode? resolvedPattern =
+        patternNode.resolver(patternNode.patternId);
     if (resolvedPattern == null) {
       return patternNode.child.accept(this, data);
     }
