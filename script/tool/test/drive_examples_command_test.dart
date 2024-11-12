@@ -409,7 +409,7 @@ void main() {
       processRunner.mockProcessesForExecutable['flutter']!
           .addAll(<FakeProcessInfo>[
         FakeProcessInfo(
-            _MockDelayingProcess(
+            _FakeDelayingProcess(
                 delayDuration: const Duration(minutes: 11),
                 fakeAsync: fakeAsync),
             <String>['test']),
@@ -1776,9 +1776,9 @@ void main() {
   });
 }
 
-class _MockDelayingProcess extends Mock implements io.Process {
+class _FakeDelayingProcess extends Fake implements io.Process {
   /// Creates a mock process that takes [delayDuration] time to exit successfully.
-  _MockDelayingProcess(
+  _FakeDelayingProcess(
       {required Duration delayDuration, required FakeAsync fakeAsync})
       : _delayDuration = delayDuration,
         _fakeAsync = fakeAsync;
