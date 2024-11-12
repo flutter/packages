@@ -334,6 +334,36 @@ void defineTests() {
     );
 
     testWidgets(
+      'should gracefully handle image URLs with empty scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        expect(find.byType(Image), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'should gracefully handle image URLs with invalid scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](ttps://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        expect(find.byType(Image), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
       'should gracefully handle width parsing failures',
       (WidgetTester tester) async {
         const String data = '![alt](https://img#x50)';
