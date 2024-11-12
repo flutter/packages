@@ -1,3 +1,7 @@
+## 0.3.19
+
+* Adds StoreKit2 Transaction expiration date.
+
 ## 0.3.18+5
 
 * Updates README to remove contributor-focused documentation.
