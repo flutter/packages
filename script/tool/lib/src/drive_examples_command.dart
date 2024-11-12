@@ -128,13 +128,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           'web-server',
           '--web-port=7357',
           '--browser-name=chrome',
-          if (useWasm)
-            '--wasm'
-          // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
-          else if (platform.environment['CHANNEL']?.toLowerCase() == 'master')
-            '--web-renderer=canvaskit'
-          else
-            '--web-renderer=html',
+          if (useWasm) '--wasm',
           if (platform.environment.containsKey('CHROME_EXECUTABLE'))
             '--chrome-binary=${platform.environment['CHROME_EXECUTABLE']}',
         ],
