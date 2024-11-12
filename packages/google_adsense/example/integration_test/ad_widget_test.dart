@@ -24,12 +24,13 @@ void main() async {
   });
 
   group('initialization', () {
-    test('Repeated initialization throws error', () {
+    testWidgets('Repeated initialization throws error', (WidgetTester _) async {
       adsense.initialize(testClient);
       expect(() => adsense.initialize(testClient), throwsA(isA<StateError>()));
     });
 
-    test('Initialization adds AdSense snippet to index.html', () {
+    testWidgets('Initialization adds AdSense snippet to index.html',
+        (WidgetTester _) async {
       // Given
       const String expectedScriptUrl =
           'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
