@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-import 'devtools_extension.dart';
+import 'shared_preferences_dev_tools_extension_data.dart';
 
 /// Provides a persistent store for simple data.
 ///

@@ -9,24 +9,26 @@ import 'package:flutter/foundation.dart';
 
 import '../shared_preferences.dart';
 
-const String _eventPrefix = 'shared_preferences:';
+const String _eventPrefix = 'shared_preferences.';
 
-/// A typedef for the post event function
+/// A typedef for the post event function.
 @visibleForTesting
 typedef PostEvent = void Function(
   String eventKind,
   Map<String, Object?> eventData,
 );
 
-/// A helper class that provides data to the devtool extension.
+/// A helper class that provides data to the DevTools extension.
 ///
 /// It is only visible for testing and eval.
 @visibleForTesting
-class DevtoolsExtension {
-  /// The default constructor for [DevtoolsExtension].
+class SharedPreferencesDevToolsExtensionData {
+  /// The default constructor for [SharedPreferencesDevToolsExtensionData].
   ///
   /// Accepts an optional [PostEvent] that should only be overwritten when testing.
-  DevtoolsExtension([this._postEvent = developer.postEvent]);
+  const SharedPreferencesDevToolsExtensionData([
+    this._postEvent = developer.postEvent,
+  ]);
 
   final PostEvent _postEvent;
 
@@ -42,7 +44,7 @@ class DevtoolsExtension {
     });
   }
 
-  /// Requests the value for a given key and post and event with the result.
+  /// Requests the value for a given key and posts an event with the result.
   Future<void> requestValue(String key, bool legacy) async {
     final Object? value;
     if (legacy) {
@@ -63,7 +65,7 @@ class DevtoolsExtension {
     });
   }
 
-  /// Requests the a value change for the give key and post an empty event when finished;
+  /// Requests the value change for the given key and posts an empty event when finished.
   Future<void> requestValueChange(
     String key,
     String serializedValue,
@@ -75,7 +77,7 @@ class DevtoolsExtension {
       final SharedPreferences legacyPrefs =
           await SharedPreferences.getInstance();
       // we need to check the kind because sometimes a double
-      // gets interpreted as an int. If this was not and issue
+      // gets interpreted as an int. If this was not an issue
       // we'd only need to do a simple pattern matching on value.
       switch (kind) {
         case 'int':
@@ -95,7 +97,7 @@ class DevtoolsExtension {
     } else {
       final SharedPreferencesAsync prefs = SharedPreferencesAsync();
       // we need to check the kind because sometimes a double
-      // gets interpreted as an int. If this was not and issue
+      // gets interpreted as an int. If this was not an issue
       // we'd only need to do a simple pattern matching on value.
       switch (kind) {
         case 'int':
@@ -116,7 +118,7 @@ class DevtoolsExtension {
     _postEvent('${_eventPrefix}change_value', <String, Object?>{});
   }
 
-  /// Requests a key removal and post an empty event when removed.
+  /// Requests a key removal and posts an empty event when removed.
   Future<void> requestRemoveKey(String key, bool legacy) async {
     if (legacy) {
       final SharedPreferences legacyPrefs =

@@ -6,7 +6,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:devtools_app_shared/service.dart';
-
 import 'package:vm_service/vm_service.dart';
 
 import 'shared_preferences_state.dart';
@@ -70,14 +69,16 @@ class SharedPreferencesToolEval {
 
     late final StreamSubscription<Event> streamSubscription;
     streamSubscription = _service.onExtensionEvent.listen((Event event) {
-      if (event.extensionKind == 'shared_preferences:$eventKind') {
+      // The event prefix and event kind are defined in `shared_preferences_dev_tools_extension_data.dart`
+      // from the `shared_preferences` package.
+      if (event.extensionKind == 'shared_preferences.$eventKind') {
         streamSubscription.cancel();
         completer.complete(event.extensionData!.data);
       }
     });
 
     await _eval.eval(
-      'DevtoolsExtension().$method',
+      'SharedPreferencesDevToolsExtensionData().$method',
       isAlive: isAlive,
     );
 

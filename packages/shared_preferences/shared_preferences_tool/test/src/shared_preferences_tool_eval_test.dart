@@ -32,13 +32,13 @@ void main() {
       vmService.onExtensionEvent = eventStream.stream;
       when(
         eval.eval(
-          'DevtoolsExtension().$method',
+          'SharedPreferencesDevToolsExtensionData().$method',
           isAlive: anyNamed('isAlive'),
         ),
       ).thenAnswer((_) async {
         eventStream.add(
           Event(
-            extensionKind: 'shared_preferences:$eventKind',
+            extensionKind: 'shared_preferences.$eventKind',
             extensionData: ExtensionData.parse(response),
           ),
         );
@@ -235,7 +235,7 @@ void main() {
 
       verify(
         eval.eval(
-          'DevtoolsExtension().$method',
+          'SharedPreferencesDevToolsExtensionData().$method',
           isAlive: anyNamed('isAlive'),
         ),
       ).called(1);
@@ -257,7 +257,7 @@ void main() {
 
       verify(
         eval.eval(
-          'DevtoolsExtension().$method',
+          'SharedPreferencesDevToolsExtensionData().$method',
           isAlive: anyNamed('isAlive'),
         ),
       ).called(1);

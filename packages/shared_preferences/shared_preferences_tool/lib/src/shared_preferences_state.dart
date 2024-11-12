@@ -162,7 +162,7 @@ sealed class SharedPreferencesData implements _SharedPreferencesData<Object> {
     };
   }
 
-  /// The kind of the value as string.
+  /// The kind of the value as a String.
   String get kind {
     return switch (this) {
       SharedPreferencesDataString() => 'String',

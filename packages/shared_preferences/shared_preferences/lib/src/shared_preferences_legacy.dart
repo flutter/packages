@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-import 'devtools_extension.dart';
+import 'shared_preferences_dev_tools_extension_data.dart';
 
 /// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
 /// a persistent store for simple data.
