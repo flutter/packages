@@ -27,6 +27,7 @@ dev_dependencies:
   flutter:
     sdk: flutter
   go_router: ^14.0.0
+  leak_tracker_flutter_testing: any
   test: ^1.20.0
 
 topics:
