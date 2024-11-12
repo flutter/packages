@@ -1,3 +1,7 @@
+## 0.2.3
+
+* Adds support to defines parameters that control the rendering of ads. See `AdsRenderingSettings`.
+
 ## 0.2.2+15
 
 * Adds remaining methods for internal wrapper of the Android native `BaseManager`.
