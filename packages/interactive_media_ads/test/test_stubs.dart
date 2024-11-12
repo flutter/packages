@@ -110,7 +110,7 @@ class TestAdsManager extends PlatformAdsManager {
     this.onSkip,
   });
 
-  Future<void> Function(AdsManagerInitParams params)? onInit;
+  Future<void> Function([PlatformAdsRenderingSettings? settings])? onInit;
 
   Future<void> Function(PlatformAdsManagerDelegate delegate)?
       onSetAdsManagerDelegate;
@@ -128,8 +128,8 @@ class TestAdsManager extends PlatformAdsManager {
   Future<void> Function()? onDestroy;
 
   @override
-  Future<void> init(AdsManagerInitParams params) async {
-    return onInit?.call(params);
+  Future<void> init([PlatformAdsRenderingSettings? settings]) async {
+    return onInit?.call(settings);
   }
 
   @override

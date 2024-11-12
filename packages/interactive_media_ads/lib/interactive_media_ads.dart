@@ -19,4 +19,5 @@ export 'src/platform_interface/platform_interface.dart'
         AdErrorType,
         AdEvent,
         AdEventType,
-        AdsLoadErrorData;
+        AdsLoadErrorData,
+        UIElement;

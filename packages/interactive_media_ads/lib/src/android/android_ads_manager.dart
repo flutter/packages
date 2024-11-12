@@ -38,7 +38,7 @@ class AndroidAdsManager extends PlatformAdsManager {
     }
 
     final ima.AdsRenderingSettings androidSettings =
-        await ima.ImaSdkFactory.instance.createAdsRenderingSettings();
+        await _proxy.instanceImaSdkFactory().createAdsRenderingSettings();
     await Future.wait(<Future<void>>[
       if (settings.bitrate != null)
         androidSettings.setBitrateKbps(settings.bitrate!),

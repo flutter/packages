@@ -28,7 +28,7 @@ void main() {
     test('init', () {
       final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
       final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
-      adsManager.init(AdsManagerInitParams());
+      adsManager.init(PlatformAdsRenderingSettings());
 
       verify(mockAdsManager.initialize(null));
     });
