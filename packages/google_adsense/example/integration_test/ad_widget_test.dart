@@ -50,7 +50,7 @@ void main() async {
     testWidgets('AdUnitWidget is created and rendered',
         (WidgetTester tester) async {
       // When
-      // TODO(sokoloff06): Mock server response as ./test_ad.html
+      // TODO(sokoloff06): Mock server response
 
       adsense.initialize(testClient);
       final Widget adUnitWidget =

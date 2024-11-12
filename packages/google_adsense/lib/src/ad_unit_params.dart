@@ -28,10 +28,12 @@ class AdUnitParams {
   /// See [MultiplexLayout]
   /// See [docs](https://support.google.com/adsense/answer/7533385?hl=en#:~:text=Change%20the%20layout%20of%20your%20Multiplex%20ad%20unit)
   static const String MATCHED_CONTENT_UI_TYPE = 'matchedContentUiType';
+
   /// The ads inside a Multiplex ad unit are arranged in a grid. You can specify how many rows and columns you want to show within that grid<br>
   /// Sets the number of rows<br>
   /// Requires setting [AdUnitParams.MATCHED_CONTENT_UI_TYPE]
   static const String MATCHED_CONTENT_ROWS_NUM = 'macthedContentRowsNum';
+
   /// The ads inside a Multiplex ad unit are arranged in a grid. You can specify how many rows and columns you want to show within that grid<br>
   /// Sets the number of columns<br>
   /// Requires setting [AdUnitParams.MATCHED_CONTENT_UI_TYPE]
@@ -46,20 +48,28 @@ class AdUnitParams {
 enum AdFormatType {
   /// Default which enables the auto-sizing behavior for the responsive ad unit
   AUTO,
+
   /// Use horizontal shape
   HORIZONTAL,
+
   /// Use rectangle shape
   RECTANGLE,
+
   /// Use vertical shape
   VERTICAL,
+
   /// Use horizontal and rectangle shape
   HORIZONTAL_RECTANGLE,
+
   /// Use horizontal and vertical shape
   HORIZONTAL_VERTICAL,
+
   /// Use rectangle and vertical shape
   RECTANGLE_VERTICAL,
+
   /// Use horizontal, rectangle and vertical shape
   HORIZONTAL_RECTANGLE_VERTICAL,
+
   /// Fluid ads have no fixed size, but rather adapt to fit the creative content they display
   FLUID
 }
@@ -69,14 +79,19 @@ enum AdFormatType {
 enum MultiplexLayout {
   /// In this layout, the image and text appear alongside each other.
   IMAGE_CARD_SIDEBYSIDE,
+
   /// In this layout, the image and text appear alongside each other within a card.
   IMAGE_SIDEBYSIDE,
+
   /// In this layout, the image and text are arranged one on top of the other.
   IMAGE_STACKED,
+
   /// In this layout, the image and text are arranged one on top of the other within a card.
   IMAGE_CARD_STACKED,
+
   /// A text-only layout with no image.
   TEXT,
+
   /// A text-only layout within a card.
   TEXT_CARD
 }

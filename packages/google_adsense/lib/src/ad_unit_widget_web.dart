@@ -42,6 +42,7 @@ class AdUnitWidgetWeb extends AdUnitWidget {
       _insElement.dataset.setProperty(key.toJS, dataAttrs[key]!.toJS);
     }
   }
+
   /// Creates [AdUnitWidget] from [AdUnitConfiguration] object
   AdUnitWidgetWeb.fromConfig(AdUnitConfiguration unitConfig)
       : this._internal(
