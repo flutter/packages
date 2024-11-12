@@ -32,8 +32,38 @@ class AndroidAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> init([PlatformAdsRenderingSettings? settings]) {
-    return _manager.init(null);
+  Future<void> init([PlatformAdsRenderingSettings? settings]) async {
+    if (settings == null) {
+      return _manager.init(null);
+    }
+
+    final ima.AdsRenderingSettings androidSettings =
+        await ima.ImaSdkFactory.instance.createAdsRenderingSettings();
+    await Future.wait(<Future<void>>[
+      if (settings.bitrate != null)
+        androidSettings.setBitrateKbps(settings.bitrate!),
+      if (settings.enablePreloading != null)
+        androidSettings.setEnablePreloading(settings.enablePreloading!),
+      if (settings.loadVideoTimeout != null)
+        androidSettings.setLoadVideoTimeout(settings.loadVideoTimeout!),
+      if (settings.mimeTypes != null)
+        androidSettings.setMimeTypes(settings.mimeTypes!),
+      if (settings.playAdsAfterTime != null)
+        androidSettings.setPlayAdsAfterTime(settings.playAdsAfterTime!),
+      if (settings.uiElements != null)
+        androidSettings.setUiElements(
+          settings.uiElements!.map(
+            (UIElement element) {
+              return switch (element) {
+                UIElement.adAttribution => ima.UiElement.adAttribution,
+                UIElement.countdown => ima.UiElement.countdown,
+              };
+            },
+          ).toList(),
+        ),
+    ]);
+
+    return _manager.init(androidSettings);
   }
 
   @override

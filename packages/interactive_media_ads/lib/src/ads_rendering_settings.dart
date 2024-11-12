@@ -7,7 +7,7 @@ import 'platform_interface/platform_interface.dart';
 
 /// Defines parameters that control the rendering of ads.
 class AdsRenderingSettings {
-  /// Creates an [AdsRequest].
+  /// Creates an [AdsRenderingSettings].
   AdsRenderingSettings({
     int? bitrate,
     bool? enablePreloading,
