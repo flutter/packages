@@ -649,7 +649,7 @@ class Camera {
 
   // TODO(replace): introduced fps in
   /// [CameraImageStreamOptions]
-  final int cameraStreamFPS = 30;
+  final int cameraStreamFPS = 60;
 
   /// Returns a stream of camera frames.
   ///
@@ -674,28 +674,26 @@ class Camera {
     required int fps,
   }) {
     int? animationFrameId;
-    num now, then = window.performance.now(), elapsed, fpsInterval = 1000 / fps;
+    num then = 0, fpsInterval = 1000 / fps;
 
-    void onAnimate(num timestamp) {
+    int? animate(num timestamp) {
       // Schedule the next frame
-      animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
-
+      animationFrameId = window.requestAnimationFrame(animate.toJS);
       // Calculate the elapsed time since the last frame
-      now = timestamp;
-      elapsed = now - then;
+      final num elapsed = timestamp - then;
 
-      // If enough time has passed since the last frame
-      if (elapsed > fpsInterval) {
+      // if we're close to the next frame (by ~8ms), do it.
+      if (fpsInterval - elapsed <= 8) {
         // Get ready for next frame
-        then = now - (elapsed % fpsInterval);
-
+        then = timestamp;
         // Perform the action task
         action();
       }
+      return animationFrameId;
     }
 
     // Initialize the animation loop
-    animationFrameId = window.requestAnimationFrame(onAnimate.toJS);
+    animationFrameId = animate(window.performance.now());
 
     // Listen for the stream controller cancellation to stop the animation
     _cameraFrameStreamController.onCancel = () {
