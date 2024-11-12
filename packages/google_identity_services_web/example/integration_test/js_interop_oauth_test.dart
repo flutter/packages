@@ -26,7 +26,7 @@ void main() async {
     testWidgets('TokenClientConfig', (_) async {
       final TokenClientConfig config = TokenClientConfig(
         client_id: 'testing_1-2-3',
-        callback: (_) {},
+        callback: (TokenResponse _) {},
         scope: <String>['one', 'two', 'three'],
         include_granted_scopes: true,
         prompt: 'some-prompt',
@@ -34,7 +34,7 @@ void main() async {
         login_hint: 'login-hint@example.com',
         hd: 'hd_value',
         state: 'some-state',
-        error_callback: (_) {},
+        error_callback: (GoogleIdentityServicesError? _) {},
       );
 
       final utils.ExpectConfigValueFn expectConfigValue =
@@ -79,14 +79,14 @@ void main() async {
         scope: <String>['one', 'two', 'three'],
         include_granted_scopes: true,
         redirect_uri: Uri.parse('https://www.example.com/login'),
-        callback: (_) {},
+        callback: (CodeResponse _) {},
         state: 'some-state',
         enable_granular_consent: true,
         login_hint: 'login-hint@example.com',
         hd: 'hd_value',
         ux_mode: UxMode.popup,
         select_account: true,
-        error_callback: (_) {},
+        error_callback: (GoogleIdentityServicesError? _) {},
       );
 
       final utils.ExpectConfigValueFn expectConfigValue =
@@ -110,7 +110,7 @@ void main() async {
     testWidgets('returns a tokenClient', (_) async {
       final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
         client_id: 'for-tests',
-        callback: (_) {},
+        callback: (TokenResponse _) {},
         scope: <String>['some_scope', 'for_tests', 'not_real'],
       ));
 

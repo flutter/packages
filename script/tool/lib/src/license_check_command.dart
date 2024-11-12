@@ -29,6 +29,7 @@ const Set<String> _ignoreBasenameList = <String>{
   'flutter_export_environment',
   'GeneratedPluginRegistrant',
   'generated_plugin_registrant',
+  'web_plugin_registrant',
 };
 
 // File suffixes that otherwise match _codeFileExtensions to ignore.
@@ -47,6 +48,8 @@ const Set<String> _ignoredFullBasenameList = <String>{
 // third_party/packages, as that is the only directory where this is allowed.
 const Set<String> _unannotatedFileThirdPartyDirectories = <String>{
   'path_parsing',
+  'flutter_svg',
+  'flutter_svg_test',
 };
 
 // Copyright and license regexes for third-party code.

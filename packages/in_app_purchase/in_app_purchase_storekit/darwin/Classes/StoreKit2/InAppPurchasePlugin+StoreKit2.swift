@@ -96,9 +96,39 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       @MainActor in
       do {
         let transactionsMsgs = await rawTransactions().map {
-          $0.convertToPigeon()
+          $0.convertToPigeon(receipt: nil)
         }
         completion(.success(transactionsMsgs))
+      }
+    }
+  }
+
+  func restorePurchases(completion: @escaping (Result<Void, Error>) -> Void) {
+    Task { [weak self] in
+      guard let self = self else { return }
+      do {
+        var unverifiedPurchases: [UInt64: (receipt: String, error: Error?)] = [:]
+        for await completedPurchase in Transaction.currentEntitlements {
+          switch completedPurchase {
+          case .verified(let purchase):
+            self.sendTransactionUpdate(
+              transaction: purchase, receipt: "\(completedPurchase.jwsRepresentation)")
+          case .unverified(let failedPurchase, let error):
+            unverifiedPurchases[failedPurchase.id] = (
+              receipt: completedPurchase.jwsRepresentation, error: error
+            )
+          }
+        }
+        if !unverifiedPurchases.isEmpty {
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_restore_failed",
+                message:
+                  "This purchase could not be restored.",
+                details: unverifiedPurchases)))
+        }
+        completion(.success(Void()))
       }
     }
   }
@@ -136,9 +166,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
-  func sendTransactionUpdate(transaction: Transaction) {
-    let transactionMessage = transaction.convertToPigeon()
-    transactionCallbackAPI?.onTransactionsUpdated(newTransaction: transactionMessage) { result in
+  private func sendTransactionUpdate(transaction: Transaction, receipt: String? = nil) {
+    let transactionMessage = transaction.convertToPigeon(receipt: receipt)
+    self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
+      result in
       switch result {
       case .success: break
       case .failure(let error):

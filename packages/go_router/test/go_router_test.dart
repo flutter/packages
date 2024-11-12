@@ -4357,6 +4357,179 @@ void main() {
       expect(find.text('Screen B'), findsOneWidget);
     });
 
+    testWidgets('Preloads routes correctly in a StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'A');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyB =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'B');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyC =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'C');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyD =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'D');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyE =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'E');
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: mockStackedShellBuilder,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(routes: <RouteBase>[
+              GoRoute(
+                path: '/a',
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyStatefulWidget(key: statefulWidgetKeyA),
+              ),
+            ]),
+            StatefulShellBranch(routes: <RouteBase>[
+              GoRoute(
+                path: '/b',
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyStatefulWidget(key: statefulWidgetKeyB),
+              ),
+            ]),
+          ],
+        ),
+        StatefulShellRoute.indexedStack(
+          builder: mockStackedShellBuilder,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyC),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/d',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyD),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              initialLocation: '/e/details',
+              routes: <RouteBase>[
+                GoRoute(
+                    path: '/e',
+                    builder: (BuildContext context, GoRouterState state) =>
+                        const Text('E'),
+                    routes: <RouteBase>[
+                      GoRoute(
+                        path: 'details',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            DummyStatefulWidget(key: statefulWidgetKeyE),
+                      ),
+                    ]),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        initialLocation: '/a',
+        navigatorKey: rootNavigatorKey,
+      );
+      expect(statefulWidgetKeyA.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyB.currentState?.counter, null);
+      expect(statefulWidgetKeyC.currentState?.counter, null);
+      expect(statefulWidgetKeyD.currentState?.counter, null);
+
+      router.go('/c');
+      await tester.pumpAndSettle();
+      expect(statefulWidgetKeyC.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyD.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyE.currentState?.counter, equals(0));
+    });
+
+    testWidgets('Preloads nested routes correctly in a StatefulShellRoute',
+        (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>();
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyA =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'A');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyB =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'B');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyC =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'C');
+      final GlobalKey<DummyStatefulWidgetState> statefulWidgetKeyD =
+          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'D');
+
+      final List<RouteBase> routes = <RouteBase>[
+        StatefulShellRoute.indexedStack(
+          builder: mockStackedShellBuilder,
+          branches: <StatefulShellBranch>[
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                StatefulShellRoute.indexedStack(
+                  builder: mockStackedShellBuilder,
+                  branches: <StatefulShellBranch>[
+                    StatefulShellBranch(preload: true, routes: <RouteBase>[
+                      GoRoute(
+                        path: '/a',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            DummyStatefulWidget(key: statefulWidgetKeyA),
+                      ),
+                    ]),
+                    StatefulShellBranch(preload: true, routes: <RouteBase>[
+                      GoRoute(
+                        path: '/b',
+                        builder: (BuildContext context, GoRouterState state) =>
+                            DummyStatefulWidget(key: statefulWidgetKeyB),
+                      ),
+                    ]),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              preload: true,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/c',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyC),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: <RouteBase>[
+                GoRoute(
+                  path: '/d',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      DummyStatefulWidget(key: statefulWidgetKeyD),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ];
+
+      await createRouter(
+        routes,
+        tester,
+        initialLocation: '/c',
+        navigatorKey: rootNavigatorKey,
+      );
+      expect(statefulWidgetKeyA.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyB.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyC.currentState?.counter, equals(0));
+      expect(statefulWidgetKeyD.currentState?.counter, null);
+    });
+
     testWidgets(
         'Redirects are correctly handled when switching branch in a '
         'StatefulShellRoute', (WidgetTester tester) async {
@@ -4563,6 +4736,74 @@ void main() {
       expect(find.text('Screen B2'), findsNothing);
       expect(find.text('Top Modal'), findsNothing);
       expect(find.text('Nested Modal'), findsOneWidget);
+    });
+
+    testWidgets(
+        'Obsolete branches in StatefulShellRoute are cleaned up after route '
+        'configuration change',
+        // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
+        skip: true, (WidgetTester tester) async {
+      final GlobalKey<NavigatorState> rootNavigatorKey =
+          GlobalKey<NavigatorState>(debugLabel: 'root');
+      final GlobalKey<StatefulNavigationShellState> statefulShellKey =
+          GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
+      StatefulNavigationShell? routeState;
+      StatefulShellBranch makeBranch(String name) => StatefulShellBranch(
+              navigatorKey:
+                  GlobalKey<NavigatorState>(debugLabel: 'branch-$name'),
+              preload: true,
+              initialLocation: '/$name',
+              routes: <GoRoute>[
+                GoRoute(
+                  path: '/$name',
+                  builder: (BuildContext context, GoRouterState state) =>
+                      Text('Screen $name'),
+                ),
+              ]);
+
+      List<RouteBase> createRoutes(bool includeCRoute) => <RouteBase>[
+            StatefulShellRoute.indexedStack(
+              key: statefulShellKey,
+              builder: (BuildContext context, GoRouterState state,
+                  StatefulNavigationShell navigationShell) {
+                routeState = navigationShell;
+                return navigationShell;
+              },
+              branches: <StatefulShellBranch>[
+                makeBranch('a'),
+                makeBranch('b'),
+                if (includeCRoute) makeBranch('c'),
+              ],
+            ),
+          ];
+
+      final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+        RoutingConfig(routes: createRoutes(true)),
+      );
+      addTearDown(config.dispose);
+      await createRouterWithRoutingConfig(
+        navigatorKey: rootNavigatorKey,
+        config,
+        tester,
+        initialLocation: '/a',
+        errorBuilder: (_, __) => const Text('error'),
+      );
+      await tester.pumpAndSettle();
+
+      bool hasLoadedBranch(String name) => routeState!.debugLoadedBranches
+          .any((StatefulShellBranch e) => e.initialLocation == '/$name');
+
+      expect(hasLoadedBranch('a'), isTrue);
+      expect(hasLoadedBranch('b'), isTrue);
+      expect(hasLoadedBranch('c'), isTrue);
+
+      // Unload branch 'c' by changing the route configuration
+      config.value = RoutingConfig(routes: createRoutes(false));
+      await tester.pumpAndSettle();
+
+      expect(hasLoadedBranch('a'), isTrue);
+      expect(hasLoadedBranch('b'), isTrue);
+      expect(hasLoadedBranch('c'), isFalse);
     });
   });
 
@@ -5458,6 +5699,7 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(
       MaterialApp.router(
         key: UniqueKey(),
@@ -5472,6 +5714,78 @@ void main() {
         routerConfig: router,
       ),
     );
+  });
+
+  testWidgets(
+      'should return the current GoRouterState when router.currentState is called',
+      (WidgetTester tester) async {
+    final List<RouteBase> routes = <RouteBase>[
+      GoRoute(
+          name: 'home',
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen()),
+      GoRoute(
+          name: 'books',
+          path: '/books',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('books')),
+      GoRoute(
+          name: 'boats',
+          path: '/boats',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('boats')),
+      ShellRoute(
+        builder: (BuildContext context, GoRouterState state, Widget child) =>
+            child,
+        routes: <RouteBase>[
+          GoRoute(
+            name: 'tulips',
+            path: '/tulips',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Text('tulips'),
+          ),
+        ],
+      )
+    ];
+
+    final GoRouter router = await createRouter(routes, tester);
+    await tester.pumpAndSettle();
+
+    GoRouterState? state = router.state;
+    expect(state?.name, 'home');
+    expect(state?.fullPath, '/');
+
+    router.go('/books');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'books');
+    expect(state?.fullPath, '/books');
+
+    router.push('/boats');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'boats');
+    expect(state?.fullPath, '/boats');
+
+    router.pop();
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'books');
+    expect(state?.fullPath, '/books');
+
+    router.go('/tulips');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'tulips');
+    expect(state?.fullPath, '/tulips');
+
+    router.go('/books');
+    router.push('/tulips');
+    await tester.pumpAndSettle();
+    state = router.state;
+    expect(state?.name, 'tulips');
+    expect(state?.fullPath, '/tulips');
   });
 
   testWidgets('should allow route paths without leading /',
