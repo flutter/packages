@@ -31,9 +31,7 @@ You are all set to start displaying [Auto ads](https://support.google.com/adsens
 ```dart
 adSense.adUnit(AdUnitConfiguration.displayAdUnit(
     adSlot: 'your_ad_slot_id',
-    isAdTest: true,
     adFormat: AdFormatType.AUTO,
-    isFullWidthResponsive: true,
     cssText:
         'border: 5px solid red; display: block; padding: 20px')),
 ```
