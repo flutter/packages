@@ -31,7 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^22.5.0
+  pigeon: ^22.6.0
 
 topics:
   - ads
