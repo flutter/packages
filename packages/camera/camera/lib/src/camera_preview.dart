@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,24 +24,25 @@ class CameraPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return controller.value.isInitialized
-        ? ValueListenableBuilder<CameraValue>(
-            valueListenable: controller,
-            builder: (BuildContext context, Object? value, Widget? child) {
-              return AspectRatio(
-                aspectRatio: _isLandscape()
-                    ? controller.value.aspectRatio
-                    : (1 / controller.value.aspectRatio),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    _wrapInRotatedBox(child: controller.buildPreview()),
-                    child ?? Container(),
-                  ],
-                ),
-              );
-            },
-            child: child,
-          )
+        ? Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.rotationY(math.pi),
+            child: ValueListenableBuilder<CameraValue>(
+              valueListenable: controller,
+              builder: (BuildContext context, Object? value, Widget? child) {
+                return AspectRatio(
+                  aspectRatio: _isLandscape() ? controller.value.aspectRatio : (1 / controller.value.aspectRatio),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      _wrapInRotatedBox(child: controller.buildPreview()),
+                      child ?? Container(),
+                    ],
+                  ),
+                );
+              },
+              child: child,
+            ))
         : Container();
   }
 
@@ -55,10 +58,7 @@ class CameraPreview extends StatelessWidget {
   }
 
   bool _isLandscape() {
-    return <DeviceOrientation>[
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight
-    ].contains(_getApplicableOrientation());
+    return <DeviceOrientation>[DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight].contains(_getApplicableOrientation());
   }
 
   int _getQuarterTurns() {
@@ -72,10 +72,6 @@ class CameraPreview extends StatelessWidget {
   }
 
   DeviceOrientation _getApplicableOrientation() {
-    return controller.value.isRecordingVideo
-        ? controller.value.recordingOrientation!
-        : (controller.value.previewPauseOrientation ??
-            controller.value.lockedCaptureOrientation ??
-            controller.value.deviceOrientation);
+    return controller.value.isRecordingVideo ? controller.value.recordingOrientation! : (controller.value.previewPauseOrientation ?? controller.value.lockedCaptureOrientation ?? controller.value.deviceOrientation);
   }
 }
