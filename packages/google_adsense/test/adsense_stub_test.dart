@@ -7,10 +7,9 @@ library;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_adsense/src/adsense_stub.dart';
+import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-
   test('initialize throws error', () {
     expect(() => adSense.initialize('test-client'),
         throwsA(isA<UnsupportedError>()));
@@ -18,15 +17,16 @@ void main() {
 
   test('adUnit throws error', () {
     expect(
-        () => adSense.adUnit(
+        () => adSense.adUnit(AdUnitConfiguration.displayAdUnit(
               adSlot: 'test-slot',
-              adUnitParams: <String, String>{'key': 'value'},
-            ),
+            )),
         throwsA(isA<UnsupportedError>()));
   });
 
   test('adUnit throws error with minimal parameters', () {
-    expect(() => adSense.adUnit(adSlot: 'test-slot'),
+    expect(
+        () => adSense
+            .adUnit(AdUnitConfiguration.displayAdUnit(adSlot: 'test-slot')),
         throwsA(isA<UnsupportedError>()));
   });
 

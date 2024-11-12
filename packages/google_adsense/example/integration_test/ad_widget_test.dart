@@ -53,7 +53,8 @@ void main() async {
       // TODO(sokoloff06): Mock server response as ./test_ad.html
 
       adsense.initialize(testClient);
-      final Widget adUnitWidget = adsense.adUnit(adSlot: testSlot);
+      final Widget adUnitWidget =
+          adSense.adUnit(AdUnitConfiguration.displayAdUnit(adSlot: testSlot));
       await tester.pumpWidget(adUnitWidget);
       await tester.pumpWidget(
           adUnitWidget); // TODO(sokoloff06): Why only works when pumping twice?

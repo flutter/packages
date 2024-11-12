@@ -10,7 +10,7 @@ import 'dart:js_interop';
 /// Binding to the `adsbygoogle` JS global.
 ///
 /// See: https://support.google.com/adsense/answer/9274516?hl=en&ref_topic=28893&sjid=11495822575537499409-EU
-@JS('adsbygoogle')
+@JS()
 external AdsByGoogle get adsbygoogle;
 
 /// The Dart definition of the `adsbygoogle` global.

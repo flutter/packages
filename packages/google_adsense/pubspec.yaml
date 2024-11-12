@@ -25,4 +25,4 @@ screenshots:
   - description: 'Ad displayed in the example app on the desktop browser'
     path: example/images/desktop_screenshot.jpg
   - description: 'Ad displayed in the example app on the mobile browser'
-    path: example/images/mobile_screenshot.jpg
+    path: example/images/mobile_screenshot.png

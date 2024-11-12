@@ -29,15 +29,13 @@ You are all set to start displaying [Auto ads](https://support.google.com/adsens
 #### Display AdUnitWidget
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
-adSense.adUnit(
+adSense.adUnit(AdUnitConfiguration.displayAdUnit(
     adSlot: 'your_ad_slot_id',
     isAdTest: true,
-    adUnitParams: <String, String>{
-      AdUnitParams.AD_FORMAT: 'auto',
-      AdUnitParams.FULL_WIDTH_RESPONSIVE: 'true',
-    },
+    adFormat: AdFormatType.AUTO,
+    isFullWidthResponsive: true,
     cssText:
-        'border: 5px solid red; display: block; padding: 20px'),
+        'border: 5px solid red; display: block; padding: 20px')),
 ```
 ## Testing and common errors
 

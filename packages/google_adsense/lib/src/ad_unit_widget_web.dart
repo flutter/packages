@@ -14,20 +14,15 @@ import 'js_interop/adsbygoogle.dart';
 
 /// Widget displaying an ad unit
 class AdUnitWidgetWeb extends AdUnitWidget {
-  // TODO(sokoloff06): consider builder?
   /// Constructs [AdUnitWidgetWeb]
-  AdUnitWidgetWeb({
-    required String adClient,
+  AdUnitWidgetWeb._internal({
     required String adSlot,
     required bool isAdTest,
-    required Map<String, String> additionalParams,
+    required Map<String, String> unitParams,
     String? cssText,
-    super.key,
-  })  : _adClient = adClient,
-        _adSlot = adSlot,
+  })  : _adSlot = adSlot,
         _isAdTest = isAdTest,
-        _additionalParams = additionalParams {
-
+        _unitParams = unitParams {
     _insElement
       ..className = 'adsbygoogle'
       ..style.display = 'block';
@@ -36,26 +31,28 @@ class AdUnitWidgetWeb extends AdUnitWidget {
     }
     final Map<String, String> dataAttrs = <String, String>{
       AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
-      AdUnitParams.AD_SLOT: _adSlot,
     };
     if (_isAdTest) {
-      dataAttrs.addAll(<String, String>{_AD_TEST_KEY: 'on'});
+      dataAttrs.addAll(<String, String>{AdUnitParams.AD_TEST: 'on'});
+    }
+    if (_unitParams.isNotEmpty) {
+      dataAttrs.addAll(_unitParams);
     }
     for (final String key in dataAttrs.keys) {
       _insElement.dataset.setProperty(key.toJS, dataAttrs[key]!.toJS);
     }
-    if (_additionalParams.isNotEmpty) {
-      for (final String key in _additionalParams.keys) {
-        _insElement.dataset.setProperty(key.toJS, _additionalParams[key]!.toJS);
-      }
-    }
   }
-
-  static const String _AD_TEST_KEY = 'adtest';
+  /// Creates [AdUnitWidget] from [AdUnitConfiguration] object
+  AdUnitWidgetWeb.fromConfig(AdUnitConfiguration unitConfig)
+      : this._internal(
+            adSlot: unitConfig.adSlot,
+            isAdTest: unitConfig.isAdTest,
+            unitParams: unitConfig.params,
+            cssText: unitConfig.cssText);
 
   @override
   String get adClient => _adClient;
-  final String _adClient;
+  final String _adClient = adSense.adClient;
 
   @override
   String get adSlot => _adSlot;
@@ -66,8 +63,8 @@ class AdUnitWidgetWeb extends AdUnitWidget {
   final bool _isAdTest;
 
   @override
-  Map<String, String> get additionalParams => _additionalParams;
-  final Map<String, String> _additionalParams;
+  Map<String, String> get additionalParams => _unitParams;
+  final Map<String, String> _unitParams;
 
   final web.HTMLElement _insElement =
       web.document.createElement('ins') as web.HTMLElement;
@@ -114,8 +111,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
       final web.Element target = entries.toDart[0].target;
       if (target.isConnected) {
         // First time resized since attached to DOM -> attachment callback from Flutter docs by David
-          onElementAttached(target as web.HTMLElement);
-          observer.disconnect();
+        onElementAttached(target as web.HTMLElement);
+        observer.disconnect();
       }
     }.toJS)
         .observe(adUnitDiv);

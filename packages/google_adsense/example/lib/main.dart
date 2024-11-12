@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+
 // #docregion init
 import 'package:google_adsense/google_adsense.dart';
 
@@ -63,15 +64,13 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             // #docregion adUnit
-            adSense.adUnit(
+            adSense.adUnit(AdUnitConfiguration.displayAdUnit(
                 adSlot: 'your_ad_slot_id',
                 isAdTest: true,
-                adUnitParams: <String, String>{
-                  AdUnitParams.AD_FORMAT: 'auto',
-                  AdUnitParams.FULL_WIDTH_RESPONSIVE: 'true',
-                },
+                adFormat: AdFormatType.AUTO,
+                isFullWidthResponsive: true,
                 cssText:
-                    'border: 5px solid red; display: block; padding: 20px'),
+                    'border: 5px solid red; display: block; padding: 20px')),
             // #enddocregion adUnit
             Text(
               '$_counter',
