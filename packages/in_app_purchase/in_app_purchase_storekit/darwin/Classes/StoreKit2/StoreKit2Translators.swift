@@ -188,14 +188,15 @@ extension Product.PurchaseResult {
 extension Transaction {
   func convertToPigeon(receipt: String?) -> SK2TransactionMessage {
 
-    let dateFromatter: DateFormatter = DateFormatter()
-    dateFromatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
     return SK2TransactionMessage(
       id: Int64(id),
       originalId: Int64(originalID),
       productId: productID,
-      purchaseDate: dateFromatter.string(from: purchaseDate),
+      purchaseDate: dateFormatter.string(from: purchaseDate),
+      expirationDate: expirationDate.map { dateFormatter.string(from: $0) },
       purchasedQuantity: Int64(purchasedQuantity),
       appAccountToken: appAccountToken?.uuidString,
       restoring: receipt != nil,
