@@ -48,6 +48,7 @@ Future<void> loadWebSdk({
         ..defer = true;
   if (trustedUrl != null) {
     script.trustedSrc = trustedUrl;
+    if (_getNonce() case var nonce?) script.nonce = nonce;
   } else {
     script.src = _url;
   }
@@ -56,6 +57,25 @@ Future<void> loadWebSdk({
 
   return completer.future;
 }
+
+/// Returns CSP nonce, if set for any script tag.
+String? _getNonce({web.Window? window}) {
+  final currentWindow = window ?? web.window;
+  final elements = currentWindow.document.querySelectorAll('script');
+  for (var i = 0; i < elements.length; i++) {
+    if (elements.item(i) case web.HTMLScriptElement element) {
+      final nonceValue = element.nullableNonce ?? element.getAttribute('nonce');
+      if (nonceValue != null && _noncePattern.hasMatch(nonceValue)) {
+        return nonceValue;
+      }
+    }
+  }
+  return null;
+}
+
+// According to the CSP3 spec a nonce must be a valid base64 string.
+// https://w3c.github.io/webappsec-csp/#grammardef-base64-value
+final _noncePattern = RegExp('^[\\w+/_-]+[=]{0,2}\$');
 
 /// Exception thrown if the Trusted Types feature is supported, enabled, and it
 /// has prevented this loader from injecting the JS SDK.
