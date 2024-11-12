@@ -1,6 +1,6 @@
 ## 0.2.3
 
-* Adds support to defines parameters that control the rendering of ads. See `AdsRenderingSettings`.
+* Adds support to define parameters that control the rendering of ads. See `AdsManager.init`.
 
 ## 0.2.2+15
 
