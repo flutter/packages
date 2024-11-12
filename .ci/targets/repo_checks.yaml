@@ -2,6 +2,13 @@ tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
+  # format requires that 'pub get' has been run to determine the language
+  # version, so the tool will auto-run it if necessary. Run it manually first
+  # so that the network requests are in a separate infra step.
+  - name: download Dart deps
+    script: .ci/scripts/tool_runner.sh
+    args: ["fetch-deps"]
+    infra_step: true
   - name: tool unit tests
     script: .ci/scripts/plugin_tools_tests.sh
   - name: tool format

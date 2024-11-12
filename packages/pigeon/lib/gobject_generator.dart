@@ -14,6 +14,9 @@ const DocumentCommentSpecification _docCommentSpec =
 /// Name for codec class.
 const String _codecBaseName = 'MessageCodec';
 
+/// Name of the standard codec from the Flutter SDK.
+const String _standardCodecName = 'FlStandardMessageCodec';
+
 /// Options that control how GObject code will be generated.
 class GObjectOptions {
   /// Creates a [GObjectOptions] object
@@ -282,7 +285,12 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     Root root,
     Indent indent, {
     required String dartPackageName,
-  }) {}
+  }) {
+    final String module = _getModule(generatorOptions, dartPackageName);
+    indent.newln();
+    _writeDeclareFinalType(indent, module, _codecBaseName,
+        parentClassName: _standardCodecName);
+  }
 
   @override
   void writeFlutterApi(
@@ -507,6 +515,9 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     final String module = _getModule(generatorOptions, dartPackageName);
     final String methodPrefix = _getMethodPrefix(module, api.name);
     final String vtableName = _getVTableName(module, api.name);
+
+    indent.newln();
+    _writeDeclareFinalType(indent, module, api.name);
 
     final bool hasAsyncMethod =
         api.methods.any((Method method) => method.isAsynchronous);
@@ -951,12 +962,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     final Iterable<EnumeratedType> customTypes = getEnumeratedTypes(root);
 
     indent.newln();
-    _writeDeclareFinalType(indent, module, _codecBaseName,
-        parentClassName: 'FlStandardMessageCodec');
-
-    indent.newln();
     _writeObjectStruct(indent, module, _codecBaseName, () {},
-        parentClassName: 'FlStandardMessageCodec');
+        parentClassName: _standardCodecName);
 
     indent.newln();
     _writeDefineType(indent, module, _codecBaseName,
@@ -971,7 +978,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           ? '$customTypeName*'
           : 'FlValue*';
       indent.writeScoped(
-          'static gboolean ${codecMethodPrefix}_write_$snakeCustomTypeName(FlStandardMessageCodec* codec, GByteArray* buffer, $valueType value, GError** error) {',
+          'static gboolean ${codecMethodPrefix}_write_$snakeCustomTypeName($_standardCodecName* codec, GByteArray* buffer, $valueType value, GError** error) {',
           '}', () {
         indent.writeln('uint8_t type = ${customType.enumeration};');
         indent.writeln('g_byte_array_append(buffer, &type, sizeof(uint8_t));');
@@ -989,7 +996,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeScoped(
-        'static gboolean ${codecMethodPrefix}_write_value(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {',
+        'static gboolean ${codecMethodPrefix}_write_value($_standardCodecName* codec, GByteArray* buffer, FlValue* value, GError** error) {',
         '}', () {
       indent.writeScoped(
           'if (fl_value_get_type(value) == FL_VALUE_TYPE_CUSTOM) {', '}', () {
@@ -1027,7 +1034,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           _snakeCaseFromCamelCase(customTypeName);
       indent.newln();
       indent.writeScoped(
-          'static FlValue* ${codecMethodPrefix}_read_$snakeCustomTypeName(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {',
+          'static FlValue* ${codecMethodPrefix}_read_$snakeCustomTypeName($_standardCodecName* codec, GBytes* buffer, size_t* offset, GError** error) {',
           '}', () {
         if (customType.type == CustomTypes.customClass) {
           indent.writeln(
@@ -1055,7 +1062,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
     indent.newln();
     indent.writeScoped(
-        'static FlValue* ${codecMethodPrefix}_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {',
+        'static FlValue* ${codecMethodPrefix}_read_value_of_type($_standardCodecName* codec, GBytes* buffer, size_t* offset, int type, GError** error) {',
         '}', () {
       indent.writeScoped('switch (type) {', '}', () {
         for (final EnumeratedType customType in customTypes) {
@@ -1472,9 +1479,6 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         indent.writeln('return self;');
       });
     }
-
-    indent.newln();
-    _writeDeclareFinalType(indent, module, api.name);
 
     indent.newln();
     _writeObjectStruct(indent, module, api.name, () {

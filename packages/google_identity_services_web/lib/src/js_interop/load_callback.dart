@@ -23,8 +23,7 @@ external set _onGoogleLibraryLoad(JSFunction callback);
 
 /// Method called after the Sign In With Google JavaScript library is loaded.
 ///
-/// The [callback] parameter must be manually wrapped in [allowInterop]
-/// before being set to the [onGoogleLibraryLoad] property.
+/// The [function] parameter must be a Dart function and not a JS function.
 set onGoogleLibraryLoad(VoidFn function) {
   _onGoogleLibraryLoad = function.toJS;
 }
