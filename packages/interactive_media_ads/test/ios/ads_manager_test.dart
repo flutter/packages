@@ -14,7 +14,10 @@ import 'package:mockito/mockito.dart';
 
 import 'ads_manager_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<ima.IMAAdsManager>()])
+@GenerateNiceMocks(<MockSpec<Object>>[
+  MockSpec<ima.IMAAdsManager>(),
+  MockSpec<ima.IMAAdsRenderingSettings>(),
+])
 void main() {
   group('IOSAdsManager', () {
     test('destroy', () {
@@ -25,12 +28,41 @@ void main() {
       verify(mockAdsManager.destroy());
     });
 
-    test('init', () {
+    test('init', () async {
       final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
-      adsManager.init(PlatformAdsRenderingSettings());
 
-      verify(mockAdsManager.initialize(null));
+      final MockIMAAdsRenderingSettings mockAdsRenderingSettings =
+          MockIMAAdsRenderingSettings();
+
+      final IOSAdsManager adsManager = IOSAdsManager(
+        mockAdsManager,
+        proxy: InteractiveMediaAdsProxy(
+          newIMAAdsRenderingSettings: () => mockAdsRenderingSettings,
+        ),
+      );
+
+      final PlatformAdsRenderingSettings settings =
+          PlatformAdsRenderingSettings(
+        bitrate: 1000,
+        enablePreloading: false,
+        loadVideoTimeout: 8000,
+        mimeTypes: <String>['value'],
+        playAdsAfterTime: 2.0,
+        uiElements: <UIElement>{UIElement.countdown},
+      );
+      await adsManager.init(settings);
+
+      verifyInOrder(<Future<void>>[
+        mockAdsRenderingSettings.setBitrate(1000),
+        mockAdsRenderingSettings.setEnablePreloading(false),
+        mockAdsRenderingSettings.setLoadVideoTimeout(8),
+        mockAdsRenderingSettings.setMimeTypes(<String>['value']),
+        mockAdsRenderingSettings.setPlayAdsAfterTime(2.0),
+        mockAdsRenderingSettings.setUIElements(
+          <ima.UIElementType>[ima.UIElementType.countdown],
+        ),
+        mockAdsManager.initialize(mockAdsRenderingSettings),
+      ]);
     });
 
     test('start', () {
