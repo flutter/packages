@@ -31,7 +31,35 @@ class IOSAdsManager extends PlatformAdsManager {
 
   @override
   Future<void> init([PlatformAdsRenderingSettings? settings]) {
-    return _manager.initialize(null);
+    if (settings == null) {
+      return _manager.initialize(null);
+    }
+
+    final IMAAdsRenderingSettings iosSettings = IMAAdsRenderingSettings();
+    return Future.wait(<Future<void>>[
+      if (settings.bitrate != null) iosSettings.setBitrate(settings.bitrate!),
+      if (settings.enablePreloading != null)
+        iosSettings.setEnablePreloading(settings.enablePreloading!),
+      if (settings.loadVideoTimeout != null)
+        // Converts milliseconds to seconds.
+        iosSettings.setLoadVideoTimeout(settings.loadVideoTimeout! / 1000),
+      if (settings.mimeTypes != null)
+        iosSettings.setMimeTypes(settings.mimeTypes!),
+      if (settings.playAdsAfterTime != null)
+        iosSettings.setPlayAdsAfterTime(settings.playAdsAfterTime!),
+      if (settings.uiElements != null)
+        iosSettings.setUIElements(
+          settings.uiElements!.map(
+            (UIElement element) {
+              return switch (element) {
+                UIElement.adAttribution => UIElementType.adAttribution,
+                UIElement.countdown => UIElementType.countdown,
+              };
+            },
+          ).toList(),
+        ),
+      _manager.initialize(iosSettings)
+    ]);
   }
 
   @override

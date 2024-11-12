@@ -61,9 +61,8 @@ class AndroidAdsManager extends PlatformAdsManager {
             },
           ).toList(),
         ),
+      _manager.init(androidSettings)
     ]);
-
-    return _manager.init(androidSettings);
   }
 
   @override
