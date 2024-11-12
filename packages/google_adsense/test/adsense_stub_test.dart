@@ -33,14 +33,7 @@ void main() {
   });
 
   test('adUnit returns Widget type', () {
-    expect(
-        adSense.adUnit,
-        isA<
-            Widget Function(
-                {required String adSlot,
-                String adClient,
-                bool isAdTest,
-                Map<String, String> adUnitParams})>());
+    expect(adSense.adUnit, isA<Widget Function(AdUnitConfiguration)>());
   });
   test('Tell the user where to find the real tests', () {
     print('---');
