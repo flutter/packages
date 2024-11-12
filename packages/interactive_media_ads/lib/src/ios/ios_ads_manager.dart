@@ -30,7 +30,7 @@ class IOSAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> init(PlatformAdsRenderingSettings settings) {
+  Future<void> init([PlatformAdsRenderingSettings? settings]) {
     return _manager.initialize(null);
   }
 

@@ -7,9 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'platform_ads_manager_delegate.dart';
 import 'platform_ads_rendering_settings.dart';
 
-/// Additional parameter passed to an [PlatformAdsManager] on initialization.
-base class AdsManagerInitParams {}
-
 /// Additional parameter passed to an [PlatformAdsManager] when starting to play
 /// ads.
 base class AdsManagerStartParams {}
@@ -21,7 +18,7 @@ abstract class PlatformAdsManager {
   PlatformAdsManager();
 
   /// Initializes the ad experience using default rendering settings.
-  Future<void> init(PlatformAdsRenderingSettings settings);
+  Future<void> init([PlatformAdsRenderingSettings? settings]);
 
   /// Starts playing the ads.
   Future<void> start(AdsManagerStartParams params);
