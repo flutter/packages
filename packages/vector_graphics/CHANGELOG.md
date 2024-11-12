@@ -1,8 +1,5 @@
 ## 1.1.15
-* Adds error handling when parsing an invalid svg string.
-* Adds error handling when downloading svg string from network.
-* Adds error handling when reading svg file from asset.
-* Expose ErrorWidgetBuilder.
+* Enhance error handling and use errorBuilder when an error causes.
 
 ## 1.1.14
 
