@@ -1,3 +1,7 @@
+## 0.3.20
+
+* Fixes manual invocation of `finishTransaction` causing a fatal crash.
+
 ## 0.3.19
 
 * Adds StoreKit2 Transaction expiration date.
