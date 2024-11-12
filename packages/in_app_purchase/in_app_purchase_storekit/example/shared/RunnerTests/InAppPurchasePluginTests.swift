@@ -160,19 +160,19 @@ final class InAppPurchasePluginTests: XCTestCase {
     let paymentTransactionStub = SKPaymentTransactionStub(map: transactionMap)
 
     let handler = PaymentQueueHandlerStub()
-    plugin.paymentQueueHandler = handler;
+    plugin.paymentQueueHandler = handler
 
-    var finishTransactionInvokeCount = 0;
+    var finishTransactionInvokeCount = 0
 
     handler.finishTransactionStub = { _ in
-      finishTransactionInvokeCount += 1;
+      finishTransactionInvokeCount += 1
     }
 
     var error: FlutterError?
     plugin.finishTransactionFinishMap(args, error: &error)
 
     XCTAssertNil(error)
-    XCTAssertEqual(finishTransactionInvokeCount, 0);
+    XCTAssertEqual(finishTransactionInvokeCount, 0)
   }
 
   func testGetProductResponseWithRequestError() {

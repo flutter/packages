@@ -256,10 +256,11 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       // If the user cancels the purchase dialog we won't have a transactionIdentifier.
       // So if it is null AND a transaction in the pendingTransactions list has
       // also a null transactionIdentifier we check for equal product identifiers.
-      if ((transaction.transactionIdentifier == transactionIdentifier
+      if (transaction.transactionIdentifier == transactionIdentifier
         || (transactionIdentifier == nil
           && transaction.transactionIdentifier == nil
-          && transaction.payment.productIdentifier == productIdentifier)) && transaction.transactionState != SKPaymentTransactionState.purchasing)
+          && transaction.payment.productIdentifier == productIdentifier))
+        && transaction.transactionState != SKPaymentTransactionState.purchasing
       {
         getPaymentQueueHandler().finish(transaction)
       }
