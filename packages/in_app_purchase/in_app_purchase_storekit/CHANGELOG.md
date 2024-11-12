@@ -1,3 +1,7 @@
+## 0.3.18+5
+
+* Adds StoreKit2 Transaction expiration date.
+
 ## 0.3.18+4
 
 * Adds StoreKit 2 support for restoring purchases.
