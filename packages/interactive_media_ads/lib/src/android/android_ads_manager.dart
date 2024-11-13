@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
+import 'android_ads_rendering_settings.dart';
 import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
@@ -37,32 +38,9 @@ class AndroidAdsManager extends PlatformAdsManager {
       return _manager.init(null);
     }
 
-    final ima.AdsRenderingSettings androidSettings =
-        await _proxy.instanceImaSdkFactory().createAdsRenderingSettings();
-    await Future.wait(<Future<void>>[
-      if (settings.bitrate != null)
-        androidSettings.setBitrateKbps(settings.bitrate!),
-      if (settings.enablePreloading != null)
-        androidSettings.setEnablePreloading(settings.enablePreloading!),
-      if (settings.loadVideoTimeout != null)
-        androidSettings.setLoadVideoTimeout(settings.loadVideoTimeout!),
-      if (settings.mimeTypes != null)
-        androidSettings.setMimeTypes(settings.mimeTypes!),
-      if (settings.playAdsAfterTime != null)
-        androidSettings.setPlayAdsAfterTime(settings.playAdsAfterTime!),
-      if (settings.uiElements != null)
-        androidSettings.setUiElements(
-          settings.uiElements!.map(
-            (UIElement element) {
-              return switch (element) {
-                UIElement.adAttribution => ima.UiElement.adAttribution,
-                UIElement.countdown => ima.UiElement.countdown,
-              };
-            },
-          ).toList(),
-        ),
-      _manager.init(androidSettings)
-    ]);
+    await _manager.init(
+      await (settings as AndroidAdsRenderingSettings).nativeSettings,
+    );
   }
 
   @override

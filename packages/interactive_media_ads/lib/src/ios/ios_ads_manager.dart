@@ -8,21 +8,16 @@ import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
 import 'interactive_media_ads.g.dart';
-import 'interactive_media_ads_proxy.dart';
 import 'ios_ads_manager_delegate.dart';
+import 'ios_ads_rendering_settings.dart';
 
 /// Implementation of [PlatformAdsManager] for iOS.
 class IOSAdsManager extends PlatformAdsManager {
   /// Constructs an [IOSAdsManager].
   @internal
-  IOSAdsManager(
-    IMAAdsManager manager, {
-    InteractiveMediaAdsProxy? proxy,
-  })  : _manager = manager,
-        _proxy = proxy ?? const InteractiveMediaAdsProxy();
+  IOSAdsManager(IMAAdsManager manager) : _manager = manager;
 
   final IMAAdsManager _manager;
-  final InteractiveMediaAdsProxy _proxy;
 
   // This must maintain a reference to the delegate because the native
   // `IMAAdsManagerDelegate.delegate` property is only a weak reference.
@@ -41,32 +36,9 @@ class IOSAdsManager extends PlatformAdsManager {
       return _manager.initialize(null);
     }
 
-    final IMAAdsRenderingSettings iosSettings =
-        _proxy.newIMAAdsRenderingSettings();
-    return Future.wait(<Future<void>>[
-      if (settings.bitrate != null) iosSettings.setBitrate(settings.bitrate!),
-      if (settings.enablePreloading != null)
-        iosSettings.setEnablePreloading(settings.enablePreloading!),
-      if (settings.loadVideoTimeout != null)
-        // Converts milliseconds to seconds.
-        iosSettings.setLoadVideoTimeout(settings.loadVideoTimeout! / 1000),
-      if (settings.mimeTypes != null)
-        iosSettings.setMimeTypes(settings.mimeTypes),
-      if (settings.playAdsAfterTime != null)
-        iosSettings.setPlayAdsAfterTime(settings.playAdsAfterTime!),
-      if (settings.uiElements != null)
-        iosSettings.setUIElements(
-          settings.uiElements!.map(
-            (UIElement element) {
-              return switch (element) {
-                UIElement.adAttribution => UIElementType.adAttribution,
-                UIElement.countdown => UIElementType.countdown,
-              };
-            },
-          ).toList(),
-        ),
-      _manager.initialize(iosSettings)
-    ]);
+    return _manager.initialize(
+      (settings as IOSAdsRenderingSettings).nativeSettings,
+    );
   }
 
   @override
