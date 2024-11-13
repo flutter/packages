@@ -7,7 +7,10 @@ import 'dart:async' as _i3;
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart'
     as _i2;
+import 'package:image_picker_macos/src/messages.g.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
+
+import 'test_api.g.dart' as _i4;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -137,6 +140,67 @@ class MockFileSelectorPlatform extends _i1.Mock
             #initialDirectory: initialDirectory,
             #confirmButtonText: confirmButtonText,
           },
+        ),
+        returnValue: _i3.Future<List<String>>.value(<String>[]),
+      ) as _i3.Future<List<String>>);
+}
+
+/// A class which mocks [TestHostImagePickerApi].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockTestHostImagePickerApi extends _i1.Mock
+    implements _i4.TestHostImagePickerApi {
+  MockTestHostImagePickerApi() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  bool supportsPHPicker() => (super.noSuchMethod(
+        Invocation.method(
+          #supportsPHPicker,
+          [],
+        ),
+        returnValue: false,
+      ) as bool);
+
+  @override
+  _i3.Future<List<String>> pickImages(
+    _i5.ImageSelectionOptions? options,
+    _i5.GeneralOptions? generalOptions,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #pickImages,
+          [
+            options,
+            generalOptions,
+          ],
+        ),
+        returnValue: _i3.Future<List<String>>.value(<String>[]),
+      ) as _i3.Future<List<String>>);
+
+  @override
+  _i3.Future<List<String>> pickVideos(_i5.GeneralOptions? generalOptions) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #pickVideos,
+          [generalOptions],
+        ),
+        returnValue: _i3.Future<List<String>>.value(<String>[]),
+      ) as _i3.Future<List<String>>);
+
+  @override
+  _i3.Future<List<String>> pickMedia(
+    _i5.MediaSelectionOptions? options,
+    _i5.GeneralOptions? generalOptions,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #pickMedia,
+          [
+            options,
+            generalOptions,
+          ],
         ),
         returnValue: _i3.Future<List<String>>.value(<String>[]),
       ) as _i3.Future<List<String>>);
