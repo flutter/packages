@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
@@ -23,27 +24,38 @@ class CameraPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return controller.value.isInitialized
-        ? Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.rotationY(math.pi),
-            child: ValueListenableBuilder<CameraValue>(
-              valueListenable: controller,
-              builder: (BuildContext context, Object? value, Widget? child) {
-                return AspectRatio(
-                  aspectRatio: _isLandscape() ? controller.value.aspectRatio : (1 / controller.value.aspectRatio),
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: <Widget>[
-                      _wrapInRotatedBox(child: controller.buildPreview()),
-                      child ?? Container(),
-                    ],
-                  ),
-                );
-              },
-              child: child,
-            ))
-        : Container();
+    return controller.value.isInitialized ? _getBuildPreviewComponent() : Container();
+  }
+
+  Widget _getBuildPreviewComponent() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return Transform(
+        alignment: Alignment.center,
+        transform: Matrix4.rotationY(math.pi),
+        child: _buildCameraPreview(),
+      );
+    }
+
+    return _buildCameraPreview();
+  }
+
+  Widget _buildCameraPreview() {
+    return ValueListenableBuilder<CameraValue>(
+      valueListenable: controller,
+      builder: (BuildContext context, Object? value, Widget? child) {
+        return AspectRatio(
+          aspectRatio: _isLandscape() ? controller.value.aspectRatio : (1 / controller.value.aspectRatio),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              _wrapInRotatedBox(child: controller.buildPreview()),
+              child ?? Container(),
+            ],
+          ),
+        );
+      },
+      child: child,
+    );
   }
 
   Widget _wrapInRotatedBox({required Widget child}) {
