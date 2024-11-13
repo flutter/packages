@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
-import 'dart:js_interop_unsafe';
+
 import 'package:web/web.dart' as web;
 import 'ad_unit_configuration.dart';
 import 'ad_unit_widget.dart';
@@ -22,11 +22,15 @@ class AdSense {
   /// Getter for adClient passed on initialization
   String get adClient => _adClient;
 
-  /// Initialization API. Should be called ASAP, ideally in the main method of your app.
-  /// Throws [StateError] if called more than once
+  /// Initializes the AdSense SDK with your [adClient].
+  ///
+  /// Should be called ASAP, ideally in the main method of your app.
+  ///
+  /// Noops after the first call.
   void initialize(String adClient) {
     if (_isInitialized) {
-      throw StateError('AdSense: sdk was already initialized, skipping');
+      web.console.warn('AdSense: sdk was already initialized, skipping'.toJS);
+      return;
     }
     _adClient = adClient;
     _addMasterScript(_adClient);
@@ -40,14 +44,10 @@ class AdSense {
   }
 
   void _addMasterScript(String adClient) {
-    if (web.window.getProperty('adsbygoogle'.toJS).isUndefinedOrNull) {
-      web.window.setProperty('adsbygoogle'.toJS, JSArray<JSObject>());
-    }
-    final web.HTMLScriptElement script =
-        web.document.createElement('script') as web.HTMLScriptElement
-          ..async = true
-          ..crossOrigin = 'anonymous';
-    script.src = _url + adClient;
+    final web.HTMLScriptElement script = web.HTMLScriptElement()
+      ..async = true
+      ..crossOrigin = 'anonymous';
+    script.src = _url + adClient; // This needs TrustedTypes
     web.document.head!.appendChild(script);
   }
 }
