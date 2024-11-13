@@ -62,7 +62,7 @@ class AdUnitWidgetWeb extends AdUnitWidget {
   final Map<String, String> _unitParams;
 
   final web.HTMLElement _insElement =
-      (web.document.createElement('ins') as web.HTMLDivElement)
+      (web.document.createElement('ins') as web.HTMLElement)
         ..className = 'adsbygoogle'
         ..style.display = 'block'
         ..style.width = '100%'
