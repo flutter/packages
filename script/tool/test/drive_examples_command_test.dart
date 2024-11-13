@@ -431,7 +431,7 @@ void main() {
         output,
         containsAllInOrder(<Matcher>[
           contains('Running for plugin'),
-          contains('Test is taking a long time, taking screenshot...'),
+          contains('Test is taking a long time, taking screenshot test-timeout-screenshot_integration_test.png...'),
           contains('No issues found!'),
         ]),
       );
