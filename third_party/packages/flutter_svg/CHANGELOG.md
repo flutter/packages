@@ -1,3 +1,16 @@
+## 2.0.14
+
+* Makes the package WASM compatible.
+
+## 2.0.13
+
+* Relaxes the dependency constraints on vector_graphics, vector_graphics_codec,
+  and vector_graphics_compiler.
+
+## 2.0.12
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 2.0.11
 
 * Transfers the package source from https://github.com/dnfield/flutter_svg

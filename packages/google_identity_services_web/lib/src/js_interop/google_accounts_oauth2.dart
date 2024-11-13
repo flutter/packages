@@ -73,7 +73,7 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
   /// A valid [accessToken] is required to revoke permissions.
   ///
   /// The [done] callback is called once the revoke action is done. It must be
-  /// manually wrapped in [allowInterop] before being passed to this method.
+  /// a Dart function and not a JS function.
   ///
   /// Method: google.accounts.oauth2.revoke
   /// https://developers.google.com/identity/oauth2/web/reference/js-reference#google.accounts.oauth2.revoke
@@ -103,8 +103,7 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
 abstract class CodeClientConfig {
   /// Constructs a CodeClientConfig object in JavaScript.
   ///
-  /// The [callback] property must be wrapped in [allowInterop] before it's
-  /// passed to this constructor.
+  /// The [callback] property must be a Dart function and not a JS function.
   factory CodeClientConfig({
     required String client_id,
     required List<String> scope,
@@ -230,8 +229,7 @@ typedef CodeClientCallbackFn = void Function(CodeResponse response);
 abstract class TokenClientConfig {
   /// Constructs a TokenClientConfig object in JavaScript.
   ///
-  /// The [callback] property must be wrapped in [allowInterop] before it's
-  /// passed to this constructor.
+  /// The [callback] property must be a Dart function and not a JS function.
   factory TokenClientConfig({
     required String client_id,
     required TokenClientCallbackFn callback,
@@ -315,9 +313,6 @@ extension TokenClientExtension on TokenClient {
 @staticInterop
 abstract class OverridableTokenClientConfig {
   /// Constructs an OverridableTokenClientConfig object in JavaScript.
-  ///
-  /// The [callback] property must be wrapped in [allowInterop] before it's
-  /// passed to this constructor.
   factory OverridableTokenClientConfig({
     /// A list of scopes that identify the resources that your application could
     /// access on the user's behalf. These values inform the consent screen that

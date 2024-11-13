@@ -115,6 +115,7 @@ void main() {
         'GeneratedPluginRegistrant.m',
         'generated_plugin_registrant.cc',
         'generated_plugin_registrant.cpp',
+        'web_plugin_registrant.dart',
         // Ignored path suffixes.
         'foo.g.dart',
         'foo.mocks.dart',
