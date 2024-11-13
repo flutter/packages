@@ -643,7 +643,7 @@ void main() {
           ]));
     });
 
-    test('fails if swift-format lint fails', () async {
+    test('fails if swift-format lint finds issues', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
       ];
@@ -675,7 +675,43 @@ void main() {
       expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Failed to lint Swift files: exit code 1.'),
+            contains('Swift linter found issues. See above for linter output.'),
+          ]));
+    });
+
+    test('fails if swift-format lint fails', () async {
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+      fakePubGet(plugin);
+
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(),
+            <String>['--version']), // check for working swift-format
+        FakeProcessInfo(MockProcess(), <String>['-i']),
+        FakeProcessInfo(MockProcess(exitCode: 99), <String>[
+          'lint',
+          '--parallel',
+          '--strict',
+        ]),
+      ];
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'format',
+        '--swift',
+        '--swift-format-path=swift-format'
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Failed to lint Swift files: exit code 99.'),
           ]));
     });
 
