@@ -43,71 +43,95 @@ class AdUnitParams {
   static const String AD_TEST = 'adtest';
 }
 
-/// Possible values for [AdUnitParams.AD_FORMAT]
+/// Possible values for [AdUnitParams.AD_FORMAT].
+///
 /// See [docs](https://support.google.com/adsense/answer/9183460?hl=en&ref_topic=9183242&sjid=2004567335727763076-EU#:~:text=Specify%20a%20general%20shape%20(desktop%20only)) for details
-enum AdFormatType {
+enum AdFormat {
   /// Default which enables the auto-sizing behavior for the responsive ad unit
-  AUTO,
+  AUTO('auto'),
 
   /// Use horizontal shape
-  HORIZONTAL,
+  HORIZONTAL('horizontal'),
 
   /// Use rectangle shape
-  RECTANGLE,
+  RECTANGLE('rectangle'),
 
   /// Use vertical shape
-  VERTICAL,
+  VERTICAL('vertical'),
 
   /// Use horizontal and rectangle shape
-  HORIZONTAL_RECTANGLE,
+  HORIZONTAL_RECTANGLE('horizontal,rectangle'),
 
   /// Use horizontal and vertical shape
-  HORIZONTAL_VERTICAL,
+  HORIZONTAL_VERTICAL('horizontal,vertical'),
 
   /// Use rectangle and vertical shape
-  RECTANGLE_VERTICAL,
+  RECTANGLE_VERTICAL('rectangle,vertical'),
 
   /// Use horizontal, rectangle and vertical shape
-  HORIZONTAL_RECTANGLE_VERTICAL,
+  HORIZONTAL_RECTANGLE_VERTICAL('horizontal,rectangle,vertical'),
 
   /// Fluid ads have no fixed size, but rather adapt to fit the creative content they display
-  FLUID
+  FLUID('fluid');
+
+  const AdFormat(this._adFormat);
+  final String _adFormat;
+
+  @override
+  String toString() => _adFormat;
 }
 
-/// Possible values for [AdUnitParams.MATCHED_CONTENT_UI_TYPE]
+/// Possible values for [AdUnitParams.AD_LAYOUT].
+///
+/// TODO: find docs link!
+enum AdLayout {
+  ///
+  IMAGE_TOP('image-top'),
+
+  ///
+  IMAGE_MIDDLE('image-middle'),
+
+  ///
+  IMAGE_SIDE('image-side'),
+
+  ///
+  TEXT_ONLY('text-only'),
+
+  ///
+  IN_ARTICLE('in-article');
+
+  const AdLayout(this._adLayout);
+  final String _adLayout;
+
+  @override
+  String toString() => _adLayout;
+}
+
+/// Possible values for [AdUnitParams.MATCHED_CONTENT_UI_TYPE].
+///
 /// See [docs](https://support.google.com/adsense/answer/7533385?hl=en#:~:text=Change%20the%20layout%20of%20your%20Multiplex%20ad%20unit)
-enum MultiplexLayout {
+enum MatchedContentUiType {
   /// In this layout, the image and text appear alongside each other.
-  IMAGE_CARD_SIDEBYSIDE,
+  IMAGE_CARD_SIDEBYSIDE('image_card_sidebyside'),
 
   /// In this layout, the image and text appear alongside each other within a card.
-  IMAGE_SIDEBYSIDE,
+  IMAGE_SIDEBYSIDE('image_sidebyside'),
 
   /// In this layout, the image and text are arranged one on top of the other.
-  IMAGE_STACKED,
+  IMAGE_STACKED('image_stacked'),
 
   /// In this layout, the image and text are arranged one on top of the other within a card.
-  IMAGE_CARD_STACKED,
+  IMAGE_CARD_STACKED('image_card_stacked'),
 
   /// A text-only layout with no image.
-  TEXT,
+  TEXT('text'),
 
   /// A text-only layout within a card.
-  TEXT_CARD
-}
+  TEXT_CARD('text_card');
 
-/// Extension to convert [AdFormatType] enum options into <ins> tag data-attribute names
-extension GetCommaSeparatedNames on AdFormatType {
-  /// Returns corresponding data-attribute
-  String getAttribute() {
-    return name.toLowerCase().split('_').join(',');
-  }
-}
+  const MatchedContentUiType(this._uiType);
+  final String _uiType;
 
-/// Extension to convert [Multiplex] enum options into <ins> tag data-attribute names
-extension GetLowerCaseName on MultiplexLayout {
-  /// Returns corresponding data-attribute
-  String getAttribute() {
-    return name.toLowerCase();
-  }
+  @override
+  String toString() => _uiType;
 }
