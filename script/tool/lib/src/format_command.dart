@@ -35,6 +35,7 @@ const int _exitGitFailed = 6;
 const int _exitDependencyMissing = 7;
 const int _exitSwiftFormatFailed = 8;
 const int _exitKotlinFormatFailed = 9;
+const int _exitSwiftLintFoundIssues = 10;
 
 final Uri _javaFormatterUrl = Uri.https('github.com',
     '/google/google-java-format/releases/download/google-java-format-1.3/google-java-format-1.3-all-deps.jar');
@@ -239,7 +240,10 @@ class FormatCommand extends PackageLoopingCommand {
             '--strict',
           ],
           files: swiftFiles);
-      if (lintExitCode != 0) {
+      if (lintExitCode == 1) {
+        printError('Swift linter found issues. See above for linter output.');
+        throw ToolExit(_exitSwiftLintFoundIssues);
+      } else if (lintExitCode != 0) {
         printError('Failed to lint Swift files: exit code $lintExitCode.');
         throw ToolExit(_exitSwiftFormatFailed);
       }
