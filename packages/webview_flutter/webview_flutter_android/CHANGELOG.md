@@ -1,4 +1,4 @@
-## 4.2.0
+## 4.1.0
 
 * Updates internal API wrapper to use `ProxyApi`s.
 
