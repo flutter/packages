@@ -44,15 +44,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Call this method to have StoreKit present a sheet enabling the user to redeem codes provided by
 /// your app. Only for iOS.
-- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))
-    API_UNAVAILABLE(tvos, macos, watchos);
+- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))API_UNAVAILABLE(tvos, macos, watchos);
 
 /// If StoreKit has called your SKPaymentQueueDelegate's "paymentQueueShouldShowPriceConsent:"
 /// method and you returned NO, you can use this method to show the price consent UI at a later time
 /// that is more appropriate for your app. If there is no pending price consent, this method will do
 /// nothing.
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))
-    API_UNAVAILABLE(tvos, macos, watchos);
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos);
 
 @end
 

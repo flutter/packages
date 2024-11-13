@@ -47,7 +47,8 @@
   return self.queue.delegate;
 }
 
-- (NSArray<SKPaymentTransaction *> *)transactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2)) {
+- (NSArray<SKPaymentTransaction *> *)transactions API_AVAILABLE(ios(3.0), macos(10.7),
+                                                                watchos(6.2)) {
   return self.queue.transactions;
 }
 
@@ -56,15 +57,13 @@
 }
 
 #if TARGET_OS_IOS
-- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))
-    API_UNAVAILABLE(tvos, macos, watchos) {
+- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue presentCodeRedemptionSheet];
 }
 #endif
 
 #if TARGET_OS_IOS
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))
-    API_UNAVAILABLE(tvos, macos, watchos) {
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue showPriceConsentIfNeeded];
 }
 #endif
