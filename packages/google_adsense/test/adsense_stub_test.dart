@@ -4,9 +4,6 @@
 
 // ignore_for_file: avoid_print
 
-@TestOn('vm')
-library;
-
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_adsense/google_adsense.dart';
