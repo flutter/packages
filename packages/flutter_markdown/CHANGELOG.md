@@ -1,6 +1,6 @@
 ## 0.7.4+2
 
-* Pass a default error builder to image widgets.
+* Passes a default error builder to image widgets.
 
 ## 0.7.4+1
 
