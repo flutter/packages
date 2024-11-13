@@ -58,7 +58,9 @@ Tests location: `android/src/test/java/io/flutter/plugins/webviewflutter/`
 
 ## Important Notes
 
-* To avoid a potentially breaking change, the code in `android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.g.kt`
+### Calling `WebView.destroy()` after Dart Instance is Garbage Collected
+
+To avoid a potentially breaking change, the code in `android/src/main/java/io/flutter/plugins/webviewflutter/AndroidWebkitLibrary.g.kt`
 needs to be updated after the pigeon generator is ran. Please add
 
 ```kotlin
@@ -68,7 +70,8 @@ if (instance is WebViewProxyApi.WebViewPlatformView) {
 }
 ```
 
-to `AndroidWebkitLibraryPigeonInstanceManager.remove`.
+to `AndroidWebkitLibraryPigeonInstanceManager.remove`. The current implementation of the native
+doesn't currently support handling when the Dart instance is garbage collected.
 
 ## Recommended Process for Adding a New Feature
 
