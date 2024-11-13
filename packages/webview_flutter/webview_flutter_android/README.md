@@ -79,6 +79,3 @@ For information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBU
 
 [1]: https://pub.dev/packages/webview_flutter
 [2]: https://flutter.dev/to/endorsed-federated-plugin
-[3]: https://pub.dev/packages/pigeon
-[4]: https://pub.dev/packages/mockito
-[5]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md

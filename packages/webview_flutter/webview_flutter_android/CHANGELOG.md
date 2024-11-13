@@ -1,6 +1,10 @@
-## 4.1.0
+## 4.2.0
 
 * Updates internal API wrapper to use `ProxyApi`s.
+
+## 4.0.2
+
+* Updates README to remove contributor-focused documentation.
 
 ## 4.0.1
 
