@@ -19,10 +19,10 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 @protocol FLTPaymentQueueHandlerProtocol <NSObject, SKPaymentTransactionObserver>
 /// An object that provides information needed to complete transactions.
 @property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
-    ios(13.0), macos(10.15));
+    ios(13.0), macos(10.15), watchos(6.2));
 /// An object containing the location and unique identifier of an Apple App Store storefront.
 @property(nonatomic, readonly, nullable)
-    SKStorefront *storefront API_AVAILABLE(ios(13.0), macos(10.15));
+    SKStorefront *storefront API_AVAILABLE(ios(13.0), macos(10.15), watchos(6.2));
 
 /// Creates a new FIAPaymentQueueHandler.
 ///
@@ -77,7 +77,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 - (void)restoreTransactions:(nullable NSString *)applicationName;
 
 /// Displays a sheet that enables users to redeem subscription offer codes.
-- (void)presentCodeRedemptionSheet API_UNAVAILABLE(tvos, macos, watchos);
+- (void)presentCodeRedemptionSheet API_UNAVAILABLE(macos);
 
 /// Return all transactions that are not marked as complete.
 - (NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions;
@@ -101,7 +101,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// - You have increased the price of the subscription in App Store Connect.
 /// - The subscriber has not yet responded to a price consent query.
 /// Otherwise the method has no effect.
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos);
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(macos);
 
 @end
 NS_ASSUME_NONNULL_END

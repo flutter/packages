@@ -45,12 +45,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Converts an instance of SKStorefront into a dictionary.
 + (NSDictionary *)getMapFromSKStorefront:(SKStorefront *)storefront
-    API_AVAILABLE(ios(13), macos(10.15));
+    API_AVAILABLE(ios(13), macos(10.15), watchos(6.2));
 
 // Converts the supplied instances of SKStorefront and SKPaymentTransaction into a dictionary.
 + (NSDictionary *)getMapFromSKStorefront:(SKStorefront *)storefront
                  andSKPaymentTransaction:(SKPaymentTransaction *)transaction
-    API_AVAILABLE(ios(13), macos(10.15));
+    API_AVAILABLE(ios(13), macos(10.15), watchos(6.2));
 
 // Creates an instance of the SKPaymentDiscount class based on the supplied dictionary.
 + (nullable SKPaymentDiscount *)getSKPaymentDiscountFromMap:(NSDictionary *)map
