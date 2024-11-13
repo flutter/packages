@@ -82,8 +82,7 @@ API_AVAILABLE(ios(13.0), macos(10.15))
 @property(nonatomic, assign) SKPaymentTransactionState paymentState;
 @property(nonatomic, strong, nullable) id<SKPaymentTransactionObserver> observer;
 @property(nonatomic, strong, readwrite) SKStorefront *storefront API_AVAILABLE(ios(13.0));
-@property(nonatomic, strong, readwrite)
-    NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2));
+@property(nonatomic, strong, readwrite) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(ios(3.0), macos(10.7), watchos(6.2));
 
 // Test Properties
 @property(nonatomic, assign)

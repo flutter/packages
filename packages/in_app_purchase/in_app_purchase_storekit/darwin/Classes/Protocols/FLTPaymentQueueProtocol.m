@@ -57,14 +57,14 @@
 
 #if TARGET_OS_IOS
 - (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))
-API_UNAVAILABLE(tvos, macos, watchos) {
+  API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue presentCodeRedemptionSheet];
 }
 #endif
 
 #if TARGET_OS_IOS
 - (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))
-API_UNAVAILABLE(tvos, macos, watchos) {
+  API_UNAVAILABLE(tvos, macos, watchos) {
   [self.queue showPriceConsentIfNeeded];
 }
 #endif
