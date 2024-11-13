@@ -153,7 +153,7 @@ encourage the community to build packages that implement
 
 #### macOS installation
 
-Since the macOS implementation uses `file_selector`, you will need to
+Since the macOS implementation uses `file_selector` by default, you will need to
 add a filesystem access
 [entitlement](https://flutter.dev/to/macos-entitlements):
 
@@ -161,6 +161,17 @@ add a filesystem access
   <key>com.apple.security.files.user-selected.read-only</key>
   <true/>
 ```
+
+This setup is still required when using the [macOS PHPicker](#macos-phpicker) on **macOS 12 and older versions**, since it's only supported on **macOS 13+** and will fallback to the `file_selector` implementation.
+
+#### macOS PHPicker
+
+To use the [macOS native image picker](https://developer.apple.com/documentation/photokit/phpickerviewcontroller) which is supported on **macOS 13 and newer versions**,
+refer to the [image_picker_macos PHPicker](https://pub.dev/packages/image_picker_macos#phpicker) section.
+
+* **on macOS 13 and newer versions**: If this feature is used, the
+filesystem access entitlement in the [macOS installation](#macos-installation) is not required.
+* **on macOS 12 and older versions**: This feature is unsupported and will fallback to `file_selector` implementation, the filesystem access entitlement in the [macOS installation](#macos-installation) is required.
 
 ### Example
 
