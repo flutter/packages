@@ -12,6 +12,7 @@ final class TestInteractiveMediaAdsPlatform
     required this.onCreatePlatformAdsManagerDelegate,
     required this.onCreatePlatformAdDisplayContainer,
     required this.onCreatePlatformContentProgressProvider,
+    this.onCreatePlatformAdsRenderingSettings,
   });
 
   PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
@@ -28,6 +29,10 @@ final class TestInteractiveMediaAdsPlatform
   PlatformContentProgressProvider Function(
     PlatformContentProgressProviderCreationParams params,
   ) onCreatePlatformContentProgressProvider;
+
+  PlatformAdsRenderingSettings Function(
+    PlatformAdsRenderingSettingsCreationParams params,
+  )? onCreatePlatformAdsRenderingSettings;
 
   @override
   PlatformAdsLoader createPlatformAdsLoader(
@@ -55,6 +60,14 @@ final class TestInteractiveMediaAdsPlatform
     PlatformContentProgressProviderCreationParams params,
   ) {
     return onCreatePlatformContentProgressProvider(params);
+  }
+
+  @override
+  PlatformAdsRenderingSettings createPlatformAdsRenderingSettings(
+    PlatformAdsRenderingSettingsCreationParams params,
+  ) {
+    return onCreatePlatformAdsRenderingSettings?.call(params) ??
+        TestAdsRenderingSettings(params);
   }
 }
 
@@ -188,4 +201,8 @@ class TestContentProgressProvider extends PlatformContentProgressProvider {
   }) async {
     return onSetProgress?.call(progress: progress, duration: duration);
   }
+}
+
+final class TestAdsRenderingSettings extends PlatformAdsRenderingSettings {
+  TestAdsRenderingSettings(super.params) : super.implementation();
 }

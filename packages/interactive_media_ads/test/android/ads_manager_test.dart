@@ -5,6 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager_delegate.dart';
+import 'package:interactive_media_ads/src/android/android_ads_rendering_settings.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
@@ -44,21 +45,21 @@ void main() {
         (_) => Future<ima.AdsRenderingSettings>.value(mockAdsRenderingSettings),
       );
 
-      final AndroidAdsManager adsManager = AndroidAdsManager(
-        mockAdsManager,
-        proxy: InteractiveMediaAdsProxy(
-          instanceImaSdkFactory: () => mockImaSdkFactory,
-        ),
-      );
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
 
-      final PlatformAdsRenderingSettings settings =
-          PlatformAdsRenderingSettings(
-        bitrate: 1000,
-        enablePreloading: false,
-        loadVideoTimeout: 12,
-        mimeTypes: <String>['value'],
-        playAdsAfterTime: 2.0,
-        uiElements: <UIElement>{UIElement.countdown},
+      final AndroidAdsRenderingSettings settings = AndroidAdsRenderingSettings(
+        AndroidAdsRenderingSettingsCreationParams(
+          bitrate: 1000,
+          enablePreloading: false,
+          loadVideoTimeout: 12,
+          mimeTypes: const <String>['value'],
+          playAdsAfterTime: 2.0,
+          uiElements: const <UIElement>{UIElement.countdown},
+          enableCustomTabs: true,
+          proxy: InteractiveMediaAdsProxy(
+            instanceImaSdkFactory: () => mockImaSdkFactory,
+          ),
+        ),
       );
       await adsManager.init(settings);
 
@@ -71,6 +72,7 @@ void main() {
         mockAdsRenderingSettings.setUiElements(
           <ima.UiElement>[ima.UiElement.countdown],
         ),
+        mockAdsRenderingSettings.setEnableCustomTabs(true),
         mockAdsManager.init(mockAdsRenderingSettings),
       ]);
     });

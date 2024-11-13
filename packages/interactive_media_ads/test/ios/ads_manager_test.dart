@@ -8,6 +8,7 @@ import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
 import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_manager.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_manager_delegate.dart';
+import 'package:interactive_media_ads/src/ios/ios_ads_rendering_settings.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -34,21 +35,20 @@ void main() {
       final MockIMAAdsRenderingSettings mockAdsRenderingSettings =
           MockIMAAdsRenderingSettings();
 
-      final IOSAdsManager adsManager = IOSAdsManager(
-        mockAdsManager,
-        proxy: InteractiveMediaAdsProxy(
-          newIMAAdsRenderingSettings: () => mockAdsRenderingSettings,
-        ),
-      );
+      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
 
-      final PlatformAdsRenderingSettings settings =
-          PlatformAdsRenderingSettings(
-        bitrate: 1000,
-        enablePreloading: false,
-        loadVideoTimeout: 8000,
-        mimeTypes: <String>['value'],
-        playAdsAfterTime: 2.0,
-        uiElements: <UIElement>{UIElement.countdown},
+      final IOSAdsRenderingSettings settings = IOSAdsRenderingSettings(
+        IOSAdsRenderingSettingsCreationParams(
+          bitrate: 1000,
+          enablePreloading: false,
+          loadVideoTimeout: 8000,
+          mimeTypes: const <String>['value'],
+          playAdsAfterTime: 2.0,
+          uiElements: const <UIElement>{UIElement.countdown},
+          proxy: InteractiveMediaAdsProxy(
+            newIMAAdsRenderingSettings: () => mockAdsRenderingSettings,
+          ),
+        ),
       );
       await adsManager.init(settings);
 

@@ -11,7 +11,12 @@ import 'test_stubs.dart';
 
 void main() {
   test('init', () async {
-    final AdsRenderingSettings adsRenderingSettings = AdsRenderingSettings();
+    final AdsRenderingSettings adsRenderingSettings =
+        AdsRenderingSettings.fromPlatform(
+      TestAdsRenderingSettings(
+        const PlatformAdsRenderingSettingsCreationParams(),
+      ),
+    );
     final TestAdsManager platformManager = TestAdsManager(
       onInit: expectAsync1(([PlatformAdsRenderingSettings? settings]) async {
         expect(settings, adsRenderingSettings.platform);
