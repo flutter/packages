@@ -575,7 +575,7 @@ void CaptureControllerImpl::StartPreview() {
   hr = capture_engine_->GetSource(&source);
   if (FAILED(hr)) {
     return OnPreviewStarted(GetCameraResult(hr),
-                            "Failed to initialize video preview");
+                            "Failed to get capture engine source");
   }
 
   if (!base_preview_media_type_) {
@@ -592,7 +592,7 @@ void CaptureControllerImpl::StartPreview() {
       base_preview_media_type_.Get());
   if (FAILED(hr)) {
     return OnPreviewStarted(GetCameraResult(hr),
-                            "Failed to initialize video preview");
+                            "Failed to set video preview output format");
   }
 
   texture_handler_->UpdateTextureSize(preview_frame_width_,
