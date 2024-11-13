@@ -77,7 +77,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 - (void)restoreTransactions:(nullable NSString *)applicationName;
 
 /// Displays a sheet that enables users to redeem subscription offer codes.
-- (void)presentCodeRedemptionSheet API_UNAVAILABLE(macos);
+- (void)presentCodeRedemptionSheet API_UNAVAILABLE(tvos, macos, watchos);
 
 /// Return all transactions that are not marked as complete.
 - (NSArray<SKPaymentTransaction *> *)getUnfinishedTransactions;
@@ -101,7 +101,7 @@ typedef void (^UpdatedDownloads)(NSArray<SKDownload *> *downloads);
 /// - You have increased the price of the subscription in App Store Connect.
 /// - The subscriber has not yet responded to a price consent query.
 /// Otherwise the method has no effect.
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(macos);
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos);
 
 @end
 NS_ASSUME_NONNULL_END
