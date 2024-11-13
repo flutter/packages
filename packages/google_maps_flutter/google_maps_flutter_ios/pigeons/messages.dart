@@ -103,14 +103,27 @@ class PlatformCameraUpdateZoomTo {
 
 /// Pigeon equivalent of the Circle class.
 class PlatformCircle {
-  PlatformCircle(this.json);
+  PlatformCircle({
+    required this.circleId,
+    required this.center,
+    this.consumeTapEvents = false,
+    this.fillColor = 0x00000000,
+    this.strokeColor = 0xFF000000,
+    this.visible = true,
+    this.strokeWidth = 10,
+    this.zIndex = 0.0,
+    this.radius = 0,
+  });
 
-  /// The circle data, as JSON. This should only be set from
-  /// Circle.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final bool consumeTapEvents;
+  final int fillColor;
+  final int strokeColor;
+  final bool visible;
+  final int strokeWidth;
+  final double zIndex;
+  final PlatformLatLng center;
+  final double radius;
+  final String circleId;
 }
 
 /// Pigeon equivalent of the Heatmap class.
@@ -123,6 +136,19 @@ class PlatformHeatmap {
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
   final Object json;
+}
+
+/// Pigeon equivalent of the InfoWindow class.
+class PlatformInfoWindow {
+  PlatformInfoWindow({
+    required this.anchor,
+    this.title,
+    this.snippet,
+  });
+
+  final String? title;
+  final String? snippet;
+  final PlatformPoint anchor;
 }
 
 /// Pigeon equivalent of Cluster.
@@ -149,38 +175,145 @@ class PlatformClusterManager {
 
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
-  PlatformMarker(this.json);
+  PlatformMarker({
+    required this.markerId,
+    required this.icon,
+    this.alpha = 1.0,
+    required this.anchor,
+    this.consumeTapEvents = false,
+    this.draggable = false,
+    this.flat = false,
+    required this.infoWindow,
+    required this.position,
+    this.rotation = 0.0,
+    this.visible = true,
+    this.zIndex = 0.0,
+    this.clusterManagerId,
+  });
 
-  /// The marker data, as JSON. This should only be set from
-  /// Marker.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final double alpha;
+  final PlatformPoint anchor;
+  final bool consumeTapEvents;
+  final bool draggable;
+  final bool flat;
+
+  final PlatformBitmap icon;
+  final PlatformInfoWindow infoWindow;
+  final PlatformLatLng position;
+  final double rotation;
+  final bool visible;
+  final double zIndex;
+  final String markerId;
+  final String? clusterManagerId;
 }
 
 /// Pigeon equivalent of the Polygon class.
 class PlatformPolygon {
-  PlatformPolygon(this.json);
+  PlatformPolygon({
+    required this.polygonId,
+    required this.consumesTapEvents,
+    required this.fillColor,
+    required this.geodesic,
+    required this.points,
+    required this.holes,
+    required this.visible,
+    required this.strokeColor,
+    required this.strokeWidth,
+    required this.zIndex,
+  });
 
-  /// The polygon data, as JSON. This should only be set from
-  /// Polygon.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final String polygonId;
+  final bool consumesTapEvents;
+  final int fillColor;
+  final bool geodesic;
+  final List<PlatformLatLng> points;
+  final List<List<PlatformLatLng>> holes;
+  final bool visible;
+  final int strokeColor;
+  final int strokeWidth;
+  final int zIndex;
+}
+
+/// Join types for polyline joints.
+enum PlatformJointType {
+  mitered,
+  bevel,
+  round,
 }
 
 /// Pigeon equivalent of the Polyline class.
 class PlatformPolyline {
-  PlatformPolyline(this.json);
+  PlatformPolyline({
+    required this.polylineId,
+    required this.consumesTapEvents,
+    required this.color,
+    required this.geodesic,
+    required this.jointType,
+    required this.patterns,
+    required this.points,
+    required this.startCap,
+    required this.endCap,
+    required this.visible,
+    required this.width,
+    required this.zIndex,
+  });
 
-  /// The polyline data, as JSON. This should only be set from
-  /// Polyline.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final String polylineId;
+  final bool consumesTapEvents;
+  final int color;
+  final bool geodesic;
+
+  /// The joint type.
+  final PlatformJointType jointType;
+
+  /// The pattern data, as a list of pattern items.
+  final List<PlatformPatternItem> patterns;
+  final List<PlatformLatLng> points;
+
+  /// The cap at the start and end vertex of a polyline.
+  /// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+  final PlatformCap startCap;
+  final PlatformCap endCap;
+
+  final bool visible;
+  final int width;
+  final int zIndex;
+}
+
+/// Enumeration of possible types of PlatformCap, corresponding to the
+/// subclasses of Cap in the Google Maps Android SDK.
+/// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+enum PlatformCapType {
+  buttCap,
+  roundCap,
+  squareCap,
+  customCap,
+}
+
+/// Pigeon equivalent of Cap from the platform interface.
+/// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
+class PlatformCap {
+  PlatformCap({required this.type, this.bitmapDescriptor, this.refWidth});
+
+  final PlatformCapType type;
+
+  final PlatformBitmap? bitmapDescriptor;
+  final double? refWidth;
+}
+
+/// Enumeration of possible types for PatternItem.
+enum PlatformPatternItemType {
+  dot,
+  dash,
+  gap,
+}
+
+/// Pigeon equivalent of the PatternItem class.
+class PlatformPatternItem {
+  PlatformPatternItem({required this.type, this.length});
+
+  final PlatformPatternItemType type;
+  final double? length;
 }
 
 /// Pigeon equivalent of the Tile class.
@@ -194,14 +327,21 @@ class PlatformTile {
 
 /// Pigeon equivalent of the TileOverlay class.
 class PlatformTileOverlay {
-  PlatformTileOverlay(this.json);
+  PlatformTileOverlay({
+    required this.tileOverlayId,
+    required this.fadeIn,
+    required this.transparency,
+    required this.zIndex,
+    required this.visible,
+    required this.tileSize,
+  });
 
-  /// The tile overlay data, as JSON. This should only be set from
-  /// TileOverlay.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final String tileOverlayId;
+  final bool fadeIn;
+  final double transparency;
+  final int zIndex;
+  final bool visible;
+  final int tileSize;
 }
 
 /// Pigeon equivalent of Flutter's EdgeInsets.
@@ -319,6 +459,14 @@ class PlatformPoint {
   final double y;
 }
 
+/// Pigeon representation of a size.
+class PlatformSize {
+  PlatformSize({required this.width, required this.height});
+
+  final double width;
+  final double height;
+}
+
 /// Pigeon equivalent of GMSTileLayer properties.
 class PlatformTileLayer {
   PlatformTileLayer({
@@ -340,6 +488,96 @@ class PlatformZoomRange {
 
   final double? min;
   final double? max;
+}
+
+/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
+/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
+/// may hold the pigeon equivalent type of any of them.
+class PlatformBitmap {
+  PlatformBitmap({required this.bitmap});
+
+  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
+  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
+  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
+  /// As Pigeon does not currently support data class inheritance, this
+  /// approach allows for the different bitmap implementations to be valid
+  /// argument and return types of the API methods. See
+  /// https://github.com/flutter/flutter/issues/117819.
+  final Object bitmap;
+}
+
+/// Pigeon equivalent of [DefaultMarker]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#defaultMarker(float)
+class PlatformBitmapDefaultMarker {
+  PlatformBitmapDefaultMarker({this.hue});
+
+  final double? hue;
+}
+
+/// Pigeon equivalent of [BytesBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#fromBitmap(android.graphics.Bitmap)
+class PlatformBitmapBytes {
+  PlatformBitmapBytes({required this.byteData, this.size});
+
+  final Uint8List byteData;
+  final PlatformSize? size;
+}
+
+/// Pigeon equivalent of [AssetBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+class PlatformBitmapAsset {
+  PlatformBitmapAsset({required this.name, this.pkg});
+
+  final String name;
+  final String? pkg;
+}
+
+/// Pigeon equivalent of [AssetImageBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+class PlatformBitmapAssetImage {
+  PlatformBitmapAssetImage(
+      {required this.name, required this.scale, this.size});
+  final String name;
+  final double scale;
+  final PlatformSize? size;
+}
+
+/// Pigeon equivalent of [AssetMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+class PlatformBitmapAssetMap {
+  PlatformBitmapAssetMap(
+      {required this.assetName,
+      required this.bitmapScaling,
+      required this.imagePixelRatio,
+      this.width,
+      this.height});
+  final String assetName;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
+}
+
+/// Pigeon equivalent of [BytesMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-frombitmap-bitmap-image
+class PlatformBitmapBytesMap {
+  PlatformBitmapBytesMap(
+      {required this.byteData,
+      required this.bitmapScaling,
+      required this.imagePixelRatio,
+      this.width,
+      this.height});
+  final Uint8List byteData;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
+}
+
+/// Pigeon equivalent of [MapBitmapScaling].
+enum PlatformMapBitmapScaling {
+  auto,
+  none,
 }
 
 /// Interface for non-test interactions with the native SDK.
