@@ -449,7 +449,8 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
         final String screenshotBasename =
             'test-timeout-screenshot_${target.replaceAll(platform.pathSeparator, '_')}.png';
-        printWarning('Test is taking a long time, taking screenshot $screenshotBasename...');
+        printWarning(
+            'Test is taking a long time, taking screenshot $screenshotBasename...');
         await processRunner.runAndStream(
           flutterCommand,
           <String>[
