@@ -128,8 +128,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
           observer.disconnect();
           if (isFilled(target)) {
             updateWidgetSize(Size(
-              target.scrollWidth.toDouble(),
-              target.scrollHeight.toDouble(),
+              target.offsetWidth.toDouble(),
+              target.offsetHeight.toDouble(),
             ));
           } else {
             // Prevent scrolling issues over empty ad slot
