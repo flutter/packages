@@ -467,10 +467,11 @@ HRESULT CaptureControllerImpl::FindBaseMediaTypes() {
     return hr;
   }
 
-  return FindBaseMediaTypes(source.Get());
+  return FindBaseMediaTypesForSource(source.Get());
 }
 
-HRESULT CaptureControllerImpl::FindBaseMediaTypes(IMFCaptureSource* source) {
+HRESULT CaptureControllerImpl::FindBaseMediaTypesForSource(
+    IMFCaptureSource* source) {
   // Find base media type for previewing.
   if (!FindBestMediaType(
           (DWORD)MF_CAPTURE_ENGINE_PREFERRED_SOURCE_STREAM_FOR_VIDEO_PREVIEW,
@@ -579,7 +580,7 @@ void CaptureControllerImpl::StartPreview() {
 
   if (!base_preview_media_type_) {
     // Enumerates mediatypes and finds media type for video capture.
-    hr = FindBaseMediaTypes(source.Get());
+    hr = FindBaseMediaTypesForSource(source.Get());
     if (FAILED(hr)) {
       return OnPreviewStarted(GetCameraResult(hr),
                               "Failed to initialize video preview");
