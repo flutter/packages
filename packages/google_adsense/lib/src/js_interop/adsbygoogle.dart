@@ -7,27 +7,35 @@ library;
 
 import 'dart:js_interop';
 
+/// JS-interop mappings to the window.adsbygoogle object.
+extension type AdsByGoogle._(JSObject _) implements JSObject {
+  @JS('push')
+  external void _push(JSObject params);
+}
+
+/// Convenience methods for Dart users.
+extension AdsByGoogleExtension on AdsByGoogle {
+  /// Convenience method for invoking push() with an empty object
+  void requestAd() {
+    _push(JSObject());
+  }
+}
+
+// window.adsbygoogle may be null if this package runs before the JS SDK loads.
+@JS('adsbygoogle')
+external AdsByGoogle? get _adsbygoogle;
+
+// window.adsbygoogle uses "duck typing", so let us set anything to it.
+@JS('adsbygoogle')
+external set _adsbygoogle(JSAny? value);
+
 /// Binding to the `adsbygoogle` JS global.
 ///
 /// See: https://support.google.com/adsense/answer/9274516?hl=en&ref_topic=28893&sjid=11495822575537499409-EU
-@JS()
-external AdsByGoogle get adsbygoogle;
-
-/// The Dart definition of the `adsbygoogle` global.
-@JS()
-@staticInterop
-abstract class AdsByGoogle {}
-
-/// The `adsbygoogle` methods mappings
-extension AdsByGoogleExtension on AdsByGoogle {
-  /// Replacement of part of the adUnit code:
-  /// <script>
-  /// (adsbygoogle = window.adsbygoogle || []).push({});
-  /// </script>
-  external void push(JSObject params);
-
-  /// Convenience method for invoking push() with an empty object
-  void requestAd() {
-    push(JSObject());
+AdsByGoogle get adsbygoogle {
+  if (_adsbygoogle.isUndefinedOrNull) {
+    // Initialize _adsbygoole to "something that has a push method".
+    _adsbygoogle = JSArray<JSObject>();
   }
+  return _adsbygoogle!;
 }
