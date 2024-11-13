@@ -260,14 +260,15 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       }
 
       // If the user cancels the purchase dialog we won't have a transactionIdentifier.
-      // So if it is null AND a transaction in the pendingTransactions list has
-      // also a null transactionIdentifier we check for equal product identifiers.
+      // So if transactionIdentifier is null AND a transaction in the pendingTransactions list
+      // also has a null transactionIdentifier, we check for equal product identifiers.
+      // TODO(louisehsu): See if we can check for SKErrorPaymentCancelled instead.
       let matchesTransactionIdentifier = transaction.transactionIdentifier == transactionIdentifier
-      let isRestoringTransaction =
+      let isCancelledTransaction =
         transactionIdentifier == nil && transaction.transactionIdentifier == nil
         && transaction.payment.productIdentifier == productIdentifier
 
-      guard matchesTransactionIdentifier || isRestoringTransaction else {
+      guard matchesTransactionIdentifier || isCancelledTransaction else {
         continue
       }
       getPaymentQueueHandler().finish(transaction)
