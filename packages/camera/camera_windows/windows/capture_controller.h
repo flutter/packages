@@ -181,6 +181,10 @@ class CaptureControllerImpl : public CaptureController,
   // for preview and video capture.
   HRESULT FindBaseMediaTypes();
 
+  // Enumerates video_sources media types and finds out best resolution
+  // for a given source.
+  HRESULT FindBaseMediaTypesForSource(IMFCaptureSource* source);
+
   // Stops preview. Called internally on camera reset and dispose.
   HRESULT StopPreview();
 
