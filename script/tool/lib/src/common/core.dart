@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 /// The signature for a print handler for commands that allow overriding the
@@ -127,3 +128,13 @@ const int exitCommandFoundErrors = 1;
 
 /// A exit code for [ToolExit] for a failure to run due to invalid arguments.
 const int exitInvalidArguments = 2;
+
+/// The directory to which to write logs and other artifacts, if set in CI.
+Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
+  final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
+  Directory? logsDirectory;
+  if (logsDirectoryPath != null) {
+    logsDirectory = fileSystem.directory(logsDirectoryPath);
+  }
+  return logsDirectory;
+}

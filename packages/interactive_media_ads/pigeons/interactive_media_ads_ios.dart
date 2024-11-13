@@ -608,3 +608,47 @@ abstract class IMACompanionAd extends NSObject {
   /// 0 if unavailable.
   late final int height;
 }
+
+/// Ad slot for companion ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAdSlot.
+@ProxyApi()
+abstract class IMACompanionAdSlot {
+  /// Initializes an instance of a IMACompanionAdSlot with fluid size.
+  IMACompanionAdSlot();
+
+  /// Initializes an instance of a IMACompanionAdSlot with design ad width and
+  /// height.
+  ///
+  /// `width` and `height` are in pixels.
+  IMACompanionAdSlot.size(int width, int height);
+
+  /// The view the companion will be rendered in.
+  ///
+  /// Display this view in your application before video ad starts.
+  late final UIView view;
+
+  /// The IMACompanionDelegate for receiving events from the companion ad slot.
+  ///
+  /// This instance only creates a weak reference to the delegate, so the Dart
+  /// instance should create an explicit reference to receive callbacks.
+  void setDelegate(IMACompanionDelegate? delegate);
+}
+
+/// Delegate to receive events from the companion ad slot.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Protocols/IMACompanionDelegate.html.
+@ProxyApi()
+abstract class IMACompanionDelegate extends NSObject {
+  IMACompanionDelegate();
+
+  /// Called when the slot is either filled or not filled.
+  late void Function(
+    IMACompanionAdSlot slot,
+    bool filled,
+  )? companionAdSlotFilled;
+
+  /// Called when the slot is clicked on by the user and will successfully
+  /// navigate away.
+  late void Function(IMACompanionAdSlot slot)? companionSlotWasClicked;
+}

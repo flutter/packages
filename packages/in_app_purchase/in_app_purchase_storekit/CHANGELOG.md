@@ -1,6 +1,18 @@
-## 0.3.18+4
+## 0.3.19+1
 
 * Removes unneeded platform availability annotations.
+
+## 0.3.19
+
+* Adds StoreKit2 Transaction expiration date.
+
+## 0.3.18+5
+
+* Updates README to remove contributor-focused documentation.
+
+## 0.3.18+4
+
+* Adds StoreKit 2 support for restoring purchases.
 
 ## 0.3.18+3
 
