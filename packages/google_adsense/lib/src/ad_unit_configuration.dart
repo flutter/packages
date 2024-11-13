@@ -33,16 +33,15 @@ class AdUnitConfiguration {
     this.cssText,
   }) : _adUnitParams = <String, String>{
           AdUnitParams.AD_SLOT: adSlot,
-          if (adFormat != null)
-            AdUnitParams.AD_FORMAT: adFormat.toString(),
-          if (adLayout != null)
-            AdUnitParams.AD_LAYOUT: adLayout.toString(),
-          if (adLayoutKey != null)
-            AdUnitParams.AD_LAYOUT_KEY: adLayoutKey,
+          if (adFormat != null) AdUnitParams.AD_FORMAT: adFormat.toString(),
+          if (adLayout != null) AdUnitParams.AD_LAYOUT: adLayout.toString(),
+          if (adLayoutKey != null) AdUnitParams.AD_LAYOUT_KEY: adLayoutKey,
           if (isFullWidthResponsive != null)
-            AdUnitParams.FULL_WIDTH_RESPONSIVE: isFullWidthResponsive.toString(),
+            AdUnitParams.FULL_WIDTH_RESPONSIVE:
+                isFullWidthResponsive.toString(),
           if (matchedContentUiType != null)
-            AdUnitParams.MATCHED_CONTENT_UI_TYPE: matchedContentUiType.toString(),
+            AdUnitParams.MATCHED_CONTENT_UI_TYPE:
+                matchedContentUiType.toString(),
           if (columnsNum != null)
             AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
           if (rowsNum != null)

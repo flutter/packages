@@ -29,8 +29,7 @@ class AdUnitWidgetWeb extends AdUnitWidget {
     }
     final Map<String, String> dataAttrs = <String, String>{
       AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
-      if (_isAdTest)
-        AdUnitParams.AD_TEST: 'on',
+      if (_isAdTest) AdUnitParams.AD_TEST: 'on',
       ..._unitParams
     };
     for (final String key in dataAttrs.keys) {
@@ -128,7 +127,10 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
         if (isLoaded(target)) {
           observer.disconnect();
           if (isFilled(target)) {
-            updateWidgetSize(Size(target.scrollWidth.toDouble(), target.scrollHeight.toDouble()));
+            updateWidgetSize(Size(
+              target.scrollWidth.toDouble(),
+              target.scrollHeight.toDouble(),
+            ));
           } else {
             // Prevent scrolling issues over empty ad slot
             target.style.pointerEvents = 'none';
