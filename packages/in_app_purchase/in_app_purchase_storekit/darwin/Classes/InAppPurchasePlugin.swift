@@ -256,7 +256,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
       // finishTransaction() cannot be called on a Transaction with a current purchasing state
       // https://developer.apple.com/documentation/storekit/skpaymentqueue/1506003-finishtransaction
       guard transaction.transactionState != SKPaymentTransactionState.purchasing else {
-        return
+        continue
       }
 
       // If the user cancels the purchase dialog we won't have a transactionIdentifier.
@@ -268,7 +268,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
         && transaction.payment.productIdentifier == productIdentifier
 
       guard matchesTransactionIdentifier || isRestoringTransaction else {
-        return
+        continue
       }
       getPaymentQueueHandler().finish(transaction)
     }
