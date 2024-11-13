@@ -8,11 +8,22 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+// #docregion phpicker-example
+import 'package:image_picker_macos/image_picker_macos.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+// #enddocregion phpicker-example
 import 'package:mime/mime.dart';
 import 'package:video_player/video_player.dart';
 
 void main() {
+  // Set to use macOS PHPicker.
+  // #docregion phpicker-example
+  final ImagePickerPlatform imagePickerImplementation =
+      ImagePickerPlatform.instance;
+  if (imagePickerImplementation is ImagePickerMacOS) {
+    imagePickerImplementation.useMacOSPHPicker = true;
+  }
+  // #enddocregion phpicker-example
   runApp(const MyApp());
 }
 
@@ -385,6 +396,46 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: const Icon(Icons.videocam),
               ),
             ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: FloatingActionButton(
+              onPressed: () {
+                void showSnackbarText(String text) {
+                  ScaffoldMessenger.of(context)
+                    ..clearSnackBars()
+                    ..showSnackBar(
+                      SnackBar(content: Text(text)),
+                    );
+                }
+
+                if (_picker is! ImagePickerMacOS) {
+                  throw StateError(
+                      'Expected the implementation to be $ImagePickerMacOS but was ${_picker.runtimeType}');
+                }
+
+                if (_picker.useMacOSPHPicker) {
+                  _picker.useMacOSPHPicker = false;
+                  setState(() {});
+                  showSnackbarText('Switched to file_picker implementation.');
+                } else {
+                  _picker.useMacOSPHPicker = true;
+                  setState(() {});
+                  showSnackbarText(
+                      'Switched to macOS PHPPicker implementation.');
+                }
+              },
+              tooltip: 'toggle macOS PHPPicker',
+              child: () {
+                if (_picker is ImagePickerMacOS) {
+                  return _picker.useMacOSPHPicker
+                      ? const Icon(Icons.apple)
+                      : const Icon(Icons.file_open);
+                }
+                throw StateError(
+                    'Expected the implementation to be $ImagePickerMacOS but was ${_picker.runtimeType}');
+              }(),
+            ),
+          ),
         ],
       ),
     );

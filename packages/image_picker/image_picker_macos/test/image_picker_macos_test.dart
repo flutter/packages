@@ -5,13 +5,15 @@
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_macos/image_picker_macos.dart';
+import 'package:image_picker_macos/src/messages.g.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'image_picker_macos_test.mocks.dart';
+import 'test_api.g.dart';
 
-@GenerateMocks(<Type>[FileSelectorPlatform])
+@GenerateMocks(<Type>[FileSelectorPlatform, TestHostImagePickerApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -23,10 +25,12 @@ void main() {
 
   late ImagePickerMacOS plugin;
   late MockFileSelectorPlatform mockFileSelectorPlatform;
+  late MockTestHostImagePickerApi mockImagePickerApi;
 
   setUp(() {
     plugin = ImagePickerMacOS();
     mockFileSelectorPlatform = MockFileSelectorPlatform();
+    mockImagePickerApi = MockTestHostImagePickerApi();
 
     when(mockFileSelectorPlatform.openFile(
             acceptedTypeGroups: anyNamed('acceptedTypeGroups')))
@@ -36,12 +40,76 @@ void main() {
             acceptedTypeGroups: anyNamed('acceptedTypeGroups')))
         .thenAnswer((_) async => List<XFile>.empty());
 
+    when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => false);
+
+    when(mockImagePickerApi.pickImages(any, any))
+        .thenAnswer((_) async => <String>[]);
+
+    when(mockImagePickerApi.pickVideos(any))
+        .thenAnswer((_) async => <String>[]);
+
+    when(mockImagePickerApi.pickMedia(any, any))
+        .thenAnswer((_) async => <String>[]);
+
     ImagePickerMacOS.fileSelector = mockFileSelectorPlatform;
+    TestHostImagePickerApi.setUp(mockImagePickerApi);
   });
+
+  void testWithPHPicker({
+    required bool enabled,
+    required void Function() body,
+  }) {
+    plugin.useMacOSPHPicker = enabled;
+    when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => enabled);
+    body();
+  }
 
   test('registered instance', () {
     ImagePickerMacOS.registerWith();
     expect(ImagePickerPlatform.instance, isA<ImagePickerMacOS>());
+  });
+
+  test('defaults to not using macOS PHPicker', () async {
+    expect(plugin.useMacOSPHPicker, false);
+  });
+
+  test(
+    'supportsPHPicker delegate to the supportsPHPicker from the platform API',
+    () async {
+      when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => false);
+      expect(await plugin.supportsPHPicker(), false);
+
+      when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => true);
+      expect(await plugin.supportsPHPicker(), true);
+    },
+  );
+
+  test(
+      'shouldUsePHPicker returns true when useMacOSPHPicker and supportsPHPicker are true',
+      () async {
+    plugin.useMacOSPHPicker = true;
+    when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => true);
+    expect(await plugin.shouldUsePHPicker(), true);
+  });
+
+  test(
+      'shouldUsePHPPicker returns false when either useMacOSPHPicker or supportsPHPicker is false',
+      () async {
+    plugin.useMacOSPHPicker = false;
+    when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => true);
+    expect(await plugin.shouldUsePHPicker(), false);
+
+    plugin.useMacOSPHPicker = true;
+    when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => false);
+    expect(await plugin.shouldUsePHPicker(), false);
+  });
+
+  test(
+      'shouldUsePHPPicker returns false when both useMacOSPHPicker and supportsPHPicker are false',
+      () async {
+    plugin.useMacOSPHPicker = false;
+    when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => false);
+    expect(await plugin.shouldUsePHPicker(), false);
   });
 
   group('images', () {
@@ -74,21 +142,46 @@ void main() {
     });
 
     test('getImageFromSource calls delegate when source is camera', () async {
-      const String fakePath = '/tmp/foo';
-      plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
-      expect(
-          (await plugin.getImageFromSource(source: ImageSource.camera))!.path,
-          fakePath);
+      Future<void> sharedTest() async {
+        const String fakePath = '/tmp/foo';
+        plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
+        expect(
+            (await plugin.getImageFromSource(source: ImageSource.camera))!.path,
+            fakePath);
+      }
+
+      // Camera is unsupported on both PHPicker and file_selector,
+      // ensure always to use the camera delegate
+      testWithPHPicker(enabled: false, body: sharedTest);
+      testWithPHPicker(enabled: true, body: sharedTest);
     });
 
     test(
         'getImageFromSource throws StateError when source is camera with no delegate',
         () async {
-      await expectLater(plugin.getImageFromSource(source: ImageSource.camera),
-          throwsStateError);
+      Future<void> sharedTest() async {
+        await expectLater(plugin.getImageFromSource(source: ImageSource.camera),
+            throwsStateError);
+      }
+
+      // Camera is unsupported on both PHPicker and file_selector,
+      // ensure always to throw state error
+      testWithPHPicker(enabled: false, body: sharedTest);
+      testWithPHPicker(enabled: true, body: sharedTest);
     });
 
-    test('getMultiImage passes the accepted type groups correctly', () async {
+    test(
+      'getMultiImage delegate to getMultiImageWithOptions',
+      () async {
+        // The getMultiImage is soft-deprecated in the platform interface
+        // and is only implemented for compatibility. Callers should be using getMultiImageWithOptions.
+        await plugin.getMultiImage();
+        verify(plugin.getMultiImageWithOptions()).called(1);
+      },
+    );
+
+    test('getMultiImageWithOptions passes the accepted type groups correctly',
+        () async {
       await plugin.getMultiImage();
 
       final VerificationResult result = verify(
@@ -97,9 +190,284 @@ void main() {
       expect(capturedTypeGroups(result)[0].uniformTypeIdentifiers,
           <String>['public.image']);
     });
+
+    test(
+      'getMultiImageWithOptions uses PHPicker when it is enabled',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getMultiImageWithOptions();
+            verify(plugin.shouldUsePHPicker()).called(1);
+            verify(mockImagePickerApi.pickImages(any, any)).called(1);
+
+            verifyNever(mockFileSelectorPlatform.openFiles(
+                acceptedTypeGroups: anyNamed('acceptedTypeGroups')));
+          },
+        );
+      },
+    );
+
+    test(
+      'getMultiImageWithOptions uses file selector when PHPicker is disabled',
+      () async {
+        testWithPHPicker(
+          enabled: false,
+          body: () async {
+            await plugin.getMultiImageWithOptions();
+            verify(plugin.shouldUsePHPicker()).called(1);
+            verifyNever(mockImagePickerApi.pickImages(any, any));
+
+            verify(mockFileSelectorPlatform.openFiles(
+                    acceptedTypeGroups: anyNamed('acceptedTypeGroups')))
+                .called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getMultiImageWithOptions pass 0 as limit to pickImages for PHPicker implementation when unspecified',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getMultiImageWithOptions(
+              // ignore: avoid_redundant_argument_values
+              options: const MultiImagePickerOptions(limit: null),
+            );
+            verify(mockImagePickerApi.pickImages(
+              any,
+              argThat(
+                predicate<GeneralOptions>(
+                    (GeneralOptions options) => options.limit == 0),
+              ),
+            ));
+          },
+        );
+      },
+    );
+
+    test(
+      'getImageFromSource uses PHPicker when it is enabled',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getImageFromSource(source: ImageSource.gallery);
+            verify(plugin.shouldUsePHPicker()).called(1);
+            verify(mockImagePickerApi.pickImages(any, any)).called(1);
+
+            verifyNever(mockFileSelectorPlatform.openFile(
+                acceptedTypeGroups: anyNamed('acceptedTypeGroups')));
+          },
+        );
+      },
+    );
+
+    test(
+      'getImageFromSource uses file selector when PHPicker is disabled',
+      () async {
+        testWithPHPicker(
+          enabled: false,
+          body: () async {
+            await plugin.getImageFromSource(source: ImageSource.gallery);
+            verify(plugin.shouldUsePHPicker()).called(1);
+            verifyNever(mockImagePickerApi.pickImages(any, any));
+
+            verify(mockFileSelectorPlatform.openFile(
+                    acceptedTypeGroups: anyNamed('acceptedTypeGroups')))
+                .called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getImageFromSource pass 1 as limit to pickImages for PHPicker implementation',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getImageFromSource(source: ImageSource.gallery);
+
+            verify(mockImagePickerApi.pickImages(
+              any,
+              argThat(
+                predicate<GeneralOptions>(
+                    (GeneralOptions options) => options.limit == 1),
+              ),
+            )).called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getImageFromSource uses 100 as image quality if not provided',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getImageFromSource(
+              source: ImageSource.gallery,
+              // ignore: avoid_redundant_argument_values
+              options: const ImagePickerOptions(imageQuality: null),
+            );
+
+            verify(mockImagePickerApi.pickImages(
+              argThat(
+                predicate<ImageSelectionOptions>(
+                    (ImageSelectionOptions options) => options.quality == 100),
+              ),
+              any,
+            )).called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getMultiImageWithOptions uses 100 as image quality if not provided',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getMultiImageWithOptions(
+              // ignore: avoid_redundant_argument_values
+              options: const MultiImagePickerOptions(
+                // ignore: avoid_redundant_argument_values
+                imageOptions: ImageOptions(imageQuality: null),
+              ),
+            );
+
+            verify(mockImagePickerApi.pickImages(
+              argThat(
+                predicate<ImageSelectionOptions>(
+                    (ImageSelectionOptions options) => options.quality == 100),
+              ),
+              any,
+            )).called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getImageFromSource return the file from the platform API for PHPicker implementation',
+      () {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            final List<String> filePaths = <String>['path/to/file'];
+            when(mockImagePickerApi.pickImages(
+              any,
+              any,
+            )).thenAnswer((_) async {
+              return filePaths;
+            });
+            expect(
+              (await plugin.pickImage(source: ImageSource.gallery))?.path,
+              filePaths.first,
+            );
+          },
+        );
+      },
+    );
+
+    test(
+      'getMultiImageWithOptions return the file from the platform API for PHPicker implementation',
+      () {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            final List<String> filePaths = <String>[
+              '/foo/bar/image.png',
+              '/dev/flutter/plugins/video.mp4',
+              'path/to/file'
+            ];
+            when(mockImagePickerApi.pickImages(
+              any,
+              any,
+            )).thenAnswer((_) async {
+              return filePaths;
+            });
+            expect(
+              (await plugin.getMultiImageWithOptions())
+                  .map((XFile file) => file.path),
+              filePaths,
+            );
+          },
+        );
+      },
+    );
+
+    test(
+      'getImageFromSource passes the arguments correctly to the platform API for the PHPicker implementation',
+      () {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            const ImagePickerOptions imageOptions = ImagePickerOptions(
+              imageQuality: 50,
+              maxHeight: 40,
+              maxWidth: 30,
+            );
+            await plugin.getImageFromSource(
+                source: ImageSource.gallery, options: imageOptions);
+            verify(mockImagePickerApi.pickImages(
+              argThat(predicate<ImageSelectionOptions>(
+                (ImageSelectionOptions options) =>
+                    options.maxSize?.width == imageOptions.maxWidth &&
+                    options.maxSize?.height == imageOptions.maxHeight &&
+                    options.quality == imageOptions.imageQuality,
+              )),
+              argThat(predicate<GeneralOptions>(
+                (GeneralOptions options) => options.limit == 1,
+              )),
+            ));
+          },
+        );
+      },
+    );
+
+    test(
+      'getMultiImageWithOptions passes the arguments correctly to the platform API for the PHPicker implementation',
+      () {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            const MultiImagePickerOptions multiImageOptions =
+                MultiImagePickerOptions(
+              imageOptions:
+                  ImageOptions(imageQuality: 50, maxHeight: 40, maxWidth: 30),
+              limit: 50,
+            );
+            await plugin.getMultiImageWithOptions(options: multiImageOptions);
+
+            verify(mockImagePickerApi.pickImages(
+              argThat(predicate<ImageSelectionOptions>(
+                (ImageSelectionOptions options) =>
+                    options.maxSize?.width ==
+                        multiImageOptions.imageOptions.maxWidth &&
+                    options.maxSize?.height ==
+                        multiImageOptions.imageOptions.maxHeight &&
+                    options.quality ==
+                        multiImageOptions.imageOptions.imageQuality,
+              )),
+              argThat(predicate<GeneralOptions>(
+                (GeneralOptions options) =>
+                    options.limit == multiImageOptions.limit,
+              )),
+            ));
+          },
+        );
+      },
+    );
   });
 
   group('videos', () {
+    // TODO(EchoEllet): (Nit) Should this uses getVideo() instead of the soft-deprecated pickVideo() for consistency?
     test('pickVideo passes the accepted type groups correctly', () async {
       await plugin.pickVideo(source: ImageSource.gallery);
 
@@ -119,17 +487,107 @@ void main() {
     });
 
     test('getVideo calls delegate when source is camera', () async {
-      const String fakePath = '/tmp/foo';
-      plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
-      expect(
-          (await plugin.getVideo(source: ImageSource.camera))!.path, fakePath);
+      Future<void> sharedTest() async {
+        const String fakePath = '/tmp/foo';
+        plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
+        expect((await plugin.getVideo(source: ImageSource.camera))!.path,
+            fakePath);
+      }
+
+      // Camera is unsupported on both PHPicker and file_selector,
+      // ensure always to use the camera delegate
+      testWithPHPicker(enabled: false, body: sharedTest);
+      testWithPHPicker(enabled: true, body: sharedTest);
     });
 
     test('getVideo throws StateError when source is camera with no delegate',
         () async {
-      await expectLater(
-          plugin.getVideo(source: ImageSource.camera), throwsStateError);
+      Future<void> sharedTest() async {
+        await expectLater(
+            plugin.getVideo(source: ImageSource.camera), throwsStateError);
+      }
+
+      // Camera is unsupported on both PHPicker and file_selector,
+      // ensure always to throw state error
+      testWithPHPicker(enabled: false, body: sharedTest);
+      testWithPHPicker(enabled: true, body: sharedTest);
     });
+
+    test(
+      'getVideo uses PHPicker when it is enabled',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getVideo(source: ImageSource.gallery);
+            verify(plugin.shouldUsePHPicker()).called(1);
+            verify(mockImagePickerApi.pickVideos(any)).called(1);
+
+            verifyNever(mockFileSelectorPlatform.openFile(
+                acceptedTypeGroups: anyNamed('acceptedTypeGroups')));
+          },
+        );
+      },
+    );
+
+    // TODO(EchoEllet): Improve the test names for this and all related in this file
+    test(
+      'getVideo uses file selector when PHPicker is disabled',
+      () async {
+        testWithPHPicker(
+          enabled: false,
+          body: () async {
+            await plugin.getVideo(source: ImageSource.gallery);
+            verify(plugin.shouldUsePHPicker()).called(1);
+            verifyNever(mockImagePickerApi.pickVideos(any));
+
+            verify(mockFileSelectorPlatform.openFile(
+                    acceptedTypeGroups: anyNamed('acceptedTypeGroups')))
+                .called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getVideo pass 1 as limit to pickVideos for PHPicker implementation',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getVideo(source: ImageSource.gallery);
+
+            verify(mockImagePickerApi.pickVideos(
+              argThat(
+                predicate<GeneralOptions>(
+                    (GeneralOptions options) => options.limit == 1),
+              ),
+            )).called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getVideo return the file from the platform API for PHPicker implementation',
+      () {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            final List<String> filePaths = <String>['path/to/file'];
+            when(mockImagePickerApi.pickVideos(
+              any,
+            )).thenAnswer((_) async {
+              return filePaths;
+            });
+            expect(
+              (await plugin.getVideo(source: ImageSource.gallery))?.path,
+              filePaths.first,
+            );
+          },
+        );
+      },
+    );
   });
 
   group('media', () {
@@ -162,6 +620,186 @@ void main() {
           ),
           <String>[]);
     });
+
+    test(
+      'getMedia uses file selector when PHPicker is disabled',
+      () async {
+        testWithPHPicker(
+          enabled: false,
+          body: () async {
+            Future<void> sharedTest({required bool allowMultiple}) async {
+              await plugin.getMedia(
+                  options: MediaOptions(allowMultiple: allowMultiple));
+              verify(plugin.shouldUsePHPicker()).called(1);
+              verifyNever(mockImagePickerApi.pickMedia(any, any));
+
+              if (allowMultiple) {
+                verify(mockFileSelectorPlatform.openFiles(
+                        acceptedTypeGroups: anyNamed('acceptedTypeGroups')))
+                    .called(1);
+              } else {
+                verify(mockFileSelectorPlatform.openFile(
+                        acceptedTypeGroups: anyNamed('acceptedTypeGroups')))
+                    .called(1);
+              }
+            }
+
+            await sharedTest(allowMultiple: true);
+            await sharedTest(allowMultiple: false);
+          },
+        );
+      },
+    );
+
+    test(
+      'getMedia uses PHPicker when it is enabled',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getMedia(
+              options: const MediaOptions(allowMultiple: false),
+            );
+            verify(plugin.shouldUsePHPicker()).called(1);
+            verify(mockImagePickerApi.pickMedia(any, any)).called(1);
+
+            verifyNever(mockFileSelectorPlatform.openFile(
+                acceptedTypeGroups: anyNamed('acceptedTypeGroups')));
+          },
+        );
+      },
+    );
+
+    test(
+      'getMultiImageWithOptions pass 0 as limit to pickImages when unspecified '
+      'and 1 if allowMultiple is false for PHPicker implementation',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getMedia(
+              options: const MediaOptions(
+                allowMultiple: true,
+                // ignore: avoid_redundant_argument_values
+                limit: null,
+              ),
+            );
+            verify(mockImagePickerApi.pickMedia(
+              any,
+              argThat(
+                predicate<GeneralOptions>(
+                    (GeneralOptions options) => options.limit == 0),
+              ),
+            ));
+
+            await plugin.getMedia(
+              options: const MediaOptions(
+                allowMultiple: false,
+                // ignore: avoid_redundant_argument_values
+                limit: null,
+              ),
+            );
+            verify(mockImagePickerApi.pickMedia(
+              any,
+              argThat(
+                predicate<GeneralOptions>(
+                    (GeneralOptions options) => options.limit == 1),
+              ),
+            ));
+          },
+        );
+      },
+    );
+
+    test(
+      'getMedia return the files from the platform API for PHPicker implementation',
+      () {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            final List<String> filePaths = <String>[
+              '/foo/bar/image.png',
+              '/dev/flutter/plugins/video.mp4',
+              'path/to/file'
+            ];
+            when(mockImagePickerApi.pickMedia(
+              any,
+              any,
+            )).thenAnswer((_) async {
+              return filePaths;
+            });
+            expect(
+              (await plugin.getMedia(
+                      options: const MediaOptions(allowMultiple: true)))
+                  .map((XFile file) => file.path),
+              filePaths,
+            );
+          },
+        );
+      },
+    );
+
+    test(
+      'getMedia uses 100 as image quality if not provided',
+      () async {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            await plugin.getMedia(
+              options: const MediaOptions(
+                allowMultiple: true,
+                // ignore: avoid_redundant_argument_values
+                imageOptions: ImageOptions(imageQuality: null),
+              ),
+            );
+
+            verify(mockImagePickerApi.pickMedia(
+              argThat(
+                predicate<MediaSelectionOptions>(
+                    (MediaSelectionOptions options) =>
+                        options.imageSelectionOptions.quality == 100),
+              ),
+              any,
+            )).called(1);
+          },
+        );
+      },
+    );
+
+    test(
+      'getMedia passes the arguments correctly to the platform API for the PHPicker implementation',
+      () {
+        testWithPHPicker(
+          enabled: true,
+          body: () async {
+            const MediaOptions mediaOptions = MediaOptions(
+              allowMultiple: true,
+              imageOptions: ImageOptions(
+                maxWidth: 500,
+                maxHeight: 300,
+                imageQuality: 80,
+              ),
+              limit: 10,
+            );
+            await plugin.getMedia(options: mediaOptions);
+            verify(mockImagePickerApi.pickMedia(
+              argThat(predicate<MediaSelectionOptions>(
+                (MediaSelectionOptions options) =>
+                    options.imageSelectionOptions.maxSize?.width ==
+                        mediaOptions.imageOptions.maxWidth &&
+                    options.imageSelectionOptions.maxSize?.height ==
+                        mediaOptions.imageOptions.maxHeight &&
+                    options.imageSelectionOptions.quality ==
+                        mediaOptions.imageOptions.imageQuality,
+              )),
+              argThat(predicate<GeneralOptions>(
+                (GeneralOptions options) => options.limit == mediaOptions.limit,
+              )),
+            ));
+          },
+        );
+      },
+    );
   });
 }
 

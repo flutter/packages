@@ -1,6 +1,7 @@
-## NEXT
+## 1.1.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates README to include a reference to the macOS PHPicker feature.
 
 ## 1.1.2
 
