@@ -300,6 +300,7 @@ class SK2TransactionMessage {
     required this.originalId,
     required this.productId,
     required this.purchaseDate,
+    this.expirationDate,
     this.purchasedQuantity = 1,
     this.appAccountToken,
     this.restoring = false,
@@ -314,6 +315,8 @@ class SK2TransactionMessage {
   String productId;
 
   String purchaseDate;
+
+  String? expirationDate;
 
   int purchasedQuantity;
 
@@ -331,6 +334,7 @@ class SK2TransactionMessage {
       originalId,
       productId,
       purchaseDate,
+      expirationDate,
       purchasedQuantity,
       appAccountToken,
       restoring,
@@ -346,11 +350,12 @@ class SK2TransactionMessage {
       originalId: result[1]! as int,
       productId: result[2]! as String,
       purchaseDate: result[3]! as String,
-      purchasedQuantity: result[4]! as int,
-      appAccountToken: result[5] as String?,
-      restoring: result[6]! as bool,
-      receiptData: result[7] as String?,
-      error: result[8] as SK2ErrorMessage?,
+      expirationDate: result[4] as String?,
+      purchasedQuantity: result[5]! as int,
+      appAccountToken: result[6] as String?,
+      restoring: result[7]! as bool,
+      receiptData: result[8] as String?,
+      error: result[9] as SK2ErrorMessage?,
     );
   }
 }
