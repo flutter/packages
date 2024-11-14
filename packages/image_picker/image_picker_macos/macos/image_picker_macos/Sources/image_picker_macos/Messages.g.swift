@@ -29,7 +29,7 @@ final class PigeonError: Error {
   var localizedDescription: String {
     return
       "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-      }
+  }
 }
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -75,8 +75,6 @@ struct GeneralOptions {
   /// The value `0` means no limit.
   var limit: Int64
 
-
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> GeneralOptions? {
     let limit = pigeonVar_list[0] as! Int64
@@ -98,8 +96,6 @@ struct GeneralOptions {
 struct MaxSize {
   var width: Double? = nil
   var height: Double? = nil
-
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> MaxSize? {
@@ -130,8 +126,6 @@ struct ImageSelectionOptions {
   /// 100 indicates original quality.
   var quality: Int64
 
-
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> ImageSelectionOptions? {
     let maxSize: MaxSize? = nilOrValue(pigeonVar_list[0])
@@ -153,8 +147,6 @@ struct ImageSelectionOptions {
 /// Generated class from Pigeon that represents data sent in messages.
 struct MediaSelectionOptions {
   var imageSelectionOptions: ImageSelectionOptions
-
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> MediaSelectionOptions? {
@@ -222,23 +214,31 @@ class messagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = messagesPigeonCodec(readerWriter: messagesPigeonCodecReaderWriter())
 }
 
-
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ImagePickerApi {
   func supportsPHPicker() throws -> Bool
-  func pickImages(options: ImageSelectionOptions, generalOptions: GeneralOptions, completion: @escaping (Result<[String], Error>) -> Void)
+  func pickImages(
+    options: ImageSelectionOptions, generalOptions: GeneralOptions,
+    completion: @escaping (Result<[String], Error>) -> Void)
   /// Currently, multi-video selection is unimplemented.
-  func pickVideos(generalOptions: GeneralOptions, completion: @escaping (Result<[String], Error>) -> Void)
-  func pickMedia(options: MediaSelectionOptions, generalOptions: GeneralOptions, completion: @escaping (Result<[String], Error>) -> Void)
+  func pickVideos(
+    generalOptions: GeneralOptions, completion: @escaping (Result<[String], Error>) -> Void)
+  func pickMedia(
+    options: MediaSelectionOptions, generalOptions: GeneralOptions,
+    completion: @escaping (Result<[String], Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class ImagePickerApiSetup {
   static var codec: FlutterStandardMessageCodec { messagesPigeonCodec.shared }
   /// Sets up an instance of `ImagePickerApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ImagePickerApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: ImagePickerApi?, messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let supportsPHPickerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.supportsPHPicker\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let supportsPHPickerChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.supportsPHPicker\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       supportsPHPickerChannel.setMessageHandler { _, reply in
         do {
@@ -251,7 +251,9 @@ class ImagePickerApiSetup {
     } else {
       supportsPHPickerChannel.setMessageHandler(nil)
     }
-    let pickImagesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.pickImages\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let pickImagesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.pickImages\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pickImagesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -270,7 +272,9 @@ class ImagePickerApiSetup {
       pickImagesChannel.setMessageHandler(nil)
     }
     /// Currently, multi-video selection is unimplemented.
-    let pickVideosChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.pickVideos\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let pickVideosChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.pickVideos\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pickVideosChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -287,7 +291,9 @@ class ImagePickerApiSetup {
     } else {
       pickVideosChannel.setMessageHandler(nil)
     }
-    let pickMediaChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.pickMedia\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let pickMediaChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.image_picker_macos.ImagePickerApi.pickMedia\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pickMediaChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
