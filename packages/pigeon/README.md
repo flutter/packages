@@ -165,7 +165,7 @@ this annotation generates
   native instance.
 * A native language registrar for setting up all the native language APIs.
 
-See this [example](./example/README.md#ProxyApi_Example) for example usage.
+See this [example](./example/README.md#Simple_ProxyApi_Example) for example usage.
 
 ## Feedback
 
