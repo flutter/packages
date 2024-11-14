@@ -467,9 +467,8 @@ void main() {
   });
 
   group('videos', () {
-    // TODO(EchoEllet): (Nit) Should this uses getVideo() instead of the soft-deprecated pickVideo() for consistency?
-    test('pickVideo passes the accepted type groups correctly', () async {
-      await plugin.pickVideo(source: ImageSource.gallery);
+    test('getVideo passes the accepted type groups correctly', () async {
+      await plugin.getVideo(source: ImageSource.gallery);
 
       final VerificationResult result = verify(mockFileSelectorPlatform
           .openFile(acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
