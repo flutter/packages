@@ -21,7 +21,7 @@ final class AndroidAdsRenderingSettingsCreationParams
     super.mimeTypes,
     super.playAdsAfterTime,
     super.uiElements,
-    this.enableCustomTabs,
+    this.enableCustomTabs = false,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
         super();
@@ -30,7 +30,7 @@ final class AndroidAdsRenderingSettingsCreationParams
   /// [PlatformAdsRenderingSettingsCreationParams].
   factory AndroidAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
     PlatformAdsRenderingSettingsCreationParams params, {
-    bool? enableCustomTabs,
+    bool enableCustomTabs = false,
   }) {
     return AndroidAdsRenderingSettingsCreationParams(
       bitrate: params.bitrate,
@@ -47,7 +47,7 @@ final class AndroidAdsRenderingSettingsCreationParams
 
   /// Notifies the SDK whether to launch the click-through URL using Custom Tabs
   /// feature.
-  final bool? enableCustomTabs;
+  final bool enableCustomTabs;
 }
 
 /// Android implementation of [PlatformAdsRenderingSettings].
@@ -67,10 +67,9 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
           nativeSettings.setBitrateKbps(params.bitrate!),
         if (_androidParams.enablePreloading != null)
           nativeSettings.setEnablePreloading(_androidParams.enablePreloading!),
-        if (_androidParams.loadVideoTimeout != null)
-          nativeSettings.setLoadVideoTimeout(
-            _androidParams.loadVideoTimeout!.inMilliseconds,
-          ),
+        nativeSettings.setLoadVideoTimeout(
+          _androidParams.loadVideoTimeout.inMilliseconds,
+        ),
         if (_androidParams.mimeTypes != null)
           nativeSettings.setMimeTypes(_androidParams.mimeTypes!),
         if (_androidParams.playAdsAfterTime != null)
@@ -81,16 +80,15 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
         if (_androidParams.uiElements != null)
           nativeSettings.setUiElements(
             _androidParams.uiElements!.map(
-              (UIElement element) {
+              (AdUIElement element) {
                 return switch (element) {
-                  UIElement.adAttribution => ima.UiElement.adAttribution,
-                  UIElement.countdown => ima.UiElement.countdown,
+                  AdUIElement.adAttribution => ima.UiElement.adAttribution,
+                  AdUIElement.countdown => ima.UiElement.countdown,
                 };
               },
             ).toList(),
           ),
-        if (_androidParams.enableCustomTabs != null)
-          nativeSettings.setEnableCustomTabs(_androidParams.enableCustomTabs!)
+        nativeSettings.setEnableCustomTabs(_androidParams.enableCustomTabs)
       ]);
 
       nativeSettingsCompleter.complete(nativeSettings);

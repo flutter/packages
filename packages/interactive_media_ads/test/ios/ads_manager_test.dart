@@ -44,13 +44,13 @@ void main() {
           loadVideoTimeout: const Duration(seconds: 9),
           mimeTypes: const <String>['value'],
           playAdsAfterTime: const Duration(seconds: 5),
-          uiElements: const <UIElement>{UIElement.countdown},
+          uiElements: const <AdUIElement>{AdUIElement.countdown},
           proxy: InteractiveMediaAdsProxy(
             newIMAAdsRenderingSettings: () => mockAdsRenderingSettings,
           ),
         ),
       );
-      await adsManager.init(settings);
+      await adsManager.init(settings: settings);
 
       verifyInOrder(<Future<void>>[
         mockAdsRenderingSettings.setBitrate(1000),

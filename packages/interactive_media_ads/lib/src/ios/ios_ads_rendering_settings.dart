@@ -51,12 +51,10 @@ base class IOSAdsRenderingSettings extends PlatformAdsRenderingSettings {
     if (_iosParams.enablePreloading != null) {
       nativeSettings.setEnablePreloading(_iosParams.enablePreloading!);
     }
-    if (_iosParams.loadVideoTimeout != null) {
-      nativeSettings.setLoadVideoTimeout(
-        _iosParams.loadVideoTimeout!.inMicroseconds /
-            Duration.microsecondsPerSecond,
-      );
-    }
+    nativeSettings.setLoadVideoTimeout(
+      _iosParams.loadVideoTimeout.inMicroseconds /
+          Duration.microsecondsPerSecond,
+    );
     if (_iosParams.mimeTypes != null) {
       nativeSettings.setMimeTypes(_iosParams.mimeTypes);
     }
@@ -69,10 +67,10 @@ base class IOSAdsRenderingSettings extends PlatformAdsRenderingSettings {
     if (_iosParams.uiElements != null) {
       nativeSettings.setUIElements(
         _iosParams.uiElements!.map(
-          (UIElement element) {
+          (AdUIElement element) {
             return switch (element) {
-              UIElement.adAttribution => UIElementType.adAttribution,
-              UIElement.countdown => UIElementType.countdown,
+              AdUIElement.adAttribution => UIElementType.adAttribution,
+              AdUIElement.countdown => UIElementType.countdown,
             };
           },
         ).toList(),

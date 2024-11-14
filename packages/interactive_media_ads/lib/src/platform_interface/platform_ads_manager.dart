@@ -18,7 +18,7 @@ abstract class PlatformAdsManager {
   PlatformAdsManager();
 
   /// Initializes the ad experience using default rendering settings.
-  Future<void> init([PlatformAdsRenderingSettings? settings]);
+  Future<void> init({PlatformAdsRenderingSettings? settings});
 
   /// Starts playing the ads.
   Future<void> start(AdsManagerStartParams params);

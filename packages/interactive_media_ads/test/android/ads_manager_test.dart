@@ -54,14 +54,14 @@ void main() {
           loadVideoTimeout: const Duration(seconds: 2),
           mimeTypes: const <String>['value'],
           playAdsAfterTime: const Duration(seconds: 5),
-          uiElements: const <UIElement>{UIElement.countdown},
+          uiElements: const <AdUIElement>{AdUIElement.countdown},
           enableCustomTabs: true,
           proxy: InteractiveMediaAdsProxy(
             instanceImaSdkFactory: () => mockImaSdkFactory,
           ),
         ),
       );
-      await adsManager.init(settings);
+      await adsManager.init(settings: settings);
 
       verifyInOrder(<Future<void>>[
         mockAdsRenderingSettings.setBitrateKbps(1000),

@@ -49,7 +49,7 @@ base class PlatformAdsRenderingSettingsCreationParams {
   const PlatformAdsRenderingSettingsCreationParams({
     this.bitrate,
     this.enablePreloading,
-    this.loadVideoTimeout,
+    this.loadVideoTimeout = const Duration(seconds: 8),
     this.mimeTypes,
     this.playAdsAfterTime,
     this.uiElements,
@@ -78,13 +78,13 @@ base class PlatformAdsRenderingSettingsCreationParams {
   /// Specifies a non-default amount of time to wait for media to load before
   /// timing out.
   ///
-  /// This only applies to the IMA client-side SDK. Default time is 8000 ms.
-  final Duration? loadVideoTimeout;
+  /// This only applies to the IMA client-side SDK.
+  final Duration loadVideoTimeout;
 
   /// The SDK will prioritize the media with MIME type on the list.
   ///
-  /// If empty, the SDK will pick the media based on player capabilities. This
-  /// only refers to the mime types of videos to be selected for linear ads.
+  /// This only refers to the mime types of videos to be selected for linear
+  /// ads.
   final List<String>? mimeTypes;
 
   /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
@@ -97,9 +97,9 @@ base class PlatformAdsRenderingSettingsCreationParams {
 
   /// Sets the ad UI elements to be rendered by the IMA SDK.
   ///
-  /// Some modifications to the uiElements list may have no effect for specific
+  /// Some modifications to the uiElements set may have no effect for specific
   /// ads.
-  final Set<UIElement>? uiElements;
+  final Set<AdUIElement>? uiElements;
 }
 
 /// Defines parameters that control the rendering of ads.

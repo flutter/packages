@@ -31,15 +31,14 @@ class IOSAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> init([PlatformAdsRenderingSettings? settings]) {
-    if (settings == null) {
-      return _manager.initialize(null);
+  Future<void> init({PlatformAdsRenderingSettings? settings}) {
+    IMAAdsRenderingSettings? nativeSettings;
+    if (settings != null) {
+      nativeSettings = settings is IOSAdsRenderingSettings
+          ? settings.nativeSettings
+          : IOSAdsRenderingSettings(settings.params).nativeSettings;
     }
 
-    final IMAAdsRenderingSettings nativeSettings =
-        settings is IOSAdsRenderingSettings
-            ? settings.nativeSettings
-            : IOSAdsRenderingSettings(settings.params).nativeSettings;
     return _manager.initialize(nativeSettings);
   }
 

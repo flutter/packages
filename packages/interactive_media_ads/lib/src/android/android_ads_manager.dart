@@ -33,15 +33,14 @@ class AndroidAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> init([PlatformAdsRenderingSettings? settings]) async {
-    if (settings == null) {
-      return _manager.init(null);
+  Future<void> init({PlatformAdsRenderingSettings? settings}) async {
+    ima.AdsRenderingSettings? nativeSettings;
+    if (settings != null) {
+      nativeSettings = settings is AndroidAdsRenderingSettings
+          ? await settings.nativeSettings
+          : await AndroidAdsRenderingSettings(settings.params).nativeSettings;
     }
 
-    final ima.AdsRenderingSettings nativeSettings =
-        settings is AndroidAdsRenderingSettings
-            ? await settings.nativeSettings
-            : await AndroidAdsRenderingSettings(settings.params).nativeSettings;
     await _manager.init(nativeSettings);
   }
 

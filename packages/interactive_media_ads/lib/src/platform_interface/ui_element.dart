@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// Describes an element of the ad UI, to be requested or rendered by the SDK.
-enum UIElement {
+enum AdUIElement {
   /// The ad attribution UI element, for example, "Ad".
   adAttribution,
 

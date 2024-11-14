@@ -11,10 +11,10 @@ class AdsRenderingSettings {
   AdsRenderingSettings({
     int? bitrate,
     bool? enablePreloading,
-    Duration? loadVideoTimeout,
+    Duration loadVideoTimeout = const Duration(seconds: 8),
     List<String>? mimeTypes,
     Duration? playAdsAfterTime,
-    Set<UIElement>? uiElements,
+    Set<AdUIElement>? uiElements,
   }) : this.fromPlatform(PlatformAdsRenderingSettings(
           PlatformAdsRenderingSettingsCreationParams(
             bitrate: bitrate,
@@ -56,13 +56,13 @@ class AdsRenderingSettings {
   /// Specifies a non-default amount of time to wait for media to load before
   /// timing out.
   ///
-  /// This only applies to the IMA client-side SDK. Default time is 8000 ms.
-  Duration? get loadVideoTimeout => platform.params.loadVideoTimeout;
+  /// This only applies to the IMA client-side SDK..
+  Duration get loadVideoTimeout => platform.params.loadVideoTimeout;
 
   /// The SDK will prioritize the media with MIME type on the list.
   ///
-  /// If empty, the SDK will pick the media based on player capabilities. This
-  /// only refers to the mime types of videos to be selected for linear ads.
+  /// This only refers to the mime types of videos to be selected for linear
+  /// ads.
   List<String>? get mimeTypes => platform.params.mimeTypes;
 
   /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
@@ -77,5 +77,5 @@ class AdsRenderingSettings {
   ///
   /// Some modifications to the uiElements list may have no effect for specific
   /// ads.
-  Set<UIElement>? get uiElements => platform.params.uiElements;
+  Set<AdUIElement>? get uiElements => platform.params.uiElements;
 }
