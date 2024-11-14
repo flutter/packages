@@ -41,9 +41,9 @@ void main() {
         IOSAdsRenderingSettingsCreationParams(
           bitrate: 1000,
           enablePreloading: false,
-          loadVideoTimeout: 8000,
+          loadVideoTimeout: const Duration(seconds: 9),
           mimeTypes: const <String>['value'],
-          playAdsAfterTime: 2.0,
+          playAdsAfterTime: const Duration(seconds: 5),
           uiElements: const <UIElement>{UIElement.countdown},
           proxy: InteractiveMediaAdsProxy(
             newIMAAdsRenderingSettings: () => mockAdsRenderingSettings,
@@ -55,9 +55,9 @@ void main() {
       verifyInOrder(<Future<void>>[
         mockAdsRenderingSettings.setBitrate(1000),
         mockAdsRenderingSettings.setEnablePreloading(false),
-        mockAdsRenderingSettings.setLoadVideoTimeout(8),
+        mockAdsRenderingSettings.setLoadVideoTimeout(9.0),
         mockAdsRenderingSettings.setMimeTypes(<String>['value']),
-        mockAdsRenderingSettings.setPlayAdsAfterTime(2.0),
+        mockAdsRenderingSettings.setPlayAdsAfterTime(5.0),
         mockAdsRenderingSettings.setUIElements(
           <ima.UIElementType>[ima.UIElementType.countdown],
         ),

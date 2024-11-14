@@ -51,9 +51,9 @@ void main() {
         AndroidAdsRenderingSettingsCreationParams(
           bitrate: 1000,
           enablePreloading: false,
-          loadVideoTimeout: 12,
+          loadVideoTimeout: const Duration(seconds: 2),
           mimeTypes: const <String>['value'],
-          playAdsAfterTime: 2.0,
+          playAdsAfterTime: const Duration(seconds: 5),
           uiElements: const <UIElement>{UIElement.countdown},
           enableCustomTabs: true,
           proxy: InteractiveMediaAdsProxy(
@@ -66,9 +66,9 @@ void main() {
       verifyInOrder(<Future<void>>[
         mockAdsRenderingSettings.setBitrateKbps(1000),
         mockAdsRenderingSettings.setEnablePreloading(false),
-        mockAdsRenderingSettings.setLoadVideoTimeout(12),
+        mockAdsRenderingSettings.setLoadVideoTimeout(2000),
         mockAdsRenderingSettings.setMimeTypes(<String>['value']),
-        mockAdsRenderingSettings.setPlayAdsAfterTime(2.0),
+        mockAdsRenderingSettings.setPlayAdsAfterTime(5.0),
         mockAdsRenderingSettings.setUiElements(
           <ima.UiElement>[ima.UiElement.countdown],
         ),

@@ -52,14 +52,19 @@ base class IOSAdsRenderingSettings extends PlatformAdsRenderingSettings {
       nativeSettings.setEnablePreloading(_iosParams.enablePreloading!);
     }
     if (_iosParams.loadVideoTimeout != null) {
-      // Converts milliseconds to seconds.
-      nativeSettings.setLoadVideoTimeout(_iosParams.loadVideoTimeout! / 1000);
+      nativeSettings.setLoadVideoTimeout(
+        _iosParams.loadVideoTimeout!.inMicroseconds /
+            Duration.microsecondsPerSecond,
+      );
     }
     if (_iosParams.mimeTypes != null) {
       nativeSettings.setMimeTypes(_iosParams.mimeTypes);
     }
     if (_iosParams.playAdsAfterTime != null) {
-      nativeSettings.setPlayAdsAfterTime(_iosParams.playAdsAfterTime!);
+      nativeSettings.setPlayAdsAfterTime(
+        _iosParams.playAdsAfterTime!.inMicroseconds /
+            Duration.microsecondsPerSecond,
+      );
     }
     if (_iosParams.uiElements != null) {
       nativeSettings.setUIElements(

@@ -76,10 +76,10 @@ base class PlatformAdsRenderingSettingsCreationParams {
   final bool? enablePreloading;
 
   /// Specifies a non-default amount of time to wait for media to load before
-  /// timing out, in milliseconds.
+  /// timing out.
   ///
   /// This only applies to the IMA client-side SDK. Default time is 8000 ms.
-  final int? loadVideoTimeout;
+  final Duration? loadVideoTimeout;
 
   /// The SDK will prioritize the media with MIME type on the list.
   ///
@@ -88,11 +88,12 @@ base class PlatformAdsRenderingSettingsCreationParams {
   final List<String>? mimeTypes;
 
   /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
-  /// time (in seconds).
+  /// time.
   ///
   /// This setting is strictly after the specified time. For example, setting
-  /// `playAdsAfterTime` to 15 will ignore an ad break scheduled to play at 15s.
-  final double? playAdsAfterTime;
+  /// `playAdsAfterTime` to 15s will ignore an ad break scheduled to play at
+  /// 15s.
+  final Duration? playAdsAfterTime;
 
   /// Sets the ad UI elements to be rendered by the IMA SDK.
   ///
