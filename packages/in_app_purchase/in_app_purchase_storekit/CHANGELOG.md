@@ -1,3 +1,7 @@
+## 0.3.20
+
+* Fixes manual invocation of `finishTransaction` causing a fatal crash.
+
 ## 0.3.19+1
 
 * Removes unneeded platform availability annotations.
