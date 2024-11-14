@@ -16,10 +16,22 @@ const String _url = 'https://accounts.google.com/gsi/client';
 // The default TrustedPolicy name that will be used to inject the script.
 const String _defaultTrustedPolicyName = 'gis-dart';
 
+// Sentinel value to tell apart when users explicitly set the nonce value to `null`.
+const String _undefined = '___undefined___';
+
 /// Loads the GIS SDK for web, using Trusted Types API when available.
+///
+/// This attempts to use Trusted Types when available, and creates a new policy
+/// with the given [trustedTypePolicyName].
+///
+/// By default, the script will attempt to copy the `nonce` attribute from other
+/// scripts in the page. The [nonce] parameter will be used when passed, and
+/// not-null. When [nonce] parameter is explicitly `null`, no `nonce`
+/// attribute is applied to the script.
 Future<void> loadWebSdk({
   web.HTMLElement? target,
   String trustedTypePolicyName = _defaultTrustedPolicyName,
+  String? nonce = _undefined,
 }) {
   final Completer<void> completer = Completer<void>();
   onGoogleLibraryLoad = () => completer.complete();
@@ -42,15 +54,17 @@ Future<void> loadWebSdk({
     }
   }
 
-  final web.HTMLScriptElement script =
-      web.document.createElement('script') as web.HTMLScriptElement
-        ..async = true
-        ..defer = true;
+  final web.HTMLScriptElement script = web.HTMLScriptElement()
+    ..async = true
+    ..defer = true;
   if (trustedUrl != null) {
     script.trustedSrc = trustedUrl;
-    if (_getNonce() case var nonce?) script.nonce = nonce;
   } else {
     script.src = _url;
+  }
+
+  if (_getNonce(suppliedNonce: nonce) case final String nonce?) {
+    script.nonce = nonce;
   }
 
   (target ?? web.document.head!).appendChild(script);
@@ -58,24 +72,32 @@ Future<void> loadWebSdk({
   return completer.future;
 }
 
-/// Returns CSP nonce, if set for any script tag.
-String? _getNonce({web.Window? window}) {
-  final currentWindow = window ?? web.window;
-  final elements = currentWindow.document.querySelectorAll('script');
-  for (var i = 0; i < elements.length; i++) {
-    if (elements.item(i) case web.HTMLScriptElement element) {
-      final nonceValue = element.nullableNonce ?? element.getAttribute('nonce');
-      if (nonceValue != null && _noncePattern.hasMatch(nonceValue)) {
-        return nonceValue;
+/// Computes the actual nonce value to use.
+///
+/// If [suppliedNonce] has been explicitly passed, returns that.
+/// If `suppliedNonce` is null, it attempts to locate the `nonce`
+/// attribute from other script in the page.
+String? _getNonce({String? suppliedNonce, web.Window? window}) {
+  if (suppliedNonce != _undefined) {
+    return suppliedNonce;
+  }
+
+  final web.Window currentWindow = window ?? web.window;
+  final web.NodeList elements =
+      currentWindow.document.querySelectorAll('script');
+
+  for (int i = 0; i < elements.length; i++) {
+    if (elements.item(i) case final web.HTMLScriptElement element) {
+      // Chrome may return an empty string instead of null.
+      final String nonce =
+          element.nullableNonce ?? element.getAttribute('nonce') ?? '';
+      if (nonce.isNotEmpty) {
+        return nonce;
       }
     }
   }
   return null;
 }
-
-// According to the CSP3 spec a nonce must be a valid base64 string.
-// https://w3c.github.io/webappsec-csp/#grammardef-base64-value
-final _noncePattern = RegExp('^[\\w+/_-]+[=]{0,2}\$');
 
 /// Exception thrown if the Trusted Types feature is supported, enabled, and it
 /// has prevented this loader from injecting the JS SDK.
