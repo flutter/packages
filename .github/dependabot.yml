@@ -102,6 +102,14 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      test-dependencies:
+        patterns:
+          - "androidx.test:*"
+          - "io.mockk:mockk:*"
+          - "junit:junit"
+          - "org.mockito:*"
+          - "org.robolectric:*"
     ignore:
       - dependency-name: "com.android.tools.build:gradle"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
