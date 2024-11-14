@@ -85,6 +85,21 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   // #enddocregion main-dart
 
+  Future<void> useProxyClass() async {
+    // #docregion simple-proxy-class
+    final SimpleExampleNativeClass instance = SimpleExampleNativeClass(
+        aField: 'my field',
+        aParameter: 'my parameter',
+        flutterMethod: (SimpleExampleNativeClass instance, String aParameter) {
+          debugPrint(aParameter);
+        }
+    );
+
+    debugPrint(instance.aField);
+    debugPrint(await instance.hostMethod('my parameter'));
+    // #enddocregion simple-proxy-class
+  }
+
   @override
   void initState() {
     super.initState();

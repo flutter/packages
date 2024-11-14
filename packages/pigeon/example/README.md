@@ -482,6 +482,19 @@ registrar.setUp()
 
 ### Generated Dart Class Usage
 
+<?code-excerpt "lib/main.dart (simple-proxy-class)"?>
+```dart
+final SimpleExampleNativeClass instance = SimpleExampleNativeClass(
+    aField: 'my field',
+    aParameter: 'my parameter',
+    flutterMethod: (SimpleExampleNativeClass instance, String aParameter) {
+      debugPrint(aParameter);
+    }
+);
+
+debugPrint(instance.aField);
+debugPrint(await instance.hostMethod('my parameter'));
+```
 
 ## Complex ProxyApi Example
 
