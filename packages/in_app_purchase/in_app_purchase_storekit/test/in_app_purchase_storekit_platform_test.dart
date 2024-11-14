@@ -584,4 +584,10 @@ void main() {
       expect(await iapStoreKitPlatform.countryCode(), expectedCountryCode);
     });
   });
+
+  test('storekit 2 is unsupported', () async {
+    final InAppPurchaseStoreKitPlatform connection =
+        InAppPurchaseStoreKitPlatform();
+    expect(connection.enableStoreKit2(), false);
+  });
 }

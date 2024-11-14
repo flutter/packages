@@ -246,8 +246,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   Future<String?> getCountryCode() => countryCode();
 
   /// Turns on StoreKit2. You cannot disable this after it is enabled.
-  void enableStoreKit2() {
-    _useStoreKit2 = true;
+  Future<bool> enableStoreKit2() async {
+    _useStoreKit2 = await SKStorefrontWrapper.supportsStoreKit2();
+    return _useStoreKit2;
   }
 }
 

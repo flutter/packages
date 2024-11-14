@@ -9,6 +9,8 @@ import '../messages.g.dart';
 
 part 'sk_storefront_wrapper.g.dart';
 
+InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+
 /// Contains the location and unique identifier of an Apple App Store storefront.
 ///
 /// Dart wrapper around StoreKit's
@@ -24,6 +26,11 @@ class SKStorefrontWrapper {
     required this.countryCode,
     required this.identifier,
   });
+
+  /// Checks the device version to determine if it supports StoreKit 2.
+  static Future<bool> supportsStoreKit2() {
+    return _hostApi.supportsStoreKit2();
+  }
 
   /// Constructs an instance of the [SKStorefrontWrapper] from a key value map
   /// of data.
