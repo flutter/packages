@@ -17,7 +17,7 @@ Downloaded by pub (not CocoaPods).
   s.source_files = 'image_picker_macos/Sources/image_picker_macos/**/*.swift'
   s.dependency 'FlutterMacOS'
 
-  s.platform = :osx, '10.11'
+  s.platform = :osx, '10.14'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.swift_version = '5.0'
 end
