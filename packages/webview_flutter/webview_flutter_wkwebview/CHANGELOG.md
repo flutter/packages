@@ -1,3 +1,11 @@
+## 3.16.2
+
+* Updates README to remove contributor-focused documentation.
+
+## 3.16.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 3.16.0
 
 * Supports NTLM for authentication.

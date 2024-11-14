@@ -1,3 +1,7 @@
+## 2.7.16
+
+* Updates internal Pigeon API to use newer features.
+
 ## 2.7.15
 
 * Changes the rotation correction calculation for Android API 29+ to use
