@@ -160,44 +160,12 @@ this annotation generates
 
 * A Dart class that acts as a proxy to the native class/type.
 * A native language API that handles creating native instances, methods calls from Dart to host,
-  and method calls from host to Dart. 
+  and method calls from host to Dart.
 * A Dart and native language `InstanceManager` that automatically handles garbage collection of the
   native instance.
+* A native language registrar for setting up all the native language APIs.
 
 See this [example](./example/README.md#ProxyApi_Example) for example usage.
-
-#### Annotation
-
-To generate ProxyApis, the generated files for the host platform language must be able to reference
-the native class. The pigeon file annotation provides support to declare the full class name in
-Kotlin or the import library for Swift:
-
-Kotlin:
-
-```dart
-@ProxyApi(
-   kotlinOptions: KotlinProxyApiOptions(
-      fullClassName: 'some.class.package.SomeNativeClass',
-   ),
-)
-abstract class SomeNativeClass {
-}
-```
-
-Swift:
-
-```dart
-@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'SomeNativeLibrary'))
-abstract class SomeNativeClass {
-}
-```
-
-#### API Structure
-
-The generated code creates:
-
-* A Dart class that represents the native class.
-* A ProxyApiRegistrar 
 
 ## Feedback
 

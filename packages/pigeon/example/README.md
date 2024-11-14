@@ -353,19 +353,56 @@ pigeon_example_package_message_flutter_api_flutter_method(
 
 ## ProxyApi Example
 
-This example gives an overview of how to use Pigeon to wrap a native API.
+This example gives an overview of how to use Pigeon to wrap a native class.
 
 ### Example Class
 
-Below are example native classes that will be wrapped by this example. 
+Below are example native classes that will be wrapped by this example. Note that other languages
+can be wrapped, but the generated code will only be in the languages shown be.
+
+#### Kotlin
 
 ```kotlin
 ```
+
+#### Swift
 
 ```swift
 ```
 
 ### Dart input
+
+This class is declared in the pigeon file and defines the generated Dart class and the native
+language API.
+
+<?code-excerpt "pigeons/messages.dart (proxy-definitions)"?>
+```dart
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'dev.flutter.pigeon_example_app.ExampleNativeClass',
+  ),
+  swiftOptions: SwiftProxyApiOptions(
+    name: 'ExampleNativeClass',
+  ),
+)
+abstract class ExampleNativeClass {
+  // ignore: avoid_unused_constructor_parameters
+  ExampleNativeClass(String aParameter);
+
+  late String aField;
+
+  @attached
+  late ExampleNativeClass anAttachedField;
+
+  late void Function(String aParameter) flutterMethod;
+
+  String hostMethod(String aParameter);
+}
+```
+
+### Kotlin
+
+### Swift
 
 ## Swift / Kotlin Plugin Example
 

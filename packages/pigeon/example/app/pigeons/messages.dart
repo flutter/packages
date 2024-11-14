@@ -63,3 +63,27 @@ abstract class MessageFlutterApi {
   String flutterMethod(String? aString);
 }
 // #enddocregion flutter-definitions
+
+// #docregion proxy-definitions
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'dev.flutter.pigeon_example_app.ExampleNativeClass',
+  ),
+  swiftOptions: SwiftProxyApiOptions(
+    name: 'ExampleNativeClass',
+  ),
+)
+abstract class ExampleNativeClass {
+  // ignore: avoid_unused_constructor_parameters
+  ExampleNativeClass(String aParameter);
+
+  late String aField;
+
+  @attached
+  late ExampleNativeClass anAttachedField;
+
+  late void Function(String aParameter) flutterMethod;
+
+  String hostMethod(String aParameter);
+}
+// #enddocregion proxy-definitions
