@@ -467,6 +467,13 @@ void main() {
   });
 
   group('videos', () {
+    test('pickVideo delegate to getVideo', () async {
+      // The pickVideo is soft-deprecated in the platform interface
+      // and is only implemented for compatibility. Callers should be using getVideo.
+      await plugin.pickVideo(source: ImageSource.gallery);
+      verify(plugin.getVideo(source: ImageSource.gallery)).called(1);
+    });
+
     test('getVideo passes the accepted type groups correctly', () async {
       await plugin.getVideo(source: ImageSource.gallery);
 
