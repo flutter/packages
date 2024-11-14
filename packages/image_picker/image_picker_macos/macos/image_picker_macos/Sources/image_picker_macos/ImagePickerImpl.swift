@@ -37,7 +37,7 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
           PigeonError(
             code: "UNSUPPORTED_PHPICKER",
             message:
-              "PHPicker is only supported on macOS 13.0 or newer. Use \(supportsPHPicker) to check.",
+              "PHPicker is only supported on macOS 13.0 or newer. Use `supportsPHPicker()` to check.",
             details: nil)))
       return
     }
@@ -74,7 +74,7 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
           PigeonError(
             code: "UNSUPPORTED_PHPICKER",
             message:
-              "PHPicker is only supported on macOS 13.0 or newer. Use \(supportsPHPicker) to check.",
+              "PHPicker is only supported on macOS 13.0 or newer. Use `supportsPHPicker()` to check.",
             details: nil)))
       return
     }
@@ -117,7 +117,7 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
           PigeonError(
             code: "UNSUPPORTED_PHPICKER",
             message:
-              "PHPicker is only supported on macOS 13.0 or newer. Use \(supportsPHPicker) to check.",
+              "PHPicker is only supported on macOS 13.0 or newer. Use `supportsPHPicker()` to check.",
             details: nil)))
       return
     }
