@@ -106,51 +106,20 @@
   self.marker.zIndex = zIndex;
 }
 
-- (void)interpretMarkerOptions:(NSDictionary *)data
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                   screenScale:(CGFloat)screenScale {
-  NSNumber *alpha = FGMGetValueOrNilFromDict(data, @"alpha");
-  if (alpha) {
-    [self setAlpha:[alpha floatValue]];
-  }
-  NSArray *anchor = FGMGetValueOrNilFromDict(data, @"anchor");
-  if (anchor) {
-    [self setAnchor:[FLTGoogleMapJSONConversions pointFromArray:anchor]];
-  }
-  NSNumber *draggable = FGMGetValueOrNilFromDict(data, @"draggable");
-  if (draggable) {
-    [self setDraggable:[draggable boolValue]];
-  }
-  NSArray *icon = FGMGetValueOrNilFromDict(data, @"icon");
-  if (icon) {
-    UIImage *image = [self extractIconFromData:icon registrar:registrar screenScale:screenScale];
-    [self setIcon:image];
-  }
-  NSNumber *flat = FGMGetValueOrNilFromDict(data, @"flat");
-  if (flat) {
-    [self setFlat:[flat boolValue]];
-  }
-  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
-  if (consumeTapEvents) {
-    [self setConsumeTapEvents:[consumeTapEvents boolValue]];
-  }
-  [self interpretInfoWindow:data];
-  NSArray *position = FGMGetValueOrNilFromDict(data, @"position");
-  if (position) {
-    [self setPosition:[FLTGoogleMapJSONConversions locationFromLatLong:position]];
-  }
-  NSNumber *rotation = FGMGetValueOrNilFromDict(data, @"rotation");
-  if (rotation) {
-    [self setRotation:[rotation doubleValue]];
-  }
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
-    [self setZIndex:[zIndex intValue]];
-  }
+- (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker {
+  [self setAlpha:platformMarker.alpha];
+  [self setAnchor:FGMGetCGPointForPigeonPoint(platformMarker.anchor)];
+  [self setDraggable:platformMarker.draggable];
+  UIImage *image = [self extractIconFromData:platformMarker.icon
+                                   registrar:registrar
+                                 screenScale:screenScale];
+  [self setIcon:image];
+  [self setFlat:platformMarker.flat];
+  [self setConsumeTapEvents:platformMarker.consumeTapEvents];
+  [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position);];
+  [self setRotation:platformMarker.rotation];
+  [self setVisible:platformMarker.visible];
+  [self setZIndex:platformMarker.zIndex];
 }
 
 - (void)interpretInfoWindow:(NSDictionary *)data {
@@ -168,86 +137,56 @@
   }
 }
 
-- (UIImage *)extractIconFromData:(NSArray *)iconData
-                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                     screenScale:(CGFloat)screenScale {
+- (UIImage *)iconFromBitmap:(FGMPlatformBitmap *)platformBitmap
+                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                screenScale:(CGFloat)screenScale {
   NSAssert(screenScale > 0, @"Screen scale must be greater than 0");
+  // See comment in messages.dart for why this is so loosely typed.
+  id bitmap = platformBitmap.bitmap;
   UIImage *image;
-  if ([iconData.firstObject isEqualToString:@"defaultMarker"]) {
-    CGFloat hue = (iconData.count == 1) ? 0.0f : [iconData[1] doubleValue];
+  if ([bitmap isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
+    FGMPlatformBitmapDefaultMarker *bitmapDefaultMarker = bitmap;
+    CGFloat hue = bitmapDefaultMarker.hue.doubleValue;
     image = [GMSMarker markerImageWithColor:[UIColor colorWithHue:hue / 360.0
                                                        saturation:1.0
                                                        brightness:0.7
                                                             alpha:1.0]];
-  } else if ([iconData.firstObject isEqualToString:@"fromAsset"]) {
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapAsset class]]) {
     // Deprecated: This message handling for 'fromAsset' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    if (iconData.count == 2) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
+    FGMPlatformBitmapAsset *bitmapAsset = bitmap;
+    if (bitmapAsset.pkg) {
+      image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAsset.name
+                                                   fromPackage:bitmapAsset.pkg]];
     } else {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]
-                                                   fromPackage:iconData[2]]];
+      image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAsset.name]];
     }
-  } else if ([iconData.firstObject isEqualToString:@"fromAssetImage"]) {
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
     // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    if (iconData.count == 3) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:iconData[1]]];
-      id scaleParam = iconData[2];
-      image = [self scaleImage:image by:scaleParam];
-    } else {
-      NSString *error =
-          [NSString stringWithFormat:@"'fromAssetImage' should have exactly 3 arguments. Got: %lu",
-                                     (unsigned long)iconData.count];
-      NSException *exception = [NSException exceptionWithName:@"InvalidBitmapDescriptor"
-                                                       reason:error
-                                                     userInfo:nil];
-      @throw exception;
-    }
-  } else if ([iconData[0] isEqualToString:@"fromBytes"]) {
+    FGMPlatformBitmapAssetImage *bitmapAssetImage = bitmap;
+    image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAssetImage.name]];
+    image = [self scaleImage:image by:bitmapAssetImage.scale];
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapBytes class]]) {
     // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
-    if (iconData.count == 2) {
-      @try {
-        FlutterStandardTypedData *byteData = iconData[1];
-        CGFloat mainScreenScale = [[UIScreen mainScreen] scale];
-        image = [UIImage imageWithData:[byteData data] scale:mainScreenScale];
-      } @catch (NSException *exception) {
-        @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                       reason:@"Unable to interpret bytes as a valid image."
-                                     userInfo:nil];
-      }
-    } else {
-      NSString *error = [NSString
-          stringWithFormat:@"fromBytes should have exactly one argument, the bytes. Got: %lu",
-                           (unsigned long)iconData.count];
-      NSException *exception = [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                                       reason:error
-                                                     userInfo:nil];
-      @throw exception;
+    FGMPlatformBitmapBytes *bitmapBytes = bitmap;
+    @try {
+      CGFloat mainScreenScale = [[UIScreen mainScreen] scale];
+      image = [UIImage imageWithData:bitmapBytes.byteData.data scale:mainScreenScale];
+    } @catch (NSException *exception) {
+      @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                     reason:@"Unable to interpret bytes as a valid image."
+                                   userInfo:nil];
     }
-  } else if ([iconData.firstObject isEqualToString:@"asset"]) {
-    NSDictionary *assetData = iconData[1];
-    if (![assetData isKindOfClass:[NSDictionary class]]) {
-      NSException *exception =
-          [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                  reason:@"Unable to interpret asset, expected a dictionary as the "
-                                         @"second parameter."
-                                userInfo:nil];
-      @throw exception;
-    }
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
+    FGMPlatformBitmapAssetMap *bitmapAssetMap = bitmap;
 
-    NSString *assetName = FGMGetValueOrNilFromDict(assetData, @"assetName");
-    NSString *scalingMode = FGMGetValueOrNilFromDict(assetData, @"bitmapScaling");
+    image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAssetMap.assetName]];
 
-    image = [UIImage imageNamed:[registrar lookupKeyForAsset:assetName]];
-
-    if ([scalingMode isEqualToString:@"auto"]) {
-      NSNumber *width = FGMGetValueOrNilFromDict(assetData, @"width");
-      NSNumber *height = FGMGetValueOrNilFromDict(assetData, @"height");
-      CGFloat imagePixelRatio =
-          [FGMGetValueOrNilFromDict(assetData, @"imagePixelRatio") doubleValue];
-
+    if (bitmapAssetMap.bitmapScaling == FGMPlatformMapBitmapScalingAuto) {
+      NSNumber *width = bitmapAssetMap.width;
+      NSNumber *height = bitmapAssetMap.height;
       if (width || height) {
         image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
         image = [FLTGoogleMapMarkerController scaledImage:image
@@ -255,44 +194,34 @@
                                                    height:height
                                               screenScale:screenScale];
       } else {
-        image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
+        image = [FLTGoogleMapMarkerController scaledImage:image
+                                                withScale:bitmapAssetMap.imagePixelRatio];
       }
     }
-  } else if ([iconData[0] isEqualToString:@"bytes"]) {
-    NSDictionary *byteData = iconData[1];
-    if (![byteData isKindOfClass:[NSDictionary class]]) {
-      NSException *exception =
-          [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                  reason:@"Unable to interpret bytes, expected a dictionary as the "
-                                         @"second parameter."
-                                userInfo:nil];
-      @throw exception;
-    }
-
-    FlutterStandardTypedData *bytes = FGMGetValueOrNilFromDict(byteData, @"byteData");
-    NSString *scalingMode = FGMGetValueOrNilFromDict(byteData, @"bitmapScaling");
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
+    FGMPlatformBitmapBytesMap *bitmapBytesMap = bitmap;
+    FlutterStandardTypedData *bytes = bitmapBytesMap.byteData;
 
     @try {
-      image = [UIImage imageWithData:[bytes data] scale:screenScale];
-      if ([scalingMode isEqualToString:@"auto"]) {
-        NSNumber *width = FGMGetValueOrNilFromDict(byteData, @"width");
-        NSNumber *height = FGMGetValueOrNilFromDict(byteData, @"height");
-        CGFloat imagePixelRatio =
-            [FGMGetValueOrNilFromDict(byteData, @"imagePixelRatio") doubleValue];
+      image = [UIImage imageWithData:bytes.data scale:screenScale];
+      if (bitmapBytesMap.bitmapScaling == FGMPlatformMapBitmapScalingAuto) {
+        NSNumber *width = bitmapBytesMap.width;
+        NSNumber *height = bitmapBytesMap.height;
 
         if (width || height) {
-          // Before scaling the image, image must be in screenScale
+          // Before scaling the image, image must be in screenScale.
           image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
           image = [FLTGoogleMapMarkerController scaledImage:image
                                                   withWidth:width
                                                      height:height
                                                 screenScale:screenScale];
         } else {
-          image = [FLTGoogleMapMarkerController scaledImage:image withScale:imagePixelRatio];
+          image = [FLTGoogleMapMarkerController scaledImage:image
+                                                  withScale:bitmapBytesMap.imagePixelRatio];
         }
       } else {
         // No scaling, load image from bytes without scale parameter.
-        image = [UIImage imageWithData:[bytes data]];
+        image = [UIImage imageWithData:bytes.data];
       }
     } @catch (NSException *exception) {
       @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
@@ -308,11 +237,7 @@
 /// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'
 /// message handling. It will be removed when the deprecated image bitmap description type
 /// 'fromBytes' is removed from the platform interface.
-- (UIImage *)scaleImage:(UIImage *)image by:(id)scaleParam {
-  double scale = 1.0;
-  if ([scaleParam isKindOfClass:[NSNumber class]]) {
-    scale = [scaleParam doubleValue];
-  }
+- (UIImage *)scaleImage:(UIImage *)image by:(double)scale {
   if (fabs(scale - 1) > 1e-3) {
     return [UIImage imageWithCGImage:[image CGImage]
                                scale:(image.scale * scale)
