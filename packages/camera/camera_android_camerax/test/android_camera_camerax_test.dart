@@ -948,7 +948,7 @@ void main() {
     const DeviceOrientation testUiOrientation = DeviceOrientation.portraitDown;
     const DeviceOrientation testCurrentOrientation =
         DeviceOrientation.portraitUp;
-    int testDefaultDisplayRotationAsConstant = Surface.rotation0;
+    int testDefaultDisplayRotation = 270;
 
     // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
@@ -970,7 +970,7 @@ void main() {
     camera.proxy.getUiOrientation =
         () async => Future<DeviceOrientation>.value(testUiOrientation);
     camera.proxy.getDefaultDisplayRotation =
-        () async => Future<int>.value(testDefaultDisplayRotationAsConstant);
+        () async => Future<int>.value(testDefaultDisplayRotation);
     camera.proxy.getDeviceOrientation =
         () async => Future<int>.value(Configuration.orientationLandscape);
 
@@ -985,10 +985,7 @@ void main() {
 
     expect(camera.currentUiOrientation, testUiOrientation);
     expect(camera.sensorOrientation, testSensorOrientation);
-    expect(
-        camera.currentDefaultDisplayRotation,
-        Surface.getCounterClockwiseRotationDegrees(
-            testDefaultDisplayRotationAsConstant));
+    expect(camera.currentDefaultDisplayRotation, testDefaultDisplayRotation);
 
     // Test that currentUiOrientation updates.
     const DeviceOrientationChangedEvent testEvent =
@@ -1002,17 +999,14 @@ void main() {
     expect(camera.currentUiOrientation, testCurrentOrientation);
 
     // Test that currentDefaultDisplayRotation updates.
-    testDefaultDisplayRotationAsConstant = Surface.rotation90;
+    testDefaultDisplayRotation = 90;
     DeviceOrientationManager.defaultDisplayRotationChangedStreamController
-        .add(testDefaultDisplayRotationAsConstant);
+        .add(testDefaultDisplayRotation);
 
     // Wait for currentDefaultDisplayRotation to update.
     await Future<void>.value();
 
-    expect(
-        camera.currentDefaultDisplayRotation,
-        Surface.getCounterClockwiseRotationDegrees(
-            testDefaultDisplayRotationAsConstant));
+    expect(camera.currentDefaultDisplayRotation, testDefaultDisplayRotation);
   });
 
   test(

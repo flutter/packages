@@ -60,8 +60,7 @@ class DeviceOrientationManager {
     api.stopListeningForDeviceOrientationChange();
   }
 
-  /// Retrieves the default rotation that CameraX uses for [UseCase]s in terms
-  /// of one of the [Surface] rotation constants.
+  /// Retrieves the default rotation that CameraX uses for [UseCase]s.
   ///
   /// The default rotation that CameraX uses is the rotation of the default
   /// display at the time of binding a particular [UseCase], but the default
@@ -75,7 +74,8 @@ class DeviceOrientationManager {
     final DeviceOrientationManagerHostApi api =
         DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
 
-    return api.getDefaultDisplayRotation();
+    return Surface.getCounterClockwiseRotationDegrees(
+        await api.getDefaultDisplayRotation());
   }
 
   /// Retrieves the current UI orientation based on the current device

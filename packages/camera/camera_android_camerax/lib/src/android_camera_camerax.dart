@@ -406,8 +406,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     isPreviewPreTransformed = await SystemServices.isPreviewPreTransformed();
     sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
 
-    currentDefaultDisplayRotation = Surface.getCounterClockwiseRotationDegrees(
-        await proxy.getDefaultDisplayRotation());
+    currentDefaultDisplayRotation = await proxy.getDefaultDisplayRotation();
 
     currentUiOrientation = await proxy.getUiOrientation();
     final int currentDeviceOrientation = await proxy.getDeviceOrientation();
@@ -426,8 +425,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     });
     DeviceOrientationManager
         .defaultDisplayRotationChangedStreamController.stream
-        .listen((int defaultDisplayRotation) => currentDefaultDisplayRotation =
-            Surface.getCounterClockwiseRotationDegrees(defaultDisplayRotation));
+        .listen((int defaultDisplayRotation) =>
+            currentDefaultDisplayRotation = defaultDisplayRotation);
 
     return flutterSurfaceTextureId;
   }
