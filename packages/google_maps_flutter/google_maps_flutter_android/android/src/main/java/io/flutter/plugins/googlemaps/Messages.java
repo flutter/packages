@@ -1851,6 +1851,19 @@ public class Messages {
       this.zIndex = setterArg;
     }
 
+    private @NonNull Long zIndexInt;
+
+    public @NonNull Long getZIndexInt() {
+      return zIndexInt;
+    }
+
+    public void setZIndexInt(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"zIndexInt\" is null.");
+      }
+      this.zIndexInt = setterArg;
+    }
+
     private @NonNull String markerId;
 
     public @NonNull String getMarkerId() {
@@ -1897,6 +1910,7 @@ public class Messages {
           && rotation.equals(that.rotation)
           && visible.equals(that.visible)
           && zIndex.equals(that.zIndex)
+          && zIndexInt.equals(that.zIndexInt)
           && markerId.equals(that.markerId)
           && Objects.equals(clusterManagerId, that.clusterManagerId);
     }
@@ -1915,6 +1929,7 @@ public class Messages {
           rotation,
           visible,
           zIndex,
+          zIndexInt,
           markerId,
           clusterManagerId);
     }
@@ -2009,6 +2024,14 @@ public class Messages {
         return this;
       }
 
+      private @Nullable Long zIndexInt;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setZIndexInt(@NonNull Long setterArg) {
+        this.zIndexInt = setterArg;
+        return this;
+      }
+
       private @Nullable String markerId;
 
       @CanIgnoreReturnValue
@@ -2038,6 +2061,7 @@ public class Messages {
         pigeonReturn.setRotation(rotation);
         pigeonReturn.setVisible(visible);
         pigeonReturn.setZIndex(zIndex);
+        pigeonReturn.setZIndexInt(zIndexInt);
         pigeonReturn.setMarkerId(markerId);
         pigeonReturn.setClusterManagerId(clusterManagerId);
         return pigeonReturn;
@@ -2046,7 +2070,7 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(13);
+      ArrayList<Object> toListResult = new ArrayList<>(14);
       toListResult.add(alpha);
       toListResult.add(anchor);
       toListResult.add(consumeTapEvents);
@@ -2058,6 +2082,7 @@ public class Messages {
       toListResult.add(rotation);
       toListResult.add(visible);
       toListResult.add(zIndex);
+      toListResult.add(zIndexInt);
       toListResult.add(markerId);
       toListResult.add(clusterManagerId);
       return toListResult;
@@ -2087,9 +2112,11 @@ public class Messages {
       pigeonResult.setVisible((Boolean) visible);
       Object zIndex = pigeonVar_list.get(10);
       pigeonResult.setZIndex((Double) zIndex);
-      Object markerId = pigeonVar_list.get(11);
+      Object zIndexInt = pigeonVar_list.get(11);
+      pigeonResult.setZIndexInt((Long) zIndexInt);
+      Object markerId = pigeonVar_list.get(12);
       pigeonResult.setMarkerId((String) markerId);
-      Object clusterManagerId = pigeonVar_list.get(12);
+      Object clusterManagerId = pigeonVar_list.get(13);
       pigeonResult.setClusterManagerId((String) clusterManagerId);
       return pigeonResult;
     }

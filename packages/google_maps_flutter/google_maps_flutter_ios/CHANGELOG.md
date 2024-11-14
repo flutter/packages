@@ -1,3 +1,7 @@
+## 2.13.2
+
+* Deprecates zIndex parameter in Marker and replace with zIndexInt.
+
 ## 2.13.1
 
 * Updates Pigeon for non-nullable collection type support.

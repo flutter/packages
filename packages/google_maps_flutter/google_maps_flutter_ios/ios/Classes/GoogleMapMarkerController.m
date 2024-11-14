@@ -147,8 +147,13 @@
   if (visible) {
     [self setVisible:[visible boolValue]];
   }
+
+  // We compare with zero because zIndexInt if non zero should get higher priority than zIndex
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
+  NSNumber *zIndexInt = FGMGetValueOrNilFromDict(data, @"zIndexInt");
+  if (zIndexInt && [zIndexInt intValue] != 0) {
+    [self setZIndex:[zIndexInt intValue]];
+  } else if (zIndex) {
     [self setZIndex:[zIndex intValue]];
   }
 }
