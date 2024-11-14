@@ -255,6 +255,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   DeviceOrientation currentUiOrientation = DeviceOrientation.portraitUp;
 
   /// Whether or not the device running the camera is naturally landscape-oriented.
+  // TODO(camsim99): Use this value to make fix for naturally landscape oriented devices.
   bool deviceIsNaturallyLandscape = false;
 
   /// The current rotation of the default Android `Display`.
@@ -425,8 +426,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     });
     DeviceOrientationManager
         .defaultDisplayRotationChangedStreamController.stream
-        .listen((int defaultDisplayRotation) =>
-            currentDefaultDisplayRotation = defaultDisplayRotation);
+        .listen((int defaultDisplayRotation) => currentDefaultDisplayRotation =
+            Surface.getCounterClockwiseRotationDegrees(defaultDisplayRotation));
 
     return flutterSurfaceTextureId;
   }

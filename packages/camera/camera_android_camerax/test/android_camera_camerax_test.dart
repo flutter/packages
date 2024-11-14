@@ -21,6 +21,7 @@ import 'package:camera_android_camerax/src/camera_state_error.dart';
 import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_android_camerax/src/capture_request_options.dart';
+import 'package:camera_android_camerax/src/configuration.dart';
 import 'package:camera_android_camerax/src/device_orientation_manager.dart';
 import 'package:camera_android_camerax/src/exposure_state.dart';
 import 'package:camera_android_camerax/src/fallback_strategy.dart';
@@ -202,6 +203,10 @@ void main() {
             Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
         getUiOrientation: () =>
             Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+        getDefaultDisplayRotation: () async =>
+            Future<int>.value(Surface.rotation90),
+        getDeviceOrientation: () async =>
+            Future<int>.value(Configuration.orientationLandscape),
       );
 
   /// CameraXProxy for testing exposure and focus related controls.
@@ -398,6 +403,10 @@ void main() {
           Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
       getUiOrientation: () =>
           Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+      getDefaultDisplayRotation: () async =>
+          Future<int>.value(Surface.rotation0),
+      getDeviceOrientation: () async =>
+          Future<int>.value(Configuration.orientationLandscape),
     );
 
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -530,6 +539,10 @@ void main() {
               : Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
       getUiOrientation: () =>
           Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+      getDefaultDisplayRotation: () async =>
+          Future<int>.value(Surface.rotation180),
+      getDeviceOrientation: () async =>
+          Future<int>.value(Configuration.orientationPortrait),
     );
 
     when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
@@ -935,6 +948,7 @@ void main() {
     const DeviceOrientation testUiOrientation = DeviceOrientation.portraitDown;
     const DeviceOrientation testCurrentOrientation =
         DeviceOrientation.portraitUp;
+    int testDefaultDisplayRotationAsConstant = Surface.rotation0;
 
     // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
@@ -955,6 +969,10 @@ void main() {
         (_) async => Future<int>.value(testSensorOrientation);
     camera.proxy.getUiOrientation =
         () async => Future<DeviceOrientation>.value(testUiOrientation);
+    camera.proxy.getDefaultDisplayRotation =
+        () async => Future<int>.value(testDefaultDisplayRotationAsConstant);
+    camera.proxy.getDeviceOrientation =
+        () async => Future<int>.value(Configuration.orientationLandscape);
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
@@ -965,18 +983,36 @@ void main() {
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
 
+    expect(camera.currentUiOrientation, testUiOrientation);
+    expect(camera.sensorOrientation, testSensorOrientation);
+    expect(
+        camera.currentDefaultDisplayRotation,
+        Surface.getCounterClockwiseRotationDegrees(
+            testDefaultDisplayRotationAsConstant));
+
+    // Test that currentUiOrientation updates.
     const DeviceOrientationChangedEvent testEvent =
         DeviceOrientationChangedEvent(testCurrentOrientation);
-
     DeviceOrientationManager.deviceOrientationChangedStreamController
         .add(testEvent);
 
     // Wait for currentDeviceOrientation to update.
     await Future<void>.value();
 
-    expect(camera.naturalOrientation, testUiOrientation);
-    expect(camera.sensorOrientation, testSensorOrientation);
-    expect(camera.currentDeviceOrientation, testCurrentOrientation);
+    expect(camera.currentUiOrientation, testCurrentOrientation);
+
+    // Test that currentDefaultDisplayRotation updates.
+    testDefaultDisplayRotationAsConstant = Surface.rotation90;
+    DeviceOrientationManager.defaultDisplayRotationChangedStreamController
+        .add(testDefaultDisplayRotationAsConstant);
+
+    // Wait for currentDefaultDisplayRotation to update.
+    await Future<void>.value();
+
+    expect(
+        camera.currentDefaultDisplayRotation,
+        Surface.getCounterClockwiseRotationDegrees(
+            testDefaultDisplayRotationAsConstant));
   });
 
   test(
@@ -1060,6 +1096,10 @@ void main() {
           Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
       getUiOrientation: () =>
           Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+      getDefaultDisplayRotation: () async =>
+          Future<int>.value(Surface.rotation90),
+      getDeviceOrientation: () async =>
+          Future<int>.value(Configuration.orientationPortrait),
     );
 
     final CameraInitializedEvent testCameraInitializedEvent =
@@ -1340,8 +1380,6 @@ void main() {
     // SurfaceTexture.
     camera.isPreviewPreTransformed = true;
 
-    camera.naturalOrientation = DeviceOrientation.portraitDown;
-
     final Widget widget = camera.buildPreview(cameraId);
 
     expect(widget is Texture, isTrue);
@@ -1362,120 +1400,49 @@ void main() {
     // SurfaceTexture.
     camera.isPreviewPreTransformed = false;
 
-    // Mock sensor and device orientation.
-    camera.sensorOrientation = 270;
-    camera.cameraIsFrontFacing = false;
-    camera.naturalOrientation = DeviceOrientation.portraitUp;
+    final List<int> rotationValuesToTest = <int>[0, 90, 180, 270];
+    // CameraPreview (see example/lib/camera_preview.dart) adds additional rotation based on device orientation.
+    final Map<DeviceOrientation, int> rotationAppliedByPluginPreview =
+        <DeviceOrientation, int>{
+      DeviceOrientation.portraitUp: 0,
+      DeviceOrientation.landscapeRight: 1,
+      DeviceOrientation.portraitDown: 2,
+      DeviceOrientation.landscapeLeft: 3,
+    };
 
-    final double expectedRotation = (camera.sensorOrientation +
-            0 /* the natural orientation in clockwise degrees */ *
-                -1 /* camera is not front facing */ +
-            360) %
-        360;
-    final int expectedQuarterTurns = (expectedRotation / 90).toInt();
+    for (final bool isFrontFacing in <bool>[true, false]) {
+      for (final int sensorOrientation in rotationValuesToTest) {
+        for (final int defaultDisplayRotation in rotationValuesToTest) {
+          for (final DeviceOrientation deviceOrientation
+              in DeviceOrientation.values) {
+            // Mock sensoro rientation, default display orientation, and device orientation.
+            camera.cameraIsFrontFacing = isFrontFacing;
+            camera.sensorOrientation = sensorOrientation;
+            camera.currentDefaultDisplayRotation = defaultDisplayRotation;
+            camera.currentUiOrientation = deviceOrientation;
 
-    final Widget widget = camera.buildPreview(cameraId);
+            final double expectedRotation = (camera.sensorOrientation -
+                    camera.currentDefaultDisplayRotation! *
+                        (isFrontFacing ? 1 : -1) +
+                    360) %
+                360;
+            final int expectedQuarterTurns = (expectedRotation / 90).toInt();
+            final int expectedQuarterturnsMinusPluginAppliedRotation =
+                expectedQuarterTurns -
+                    rotationAppliedByPluginPreview[
+                        camera.currentUiOrientation]!;
 
-    expect(widget is RotatedBox, isTrue);
-    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
-    expect(widget.child is Texture, isTrue);
-    expect((widget.child! as Texture).textureId, cameraId);
-  });
+            final Widget widget = camera.buildPreview(cameraId);
 
-  test(
-      'buildPreview returns preview with expected rotation if camera is front facing, the current orientation is landscape, and the preview is not backed by a SurfaceTexture',
-      () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const int cameraId = 7;
-
-    // Tell camera that createCamera has been called and thus, preview has been
-    // bound to the lifecycle of the camera.
-    camera.previewInitiallyBound = true;
-
-    // Tell camera the Surface used to build camera preview is not backed by a
-    // SurfaceTexture.
-    camera.isPreviewPreTransformed = false;
-
-    // Mock sensor and device orientation.
-    camera.sensorOrientation = 270;
-    camera.naturalOrientation = DeviceOrientation.portraitUp;
-    camera.cameraIsFrontFacing = true;
-
-    // Calculate expected rotation with offset due to counter-clockwise rotation
-    // of the image with th efront camera in use.
-    final double expectedRotation = ((camera.sensorOrientation +
-                0 /* the natural orientation in clockwise degrees */ *
-                    1 /* camera is front facing */ +
-                360) %
-            360) +
-        180;
-    final int expectedQuarterTurns = (expectedRotation / 90).toInt() % 4;
-
-    // Test landscape left.
-    camera.currentDeviceOrientation = DeviceOrientation.landscapeLeft;
-    Widget widget = camera.buildPreview(cameraId);
-
-    expect(widget is RotatedBox, isTrue);
-    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
-    expect(widget.child is Texture, isTrue);
-    expect((widget.child! as Texture).textureId, cameraId);
-
-    // Test landscape right.
-    camera.currentDeviceOrientation = DeviceOrientation.landscapeRight;
-    widget = camera.buildPreview(cameraId);
-
-    expect(widget is RotatedBox, isTrue);
-    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
-    expect(widget.child is Texture, isTrue);
-    expect((widget.child! as Texture).textureId, cameraId);
-  });
-
-  test(
-      'buildPreview returns preview with expected rotation if camera is front facing, the current orientation is not landscape, and the preview is not backed by a SurfaceTexture',
-      () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const int cameraId = 733;
-
-    // Tell camera that createCamera has been called and thus, preview has been
-    // bound to the lifecycle of the camera.
-    camera.previewInitiallyBound = true;
-
-    // Tell camera the Surface used to build camera preview is not backed by a
-    // SurfaceTexture.
-    camera.isPreviewPreTransformed = false;
-
-    // Mock sensor and device orientation.
-    camera.sensorOrientation = 270;
-    camera.naturalOrientation = DeviceOrientation.portraitUp;
-    camera.cameraIsFrontFacing = true;
-
-    // Calculate expected rotation without offset needed for landscape orientations
-    // due to counter-clockwise rotation of the image with th efront camera in use.
-    final double expectedRotation = (camera.sensorOrientation +
-            0 /* the natural orientation in clockwise degrees */ *
-                1 /* camera is front facing */ +
-            360) %
-        360;
-
-    final int expectedQuarterTurns = (expectedRotation / 90).toInt() % 4;
-
-    // Test portrait up.
-    camera.currentDeviceOrientation = DeviceOrientation.portraitUp;
-    Widget widget = camera.buildPreview(cameraId);
-
-    expect(widget is RotatedBox, isTrue);
-    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
-    expect(widget.child is Texture, isTrue);
-    expect((widget.child! as Texture).textureId, cameraId);
-
-    // Test portrait down.
-    camera.currentDeviceOrientation = DeviceOrientation.portraitDown;
-    widget = camera.buildPreview(cameraId);
-
-    expect(widget is RotatedBox, isTrue);
-    expect((widget as RotatedBox).quarterTurns, expectedQuarterTurns);
-    expect(widget.child is Texture, isTrue);
-    expect((widget.child! as Texture).textureId, cameraId);
+            expect(widget is RotatedBox, isTrue);
+            expect((widget as RotatedBox).quarterTurns,
+                expectedQuarterturnsMinusPluginAppliedRotation);
+            expect(widget.child is Texture, isTrue);
+            expect((widget.child! as Texture).textureId, cameraId);
+          }
+        }
+      }
+    }
   });
 
   group('video recording', () {
