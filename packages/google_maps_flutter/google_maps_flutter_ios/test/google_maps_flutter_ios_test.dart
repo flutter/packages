@@ -323,7 +323,6 @@ void main() {
       expect(firstChanged.circleId, object2new.circleId.value);
     }
     // Object 3 should be added.
-    expect(toAdd.length, 1);
     {
       expect(toAdd.length, 1);
       final PlatformCircle firstAdded = toAdd.first;
