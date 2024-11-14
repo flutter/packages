@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "image_picker_macos",
   platforms: [
-    .macOS("10.11")
+    .macOS("10.14")
   ],
   products: [
     .library(name: "image-picker-macos", targets: ["image_picker_macos"])
