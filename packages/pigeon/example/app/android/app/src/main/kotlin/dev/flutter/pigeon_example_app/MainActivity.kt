@@ -46,7 +46,7 @@ private class PigeonFlutterApi {
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo.getOrNull()!!)) }
   }
 }
 // #enddocregion kotlin-class-flutter
@@ -57,5 +57,10 @@ class MainActivity : FlutterActivity() {
 
     val api = PigeonApiImplementation()
     ExampleHostApi.setUp(flutterEngine.dartExecutor.binaryMessenger, api)
+
+    // #docregion registrar-setup
+    val registrar = ProxyApiRegistrar(flutterEngine.dartExecutor.binaryMessenger)
+    registrar.setUp()
+    // #enddocregion registrar-setup
   }
 }

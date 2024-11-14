@@ -303,7 +303,7 @@ private class PigeonFlutterApi {
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo.getOrNull()!!)) }
   }
 }
 ```
@@ -362,7 +362,17 @@ can be wrapped, but the generated code will only be in the languages shown below
 
 #### Kotlin
 
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/ExampleLibrary.kt (simple-proxy-class)"?>
 ```kotlin
+package dev.flutter.pigeon_example_app
+
+open class SimpleExampleNativeClass(val aField: String, private val aParameter: String) {
+  open fun flutterMethod(aParameter: String) {}
+
+  fun hostMethod(aParameter: String): String {
+    return "aString"
+  }
+}
 ```
 
 #### Swift
@@ -400,13 +410,82 @@ abstract class SimpleExampleNativeClass {
 }
 ```
 
-### Kotlin
+### ProxyApi Implementation
 
-### Swift
+#### Kotlin
+
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/ProxyApiImpl.kt (simple-proxy-api)"?>
+```kotlin
+class SimpleExampleNativeClassProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiSimpleExampleNativeClass(pigeonRegistrar) {
+
+  internal class SimpleExampleNativeClassImpl(
+      val api: SimpleExampleNativeClassProxyApi,
+      aField: String,
+      aParameter: String
+  ) : SimpleExampleNativeClass(aField, aParameter) {
+    override fun flutterMethod(aParameter: String) {
+      api.flutterMethod(this, aParameter) {}
+    }
+  }
+
+  override fun pigeon_defaultConstructor(
+      aField: String,
+      aParameter: String
+  ): SimpleExampleNativeClass {
+    return SimpleExampleNativeClassImpl(this, aParameter, aField)
+  }
+
+  override fun aField(pigeon_instance: SimpleExampleNativeClass): String {
+    return pigeon_instance.aField
+  }
+
+  override fun hostMethod(pigeon_instance: SimpleExampleNativeClass, aParameter: String): String {
+    return pigeon_instance.hostMethod(aParameter)
+  }
+}
+```
+
+#### Swift
+
+```swift
+```
+
+### Registrar Implementation and Setup
+
+#### Kotlin
+
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/ProxyApiImpl.kt (simple-proxy-registrar)"?>
+```kotlin
+open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
+    MessagesPigeonProxyApiRegistrar(binaryMessenger) {
+  override fun getPigeonApiSimpleExampleNativeClass(): PigeonApiSimpleExampleNativeClass {
+    return SimpleExampleNativeClassProxyApi(this)
+  }
+  // ···
+}
+```
+
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (registrar-setup)"?>
+```kotlin
+val registrar = ProxyApiRegistrar(flutterEngine.dartExecutor.binaryMessenger)
+registrar.setUp()
+```
+
+#### Swift
+
+```swift
+```
+
+```swift
+```
+
+### Generated Dart Class Usage
+
 
 ## Complex ProxyApi Example
 
-Example with inheritance, static methods and attached fields.
+Example with inheritance, static methods, and attached fields.
 
 ### Dart input
 
