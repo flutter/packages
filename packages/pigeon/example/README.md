@@ -284,7 +284,7 @@ private class PigeonFlutterApi {
     aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void
   ) {
     flutterAPI.flutterMethod(aString: aStringArg) {
-      completion(.success($0))
+      completion(.success(try! $0.get()))
     }
   }
 }
@@ -377,7 +377,21 @@ open class SimpleExampleNativeClass(val aField: String, private val aParameter: 
 
 #### Swift
 
+<?code-excerpt "ios/Runner/ExampleLibrary.swift (simple-proxy-class)"?>
 ```swift
+class SimpleExampleNativeClass {
+  let aField: String
+
+  init(aField: String, aParameter: String) {
+    self.aField = aField
+  }
+
+  open func flutterMethod(aParameter: String) {}
+
+  func hostMethod(aParamter: String) -> String {
+    return "some string"
+  }
+}
 ```
 
 ### Dart input
@@ -448,7 +462,41 @@ class SimpleExampleNativeClassProxyApi(override val pigeonRegistrar: ProxyApiReg
 
 #### Swift
 
+<?code-excerpt "ios/Runner/ProxyAPIImpl.swift (simple-proxy-api)"?>
 ```swift
+class SimpleExampleNativeClassImpl: SimpleExampleNativeClass {
+  let api: PigeonApiSimpleExampleNativeClass
+
+  init(api: PigeonApiSimpleExampleNativeClass, aField: String, aParameter: String) {
+    self.api = api
+    super.init(aField: aField, aParameter: aField)
+  }
+
+  override func flutterMethod(aParameter: String) {
+    api.flutterMethod(pigeonInstance: self, aParameter: aParameter) { _ in }
+  }
+}
+
+class SimpleExampleNativeClassAPIDelegate: PigeonApiDelegateSimpleExampleNativeClass {
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiSimpleExampleNativeClass, aField: String, aParameter: String
+  ) throws -> SimpleExampleNativeClass {
+    return SimpleExampleNativeClassImpl(api: pigeonApi, aField: aField, aParameter: aParameter)
+  }
+
+  func aField(
+    pigeonApi: PigeonApiSimpleExampleNativeClass, pigeonInstance: SimpleExampleNativeClass
+  ) throws -> String {
+    return pigeonInstance.aField
+  }
+
+  func hostMethod(
+    pigeonApi: PigeonApiSimpleExampleNativeClass, pigeonInstance: SimpleExampleNativeClass,
+    aParameter: String
+  ) throws -> String {
+    return pigeonInstance.hostMethod(aParamter: aParameter)
+  }
+}
 ```
 
 ### Registrar Implementation and Setup
@@ -474,10 +522,24 @@ registrar.setUp()
 
 #### Swift
 
+<?code-excerpt "ios/Runner/ProxyAPIImpl.swift (simple-proxy-registrar)"?>
 ```swift
+open class ProxyAPIDelegate: MessagesPigeonProxyApiDelegate {
+  func pigeonApiSimpleExampleNativeClass(_ registrar: MessagesPigeonProxyApiRegistrar)
+    -> PigeonApiSimpleExampleNativeClass
+  {
+    return PigeonApiSimpleExampleNativeClass(
+      pigeonRegistrar: registrar, delegate: SimpleExampleNativeClassAPIDelegate())
+  }
+  // ···
+}
 ```
 
+<?code-excerpt "ios/Runner/AppDelegate.swift (registrar-setup)"?>
 ```swift
+proxyApiRegistrar = MessagesPigeonProxyApiRegistrar(
+  binaryMessenger: controller.binaryMessenger, apiDelegate: ProxyAPIDelegate())
+proxyApiRegistrar?.setUp()
 ```
 
 ### Generated Dart Class Usage
@@ -489,8 +551,7 @@ final SimpleExampleNativeClass instance = SimpleExampleNativeClass(
     aParameter: 'my parameter',
     flutterMethod: (SimpleExampleNativeClass instance, String aParameter) {
       debugPrint(aParameter);
-    }
-);
+    });
 
 debugPrint(instance.aField);
 debugPrint(await instance.hostMethod('my parameter'));

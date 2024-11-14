@@ -88,11 +88,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> useProxyClass() async {
     // #docregion simple-proxy-class
     final SimpleExampleNativeClass instance = SimpleExampleNativeClass(
-        aField: 'my field',
-        aParameter: 'my parameter',
-        flutterMethod: (SimpleExampleNativeClass instance, String aParameter) {
-          debugPrint(aParameter);
-        }
+      aField: 'my field',
+      aParameter: 'my parameter',
+      flutterMethod: (SimpleExampleNativeClass instance, String aParameter) {
+        debugPrint(aParameter);
+      },
     );
 
     debugPrint(instance.aField);
