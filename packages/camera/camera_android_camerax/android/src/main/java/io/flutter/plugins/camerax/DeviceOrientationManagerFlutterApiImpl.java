@@ -6,8 +6,8 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerFlutterApi;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationInfo;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerFlutterApi;
 
 public class DeviceOrientationManagerFlutterApiImpl extends DeviceOrientationManagerFlutterApi {
   public DeviceOrientationManagerFlutterApiImpl(@NonNull BinaryMessenger binaryMessenger) {

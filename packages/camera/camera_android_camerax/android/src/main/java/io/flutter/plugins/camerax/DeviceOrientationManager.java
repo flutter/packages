@@ -93,7 +93,8 @@ public class DeviceOrientationManager {
   void handleUIOrientationChange() {
     PlatformChannel.DeviceOrientation orientation = getUIOrientation();
     int rotation = getDefaultRotation();
-    handleOrientationChange(orientation, lastOrientation, rotation, deviceOrientationChangeCallback);
+    handleOrientationChange(
+        orientation, lastOrientation, rotation, deviceOrientationChangeCallback);
     lastOrientation = orientation;
   }
 

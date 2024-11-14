@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -64,29 +65,31 @@ public class DeviceOrientationManagerTest {
     }
 
     verify(mockDeviceOrientationChangeCallback, times(1))
-        .onChange(DeviceOrientation.LANDSCAPE_LEFT);
+        .onChange(DeviceOrientation.LANDSCAPE_LEFT, Surface.ROTATION_0);
   }
 
   @Test
   public void handleOrientationChange_shouldSendMessageWhenOrientationIsUpdated() {
     DeviceOrientation previousOrientation = DeviceOrientation.PORTRAIT_UP;
     DeviceOrientation newOrientation = DeviceOrientation.LANDSCAPE_LEFT;
+    final int newRotation = Surface.ROTATION_270;
 
     DeviceOrientationManager.handleOrientationChange(
-        newOrientation, previousOrientation, mockDeviceOrientationChangeCallback);
+        newOrientation, previousOrientation, newRotation, mockDeviceOrientationChangeCallback);
 
-    verify(mockDeviceOrientationChangeCallback, times(1)).onChange(newOrientation);
+    verify(mockDeviceOrientationChangeCallback, times(1)).onChange(newOrientation, newRotation);
   }
 
   @Test
   public void handleOrientationChange_shouldNotSendMessageWhenOrientationIsNotUpdated() {
     DeviceOrientation previousOrientation = DeviceOrientation.PORTRAIT_UP;
     DeviceOrientation newOrientation = DeviceOrientation.PORTRAIT_UP;
+    final int newRotation = Surface.ROTATION_180;
 
     DeviceOrientationManager.handleOrientationChange(
-        newOrientation, previousOrientation, mockDeviceOrientationChangeCallback);
+        newOrientation, previousOrientation, newRotation, mockDeviceOrientationChangeCallback);
 
-    verify(mockDeviceOrientationChangeCallback, never()).onChange(any());
+    verify(mockDeviceOrientationChangeCallback, never()).onChange(any(), anyInt());
   }
 
   @Test

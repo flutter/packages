@@ -27,6 +27,12 @@ class DeviceOrientationManager {
       deviceOrientationChangedStreamController =
       StreamController<DeviceOrientationChangedEvent>.broadcast();
 
+  /// Stream that emits the rotation of the default Android `Display`
+  /// used to display the camera preview whenever the device orientatin
+  /// is changed.
+  ///
+  /// Values may start being added to the stream once
+  /// `startListeningForDeviceOrientationChange(...)` is called.
   static final StreamController<int>
       defaultDisplayRotationChangedStreamController =
       StreamController<int>.broadcast();
@@ -82,7 +88,7 @@ class DeviceOrientationManager {
     return deserializeDeviceOrientation(await api.getUiOrientation());
   }
 
-  /// ... in terms of one of the [Configuration] orientation constants.
+  /// Returns the device orientation in terms of one of the `Configuration` orientation constants.
   static Future<int> getDeviceOrientation({BinaryMessenger? binaryMessenger}) {
     final DeviceOrientationManagerHostApi api =
         DeviceOrientationManagerHostApi(binaryMessenger: binaryMessenger);
@@ -141,7 +147,7 @@ class DeviceOrientationManagerFlutterApiImpl
     DeviceOrientationManager.deviceOrientationChangedStreamController
         .add(DeviceOrientationChangedEvent(uiOrientation));
     DeviceOrientationManager.defaultDisplayRotationChangedStreamController.add(
-        Surface.getRotationDegrees(
+        Surface.getCounterClockwiseRotationDegrees(
             deviceOrientationInfo.defaultDisplayRotation));
   }
 }

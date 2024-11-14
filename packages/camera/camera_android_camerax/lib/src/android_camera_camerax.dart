@@ -356,9 +356,8 @@ class AndroidCameraCameraX extends CameraPlatform {
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
     cameraSelector = proxy.createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
-    proxy.startListeningForDeviceOrientationChange(cameraIsFrontFacing,
-        /* not acutally used */ cameraDescription.sensorOrientation);
-    // TODO(camsim99): remove sensorOrientation from device orientation manager.
+    proxy.startListeningForDeviceOrientationChange(
+        cameraIsFrontFacing, cameraDescription.sensorOrientation);
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -406,8 +405,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     isPreviewPreTransformed = await SystemServices.isPreviewPreTransformed();
     sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
 
-    currentDefaultDisplayRotation =
-        Surface.getRotationDegrees(await proxy.getDefaultDisplayRotation());
+    currentDefaultDisplayRotation = Surface.getCounterClockwiseRotationDegrees(
+        await proxy.getDefaultDisplayRotation());
 
     currentUiOrientation = await proxy.getUiOrientation();
     final int currentDeviceOrientation = await proxy.getDeviceOrientation();
@@ -868,7 +867,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns a widget showing a live camera preview.
   ///
   /// [createCamera] must be called before attempting to build this preview.
-  // TODO(camsim99): Fix preview rotation for landscape oriented devices (like some tablets).
   @override
   Widget buildPreview(int cameraId) {
     if (!previewInitiallyBound) {
@@ -891,12 +889,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     };
 
     if (isPreviewPreTransformed) {
-      // TODO(camsim99): put back comment
+      // If the camera preview is backed by a SurfaceTexture, the transformation
+      // needed to correctly rotate the preview has already been applied.
       return cameraPreview;
     }
 
-    // TODO(camsim99): put back comment
+    // Fix for the rotation of the camera preview not backed by a SurfaceTexture
+    // with respect to the naturalOrientation of the device:
+
     final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
+
+    // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
+    // for more context on this formula.
     final double rotationCorrection = (sensorOrientation -
             currentDefaultDisplayRotation! * signForCameraDirection +
             360) %

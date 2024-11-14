@@ -32,8 +32,7 @@ class CameraPreview extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    controller.buildPreview(),
-                    // _wrapInRotatedBox(child: controller.buildPreview()),
+                    _wrapInRotatedBox(child: controller.buildPreview()),
                     child ?? Container(),
                   ],
                 ),
@@ -45,15 +44,14 @@ class CameraPreview extends StatelessWidget {
   }
 
   Widget _wrapInRotatedBox({required Widget child}) {
-    return child;
-    // if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
-    //   return child;
-    // }
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return child;
+    }
 
-    // return RotatedBox(
-    //   quarterTurns: _getQuarterTurns(),
-    //   child: child,
-    // );
+    return RotatedBox(
+      quarterTurns: _getQuarterTurns(),
+      child: child,
+    );
   }
 
   bool _isLandscape() {
