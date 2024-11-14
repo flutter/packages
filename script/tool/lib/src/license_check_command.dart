@@ -29,6 +29,7 @@ const Set<String> _ignoreBasenameList = <String>{
   'flutter_export_environment',
   'GeneratedPluginRegistrant',
   'generated_plugin_registrant',
+  'web_plugin_registrant',
 };
 
 // File suffixes that otherwise match _codeFileExtensions to ignore.

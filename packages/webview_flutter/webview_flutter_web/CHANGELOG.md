@@ -1,3 +1,7 @@
+## 0.2.3+4
+
+* Updates README to remove contributor-focused documentation.
+
 ## 0.2.3+3
 
 * Adds `missing_code_block_language_in_doc_comment` lint.
