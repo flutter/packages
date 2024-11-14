@@ -426,6 +426,8 @@ abstract class SimpleExampleNativeClass {
 
 ### ProxyApi Implementation
 
+Below is an example of implementing the generated API in the host language.
+
 #### Kotlin
 
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/ProxyApiImpl.kt (simple-proxy-api)"?>
@@ -501,6 +503,9 @@ class SimpleExampleNativeClassAPIDelegate: PigeonApiDelegateSimpleExampleNativeC
 
 ### Registrar Implementation and Setup
 
+Below is an example of implementing the ProxyApi registrar or registrar delegate in the host
+language. Followed by an example of setting up the registrar.
+
 #### Kotlin
 
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/ProxyApiImpl.kt (simple-proxy-registrar)"?>
@@ -544,14 +549,17 @@ proxyApiRegistrar?.setUp()
 
 ### Generated Dart Class Usage
 
+Below is an example of using the generated Dart class to call a method and set a callback method.
+
 <?code-excerpt "lib/main.dart (simple-proxy-class)"?>
 ```dart
 final SimpleExampleNativeClass instance = SimpleExampleNativeClass(
-    aField: 'my field',
-    aParameter: 'my parameter',
-    flutterMethod: (SimpleExampleNativeClass instance, String aParameter) {
-      debugPrint(aParameter);
-    });
+  aField: 'my field',
+  aParameter: 'my parameter',
+  flutterMethod: (SimpleExampleNativeClass instance, String aParameter) {
+    debugPrint(aParameter);
+  },
+);
 
 debugPrint(instance.aField);
 debugPrint(await instance.hostMethod('my parameter'));
