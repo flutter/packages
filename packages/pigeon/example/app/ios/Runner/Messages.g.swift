@@ -72,6 +72,499 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
 }
+/// Handles the callback when an object is deallocated.
+protocol MessagesPigeonInternalFinalizerDelegate: AnyObject {
+  /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
+  func onDeinit(identifier: Int64)
+}
+
+// Attaches to an object to receive a callback when the object is deallocated.
+internal final class MessagesPigeonInternalFinalizer {
+  private static let associatedObjectKey = malloc(1)!
+
+  private let identifier: Int64
+  // Reference to the delegate is weak because the callback should be ignored if the
+  // `InstanceManager` is deallocated.
+  private weak var delegate: MessagesPigeonInternalFinalizerDelegate?
+
+  private init(identifier: Int64, delegate: MessagesPigeonInternalFinalizerDelegate) {
+    self.identifier = identifier
+    self.delegate = delegate
+  }
+
+  internal static func attach(
+    to instance: AnyObject, identifier: Int64, delegate: MessagesPigeonInternalFinalizerDelegate
+  ) {
+    let finalizer = MessagesPigeonInternalFinalizer(identifier: identifier, delegate: delegate)
+    objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
+  }
+
+  static func detach(from instance: AnyObject) {
+    objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+  }
+
+  deinit {
+    delegate?.onDeinit(identifier: identifier)
+  }
+}
+
+/// Maintains instances used to communicate with the corresponding objects in Dart.
+///
+/// Objects stored in this container are represented by an object in Dart that is also stored in
+/// an InstanceManager with the same identifier.
+///
+/// When an instance is added with an identifier, either can be used to retrieve the other.
+///
+/// Added instances are added as a weak reference and a strong reference. When the strong
+/// reference is removed and the weak reference is deallocated,`MessagesPigeonInternalFinalizerDelegate.onDeinit`
+/// is called with the instance's identifier. However, if the strong reference is removed and then the identifier is
+/// retrieved with the intention to pass the identifier to Dart (e.g. by calling `identifierWithStrongReference`),
+/// the strong reference to the instance is re-added. The strong reference will then need to be removed manually
+/// again.
+///
+/// Accessing and inserting to an InstanceManager is thread safe.
+final class MessagesPigeonInstanceManager {
+  // Identifiers are locked to a specific range to avoid collisions with objects
+  // created simultaneously from Dart.
+  // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
+  // 0 <= n < 2^16.
+  private static let minHostCreatedIdentifier: Int64 = 65536
+
+  private let lockQueue = DispatchQueue(label: "MessagesPigeonInstanceManager")
+  private let identifiers: NSMapTable<AnyObject, NSNumber> = NSMapTable(
+    keyOptions: [.weakMemory, .objectPointerPersonality], valueOptions: .strongMemory)
+  private let weakInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
+    keyOptions: .strongMemory, valueOptions: [.weakMemory, .objectPointerPersonality])
+  private let strongInstances: NSMapTable<NSNumber, AnyObject> = NSMapTable(
+    keyOptions: .strongMemory, valueOptions: [.strongMemory, .objectPointerPersonality])
+  private let finalizerDelegate: MessagesPigeonInternalFinalizerDelegate
+  private var nextIdentifier: Int64 = minHostCreatedIdentifier
+
+  public init(finalizerDelegate: MessagesPigeonInternalFinalizerDelegate) {
+    self.finalizerDelegate = finalizerDelegate
+  }
+
+  /// Adds a new instance that was instantiated from Dart.
+  ///
+  /// The same instance can be added multiple times, but each identifier must be unique. This allows
+  /// two objects that are equivalent (e.g. conforms to `Equatable`)  to both be added.
+  ///
+  /// - Parameters:
+  ///   - instance: the instance to be stored
+  ///   - identifier: the identifier to be paired with instance. This value must be >= 0 and unique
+  func addDartCreatedInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
+    lockQueue.async {
+      self.addInstance(instance, withIdentifier: identifier)
+    }
+  }
+
+  /// Adds a new instance that was instantiated from the host platform.
+  ///
+  /// - Parameters:
+  ///   - instance: the instance to be stored. This must be unique to all other added instances.
+  /// - Returns: the unique identifier (>= 0) stored with instance
+  func addHostCreatedInstance(_ instance: AnyObject) -> Int64 {
+    assert(!containsInstance(instance), "Instance of \(instance) has already been added.")
+    var identifier: Int64 = -1
+    lockQueue.sync {
+      identifier = nextIdentifier
+      nextIdentifier += 1
+      self.addInstance(instance, withIdentifier: identifier)
+    }
+    return identifier
+  }
+
+  /// Removes `instanceIdentifier` and its associated strongly referenced instance, if present, from the manager.
+  ///
+  /// - Parameters:
+  ///   - instanceIdentifier: the identifier paired to an instance.
+  /// - Returns: removed instance if the manager contains the given identifier, otherwise `nil` if
+  ///   the manager doesn't contain the value
+  func removeInstance<T: AnyObject>(withIdentifier instanceIdentifier: Int64) throws -> T? {
+    var instance: AnyObject? = nil
+    lockQueue.sync {
+      instance = strongInstances.object(forKey: NSNumber(value: instanceIdentifier))
+      strongInstances.removeObject(forKey: NSNumber(value: instanceIdentifier))
+    }
+    return instance as? T
+  }
+
+  /// Retrieves the instance associated with identifier.
+  ///
+  /// - Parameters:
+  ///   - instanceIdentifier: the identifier associated with an instance
+  /// - Returns: the instance associated with `instanceIdentifier` if the manager contains the value, otherwise
+  ///   `nil` if the manager doesn't contain the value
+  func instance<T: AnyObject>(forIdentifier instanceIdentifier: Int64) -> T? {
+    var instance: AnyObject? = nil
+    lockQueue.sync {
+      instance = weakInstances.object(forKey: NSNumber(value: instanceIdentifier))
+    }
+    return instance as? T
+  }
+
+  private func addInstance(_ instance: AnyObject, withIdentifier identifier: Int64) {
+    assert(identifier >= 0)
+    assert(
+      weakInstances.object(forKey: identifier as NSNumber) == nil,
+      "Identifier has already been added: \(identifier)")
+    identifiers.setObject(NSNumber(value: identifier), forKey: instance)
+    weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
+    strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
+    MessagesPigeonInternalFinalizer.attach(
+      to: instance, identifier: identifier, delegate: finalizerDelegate)
+  }
+
+  /// Retrieves the identifier paired with an instance.
+  ///
+  /// If the manager contains a strong reference to `instance`, it will return the identifier
+  /// associated with `instance`. If the manager contains only a weak reference to `instance`, a new
+  /// strong reference to `instance` will be added and will need to be removed again with `removeInstance`.
+  ///
+  /// If this method returns a nonnull identifier, this method also expects the Dart
+  /// `MessagesPigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
+  /// identifier is associated with.
+  ///
+  /// - Parameters:
+  ///   - instance: an instance that may be stored in the manager
+  /// - Returns: the identifier associated with `instance` if the manager contains the value, otherwise
+  ///   `nil` if the manager doesn't contain the value
+  func identifierWithStrongReference(forInstance instance: AnyObject) -> Int64? {
+    var identifier: Int64? = nil
+    lockQueue.sync {
+      if let existingIdentifier = identifiers.object(forKey: instance)?.int64Value {
+        strongInstances.setObject(instance, forKey: NSNumber(value: existingIdentifier))
+        identifier = existingIdentifier
+      }
+    }
+    return identifier
+  }
+
+  /// Whether this manager contains the given `instance`.
+  ///
+  /// - Parameters:
+  ///   - instance: the instance whose presence in this manager is to be tested
+  /// - Returns: whether this manager contains the given `instance`
+  func containsInstance(_ instance: AnyObject) -> Bool {
+    var containsInstance = false
+    lockQueue.sync {
+      containsInstance = identifiers.object(forKey: instance) != nil
+    }
+    return containsInstance
+  }
+
+  /// Removes all of the instances from this manager.
+  ///
+  /// The manager will be empty after this call returns.
+  func removeAllObjects() throws {
+    lockQueue.sync {
+      identifiers.removeAllObjects()
+      weakInstances.removeAllObjects()
+      strongInstances.removeAllObjects()
+      nextIdentifier = MessagesPigeonInstanceManager.minHostCreatedIdentifier
+    }
+  }
+
+  /// The number of instances stored as a strong reference.
+  ///
+  /// For debugging and testing purposes.
+  internal var strongInstanceCount: Int {
+    var count: Int = 0
+    lockQueue.sync {
+      count = strongInstances.count
+    }
+    return count
+  }
+
+  /// The number of instances stored as a weak reference.
+  ///
+  /// For debugging and testing purposes. NSMapTables that store keys or objects as weak
+  /// reference will be reclaimed non-deterministically.
+  internal var weakInstanceCount: Int {
+    var count: Int = 0
+    lockQueue.sync {
+      count = weakInstances.count
+    }
+    return count
+  }
+}
+
+private class MessagesPigeonInstanceManagerApi {
+  /// The codec used for serializing messages.
+  var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
+
+  /// Handles sending and receiving messages with Dart.
+  unowned let binaryMessenger: FlutterBinaryMessenger
+
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    self.binaryMessenger = binaryMessenger
+  }
+
+  /// Sets up an instance of `MessagesPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, instanceManager: MessagesPigeonInstanceManager?
+  ) {
+    let codec = MessagesPigeonCodec.shared
+    let removeStrongReferenceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_example_package.PigeonInternalInstanceManager.removeStrongReference",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let instanceManager = instanceManager {
+      removeStrongReferenceChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let identifierArg = args[0] as! Int64
+        do {
+          let _: AnyObject? = try instanceManager.removeInstance(withIdentifier: identifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      removeStrongReferenceChannel.setMessageHandler(nil)
+    }
+    let clearChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.PigeonInternalInstanceManager.clear",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let instanceManager = instanceManager {
+      clearChannel.setMessageHandler { _, reply in
+        do {
+          try instanceManager.removeAllObjects()
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      clearChannel.setMessageHandler(nil)
+    }
+  }
+
+  /// Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
+  func removeStrongReference(
+    identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.PigeonInternalInstanceManager.removeStrongReference"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([identifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
+protocol MessagesPigeonProxyApiDelegate {
+  /// An implementation of [PigeonApiSimpleExampleNativeClass] used to add a new Dart instance of
+  /// `SimpleExampleNativeClass` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiSimpleExampleNativeClass(_ registrar: MessagesPigeonProxyApiRegistrar)
+    -> PigeonApiSimpleExampleNativeClass
+  /// An implementation of [PigeonApiComplexExampleNativeClass] used to add a new Dart instance of
+  /// `ComplexExampleNativeClass` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiComplexExampleNativeClass(_ registrar: MessagesPigeonProxyApiRegistrar)
+    -> PigeonApiComplexExampleNativeClass
+  /// An implementation of [PigeonApiExampleNativeSuperClass] used to add a new Dart instance of
+  /// `ExampleNativeSuperClass` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiExampleNativeSuperClass(_ registrar: MessagesPigeonProxyApiRegistrar)
+    -> PigeonApiExampleNativeSuperClass
+  /// An implementation of [PigeonApiExampleNativeInterface] used to add a new Dart instance of
+  /// `ExampleNativeInterface` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiExampleNativeInterface(_ registrar: MessagesPigeonProxyApiRegistrar)
+    -> PigeonApiExampleNativeInterface
+}
+
+extension MessagesPigeonProxyApiDelegate {
+  func pigeonApiExampleNativeInterface(_ registrar: MessagesPigeonProxyApiRegistrar)
+    -> PigeonApiExampleNativeInterface
+  {
+    return PigeonApiExampleNativeInterface(
+      pigeonRegistrar: registrar, delegate: PigeonApiDelegateExampleNativeInterface())
+  }
+}
+
+open class MessagesPigeonProxyApiRegistrar {
+  let binaryMessenger: FlutterBinaryMessenger
+  let apiDelegate: MessagesPigeonProxyApiDelegate
+  let instanceManager: MessagesPigeonInstanceManager
+  /// Whether APIs should ignore calling to Dart.
+  public var ignoreCallsToDart = false
+  private var _codec: FlutterStandardMessageCodec?
+  var codec: FlutterStandardMessageCodec {
+    if _codec == nil {
+      _codec = FlutterStandardMessageCodec(
+        readerWriter: MessagesPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: self))
+    }
+    return _codec!
+  }
+
+  private class InstanceManagerApiFinalizerDelegate: MessagesPigeonInternalFinalizerDelegate {
+    let api: MessagesPigeonInstanceManagerApi
+
+    init(_ api: MessagesPigeonInstanceManagerApi) {
+      self.api = api
+    }
+
+    public func onDeinit(identifier: Int64) {
+      api.removeStrongReference(identifier: identifier) {
+        _ in
+      }
+    }
+  }
+
+  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: MessagesPigeonProxyApiDelegate) {
+    self.binaryMessenger = binaryMessenger
+    self.apiDelegate = apiDelegate
+    self.instanceManager = MessagesPigeonInstanceManager(
+      finalizerDelegate: InstanceManagerApiFinalizerDelegate(
+        MessagesPigeonInstanceManagerApi(binaryMessenger: binaryMessenger)))
+  }
+
+  func setUp() {
+    MessagesPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: instanceManager)
+    PigeonApiSimpleExampleNativeClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiSimpleExampleNativeClass(self))
+    PigeonApiComplexExampleNativeClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiComplexExampleNativeClass(self))
+    PigeonApiExampleNativeSuperClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiExampleNativeSuperClass(self))
+  }
+  func tearDown() {
+    MessagesPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: nil)
+    PigeonApiSimpleExampleNativeClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiComplexExampleNativeClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiExampleNativeSuperClass.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
+  }
+}
+private class MessagesPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
+  unowned let pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+
+  private class MessagesPigeonInternalProxyApiCodecReader: MessagesPigeonCodecReader {
+    unowned let pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+
+    init(data: Data, pigeonRegistrar: MessagesPigeonProxyApiRegistrar) {
+      self.pigeonRegistrar = pigeonRegistrar
+      super.init(data: data)
+    }
+
+    override func readValue(ofType type: UInt8) -> Any? {
+      switch type {
+      case 128:
+        let identifier = self.readValue()
+        let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
+          forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+        return instance
+      default:
+        return super.readValue(ofType: type)
+      }
+    }
+  }
+
+  private class MessagesPigeonInternalProxyApiCodecWriter: MessagesPigeonCodecWriter {
+    unowned let pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+
+    init(data: NSMutableData, pigeonRegistrar: MessagesPigeonProxyApiRegistrar) {
+      self.pigeonRegistrar = pigeonRegistrar
+      super.init(data: data)
+    }
+
+    override func writeValue(_ value: Any) {
+      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any]
+        || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String
+        || value is Code
+      {
+        super.writeValue(value)
+        return
+      }
+
+      if let instance = value as? SimpleExampleNativeClass {
+        pigeonRegistrar.apiDelegate.pigeonApiSimpleExampleNativeClass(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? ComplexExampleNativeClass {
+        pigeonRegistrar.apiDelegate.pigeonApiComplexExampleNativeClass(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? ExampleNativeSuperClass {
+        pigeonRegistrar.apiDelegate.pigeonApiExampleNativeSuperClass(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? ExampleNativeInterface {
+        pigeonRegistrar.apiDelegate.pigeonApiExampleNativeInterface(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as AnyObject?,
+        pigeonRegistrar.instanceManager.containsInstance(instance)
+      {
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance)!)
+      } else {
+        print("Unsupported value: \(value) of \(type(of: value))")
+        assert(false, "Unsupported value for MessagesPigeonInternalProxyApiCodecWriter")
+      }
+
+    }
+  }
+
+  init(pigeonRegistrar: MessagesPigeonProxyApiRegistrar) {
+    self.pigeonRegistrar = pigeonRegistrar
+  }
+
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return MessagesPigeonInternalProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return MessagesPigeonInternalProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+  }
+}
 
 enum Code: Int {
   case one = 0
@@ -268,4 +761,487 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
       }
     }
   }
+}
+protocol PigeonApiDelegateSimpleExampleNativeClass {
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiSimpleExampleNativeClass, aField: String, aParameter: String
+  ) throws -> SimpleExampleNativeClass
+  func aField(
+    pigeonApi: PigeonApiSimpleExampleNativeClass, pigeonInstance: SimpleExampleNativeClass
+  ) throws -> String
+  /// Makes a call from Dart to native language.
+  func hostMethod(
+    pigeonApi: PigeonApiSimpleExampleNativeClass, pigeonInstance: SimpleExampleNativeClass,
+    aParameter: String
+  ) throws -> String
+}
+
+protocol PigeonApiProtocolSimpleExampleNativeClass {
+  /// Makes a call from native language to Dart.
+  func flutterMethod(
+    pigeonInstance pigeonInstanceArg: SimpleExampleNativeClass, aParameter aParameterArg: String,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+}
+
+final class PigeonApiSimpleExampleNativeClass: PigeonApiProtocolSimpleExampleNativeClass {
+  unowned let pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateSimpleExampleNativeClass
+  init(
+    pigeonRegistrar: MessagesPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateSimpleExampleNativeClass
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiSimpleExampleNativeClass?
+  ) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: MessagesPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonIdentifierArg = args[0] as! Int64
+        let aFieldArg = args[1] as! String
+        let aParameterArg = args[2] as! String
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.pigeonDefaultConstructor(
+              pigeonApi: api, aField: aFieldArg, aParameter: aParameterArg),
+            withIdentifier: pigeonIdentifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      pigeonDefaultConstructorChannel.setMessageHandler(nil)
+    }
+    let hostMethodChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.hostMethod",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      hostMethodChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! SimpleExampleNativeClass
+        let aParameterArg = args[1] as! String
+        do {
+          let result = try api.pigeonDelegate.hostMethod(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, aParameter: aParameterArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      hostMethodChannel.setMessageHandler(nil)
+    }
+  }
+
+  ///Creates a Dart instance of SimpleExampleNativeClass and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: SimpleExampleNativeClass,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let aFieldArg = try! pigeonDelegate.aField(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg, aFieldArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+  /// Makes a call from native language to Dart.
+  func flutterMethod(
+    pigeonInstance pigeonInstanceArg: SimpleExampleNativeClass, aParameter aParameterArg: String,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.flutterMethod"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, aParameterArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+
+}
+protocol PigeonApiDelegateComplexExampleNativeClass {
+  func aStaticField(pigeonApi: PigeonApiComplexExampleNativeClass) throws -> ExampleNativeSuperClass
+  func anAttachedField(
+    pigeonApi: PigeonApiComplexExampleNativeClass, pigeonInstance: ComplexExampleNativeClass
+  ) throws -> ExampleNativeSuperClass
+  func staticHostMethod(pigeonApi: PigeonApiComplexExampleNativeClass) throws -> String
+}
+
+protocol PigeonApiProtocolComplexExampleNativeClass {
+}
+
+final class PigeonApiComplexExampleNativeClass: PigeonApiProtocolComplexExampleNativeClass {
+  unowned let pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateComplexExampleNativeClass
+  ///An implementation of [ExampleNativeSuperClass] used to access callback methods
+  var pigeonApiExampleNativeSuperClass: PigeonApiExampleNativeSuperClass {
+    return pigeonRegistrar.apiDelegate.pigeonApiExampleNativeSuperClass(pigeonRegistrar)
+  }
+
+  ///An implementation of [ExampleNativeInterface] used to access callback methods
+  var pigeonApiExampleNativeInterface: PigeonApiExampleNativeInterface {
+    return pigeonRegistrar.apiDelegate.pigeonApiExampleNativeInterface(pigeonRegistrar)
+  }
+
+  init(
+    pigeonRegistrar: MessagesPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateComplexExampleNativeClass
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiComplexExampleNativeClass?
+  ) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: MessagesPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    let aStaticFieldChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.aStaticField",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      aStaticFieldChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonIdentifierArg = args[0] as! Int64
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.aStaticField(pigeonApi: api), withIdentifier: pigeonIdentifierArg
+          )
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      aStaticFieldChannel.setMessageHandler(nil)
+    }
+    let anAttachedFieldChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.anAttachedField",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      anAttachedFieldChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! ComplexExampleNativeClass
+        let pigeonIdentifierArg = args[1] as! Int64
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.anAttachedField(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg),
+            withIdentifier: pigeonIdentifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      anAttachedFieldChannel.setMessageHandler(nil)
+    }
+    let staticHostMethodChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.staticHostMethod",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      staticHostMethodChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.pigeonDelegate.staticHostMethod(pigeonApi: api)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      staticHostMethodChannel.setMessageHandler(nil)
+    }
+  }
+
+  ///Creates a Dart instance of ComplexExampleNativeClass and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: ComplexExampleNativeClass,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
+protocol PigeonApiDelegateExampleNativeSuperClass {
+  func inheritedSuperClassMethod(
+    pigeonApi: PigeonApiExampleNativeSuperClass, pigeonInstance: ExampleNativeSuperClass
+  ) throws -> String
+}
+
+protocol PigeonApiProtocolExampleNativeSuperClass {
+}
+
+final class PigeonApiExampleNativeSuperClass: PigeonApiProtocolExampleNativeSuperClass {
+  unowned let pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateExampleNativeSuperClass
+  init(
+    pigeonRegistrar: MessagesPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateExampleNativeSuperClass
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiExampleNativeSuperClass?
+  ) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: MessagesPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    let inheritedSuperClassMethodChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_example_package.ExampleNativeSuperClass.inheritedSuperClassMethod",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      inheritedSuperClassMethodChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! ExampleNativeSuperClass
+        do {
+          let result = try api.pigeonDelegate.inheritedSuperClassMethod(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      inheritedSuperClassMethodChannel.setMessageHandler(nil)
+    }
+  }
+
+  ///Creates a Dart instance of ExampleNativeSuperClass and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: ExampleNativeSuperClass,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.ExampleNativeSuperClass.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+}
+open class PigeonApiDelegateExampleNativeInterface {
+}
+
+protocol PigeonApiProtocolExampleNativeInterface {
+  func inheritedInterfaceMethod(
+    pigeonInstance pigeonInstanceArg: ExampleNativeInterface,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
+}
+
+final class PigeonApiExampleNativeInterface: PigeonApiProtocolExampleNativeInterface {
+  unowned let pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateExampleNativeInterface
+  init(
+    pigeonRegistrar: MessagesPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateExampleNativeInterface
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  ///Creates a Dart instance of ExampleNativeInterface and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: ExampleNativeInterface,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(Void()))
+      return
+    }
+    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+      pigeonInstance as AnyObject)
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.ExampleNativeInterface.pigeon_newInstance"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+  func inheritedInterfaceMethod(
+    pigeonInstance pigeonInstanceArg: ExampleNativeInterface,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+      return
+    }
+    let binaryMessenger = pigeonRegistrar.binaryMessenger
+    let codec = pigeonRegistrar.codec
+    let channelName: String =
+      "dev.flutter.pigeon.pigeon_example_package.ExampleNativeInterface.inheritedInterfaceMethod"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(Void()))
+      }
+    }
+  }
+
 }

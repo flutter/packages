@@ -45,6 +45,419 @@ class FlutterError(
     override val message: String? = null,
     val details: Any? = null
 ) : Throwable()
+/**
+ * Maintains instances used to communicate with the corresponding objects in Dart.
+ *
+ * Objects stored in this container are represented by an object in Dart that is also stored in an
+ * InstanceManager with the same identifier.
+ *
+ * When an instance is added with an identifier, either can be used to retrieve the other.
+ *
+ * Added instances are added as a weak reference and a strong reference. When the strong reference
+ * is removed with [remove] and the weak reference is deallocated, the
+ * `finalizationListener.onFinalize` is called with the instance's identifier. However, if the
+ * strong reference is removed and then the identifier is retrieved with the intention to pass the
+ * identifier to Dart (e.g. calling [getIdentifierForStrongReference]), the strong reference to the
+ * instance is recreated. The strong reference will then need to be removed manually again.
+ */
+@Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
+class MessagesPigeonInstanceManager(private val finalizationListener: PigeonFinalizationListener) {
+  /** Interface for listening when a weak reference of an instance is removed from the manager. */
+  interface PigeonFinalizationListener {
+    fun onFinalize(identifier: Long)
+  }
+
+  private val identifiers = java.util.WeakHashMap<Any, Long>()
+  private val weakInstances = HashMap<Long, java.lang.ref.WeakReference<Any>>()
+  private val strongInstances = HashMap<Long, Any>()
+  private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
+  private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
+  private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+  private var nextIdentifier: Long = minHostCreatedIdentifier
+  private var hasFinalizationListenerStopped = false
+
+  /**
+   * Modifies the time interval used to define how often this instance removes garbage collected
+   * weak references to native Android objects that this instance was managing.
+   */
+  var clearFinalizedWeakReferencesInterval: Long = 3000
+    set(value) {
+      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      field = value
+      releaseAllFinalizedInstances()
+    }
+
+  init {
+    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+  }
+
+  companion object {
+    // Identifiers are locked to a specific range to avoid collisions with objects
+    // created simultaneously from Dart.
+    // Host uses identifiers >= 2^16 and Dart is expected to use values n where,
+    // 0 <= n < 2^16.
+    private const val minHostCreatedIdentifier: Long = 65536
+    private const val tag = "PigeonInstanceManager"
+
+    /**
+     * Instantiate a new manager with a listener for garbage collected weak references.
+     *
+     * When the manager is no longer needed, [stopFinalizationListener] must be called.
+     */
+    fun create(finalizationListener: PigeonFinalizationListener): MessagesPigeonInstanceManager {
+      return MessagesPigeonInstanceManager(finalizationListener)
+    }
+  }
+
+  /**
+   * Removes `identifier` and return its associated strongly referenced instance, if present, from
+   * the manager.
+   */
+  fun <T> remove(identifier: Long): T? {
+    logWarningIfFinalizationListenerHasStopped()
+    return strongInstances.remove(identifier) as T?
+  }
+
+  /**
+   * Retrieves the identifier paired with an instance, if present, otherwise `null`.
+   *
+   * If the manager contains a strong reference to `instance`, it will return the identifier
+   * associated with `instance`. If the manager contains only a weak reference to `instance`, a new
+   * strong reference to `instance` will be added and will need to be removed again with [remove].
+   *
+   * If this method returns a nonnull identifier, this method also expects the Dart
+   * `MessagesPigeonInstanceManager` to have, or recreate, a weak reference to the Dart instance the
+   * identifier is associated with.
+   */
+  fun getIdentifierForStrongReference(instance: Any?): Long? {
+    logWarningIfFinalizationListenerHasStopped()
+    val identifier = identifiers[instance]
+    if (identifier != null) {
+      strongInstances[identifier] = instance!!
+    }
+    return identifier
+  }
+
+  /**
+   * Adds a new instance that was instantiated from Dart.
+   *
+   * The same instance can be added multiple times, but each identifier must be unique. This allows
+   * two objects that are equivalent (e.g. the `equals` method returns true and their hashcodes are
+   * equal) to both be added.
+   *
+   * [identifier] must be >= 0 and unique.
+   */
+  fun addDartCreatedInstance(instance: Any, identifier: Long) {
+    logWarningIfFinalizationListenerHasStopped()
+    addInstance(instance, identifier)
+  }
+
+  /**
+   * Adds a new unique instance that was instantiated from the host platform.
+   *
+   * [identifier] must be >= 0 and unique.
+   */
+  fun addHostCreatedInstance(instance: Any): Long {
+    logWarningIfFinalizationListenerHasStopped()
+    require(!containsInstance(instance)) {
+      "Instance of ${instance.javaClass} has already been added."
+    }
+    val identifier = nextIdentifier++
+    addInstance(instance, identifier)
+    return identifier
+  }
+
+  /** Retrieves the instance associated with identifier, if present, otherwise `null`. */
+  fun <T> getInstance(identifier: Long): T? {
+    logWarningIfFinalizationListenerHasStopped()
+    val instance = weakInstances[identifier] as java.lang.ref.WeakReference<T>?
+    return instance?.get()
+  }
+
+  /** Returns whether this manager contains the given `instance`. */
+  fun containsInstance(instance: Any?): Boolean {
+    logWarningIfFinalizationListenerHasStopped()
+    return identifiers.containsKey(instance)
+  }
+
+  /**
+   * Stops the periodic run of the [PigeonFinalizationListener] for instances that have been garbage
+   * collected.
+   *
+   * The InstanceManager can continue to be used, but the [PigeonFinalizationListener] will no
+   * longer be called and methods will log a warning.
+   */
+  fun stopFinalizationListener() {
+    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    hasFinalizationListenerStopped = true
+  }
+
+  /**
+   * Removes all of the instances from this manager.
+   *
+   * The manager will be empty after this call returns.
+   */
+  fun clear() {
+    identifiers.clear()
+    weakInstances.clear()
+    strongInstances.clear()
+    weakReferencesToIdentifiers.clear()
+  }
+
+  /**
+   * Whether the [PigeonFinalizationListener] is still being called for instances that are garbage
+   * collected.
+   *
+   * See [stopFinalizationListener].
+   */
+  fun hasFinalizationListenerStopped(): Boolean {
+    return hasFinalizationListenerStopped
+  }
+
+  private fun releaseAllFinalizedInstances() {
+    if (hasFinalizationListenerStopped()) {
+      return
+    }
+    var reference: java.lang.ref.WeakReference<Any>?
+    while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } !=
+        null) {
+      val identifier = weakReferencesToIdentifiers.remove(reference)
+      if (identifier != null) {
+        weakInstances.remove(identifier)
+        strongInstances.remove(identifier)
+        finalizationListener.onFinalize(identifier)
+      }
+    }
+    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+  }
+
+  private fun addInstance(instance: Any, identifier: Long) {
+    require(identifier >= 0) { "Identifier must be >= 0: $identifier" }
+    require(!weakInstances.containsKey(identifier)) {
+      "Identifier has already been added: $identifier"
+    }
+    val weakReference = java.lang.ref.WeakReference(instance, referenceQueue)
+    identifiers[instance] = identifier
+    weakInstances[identifier] = weakReference
+    weakReferencesToIdentifiers[weakReference] = identifier
+    strongInstances[identifier] = instance
+  }
+
+  private fun logWarningIfFinalizationListenerHasStopped() {
+    if (hasFinalizationListenerStopped()) {
+      Log.w(
+          tag,
+          "The manager was used after calls to the PigeonFinalizationListener has been stopped.")
+    }
+  }
+}
+
+/** Generated API for managing the Dart and native `InstanceManager`s. */
+private class MessagesPigeonInstanceManagerApi(val binaryMessenger: BinaryMessenger) {
+  companion object {
+    /** The codec used by MessagesPigeonInstanceManagerApi. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+
+    /**
+     * Sets up an instance of `MessagesPigeonInstanceManagerApi` to handle messages from the
+     * `binaryMessenger`.
+     */
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        instanceManager: MessagesPigeonInstanceManager?
+    ) {
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.PigeonInternalInstanceManager.removeStrongReference",
+                codec)
+        if (instanceManager != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val identifierArg = args[0] as Long
+            val wrapped: List<Any?> =
+                try {
+                  instanceManager.remove<Any?>(identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.PigeonInternalInstanceManager.clear",
+                codec)
+        if (instanceManager != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  instanceManager.clear()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.PigeonInternalInstanceManager.removeStrongReference"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+/**
+ * Provides implementations for each ProxyApi implementation and provides access to resources needed
+ * by any implementation.
+ */
+abstract class MessagesPigeonProxyApiRegistrar(val binaryMessenger: BinaryMessenger) {
+  /** Whether APIs should ignore calling to Dart. */
+  public var ignoreCallsToDart = false
+  val instanceManager: MessagesPigeonInstanceManager
+  private var _codec: MessageCodec<Any?>? = null
+  val codec: MessageCodec<Any?>
+    get() {
+      if (_codec == null) {
+        _codec = MessagesPigeonProxyApiBaseCodec(this)
+      }
+      return _codec!!
+    }
+
+  init {
+    val api = MessagesPigeonInstanceManagerApi(binaryMessenger)
+    instanceManager =
+        MessagesPigeonInstanceManager.create(
+            object : MessagesPigeonInstanceManager.PigeonFinalizationListener {
+              override fun onFinalize(identifier: Long) {
+                api.removeStrongReference(identifier) {
+                  if (it.isFailure) {
+                    Log.e(
+                        "PigeonProxyApiRegistrar",
+                        "Failed to remove Dart strong reference with identifier: $identifier")
+                  }
+                }
+              }
+            })
+  }
+  /**
+   * An implementation of [PigeonApiSimpleExampleNativeClass] used to add a new Dart instance of
+   * `SimpleExampleNativeClass` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiSimpleExampleNativeClass(): PigeonApiSimpleExampleNativeClass
+
+  /**
+   * An implementation of [PigeonApiComplexExampleNativeClass] used to add a new Dart instance of
+   * `ComplexExampleNativeClass` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiComplexExampleNativeClass(): PigeonApiComplexExampleNativeClass
+
+  /**
+   * An implementation of [PigeonApiExampleNativeSuperClass] used to add a new Dart instance of
+   * `ExampleNativeSuperClass` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiExampleNativeSuperClass(): PigeonApiExampleNativeSuperClass
+
+  /**
+   * An implementation of [PigeonApiExampleNativeInterface] used to add a new Dart instance of
+   * `ExampleNativeInterface` to the Dart `InstanceManager`.
+   */
+  open fun getPigeonApiExampleNativeInterface(): PigeonApiExampleNativeInterface {
+    return PigeonApiExampleNativeInterface(this)
+  }
+
+  fun setUp() {
+    MessagesPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
+    PigeonApiSimpleExampleNativeClass.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiSimpleExampleNativeClass())
+    PigeonApiComplexExampleNativeClass.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiComplexExampleNativeClass())
+    PigeonApiExampleNativeSuperClass.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiExampleNativeSuperClass())
+  }
+
+  fun tearDown() {
+    MessagesPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiSimpleExampleNativeClass.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiComplexExampleNativeClass.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiExampleNativeSuperClass.setUpMessageHandlers(binaryMessenger, null)
+  }
+}
+
+private class MessagesPigeonProxyApiBaseCodec(val registrar: MessagesPigeonProxyApiRegistrar) :
+    MessagesPigeonCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return registrar.instanceManager.getInstance(readValue(buffer) as Long)
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    if (value is Boolean ||
+        value is ByteArray ||
+        value is Double ||
+        value is DoubleArray ||
+        value is FloatArray ||
+        value is Int ||
+        value is IntArray ||
+        value is List<*> ||
+        value is Long ||
+        value is LongArray ||
+        value is Map<*, *> ||
+        value is String ||
+        value is Code ||
+        value == null) {
+      super.writeValue(stream, value)
+      return
+    }
+
+    if (value is dev.flutter.pigeon_example_app.SimpleExampleNativeClass) {
+      registrar.getPigeonApiSimpleExampleNativeClass().pigeon_newInstance(value) {}
+    } else if (value is dev.flutter.pigeon_example_app.ComplexExampleNativeClass) {
+      registrar.getPigeonApiComplexExampleNativeClass().pigeon_newInstance(value) {}
+    } else if (value is dev.flutter.pigeon_example_app.ExampleNativeSuperClass) {
+      registrar.getPigeonApiExampleNativeSuperClass().pigeon_newInstance(value) {}
+    } else if (value is dev.flutter.pigeon_example_app.ExampleNativeInterface) {
+      registrar.getPigeonApiExampleNativeInterface().pigeon_newInstance(value) {}
+    }
+
+    when {
+      registrar.instanceManager.containsInstance(value) -> {
+        stream.write(128)
+        writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
+      }
+      else ->
+          throw IllegalArgumentException(
+              "Unsupported value: '$value' of type '${value.javaClass.name}'")
+    }
+  }
+}
 
 enum class Code(val raw: Int) {
   ONE(0),
@@ -232,6 +645,445 @@ class MessageFlutterApi(
         } else {
           val output = it[0] as String
           callback(Result.success(output))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiSimpleExampleNativeClass(
+    open val pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+) {
+  abstract fun pigeon_defaultConstructor(
+      aField: String,
+      aParameter: String
+  ): dev.flutter.pigeon_example_app.SimpleExampleNativeClass
+
+  abstract fun aField(
+      pigeon_instance: dev.flutter.pigeon_example_app.SimpleExampleNativeClass
+  ): String
+
+  /** Makes a call from Dart to native language. */
+  abstract fun hostMethod(
+      pigeon_instance: dev.flutter.pigeon_example_app.SimpleExampleNativeClass,
+      aParameter: String
+  ): String
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiSimpleExampleNativeClass?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: MessagesPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.pigeon_defaultConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val aFieldArg = args[1] as String
+            val aParameterArg = args[2] as String
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.pigeon_defaultConstructor(aFieldArg, aParameterArg), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.hostMethod",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as dev.flutter.pigeon_example_app.SimpleExampleNativeClass
+            val aParameterArg = args[1] as String
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.hostMethod(pigeon_instanceArg, aParameterArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of SimpleExampleNativeClass and attaches it to [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: dev.flutter.pigeon_example_app.SimpleExampleNativeClass,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val aFieldArg = aField(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg, aFieldArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  /** Makes a call from native language to Dart. */
+  fun flutterMethod(
+      pigeon_instanceArg: dev.flutter.pigeon_example_app.SimpleExampleNativeClass,
+      aParameterArg: String,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.SimpleExampleNativeClass.flutterMethod"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, aParameterArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiComplexExampleNativeClass(
+    open val pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+) {
+  abstract fun aStaticField(): dev.flutter.pigeon_example_app.ExampleNativeSuperClass
+
+  abstract fun anAttachedField(
+      pigeon_instance: dev.flutter.pigeon_example_app.ComplexExampleNativeClass
+  ): dev.flutter.pigeon_example_app.ExampleNativeSuperClass
+
+  abstract fun staticHostMethod(): String
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiComplexExampleNativeClass?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: MessagesPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.aStaticField",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.aStaticField(), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.anAttachedField",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as dev.flutter.pigeon_example_app.ComplexExampleNativeClass
+            val pigeon_identifierArg = args[1] as Long
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.anAttachedField(pigeon_instanceArg), pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.staticHostMethod",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.staticHostMethod())
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /**
+   * Creates a Dart instance of ComplexExampleNativeClass and attaches it to [pigeon_instanceArg].
+   */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: dev.flutter.pigeon_example_app.ComplexExampleNativeClass,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.ComplexExampleNativeClass.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiExampleNativeSuperClass] used to access callback methods */
+  fun pigeon_getPigeonApiExampleNativeSuperClass(): PigeonApiExampleNativeSuperClass {
+    return pigeonRegistrar.getPigeonApiExampleNativeSuperClass()
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiExampleNativeInterface] used to access callback methods */
+  fun pigeon_getPigeonApiExampleNativeInterface(): PigeonApiExampleNativeInterface {
+    return pigeonRegistrar.getPigeonApiExampleNativeInterface()
+  }
+}
+
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiExampleNativeSuperClass(
+    open val pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+) {
+  abstract fun inheritedSuperClassMethod(
+      pigeon_instance: dev.flutter.pigeon_example_app.ExampleNativeSuperClass
+  ): String
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(
+        binaryMessenger: BinaryMessenger,
+        api: PigeonApiExampleNativeSuperClass?
+    ) {
+      val codec = api?.pigeonRegistrar?.codec ?: MessagesPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleNativeSuperClass.inheritedSuperClassMethod",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg =
+                args[0] as dev.flutter.pigeon_example_app.ExampleNativeSuperClass
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.inheritedSuperClassMethod(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ExampleNativeSuperClass and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: dev.flutter.pigeon_example_app.ExampleNativeSuperClass,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.ExampleNativeSuperClass.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+}
+
+@Suppress("UNCHECKED_CAST")
+open class PigeonApiExampleNativeInterface(
+    open val pigeonRegistrar: MessagesPigeonProxyApiRegistrar
+) {
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of ExampleNativeInterface and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: dev.flutter.pigeon_example_app.ExampleNativeInterface,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg =
+        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.ExampleNativeInterface.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
+  }
+
+  fun inheritedInterfaceMethod(
+      pigeon_instanceArg: dev.flutter.pigeon_example_app.ExampleNativeInterface,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName =
+        "dev.flutter.pigeon.pigeon_example_package.ExampleNativeInterface.inheritedInterfaceMethod"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
       } else {
         callback(Result.failure(createConnectionError(channelName)))
