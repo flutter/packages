@@ -1,3 +1,7 @@
+## 1.1.15
+
+* Updates error handling in VectorGraphicWidget to handle errors when the bytes of the graphic cannot be loaded.
+
 ## 1.1.14
 
 * Relaxes dependency constraint on vector_graphics_codec.
