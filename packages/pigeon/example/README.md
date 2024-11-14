@@ -351,6 +351,22 @@ pigeon_example_package_message_flutter_api_flutter_method(
     self->flutter_api, "hello", nullptr, flutter_method_cb, self);
 ```
 
+## ProxyApi Example
+
+This example gives an overview of how to use Pigeon to wrap a native API.
+
+### Example Class
+
+Below are example native classes that will be wrapped by this example. 
+
+```kotlin
+```
+
+```swift
+```
+
+### Dart input
+
 ## Swift / Kotlin Plugin Example
 
 A downloadable example of using Pigeon to create a Flutter Plugin with Swift and
