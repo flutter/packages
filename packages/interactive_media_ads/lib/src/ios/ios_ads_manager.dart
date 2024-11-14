@@ -36,9 +36,11 @@ class IOSAdsManager extends PlatformAdsManager {
       return _manager.initialize(null);
     }
 
-    return _manager.initialize(
-      (settings as IOSAdsRenderingSettings).nativeSettings,
-    );
+    final IMAAdsRenderingSettings nativeSettings =
+        settings is IOSAdsRenderingSettings
+            ? settings.nativeSettings
+            : IOSAdsRenderingSettings(settings.params).nativeSettings;
+    return _manager.initialize(nativeSettings);
   }
 
   @override

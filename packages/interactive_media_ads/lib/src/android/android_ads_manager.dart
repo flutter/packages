@@ -38,9 +38,11 @@ class AndroidAdsManager extends PlatformAdsManager {
       return _manager.init(null);
     }
 
-    await _manager.init(
-      await (settings as AndroidAdsRenderingSettings).nativeSettings,
-    );
+    final ima.AdsRenderingSettings nativeSettings =
+        settings is AndroidAdsRenderingSettings
+            ? await settings.nativeSettings
+            : await AndroidAdsRenderingSettings(settings.params).nativeSettings;
+    await _manager.init(nativeSettings);
   }
 
   @override
