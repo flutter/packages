@@ -47,7 +47,6 @@ updates:
       - /packages/palette_generator/example/android/app
       - /packages/path_provider/path_provider/example/android/app
       - /packages/path_provider/path_provider_android/example/android/app
-      - /packages/platform/example/android/app
       - /packages/pigeon/example/app/android/app
       - /packages/pigeon/platform_tests/test_plugin/example/android/app
       - /packages/pigeon/platform_tests/alternate_language_test_plugin/example/android/app
