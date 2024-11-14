@@ -529,7 +529,6 @@ void main() {
       },
     );
 
-    // TODO(EchoEllet): Improve the test names for this and all related in this file
     test(
       'getVideo uses file selector when PHPicker is disabled',
       () async {

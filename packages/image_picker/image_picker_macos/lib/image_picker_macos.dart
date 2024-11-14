@@ -47,7 +47,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
   /// Supports picking an image, multi-image, video, media, and multiple media.
   bool useMacOSPHPicker = false;
 
-  // TODO(EchoEllet): shouldUsePHPicker() and supportsPHPicker() should not be public, avoid using @visibleForTesting
+  // TODO(EchoEllet): avoid using @visibleForTesting per https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md#avoid-using-visiblefortesting
 
   /// Return `true` if the current macOS version supports [useMacOSPHPicker].
   ///
