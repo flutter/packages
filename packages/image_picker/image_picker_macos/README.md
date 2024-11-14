@@ -34,8 +34,7 @@ have them as files on their desktop. The macOS Photos app supports importing ima
 `ImageSource.camera` is not supported unless a `cameraDelegate` is set.
 
 ### pickImage()
-<!-- TODO(EchoEllet): It's possible to support those on file_selector implementation using the same platform API, should we support resizing and compressing for file_selector implementation? Will return new temp file path. -->
-The arguments `maxWidth`, `maxHeight`, `imageQuality` and `limit` are only supported when using the [PHPicker](#phpicker) implementation; they are not available in the default [file_selector][5] implementation.
+The arguments `maxWidth`, `maxHeight`, `imageQuality`, and `limit` are only supported when using the [PHPicker](#phpicker) implementation; they are not available in the default [file_selector][5] implementation.
 
 The argument `requestFullMetadata` is unsupported on macOS.
 
