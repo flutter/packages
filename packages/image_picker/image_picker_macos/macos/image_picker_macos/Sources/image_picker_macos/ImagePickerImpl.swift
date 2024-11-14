@@ -472,7 +472,7 @@ class PickVideoHandler {
       let tempVideoUrl = FileManager.default.temporaryDirectory.appendingPathComponent(
         tempVideoFileName)
 
-      let videoData = await try itemProvider.loadDataRepresentation(for: videoType)
+      let videoData = try await itemProvider.loadDataRepresentation(for: videoType)
       try videoData.write(to: tempVideoUrl)
 
       let tempVideoPath = tempVideoUrl.pathString()
