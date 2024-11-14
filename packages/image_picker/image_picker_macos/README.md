@@ -26,7 +26,7 @@ they will see: `No photos` or `No Photos or Videos` message even if they
 have them as files on their desktop. The macOS Photos app supports importing images from an iOS device.
 
 > [!NOTE]
-> This feature is only supported on **macOS 13.0 and newer versions**, on older versions it will fallback to using [file_selector][3] if enabled.
+> This feature is only supported on **macOS 13.0 and newer versions**, on older versions it will fallback to using [`file_selector`][3] if enabled.
 > By defaults it's disabled on all versions.
 
 ## Limitations
