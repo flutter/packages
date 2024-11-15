@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         type: 'action_one',
         localizedTitle: 'Action one',
         localizedSubtitle: 'Action one subtitle',
-        icon: 'icon_help',
+        icon: 'AppIcon',
       ),
       // NOTE: This second action icon will only work on Android.
       // In a real world project keep the same file name for both platforms.
