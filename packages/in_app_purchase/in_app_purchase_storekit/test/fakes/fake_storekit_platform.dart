@@ -281,7 +281,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     queueIsActive = false;
   }
 
-  @override
   bool supportsStoreKit2() {
     return false;
   }
