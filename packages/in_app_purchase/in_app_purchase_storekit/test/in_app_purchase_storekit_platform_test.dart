@@ -586,8 +586,6 @@ void main() {
   });
 
   test('storekit 2 is unsupported', () async {
-    final InAppPurchaseStoreKitPlatform connection =
-        InAppPurchaseStoreKitPlatform();
-    expect(connection.enableStoreKit2(), false);
+    expect(fakeStoreKitPlatform.supportsStoreKit2(), false);
   });
 }
