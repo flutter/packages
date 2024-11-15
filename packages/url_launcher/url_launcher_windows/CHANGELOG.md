@@ -1,3 +1,7 @@
+## 3.1.4
+
+* Fixes an issue where the URL logged would not be escaped on failure.
+
 ## 3.1.3
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
