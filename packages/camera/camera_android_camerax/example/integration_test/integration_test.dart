@@ -107,7 +107,9 @@ void main() {
         await controller.dispose();
       }
     }
-  }, skip: true);
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 
   testWidgets('Preview takes expected resolution from preset',
       (WidgetTester tester) async {
