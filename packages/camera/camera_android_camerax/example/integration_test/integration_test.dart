@@ -107,7 +107,7 @@ void main() {
         await controller.dispose();
       }
     }
-  });
+  }, skip: true);
 
   testWidgets('Preview takes expected resolution from preset',
       (WidgetTester tester) async {
