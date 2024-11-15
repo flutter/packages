@@ -12,6 +12,7 @@ import 'package:meta/meta.dart';
 import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 /// In theory this should be 8191, but in practice that was still resulting in
@@ -34,6 +35,7 @@ const int _exitGitFailed = 6;
 const int _exitDependencyMissing = 7;
 const int _exitSwiftFormatFailed = 8;
 const int _exitKotlinFormatFailed = 9;
+const int _exitSwiftLintFoundIssues = 10;
 
 final Uri _javaFormatterUrl = Uri.https('github.com',
     '/google/google-java-format/releases/download/google-java-format-1.3/google-java-format-1.3-all-deps.jar');
@@ -120,6 +122,15 @@ class FormatCommand extends PackageLoopingCommand {
       relativeTo: package.directory,
     );
     if (getBoolArg(_dartArg)) {
+      // Ensure that .dart_tool exists, since without it `dart` doesn't know
+      // the lanugage version, so the formatter may give different output.
+      if (!package.directory.childDirectory('.dart_tool').existsSync()) {
+        if (!await runPubGet(package, processRunner, super.platform)) {
+          printError('Unable to fetch dependencies.');
+          return PackageResult.fail(<String>['unable to fetch dependencies']);
+        }
+      }
+
       await _formatDart(files, workingDir: package.directory);
     }
     // Success or failure is determined overall in completeRun, since most code
@@ -229,7 +240,10 @@ class FormatCommand extends PackageLoopingCommand {
             '--strict',
           ],
           files: swiftFiles);
-      if (lintExitCode != 0) {
+      if (lintExitCode == 1) {
+        printError('Swift linter found issues. See above for linter output.');
+        throw ToolExit(_exitSwiftLintFoundIssues);
+      } else if (lintExitCode != 0) {
         printError('Failed to lint Swift files: exit code $lintExitCode.');
         throw ToolExit(_exitSwiftFormatFailed);
       }

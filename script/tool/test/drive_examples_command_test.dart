@@ -838,7 +838,6 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=canvaskit',
                   '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
@@ -901,61 +900,6 @@ void main() {
           ]));
     });
 
-    // TODO(dit): Clean this up, https://github.com/flutter/flutter/issues/151869
-    test('drives a web plugin (html renderer in stable)', () async {
-      // Override the platform to simulate CHANNEL: stable
-      mockPlatform.environment['CHANNEL'] = 'stable';
-
-      final RepositoryPackage plugin = createFakePlugin(
-        'plugin',
-        packagesDir,
-        extraFiles: <String>[
-          'example/integration_test/plugin_test.dart',
-          'example/test_driver/integration_test.dart',
-          'example/web/index.html',
-        ],
-        platformSupport: <String, PlatformDetails>{
-          platformWeb: const PlatformDetails(PlatformSupport.inline),
-        },
-      );
-
-      final Directory pluginExampleDirectory = getExampleDir(plugin);
-
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'drive-examples',
-        '--web',
-      ]);
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('Running for plugin'),
-          contains('No issues found!'),
-        ]),
-      );
-
-      expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                getFlutterCommand(mockPlatform),
-                const <String>[
-                  'drive',
-                  '-d',
-                  'web-server',
-                  '--web-port=7357',
-                  '--browser-name=chrome',
-                  '--web-renderer=html',
-                  '--screenshot=/path/to/logs/plugin_example-drive',
-                  '--driver',
-                  'test_driver/integration_test.dart',
-                  '--target',
-                  'integration_test/plugin_test.dart',
-                ],
-                pluginExampleDirectory.path),
-          ]));
-    });
-
     test('runs chromedriver when requested', () async {
       final RepositoryPackage plugin = createFakePlugin(
         'plugin',
@@ -995,7 +939,6 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=canvaskit',
                   '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
@@ -1048,7 +991,6 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=canvaskit',
                   '--chrome-binary=/path/to/chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
@@ -1500,7 +1442,6 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=canvaskit',
                   '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
@@ -1516,7 +1457,6 @@ void main() {
                   'web-server',
                   '--web-port=7357',
                   '--browser-name=chrome',
-                  '--web-renderer=canvaskit',
                   '--screenshot=/path/to/logs/plugin_example-drive',
                   '--driver',
                   'test_driver/integration_test.dart',
@@ -1616,7 +1556,6 @@ void main() {
                     'web-server',
                     '--web-port=7357',
                     '--browser-name=chrome',
-                    '--web-renderer=canvaskit',
                     '--screenshot=/path/to/logs/a_package_example-drive',
                     '--driver',
                     'test_driver/integration_test.dart',
@@ -1662,7 +1601,6 @@ void main() {
                     'web-server',
                     '--web-port=7357',
                     '--browser-name=chrome',
-                    '--web-renderer=canvaskit',
                     '--driver',
                     'test_driver/integration_test.dart',
                     '--target',
@@ -1742,7 +1680,6 @@ void main() {
                     'web-server',
                     '--web-port=7357',
                     '--browser-name=chrome',
-                    '--web-renderer=canvaskit',
                     '--screenshot=/path/to/logs/a_package_example_with_web-drive',
                     '--driver',
                     'test_driver/integration_test.dart',
