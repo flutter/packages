@@ -97,11 +97,6 @@ Future<int> generateTestPigeons(
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
 
-    const Set<String> swiftIncludeErrorClassInputs = <String>{
-      'core_tests',
-      'proxy_api_tests',
-    };
-
     // Generate the default language test plugin output.
     int generateCode = await runPigeon(
       input: './pigeons/$input.dart',
@@ -123,7 +118,6 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: swiftIncludeErrorClassInputs.contains(input),
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -155,7 +149,6 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: swiftIncludeErrorClassInputs.contains(input),
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
