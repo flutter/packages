@@ -1,6 +1,10 @@
-## 0.3.2
+## 0.3.3
 
 * Move all the JavaScript types to extend `JSObject`.
+
+## 0.3.2
+
+* Adds the `nonce` parameter to `loadWebSdk`.
 
 ## 0.3.1+5
 
