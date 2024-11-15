@@ -280,6 +280,12 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   void stopObservingPaymentQueue() {
     queueIsActive = false;
   }
+
+  @override
+  bool supportsStoreKit2() {
+    // TODO: implement supportsStoreKit2
+    throw UnimplementedError();
+  }
 }
 
 class FakeStoreKit2Platform implements TestInAppPurchase2Api {

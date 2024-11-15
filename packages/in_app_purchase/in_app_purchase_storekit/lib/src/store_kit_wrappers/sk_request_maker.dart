@@ -55,4 +55,8 @@ class SKRequestMaker {
       {Map<String, Object?>? receiptProperties}) {
     return _hostApi.refreshReceipt(receiptProperties: receiptProperties);
   }
+
+  static Future<bool> supportsStoreKit2() async {
+    return _hostApi.supportsStoreKit2();
+  }
 }
