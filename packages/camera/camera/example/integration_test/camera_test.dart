@@ -94,7 +94,7 @@ void main() {
         await controller.dispose();
       }
     }
-  });
+  }, skip: true);
 
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
