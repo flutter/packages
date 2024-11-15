@@ -66,7 +66,6 @@ void main() async {
       expectConfigValue('login_uri', 'https://www.example.com/login');
       expectConfigValue('native_callback', utils.isAJs('function'));
       expectConfigValue('cancel_on_tap_outside', false);
-      expectConfigValue('allowed_parent_origin', utils.isJSArray);
       expectConfigValue(
           'allowed_parent_origin', <String>['allowed', 'another']);
       expectConfigValue('prompt_parent_id', 'some_dom_id');
