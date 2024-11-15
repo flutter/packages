@@ -27,11 +27,6 @@ class SKStorefrontWrapper {
     required this.identifier,
   });
 
-  /// Checks the device version to determine if it supports StoreKit 2.
-  static Future<bool> supportsStoreKit2() {
-    return _hostApi.supportsStoreKit2();
-  }
-
   /// Constructs an instance of the [SKStorefrontWrapper] from a key value map
   /// of data.
   ///

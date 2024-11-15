@@ -15,4 +15,9 @@ final class AppStore {
   Future<bool> canMakePayments() {
     return _hostApi.canMakePayments();
   }
+
+  /// Checks the device version to determine if it supports StoreKit 2.
+  static Future<bool> supportsStoreKit2() {
+    return _hostApi.supportsStoreKit2();
+  }
 }

@@ -264,6 +264,4 @@ abstract class InAppPurchaseAPI {
   void removePaymentQueueDelegate();
 
   void showPriceConsentIfNeeded();
-
-  bool supportsStoreKit2();
 }

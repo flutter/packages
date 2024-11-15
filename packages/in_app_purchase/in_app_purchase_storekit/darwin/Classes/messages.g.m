@@ -879,21 +879,4 @@ void SetUpFIAInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMesseng
       [channel setMessageHandler:nil];
     }
   }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchaseAPI.supportsStoreKit2", messageChannelSuffix]
-        binaryMessenger:binaryMessenger
-        codec:FIAGetMessagesCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(supportsStoreKit2WithError:)], @"FIAInAppPurchaseAPI api (%@) doesn't respond to @selector(supportsStoreKit2WithError:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        FlutterError *error;
-        NSNumber *output = [api supportsStoreKit2WithError:&error];
-        callback(wrapResult(output, error));
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
 }

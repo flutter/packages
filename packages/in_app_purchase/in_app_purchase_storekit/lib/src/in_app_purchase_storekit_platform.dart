@@ -250,7 +250,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Turns on StoreKit2. You cannot disable this after it is enabled.
   Future<bool> enableStoreKit2() async {
-    _useStoreKit2 = await SKStorefrontWrapper.supportsStoreKit2();
+    _useStoreKit2 = await AppStore.supportsStoreKit2();
     return _useStoreKit2;
   }
 }

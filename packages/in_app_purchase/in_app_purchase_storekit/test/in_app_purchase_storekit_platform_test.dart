@@ -584,8 +584,4 @@ void main() {
       expect(await iapStoreKitPlatform.countryCode(), expectedCountryCode);
     });
   });
-
-  test('storekit 2 is unsupported', () async {
-    expect(fakeStoreKitPlatform.supportsStoreKit2(), false);
-  });
 }

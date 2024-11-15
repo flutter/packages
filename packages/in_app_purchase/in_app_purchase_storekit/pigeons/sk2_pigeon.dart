@@ -196,6 +196,8 @@ abstract class InAppPurchase2API {
 
   @async
   void restorePurchases();
+
+  bool supportsStoreKit2();
 }
 
 @FlutterApi()

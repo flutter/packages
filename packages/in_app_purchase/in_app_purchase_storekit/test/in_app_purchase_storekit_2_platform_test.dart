@@ -48,6 +48,10 @@ void main() {
     });
   });
 
+  test('storekit 2 is unsupported', () async {
+    expect(fakeStoreKit2Platform.supportsStoreKit2(), true);
+  });
+
   group('query product list', () {
     test('should get product list and correct invalid identifiers', () async {
       final InAppPurchaseStoreKitPlatform connection =

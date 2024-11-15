@@ -280,10 +280,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   void stopObservingPaymentQueue() {
     queueIsActive = false;
   }
-
-  bool supportsStoreKit2() {
-    return false;
-  }
 }
 
 class FakeStoreKit2Platform implements TestInAppPurchase2Api {
@@ -392,6 +388,11 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   Future<void> restorePurchases() async {
     InAppPurchaseStoreKitPlatform.sk2TransactionObserver
         .onTransactionsUpdated(transactionList);
+  }
+
+  @override
+  bool supportsStoreKit2() {
+    return true;
   }
 }
 

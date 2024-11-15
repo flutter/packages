@@ -270,8 +270,6 @@ NSObject<FlutterMessageCodec> *FIAGetMessagesCodec(void);
 - (void)registerPaymentQueueDelegateWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)removePaymentQueueDelegateWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)showPriceConsentIfNeededWithError:(FlutterError *_Nullable *_Nonnull)error;
-/// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)supportsStoreKit2WithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFIAInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FIAInAppPurchaseAPI> *_Nullable api);
