@@ -1,6 +1,8 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Fix platform detection so this package correctly reports compatibility with
+  WebAssembly.
 
 ## 2.9.0
 
