@@ -100,7 +100,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
             },
           ));
 
-          manager.init(AdsRenderingSettings(enablePreloading: true));
+          manager.init(settings: AdsRenderingSettings(enablePreloading: true));
         },
         onAdsLoadError: (AdsLoadErrorData data) {
           debugPrint('OnAdsLoadError: ${data.error.message}');

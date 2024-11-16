@@ -4,8 +4,8 @@
 
 import 'package:flutter/foundation.dart';
 
+import 'ad_ui_element.dart';
 import 'interactive_media_ads_platform.dart';
-import 'ui_element.dart';
 
 /// Object specifying creation parameters for creating a
 /// [PlatformAdsRenderingSettings].
