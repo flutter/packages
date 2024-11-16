@@ -12,13 +12,6 @@ import StoreKit
 #endif
 
 public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
-  public func supportsStoreKit2WithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>) -> NSNumber? {
-    if #available(iOS 15.0, macOS 15.0, *) {
-      return true
-    }
-    return false
-  }
-
   private let receiptManager: FIAPReceiptManager
   private var productsCache: NSMutableDictionary = [:]
   private var paymentQueueDelegateCallbackChannel: FlutterMethodChannel?
@@ -425,6 +418,15 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
 
   public func updatedDownloads() {
     NSLog("Received an updatedDownloads callback, but downloads are not supported.")
+  }
+
+  public func supportsStoreKit2WithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
+    if #available(iOS 15.0, macOS 15.0, *) {
+      return true
+    }
+    return false
   }
 
   // MARK: - Methods exposed for testing
