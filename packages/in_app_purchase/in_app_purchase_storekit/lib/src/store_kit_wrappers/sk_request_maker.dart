@@ -56,6 +56,7 @@ class SKRequestMaker {
     return _hostApi.refreshReceipt(receiptProperties: receiptProperties);
   }
 
+  /// Check if current device supports StoreKit 2.
   static Future<bool> supportsStoreKit2() async {
     return _hostApi.supportsStoreKit2();
   }
