@@ -10,7 +10,7 @@ import Foundation
 class AuthenticationChallengeResponse {
   let disposition: UrlSessionAuthChallengeDisposition
   let credential: URLCredential
-  
+
   init(disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential) {
     self.disposition = disposition
     self.credential = credential
