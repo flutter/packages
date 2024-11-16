@@ -155,7 +155,6 @@ class PigeonInstanceManager {
     WKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKUIDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKHTTPCookieStore.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    NSURL.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     UIScrollViewDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     URLCredential.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     URLProtectionSpace.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -424,6 +423,7 @@ class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
 class InteractiveMediaAdsProxy {
   /// Constructs an [InteractiveMediaAdsProxy].
   const InteractiveMediaAdsProxy({
+    this.newNSURLRequest = NSURLRequest.new,
     this.newWKUserScript = WKUserScript.new,
     this.newWKWebViewConfiguration = WKWebViewConfiguration.new,
     this.newWKScriptMessageHandler = WKScriptMessageHandler.new,
@@ -435,6 +435,9 @@ class InteractiveMediaAdsProxy {
     this.defaultDataStoreWKWebsiteDataStore =
         _defaultDataStoreWKWebsiteDataStore,
   });
+
+  /// Constructs [NSURLRequest].
+  final NSURLRequest Function({required String url}) newNSURLRequest;
 
   /// Constructs [WKUserScript].
   final WKUserScript Function({
@@ -926,6 +929,42 @@ class _PigeonCodec extends StandardMessageCodec {
 ///
 /// See https://developer.apple.com/documentation/foundation/nsurlrequest.
 class NSURLRequest extends NSObject {
+  NSURLRequest({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    super.observeValue,
+    required String url,
+  }) : super.pigeon_detached() {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSURLRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+          .send(<Object?>[pigeonVar_instanceIdentifier, url]) as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
   /// Constructs [NSURLRequest] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -934,21 +973,17 @@ class NSURLRequest extends NSObject {
   NSURLRequest.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required this.url,
     super.observeValue,
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecNSURLRequest =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
-  /// The URL being requested.
-  final String url;
-
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    NSURLRequest Function(String url)? pigeon_newInstance,
+    NSURLRequest Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -971,17 +1006,13 @@ class NSURLRequest extends NSObject {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.pigeon_newInstance was null, expected non-null int.');
-          final String? arg_url = (args[1] as String?);
-          assert(arg_url != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.pigeon_newInstance was null, expected non-null String.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_url!) ??
+              pigeon_newInstance?.call() ??
                   NSURLRequest.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
-                    url: arg_url!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -994,6 +1025,34 @@ class NSURLRequest extends NSObject {
           }
         });
       }
+    }
+  }
+
+  /// The URL being requested.
+  Future<String?> getUrl() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSURLRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.getUrl';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
     }
   }
 
@@ -1054,7 +1113,7 @@ class NSURLRequest extends NSObject {
   }
 
   /// A dictionary containing all of the HTTP header fields for a request.
-  Future<Map<String?, String?>> getAllHttpHeaderFields() async {
+  Future<Map<String, String>?> getAllHttpHeaderFields() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecNSURLRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1076,14 +1135,9 @@ class NSURLRequest extends NSObject {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
-          .cast<String?, String?>();
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String, String>();
     }
   }
 
@@ -1092,7 +1146,6 @@ class NSURLRequest extends NSObject {
     return NSURLRequest.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
-      url: url,
       observeValue: observeValue,
     );
   }
@@ -5551,112 +5604,6 @@ class WKHTTPCookieStore extends NSObject {
   }
 }
 
-/// An object that represents the location of a resource, such as an item on a
-/// remote server or the path to a local file.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurl.
-class NSURL extends NSObject {
-  /// Constructs [NSURL] without creating the associated native object.
-  ///
-  /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInstanceManager].
-  @protected
-  NSURL.pigeon_detached({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    super.observeValue,
-  }) : super.pigeon_detached();
-
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecNSURL =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
-
-  static void pigeon_setUpMessageHandlers({
-    bool pigeon_clearHandlers = false,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-    NSURL Function()? pigeon_newInstance,
-  }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSURL.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURL.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURL.pigeon_newInstance was null, expected non-null int.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  NSURL.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-  }
-
-  /// The URL string for the receiver as an absolute URL.
-  Future<String?> getAbsoluteString() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecNSURL;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.NSURL.getAbsoluteString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
-  }
-
-  @override
-  NSURL pigeon_copy() {
-    return NSURL.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-      observeValue: observeValue,
-    );
-  }
-}
-
 /// The interface for the delegate of a scroll view.
 ///
 /// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate.
@@ -5815,16 +5762,17 @@ class UIScrollViewDelegate extends NSObject {
 /// of credential and the type of persistent storage to use, if any.
 ///
 /// See https://developer.apple.com/documentation/foundation/urlcredential.
-class URLCredential extends PigeonInternalProxyApiBaseClass {
+class URLCredential extends NSObject {
   /// Creates a URL credential instance for internet password authentication
   /// with a given user name and password, using a given persistence setting.
   URLCredential({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    super.observeValue,
     required String user,
     required String password,
     required UrlCredentialPersistence persistence,
-  }) {
+  }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -5868,7 +5816,8 @@ class URLCredential extends PigeonInternalProxyApiBaseClass {
   URLCredential.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecURLCredential =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
@@ -5927,6 +5876,7 @@ class URLCredential extends PigeonInternalProxyApiBaseClass {
     return URLCredential.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }
@@ -5935,7 +5885,7 @@ class URLCredential extends PigeonInternalProxyApiBaseClass {
 /// requires authentication.
 ///
 /// See https://developer.apple.com/documentation/foundation/urlprotectionspace.
-class URLProtectionSpace extends PigeonInternalProxyApiBaseClass {
+class URLProtectionSpace extends NSObject {
   /// Constructs [URLProtectionSpace] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -5948,7 +5898,8 @@ class URLProtectionSpace extends PigeonInternalProxyApiBaseClass {
     required this.port,
     this.realm,
     this.authenticationMethod,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   /// The receiver’s host.
   final String host;
@@ -6038,6 +5989,7 @@ class URLProtectionSpace extends PigeonInternalProxyApiBaseClass {
       port: port,
       realm: realm,
       authenticationMethod: authenticationMethod,
+      observeValue: observeValue,
     );
   }
 }
@@ -6045,7 +5997,7 @@ class URLProtectionSpace extends PigeonInternalProxyApiBaseClass {
 /// A challenge from a server requiring authentication from the client.
 ///
 /// See https://developer.apple.com/documentation/foundation/urlauthenticationchallenge.
-class URLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
+class URLAuthenticationChallenge extends NSObject {
   /// Constructs [URLAuthenticationChallenge] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -6054,7 +6006,8 @@ class URLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
   URLAuthenticationChallenge.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+    super.observeValue,
+  }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec
       _pigeonVar_codecURLAuthenticationChallenge =
@@ -6147,6 +6100,7 @@ class URLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
     return URLAuthenticationChallenge.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
     );
   }
 }

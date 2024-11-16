@@ -336,8 +336,10 @@ enum UrlCredentialPersistence {
 /// See https://developer.apple.com/documentation/foundation/nsurlrequest.
 @ProxyApi()
 abstract class NSURLRequest extends NSObject {
+  NSURLRequest(String url);
+
   /// The URL being requested.
-  late String url;
+  String? getUrl();
 
   /// The HTTP request method.
   String? getHttpMethod();
@@ -346,7 +348,7 @@ abstract class NSURLRequest extends NSObject {
   Uint8List? getHttpBody();
 
   /// A dictionary containing all of the HTTP header fields for a request.
-  Map<String?, String?> getAllHttpHeaderFields();
+  Map<String, String>? getAllHttpHeaderFields();
 }
 
 /// The metadata associated with the response to an HTTP protocol URL load
@@ -824,16 +826,6 @@ abstract class WKHTTPCookieStore extends NSObject {
   void setCookie(HTTPCookie cookie);
 }
 
-/// An object that represents the location of a resource, such as an item on a
-/// remote server or the path to a local file.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurl.
-@ProxyApi()
-abstract class NSURL extends NSObject {
-  /// The URL string for the receiver as an absolute URL.
-  String? getAbsoluteString();
-}
-
 /// The interface for the delegate of a scroll view.
 ///
 /// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate.
@@ -856,7 +848,7 @@ abstract class UIScrollViewDelegate extends NSObject {
 ///
 /// See https://developer.apple.com/documentation/foundation/urlcredential.
 @ProxyApi()
-abstract class URLCredential {
+abstract class URLCredential extends NSObject {
   /// Creates a URL credential instance for internet password authentication
   /// with a given user name and password, using a given persistence setting.
   URLCredential(
@@ -871,7 +863,7 @@ abstract class URLCredential {
 ///
 /// See https://developer.apple.com/documentation/foundation/urlprotectionspace.
 @ProxyApi()
-abstract class URLProtectionSpace {
+abstract class URLProtectionSpace extends NSObject {
   /// The receiver’s host.
   late String host;
 
@@ -889,7 +881,7 @@ abstract class URLProtectionSpace {
 ///
 /// See https://developer.apple.com/documentation/foundation/urlauthenticationchallenge.
 @ProxyApi()
-abstract class URLAuthenticationChallenge {
+abstract class URLAuthenticationChallenge extends NSObject {
   /// The receiver’s protection space.
   URLProtectionSpace getProtectionSpace();
 }
