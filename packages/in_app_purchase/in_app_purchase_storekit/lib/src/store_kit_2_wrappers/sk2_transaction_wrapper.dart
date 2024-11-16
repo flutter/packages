@@ -22,6 +22,7 @@ class SK2Transaction {
       required this.originalId,
       required this.productId,
       required this.purchaseDate,
+      this.expirationDate,
       this.quantity = 1,
       required this.appAccountToken,
       this.subscriptionGroupID,
@@ -42,6 +43,9 @@ class SK2Transaction {
   /// The date that the App Store charged the user’s account for a purchased or
   /// restored product, or for a subscription purchase or renewal after a lapse.
   final String purchaseDate;
+
+  /// The date the subscription expires or renews.
+  final String? expirationDate;
 
   /// The number of consumable products purchased.
   final int quantity;
@@ -100,6 +104,7 @@ extension on SK2TransactionMessage {
         originalId: originalId.toString(),
         productId: productId,
         purchaseDate: purchaseDate,
+        expirationDate: expirationDate,
         appAccountToken: appAccountToken);
   }
 
