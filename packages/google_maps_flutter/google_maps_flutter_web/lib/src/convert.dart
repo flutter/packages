@@ -258,7 +258,6 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
       // XSS attacks through the contents of the marker InfoWindow.
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
-      // ignore: unsafe_html
       snippet.innerHTMLString = sanitizeHtml(markerSnippet);
     }
 
