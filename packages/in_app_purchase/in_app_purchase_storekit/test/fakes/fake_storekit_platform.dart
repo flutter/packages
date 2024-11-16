@@ -283,8 +283,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   bool supportsStoreKit2() {
-    // TODO: implement supportsStoreKit2
-    throw UnimplementedError();
+    return true;
   }
 }
 
