@@ -1,6 +1,6 @@
 ## 0.3.3
 
-* Move all the JavaScript types to extend `JSObject`.
+* Migrates all the JavaScript types to the latest syntax.
 
 ## 0.3.2
 
