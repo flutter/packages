@@ -36,7 +36,6 @@ void main() {
     TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
   });
 
-
   setUp(() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =

@@ -67,7 +67,8 @@ typedef NS_ENUM(NSUInteger, FIASKProductDiscountTypeMessage) {
 typedef NS_ENUM(NSUInteger, FIASKProductDiscountPaymentModeMessage) {
   /// Allows user to pay the discounted price at each payment period.
   FIASKProductDiscountPaymentModeMessagePayAsYouGo = 0,
-  /// Allows user to pay the discounted price upfront and receive the product for the rest of time that was paid for.
+  /// Allows user to pay the discounted price upfront and receive the product for the rest of time
+  /// that was paid for.
   FIASKProductDiscountPaymentModeMessagePayUpFront = 1,
   /// User pays nothing during the discounted period.
   FIASKProductDiscountPaymentModeMessageFreeTrial = 2,
@@ -274,8 +275,11 @@ NSObject<FlutterMessageCodec> *FIAGetMessagesCodec(void);
 - (nullable NSNumber *)supportsStoreKit2WithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFIAInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FIAInAppPurchaseAPI> *_Nullable api);
+extern void SetUpFIAInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger,
+                                     NSObject<FIAInAppPurchaseAPI> *_Nullable api);
 
-extern void SetUpFIAInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FIAInAppPurchaseAPI> *_Nullable api, NSString *messageChannelSuffix);
+extern void SetUpFIAInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                               NSObject<FIAInAppPurchaseAPI> *_Nullable api,
+                                               NSString *messageChannelSuffix);
 
 NS_ASSUME_NONNULL_END
