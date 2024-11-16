@@ -356,9 +356,9 @@ private class WebKitLibraryPigeonInstanceManagerApi {
   }
 }
 protocol WebKitLibraryPigeonProxyApiDelegate {
-  /// An implementation of [PigeonApiNSURLRequest] used to add a new Dart instance of
-  /// `NSURLRequest` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSURLRequest
+  /// An implementation of [PigeonApiURLRequest] used to add a new Dart instance of
+  /// `URLRequest` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest
   /// An implementation of [PigeonApiHTTPURLResponse] used to add a new Dart instance of
   /// `HTTPURLResponse` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiHTTPURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiHTTPURLResponse
@@ -484,7 +484,7 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
 
   func setUp() {
     WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)
-    PigeonApiNSURLRequest.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSURLRequest(self))
+    PigeonApiURLRequest.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLRequest(self))
     PigeonApiWKUserScript.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUserScript(self))
     PigeonApiWKWebsiteDataStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebsiteDataStore(self))
     PigeonApiUIView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIView(self))
@@ -503,7 +503,7 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
   }
   func tearDown() {
     WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
-    PigeonApiNSURLRequest.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiURLRequest.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKUserScript.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKWebsiteDataStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiUIView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
@@ -560,8 +560,8 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
       }
 
 
-      if let instance = value as? NSURLRequest {
-        pigeonRegistrar.apiDelegate.pigeonApiNSURLRequest(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? URLRequestWrapper {
+        pigeonRegistrar.apiDelegate.pigeonApiURLRequest(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -1299,40 +1299,40 @@ class WebKitLibraryPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable
   static let shared = WebKitLibraryPigeonCodec(readerWriter: WebKitLibraryPigeonCodecReaderWriter())
 }
 
-protocol PigeonApiDelegateNSURLRequest {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSURLRequest, url: String) throws -> NSURLRequest
+protocol PigeonApiDelegateURLRequest {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws -> URLRequestWrapper
   /// The URL being requested.
-  func getUrl(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> String?
+  func getUrl(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String?
   /// The HTTP request method.
-  func getHttpMethod(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> String?
+  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String?
   /// The request body.
-  func getHttpBody(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> FlutterStandardTypedData?
+  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> FlutterStandardTypedData?
   /// A dictionary containing all of the HTTP header fields for a request.
-  func getAllHttpHeaderFields(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> [String: String]?
+  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> [String: String]?
 }
 
-protocol PigeonApiProtocolNSURLRequest {
+protocol PigeonApiProtocolURLRequest {
 }
 
-final class PigeonApiNSURLRequest: PigeonApiProtocolNSURLRequest  {
+final class PigeonApiURLRequest: PigeonApiProtocolURLRequest  {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateNSURLRequest
+  let pigeonDelegate: PigeonApiDelegateURLRequest
   ///An implementation of [NSObject] used to access callback methods
   var pigeonApiNSObject: PigeonApiNSObject {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSURLRequest) {
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLRequest) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSURLRequest?) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLRequest?) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
         readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1350,11 +1350,11 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let getUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.getUrl", binaryMessenger: binaryMessenger, codec: codec)
+    let getUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getUrl", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! NSURLRequest
+        let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
           let result = try api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
@@ -1365,11 +1365,11 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getUrlChannel.setMessageHandler(nil)
     }
-    let getHttpMethodChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.getHttpMethod", binaryMessenger: binaryMessenger, codec: codec)
+    let getHttpMethodChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getHttpMethod", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHttpMethodChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! NSURLRequest
+        let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
           let result = try api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
@@ -1380,11 +1380,11 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getHttpMethodChannel.setMessageHandler(nil)
     }
-    let getHttpBodyChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.getHttpBody", binaryMessenger: binaryMessenger, codec: codec)
+    let getHttpBodyChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getHttpBody", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHttpBodyChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! NSURLRequest
+        let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
           let result = try api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
@@ -1395,11 +1395,11 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getHttpBodyChannel.setMessageHandler(nil)
     }
-    let getAllHttpHeaderFieldsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.getAllHttpHeaderFields", binaryMessenger: binaryMessenger, codec: codec)
+    let getAllHttpHeaderFieldsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getAllHttpHeaderFields", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAllHttpHeaderFieldsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! NSURLRequest
+        let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
           let result = try api.pigeonDelegate.getAllHttpHeaderFields(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
@@ -1412,8 +1412,8 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 
-  ///Creates a Dart instance of NSURLRequest and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSURLRequest, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  ///Creates a Dart instance of URLRequest and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: URLRequestWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1429,7 +1429,7 @@ withIdentifier: pigeonIdentifierArg)
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLRequest.pigeon_newInstance"
+    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
@@ -1457,28 +1457,28 @@ import Foundation
 
 
 
-/// ProxyApi implementation for [NSURLRequest].
+/// ProxyApi implementation for [URLRequest].
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class RequestProxyAPIDelegate : PigeonApiDelegateNSURLRequest {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiNSURLRequest, url: String) throws -> NSURLRequest {
-    return NSURLRequest(,url: url)
+class RequestProxyAPIDelegate : PigeonApiDelegateURLRequest {
+  func pigeon_defaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws -> URLRequestWrapper {
+    return URLRequest(,url: url)
   }
 
-  func getUrl(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> String? {
+  func getUrl(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String? {
     return pigeonInstance.getUrl()
   }
 
-  func getHttpMethod(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> String? {
+  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String? {
     return pigeonInstance.getHttpMethod()
   }
 
-  func getHttpBody(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> FlutterStandardTypedData? {
+  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> FlutterStandardTypedData? {
     return pigeonInstance.getHttpBody()
   }
 
-  func getAllHttpHeaderFields(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> [String: String]? {
+  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> [String: String]? {
     return pigeonInstance.getAllHttpHeaderFields()
   }
 
@@ -1499,7 +1499,7 @@ import XCTest
 class RequestProxyApiTests: XCTestCase {
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSURLRequest(registrar)
+    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = try? api.pigeonDefaultConstructor(pigeonApi: api, url: "myString")
     XCTAssertNotNil(instance)
@@ -1507,7 +1507,7 @@ class RequestProxyApiTests: XCTestCase {
 
   func testGetUrl() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSURLRequest(registrar)
+    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = TestRequest()
     let value = api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance )
@@ -1518,7 +1518,7 @@ class RequestProxyApiTests: XCTestCase {
 
   func testGetHttpMethod() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSURLRequest(registrar)
+    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = TestRequest()
     let value = api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: instance )
@@ -1529,7 +1529,7 @@ class RequestProxyApiTests: XCTestCase {
 
   func testGetHttpBody() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSURLRequest(registrar)
+    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = TestRequest()
     let value = api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: instance )
@@ -1540,7 +1540,7 @@ class RequestProxyApiTests: XCTestCase {
 
   func testGetAllHttpHeaderFields() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSURLRequest(registrar)
+    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = TestRequest()
     let value = api.pigeonDelegate.getAllHttpHeaderFields(pigeonApi: api, pigeonInstance: instance )
@@ -1550,7 +1550,7 @@ class RequestProxyApiTests: XCTestCase {
   }
 
 }
-class TestRequest: NSURLRequest {
+class TestRequest: URLRequest {
   var getUrlCalled = false
   var getHttpMethodCalled = false
   var getHttpBodyCalled = false
@@ -1866,7 +1866,7 @@ class UserScriptProxyApiTests: XCTestCase {
 
 protocol PigeonApiDelegateWKNavigationAction {
   /// The URL request object associated with the navigation action.
-  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> NSURLRequest
+  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> URLRequestWrapper
   /// The frame in which to display the new content.
   func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo
   /// The type of action that triggered the navigation.
@@ -1942,7 +1942,7 @@ import WebKit
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class NavigationActionProxyAPIDelegate : PigeonApiDelegateWKNavigationAction {
-  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> NSURLRequest {
+  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> URLRequestWrapper {
     return pigeon_instance.request
   }
 
@@ -2145,7 +2145,7 @@ protocol PigeonApiDelegateWKFrameInfo {
   /// or a subframe.
   func isMainFrame(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> Bool
   /// The frame’s current request.
-  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> NSURLRequest
+  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> URLRequestWrapper
 }
 
 protocol PigeonApiProtocolWKFrameInfo {
@@ -2219,7 +2219,7 @@ class FrameInfoProxyAPIDelegate : PigeonApiDelegateWKFrameInfo {
     return pigeon_instance.isMainFrame
   }
 
-  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> NSURLRequest {
+  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> URLRequestWrapper {
     return pigeon_instance.request
   }
 
@@ -5215,7 +5215,7 @@ protocol PigeonApiDelegateWKWebView {
   func getEstimatedProgress(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView) throws -> Double
   /// Loads the web content that the specified URL request object references and
   /// navigates to that content.
-  func loadRequest(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView, request: NSURLRequest) throws
+  func load(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper) throws
   /// Loads the contents of the specified HTML string and navigates to it.
   func loadHtmlString(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?) throws
   /// Loads the web content from the specified file and navigates to it.
@@ -5346,21 +5346,21 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getEstimatedProgressChannel.setMessageHandler(nil)
     }
-    let loadRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.loadRequest", binaryMessenger: binaryMessenger, codec: codec)
+    let loadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.load", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      loadRequestChannel.setMessageHandler { message, reply in
+      loadChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebView
-        let requestArg = args[1] as! NSURLRequest
+        let requestArg = args[1] as! URLRequestWrapper
         do {
-          try api.pigeonDelegate.loadRequest(pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
+          try api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
-      loadRequestChannel.setMessageHandler(nil)
+      loadChannel.setMessageHandler(nil)
     }
     let loadHtmlStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.loadHtmlString", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -5658,8 +5658,8 @@ class WebViewProxyAPIDelegate : PigeonApiDelegateWKWebView {
     return pigeonInstance.getEstimatedProgress()
   }
 
-  func loadRequest(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView, request: NSURLRequest) throws {
-    pigeonInstance.loadRequest(request: request)
+  func load(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper) throws {
+    pigeonInstance.load(request: request)
   }
 
   func loadHtmlString(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?) throws {
@@ -5788,15 +5788,15 @@ class WebViewProxyApiTests: XCTestCase {
     XCTAssertEqual(value, instance.getEstimatedProgress())
   }
 
-  func testLoadRequest() {
+  func testLoad() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebView(registrar)
 
     let instance = TestWebView()
     let request = TestRequest
-    api.pigeonDelegate.loadRequest(pigeonApi: api, pigeonInstance: instance, request: request)
+    api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: instance, request: request)
 
-    XCTAssertEqual(instance.loadRequestArgs, [request])
+    XCTAssertEqual(instance.loadArgs, [request])
   }
 
   func testLoadHtmlString() {
@@ -5959,7 +5959,7 @@ class TestWebView: WKWebView {
   var setNavigationDelegateArgs: [AnyHashable?]? = nil
   var getUrlCalled = false
   var getEstimatedProgressCalled = false
-  var loadRequestArgs: [AnyHashable?]? = nil
+  var loadArgs: [AnyHashable?]? = nil
   var loadHtmlStringArgs: [AnyHashable?]? = nil
   var loadFileUrlArgs: [AnyHashable?]? = nil
   var loadFlutterAssetArgs: [AnyHashable?]? = nil
@@ -5988,8 +5988,8 @@ class TestWebView: WKWebView {
   override func getEstimatedProgress() {
     getEstimatedProgressCalled = true
   }
-  override func loadRequest() {
-    loadRequestArgs = [request]
+  override func load() {
+    loadArgs = [request]
   }
   override func loadHtmlString() {
     loadHtmlStringArgs = [string, baseUrl]

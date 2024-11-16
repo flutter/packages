@@ -8,28 +8,28 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class URLRequestProxyAPIDelegate : PigeonApiDelegateNSURLRequest {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSURLRequest, url: String) throws -> NSURLRequest {
-    return NSURLRequest(url: URL(string: url)!)
+class URLRequestProxyAPIDelegate : PigeonApiDelegateURLRequest {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws -> URLRequestWrapper {
+    return URLRequestWrapper(value: URLRequest(url: URL(string: url)!))
   }
 
-  func getUrl(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> String? {
-    return pigeonInstance.url?.absoluteString
+  func getUrl(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String? {
+    return pigeonInstance.value.url?.absoluteString
   }
 
-  func getHttpMethod(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> String? {
-    return pigeonInstance.httpMethod
+  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String? {
+    return pigeonInstance.value.httpMethod
   }
 
-  func getHttpBody(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> FlutterStandardTypedData? {
-    if (pigeonInstance.httpBody != nil) {
-      return FlutterStandardTypedData(bytes: pigeonInstance.httpBody!)
+  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> FlutterStandardTypedData? {
+    if let httpBody = pigeonInstance.value.httpBody {
+      return FlutterStandardTypedData(bytes: httpBody)
     }
     
     return nil
   }
 
-  func getAllHttpHeaderFields(pigeonApi: PigeonApiNSURLRequest, pigeonInstance: NSURLRequest) throws -> [String: String]? {
-    return pigeonInstance.allHTTPHeaderFields
+  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> [String: String]? {
+    return pigeonInstance.value.allHTTPHeaderFields
   }
 }

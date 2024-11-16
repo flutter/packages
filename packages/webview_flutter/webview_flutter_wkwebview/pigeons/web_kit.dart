@@ -333,10 +333,10 @@ enum UrlCredentialPersistence {
 
 /// A URL load request that is independent of protocol or URL scheme.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlrequest.
-@ProxyApi()
-abstract class NSURLRequest extends NSObject {
-  NSURLRequest(String url);
+/// See https://developer.apple.com/documentation/foundation/urlrequest.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URLRequestWrapper'))
+abstract class URLRequest extends NSObject {
+  URLRequest(String url);
 
   /// The URL being requested.
   String? getUrl();
@@ -388,7 +388,7 @@ abstract class WKUserScript extends NSObject {
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKNavigationAction extends NSObject {
   /// The URL request object associated with the navigation action.
-  late NSURLRequest request;
+  late URLRequest request;
 
   /// The frame in which to display the new content.
   late WKFrameInfo targetFrame;
@@ -421,7 +421,7 @@ abstract class WKFrameInfo extends NSObject {
   late bool isMainFrame;
 
   /// The frame’s current request.
-  late NSURLRequest request;
+  late URLRequest request;
 }
 
 /// Information about an error condition including a domain, a domain-specific
@@ -722,7 +722,7 @@ abstract class WKWebView {
 
   /// Loads the web content that the specified URL request object references and
   /// navigates to that content.
-  void loadRequest(NSURLRequest request);
+  void load(URLRequest request);
 
   /// Loads the contents of the specified HTML string and navigates to it.
   void loadHtmlString(String string, String? baseUrl);
