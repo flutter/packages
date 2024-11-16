@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -20,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -30,7 +28,6 @@ List<Object?> wrapResponse(
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -114,10 +111,9 @@ class PigeonInstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>>
-      _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
-      <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
+      <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -127,8 +123,7 @@ class PigeonInstanceManager {
 
   static PigeonInstanceManager _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
-    final _PigeonInternalInstanceManagerApi api =
-        _PigeonInternalInstanceManagerApi();
+    final _PigeonInternalInstanceManagerApi api = _PigeonInternalInstanceManagerApi();
     // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
     final PigeonInstanceManager instanceManager = PigeonInstanceManager(
@@ -136,62 +131,35 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
-    NSURLRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSHTTPURLResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKUserScript.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKNavigationAction.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKNavigationResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKFrameInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKScriptMessage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKSecurityOrigin.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSHTTPCookie.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AuthenticationChallengeResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKWebsiteDataStore.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    NSURLRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    HTTPURLResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKUserScript.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKNavigationAction.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKNavigationResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKFrameInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    NSError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKScriptMessage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKSecurityOrigin.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    HTTPCookie.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AuthenticationChallengeResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKWebsiteDataStore.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     UIView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    UIScrollView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKWebViewConfiguration.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKUserContentController.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKPreferences.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKScriptMessageHandler.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKNavigationDelegate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSObject.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKWebView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKUIDelegate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKHTTPCookieStore.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    UIScrollView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKWebViewConfiguration.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKUserContentController.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKPreferences.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKScriptMessageHandler.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKNavigationDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    NSObject.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKUIDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKHTTPCookieStore.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     NSURL.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    UIScrollViewDelegate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSURLCredential.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSURLProtectionSpace.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSURLAuthenticationChallenge.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    UIScrollViewDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    URLCredential.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    URLProtectionSpace.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    URLAuthenticationChallenge.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -255,20 +223,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(
-      int identifier) {
-    final PigeonInternalProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
+    final PigeonInternalProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonInternalProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonInternalProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonInternalProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -292,20 +255,17 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(PigeonInternalProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(PigeonInternalProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -429,46 +389,43 @@ class _PigeonInternalInstanceManagerApi {
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
-  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonInternalProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonInternalProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
+
 
 /// The values that can be returned in a change dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions.
 enum KeyValueObservingOptions {
   /// Indicates that the change dictionary should provide the new attribute
   /// value, if applicable.
   newValue,
-
   /// Indicates that the change dictionary should contain the old attribute
   /// value, if applicable.
   oldValue,
-
   /// If specified, a notification should be sent to the observer immediately,
   /// before the observer registration method even returns.
   initialValue,
-
   /// Whether separate notifications should be sent to the observer before and
   /// after each change, instead of a single notification after the change.
   priorNotification,
@@ -476,70 +433,60 @@ enum KeyValueObservingOptions {
 
 /// The kinds of changes that can be observed.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange.
 enum KeyValueChange {
   /// Indicates that the value of the observed key path was set to a new value.
   setting,
-
   /// Indicates that an object has been inserted into the to-many relationship
   /// that is being observed.
   insertion,
-
   /// Indicates that an object has been removed from the to-many relationship
   /// that is being observed.
   removal,
-
   /// Indicates that an object has been replaced in the to-many relationship
   /// that is being observed.
   replacement,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
 
 /// The keys that can appear in the change dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey.
 enum KeyValueChangeKey {
   /// If the value of the `KeyValueChangeKey.kind` entry is
   /// `KeyValueChange.insertion`, `KeyValueChange.removal`, or
   /// `KeyValueChange.replacement`, the value of this key is a Set object that
   /// contains the indexes of the inserted, removed, or replaced objects.
   indexes,
-
   /// An object that contains a value corresponding to one of the
   /// `KeyValueChange` enum, indicating what sort of change has occurred.
   kind,
-
   /// If the value of the `KeyValueChange.kind` entry is
   /// `KeyValueChange.setting, and `KeyValueObservingOptions.newValue` was
   /// specified when the observer was registered, the value of this key is the
   /// new value for the attribute.
   newValue,
-
   /// If the `KeyValueObservingOptions.priorNotification` option was specified
   /// when the observer was registered this notification is sent prior to a
   /// change.
   notificationIsPrior,
-
   /// If the value of the `KeyValueChange.kind` entry is
   /// `KeyValueChange.setting`, and `KeyValueObservingOptions.old` was specified
   /// when the observer was registered, the value of this key is the value
   /// before the attribute was changed.
   oldValue,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
 
 /// Constants for the times at which to inject script content into a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime.
 enum UserScriptInjectionTime {
   /// A constant to inject the script after the creation of the webpage’s
   /// document element, but before loading any other content.
   atDocumentStart,
-
   /// A constant to inject the script after the document finishes loading, but
   /// before loading any other subresources.
   atDocumentEnd,
@@ -547,17 +494,14 @@ enum UserScriptInjectionTime {
 
 /// The media types that require a user gesture to begin playing.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes.
 enum AudiovisualMediaType {
   /// No media types require a user gesture to begin playing.
   none,
-
   /// Media types that contain audio require a user gesture to begin playing.
   audio,
-
   /// Media types that contain video require a user gesture to begin playing.
   video,
-
   /// All media types require a user gesture to begin playing.
   all,
 }
@@ -565,29 +509,22 @@ enum AudiovisualMediaType {
 /// A `WKWebsiteDataRecord` object includes these constants in its dataTypes
 /// property.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types.
 enum WebsiteDataType {
   /// Cookies.
   cookies,
-
   /// In-memory caches.
   memoryCache,
-
   /// On-disk caches.
   diskCache,
-
   /// HTML offline web app caches.
   offlineWebApplicationCache,
-
   /// HTML local storage.
   localStorage,
-
   /// HTML session storage.
   sessionStorage,
-
   /// WebSQL databases.
   webSQLDatabases,
-
   /// IndexedDB databases.
   indexedDBDatabases,
 }
@@ -595,14 +532,12 @@ enum WebsiteDataType {
 /// Constants that indicate whether to allow or cancel navigation to a webpage
 /// from an action.
 ///
-/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy.
 enum NavigationActionPolicy {
   /// Allow the navigation to continue.
   allow,
-
   /// Cancel the navigation.
   cancel,
-
   /// Allow the download to proceed.
   download,
 }
@@ -614,10 +549,8 @@ enum NavigationActionPolicy {
 enum NavigationResponsePolicy {
   /// Allow the navigation to continue.
   allow,
-
   /// Cancel the navigation.
   cancel,
-
   /// Allow the download to proceed.
   download,
 }
@@ -628,48 +561,35 @@ enum NavigationResponsePolicy {
 enum HttpCookiePropertyKey {
   /// A String object containing the comment for the cookie.
   comment,
-
   /// An Uri object or String object containing the comment URL for the cookie.
   commentUrl,
-
   /// Aa String object stating whether the cookie should be discarded at the end
   /// of the session.
   discard,
-
   /// An String object containing the domain for the cookie.
   domain,
-
   /// An Date object or String object specifying the expiration date for the
   /// cookie.
   expires,
-
   /// An String object containing an integer value stating how long in seconds
   /// the cookie should be kept, at most.
   maximumAge,
-
   /// An String object containing the name of the cookie (required).
   name,
-
   /// A URL or String object containing the URL that set this cookie.
   originUrl,
-
   /// A String object containing the path for the cookie.
   path,
-
   /// An String object containing comma-separated integer values specifying the
   /// ports for the cookie.
   port,
-
   /// A string indicating the same-site policy for the cookie.
   sameSitePolicy,
-
   /// A String object indicating that the cookie should be transmitted only over
   /// secure channels.
   secure,
-
   /// A String object containing the value of the cookie.
   value,
-
   /// A String object that specifies the version of the cookie.
   version,
 }
@@ -680,71 +600,57 @@ enum HttpCookiePropertyKey {
 enum NavigationType {
   /// A link activation.
   linkActivated,
-
   /// A request to submit a form.
   submitted,
-
   /// A request for the frame’s next or previous item.
   backForward,
-
   /// A request to reload the webpage.
   reload,
-
   /// A request to resubmit a form.
   formResubmitted,
-
   /// A navigation request that originates for some other reason.
   other,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
 
 /// Possible permission decisions for device resource access.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision.
 enum PermissionDecision {
   /// Deny permission for the requested resource.
   deny,
-
   /// Deny permission for the requested resource.
   grant,
-
   /// Prompt the user for permission for the requested resource.
   prompt,
 }
 
 /// List of the types of media devices that can capture audio, video, or both.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype.
 enum MediaCaptureType {
   /// A media device that can capture video.
   camera,
-
   /// A media device or devices that can capture audio and video.
   cameraAndMicrophone,
-
   /// A media device that can capture audio.
   microphone,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
 
 /// Responses to an authentication challenge.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+/// See https://developer.apple.com/documentation/foundation/urlsession/authchallengedisposition.
 enum UrlSessionAuthChallengeDisposition {
   /// Use the specified credential, which may be nil.
   useCredential,
-
   /// Use the default handling for the challenge as though this delegate method
   /// were not implemented.
   performDefaultHandling,
-
   /// Cancel the entire request.
   cancelAuthenticationChallenge,
-
   /// Reject this challenge, and call the authentication delegate method again
   /// with the next authentication protection space.
   rejectProtectionSpace,
@@ -756,18 +662,16 @@ enum UrlSessionAuthChallengeDisposition {
 enum UrlCredentialPersistence {
   /// The credential should not be stored.
   none,
-
   /// The credential should be stored only for this session.
   session,
-
   /// The credential should be stored in the keychain.
   permanent,
-
   /// The credential should be stored permanently in the keychain, and in
   /// addition should be distributed to other devices based on the owning Apple
   /// ID.
   synchronizable,
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -776,46 +680,46 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is KeyValueObservingOptions) {
+    }    else if (value is KeyValueObservingOptions) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is KeyValueChange) {
+    }    else if (value is KeyValueChange) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is KeyValueChangeKey) {
+    }    else if (value is KeyValueChangeKey) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is UserScriptInjectionTime) {
+    }    else if (value is UserScriptInjectionTime) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is AudiovisualMediaType) {
+    }    else if (value is AudiovisualMediaType) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is WebsiteDataType) {
+    }    else if (value is WebsiteDataType) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    } else if (value is NavigationActionPolicy) {
+    }    else if (value is NavigationActionPolicy) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    } else if (value is NavigationResponsePolicy) {
+    }    else if (value is NavigationResponsePolicy) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    } else if (value is HttpCookiePropertyKey) {
+    }    else if (value is HttpCookiePropertyKey) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    } else if (value is NavigationType) {
+    }    else if (value is NavigationType) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    } else if (value is PermissionDecision) {
+    }    else if (value is PermissionDecision) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    } else if (value is MediaCaptureType) {
+    }    else if (value is MediaCaptureType) {
       buffer.putUint8(140);
       writeValue(buffer, value.index);
-    } else if (value is UrlSessionAuthChallengeDisposition) {
+    }    else if (value is UrlSessionAuthChallengeDisposition) {
       buffer.putUint8(141);
       writeValue(buffer, value.index);
-    } else if (value is UrlCredentialPersistence) {
+    }    else if (value is UrlCredentialPersistence) {
       buffer.putUint8(142);
       writeValue(buffer, value.index);
     } else {
@@ -826,48 +730,46 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueObservingOptions.values[value];
-      case 130:
+      case 130: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueChange.values[value];
-      case 131:
+      case 131: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueChangeKey.values[value];
-      case 132:
+      case 132: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : UserScriptInjectionTime.values[value];
-      case 133:
+      case 133: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AudiovisualMediaType.values[value];
-      case 134:
+      case 134: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : WebsiteDataType.values[value];
-      case 135:
+      case 135: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NavigationActionPolicy.values[value];
-      case 136:
+      case 136: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NavigationResponsePolicy.values[value];
-      case 137:
+      case 137: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : HttpCookiePropertyKey.values[value];
-      case 138:
+      case 138: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NavigationType.values[value];
-      case 139:
+      case 139: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PermissionDecision.values[value];
-      case 140:
+      case 140: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MediaCaptureType.values[value];
-      case 141:
+      case 141: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : UrlSessionAuthChallengeDisposition.values[value];
-      case 142:
+        return value == null ? null : UrlSessionAuthChallengeDisposition.values[value];
+      case 142: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : UrlCredentialPersistence.values[value];
       default:
@@ -875,10 +777,9 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
-
 /// A URL load request that is independent of protocol or URL scheme.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlrequest?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nsurlrequest.
 class NSURLRequest extends NSObject {
   /// Constructs [NSURLRequest] without creating the associated native object.
   ///
@@ -1055,14 +956,14 @@ class NSURLRequest extends NSObject {
 /// The metadata associated with the response to an HTTP protocol URL load
 /// request.
 ///
-/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
-class NSHTTPURLResponse extends NSObject {
-  /// Constructs [NSHTTPURLResponse] without creating the associated native object.
+/// See https://developer.apple.com/documentation/foundation/httpurlresponse.
+class HTTPURLResponse extends NSObject {
+  /// Constructs [HTTPURLResponse] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  NSHTTPURLResponse.pigeon_detached({
+  HTTPURLResponse.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.statusCode,
@@ -1076,7 +977,7 @@ class NSHTTPURLResponse extends NSObject {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    NSHTTPURLResponse Function(int statusCode)? pigeon_newInstance,
+    HTTPURLResponse Function(int statusCode)? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -1086,7 +987,7 @@ class NSHTTPURLResponse extends NSObject {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPURLResponse.pigeon_newInstance',
+          'dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -1094,19 +995,19 @@ class NSHTTPURLResponse extends NSObject {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPURLResponse.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPURLResponse.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance was null, expected non-null int.');
           final int? arg_statusCode = (args[1] as int?);
           assert(arg_statusCode != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPURLResponse.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance was null, expected non-null int.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_statusCode!) ??
-                  NSHTTPURLResponse.pigeon_detached(
+                  HTTPURLResponse.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     statusCode: arg_statusCode!,
@@ -1126,8 +1027,8 @@ class NSHTTPURLResponse extends NSObject {
   }
 
   @override
-  NSHTTPURLResponse pigeon_copy() {
-    return NSHTTPURLResponse.pigeon_detached(
+  HTTPURLResponse pigeon_copy() {
+    return HTTPURLResponse.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       statusCode: statusCode,
@@ -1138,7 +1039,7 @@ class NSHTTPURLResponse extends NSObject {
 
 /// A script that the web view injects into a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuserscript?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkuserscript.
 class WKUserScript extends NSObject {
   /// Creates a user script object that contains the specified source code and
   /// attributes.
@@ -1419,7 +1320,7 @@ class WKNavigationResponse extends NSObject {
   }) : super.pigeon_detached();
 
   /// The frame’s response.
-  final NSHTTPURLResponse response;
+  final HTTPURLResponse response;
 
   /// A Boolean value that indicates whether the response targets the web view’s
   /// main frame.
@@ -1430,7 +1331,7 @@ class WKNavigationResponse extends NSObject {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
     WKNavigationResponse Function(
-      NSHTTPURLResponse response,
+      HTTPURLResponse response,
       bool forMainFrame,
     )? pigeon_newInstance,
   }) {
@@ -1455,10 +1356,9 @@ class WKNavigationResponse extends NSObject {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationResponse.pigeon_newInstance was null, expected non-null int.');
-          final NSHTTPURLResponse? arg_response =
-              (args[1] as NSHTTPURLResponse?);
+          final HTTPURLResponse? arg_response = (args[1] as HTTPURLResponse?);
           assert(arg_response != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationResponse.pigeon_newInstance was null, expected non-null NSHTTPURLResponse.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationResponse.pigeon_newInstance was null, expected non-null HTTPURLResponse.');
           final bool? arg_forMainFrame = (args[2] as bool?);
           assert(arg_forMainFrame != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationResponse.pigeon_newInstance was null, expected non-null bool.');
@@ -1500,7 +1400,7 @@ class WKNavigationResponse extends NSObject {
 
 /// An object that contains information about a frame on a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkframeinfo?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkframeinfo.
 class WKFrameInfo extends NSObject {
   /// Constructs [WKFrameInfo] without creating the associated native object.
   ///
@@ -1597,7 +1497,7 @@ class WKFrameInfo extends NSObject {
 /// Information about an error condition including a domain, a domain-specific
 /// error code, and application-specific information.
 ///
-/// See https://developer.apple.com/documentation/foundation/nserror?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nserror.
 class NSError extends NSObject {
   /// Constructs [NSError] without creating the associated native object.
   ///
@@ -1704,7 +1604,7 @@ class NSError extends NSObject {
 /// An object that encapsulates a message sent by JavaScript code from a
 /// webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkscriptmessage?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkscriptmessage.
 class WKScriptMessage extends NSObject {
   /// Constructs [WKScriptMessage] without creating the associated native object.
   ///
@@ -1797,7 +1697,7 @@ class WKScriptMessage extends NSObject {
 
 /// An object that identifies the origin of a particular resource.
 ///
-/// See https://developer.apple.com/documentation/webkit/wksecurityorigin?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wksecurityorigin.
 class WKSecurityOrigin extends NSObject {
   /// Constructs [WKSecurityOrigin] without creating the associated native object.
   ///
@@ -1809,7 +1709,7 @@ class WKSecurityOrigin extends NSObject {
     super.pigeon_instanceManager,
     required this.host,
     required this.port,
-    required this.protocol,
+    required this.securityProtocol,
     super.observeValue,
   }) : super.pigeon_detached();
 
@@ -1820,7 +1720,7 @@ class WKSecurityOrigin extends NSObject {
   final int port;
 
   /// The security origin's protocol.
-  final String protocol;
+  final String securityProtocol;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -1829,7 +1729,7 @@ class WKSecurityOrigin extends NSObject {
     WKSecurityOrigin Function(
       String host,
       int port,
-      String protocol,
+      String securityProtocol,
     )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -1859,19 +1759,20 @@ class WKSecurityOrigin extends NSObject {
           final int? arg_port = (args[2] as int?);
           assert(arg_port != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKSecurityOrigin.pigeon_newInstance was null, expected non-null int.');
-          final String? arg_protocol = (args[3] as String?);
-          assert(arg_protocol != null,
+          final String? arg_securityProtocol = (args[3] as String?);
+          assert(arg_securityProtocol != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKSecurityOrigin.pigeon_newInstance was null, expected non-null String.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_host!, arg_port!, arg_protocol!) ??
+              pigeon_newInstance?.call(
+                      arg_host!, arg_port!, arg_securityProtocol!) ??
                   WKSecurityOrigin.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     host: arg_host!,
                     port: arg_port!,
-                    protocol: arg_protocol!,
+                    securityProtocol: arg_securityProtocol!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -1894,7 +1795,7 @@ class WKSecurityOrigin extends NSObject {
       pigeon_instanceManager: pigeon_instanceManager,
       host: host,
       port: port,
-      protocol: protocol,
+      securityProtocol: securityProtocol,
       observeValue: observeValue,
     );
   }
@@ -1902,14 +1803,14 @@ class WKSecurityOrigin extends NSObject {
 
 /// A representation of an HTTP cookie.
 ///
-/// See https://developer.apple.com/documentation/foundation/nshttpcookie?language=objc.
-class NSHTTPCookie extends NSObject {
-  /// Constructs [NSHTTPCookie] without creating the associated native object.
+/// See https://developer.apple.com/documentation/foundation/httpcookie.
+class HTTPCookie extends NSObject {
+  /// Constructs [HTTPCookie] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  NSHTTPCookie.pigeon_detached({
+  HTTPCookie.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.properties,
@@ -1923,7 +1824,7 @@ class NSHTTPCookie extends NSObject {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    NSHTTPCookie Function(Map<HttpCookiePropertyKey, Object?> properties)?
+    HTTPCookie Function(Map<HttpCookiePropertyKey, Object?> properties)?
         pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -1934,7 +1835,7 @@ class NSHTTPCookie extends NSObject {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPCookie.pigeon_newInstance',
+          'dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -1942,21 +1843,21 @@ class NSHTTPCookie extends NSObject {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPCookie.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPCookie.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance was null, expected non-null int.');
           final Map<HttpCookiePropertyKey, Object?>? arg_properties =
               (args[1] as Map<Object?, Object?>?)
                   ?.cast<HttpCookiePropertyKey, Object?>();
           assert(arg_properties != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPCookie.pigeon_newInstance was null, expected non-null Map<HttpCookiePropertyKey, Object?>.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance was null, expected non-null Map<HttpCookiePropertyKey, Object?>.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_properties!) ??
-                  NSHTTPCookie.pigeon_detached(
+                  HTTPCookie.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     properties: arg_properties!,
@@ -1976,8 +1877,8 @@ class NSHTTPCookie extends NSObject {
   }
 
   @override
-  NSHTTPCookie pigeon_copy() {
-    return NSHTTPCookie.pigeon_detached(
+  HTTPCookie pigeon_copy() {
+    return HTTPCookie.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       properties: properties,
@@ -2006,7 +1907,7 @@ class AuthenticationChallengeResponse extends PigeonInternalProxyApiBaseClass {
 
   /// The credential to use for authentication when the disposition parameter
   /// contains the value URLSession.AuthChallengeDisposition.useCredential.
-  final NSURLCredential? credential;
+  final URLCredential? credential;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -2014,7 +1915,7 @@ class AuthenticationChallengeResponse extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     AuthenticationChallengeResponse Function(
       UrlSessionAuthChallengeDisposition disposition,
-      NSURLCredential? credential,
+      URLCredential? credential,
     )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -2042,7 +1943,7 @@ class AuthenticationChallengeResponse extends PigeonInternalProxyApiBaseClass {
               (args[1] as UrlSessionAuthChallengeDisposition?);
           assert(arg_disposition != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.AuthenticationChallengeResponse.pigeon_newInstance was null, expected non-null UrlSessionAuthChallengeDisposition.');
-          final NSURLCredential? arg_credential = (args[2] as NSURLCredential?);
+          final URLCredential? arg_credential = (args[2] as URLCredential?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
@@ -2081,7 +1982,7 @@ class AuthenticationChallengeResponse extends PigeonInternalProxyApiBaseClass {
 /// An object that manages cookies, disk and memory caches, and other types of
 /// data for a web view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore.
 class WKWebsiteDataStore extends NSObject {
   /// Constructs [WKWebsiteDataStore] without creating the associated native object.
   ///
@@ -2276,7 +2177,7 @@ class WKWebsiteDataStore extends NSObject {
 
 /// An object that manages the content for a rectangular area on the screen.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiview?language=objc.
+/// See https://developer.apple.com/documentation/uikit/uiview.
 class UIView extends NSObject {
   /// Constructs [UIView] without creating the associated native object.
   ///
@@ -2409,7 +2310,7 @@ class UIView extends NSObject {
 
 /// A view that allows the scrolling and zooming of its contained views.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiscrollview?language=objc.
+/// See https://developer.apple.com/documentation/uikit/uiscrollview.
 class UIScrollView extends UIView {
   /// Constructs [UIScrollView] without creating the associated native object.
   ///
@@ -2613,7 +2514,7 @@ class UIScrollView extends UIView {
 
 /// A collection of properties that you use to initialize a web view..
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration.
 class WKWebViewConfiguration extends NSObject {
   WKWebViewConfiguration({
     super.pigeon_binaryMessenger,
@@ -2814,7 +2715,7 @@ class WKWebViewConfiguration extends NSObject {
 /// An object for managing interactions between JavaScript code and your web
 /// view, and for filtering content in your web view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkusercontentcontroller?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkusercontentcontroller.
 class WKUserContentController extends NSObject {
   /// Constructs [WKUserContentController] without creating the associated native object.
   ///
@@ -3037,7 +2938,7 @@ class WKUserContentController extends NSObject {
 
 /// An object that encapsulates the standard behaviors to apply to websites.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkpreferences?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkpreferences.
 class WKPreferences extends NSObject {
   /// Constructs [WKPreferences] without creating the associated native object.
   ///
@@ -3142,7 +3043,7 @@ class WKPreferences extends NSObject {
 
 /// An interface for receiving messages from JavaScript code running in a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler.
 class WKScriptMessageHandler extends NSObject {
   WKScriptMessageHandler({
     super.pigeon_binaryMessenger,
@@ -3290,7 +3191,7 @@ class WKScriptMessageHandler extends NSObject {
 /// Methods for accepting or rejecting navigation changes, and for tracking the
 /// progress of navigation requests.
 ///
-/// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wknavigationdelegate.
 class WKNavigationDelegate extends NSObject {
   WKNavigationDelegate({
     super.pigeon_binaryMessenger,
@@ -3557,7 +3458,7 @@ class WKNavigationDelegate extends NSObject {
   final Future<AuthenticationChallengeResponse> Function(
     WKNavigationDelegate pigeon_instance,
     WKWebView webView,
-    NSURLAuthenticationChallenge challenge,
+    URLAuthenticationChallenge challenge,
   )? didReceiveAuthenticationChallenge;
 
   static void pigeon_setUpMessageHandlers({
@@ -3602,7 +3503,7 @@ class WKNavigationDelegate extends NSObject {
     Future<AuthenticationChallengeResponse> Function(
       WKNavigationDelegate pigeon_instance,
       WKWebView webView,
-      NSURLAuthenticationChallenge challenge,
+      URLAuthenticationChallenge challenge,
     )? didReceiveAuthenticationChallenge,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -3938,10 +3839,10 @@ class WKNavigationDelegate extends NSObject {
           final WKWebView? arg_webView = (args[1] as WKWebView?);
           assert(arg_webView != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didReceiveAuthenticationChallenge was null, expected non-null WKWebView.');
-          final NSURLAuthenticationChallenge? arg_challenge =
-              (args[2] as NSURLAuthenticationChallenge?);
+          final URLAuthenticationChallenge? arg_challenge =
+              (args[2] as URLAuthenticationChallenge?);
           assert(arg_challenge != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didReceiveAuthenticationChallenge was null, expected non-null NSURLAuthenticationChallenge.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didReceiveAuthenticationChallenge was null, expected non-null URLAuthenticationChallenge.');
           try {
             final AuthenticationChallengeResponse? output =
                 await (didReceiveAuthenticationChallenge ??
@@ -4236,7 +4137,7 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
 /// An object that displays interactive web content, such as for an in-app
 /// browser.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebview?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
 class WKWebView extends PigeonInternalProxyApiBaseClass {
   WKWebView({
     super.pigeon_binaryMessenger,
@@ -4907,7 +4808,7 @@ class WKWebView extends PigeonInternalProxyApiBaseClass {
 /// The methods for presenting native user interface elements on behalf of a
 /// webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkuidelegate.
 class WKUIDelegate extends PigeonInternalProxyApiBaseClass {
   WKUIDelegate({
     super.pigeon_binaryMessenger,
@@ -5400,7 +5301,7 @@ class WKUIDelegate extends PigeonInternalProxyApiBaseClass {
 /// An object that manages the HTTP cookies associated with a particular web
 /// view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkhttpcookiestore?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkhttpcookiestore.
 class WKHTTPCookieStore extends NSObject {
   /// Constructs [WKHTTPCookieStore] without creating the associated native object.
   ///
@@ -5468,7 +5369,7 @@ class WKHTTPCookieStore extends NSObject {
 
   /// Sets a cookie policy that indicates whether the cookie store allows cookie
   /// storage.
-  Future<void> setCookie(NSHTTPCookie cookie) async {
+  Future<void> setCookie(HTTPCookie cookie) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWKHTTPCookieStore;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -5508,7 +5409,7 @@ class WKHTTPCookieStore extends NSObject {
 /// An object that represents the location of a resource, such as an item on a
 /// remote server or the path to a local file.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nsurl.
 class NSURL extends NSObject {
   /// Constructs [NSURL] without creating the associated native object.
   ///
@@ -5613,7 +5514,7 @@ class NSURL extends NSObject {
 
 /// The interface for the delegate of a scroll view.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate.
 class UIScrollViewDelegate extends NSObject {
   /// Constructs [UIScrollViewDelegate] without creating the associated native object.
   ///
@@ -5768,11 +5669,11 @@ class UIScrollViewDelegate extends NSObject {
 /// An authentication credential consisting of information specific to the type
 /// of credential and the type of persistent storage to use, if any.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
-class NSURLCredential extends PigeonInternalProxyApiBaseClass {
+/// See https://developer.apple.com/documentation/foundation/urlcredential.
+class URLCredential extends PigeonInternalProxyApiBaseClass {
   /// Creates a URL credential instance for internet password authentication
   /// with a given user name and password, using a given persistence setting.
-  NSURLCredential({
+  URLCredential({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required String user,
@@ -5782,11 +5683,11 @@ class NSURLCredential extends PigeonInternalProxyApiBaseClass {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecNSURLCredential;
+        _pigeonVar_codecURLCredential;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     () async {
       const String pigeonVar_channelName =
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSURLCredential.pigeon_defaultConstructor';
+          'dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_defaultConstructor';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
         pigeonVar_channelName,
@@ -5814,24 +5715,24 @@ class NSURLCredential extends PigeonInternalProxyApiBaseClass {
     }();
   }
 
-  /// Constructs [NSURLCredential] without creating the associated native object.
+  /// Constructs [URLCredential] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  NSURLCredential.pigeon_detached({
+  URLCredential.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
   });
 
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecNSURLCredential =
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecURLCredential =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    NSURLCredential Function()? pigeon_newInstance,
+    URLCredential Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -5841,7 +5742,7 @@ class NSURLCredential extends PigeonInternalProxyApiBaseClass {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSURLCredential.pigeon_newInstance',
+          'dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_newInstance',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -5849,16 +5750,16 @@ class NSURLCredential extends PigeonInternalProxyApiBaseClass {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLCredential.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLCredential.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_newInstance was null, expected non-null int.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
-                  NSURLCredential.pigeon_detached(
+                  URLCredential.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                   ),
@@ -5877,8 +5778,8 @@ class NSURLCredential extends PigeonInternalProxyApiBaseClass {
   }
 
   @override
-  NSURLCredential pigeon_copy() {
-    return NSURLCredential.pigeon_detached(
+  URLCredential pigeon_copy() {
+    return URLCredential.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
@@ -5888,14 +5789,14 @@ class NSURLCredential extends PigeonInternalProxyApiBaseClass {
 /// A server or an area on a server, commonly referred to as a realm, that
 /// requires authentication.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlprotectionspace?language=objc.
-class NSURLProtectionSpace extends PigeonInternalProxyApiBaseClass {
-  /// Constructs [NSURLProtectionSpace] without creating the associated native object.
+/// See https://developer.apple.com/documentation/foundation/urlprotectionspace.
+class URLProtectionSpace extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [URLProtectionSpace] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  NSURLProtectionSpace.pigeon_detached({
+  URLProtectionSpace.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.host,
@@ -5920,7 +5821,7 @@ class NSURLProtectionSpace extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    NSURLProtectionSpace Function(
+    URLProtectionSpace Function(
       String host,
       int port,
       int? realm,
@@ -5935,7 +5836,7 @@ class NSURLProtectionSpace extends PigeonInternalProxyApiBaseClass {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSURLProtectionSpace.pigeon_newInstance',
+          'dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -5943,17 +5844,17 @@ class NSURLProtectionSpace extends PigeonInternalProxyApiBaseClass {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLProtectionSpace.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLProtectionSpace.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance was null, expected non-null int.');
           final String? arg_host = (args[1] as String?);
           assert(arg_host != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLProtectionSpace.pigeon_newInstance was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance was null, expected non-null String.');
           final int? arg_port = (args[2] as int?);
           assert(arg_port != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLProtectionSpace.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance was null, expected non-null int.');
           final int? arg_realm = (args[3] as int?);
           final String? arg_authenticationMethod = (args[4] as String?);
           try {
@@ -5961,7 +5862,7 @@ class NSURLProtectionSpace extends PigeonInternalProxyApiBaseClass {
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(arg_host!, arg_port!, arg_realm,
                       arg_authenticationMethod) ??
-                  NSURLProtectionSpace.pigeon_detached(
+                  URLProtectionSpace.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     host: arg_host!,
@@ -5984,8 +5885,8 @@ class NSURLProtectionSpace extends PigeonInternalProxyApiBaseClass {
   }
 
   @override
-  NSURLProtectionSpace pigeon_copy() {
-    return NSURLProtectionSpace.pigeon_detached(
+  URLProtectionSpace pigeon_copy() {
+    return URLProtectionSpace.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       host: host,
@@ -5998,27 +5899,27 @@ class NSURLProtectionSpace extends PigeonInternalProxyApiBaseClass {
 
 /// A challenge from a server requiring authentication from the client.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
-class NSURLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
-  /// Constructs [NSURLAuthenticationChallenge] without creating the associated native object.
+/// See https://developer.apple.com/documentation/foundation/urlauthenticationchallenge.
+class URLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [URLAuthenticationChallenge] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  NSURLAuthenticationChallenge.pigeon_detached({
+  URLAuthenticationChallenge.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
   });
 
   late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecNSURLAuthenticationChallenge =
+      _pigeonVar_codecURLAuthenticationChallenge =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    NSURLAuthenticationChallenge Function()? pigeon_newInstance,
+    URLAuthenticationChallenge Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -6028,7 +5929,7 @@ class NSURLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.NSURLAuthenticationChallenge.pigeon_newInstance',
+          'dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.pigeon_newInstance',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -6036,16 +5937,16 @@ class NSURLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLAuthenticationChallenge.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSURLAuthenticationChallenge.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.pigeon_newInstance was null, expected non-null int.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
-                  NSURLAuthenticationChallenge.pigeon_detached(
+                  URLAuthenticationChallenge.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                   ),
@@ -6064,12 +5965,12 @@ class NSURLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
   }
 
   /// The receiver’s protection space.
-  Future<NSURLProtectionSpace> getProtectionSpace() async {
+  Future<URLProtectionSpace> getProtectionSpace() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecNSURLAuthenticationChallenge;
+        _pigeonVar_codecURLAuthenticationChallenge;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.NSURLAuthenticationChallenge.getProtectionSpace';
+        'dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.getProtectionSpace';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -6092,15 +5993,16 @@ class NSURLAuthenticationChallenge extends PigeonInternalProxyApiBaseClass {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as NSURLProtectionSpace?)!;
+      return (pigeonVar_replyList[0] as URLProtectionSpace?)!;
     }
   }
 
   @override
-  NSURLAuthenticationChallenge pigeon_copy() {
-    return NSURLAuthenticationChallenge.pigeon_detached(
+  URLAuthenticationChallenge pigeon_copy() {
+    return URLAuthenticationChallenge.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }
+

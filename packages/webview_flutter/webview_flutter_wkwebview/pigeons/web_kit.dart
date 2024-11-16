@@ -17,7 +17,7 @@ import 'package:pigeon/pigeon.dart';
 
 /// The values that can be returned in a change dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions.
 enum KeyValueObservingOptions {
   /// Indicates that the change dictionary should provide the new attribute
   /// value, if applicable.
@@ -38,7 +38,7 @@ enum KeyValueObservingOptions {
 
 /// The kinds of changes that can be observed.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange.
 enum KeyValueChange {
   /// Indicates that the value of the observed key path was set to a new value.
   setting,
@@ -61,7 +61,7 @@ enum KeyValueChange {
 
 /// The keys that can appear in the change dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey.
 enum KeyValueChangeKey {
   /// If the value of the `KeyValueChangeKey.kind` entry is
   /// `KeyValueChange.insertion`, `KeyValueChange.removal`, or
@@ -96,7 +96,7 @@ enum KeyValueChangeKey {
 
 /// Constants for the times at which to inject script content into a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime.
 enum UserScriptInjectionTime {
   /// A constant to inject the script after the creation of the webpage’s
   /// document element, but before loading any other content.
@@ -109,7 +109,7 @@ enum UserScriptInjectionTime {
 
 /// The media types that require a user gesture to begin playing.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes.
 enum AudiovisualMediaType {
   /// No media types require a user gesture to begin playing.
   none,
@@ -127,7 +127,7 @@ enum AudiovisualMediaType {
 /// A `WKWebsiteDataRecord` object includes these constants in its dataTypes
 /// property.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types.
 enum WebsiteDataType {
   /// Cookies.
   cookies,
@@ -157,7 +157,7 @@ enum WebsiteDataType {
 /// Constants that indicate whether to allow or cancel navigation to a webpage
 /// from an action.
 ///
-/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy.
 enum NavigationActionPolicy {
   /// Allow the navigation to continue.
   allow,
@@ -264,7 +264,7 @@ enum NavigationType {
 
 /// Possible permission decisions for device resource access.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision.
 enum PermissionDecision {
   /// Deny permission for the requested resource.
   deny,
@@ -278,7 +278,7 @@ enum PermissionDecision {
 
 /// List of the types of media devices that can capture audio, video, or both.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype.
 enum MediaCaptureType {
   /// A media device that can capture video.
   camera,
@@ -295,7 +295,7 @@ enum MediaCaptureType {
 
 /// Responses to an authentication challenge.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+/// See https://developer.apple.com/documentation/foundation/urlsession/authchallengedisposition.
 enum UrlSessionAuthChallengeDisposition {
   /// Use the specified credential, which may be nil.
   useCredential,
@@ -333,7 +333,7 @@ enum UrlCredentialPersistence {
 
 /// A URL load request that is independent of protocol or URL scheme.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlrequest?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nsurlrequest.
 @ProxyApi()
 abstract class NSURLRequest extends NSObject {
   /// The URL being requested.
@@ -352,16 +352,16 @@ abstract class NSURLRequest extends NSObject {
 /// The metadata associated with the response to an HTTP protocol URL load
 /// request.
 ///
-/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+/// See https://developer.apple.com/documentation/foundation/httpurlresponse.
 @ProxyApi()
-abstract class NSHTTPURLResponse extends NSObject {
+abstract class HTTPURLResponse extends NSObject {
   /// The response’s HTTP status code.
   late int statusCode;
 }
 
 /// A script that the web view injects into a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuserscript?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkuserscript.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKUserScript extends NSObject {
   /// Creates a user script object that contains the specified source code and
@@ -402,7 +402,7 @@ abstract class WKNavigationAction extends NSObject {
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKNavigationResponse extends NSObject {
   /// The frame’s response.
-  late NSHTTPURLResponse response;
+  late HTTPURLResponse response;
 
   /// A Boolean value that indicates whether the response targets the web view’s
   /// main frame.
@@ -411,7 +411,7 @@ abstract class WKNavigationResponse extends NSObject {
 
 /// An object that contains information about a frame on a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkframeinfo?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkframeinfo.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKFrameInfo extends NSObject {
   /// A Boolean value indicating whether the frame is the web site's main frame
@@ -425,7 +425,7 @@ abstract class WKFrameInfo extends NSObject {
 /// Information about an error condition including a domain, a domain-specific
 /// error code, and application-specific information.
 ///
-/// See https://developer.apple.com/documentation/foundation/nserror?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nserror.
 @ProxyApi()
 abstract class NSError extends NSObject {
   /// The error code.
@@ -441,7 +441,7 @@ abstract class NSError extends NSObject {
 /// An object that encapsulates a message sent by JavaScript code from a
 /// webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkscriptmessage?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkscriptmessage.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKScriptMessage extends NSObject {
   /// The name of the message handler to which the message is sent.
@@ -453,7 +453,7 @@ abstract class WKScriptMessage extends NSObject {
 
 /// An object that identifies the origin of a particular resource.
 ///
-/// See https://developer.apple.com/documentation/webkit/wksecurityorigin?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wksecurityorigin.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKSecurityOrigin extends NSObject {
   /// The security origin’s host.
@@ -463,14 +463,14 @@ abstract class WKSecurityOrigin extends NSObject {
   late int port;
 
   /// The security origin's protocol.
-  late String protocol;
+  late String securityProtocol;
 }
 
 /// A representation of an HTTP cookie.
 ///
-/// See https://developer.apple.com/documentation/foundation/nshttpcookie?language=objc.
+/// See https://developer.apple.com/documentation/foundation/httpcookie.
 @ProxyApi()
-abstract class NSHTTPCookie extends NSObject {
+abstract class HTTPCookie extends NSObject {
   /// The cookie’s properties.
   late Map<HttpCookiePropertyKey, Object?> properties;
 }
@@ -484,13 +484,13 @@ abstract class AuthenticationChallengeResponse {
 
   /// The credential to use for authentication when the disposition parameter
   /// contains the value URLSession.AuthChallengeDisposition.useCredential.
-  late NSURLCredential? credential;
+  late URLCredential? credential;
 }
 
 /// An object that manages cookies, disk and memory caches, and other types of
 /// data for a web view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKWebsiteDataStore extends NSObject {
   /// The default data store, which stores data persistently to disk.
@@ -511,7 +511,7 @@ abstract class WKWebsiteDataStore extends NSObject {
 
 /// An object that manages the content for a rectangular area on the screen.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiview?language=objc.
+/// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'UIKit', supportsMacos: false),
 )
@@ -525,7 +525,7 @@ abstract class UIView extends NSObject {
 
 /// A view that allows the scrolling and zooming of its contained views.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiscrollview?language=objc.
+/// See https://developer.apple.com/documentation/uikit/uiscrollview.
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'UIKit', supportsMacos: false),
 )
@@ -549,7 +549,7 @@ abstract class UIScrollView extends UIView {
 
 /// A collection of properties that you use to initialize a web view..
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKWebViewConfiguration extends NSObject {
   WKWebViewConfiguration();
@@ -571,7 +571,7 @@ abstract class WKWebViewConfiguration extends NSObject {
 /// An object for managing interactions between JavaScript code and your web
 /// view, and for filtering content in your web view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkusercontentcontroller?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkusercontentcontroller.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKUserContentController extends NSObject {
   /// Installs a message handler that you can call from your JavaScript code.
@@ -594,7 +594,7 @@ abstract class WKUserContentController extends NSObject {
 
 /// An object that encapsulates the standard behaviors to apply to websites.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkpreferences?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkpreferences.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKPreferences extends NSObject {
   /// A Boolean value that indicates whether JavaScript is enabled.
@@ -603,7 +603,7 @@ abstract class WKPreferences extends NSObject {
 
 /// An interface for receiving messages from JavaScript code running in a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKScriptMessageHandler extends NSObject {
   WKScriptMessageHandler();
@@ -618,7 +618,7 @@ abstract class WKScriptMessageHandler extends NSObject {
 /// Methods for accepting or rejecting navigation changes, and for tracking the
 /// progress of navigation requests.
 ///
-/// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wknavigationdelegate.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKNavigationDelegate extends NSObject {
   WKNavigationDelegate();
@@ -662,7 +662,7 @@ abstract class WKNavigationDelegate extends NSObject {
   @async
   AuthenticationChallengeResponse Function(
     WKWebView webView,
-    NSURLAuthenticationChallenge challenge,
+    URLAuthenticationChallenge challenge,
   )? didReceiveAuthenticationChallenge;
 }
 
@@ -700,7 +700,7 @@ abstract class NSObject {
 /// An object that displays interactive web content, such as for an in-app
 /// browser.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebview?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKWebView {
   WKWebView(WKWebViewConfiguration configuration);
@@ -773,7 +773,7 @@ abstract class WKWebView {
 /// The methods for presenting native user interface elements on behalf of a
 /// webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkuidelegate.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKUIDelegate {
   WKUIDelegate();
@@ -815,19 +815,19 @@ abstract class WKUIDelegate {
 /// An object that manages the HTTP cookies associated with a particular web
 /// view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkhttpcookiestore?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkhttpcookiestore.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKHTTPCookieStore extends NSObject {
   /// Sets a cookie policy that indicates whether the cookie store allows cookie
   /// storage.
   @async
-  void setCookie(NSHTTPCookie cookie);
+  void setCookie(HTTPCookie cookie);
 }
 
 /// An object that represents the location of a resource, such as an item on a
 /// remote server or the path to a local file.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nsurl.
 @ProxyApi()
 abstract class NSURL extends NSObject {
   /// The URL string for the receiver as an absolute URL.
@@ -836,7 +836,7 @@ abstract class NSURL extends NSObject {
 
 /// The interface for the delegate of a scroll view.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
 abstract class UIScrollViewDelegate extends NSObject {
   /// Tells the delegate when the user scrolls the content view within the
@@ -854,12 +854,12 @@ abstract class UIScrollViewDelegate extends NSObject {
 /// An authentication credential consisting of information specific to the type
 /// of credential and the type of persistent storage to use, if any.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
+/// See https://developer.apple.com/documentation/foundation/urlcredential.
 @ProxyApi()
-abstract class NSURLCredential {
+abstract class URLCredential {
   /// Creates a URL credential instance for internet password authentication
   /// with a given user name and password, using a given persistence setting.
-  NSURLCredential(
+  URLCredential(
     String user,
     String password,
     UrlCredentialPersistence persistence,
@@ -869,9 +869,9 @@ abstract class NSURLCredential {
 /// A server or an area on a server, commonly referred to as a realm, that
 /// requires authentication.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlprotectionspace?language=objc.
+/// See https://developer.apple.com/documentation/foundation/urlprotectionspace.
 @ProxyApi()
-abstract class NSURLProtectionSpace {
+abstract class URLProtectionSpace {
   /// The receiver’s host.
   late String host;
 
@@ -887,9 +887,9 @@ abstract class NSURLProtectionSpace {
 
 /// A challenge from a server requiring authentication from the client.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
+/// See https://developer.apple.com/documentation/foundation/urlauthenticationchallenge.
 @ProxyApi()
-abstract class NSURLAuthenticationChallenge {
+abstract class URLAuthenticationChallenge {
   /// The receiver’s protection space.
-  NSURLProtectionSpace getProtectionSpace();
+  URLProtectionSpace getProtectionSpace();
 }

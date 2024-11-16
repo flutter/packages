@@ -359,9 +359,9 @@ protocol WebKitLibraryPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiNSURLRequest] used to add a new Dart instance of
   /// `NSURLRequest` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiNSURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSURLRequest
-  /// An implementation of [PigeonApiNSHTTPURLResponse] used to add a new Dart instance of
-  /// `NSHTTPURLResponse` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSHTTPURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSHTTPURLResponse
+  /// An implementation of [PigeonApiHTTPURLResponse] used to add a new Dart instance of
+  /// `HTTPURLResponse` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiHTTPURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiHTTPURLResponse
   /// An implementation of [PigeonApiWKUserScript] used to add a new Dart instance of
   /// `WKUserScript` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiWKUserScript(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUserScript
@@ -383,9 +383,9 @@ protocol WebKitLibraryPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiWKSecurityOrigin] used to add a new Dart instance of
   /// `WKSecurityOrigin` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiWKSecurityOrigin(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKSecurityOrigin
-  /// An implementation of [PigeonApiNSHTTPCookie] used to add a new Dart instance of
-  /// `NSHTTPCookie` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSHTTPCookie(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSHTTPCookie
+  /// An implementation of [PigeonApiHTTPCookie] used to add a new Dart instance of
+  /// `HTTPCookie` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiHTTPCookie(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiHTTPCookie
   /// An implementation of [PigeonApiAuthenticationChallengeResponse] used to add a new Dart instance of
   /// `AuthenticationChallengeResponse` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiAuthenticationChallengeResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiAuthenticationChallengeResponse
@@ -431,15 +431,15 @@ protocol WebKitLibraryPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiUIScrollViewDelegate] used to add a new Dart instance of
   /// `UIScrollViewDelegate` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiUIScrollViewDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIScrollViewDelegate
-  /// An implementation of [PigeonApiNSURLCredential] used to add a new Dart instance of
-  /// `NSURLCredential` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSURLCredential(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSURLCredential
-  /// An implementation of [PigeonApiNSURLProtectionSpace] used to add a new Dart instance of
-  /// `NSURLProtectionSpace` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSURLProtectionSpace(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSURLProtectionSpace
-  /// An implementation of [PigeonApiNSURLAuthenticationChallenge] used to add a new Dart instance of
-  /// `NSURLAuthenticationChallenge` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSURLAuthenticationChallenge(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSURLAuthenticationChallenge
+  /// An implementation of [PigeonApiURLCredential] used to add a new Dart instance of
+  /// `URLCredential` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiURLCredential(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLCredential
+  /// An implementation of [PigeonApiURLProtectionSpace] used to add a new Dart instance of
+  /// `URLProtectionSpace` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiURLProtectionSpace(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLProtectionSpace
+  /// An implementation of [PigeonApiURLAuthenticationChallenge] used to add a new Dart instance of
+  /// `URLAuthenticationChallenge` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiURLAuthenticationChallenge(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLAuthenticationChallenge
 }
 
 extension WebKitLibraryPigeonProxyApiDelegate {
@@ -502,8 +502,8 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
     PigeonApiWKUIDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUIDelegate(self))
     PigeonApiWKHTTPCookieStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKHTTPCookieStore(self))
     PigeonApiNSURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSURL(self))
-    PigeonApiNSURLCredential.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSURLCredential(self))
-    PigeonApiNSURLAuthenticationChallenge.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSURLAuthenticationChallenge(self))
+    PigeonApiURLCredential.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLCredential(self))
+    PigeonApiURLAuthenticationChallenge.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLAuthenticationChallenge(self))
   }
   func tearDown() {
     WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
@@ -522,8 +522,8 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
     PigeonApiWKUIDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKHTTPCookieStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiNSURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiNSURLCredential.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiNSURLAuthenticationChallenge.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiURLCredential.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiURLAuthenticationChallenge.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
@@ -576,8 +576,8 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
       }
 
 
-      if let instance = value as? NSHTTPURLResponse {
-        pigeonRegistrar.apiDelegate.pigeonApiNSHTTPURLResponse(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? HTTPURLResponse {
+        pigeonRegistrar.apiDelegate.pigeonApiHTTPURLResponse(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -664,8 +664,8 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
       }
 
 
-      if let instance = value as? NSHTTPCookie {
-        pigeonRegistrar.apiDelegate.pigeonApiNSHTTPCookie(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? HTTPCookie {
+        pigeonRegistrar.apiDelegate.pigeonApiHTTPCookie(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -840,8 +840,8 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
       }
 
 
-      if let instance = value as? NSURLCredential {
-        pigeonRegistrar.apiDelegate.pigeonApiNSURLCredential(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? URLCredential {
+        pigeonRegistrar.apiDelegate.pigeonApiURLCredential(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -851,8 +851,8 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
       }
 
 
-      if let instance = value as? NSURLProtectionSpace {
-        pigeonRegistrar.apiDelegate.pigeonApiNSURLProtectionSpace(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? URLProtectionSpace {
+        pigeonRegistrar.apiDelegate.pigeonApiURLProtectionSpace(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -862,8 +862,8 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
       }
 
 
-      if let instance = value as? NSURLAuthenticationChallenge {
-        pigeonRegistrar.apiDelegate.pigeonApiNSURLAuthenticationChallenge(pigeonRegistrar).pigeonNewInstance(
+      if let instance = value as? URLAuthenticationChallenge {
+        pigeonRegistrar.apiDelegate.pigeonApiURLAuthenticationChallenge(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -901,7 +901,7 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
 
 /// The values that can be returned in a change dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions.
 enum KeyValueObservingOptions: Int {
   /// Indicates that the change dictionary should provide the new attribute
   /// value, if applicable.
@@ -919,7 +919,7 @@ enum KeyValueObservingOptions: Int {
 
 /// The kinds of changes that can be observed.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange.
 enum KeyValueChange: Int {
   /// Indicates that the value of the observed key path was set to a new value.
   case setting = 0
@@ -938,7 +938,7 @@ enum KeyValueChange: Int {
 
 /// The keys that can appear in the change dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey?language=objc.
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey.
 enum KeyValueChangeKey: Int {
   /// If the value of the `KeyValueChangeKey.kind` entry is
   /// `KeyValueChange.insertion`, `KeyValueChange.removal`, or
@@ -968,7 +968,7 @@ enum KeyValueChangeKey: Int {
 
 /// Constants for the times at which to inject script content into a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime.
 enum UserScriptInjectionTime: Int {
   /// A constant to inject the script after the creation of the webpage’s
   /// document element, but before loading any other content.
@@ -980,7 +980,7 @@ enum UserScriptInjectionTime: Int {
 
 /// The media types that require a user gesture to begin playing.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes.
 enum AudiovisualMediaType: Int {
   /// No media types require a user gesture to begin playing.
   case none = 0
@@ -995,7 +995,7 @@ enum AudiovisualMediaType: Int {
 /// A `WKWebsiteDataRecord` object includes these constants in its dataTypes
 /// property.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types.
 enum WebsiteDataType: Int {
   /// Cookies.
   case cookies = 0
@@ -1018,7 +1018,7 @@ enum WebsiteDataType: Int {
 /// Constants that indicate whether to allow or cancel navigation to a webpage
 /// from an action.
 ///
-/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy.
 enum NavigationActionPolicy: Int {
   /// Allow the navigation to continue.
   case allow = 0
@@ -1102,7 +1102,7 @@ enum NavigationType: Int {
 
 /// Possible permission decisions for device resource access.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision.
 enum PermissionDecision: Int {
   /// Deny permission for the requested resource.
   case deny = 0
@@ -1114,7 +1114,7 @@ enum PermissionDecision: Int {
 
 /// List of the types of media devices that can capture audio, video, or both.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
+/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype.
 enum MediaCaptureType: Int {
   /// A media device that can capture video.
   case camera = 0
@@ -1128,7 +1128,7 @@ enum MediaCaptureType: Int {
 
 /// Responses to an authentication challenge.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
+/// See https://developer.apple.com/documentation/foundation/urlsession/authchallengedisposition.
 enum UrlSessionAuthChallengeDisposition: Int {
   /// Use the specified credential, which may be nil.
   case useCredential = 0
@@ -1430,28 +1430,28 @@ final class PigeonApiNSURLRequest: PigeonApiProtocolNSURLRequest  {
     }
   }
 }
-protocol PigeonApiDelegateNSHTTPURLResponse {
+protocol PigeonApiDelegateHTTPURLResponse {
   /// The response’s HTTP status code.
-  func statusCode(pigeonApi: PigeonApiNSHTTPURLResponse, pigeonInstance: NSHTTPURLResponse) throws -> Int64
+  func statusCode(pigeonApi: PigeonApiHTTPURLResponse, pigeonInstance: HTTPURLResponse) throws -> Int64
 }
 
-protocol PigeonApiProtocolNSHTTPURLResponse {
+protocol PigeonApiProtocolHTTPURLResponse {
 }
 
-final class PigeonApiNSHTTPURLResponse: PigeonApiProtocolNSHTTPURLResponse  {
+final class PigeonApiHTTPURLResponse: PigeonApiProtocolHTTPURLResponse  {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateNSHTTPURLResponse
+  let pigeonDelegate: PigeonApiDelegateHTTPURLResponse
   ///An implementation of [NSObject] used to access callback methods
   var pigeonApiNSObject: PigeonApiNSObject {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSHTTPURLResponse) {
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateHTTPURLResponse) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  ///Creates a Dart instance of NSHTTPURLResponse and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSHTTPURLResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  ///Creates a Dart instance of HTTPURLResponse and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: HTTPURLResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1468,7 +1468,7 @@ final class PigeonApiNSHTTPURLResponse: PigeonApiProtocolNSHTTPURLResponse  {
     let statusCodeArg = try! pigeonDelegate.statusCode(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPURLResponse.pigeon_newInstance"
+    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg, statusCodeArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
@@ -1644,7 +1644,7 @@ final class PigeonApiWKNavigationAction: PigeonApiProtocolWKNavigationAction  {
 }
 protocol PigeonApiDelegateWKNavigationResponse {
   /// The frame’s response.
-  func response(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> NSHTTPURLResponse
+  func response(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> HTTPURLResponse
   /// A Boolean value that indicates whether the response targets the web view’s
   /// main frame.
   func forMainFrame(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> Bool
@@ -1889,7 +1889,7 @@ protocol PigeonApiDelegateWKSecurityOrigin {
   /// The security origin's port.
   func port(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> Int64
   /// The security origin's protocol.
-  func protocol(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> String
+  func securityProtocol(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> String
 }
 
 protocol PigeonApiProtocolWKSecurityOrigin {
@@ -1924,12 +1924,12 @@ final class PigeonApiWKSecurityOrigin: PigeonApiProtocolWKSecurityOrigin  {
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
     let hostArg = try! pigeonDelegate.host(pigeonApi: self, pigeonInstance: pigeonInstance)
     let portArg = try! pigeonDelegate.port(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let protocolArg = try! pigeonDelegate.protocol(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let securityProtocolArg = try! pigeonDelegate.securityProtocol(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKSecurityOrigin.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, hostArg, portArg, protocolArg] as [Any?]) { response in
+    channel.sendMessage([pigeonIdentifierArg, hostArg, portArg, securityProtocolArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -1945,28 +1945,28 @@ final class PigeonApiWKSecurityOrigin: PigeonApiProtocolWKSecurityOrigin  {
     }
   }
 }
-protocol PigeonApiDelegateNSHTTPCookie {
+protocol PigeonApiDelegateHTTPCookie {
   /// The cookie’s properties.
-  func properties(pigeonApi: PigeonApiNSHTTPCookie, pigeonInstance: NSHTTPCookie) throws -> [HttpCookiePropertyKey: Any?]
+  func properties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any?]
 }
 
-protocol PigeonApiProtocolNSHTTPCookie {
+protocol PigeonApiProtocolHTTPCookie {
 }
 
-final class PigeonApiNSHTTPCookie: PigeonApiProtocolNSHTTPCookie  {
+final class PigeonApiHTTPCookie: PigeonApiProtocolHTTPCookie  {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateNSHTTPCookie
+  let pigeonDelegate: PigeonApiDelegateHTTPCookie
   ///An implementation of [NSObject] used to access callback methods
   var pigeonApiNSObject: PigeonApiNSObject {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSHTTPCookie) {
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateHTTPCookie) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  ///Creates a Dart instance of NSHTTPCookie and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSHTTPCookie, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  ///Creates a Dart instance of HTTPCookie and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: HTTPCookie, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -1983,7 +1983,7 @@ final class PigeonApiNSHTTPCookie: PigeonApiProtocolNSHTTPCookie  {
     let propertiesArg = try! pigeonDelegate.properties(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSHTTPCookie.pigeon_newInstance"
+    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg, propertiesArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
@@ -2006,7 +2006,7 @@ protocol PigeonApiDelegateAuthenticationChallengeResponse {
   func disposition(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> UrlSessionAuthChallengeDisposition
   /// The credential to use for authentication when the disposition parameter
   /// contains the value URLSession.AuthChallengeDisposition.useCredential.
-  func credential(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> NSURLCredential?
+  func credential(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> URLCredential?
 }
 
 protocol PigeonApiProtocolAuthenticationChallengeResponse {
@@ -2919,7 +2919,7 @@ protocol PigeonApiProtocolWKNavigationDelegate {
   /// Tells the delegate that the web view’s content process was terminated.
   func webViewWebContentProcessDidTerminate(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Asks the delegate to respond to an authentication challenge.
-  func didReceiveAuthenticationChallenge(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, challenge challengeArg: NSURLAuthenticationChallenge, completion: @escaping (Result<AuthenticationChallengeResponse, PigeonError>) -> Void)
+  func didReceiveAuthenticationChallenge(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, challenge challengeArg: URLAuthenticationChallenge, completion: @escaping (Result<AuthenticationChallengeResponse, PigeonError>) -> Void)
 }
 
 final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate  {
@@ -3213,7 +3213,7 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Asks the delegate to respond to an authentication challenge.
-  func didReceiveAuthenticationChallenge(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, challenge challengeArg: NSURLAuthenticationChallenge, completion: @escaping (Result<AuthenticationChallengeResponse, PigeonError>) -> Void)   {
+  func didReceiveAuthenticationChallenge(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, challenge challengeArg: URLAuthenticationChallenge, completion: @escaping (Result<AuthenticationChallengeResponse, PigeonError>) -> Void)   {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -4062,7 +4062,7 @@ withIdentifier: pigeonIdentifierArg)
 protocol PigeonApiDelegateWKHTTPCookieStore {
   /// Sets a cookie policy that indicates whether the cookie store allows cookie
   /// storage.
-  func setCookie(pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: NSHTTPCookie, completion: @escaping (Result<Void, Error>) -> Void)
+  func setCookie(pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol PigeonApiProtocolWKHTTPCookieStore {
@@ -4091,7 +4091,7 @@ final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore  {
       setCookieChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKHTTPCookieStore
-        let cookieArg = args[1] as! NSHTTPCookie
+        let cookieArg = args[1] as! HTTPCookie
         api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: pigeonInstanceArg, cookie: cookieArg) { result in
           switch result {
           case .success:
@@ -4312,29 +4312,29 @@ final class PigeonApiUIScrollViewDelegate: PigeonApiProtocolUIScrollViewDelegate
   }
 
 }
-protocol PigeonApiDelegateNSURLCredential {
+protocol PigeonApiDelegateURLCredential {
   /// Creates a URL credential instance for internet password authentication
   /// with a given user name and password, using a given persistence setting.
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSURLCredential, user: String, password: String, persistence: UrlCredentialPersistence) throws -> NSURLCredential
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLCredential, user: String, password: String, persistence: UrlCredentialPersistence) throws -> URLCredential
 }
 
-protocol PigeonApiProtocolNSURLCredential {
+protocol PigeonApiProtocolURLCredential {
 }
 
-final class PigeonApiNSURLCredential: PigeonApiProtocolNSURLCredential  {
+final class PigeonApiURLCredential: PigeonApiProtocolURLCredential  {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateNSURLCredential
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSURLCredential) {
+  let pigeonDelegate: PigeonApiDelegateURLCredential
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLCredential) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSURLCredential?) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLCredential?) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
         readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLCredential.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -4356,8 +4356,8 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 
-  ///Creates a Dart instance of NSURLCredential and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSURLCredential, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  ///Creates a Dart instance of URLCredential and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: URLCredential, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -4373,7 +4373,7 @@ withIdentifier: pigeonIdentifierArg)
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLCredential.pigeon_newInstance"
+    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
@@ -4391,29 +4391,29 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-protocol PigeonApiDelegateNSURLProtectionSpace {
+protocol PigeonApiDelegateURLProtectionSpace {
   /// The receiver’s host.
-  func host(pigeonApi: PigeonApiNSURLProtectionSpace, pigeonInstance: NSURLProtectionSpace) throws -> String
+  func host(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String
   /// The receiver’s port.
-  func port(pigeonApi: PigeonApiNSURLProtectionSpace, pigeonInstance: NSURLProtectionSpace) throws -> Int64
+  func port(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> Int64
   /// The receiver’s authentication realm.
-  func realm(pigeonApi: PigeonApiNSURLProtectionSpace, pigeonInstance: NSURLProtectionSpace) throws -> Int64?
+  func realm(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> Int64?
   /// The authentication method used by the receiver.
-  func authenticationMethod(pigeonApi: PigeonApiNSURLProtectionSpace, pigeonInstance: NSURLProtectionSpace) throws -> String?
+  func authenticationMethod(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String?
 }
 
-protocol PigeonApiProtocolNSURLProtectionSpace {
+protocol PigeonApiProtocolURLProtectionSpace {
 }
 
-final class PigeonApiNSURLProtectionSpace: PigeonApiProtocolNSURLProtectionSpace  {
+final class PigeonApiURLProtectionSpace: PigeonApiProtocolURLProtectionSpace  {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateNSURLProtectionSpace
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSURLProtectionSpace) {
+  let pigeonDelegate: PigeonApiDelegateURLProtectionSpace
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLProtectionSpace) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  ///Creates a Dart instance of NSURLProtectionSpace and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSURLProtectionSpace, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  ///Creates a Dart instance of URLProtectionSpace and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: URLProtectionSpace, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -4433,7 +4433,7 @@ final class PigeonApiNSURLProtectionSpace: PigeonApiProtocolNSURLProtectionSpace
     let authenticationMethodArg = try! pigeonDelegate.authenticationMethod(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLProtectionSpace.pigeon_newInstance"
+    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg, hostArg, portArg, realmArg, authenticationMethodArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
@@ -4451,32 +4451,32 @@ final class PigeonApiNSURLProtectionSpace: PigeonApiProtocolNSURLProtectionSpace
     }
   }
 }
-protocol PigeonApiDelegateNSURLAuthenticationChallenge {
+protocol PigeonApiDelegateURLAuthenticationChallenge {
   /// The receiver’s protection space.
-  func getProtectionSpace(pigeonApi: PigeonApiNSURLAuthenticationChallenge, pigeonInstance: NSURLAuthenticationChallenge) throws -> NSURLProtectionSpace
+  func getProtectionSpace(pigeonApi: PigeonApiURLAuthenticationChallenge, pigeonInstance: URLAuthenticationChallenge) throws -> URLProtectionSpace
 }
 
-protocol PigeonApiProtocolNSURLAuthenticationChallenge {
+protocol PigeonApiProtocolURLAuthenticationChallenge {
 }
 
-final class PigeonApiNSURLAuthenticationChallenge: PigeonApiProtocolNSURLAuthenticationChallenge  {
+final class PigeonApiURLAuthenticationChallenge: PigeonApiProtocolURLAuthenticationChallenge  {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
-  let pigeonDelegate: PigeonApiDelegateNSURLAuthenticationChallenge
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSURLAuthenticationChallenge) {
+  let pigeonDelegate: PigeonApiDelegateURLAuthenticationChallenge
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLAuthenticationChallenge) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSURLAuthenticationChallenge?) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLAuthenticationChallenge?) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
         readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let getProtectionSpaceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLAuthenticationChallenge.getProtectionSpace", binaryMessenger: binaryMessenger, codec: codec)
+    let getProtectionSpaceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.getProtectionSpace", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getProtectionSpaceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! NSURLAuthenticationChallenge
+        let pigeonInstanceArg = args[0] as! URLAuthenticationChallenge
         do {
           let result = try api.pigeonDelegate.getProtectionSpace(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
@@ -4489,8 +4489,8 @@ final class PigeonApiNSURLAuthenticationChallenge: PigeonApiProtocolNSURLAuthent
     }
   }
 
-  ///Creates a Dart instance of NSURLAuthenticationChallenge and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSURLAuthenticationChallenge, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  ///Creates a Dart instance of URLAuthenticationChallenge and attaches it to [pigeonInstance].
+  func pigeonNewInstance(pigeonInstance: URLAuthenticationChallenge, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -4506,7 +4506,7 @@ final class PigeonApiNSURLAuthenticationChallenge: PigeonApiProtocolNSURLAuthent
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSURLAuthenticationChallenge.pigeon_newInstance"
+    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
