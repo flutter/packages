@@ -4,11 +4,40 @@
 
 // ignore_for_file: avoid_print
 
+@TestOn('vm')
+library;
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
+  group('stub api tests', () {
+    test('initialize throws error', () {
+      expect(() => adSense.initialize('test-client'),
+          throwsA(isA<UnsupportedError>()));
+    });
+    ;
+
+    test('adUnit throws error', () {
+      expect(
+          () => adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+                adSlot: 'test-slot',
+              )),
+          throwsA(isA<UnsupportedError>()));
+    });
+
+    test('adUnit throws error with minimal parameters', () {
+      expect(
+          () => adSense
+              .adUnit(AdUnitConfiguration.displayAdUnit(adSlot: 'test-slot')),
+          throwsA(isA<UnsupportedError>()));
+    });
+
+    test('adUnit returns Widget type', () {
+      expect(adSense.adUnit, isA<Widget Function(AdUnitConfiguration)>());
+    });
+  });
   test('initialize throws error', () {
     expect(() => adSense.initialize('test-client'),
         throwsA(isA<UnsupportedError>()));
@@ -32,6 +61,7 @@ void main() {
   test('adUnit returns Widget type', () {
     expect(adSense.adUnit, isA<Widget Function(AdUnitConfiguration)>());
   });
+
   test('Tell the user where to find the real tests', () {
     print('---');
     print('This package uses integration_test for its main tests.');
