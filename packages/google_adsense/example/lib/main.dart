@@ -67,16 +67,17 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 const Text('Some text'),
                 Expanded(
-                  child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                      adSlot: 'your_ad_slot_id',
-                      adFormat: AdFormat.AUTO,
-                      cssText: 'border: 5px solid red')),
+                  child:
+                      // #docregion adUnit
+                      adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+                          adSlot: 'your_ad_slot_id',
+                          adFormat: AdFormat.AUTO,
+                          cssText: 'border: 5px solid red'))
+                  // #enddocregion adUnit
+                  ,
                 )
               ],
             ),
-            // #docregion adUnit
-
-            // #enddocregion adUnit
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
