@@ -5,9 +5,11 @@
 import 'dart:js_interop';
 
 import 'package:web/web.dart' as web;
+
 import 'ad_unit_configuration.dart';
 import 'ad_unit_widget.dart';
 import 'ad_unit_widget_web.dart';
+import 'js_interop/package_web_tweaks.dart';
 
 /// Returns a singleton instance of Adsense library public interface
 final AdSense adSense = AdSense();
@@ -44,10 +46,38 @@ class AdSense {
   }
 
   void _addMasterScript(String adClient) {
+    final String finalUrl = _url + adClient;
+
+    web.TrustedScriptURL? trustedUrl;
+    if (web.window.nullableTrustedTypes != null) {
+      final String finalUrl = _url + adClient;
+      const String trustedTypePolicyName = 'adsense-dart';
+      web.console.debug(
+        'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
+      );
+      try {
+        final web.TrustedTypePolicy policy =
+            web.window.trustedTypes.createPolicy(
+                trustedTypePolicyName,
+                web.TrustedTypePolicyOptions(
+                  createScriptURL: ((JSString url) => finalUrl).toJS,
+                ));
+        trustedUrl = policy.createScriptURLNoArgs(finalUrl);
+      } catch (e) {
+        throw TrustedTypesException(e.toString());
+      }
+    }
+
     final web.HTMLScriptElement script = web.HTMLScriptElement()
       ..async = true
       ..crossOrigin = 'anonymous';
-    script.src = _url + adClient; // This needs TrustedTypes
+    if (trustedUrl != null) {
+      script.trustedSrc = trustedUrl;
+    } else {
+      script.src = finalUrl;
+    }
+
+    script.src = finalUrl;
     web.document.head!.appendChild(script);
   }
 }
