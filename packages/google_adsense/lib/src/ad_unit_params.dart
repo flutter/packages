@@ -83,7 +83,7 @@ enum AdFormat {
 
 /// Possible values for [AdUnitParams.AD_LAYOUT].
 ///
-/// TODO: find docs link!
+// TODO(sokoloff06): find docs link!
 enum AdLayout {
   ///
   IMAGE_TOP('image-top'),
@@ -134,4 +134,14 @@ enum MatchedContentUiType {
 
   @override
   String toString() => _uiType;
+}
+
+/// After an ad unit has finished requesting an ad, AdSense adds a parameter to the <ins> element called data-ad-status. Note: data-ad-status should not be confused with data-adsbygoogle-status, which is used by our ad code for ads processing purposes.
+/// See [docs](https://support.google.com/adsense/answer/10762946?hl=en) for more information
+enum AdStatus {
+  /// Indicates ad slot was filled
+  FILLED,
+
+  /// Indicates ad slot was not filled
+  UNFILLED
 }

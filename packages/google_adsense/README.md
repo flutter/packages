@@ -31,7 +31,7 @@ You are all set to start displaying [Auto ads](https://support.google.com/adsens
 ```dart
 adSense.adUnit(AdUnitConfiguration.displayAdUnit(
     adSlot: 'your_ad_slot_id',
-    adFormat: AdFormatType.AUTO,
+    adFormat: AdFormat.AUTO,
     cssText:
         'border: 5px solid red; display: block; padding: 20px')),
 ```

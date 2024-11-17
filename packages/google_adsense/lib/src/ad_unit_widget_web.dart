@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:developer';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
@@ -73,9 +73,11 @@ class AdUnitWidgetWeb extends AdUnitWidget {
 class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
     with AutomaticKeepAliveClientMixin {
   static int adUnitCounter = 0;
+
   // Make the ad as wide as the available space, so Adsense delivers the best
   // possible size.
   Size adSize = const Size(double.infinity, 1);
+
   // Size adSize = const Size(600, 1); // It seems ads don't resize, do we need to define fixed sizes for ad units?
   late web.HTMLElement adUnitDiv;
   static final JSString _adStatusKey = 'adStatus'.toJS;
@@ -110,7 +112,10 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
       ..id = 'adUnit${adUnitCounter++}'
       ..append(widget._insElement);
 
-    log('onElementCreated: $adUnitDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
+    if (kDebugMode) {
+      debugPrint(
+          'onElementCreated: $adUnitDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
+    }
 
     // Using Resize observer to detect element attached to DOM
     adSenseResizeObserver.observe(adUnitDiv);
@@ -121,7 +126,9 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
       for (final JSObject entry in entries.toDart) {
         final web.HTMLElement target =
             (entry as web.MutationRecord).target as web.HTMLElement;
-        log('MO current entry: $target');
+        if (kDebugMode) {
+          debugPrint('MO current entry: $target');
+        }
         if (isLoaded(target)) {
           observer.disconnect();
           if (isFilled(target)) {
@@ -156,10 +163,12 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
   bool isLoaded(web.HTMLElement target) {
     final bool isLoaded =
         target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
-    if (isLoaded) {
-      log('Ad is loaded');
-    } else {
-      log('Ad is loading');
+    if (kDebugMode) {
+      if (isLoaded) {
+        debugPrint('Ad is loaded');
+      } else {
+        debugPrint('Ad is loading');
+      }
     }
     return isLoaded;
   }
@@ -167,24 +176,33 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
   bool isFilled(web.HTMLElement target) {
     final JSAny? adStatus = target.dataset.getProperty(_adStatusKey);
     switch (adStatus) {
-      case 'filled':
+      case AdStatus.FILLED:
         {
-          log('Ad filled');
+          if (kDebugMode) {
+            debugPrint('Ad filled');
+          }
           return true;
         }
-      case 'unfilled':
+      case AdStatus.UNFILLED:
         {
-          log('Ad unfilled!');
+          if (kDebugMode) {
+            debugPrint('Ad unfilled!');
+          }
           return false;
         }
       default:
-        log('No data-ad-status attribute found');
+        if (kDebugMode) {
+          // Printing warning as this scenario is unexpected
+          web.console.warn('No data-ad-status attribute found'.toJS);
+        }
         return false;
     }
   }
 
   void updateWidgetSize(Size newSize) {
-    debugPrint('Resizing AdUnit to $newSize');
+    if (kDebugMode) {
+      debugPrint('Resizing AdUnit to $newSize');
+    }
     setState(() {
       adSize = newSize;
     });
