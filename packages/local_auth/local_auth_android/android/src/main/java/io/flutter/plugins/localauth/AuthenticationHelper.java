@@ -74,7 +74,6 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
                 strings.getReason().isEmpty()
                     ? null
                     : strings.getReason())
-            .setDescription(strings.getReason())
             .setTitle(strings.getSignInTitle())
             .setSubtitle(strings.getBiometricHint())
             .setConfirmationRequired(options.getSensitiveTransaction());
