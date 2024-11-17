@@ -389,6 +389,11 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
     InAppPurchaseStoreKitPlatform.sk2TransactionObserver
         .onTransactionsUpdated(transactionList);
   }
+
+  @override
+  bool supportsStoreKit2() {
+    return true;
+  }
 }
 
 SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {

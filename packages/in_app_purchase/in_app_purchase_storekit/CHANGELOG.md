@@ -1,3 +1,7 @@
+## 0.3.20+1
+
+* Disallow enabling StoreKit2 on devices below iOS 15, or OSX 15.
+
 ## 0.3.20
 
 * Fixes manual invocation of `finishTransaction` causing a fatal crash.

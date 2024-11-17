@@ -9,6 +9,8 @@ import '../messages.g.dart';
 
 part 'sk_storefront_wrapper.g.dart';
 
+InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+
 /// Contains the location and unique identifier of an Apple App Store storefront.
 ///
 /// Dart wrapper around StoreKit's

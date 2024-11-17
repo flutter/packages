@@ -134,6 +134,8 @@ abstract class TestInAppPurchase2Api {
 
   Future<void> restorePurchases();
 
+  bool supportsStoreKit2();
+
   static void setUp(
     TestInAppPurchase2Api? api, {
     BinaryMessenger? binaryMessenger,
@@ -363,6 +365,32 @@ abstract class TestInAppPurchase2Api {
           try {
             await api.restorePurchases();
             return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.supportsStoreKit2$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
+                (Object? message) async {
+          try {
+            final bool output = api.supportsStoreKit2();
+            return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
