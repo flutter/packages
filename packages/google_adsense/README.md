@@ -32,6 +32,7 @@ You are all set to start displaying [Auto ads](https://support.google.com/adsens
 adSense.adUnit(AdUnitConfiguration.displayAdUnit(
     adSlot: 'your_ad_slot_id',
     adFormat: AdFormat.AUTO,
+    isFullWidthResponsive: false,
     cssText: 'border: 5px solid red'))
 ```
 ## Testing and common errors
