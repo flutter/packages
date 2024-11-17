@@ -70,6 +70,10 @@ class AuthenticationHelper extends BiometricPrompt.AuthenticationCallback
 
     BiometricPrompt.PromptInfo.Builder promptBuilder =
         new BiometricPrompt.PromptInfo.Builder()
+            .setDescription(
+                strings.getReason().isEmpty()
+                    ? null
+                    : strings.getReason())
             .setDescription(strings.getReason())
             .setTitle(strings.getSignInTitle())
             .setSubtitle(strings.getBiometricHint())

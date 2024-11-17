@@ -1,3 +1,7 @@
+## 1.0.47
+
+* Allowing empty localizedReason for Android
+
 ## 1.0.46
 
 * Updates Java compatibility version to 11.
