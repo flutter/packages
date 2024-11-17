@@ -66,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
             // #docregion adUnit
             adSense.adUnit(AdUnitConfiguration.displayAdUnit(
                 adSlot: 'your_ad_slot_id',
-                adFormat: AdFormatType.AUTO,
+                adFormat: AdFormat.AUTO,
                 cssText:
                     'border: 5px solid red; display: block; padding: 20px')),
             // #enddocregion adUnit

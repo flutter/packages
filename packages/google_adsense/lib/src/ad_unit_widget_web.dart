@@ -64,9 +64,7 @@ class AdUnitWidgetWeb extends AdUnitWidget {
   final web.HTMLElement _insElement =
       (web.document.createElement('ins') as web.HTMLElement)
         ..className = 'adsbygoogle'
-        ..style.display = 'block'
-        ..style.width = '100%'
-        ..style.height = '100%';
+        ..style.display = 'block';
 
   @override
   State<AdUnitWidgetWeb> createState() => _AdUnitWidgetWebState();
