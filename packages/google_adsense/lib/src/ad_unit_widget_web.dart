@@ -83,6 +83,17 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
   @override
   bool get wantKeepAlive => true;
 
+  static final web.ResizeObserver adSenseResizeObserver = web.ResizeObserver(
+      (JSArray<web.ResizeObserverEntry> entries, web.ResizeObserver observer) {
+    // only check first one
+    final web.Element target = entries.toDart[0].target;
+    if (target.isConnected) {
+      // First time resized since attached to DOM -> attachment callback from Flutter docs by David
+      onElementAttached(target as web.HTMLElement);
+      observer.disconnect();
+    }
+  }.toJS);
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -101,19 +112,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
 
     log('onElementCreated: $adUnitDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
 
-    // TODO(sokoloff06): Make shared
     // Using Resize observer to detect element attached to DOM
-    web.ResizeObserver((JSArray<web.ResizeObserverEntry> entries,
-            web.ResizeObserver observer) {
-      // only check first one
-      final web.Element target = entries.toDart[0].target;
-      if (target.isConnected) {
-        // First time resized since attached to DOM -> attachment callback from Flutter docs by David
-        onElementAttached(target as web.HTMLElement);
-        observer.disconnect();
-      }
-    }.toJS)
-        .observe(adUnitDiv);
+    adSenseResizeObserver.observe(adUnitDiv);
 
     // Using Mutation Observer to detect when adslot is being loaded based on https://support.google.com/adsense/answer/10762946?hl=en
     web.MutationObserver(
@@ -145,8 +145,11 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
                 attributeFilter: <JSString>['data-ad-status'.toJS].toJS));
   }
 
-  void onElementAttached(web.HTMLElement element) {
-    log('Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
+  static void onElementAttached(web.HTMLElement element) {
+    if (kDebugMode) {
+      debugPrint(
+          'Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
+    }
     adsbygoogle.requestAd();
   }
 
