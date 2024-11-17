@@ -138,10 +138,10 @@ enum MatchedContentUiType {
 
 /// After an ad unit has finished requesting an ad, AdSense adds a parameter to the <ins> element called data-ad-status. Note: data-ad-status should not be confused with data-adsbygoogle-status, which is used by our ad code for ads processing purposes.
 /// See [docs](https://support.google.com/adsense/answer/10762946?hl=en) for more information
-enum AdStatus {
+class AdStatus {
   /// Indicates ad slot was filled
-  FILLED,
+  static const String FILLED = 'filled';
 
   /// Indicates ad slot was not filled
-  UNFILLED
+  static const String UNFILLED = 'unfilled';
 }
