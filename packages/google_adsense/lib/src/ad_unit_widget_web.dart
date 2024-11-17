@@ -23,21 +23,15 @@ class AdUnitWidgetWeb extends AdUnitWidget {
   })  : _adSlot = adSlot,
         _isAdTest = isAdTest,
         _unitParams = unitParams {
-    _insElement
-      ..className = 'adsbygoogle'
-      ..style.display = 'block';
     if (cssText != null && cssText.isNotEmpty) {
-      _insElement.style.cssText = cssText;
+      // Allow users to set partial cssText
+      _insElement.style.cssText += cssText;
     }
     final Map<String, String> dataAttrs = <String, String>{
       AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
+      if (_isAdTest) AdUnitParams.AD_TEST: 'on',
+      ..._unitParams
     };
-    if (_isAdTest) {
-      dataAttrs.addAll(<String, String>{AdUnitParams.AD_TEST: 'on'});
-    }
-    if (_unitParams.isNotEmpty) {
-      dataAttrs.addAll(_unitParams);
-    }
     for (final String key in dataAttrs.keys) {
       _insElement.dataset.setProperty(key.toJS, dataAttrs[key]!.toJS);
     }
@@ -68,7 +62,11 @@ class AdUnitWidgetWeb extends AdUnitWidget {
   final Map<String, String> _unitParams;
 
   final web.HTMLElement _insElement =
-      web.document.createElement('ins') as web.HTMLElement;
+      (web.document.createElement('ins') as web.HTMLElement)
+        ..className = 'adsbygoogle'
+        ..style.display = 'block'
+        ..style.width = '100%'
+        ..style.height = '100%';
 
   @override
   State<AdUnitWidgetWeb> createState() => _AdUnitWidgetWebState();
@@ -77,7 +75,10 @@ class AdUnitWidgetWeb extends AdUnitWidget {
 class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
     with AutomaticKeepAliveClientMixin {
   static int adUnitCounter = 0;
-  double adHeight = 1.0;
+  // Make the ad as wide as the available space, so Adsense delivers the best
+  // possible size.
+  Size adSize = const Size(double.infinity, 1);
+  // Size adSize = const Size(600, 1); // It seems ads don't resize, do we need to define fixed sizes for ad units?
   late web.HTMLElement adUnitDiv;
   static final JSString _adStatusKey = 'adStatus'.toJS;
 
@@ -87,22 +88,20 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return SizedBox(
-      height: adHeight,
+    return SizedBox.fromSize(
+      size: adSize,
       child: HtmlElementView.fromTagName(
           tagName: 'div', onElementCreated: onElementCreated),
     );
   }
 
   void onElementCreated(Object element) {
-    adUnitDiv = element as web.HTMLElement;
-    log('onElementCreated: $adUnitDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
-    adUnitDiv
-      ..id = 'adUnit${adUnitCounter++}'
-      ..style.height = 'min-content'
-      ..style.textAlign = 'center';
     // Adding ins inside of the adUnit
-    adUnitDiv.append(widget._insElement);
+    adUnitDiv = element as web.HTMLElement
+      ..id = 'adUnit${adUnitCounter++}'
+      ..append(widget._insElement);
+
+    log('onElementCreated: $adUnitDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
 
     // TODO(sokoloff06): Make shared
     // Using Resize observer to detect element attached to DOM
@@ -128,12 +127,15 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
         if (isLoaded(target)) {
           observer.disconnect();
           if (isFilled(target)) {
-            updateWidgetHeight(target.offsetHeight);
+            updateWidgetSize(Size(
+              target.offsetWidth.toDouble(),
+              target.offsetHeight.toDouble(),
+            ));
           } else {
             // Prevent scrolling issues over empty ad slot
             target.style.pointerEvents = 'none';
             target.style.height = '0px';
-            updateWidgetHeight(0);
+            updateWidgetSize(Size.zero);
           }
         }
       }
@@ -180,10 +182,10 @@ class _AdUnitWidgetWebState extends State<AdUnitWidgetWeb>
     }
   }
 
-  void updateWidgetHeight(int newHeight) {
-    debugPrint('listener invoked with height $newHeight');
+  void updateWidgetSize(Size newSize) {
+    debugPrint('Resizing AdUnit to $newSize');
     setState(() {
-      adHeight = newHeight.toDouble();
+      adSize = newSize;
     });
   }
 }

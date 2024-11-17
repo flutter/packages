@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart';
 
 import '../google_adsense.dart';
 
-/// AdUnit configuration object<br>
+/// AdUnit configuration object.
+///
 /// Arguments:
 /// - `adSlot`: See [AdUnitParams.AD_SLOT]
 /// - `adFormat`: See [AdUnitParams.AD_FORMAT]
@@ -18,35 +19,40 @@ import '../google_adsense.dart';
 /// - `isFullWidthResponsive`: See [AdUnitParams.FULL_WIDTH_RESPONSIVE]
 /// - `isAdTest`: See [AdUnitParams.AD_TEST]
 /// - `cssText`: See [AdUnitConfiguration.cssText]
-
 class AdUnitConfiguration {
   AdUnitConfiguration._internal({
     required String adSlot,
-    AdFormatType? adFormat,
-    String? adLayout,
+    AdFormat? adFormat,
+    AdLayout? adLayout,
     String? adLayoutKey,
-    MultiplexLayout? multiplexLayout,
+    MatchedContentUiType? matchedContentUiType,
     int? rowsNum,
     int? columnsNum,
-    bool isFullWidthResponsive = true,
+    bool? isFullWidthResponsive = true,
     this.isAdTest = kDebugMode,
     this.cssText,
-  }) : _adUnitParams = _buildParams(<String, String?>{
+  }) : _adUnitParams = <String, String>{
           AdUnitParams.AD_SLOT: adSlot,
-          AdUnitParams.AD_FORMAT: adFormat?.getAttribute(),
-          AdUnitParams.AD_LAYOUT: adLayout,
-          AdUnitParams.AD_LAYOUT_KEY: adLayoutKey,
-          AdUnitParams.FULL_WIDTH_RESPONSIVE: isFullWidthResponsive.toString(),
-          AdUnitParams.MATCHED_CONTENT_UI_TYPE: multiplexLayout?.getAttribute(),
-          AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum?.toString(),
-          AdUnitParams.MATCHED_CONTENT_ROWS_NUM: rowsNum?.toString(),
-        });
+          if (adFormat != null) AdUnitParams.AD_FORMAT: adFormat.toString(),
+          if (adLayout != null) AdUnitParams.AD_LAYOUT: adLayout.toString(),
+          if (adLayoutKey != null) AdUnitParams.AD_LAYOUT_KEY: adLayoutKey,
+          if (isFullWidthResponsive != null)
+            AdUnitParams.FULL_WIDTH_RESPONSIVE:
+                isFullWidthResponsive.toString(),
+          if (matchedContentUiType != null)
+            AdUnitParams.MATCHED_CONTENT_UI_TYPE:
+                matchedContentUiType.toString(),
+          if (columnsNum != null)
+            AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
+          if (rowsNum != null)
+            AdUnitParams.MATCHED_CONTENT_ROWS_NUM: rowsNum.toString(),
+        };
 
   /// Creates In-article ad unit configuration object
   AdUnitConfiguration.multiplexAdUnit({
     required String adSlot,
-    required AdFormatType adFormat,
-    MultiplexLayout? multiplexLayout,
+    required AdFormat adFormat,
+    MatchedContentUiType? matchedContentUiType,
     int? rowsNum,
     int? columnsNum,
     bool isFullWidthResponsive = true,
@@ -55,7 +61,7 @@ class AdUnitConfiguration {
   }) : this._internal(
             adSlot: adSlot,
             adFormat: adFormat,
-            multiplexLayout: multiplexLayout,
+            matchedContentUiType: matchedContentUiType,
             rowsNum: rowsNum,
             columnsNum: columnsNum,
             isFullWidthResponsive: isFullWidthResponsive,
@@ -65,8 +71,8 @@ class AdUnitConfiguration {
   /// Creates In-feed ad unit configuration object
   AdUnitConfiguration.inFeedAdUnit({
     required String adSlot,
-    AdFormatType? adFormat,
     required String adLayoutKey,
+    AdFormat? adFormat,
     bool isFullWidthResponsive = true,
     String? cssText,
     bool isAdTest = kDebugMode,
@@ -81,8 +87,8 @@ class AdUnitConfiguration {
   /// Creates In-article ad unit configuration object
   AdUnitConfiguration.inArticleAdUnit({
     required String adSlot,
-    AdFormatType? adFormat,
-    String adLayout = 'in-article',
+    AdFormat? adFormat,
+    AdLayout adLayout = AdLayout.IN_ARTICLE,
     bool isFullWidthResponsive = true,
     String? cssText,
     bool isAdTest = kDebugMode,
@@ -97,7 +103,7 @@ class AdUnitConfiguration {
   /// Creates Display ad unit configuration object
   AdUnitConfiguration.displayAdUnit({
     required String adSlot,
-    AdFormatType? adFormat,
+    AdFormat? adFormat,
     bool isFullWidthResponsive = true,
     String? cssText,
     bool isAdTest = kDebugMode,
@@ -124,12 +130,4 @@ class AdUnitConfiguration {
 
   /// Map containing all additional parameters of this configuration
   Map<String, String> get params => _adUnitParams;
-
-  static Map<String, String> _buildParams(Map<String, String?> inputParams) {
-    final Map<String, String?> paramsMap =
-        Map<String, String?>.from(inputParams);
-    paramsMap.removeWhere((String key, String? value) => value == null);
-
-    return paramsMap.cast<String, String>();
-  }
 }

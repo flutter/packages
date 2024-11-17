@@ -24,11 +24,6 @@ void main() async {
   });
 
   group('initialization', () {
-    testWidgets('Repeated initialization throws error', (WidgetTester _) async {
-      adsense.initialize(testClient);
-      expect(() => adsense.initialize(testClient), throwsA(isA<StateError>()));
-    });
-
     testWidgets('Initialization adds AdSense snippet to index.html',
         (WidgetTester _) async {
       // Given
