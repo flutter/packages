@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'You have pushed the button this many times:',
             ),
             Row(
-              children: [
+              children: <Widget>[
                 const Text('Some text'),
                 Expanded(
                   child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
