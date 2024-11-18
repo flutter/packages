@@ -141,6 +141,21 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Widget buildView(int textureId) {
+    // FIXME Use platform view or texture view based on a param.
+    // FIXME Use a separate class for creation.
+
+    final Map<String, dynamic> creationParams = <String, dynamic>{
+      'viewId': textureId,
+    };
+    return IgnorePointer(
+      // IgnorePointer so that GestureDetector can be used above the platform view.
+      child: UiKitView(
+        viewType: 'plugins.flutter.dev/video_player_ios',
+        creationParams: creationParams,
+        creationParamsCodec: const StandardMessageCodec(),
+      ),
+    );
+
     return Texture(textureId: textureId);
   }
 
