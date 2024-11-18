@@ -43,6 +43,10 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FVPVideoPlayerPlugin *instance = [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   [registrar publish:instance];
+  FVPNativeVideoViewFactory *factory =
+      [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
+                                        playersByTextureId:instance.playersByTextureId];
+  [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
 }
 

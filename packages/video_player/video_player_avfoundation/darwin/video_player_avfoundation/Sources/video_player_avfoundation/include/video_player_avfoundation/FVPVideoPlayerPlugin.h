@@ -8,6 +8,22 @@
 #import <Flutter/Flutter.h>
 #endif
 
+#import <AVFoundation/AVFoundation.h>
+
 @interface FVPVideoPlayerPlugin : NSObject <FlutterPlugin>
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+@end
+
+@interface FVPNativeVideoViewFactory : NSObject <FlutterPlatformViewFactory>
+- (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger;
+@end
+
+@interface FVPNativeVideoView : NSObject <FlutterPlatformView>
+- (instancetype)initWithFrame:(CGRect)frame
+               viewIdentifier:(int64_t)viewId
+                    arguments:(id _Nullable)args
+              binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                       player:(AVPlayer *)player;
+
+- (UIView *)view;
 @end
