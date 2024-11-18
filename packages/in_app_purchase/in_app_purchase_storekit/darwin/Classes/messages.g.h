@@ -111,14 +111,18 @@ typedef NS_ENUM(NSUInteger, FIASKSubscriptionPeriodUnitMessage) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithPayment:(FIASKPaymentMessage *)payment
-               transactionState:(FIASKPaymentTransactionStateMessage)transactionState
-            originalTransaction:(nullable FIASKPaymentTransactionMessage *)originalTransaction
+               transactionState:
+                   (FIASKPaymentTransactionStateMessage)transactionState
+            originalTransaction:
+                (nullable FIASKPaymentTransactionMessage *)originalTransaction
            transactionTimeStamp:(nullable NSNumber *)transactionTimeStamp
           transactionIdentifier:(nullable NSString *)transactionIdentifier
                           error:(nullable FIASKErrorMessage *)error;
 @property(nonatomic, strong) FIASKPaymentMessage *payment;
-@property(nonatomic, assign) FIASKPaymentTransactionStateMessage transactionState;
-@property(nonatomic, strong, nullable) FIASKPaymentTransactionMessage *originalTransaction;
+@property(nonatomic, assign)
+    FIASKPaymentTransactionStateMessage transactionState;
+@property(nonatomic, strong, nullable)
+    FIASKPaymentTransactionMessage *originalTransaction;
 @property(nonatomic, strong, nullable) NSNumber *transactionTimeStamp;
 @property(nonatomic, copy, nullable) NSString *transactionIdentifier;
 @property(nonatomic, strong, nullable) FIASKErrorMessage *error;
@@ -127,18 +131,21 @@ typedef NS_ENUM(NSUInteger, FIASKSubscriptionPeriodUnitMessage) {
 @interface FIASKPaymentMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithProductIdentifier:(NSString *)productIdentifier
-                      applicationUsername:(nullable NSString *)applicationUsername
-                              requestData:(nullable NSString *)requestData
-                                 quantity:(NSInteger)quantity
-               simulatesAskToBuyInSandbox:(BOOL)simulatesAskToBuyInSandbox
-                          paymentDiscount:(nullable FIASKPaymentDiscountMessage *)paymentDiscount;
++ (instancetype)
+     makeWithProductIdentifier:(NSString *)productIdentifier
+           applicationUsername:(nullable NSString *)applicationUsername
+                   requestData:(nullable NSString *)requestData
+                      quantity:(NSInteger)quantity
+    simulatesAskToBuyInSandbox:(BOOL)simulatesAskToBuyInSandbox
+               paymentDiscount:
+                   (nullable FIASKPaymentDiscountMessage *)paymentDiscount;
 @property(nonatomic, copy) NSString *productIdentifier;
 @property(nonatomic, copy, nullable) NSString *applicationUsername;
 @property(nonatomic, copy, nullable) NSString *requestData;
 @property(nonatomic, assign) NSInteger quantity;
 @property(nonatomic, assign) BOOL simulatesAskToBuyInSandbox;
-@property(nonatomic, strong, nullable) FIASKPaymentDiscountMessage *paymentDiscount;
+@property(nonatomic, strong, nullable)
+    FIASKPaymentDiscountMessage *paymentDiscount;
 @end
 
 @interface FIASKErrorMessage : NSObject
@@ -170,16 +177,20 @@ typedef NS_ENUM(NSUInteger, FIASKSubscriptionPeriodUnitMessage) {
 @interface FIASKStorefrontMessage : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithCountryCode:(NSString *)countryCode identifier:(NSString *)identifier;
++ (instancetype)makeWithCountryCode:(NSString *)countryCode
+                         identifier:(NSString *)identifier;
 @property(nonatomic, copy) NSString *countryCode;
 @property(nonatomic, copy) NSString *identifier;
 @end
 
 @interface FIASKProductsResponseMessage : NSObject
-+ (instancetype)makeWithProducts:(nullable NSArray<FIASKProductMessage *> *)products
-       invalidProductIdentifiers:(nullable NSArray<NSString *> *)invalidProductIdentifiers;
++ (instancetype)makeWithProducts:
+                    (nullable NSArray<FIASKProductMessage *> *)products
+       invalidProductIdentifiers:
+           (nullable NSArray<NSString *> *)invalidProductIdentifiers;
 @property(nonatomic, copy, nullable) NSArray<FIASKProductMessage *> *products;
-@property(nonatomic, copy, nullable) NSArray<NSString *> *invalidProductIdentifiers;
+@property(nonatomic, copy, nullable)
+    NSArray<NSString *> *invalidProductIdentifiers;
 @end
 
 @interface FIASKProductMessage : NSObject
@@ -192,18 +203,26 @@ typedef NS_ENUM(NSUInteger, FIASKSubscriptionPeriodUnitMessage) {
                     priceLocale:(FIASKPriceLocaleMessage *)priceLocale
     subscriptionGroupIdentifier:(nullable NSString *)subscriptionGroupIdentifier
                           price:(NSString *)price
-             subscriptionPeriod:(nullable FIASKProductSubscriptionPeriodMessage *)subscriptionPeriod
-              introductoryPrice:(nullable FIASKProductDiscountMessage *)introductoryPrice
-                      discounts:(nullable NSArray<FIASKProductDiscountMessage *> *)discounts;
+             subscriptionPeriod:
+                 (nullable FIASKProductSubscriptionPeriodMessage *)
+                     subscriptionPeriod
+              introductoryPrice:
+                  (nullable FIASKProductDiscountMessage *)introductoryPrice
+                      discounts:
+                          (nullable NSArray<FIASKProductDiscountMessage *> *)
+                              discounts;
 @property(nonatomic, copy) NSString *productIdentifier;
 @property(nonatomic, copy) NSString *localizedTitle;
 @property(nonatomic, copy, nullable) NSString *localizedDescription;
 @property(nonatomic, strong) FIASKPriceLocaleMessage *priceLocale;
 @property(nonatomic, copy, nullable) NSString *subscriptionGroupIdentifier;
 @property(nonatomic, copy) NSString *price;
-@property(nonatomic, strong, nullable) FIASKProductSubscriptionPeriodMessage *subscriptionPeriod;
-@property(nonatomic, strong, nullable) FIASKProductDiscountMessage *introductoryPrice;
-@property(nonatomic, copy, nullable) NSArray<FIASKProductDiscountMessage *> *discounts;
+@property(nonatomic, strong, nullable)
+    FIASKProductSubscriptionPeriodMessage *subscriptionPeriod;
+@property(nonatomic, strong, nullable)
+    FIASKProductDiscountMessage *introductoryPrice;
+@property(nonatomic, copy, nullable)
+    NSArray<FIASKProductDiscountMessage *> *discounts;
 @end
 
 @interface FIASKPriceLocaleMessage : NSObject
@@ -226,15 +245,18 @@ typedef NS_ENUM(NSUInteger, FIASKSubscriptionPeriodUnitMessage) {
 + (instancetype)makeWithPrice:(NSString *)price
                   priceLocale:(FIASKPriceLocaleMessage *)priceLocale
               numberOfPeriods:(NSInteger)numberOfPeriods
-                  paymentMode:(FIASKProductDiscountPaymentModeMessage)paymentMode
-           subscriptionPeriod:(FIASKProductSubscriptionPeriodMessage *)subscriptionPeriod
+                  paymentMode:
+                      (FIASKProductDiscountPaymentModeMessage)paymentMode
+           subscriptionPeriod:
+               (FIASKProductSubscriptionPeriodMessage *)subscriptionPeriod
                    identifier:(nullable NSString *)identifier
                          type:(FIASKProductDiscountTypeMessage)type;
 @property(nonatomic, copy) NSString *price;
 @property(nonatomic, strong) FIASKPriceLocaleMessage *priceLocale;
 @property(nonatomic, assign) NSInteger numberOfPeriods;
 @property(nonatomic, assign) FIASKProductDiscountPaymentModeMessage paymentMode;
-@property(nonatomic, strong) FIASKProductSubscriptionPeriodMessage *subscriptionPeriod;
+@property(nonatomic, strong)
+    FIASKProductSubscriptionPeriodMessage *subscriptionPeriod;
 @property(nonatomic, copy, nullable) NSString *identifier;
 @property(nonatomic, assign) FIASKProductDiscountTypeMessage type;
 @end
