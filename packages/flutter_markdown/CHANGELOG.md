@@ -1,3 +1,7 @@
+## 0.7.4+2
+
+* Fixes to enable compilation to WebAssembly. 
+
 ## 0.7.4+1
 
 * Makes it so that custom blocks are not limited to being a Column or
