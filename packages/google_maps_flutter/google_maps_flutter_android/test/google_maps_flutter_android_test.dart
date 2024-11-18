@@ -299,18 +299,18 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateCircles(captureAny, captureAny, captureAny));
-    final List<PlatformCircle?> toAdd =
-        verification.captured[0] as List<PlatformCircle?>;
-    final List<PlatformCircle?> toChange =
-        verification.captured[1] as List<PlatformCircle?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformCircle> toAdd =
+        verification.captured[0] as List<PlatformCircle>;
+    final List<PlatformCircle> toChange =
+        verification.captured[1] as List<PlatformCircle>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.circleId.value);
     // Object two should be changed.
     {
       expect(toChange.length, 1);
-      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      final List<Object?>? encoded = toChange.first.encode() as List<Object?>?;
       expect(encoded?.getRange(0, 6), <Object?>[
         object2new.consumeTapEvents,
         object2new.fillColor.value,
@@ -331,7 +331,7 @@ void main() {
     expect(toAdd.length, 1);
     {
       expect(toAdd.length, 1);
-      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      final List<Object?>? encoded = toAdd.first.encode() as List<Object?>?;
       expect(encoded?.getRange(0, 6), <Object?>[
         object3.consumeTapEvents,
         object3.fillColor.value,
@@ -366,9 +366,9 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateClusterManagers(captureAny, captureAny));
-    final List<PlatformClusterManager?> toAdd =
-        verification.captured[0] as List<PlatformClusterManager?>;
-    final List<String?> toRemove = verification.captured[1] as List<String?>;
+    final List<PlatformClusterManager> toAdd =
+        verification.captured[0] as List<PlatformClusterManager>;
+    final List<String> toRemove = verification.captured[1] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.clusterManagerId.value);
@@ -376,7 +376,7 @@ void main() {
     // managers, since they have no non-ID properties.
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.identifier, object3.clusterManagerId.value);
+    expect(toAdd.first.identifier, object3.clusterManagerId.value);
   });
 
   test('updateMarkers passes expected arguments', () async {
@@ -395,18 +395,18 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateMarkers(captureAny, captureAny, captureAny));
-    final List<PlatformMarker?> toAdd =
-        verification.captured[0] as List<PlatformMarker?>;
-    final List<PlatformMarker?> toChange =
-        verification.captured[1] as List<PlatformMarker?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformMarker> toAdd =
+        verification.captured[0] as List<PlatformMarker>;
+    final List<PlatformMarker> toChange =
+        verification.captured[1] as List<PlatformMarker>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.markerId.value);
     // Object two should be changed.
     {
       expect(toChange.length, 1);
-      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
+      final List<Object?>? encoded = toChange.first.encode() as List<Object?>?;
       expect(encoded?[0], object2new.alpha);
       final PlatformDoublePair? offset = encoded?[1] as PlatformDoublePair?;
       expect(offset?.x, object2new.anchor.dx);
@@ -441,7 +441,7 @@ void main() {
     // Object 3 should be added.
     {
       expect(toAdd.length, 1);
-      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
+      final List<Object?>? encoded = toAdd.first.encode() as List<Object?>?;
       expect(encoded?[0], object3.alpha);
       final PlatformDoublePair? offset = encoded?[1] as PlatformDoublePair?;
       expect(offset?.x, object3.anchor.dx);
@@ -491,11 +491,11 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updatePolygons(captureAny, captureAny, captureAny));
-    final List<PlatformPolygon?> toAdd =
-        verification.captured[0] as List<PlatformPolygon?>;
-    final List<PlatformPolygon?> toChange =
-        verification.captured[1] as List<PlatformPolygon?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformPolygon> toAdd =
+        verification.captured[0] as List<PlatformPolygon>;
+    final List<PlatformPolygon> toChange =
+        verification.captured[1] as List<PlatformPolygon>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polygonId.value);
@@ -509,11 +509,11 @@ void main() {
       ]);
       expect(actual.points.length, expected.points.length);
       for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
-        expect(point?.latitude, actual.points[i]?.latitude);
-        expect(point?.longitude, actual.points[i]?.longitude);
+        expect(point?.latitude, actual.points[i].latitude);
+        expect(point?.longitude, actual.points[i].longitude);
       }
       expect(actual.holes.length, expected.holes.length);
-      for (final (int i, List<PlatformLatLng?>? hole) in actual.holes.indexed) {
+      for (final (int i, List<PlatformLatLng>? hole) in actual.holes.indexed) {
         final List<LatLng> expectedHole = expected.holes[i];
         for (final (int j, PlatformLatLng? point) in hole!.indexed) {
           expect(point?.latitude, expectedHole[j].latitude);
@@ -530,10 +530,10 @@ void main() {
 
     // Object two should be changed.
     expect(toChange.length, 1);
-    expectPolygon(toChange.first!, object2new);
+    expectPolygon(toChange.first, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expectPolygon(toAdd.first!, object3);
+    expectPolygon(toAdd.first, object3);
   });
 
   test('updatePolylines passes expected arguments', () async {
@@ -558,11 +558,11 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updatePolylines(captureAny, captureAny, captureAny));
-    final List<PlatformPolyline?> toAdd =
-        verification.captured[0] as List<PlatformPolyline?>;
-    final List<PlatformPolyline?> toChange =
-        verification.captured[1] as List<PlatformPolyline?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformPolyline> toAdd =
+        verification.captured[0] as List<PlatformPolyline>;
+    final List<PlatformPolyline> toChange =
+        verification.captured[1] as List<PlatformPolyline>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     void expectPolyline(PlatformPolyline actual, Polyline expected) {
       final List<Object?> encoded = actual.encode() as List<Object?>;
       expect(encoded.sublist(0, 5), <Object?>[
@@ -579,8 +579,8 @@ void main() {
       ]);
       expect(actual.points.length, expected.points.length);
       for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
-        expect(point?.latitude, actual.points[i]?.latitude);
-        expect(point?.longitude, actual.points[i]?.longitude);
+        expect(point?.latitude, actual.points[i].latitude);
+        expect(point?.longitude, actual.points[i].longitude);
       }
       expect(actual.patterns.length, expected.patterns.length);
       for (final (int i, PlatformPatternItem? pattern)
@@ -607,10 +607,10 @@ void main() {
     expect(toRemove.first, object1.polylineId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expectPolyline(toChange.first!, object2new);
+    expectPolyline(toChange.first, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expectPolyline(toAdd.first!, object3);
+    expectPolyline(toAdd.first, object3);
   });
 
   test('updateTileOverlays passes expected arguments', () async {
@@ -634,11 +634,11 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateTileOverlays(captureAny, captureAny, captureAny));
-    final List<PlatformTileOverlay?> toAdd =
-        verification.captured[0] as List<PlatformTileOverlay?>;
-    final List<PlatformTileOverlay?> toChange =
-        verification.captured[1] as List<PlatformTileOverlay?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformTileOverlay> toAdd =
+        verification.captured[0] as List<PlatformTileOverlay>;
+    final List<PlatformTileOverlay> toChange =
+        verification.captured[1] as List<PlatformTileOverlay>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     void expectTileOverlay(PlatformTileOverlay? actual, TileOverlay expected) {
       expect(actual?.encode(), <Object?>[
         expected.tileOverlayId.value,
