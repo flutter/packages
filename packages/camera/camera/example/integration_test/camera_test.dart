@@ -94,9 +94,7 @@ void main() {
         await controller.dispose();
       }
     }
-  },
-      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
-      skip: true);
+  });
 
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
