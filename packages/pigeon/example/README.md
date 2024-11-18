@@ -281,10 +281,10 @@ private class PigeonFlutterApi {
   }
 
   func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
   ) {
     flutterAPI.flutterMethod(aString: aStringArg) {
-      completion(.success($0))
+      completion($0)
     }
   }
 }
@@ -294,16 +294,15 @@ private class PigeonFlutterApi {
 
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-flutter)"?>
 ```kotlin
-private class PigeonFlutterApi {
-
+private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
   var flutterApi: MessageFlutterApi? = null
 
-  constructor(binding: FlutterPlugin.FlutterPluginBinding) {
-    flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
+  init {
+    flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
   }
 }
 ```
