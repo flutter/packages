@@ -69,6 +69,8 @@ updates:
       prefix: "[gradle]"
     schedule:
       interval: "weekly"
+    labels:
+      - "autosubmit"
     open-pull-requests-limit: 10
     ignore:
       - dependency-name: "*"
@@ -101,6 +103,8 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    labels:
+      - "autosubmit"
     ignore:
       - dependency-name: "com.android.tools.build:gradle"
         update-types: ["version-update:semver-minor", "version-update:semver-patch"]
