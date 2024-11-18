@@ -77,8 +77,14 @@
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
-  int64_t textureId = [self.registry registerTexture:player];
-  frameUpdater.textureId = textureId;
+  int64_t textureId;
+  if (frameUpdater != nil) {
+    textureId = [self.registry registerTexture:player];
+    frameUpdater.textureId = textureId;
+  } else {
+    textureId = arc4random();
+  }
+
   FlutterEventChannel *eventChannel = [FlutterEventChannel
       eventChannelWithName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld",
                                                       textureId]
@@ -87,9 +93,13 @@
   player.eventChannel = eventChannel;
   self.playersByTextureId[@(textureId)] = player;
 
-  // Ensure that the first frame is drawn once available, even if the video isn't played, since
-  // the engine is now expecting the texture to be populated.
-  [player expectFrame];
+  // FIXME Does it need to be here?
+  if (frameUpdater != nil) {
+    // Ensure that the first frame is drawn once available, even if the video isn't played, since
+    // the engine is now expecting the texture to be populated.
+    // We can safely cast to FVPVideoPlayerTextureApproach since frameUpdater is non-nil.
+    [(FVPVideoPlayerTextureApproach *)player expectFrame];
+  }
 
   return textureId;
 }
@@ -110,12 +120,15 @@
 
 - (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
                                    error:(FlutterError **)error {
-  FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
-  FVPDisplayLink *displayLink =
-      [self.displayLinkFactory displayLinkWithRegistrar:_registrar
-                                               callback:^() {
-                                                 [frameUpdater displayLinkFired];
-                                               }];
+  FVPFrameUpdater *frameUpdater;
+  FVPDisplayLink *displayLink;
+  if (options.viewType.value == FVPPlatformVideoViewTypeTextureView) {
+    frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
+    displayLink = [self.displayLinkFactory displayLinkWithRegistrar:_registrar
+                                                           callback:^() {
+                                                             [frameUpdater displayLinkFired];
+                                                           }];
+  }
 
   FVPVideoPlayer *player;
   if (options.asset) {
@@ -126,23 +139,36 @@
       assetPath = [_registrar lookupKeyForAsset:options.asset];
     }
     @try {
-      player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
-                                        frameUpdater:frameUpdater
-                                         displayLink:displayLink
-                                           avFactory:_avFactory
-                                           registrar:self.registrar];
+      if (options.viewType.value == FVPPlatformVideoViewTypeTextureView) {
+        player = [[FVPVideoPlayerTextureApproach alloc] initWithAsset:assetPath
+                                                         frameUpdater:frameUpdater
+                                                          displayLink:displayLink
+                                                            avFactory:_avFactory
+                                                            registrar:self.registrar];
+      } else {
+        player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
+                                             avFactory:_avFactory
+                                             registrar:self.registrar];
+      }
       return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
     } @catch (NSException *exception) {
       *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
       return nil;
     }
   } else if (options.uri) {
-    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                    frameUpdater:frameUpdater
-                                     displayLink:displayLink
-                                     httpHeaders:options.httpHeaders
-                                       avFactory:_avFactory
-                                       registrar:self.registrar];
+    if (options.viewType.value == FVPPlatformVideoViewTypeTextureView) {
+      player = [[FVPVideoPlayerTextureApproach alloc] initWithURL:[NSURL URLWithString:options.uri]
+                                                     frameUpdater:frameUpdater
+                                                      displayLink:displayLink
+                                                      httpHeaders:options.httpHeaders
+                                                        avFactory:_avFactory
+                                                        registrar:self.registrar];
+    } else {
+      player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
+                                       httpHeaders:options.httpHeaders
+                                         avFactory:_avFactory
+                                         registrar:self.registrar];
+    }
     return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
@@ -153,6 +179,7 @@
 - (void)disposePlayer:(NSInteger)textureId error:(FlutterError **)error {
   NSNumber *playerKey = @(textureId);
   FVPVideoPlayer *player = self.playersByTextureId[playerKey];
+  // FIXME Only unregister texture when using texture approach
   [self.registry unregisterTexture:textureId];
   [self.playersByTextureId removeObjectForKey:playerKey];
   if (!player.disposed) {
