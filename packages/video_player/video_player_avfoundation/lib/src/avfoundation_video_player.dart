@@ -31,7 +31,10 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create(DataSource dataSource) async {
+  Future<int?> create(
+    DataSource dataSource,
+    VideoViewType viewType,
+  ) async {
     String? asset;
     String? packageName;
     String? uri;
@@ -56,6 +59,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
+      viewType: _platformVideoViewTypeFromVideoViewType(viewType),
     );
 
     return _api.create(options);
@@ -140,12 +144,23 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId) {
-    // FIXME Use platform view or texture view based on a param.
-    // FIXME Use a separate class for creation.
+  Future<void> setMixWithOthers(bool mixWithOthers) {
+    return _api.setMixWithOthers(mixWithOthers);
+  }
+
+  @override
+  Widget buildView(int textureId, VideoViewType viewType) {
+    return switch (viewType) {
+      VideoViewType.textureView => Texture(textureId: textureId),
+      VideoViewType.platformView => _buildPlatformView(textureId, viewType),
+    };
+  }
+
+  Widget _buildPlatformView(int viewId, VideoViewType viewType) {
+    // FIXME Use a separate class for creation params.
 
     final Map<String, dynamic> creationParams = <String, dynamic>{
-      'viewId': textureId,
+      'viewId': viewId,
     };
     return IgnorePointer(
       // IgnorePointer so that GestureDetector can be used above the platform view.
@@ -155,13 +170,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         creationParamsCodec: const StandardMessageCodec(),
       ),
     );
-
-    return Texture(textureId: textureId);
-  }
-
-  @override
-  Future<void> setMixWithOthers(bool mixWithOthers) {
-    return _api.setMixWithOthers(mixWithOthers);
   }
 
   EventChannel _eventChannelFor(int textureId) {
@@ -183,4 +191,13 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       Duration(milliseconds: pair[1] as int),
     );
   }
+}
+
+PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
+  VideoViewType viewType,
+) {
+  return switch (viewType) {
+    VideoViewType.textureView => PlatformVideoViewType.textureView,
+    VideoViewType.platformView => PlatformVideoViewType.platformView,
+  };
 }

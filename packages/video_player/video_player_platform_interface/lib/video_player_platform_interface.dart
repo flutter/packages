@@ -49,7 +49,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create(DataSource dataSource) {
+  Future<int?> create(DataSource dataSource, VideoViewType viewType) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
@@ -94,7 +94,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Returns a widget displaying the video with a given textureID.
-  Widget buildView(int textureId) {
+  Widget buildView(int textureId, VideoViewType viewType) {
     throw UnimplementedError('buildView() has not been implemented.');
   }
 
@@ -110,6 +110,12 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
+
+// FIXME Add docs
+enum VideoViewType {
+  textureView,
+  platformView,
+}
 
 /// Description of the data source used to create an instance of
 /// the video player.

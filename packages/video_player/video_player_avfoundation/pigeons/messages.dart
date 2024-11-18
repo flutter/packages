@@ -17,6 +17,13 @@ import 'package:pigeon/pigeon.dart';
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+
+/// Pigeon equivalent of VideoViewType.
+enum PlatformVideoViewType {
+  textureView,
+  platformView,
+}
+
 class CreationOptions {
   CreationOptions({required this.httpHeaders});
   String? asset;
@@ -24,6 +31,7 @@ class CreationOptions {
   String? packageName;
   String? formatHint;
   Map<String, String> httpHeaders;
+  PlatformVideoViewType? viewType;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
