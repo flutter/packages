@@ -8,8 +8,6 @@
 #import <Flutter/Flutter.h>
 #endif
 
-#import <AVFoundation/AVFoundation.h>
-
 @interface FVPVideoPlayerPlugin : NSObject <FlutterPlugin>
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 @end
