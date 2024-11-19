@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   setUp(() {
@@ -57,6 +58,24 @@ void main() {
     expect((await loader.prepareMessage(null))!.lengthInBytes, 0);
     expect((await packageLoader.prepareMessage(null))!.lengthInBytes, 1);
   });
+
+  test('SvgNetworkLoader closes internal client', () async {
+    final List<VerifyCloseClient> createdClients = <VerifyCloseClient>[];
+
+    await http.runWithClient(() async {
+      const SvgNetworkLoader loader = SvgNetworkLoader('');
+
+      expect(createdClients, isEmpty);
+      await loader.prepareMessage(null);
+
+      expect(createdClients, hasLength(1));
+      expect(createdClients[0].closeCalled, true);
+    }, () {
+      final VerifyCloseClient client = VerifyCloseClient();
+      createdClients.add(client);
+      return client;
+    });
+  });
 }
 
 class TestBundle extends Fake implements AssetBundle {
@@ -95,4 +114,20 @@ class _TestColorMapper extends ColorMapper {
       String? id, String elementName, String attributeName, Color color) {
     return color;
   }
+}
+
+class VerifyCloseClient implements http.Client {
+  bool closeCalled = false;
+
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
+    return http.Response('', 200);
+  }
+
+  void close() {
+    assert(!closeCalled);
+    closeCalled = true;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
