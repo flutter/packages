@@ -2,7 +2,7 @@ group 'dev.flutter.packages.interactive_media_ads'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.9.10'
     repositories {
         google()
         mavenCentral()
@@ -48,7 +48,7 @@ android {
     }
 
     dependencies {
-        implementation 'androidx.annotation:annotation:1.8.2'
+        implementation 'androidx.annotation:annotation:1.9.1'
         implementation 'com.google.ads.interactivemedia.v3:interactivemedia:3.35.1'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.jetbrains.kotlin:kotlin-test'
