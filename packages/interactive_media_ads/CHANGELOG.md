@@ -1,3 +1,11 @@
+## 0.2.3+1
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
+## 0.2.3
+
+* Adds parameters to control the rendering of ads. See `AdsManager.init`.
+
 ## 0.2.2+15
 
 * Adds remaining methods for internal wrapper of the Android native `BaseManager`.

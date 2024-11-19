@@ -5,7 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
-import 'android_webview.dart';
+import 'android_webkit.g.dart';
 import 'android_webview_controller.dart';
 
 /// Object specifying creation parameters for creating a [AndroidWebViewCookieManager].
@@ -82,8 +82,8 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
     AndroidWebViewController controller,
     bool accept,
   ) {
-    // ignore: invalid_use_of_visible_for_testing_member
-    final WebView webView = WebView.api.instanceManager
+    // ignore: invalid_use_of_protected_member
+    final WebView webView = _cookieManager.pigeon_instanceManager
         .getInstanceWithWeakReference(controller.webViewIdentifier)!;
     return _cookieManager.setAcceptThirdPartyCookies(webView, accept);
   }
