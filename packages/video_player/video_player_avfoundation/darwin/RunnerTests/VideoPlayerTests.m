@@ -179,7 +179,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
@@ -217,7 +219,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -283,7 +287,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -333,7 +339,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -395,7 +403,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -423,7 +433,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
@@ -455,7 +467,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
@@ -564,7 +578,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   FlutterError *createError;
   NSNumber *textureId = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
@@ -602,7 +618,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
   FlutterError *createError;
   NSNumber *textureId = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
@@ -625,11 +643,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
 
-  FVPCreationOptions *create = [FVPCreationOptions makeWithAsset:nil
-                                                             uri:uri
-                                                     packageName:nil
-                                                      formatHint:nil
-                                                     httpHeaders:@{}];
+  FVPCreationOptions *create =
+      [FVPCreationOptions makeWithAsset:nil
+                                    uri:uri
+                            packageName:nil
+                             formatHint:nil
+                            httpHeaders:@{}
+                               viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                                            initWithValue:FVPPlatformVideoViewTypeTextureView]];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
 
   FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
@@ -694,7 +715,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
           packageName:nil
            formatHint:nil
-          httpHeaders:@{}];
+          httpHeaders:@{}
+             viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                          initWithValue:FVPPlatformVideoViewTypeTextureView]];
     NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(textureId);
@@ -748,7 +771,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
           packageName:nil
            formatHint:nil
-          httpHeaders:@{}];
+          httpHeaders:@{}
+             viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                          initWithValue:FVPPlatformVideoViewTypeTextureView]];
     NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(textureId);
@@ -782,6 +807,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:pluginKey];
 
+  // FIXME This line makes the test fail (or rather run forever) if native view factory is
+  // registered.
   [FVPVideoPlayerPlugin registerWithRegistrar:registrar];
 
   id publishedValue = [registry valuePublishedByPlugin:pluginKey];
