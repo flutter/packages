@@ -2,6 +2,7 @@
 #import "FVPFrameUpdater.h"
 #import "FVPVideoPlayer.h"
 
+// FIXME Add docs - what functionality this class adds.
 @interface FVPVideoPlayerTextureApproach : FVPVideoPlayer
 // The CALayer associated with the Flutter view this plugin is associated with, if any.
 @property(nonatomic, readonly) CALayer *flutterViewLayer;

@@ -4,6 +4,9 @@
 #import <Flutter/Flutter.h>
 #endif
 
+// FIXME Do we even need ifs below? MacOS currently doesn't support FlutterPlatformView.
+//  But can we complie code without it? And is it good to put iOS-specific code in the main
+//  directory (video_player_avfoundation?
 #if TARGET_OS_OSX
 @interface FVPNativeVideoView : NSView
 #else
