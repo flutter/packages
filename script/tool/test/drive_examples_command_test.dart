@@ -3,13 +3,16 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
+import 'package:fake_async/fake_async.dart';
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/drive_examples_command.dart';
+import 'package:mockito/mockito.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
@@ -384,6 +387,82 @@ void main() {
                   'integration_test',
                 ],
                 pluginExampleDirectory.path),
+          ]));
+    });
+
+    test('saves a screenshot if test is taking too long', () async {
+      setMockFlutterDevicesOutput();
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>[
+          'example/integration_test/bar_test.dart',
+          'example/ios/ios.m',
+        ],
+        platformSupport: <String, PlatformDetails>{
+          platformAndroid: const PlatformDetails(PlatformSupport.inline),
+          platformIOS: const PlatformDetails(PlatformSupport.inline),
+        },
+      );
+
+      final FakeAsync fakeAsync = FakeAsync();
+      processRunner.mockProcessesForExecutable['flutter']!
+          .addAll(<FakeProcessInfo>[
+        FakeProcessInfo(
+            _FakeDelayingProcess(
+                delayDuration: const Duration(minutes: 11),
+                fakeAsync: fakeAsync),
+            <String>['test']),
+        FakeProcessInfo(MockProcess(), <String>['screenshot']),
+      ]);
+
+      final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+      List<String> output = <String>[];
+      fakeAsync.run((_) {
+        () async {
+          output = await runCapturingPrint(
+              runner, <String>['drive-examples', '--ios']);
+        }();
+      });
+      fakeAsync.flushTimers();
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains(
+              'Test is taking a long time, taking screenshot test-timeout-screenshot_integration_test.png...'),
+          contains('No issues found!'),
+        ]),
+      );
+
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(getFlutterCommand(mockPlatform),
+                const <String>['devices', '--machine'], null),
+            ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>[
+                'test',
+                '-d',
+                _fakeIOSDevice,
+                '--debug-logs-dir=/path/to/logs',
+                'integration_test',
+              ],
+              pluginExampleDirectory.path,
+            ),
+            ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>[
+                'screenshot',
+                '-d',
+                _fakeIOSDevice,
+                '--out=/path/to/logs/test-timeout-screenshot_integration_test.png',
+              ],
+              pluginExampleDirectory.path,
+            ),
           ]));
     });
 
@@ -1633,4 +1712,21 @@ void main() {
       });
     });
   });
+}
+
+class _FakeDelayingProcess extends Fake implements io.Process {
+  /// Creates a mock process that takes [delayDuration] time to exit successfully.
+  _FakeDelayingProcess(
+      {required Duration delayDuration, required FakeAsync fakeAsync})
+      : _delayDuration = delayDuration,
+        _fakeAsync = fakeAsync;
+
+  final Duration _delayDuration;
+  final FakeAsync _fakeAsync;
+
+  @override
+  Future<int> get exitCode async {
+    _fakeAsync.elapse(_delayDuration);
+    return 0;
+  }
 }
