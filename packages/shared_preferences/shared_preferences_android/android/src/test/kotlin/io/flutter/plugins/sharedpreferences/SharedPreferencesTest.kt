@@ -49,7 +49,9 @@ internal class SharedPreferencesTest {
     every { flutterPluginBinding.binaryMessenger } returns binaryMessenger
     every { flutterPluginBinding.applicationContext } returns testContext
     plugin.onAttachedToEngine(flutterPluginBinding)
-    val backend = SharedPreferencesBackend(flutterPluginBinding.binaryMessenger, flutterPluginBinding.applicationContext)
+    val backend =
+        SharedPreferencesBackend(
+            flutterPluginBinding.binaryMessenger, flutterPluginBinding.applicationContext)
     return if (options.useDataStore) {
       plugin
     } else {
@@ -302,7 +304,8 @@ internal class SharedPreferencesTest {
   @Test
   fun testSharedPreferencesWithMultipleFiles() {
     val plugin = pluginSetup(sharedPreferencesOptions)
-    val optionsWithNewFile = SharedPreferencesPigeonOptions(useDataStore = false, fileName = "test_file")
+    val optionsWithNewFile =
+        SharedPreferencesPigeonOptions(useDataStore = false, fileName = "test_file")
     plugin.setInt(intKey, 1, sharedPreferencesOptions)
     plugin.setInt(intKey, 2, optionsWithNewFile)
     Assert.assertEquals(plugin.getInt(intKey, sharedPreferencesOptions), 1L)
