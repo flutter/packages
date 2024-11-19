@@ -25,6 +25,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     return _api.initialize();
   }
 
+  // FIXME Rename textureId everywhere to playerId.
   @override
   Future<void> dispose(int textureId) {
     return _api.dispose(textureId);
@@ -156,11 +157,10 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     };
   }
 
-  Widget _buildPlatformView(int viewId, VideoViewType viewType) {
+  Widget _buildPlatformView(int playerId, VideoViewType viewType) {
     // FIXME Use a separate class for creation params.
-
     final Map<String, dynamic> creationParams = <String, dynamic>{
-      'viewId': viewId,
+      'playerId': playerId,
     };
     return IgnorePointer(
       // IgnorePointer so that GestureDetector can be used above the platform view.
