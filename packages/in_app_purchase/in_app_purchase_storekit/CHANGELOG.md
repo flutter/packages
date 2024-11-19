@@ -1,3 +1,7 @@
+## 0.3.20+2
+
+* Fixes price not being displayed correctly.
+* 
 ## 0.3.20
 
 * Fixes manual invocation of `finishTransaction` causing a fatal crash.
