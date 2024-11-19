@@ -203,7 +203,7 @@ void main() {
         );
       });
 
-      test('InstanceManager variable', () {
+      test('InstanceManager field', () {
         final Root root = Root(apis: <Api>[
           AstProxyApi(
             name: 'Api',
