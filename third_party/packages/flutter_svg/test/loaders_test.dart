@@ -128,18 +128,17 @@ class _TestColorMapper extends ColorMapper {
   }
 }
 
-class VerifyCloseClient implements http.Client {
+class VerifyCloseClient extends Fake implements http.Client {
   bool closeCalled = false;
 
+  @override
   Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
     return http.Response('', 200);
   }
 
+  @override
   void close() {
     assert(!closeCalled);
     closeCalled = true;
   }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
