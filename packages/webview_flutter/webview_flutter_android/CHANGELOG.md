@@ -2,6 +2,10 @@
 
 * Updates internal API wrapper to use `ProxyApi`s.
 
+## 4.0.3
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
 ## 4.0.2
 
 * Updates README to remove contributor-focused documentation.
