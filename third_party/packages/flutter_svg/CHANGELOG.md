@@ -1,3 +1,9 @@
+## 2.0.15
+* Adds error handling when parsing an invalid svg string.
+* Adds error handling when downloading svg string from network.
+* Adds error handling when reading svg file from asset.
+* Expose ErrorWidgetBuilder.
+
 ## 2.0.14
 
 * Makes the package WASM compatible.
