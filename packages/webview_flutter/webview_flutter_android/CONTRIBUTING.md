@@ -12,7 +12,7 @@ For making changes to this package, please take a look at [changing federated pl
 
 ### Quick Overview
 
-This plugin implements the platform interface provided in `webview_flutter_platform_interface` using
+This plugin implements the platform interface provided by `webview_flutter_platform_interface` using
 the native WebKit APIs for Android.
 
 #### SDK Wrappers
