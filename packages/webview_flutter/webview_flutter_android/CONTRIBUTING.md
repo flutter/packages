@@ -20,7 +20,7 @@ the native WebKit APIs for Android.
 To access native APIS, this plugins uses Dart wrappers of the native library. The native library is
 wrapped using using the `ProxyApi` feature from the `pigeon` package.
 
-The wrappers for the native library can be updated and modified by changing `pigeons/android_webview.dart`.
+The wrappers for the native library can be updated and modified by changing `pigeons/android_webkit.dart`.
 
 The generated files are located:
 * `lib/src/android_webkit.g.dart`
