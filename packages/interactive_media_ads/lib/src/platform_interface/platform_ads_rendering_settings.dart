@@ -85,6 +85,8 @@ base class PlatformAdsRenderingSettingsCreationParams {
   ///
   /// This only refers to the mime types of videos to be selected for linear
   /// ads.
+  ///
+  /// If null, the platform will decide the default value.
   final List<String>? mimeTypes;
 
   /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
@@ -99,6 +101,8 @@ base class PlatformAdsRenderingSettingsCreationParams {
   ///
   /// Some modifications to the uiElements set may have no effect for specific
   /// ads.
+  ///
+  /// If null, the platform will decide the default value.
   final Set<AdUIElement>? uiElements;
 }
 

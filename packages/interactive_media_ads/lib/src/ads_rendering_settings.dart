@@ -56,13 +56,15 @@ class AdsRenderingSettings {
   /// Specifies a non-default amount of time to wait for media to load before
   /// timing out.
   ///
-  /// This only applies to the IMA client-side SDK..
+  /// This only applies to the IMA client-side SDK.
   Duration get loadVideoTimeout => platform.params.loadVideoTimeout;
 
   /// The SDK will prioritize the media with MIME type on the list.
   ///
   /// This only refers to the mime types of videos to be selected for linear
   /// ads.
+  ///
+  /// If null, the platform will decide the default value.
   List<String>? get mimeTypes => platform.params.mimeTypes;
 
   /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
@@ -73,9 +75,11 @@ class AdsRenderingSettings {
   /// 15s.
   Duration? get playAdsAfterTime => platform.params.playAdsAfterTime;
 
-  /// Sets the ad UI elements to be rendered by the IMA SDK.
+  /// The ad UI elements to be rendered by the IMA SDK.
   ///
   /// Some modifications to the uiElements list may have no effect for specific
   /// ads.
+  ///
+  /// If null, the platform will decide the default value.
   Set<AdUIElement>? get uiElements => platform.params.uiElements;
 }
