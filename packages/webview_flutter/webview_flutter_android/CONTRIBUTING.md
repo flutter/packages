@@ -5,7 +5,7 @@ https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
 
 ## Package Structure
 
-This plugin serves as a platform implementation plugin as outlined in [federated plugin](https://docs.flutter.dev/packages-and-plugins/developing-packages#federated-plugins). 
+This plugin serves as a platform implementation plugin as outlined in [federated plugins](https://docs.flutter.dev/packages-and-plugins/developing-packages#federated-plugins). 
 The sections below will provide an overview of how this plugin implements this portion with Android.
 
 For making changes to this package, please take a look at [changing federated plugins](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins).
