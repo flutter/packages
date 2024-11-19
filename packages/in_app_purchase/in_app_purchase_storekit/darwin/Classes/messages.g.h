@@ -255,60 +255,39 @@ NSObject<FlutterMessageCodec> *FIAGetMessagesCodec(void);
 /// Returns if the current device is able to make payments
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)canMakePaymentsWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)canMakePaymentsWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable NSArray<FIASKPaymentTransactionMessage *> *)transactionsWithError:
     (FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable FIASKStorefrontMessage *)storefrontWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
+- (nullable FIASKStorefrontMessage *)storefrontWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)addPaymentPaymentMap:(NSDictionary<NSString *, id> *)paymentMap
                        error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)
-    startProductRequestProductIdentifiers:
-        (NSArray<NSString *> *)productIdentifiers
-                               completion:
-                                   (void (^)(
-                                       FIASKProductsResponseMessage *_Nullable,
-                                       FlutterError *_Nullable))completion;
+- (void)startProductRequestProductIdentifiers:(NSArray<NSString *> *)productIdentifiers
+                                   completion:(void (^)(FIASKProductsResponseMessage *_Nullable,
+                                                        FlutterError *_Nullable))completion;
 - (void)finishTransactionFinishMap:(NSDictionary<NSString *, id> *)finishMap
                              error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)restoreTransactionsApplicationUserName:
-            (nullable NSString *)applicationUserName
-                                         error:
-                                             (FlutterError *_Nullable *_Nonnull)
-                                                 error;
-- (void)presentCodeRedemptionSheetWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
-- (nullable NSString *)retrieveReceiptDataWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
-- (void)refreshReceiptReceiptProperties:
-            (nullable NSDictionary<NSString *, id> *)receiptProperties
-                             completion:
-                                 (void (^)(FlutterError *_Nullable))completion;
-- (void)startObservingPaymentQueueWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
-- (void)stopObservingPaymentQueueWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
-- (void)registerPaymentQueueDelegateWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
-- (void)removePaymentQueueDelegateWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
-- (void)showPriceConsentIfNeededWithError:
-    (FlutterError *_Nullable *_Nonnull)error;
+- (void)restoreTransactionsApplicationUserName:(nullable NSString *)applicationUserName
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)presentCodeRedemptionSheetWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)retrieveReceiptDataWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (void)refreshReceiptReceiptProperties:(nullable NSDictionary<NSString *, id> *)receiptProperties
+                             completion:(void (^)(FlutterError *_Nullable))completion;
+- (void)startObservingPaymentQueueWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (void)stopObservingPaymentQueueWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (void)registerPaymentQueueDelegateWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (void)removePaymentQueueDelegateWithError:(FlutterError *_Nullable *_Nonnull)error;
+- (void)showPriceConsentIfNeededWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)supportsStoreKit2WithError:
-    (FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)supportsStoreKit2WithError:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFIAInAppPurchaseAPI(
-    id<FlutterBinaryMessenger> binaryMessenger,
-    NSObject<FIAInAppPurchaseAPI> *_Nullable api);
+extern void SetUpFIAInAppPurchaseAPI(id<FlutterBinaryMessenger> binaryMessenger,
+                                     NSObject<FIAInAppPurchaseAPI> *_Nullable api);
 
-extern void SetUpFIAInAppPurchaseAPIWithSuffix(
-    id<FlutterBinaryMessenger> binaryMessenger,
-    NSObject<FIAInAppPurchaseAPI> *_Nullable api,
-    NSString *messageChannelSuffix);
+extern void SetUpFIAInAppPurchaseAPIWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                               NSObject<FIAInAppPurchaseAPI> *_Nullable api,
+                                               NSString *messageChannelSuffix);
 
 NS_ASSUME_NONNULL_END
