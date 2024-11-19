@@ -18,66 +18,30 @@ import android.os.Message;
 import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.GeolocationPermissions;
+import android.webkit.JsPromptResult;
+import android.webkit.JsResult;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebView.WebViewTransport;
 import android.webkit.WebViewClient;
-import androidx.annotation.NonNull;
-import io.flutter.plugins.webviewflutter.WebChromeClientHostApiImpl.WebChromeClientCreator;
-import io.flutter.plugins.webviewflutter.WebChromeClientHostApiImpl.WebChromeClientImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class WebChromeClientTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-  @Mock public WebChromeClientFlutterApiImpl mockFlutterApi;
-
-  @Mock public WebView mockWebView;
-
-  @Mock public WebViewClient mockWebViewClient;
-
-  InstanceManager instanceManager;
-  WebChromeClientHostApiImpl hostApiImpl;
-  WebChromeClientImpl webChromeClient;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-
-    final WebChromeClientCreator webChromeClientCreator =
-        new WebChromeClientCreator() {
-          @Override
-          @NonNull
-          public WebChromeClientImpl createWebChromeClient(
-              @NonNull WebChromeClientFlutterApiImpl flutterApi) {
-            webChromeClient = super.createWebChromeClient(flutterApi);
-            return webChromeClient;
-          }
-        };
-
-    hostApiImpl =
-        new WebChromeClientHostApiImpl(instanceManager, webChromeClientCreator, mockFlutterApi);
-    hostApiImpl.create(2L);
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
-  }
-
   @Test
   public void onProgressChanged() {
-    webChromeClient.onProgressChanged(mockWebView, 23);
-    verify(mockFlutterApi).onProgressChanged(eq(webChromeClient), eq(mockWebView), eq(23L), any());
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final Long progress = 0L;
+    instance.onProgressChanged(webView, progress.intValue());
+
+    verify(mockApi).onProgressChanged(eq(instance), eq(webView), eq(progress), any());
   }
 
   @Test
@@ -88,8 +52,13 @@ public class WebChromeClientTest {
     final Message message = new Message();
     message.obj = mock(WebViewTransport.class);
 
-    webChromeClient.setWebViewClient(mockWebViewClient);
-    assertTrue(webChromeClient.onCreateWindow(mockWebView, message, mockOnCreateWindowWebView));
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+
+    final WebViewClient mockWebViewClient = mock(WebViewClient.class);
+    final WebView mockWebView = mock(WebView.class);
+    instance.setWebViewClient(mockWebViewClient);
+    assertTrue(instance.onCreateWindow(mockWebView, message, mockOnCreateWindowWebView));
 
     /// Capture the WebViewClient used with onCreateWindow WebView.
     final ArgumentCaptor<WebViewClient> webViewClientCaptor =
@@ -122,58 +91,127 @@ public class WebChromeClientTest {
 
   @Test
   public void onPermissionRequest() {
-    final PermissionRequest mockRequest = mock(PermissionRequest.class);
-    instanceManager.addDartCreatedInstance(mockRequest, 10);
-    webChromeClient.onPermissionRequest(mockRequest);
-    verify(mockFlutterApi).onPermissionRequest(eq(webChromeClient), eq(mockRequest), any());
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    final android.webkit.PermissionRequest request = mock(PermissionRequest.class);
+    instance.onPermissionRequest(request);
+
+    verify(mockApi).onPermissionRequest(eq(instance), eq(request), any());
   }
 
   @Test
   public void onShowCustomView() {
-    final View mockView = mock(View.class);
-    instanceManager.addDartCreatedInstance(mockView, 10);
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
-    final WebChromeClient.CustomViewCallback mockCustomViewCallback =
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    final android.view.View view = mock(View.class);
+    final android.webkit.WebChromeClient.CustomViewCallback callback =
         mock(WebChromeClient.CustomViewCallback.class);
-    instanceManager.addDartCreatedInstance(mockView, 12);
+    instance.onShowCustomView(view, callback);
 
-    webChromeClient.onShowCustomView(mockView, mockCustomViewCallback);
-    verify(mockFlutterApi)
-        .onShowCustomView(eq(webChromeClient), eq(mockView), eq(mockCustomViewCallback), any());
+    verify(mockApi).onShowCustomView(eq(instance), eq(view), eq(callback), any());
   }
 
   @Test
   public void onHideCustomView() {
-    webChromeClient.onHideCustomView();
-    verify(mockFlutterApi).onHideCustomView(eq(webChromeClient), any());
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    instance.onHideCustomView();
+
+    verify(mockApi).onHideCustomView(eq(instance), any());
   }
 
+  @Test
   public void onGeolocationPermissionsShowPrompt() {
-    final GeolocationPermissions.Callback mockCallback =
-        mock(GeolocationPermissions.Callback.class);
-    webChromeClient.onGeolocationPermissionsShowPrompt("https://flutter.dev", mockCallback);
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
-    verify(mockFlutterApi)
-        .onGeolocationPermissionsShowPrompt(
-            eq(webChromeClient), eq("https://flutter.dev"), eq(mockCallback), any());
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    final String origin = "myString";
+    final android.webkit.GeolocationPermissions.Callback callback =
+        mock(GeolocationPermissions.Callback.class);
+    instance.onGeolocationPermissionsShowPrompt(origin, callback);
+
+    verify(mockApi)
+        .onGeolocationPermissionsShowPrompt(eq(instance), eq(origin), eq(callback), any());
   }
 
   @Test
   public void onGeolocationPermissionsHidePrompt() {
-    webChromeClient.onGeolocationPermissionsHidePrompt();
-    verify(mockFlutterApi).onGeolocationPermissionsHidePrompt(eq(webChromeClient), any());
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    instance.onGeolocationPermissionsHidePrompt();
+
+    verify(mockApi).onGeolocationPermissionsHidePrompt(eq(instance), any());
   }
 
   @Test
   public void onConsoleMessage() {
-    webChromeClient.onConsoleMessage(
-        new ConsoleMessage("message", "sourceId", 23, ConsoleMessage.MessageLevel.ERROR));
-    verify(mockFlutterApi).onConsoleMessage(eq(webChromeClient), any(), any());
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    instance.setReturnValueForOnConsoleMessage(true);
+    final android.webkit.ConsoleMessage message = mock(ConsoleMessage.class);
+    instance.onConsoleMessage(message);
+
+    verify(mockApi).onConsoleMessage(eq(instance), eq(message), any());
   }
 
   @Test
-  public void setReturnValueForOnConsoleMessage() {
-    webChromeClient.setReturnValueForOnConsoleMessage(true);
-    assertTrue(webChromeClient.onConsoleMessage(null));
+  public void onJsAlert() {
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    instance.setReturnValueForOnJsAlert(true);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final String url = "myString";
+    final String message = "myString";
+    final JsResult mockJsResult = mock(JsResult.class);
+    instance.onJsAlert(webView, url, message, mockJsResult);
+
+    verify(mockApi).onJsAlert(eq(instance), eq(webView), eq(url), eq(message), any());
+  }
+
+  @Test
+  public void onJsConfirm() {
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    instance.setReturnValueForOnJsConfirm(true);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final String url = "myString";
+    final String message = "myString";
+    final JsResult mockJsResult = mock(JsResult.class);
+    instance.onJsConfirm(webView, url, message, mockJsResult);
+
+    verify(mockApi).onJsConfirm(eq(instance), eq(webView), eq(url), eq(message), any());
+  }
+
+  @Test
+  public void onJsPrompt() {
+    final WebChromeClientProxyApi mockApi = mock(WebChromeClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebChromeClientImpl instance = new WebChromeClientImpl(mockApi);
+    instance.setReturnValueForOnJsPrompt(true);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final String url = "myString";
+    final String message = "myString";
+    final String defaultValue = "myString";
+    final JsPromptResult mockJsPromptResult = mock(JsPromptResult.class);
+    instance.onJsPrompt(webView, url, message, defaultValue, mockJsPromptResult);
+
+    verify(mockApi)
+        .onJsPrompt(eq(instance), eq(webView), eq(url), eq(message), eq(defaultValue), any());
   }
 }

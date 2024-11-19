@@ -11,8 +11,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
-import '../android_webview.dart';
-import '../instance_manager.dart';
+import '../android_webkit.g.dart';
 import 'webview_android_widget.dart';
 
 /// Builds an Android webview.
@@ -22,13 +21,13 @@ import 'webview_android_widget.dart';
 /// communicate with the platform code.
 class AndroidWebView implements WebViewPlatform {
   /// Constructs an [AndroidWebView].
-  AndroidWebView({@visibleForTesting InstanceManager? instanceManager})
-      : instanceManager = instanceManager ?? JavaObject.globalInstanceManager;
+  AndroidWebView({@visibleForTesting PigeonInstanceManager? instanceManager})
+      : instanceManager = instanceManager ?? PigeonInstanceManager.instance;
 
   /// Maintains instances used to communicate with the native objects they
   /// represent.
   @protected
-  final InstanceManager instanceManager;
+  final PigeonInstanceManager instanceManager;
 
   @override
   Widget build({
