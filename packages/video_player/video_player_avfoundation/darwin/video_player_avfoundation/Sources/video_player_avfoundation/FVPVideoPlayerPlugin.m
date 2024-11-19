@@ -9,12 +9,15 @@
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
-#import "./include/video_player_avfoundation/FVPNativeVideoViewFactory.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayerTextureApproach.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
 #import "./include/video_player_avfoundation/messages.g.h"
+
+#if TARGET_OS_IOS
+#import "./include/video_player_avfoundation/FVPNativeVideoViewFactory.h"
+#endif
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -46,10 +49,12 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FVPVideoPlayerPlugin *instance = [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   [registrar publish:instance];
+#if TARGET_OS_IOS
   FVPNativeVideoViewFactory *factory =
       [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
                                         playersByTextureId:instance.playersByTextureId];
   [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
+#endif
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
 }
 
