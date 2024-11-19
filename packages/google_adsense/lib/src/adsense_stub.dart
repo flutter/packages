@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/widgets.dart';
+
 import '../google_adsense.dart';
 
 /// Returns a singleton instance of Adsense library public interface
@@ -21,7 +23,7 @@ class AdSense {
 
   /// Returns a configurable [AdUnitWidget]<br>
   /// `configuration`: see [AdUnitConfiguration]
-  AdUnitWidget adUnit(AdUnitConfiguration configuration) {
+  Widget adUnit(AdUnitConfiguration configuration) {
     throw UnsupportedError('Only supported on web');
   }
 }

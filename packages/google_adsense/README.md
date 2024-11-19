@@ -1,7 +1,11 @@
 # google_adsense
 [Google AdSense](https://adsense.google.com/intl/en_us/start/) plugin for Flutter Web
 
-This package initializes AdSense on your website and provides an `AdUnitWidget` that can be configured and placed in the desired location in your Flutter web app UI, without having to directly modify the HTML markup of the app directly.
+This package initializes AdSense on your website and provides an ad unit `Widget` that can be configured and placed in the desired location in your Flutter web app UI, without having to directly modify the HTML markup of the app directly.
+
+## Disclaimer: Early Access ⚠️
+This package is currently in early access and is provided as-is. While it's open source and publicly available, it's likely that you'll need to make additional customizations and configurations to fully integrate it with your Flutter Web App.
+Please express interest joining Early Access program using [this form](https://docs.google.com/forms/d/e/1FAIpQLSdN6aOwVkaxGdxbVQFVZ_N4_UCBkuWYa-cS4_rbU_f1jK10Tw/viewform)
 
 ## Installation
 run `flutter pub add google_adsense`
@@ -11,7 +15,7 @@ run `flutter pub add google_adsense`
 #### Setup your AdSense account
 1. [Make sure your site's pages are ready for AdSense](https://support.google.com/adsense/answer/7299563?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1319756&rd=1)
 2. [Create your AdSense account](https://support.google.com/adsense/answer/10162?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1250103&rd=1)
-3. (Optionally) To use `AdUnitWidget`, create [ad units](https://support.google.com/adsense/answer/9183549?hl=en&ref_topic=9183242&sjid=5790642343077592212-EU) in your AdSense account
+3. (Optionally) To use ad unit `Widget`, create [ad units](https://support.google.com/adsense/answer/9183549?hl=en&ref_topic=9183242&sjid=5790642343077592212-EU) in your AdSense account
 
 #### Initialize AdSense
 To start displaying ads, initialize the AdSense with your [client/publisher ID](https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU) (only use numbers).
@@ -26,15 +30,20 @@ void main() {
 
 ```
 You are all set to start displaying [Auto ads](https://support.google.com/adsense/answer/9261805?hl=en)!
-#### Display AdUnitWidget
+#### Display ad unit Widget
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
 adSense.adUnit(AdUnitConfiguration.displayAdUnit(
     adSlot: 'your_ad_slot_id',
     adFormat: AdFormat.AUTO,
-    isFullWidthResponsive: false,
-    cssText: 'border: 5px solid red'))
+    isFullWidthResponsive: false))
 ```
+
+#### Customize ad unit Widget
+To [modify your responsive ad code](https://support.google.com/adsense/answer/9183363?hl=en&ref_topic=9183242&sjid=11551379421978541034-EU):
+1. Make sure your modifications are not breaking AdSense policies (e.g. avoid driving [unnatural attention to ads](https://support.google.com/adsense/answer/1346295?sjid=11551379421978541034-EU#Unnatural_attention_to_ads))
+2. Use Flutter instruments for [adaptive and responsive design](https://docs.flutter.dev/ui/adaptive-responsive)
+
 ## Testing and common errors
 
 ### Failed to load resource: the server responded with a status of 400
@@ -58,4 +67,4 @@ There is no deterministic way to make sure your ads are 100% filled even when te
 - Add AD_TEST parameter with value `true`  
 - Make sure AD_FORMAT is `auto` (default setting)
 - Make sure FULL_WIDTH_RESPONSIVE is `true` (default setting)
-- Try resizing the window or making sure that adUnitWidget width is less than ~1300px 
+- Try resizing the window or making sure that ad unit Widget width is less than ~1300px 

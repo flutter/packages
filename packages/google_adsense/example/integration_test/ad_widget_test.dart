@@ -57,7 +57,7 @@ void main() async {
       // Then
       // Widget level
       expect(find.byWidget(adUnitWidget), findsOneWidget);
-      expect(adUnitWidget, isA<AdUnitWidget>());
+      expect(adUnitWidget, isA<Widget>());
 
       // DOM level
       final web.HTMLElement? platformView =

@@ -18,7 +18,6 @@ import '../google_adsense.dart';
 /// - `columnsNum`: See [AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM]
 /// - `isFullWidthResponsive`: See [AdUnitParams.FULL_WIDTH_RESPONSIVE]
 /// - `isAdTest`: See [AdUnitParams.AD_TEST]
-/// - `cssText`: See [AdUnitConfiguration.cssText]
 class AdUnitConfiguration {
   AdUnitConfiguration._internal({
     required String adSlot,
@@ -30,7 +29,6 @@ class AdUnitConfiguration {
     int? columnsNum,
     bool? isFullWidthResponsive = true,
     this.isAdTest = kDebugMode,
-    this.cssText,
   }) : _adUnitParams = <String, String>{
           AdUnitParams.AD_SLOT: adSlot,
           if (adFormat != null) AdUnitParams.AD_FORMAT: adFormat.toString(),
@@ -56,7 +54,6 @@ class AdUnitConfiguration {
     int? rowsNum,
     int? columnsNum,
     bool isFullWidthResponsive = true,
-    String? cssText,
     bool isAdTest = kDebugMode,
   }) : this._internal(
             adSlot: adSlot,
@@ -65,7 +62,6 @@ class AdUnitConfiguration {
             rowsNum: rowsNum,
             columnsNum: columnsNum,
             isFullWidthResponsive: isFullWidthResponsive,
-            cssText: cssText,
             isAdTest: isAdTest);
 
   /// Creates In-feed ad unit configuration object
@@ -74,14 +70,12 @@ class AdUnitConfiguration {
     required String adLayoutKey,
     AdFormat? adFormat,
     bool isFullWidthResponsive = true,
-    String? cssText,
     bool isAdTest = kDebugMode,
   }) : this._internal(
             adSlot: adSlot,
             adFormat: adFormat,
             adLayoutKey: adLayoutKey,
             isFullWidthResponsive: isFullWidthResponsive,
-            cssText: cssText,
             isAdTest: isAdTest);
 
   /// Creates In-article ad unit configuration object
@@ -90,14 +84,12 @@ class AdUnitConfiguration {
     AdFormat? adFormat,
     AdLayout adLayout = AdLayout.IN_ARTICLE,
     bool isFullWidthResponsive = true,
-    String? cssText,
     bool isAdTest = kDebugMode,
   }) : this._internal(
             adSlot: adSlot,
             adFormat: adFormat,
             adLayout: adLayout,
             isFullWidthResponsive: isFullWidthResponsive,
-            cssText: cssText,
             isAdTest: isAdTest);
 
   /// Creates Display ad unit configuration object
@@ -105,22 +97,17 @@ class AdUnitConfiguration {
     required String adSlot,
     AdFormat? adFormat,
     bool isFullWidthResponsive = true,
-    String? cssText,
     bool isAdTest = kDebugMode,
   }) : this._internal(
             adSlot: adSlot,
             adFormat: adFormat,
             isFullWidthResponsive: isFullWidthResponsive,
-            cssText: cssText,
             isAdTest: isAdTest);
 
   Map<String, String> _adUnitParams;
 
   /// See [AdUnitParams.AD_TEST]
   final bool isAdTest;
-
-  /// CSS rules to be applied to the generated <ins> element. E.g. `border: 5px solid red; display: block; padding: 20px`
-  final String? cssText;
 
   /// See [AdUnitParams.AD_CLIENT]
   String get adClient => _adUnitParams[AdUnitParams.AD_CLIENT]!;

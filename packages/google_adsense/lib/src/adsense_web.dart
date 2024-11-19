@@ -4,11 +4,11 @@
 
 import 'dart:js_interop';
 
+import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import 'ad_unit_configuration.dart';
 import 'ad_unit_widget.dart';
-import 'ad_unit_widget_web.dart';
 import 'js_interop/package_web_tweaks.dart';
 
 /// Returns a singleton instance of Adsense library public interface
@@ -41,8 +41,8 @@ class AdSense {
 
   /// Returns a configurable [AdUnitWidget]<br>
   /// `configuration`: see [AdUnitConfiguration]
-  AdUnitWidget adUnit(AdUnitConfiguration configuration) {
-    return AdUnitWidgetWeb.fromConfig(configuration);
+  Widget adUnit(AdUnitConfiguration configuration) {
+    return AdUnitWidget.fromConfig(configuration);
   }
 
   void _addMasterScript(String adClient) {
