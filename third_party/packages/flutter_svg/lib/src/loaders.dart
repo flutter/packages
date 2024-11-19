@@ -438,7 +438,11 @@ class SvgNetworkLoader extends SvgLoader<Uint8List> {
   @override
   Future<Uint8List?> prepareMessage(BuildContext? context) async {
     final http.Client client = _httpClient ?? http.Client();
-    return (await client.get(Uri.parse(url), headers: headers)).bodyBytes;
+    final http.Response response = await client.get(Uri.parse(url), headers: headers);
+    if (_httpClient == null) {
+      client.close();
+    }
+    return response.bodyBytes;
   }
 
   @override
