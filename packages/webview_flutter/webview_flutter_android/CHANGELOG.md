@@ -1,6 +1,7 @@
 ## 4.1.0
 
 * Updates internal API wrapper to use `ProxyApi`s.
+* Reduces `androidx.annotation:annotation` from 1.9.1 to 1.8.2.
 
 ## 4.0.3
 
