@@ -1,6 +1,6 @@
 ## 2.0.15
 
-* Fix `SvgNetworkLoader` not closing internally created http clients.
+* Fixes `SvgNetworkLoader` not closing internally created http clients.
 
 ## 2.0.14
 
