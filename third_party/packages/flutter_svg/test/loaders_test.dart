@@ -69,12 +69,23 @@ void main() {
       await loader.prepareMessage(null);
 
       expect(createdClients, hasLength(1));
-      expect(createdClients[0].closeCalled, true);
+      expect(createdClients[0].closeCalled, isTrue);
     }, () {
       final VerifyCloseClient client = VerifyCloseClient();
       createdClients.add(client);
       return client;
     });
+  });
+
+  test("SvgNetworkLoader doesn't close passed client", () async {
+    final VerifyCloseClient client = VerifyCloseClient();
+    final SvgNetworkLoader loader = SvgNetworkLoader('',
+        httpClient: client as http.Client,
+    );
+
+    expect(client.closeCalled, isFalse);
+    await loader.prepareMessage(null);
+    expect(client.closeCalled, isFalse);
   });
 }
 
