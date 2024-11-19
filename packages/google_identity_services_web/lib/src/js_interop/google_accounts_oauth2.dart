@@ -9,9 +9,6 @@
 // * non_constant_identifier_names required to be able to use the same parameter
 //   names as the underlying library.
 
-@JS()
-library google_accounts_oauth2;
-
 import 'dart:js_interop';
 
 import 'shared.dart';
@@ -23,12 +20,7 @@ import 'shared.dart';
 external GoogleAccountsOauth2 get oauth2;
 
 /// The Dart definition of the `google.accounts.oauth2` global.
-@JS()
-@staticInterop
-abstract class GoogleAccountsOauth2 {}
-
-/// The `google.accounts.oauth2` methods
-extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
+extension type GoogleAccountsOauth2._(JSObject _) implements JSObject {
   /// Initializes and returns a code client, with the passed-in [config].
   ///
   /// Method: google.accounts.oauth2.initCodeClient
@@ -97,10 +89,7 @@ extension GoogleAccountsOauth2Extension on GoogleAccountsOauth2 {
 ///
 /// Data type: CodeClientConfig
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeClientConfig
-@JS()
-@anonymous
-@staticInterop
-abstract class CodeClientConfig {
+extension type CodeClientConfig._(JSObject _) implements JSObject {
   /// Constructs a CodeClientConfig object in JavaScript.
   ///
   /// The [callback] property must be a Dart function and not a JS function.
@@ -161,12 +150,7 @@ abstract class CodeClientConfig {
 ///
 /// Data type: CodeClient
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeClient
-@JS()
-@staticInterop
-abstract class CodeClient {}
-
-/// The methods available on the [CodeClient].
-extension CodeClientExtension on CodeClient {
+extension type CodeClient._(JSObject _) implements JSObject {
   /// Starts the OAuth 2.0 Code UX flow.
   external void requestCode();
 }
@@ -175,12 +159,7 @@ extension CodeClientExtension on CodeClient {
 ///
 /// Data type: CodeResponse
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#CodeResponse
-@JS()
-@staticInterop
-abstract class CodeResponse {}
-
-/// The fields that are contained in the code response object.
-extension CodeResponseExtension on CodeResponse {
+extension type CodeResponse._(JSObject _) implements JSObject {
   /// The authorization code of a successful token response.
   String? get code => _code?.toDart;
   @JS('code')
@@ -223,10 +202,7 @@ typedef CodeClientCallbackFn = void Function(CodeResponse response);
 ///
 /// Data type: TokenClientConfig
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenClientConfig
-@JS()
-@anonymous
-@staticInterop
-abstract class TokenClientConfig {
+extension type TokenClientConfig._(JSObject _) implements JSObject {
   /// Constructs a TokenClientConfig object in JavaScript.
   ///
   /// The [callback] property must be a Dart function and not a JS function.
@@ -281,12 +257,7 @@ abstract class TokenClientConfig {
 ///
 /// Data type: TokenClient
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenClient
-@JS()
-@staticInterop
-abstract class TokenClient {}
-
-/// The methods available on the [TokenClient].
-extension TokenClientExtension on TokenClient {
+extension type TokenClient._(JSObject _) implements JSObject {
   /// Starts the OAuth 2.0 Code UX flow.
   void requestAccessToken([
     OverridableTokenClientConfig? overrideConfig,
@@ -308,10 +279,7 @@ extension TokenClientExtension on TokenClient {
 ///
 /// Data type: OverridableTokenClientConfig
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#OverridableTokenClientConfig
-@JS()
-@anonymous
-@staticInterop
-abstract class OverridableTokenClientConfig {
+extension type OverridableTokenClientConfig._(JSObject _) implements JSObject {
   /// Constructs an OverridableTokenClientConfig object in JavaScript.
   factory OverridableTokenClientConfig({
     /// A list of scopes that identify the resources that your application could
@@ -396,12 +364,7 @@ abstract class OverridableTokenClientConfig {
 ///
 /// Data type: TokenResponse
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenResponse
-@JS()
-@staticInterop
-abstract class TokenResponse {}
-
-/// The fields that are contained in the code response object.
-extension TokenResponseExtension on TokenResponse {
+extension type TokenResponse._(JSObject _) implements JSObject {
   /// The access token of a successful token response.
   String? get access_token => _access_token?.toDart;
   @JS('access_token')
@@ -465,12 +428,7 @@ typedef TokenClientCallbackFn = void Function(TokenResponse response);
 typedef ErrorCallbackFn = void Function(GoogleIdentityServicesError? error);
 
 /// An error returned by `initTokenClient` or `initDataClient`.
-@JS()
-@staticInterop
-abstract class GoogleIdentityServicesError {}
-
-/// Methods of the GoogleIdentityServicesError object.
-extension GoogleIdentityServicesErrorExtension on GoogleIdentityServicesError {
+extension type GoogleIdentityServicesError._(JSObject _) implements JSObject {
   /// The type of error
   GoogleIdentityServicesErrorType get type =>
       GoogleIdentityServicesErrorType.values.byName(_type.toDart);
@@ -492,12 +450,7 @@ typedef RevokeTokenDoneFn = void Function(TokenRevocationResponse response);
 ///
 /// Data type: RevocationResponse
 /// https://developers.google.com/identity/oauth2/web/reference/js-reference#TokenResponse
-@JS()
-@staticInterop
-abstract class TokenRevocationResponse {}
-
-/// The fields that are contained in the [TokenRevocationResponse] object.
-extension TokenRevocationResponseExtension on TokenRevocationResponse {
+extension type TokenRevocationResponse._(JSObject _) implements JSObject {
   /// This field is a boolean value set to true if the revoke method call
   /// succeeded or false on failure.
   bool get successful => _successful.toDart;

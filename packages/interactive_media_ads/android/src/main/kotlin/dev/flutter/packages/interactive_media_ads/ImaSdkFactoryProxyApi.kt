@@ -7,6 +7,7 @@ package dev.flutter.packages.interactive_media_ads
 import android.view.ViewGroup
 import com.google.ads.interactivemedia.v3.api.AdDisplayContainer
 import com.google.ads.interactivemedia.v3.api.AdsLoader
+import com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
 import com.google.ads.interactivemedia.v3.api.AdsRequest
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import com.google.ads.interactivemedia.v3.api.ImaSdkSettings
@@ -45,5 +46,9 @@ class ImaSdkFactoryProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun createAdsRequest(pigeon_instance: ImaSdkFactory): AdsRequest {
     return pigeon_instance.createAdsRequest()
+  }
+
+  override fun createAdsRenderingSettings(pigeon_instance: ImaSdkFactory): AdsRenderingSettings {
+    return pigeon_instance.createAdsRenderingSettings()
   }
 }
