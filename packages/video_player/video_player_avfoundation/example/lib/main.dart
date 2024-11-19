@@ -4,6 +4,8 @@
 
 // ignore_for_file: public_member_api_docs
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
@@ -66,7 +68,9 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
     super.initState();
     _controller = MiniController.asset(
       'assets/Butterfly-209.mp4',
-      viewType: VideoViewType.platformView,
+      viewType: Platform.isIOS
+          ? VideoViewType.platformView
+          : VideoViewType.textureView,
     );
 
     _controller.addListener(() {
@@ -124,7 +128,9 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     super.initState();
     _controller = MiniController.network(
       'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-      viewType: VideoViewType.platformView,
+      viewType: Platform.isIOS
+          ? VideoViewType.platformView
+          : VideoViewType.textureView,
     );
 
     _controller.addListener(() {
