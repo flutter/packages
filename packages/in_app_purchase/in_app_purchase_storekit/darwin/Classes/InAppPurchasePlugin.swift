@@ -423,7 +423,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
   public func supportsStoreKit2WithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
     -> NSNumber?
   {
-    if #available(iOS 15.0, macOS 15.0, *) {
+    if #available(iOS 15.0, macOS 12.0, *) {
       return true
     }
     return false
