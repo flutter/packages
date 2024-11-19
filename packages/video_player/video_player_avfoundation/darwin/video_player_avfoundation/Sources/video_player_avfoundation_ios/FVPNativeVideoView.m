@@ -1,6 +1,6 @@
 #import <AVFoundation/AVFoundation.h>
 
-#import "../video_player_avfoundation/include/video_player_avfoundation/FVPNativeVideoView.h"
+#import "FVPNativeVideoView.h"
 
 @interface FVPPlayerView : UIView
 @end
