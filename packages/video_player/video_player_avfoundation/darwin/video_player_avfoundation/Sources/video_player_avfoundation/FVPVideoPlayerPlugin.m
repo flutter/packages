@@ -189,8 +189,9 @@
 - (void)disposePlayer:(NSInteger)textureId error:(FlutterError **)error {
   NSNumber *playerKey = @(textureId);
   FVPVideoPlayer *player = self.playersByTextureId[playerKey];
-  // FIXME Only unregister texture when using texture approach
-  [self.registry unregisterTexture:textureId];
+  if ([player isKindOfClass:[FVPVideoPlayerTextureApproach class]]) {
+    [self.registry unregisterTexture:textureId];
+  }
   [self.playersByTextureId removeObjectForKey:playerKey];
   if (!player.disposed) {
     [player dispose];
