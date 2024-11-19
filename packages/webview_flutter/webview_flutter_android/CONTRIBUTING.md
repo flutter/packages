@@ -8,7 +8,7 @@ https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
 This plugin serves as a platform implementation plugin as outlined in [federated plugin](https://docs.flutter.dev/packages-and-plugins/developing-packages#federated-plugins). 
 The sections below will provide an overview of how this plugin implements this portion with Android.
 
-For making changes to this package, please take a look at [changing federated plugin](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins).
+For making changes to this package, please take a look at [changing federated plugins](https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins).
 
 ### Quick Overview
 
@@ -89,5 +89,3 @@ If this is only supported on a single platform, add where it can be added in the
 implementation.
 
 ### 4. Work can be started on the feature request or you can wait for feedback from a Flutter contributor.
-
-[IMA SDKs]: https://developers.google.com/interactive-media-ads
