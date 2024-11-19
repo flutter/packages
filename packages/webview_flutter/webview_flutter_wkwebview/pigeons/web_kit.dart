@@ -342,10 +342,19 @@ abstract class URLRequest extends NSObject {
   String? getUrl();
 
   /// The HTTP request method.
+  void setHttpMethod(String? method);
+
+  /// The HTTP request method.
   String? getHttpMethod();
 
   /// The request body.
+  void setHttpBody(Uint8List? body);
+
+  /// The request body.
   Uint8List? getHttpBody();
+
+  /// A dictionary containing all of the HTTP header fields for a request.
+  void setAllHttpHeaderFields(Map<String, String>? fields);
 
   /// A dictionary containing all of the HTTP header fields for a request.
   Map<String, String>? getAllHttpHeaderFields();
@@ -438,6 +447,9 @@ abstract class NSError extends NSObject {
 
   /// The user info dictionary.
   late Map<String, Object?> userInfo;
+
+  /// A string containing the localized description of the error.
+  late String localizedDescription;
 }
 
 /// An object that encapsulates a message sent by JavaScript code from a
@@ -473,6 +485,8 @@ abstract class WKSecurityOrigin extends NSObject {
 /// See https://developer.apple.com/documentation/foundation/httpcookie.
 @ProxyApi()
 abstract class HTTPCookie extends NSObject {
+  HTTPCookie();
+
   /// The cookie’s properties.
   late Map<HttpCookiePropertyKey, Object?> properties;
 }
@@ -481,6 +495,8 @@ abstract class HTTPCookie extends NSObject {
 /// by a `WKNavigationDelegate`.
 @ProxyApi()
 abstract class AuthenticationChallengeResponse {
+  AuthenticationChallengeResponse();
+
   /// The option to use to handle the challenge.
   late UrlSessionAuthChallengeDisposition disposition;
 
@@ -556,6 +572,28 @@ abstract class UIScrollView extends UIView {
 abstract class WKWebViewConfiguration extends NSObject {
   WKWebViewConfiguration();
 
+  /// The object that coordinates interactions between your app’s native code
+  /// and the webpage’s scripts and other content.
+  void setUserContentController(WKUserContentController controller);
+
+  /// The object that coordinates interactions between your app’s native code
+  /// and the webpage’s scripts and other content.
+  WKUserContentController getUserContentController();
+
+  /// The object you use to get and set the site’s cookies and to track the
+  /// cached data objects.
+  void setWebsiteDataStore(WKWebsiteDataStore dataStore);
+
+  /// The object you use to get and set the site’s cookies and to track the
+  /// cached data objects.
+  WKWebsiteDataStore getWebsiteDataStore();
+
+  /// The object that manages the preference-related settings for the web view.
+  void setPreferences(WKPreferences controller);
+
+  /// The object that manages the preference-related settings for the web view.
+  WKPreferences getUserPreferences();
+
   /// A Boolean value that indicates whether HTML5 videos play inline or use the
   /// native full-screen controller.
   void setAllowsInlineMediaPlayback(bool allow);
@@ -591,7 +629,7 @@ abstract class WKUserContentController extends NSObject {
   void addUserScript(WKUserScript userScript);
 
   /// Removes all user scripts from the web view.
-  void removeAllUserScripts(int identifier);
+  void removeAllUserScripts();
 }
 
 /// An object that encapsulates the standard behaviors to apply to websites.
@@ -703,9 +741,54 @@ abstract class NSObject {
 /// browser.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebview.
-@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
-abstract class WKWebView {
-  WKWebView(WKWebViewConfiguration configuration);
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+    supportsMacos: false,
+  ),
+)
+abstract class WKWebViewUIExtensions extends UIView {
+  /// The scroll view associated with the web view.
+  @attached
+  late UIScrollView scrollView;
+}
+
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+    supportsIos: false,
+  ),
+)
+abstract class WKWebViewNSExtensions extends NSObject {}
+
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+  ),
+)
+abstract class WKWebView extends NSObject {
+  WKWebView(WKWebViewConfiguration initialConfiguration);
+
+  /// The object that contains the configuration details for the web view.
+  @attached
+  late WKWebViewConfiguration configuration;
+
+  @attached
+  late WKWebViewUIExtensions UIWebViewExtensions;
+
+  @attached
+  late WKWebViewNSExtensions NSWebViewExtensions;
 
   /// The object you use to integrate custom user interface elements, such as
   /// contextual menus or panels, into web view interactions.
@@ -777,7 +860,7 @@ abstract class WKWebView {
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuidelegate.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
-abstract class WKUIDelegate {
+abstract class WKUIDelegate extends NSObject {
   WKUIDelegate();
 
   /// Creates a new web view.
@@ -829,8 +912,12 @@ abstract class WKHTTPCookieStore extends NSObject {
 /// The interface for the delegate of a scroll view.
 ///
 /// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate.
-@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'UIKit', supportsMacos: false),
+)
 abstract class UIScrollViewDelegate extends NSObject {
+  UIScrollViewDelegate();
+
   /// Tells the delegate when the user scrolls the content view within the
   /// scroll view.
   ///
@@ -851,7 +938,7 @@ abstract class UIScrollViewDelegate extends NSObject {
 abstract class URLCredential extends NSObject {
   /// Creates a URL credential instance for internet password authentication
   /// with a given user name and password, using a given persistence setting.
-  URLCredential(
+  URLCredential.withUser(
     String user,
     String password,
     UrlCredentialPersistence persistence,
@@ -871,7 +958,7 @@ abstract class URLProtectionSpace extends NSObject {
   late int port;
 
   /// The receiver’s authentication realm.
-  late int? realm;
+  late String? realm;
 
   /// The authentication method used by the receiver.
   late String? authenticationMethod;
@@ -884,4 +971,14 @@ abstract class URLProtectionSpace extends NSObject {
 abstract class URLAuthenticationChallenge extends NSObject {
   /// The receiver’s protection space.
   URLProtectionSpace getProtectionSpace();
+}
+
+/// A value that identifies the location of a resource, such as an item on a
+/// remote server or the path to a local file..
+///
+/// See https://developer.apple.com/documentation/foundation/url.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URLWrapper'))
+abstract class URL extends NSObject {
+  /// The absolute string for the URL.
+  String getAbsoluteString();
 }

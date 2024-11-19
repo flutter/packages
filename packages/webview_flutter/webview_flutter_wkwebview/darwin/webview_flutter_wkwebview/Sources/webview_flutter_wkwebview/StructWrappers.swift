@@ -11,3 +11,12 @@ class URLRequestWrapper {
     self.value = value
   }
 }
+
+class URLWrapper {
+  let value: URL
+  
+  init(value: URL) {
+    self.value = value
+  }
+}
+
