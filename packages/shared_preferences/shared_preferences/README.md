@@ -52,7 +52,7 @@ latest data stored on the native platform regardless of what process was used to
 
 The [SharedPreferences] API uses the native [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
 
-The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) to store data.
+The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs can use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) or [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) to store data.
 
 ## Examples
 Here are small examples that show you how to use the API.
@@ -187,7 +187,7 @@ the new prefix otherwise the old preferences will be inaccessible.
 
 | Platform | SharedPreferences | SharedPreferencesAsync/WithCache |
 | :--- | :--- | :--- |
-| Android | SharedPreferences | DataStore Preferences |
+| Android | SharedPreferences | DataStore Preferences or SharedPreferences |
 | iOS | NSUserDefaults | NSUserDefaults |
 | Linux | In the XDG_DATA_HOME directory | In the XDG_DATA_HOME directory |
 | macOS | NSUserDefaults | NSUserDefaults |
