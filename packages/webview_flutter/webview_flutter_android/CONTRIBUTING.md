@@ -35,11 +35,11 @@ Run `flutter build apk --debug` in `example/`.
 ##### 2. Make changes to the respective pigeon file that matches the native SDK
 
 * Android Dependency: https://developer.android.com/reference/android/webkit/package-summary
-* Pigeon file to update: `pigeons/android_webview.dart`
+* Pigeon file to update: `pigeons/android_webkit.dart`
 
 ##### 3. Run the code generator from the terminal
 
-Run: `dart run pigeon --input pigeons/android_webview.dart`
+Run: `dart run pigeon --input pigeons/android_webkit.dart`
 
 ##### 4. Update the generated APIs in native code
 
