@@ -17,9 +17,16 @@
 - (instancetype)initWithPath:(GMSMutablePath *)path
                   identifier:(NSString *)identifier
                      mapView:(GMSMapView *)mapView {
+  GMSPolygon *polygon = [GMSPolygon polygonWithPath:path];
+  return [self initWithPolygon:polygon identifier:identifier mapView:mapView];
+}
+
+- (instancetype)initWithPolygon:(GMSPolygon *)polygon
+                     identifier:(NSString *)identifier
+                        mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
-    _polygon = [GMSPolygon polygonWithPath:path];
+    _polygon = polygon;
     _mapView = mapView;
     _polygon.userData = @[ identifier ];
   }
@@ -78,11 +85,6 @@
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
@@ -111,6 +113,13 @@
   NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"strokeWidth");
   if (strokeWidth) {
     [self setStrokeWidth:[strokeWidth intValue]];
+  }
+
+  // Setting the visibility adds the polygon to the map.
+  // Therefore, it should be done after the other properties are set.
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

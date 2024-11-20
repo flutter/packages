@@ -19,9 +19,17 @@
                               circleId:(NSString *)circleIdentifier
                                mapView:(GMSMapView *)mapView
                                options:(NSDictionary *)options {
+  GMSCircle *circle = [GMSCircle circleWithPosition:position radius:radius];
+  return [self initWithCircle:circle circleId:circleIdentifier mapView:mapView options:options];
+}
+
+- (instancetype)initWithCircle:(GMSCircle *)circle
+                      circleId:(NSString *)circleIdentifier
+                       mapView:(GMSMapView *)mapView
+                       options:(NSDictionary *)options {
   self = [super init];
   if (self) {
-    _circle = [GMSCircle circleWithPosition:position radius:radius];
+    _circle = circle;
     _mapView = mapView;
     _circle.userData = @[ circleIdentifier ];
     [self interpretCircleOptions:options];
@@ -65,11 +73,6 @@
     [self setConsumeTapEvents:consumeTapEvents.boolValue];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
@@ -98,6 +101,13 @@
   NSNumber *fillColor = FGMGetValueOrNilFromDict(data, @"fillColor");
   if (fillColor) {
     [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
+  }
+
+  // Setting the visibility adds the circle to the map.
+  // Therefore, it should be done after the other properties are set.
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 

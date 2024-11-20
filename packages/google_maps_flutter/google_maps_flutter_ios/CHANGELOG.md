@@ -1,3 +1,7 @@
+## 2.13.2
+
+* Fixes map objects (markers, polygons, polylines, circles, and tiles) being added with the wrong properties.
+
 ## 2.13.1
 
 * Updates Pigeon for non-nullable collection type support.

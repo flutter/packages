@@ -17,9 +17,16 @@
 - (instancetype)initWithPath:(GMSMutablePath *)path
                   identifier:(NSString *)identifier
                      mapView:(GMSMapView *)mapView {
+  GMSPolyline *polyline = [GMSPolyline polylineWithPath:path];
+  return [self initWithPolyline:polyline identifier:identifier mapView:mapView];
+}
+
+- (instancetype)initWithPolyline:(GMSPolyline *)polyline
+                      identifier:(NSString *)identifier
+                         mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
-    _polyline = [GMSPolyline polylineWithPath:path];
+    _polyline = polyline;
     _mapView = mapView;
     _polyline.userData = @[ identifier ];
   }
@@ -70,11 +77,6 @@
     [self setConsumeTapEvents:[consumeTapEvents boolValue]];
   }
 
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
   NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
   if (zIndex) {
     [self setZIndex:[zIndex intValue]];
@@ -106,6 +108,13 @@
         setPattern:[FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns
                                                              strokeColor:self.polyline.strokeColor]
            lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
+  }
+
+  // Setting the visibility adds the polyline to the map.
+  // Therefore, it should be done after the other properties are set.
+  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
+  if (visible) {
+    [self setVisible:[visible boolValue]];
   }
 }
 
