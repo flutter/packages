@@ -18,7 +18,7 @@
 #import "./include/video_player_avfoundation/messages.g.h"
 
 #if TARGET_OS_IOS
-// Platform views are only supported on iOS as of now.
+// We only support platform views on iOS as of now.
 #import "../video_player_avfoundation_ios/include/FVPNativeVideoViewFactory.h"
 #endif
 
@@ -53,7 +53,7 @@
   FVPVideoPlayerPlugin *instance = [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   [registrar publish:instance];
 #if TARGET_OS_IOS
-  // Platform views are only supported on iOS as of now.
+  // We only support platform views on iOS as of now.
   FVPNativeVideoViewFactory *factory =
       [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
                                         playersByTextureId:instance.playersByTextureId];
