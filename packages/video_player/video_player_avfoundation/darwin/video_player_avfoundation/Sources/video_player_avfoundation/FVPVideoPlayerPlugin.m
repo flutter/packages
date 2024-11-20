@@ -108,7 +108,6 @@
   player.eventChannel = eventChannel;
   self.playersByTextureId[@(textureId)] = player;
 
-  // FIXME Does it need to be here?
   if (frameUpdater) {
     // Ensure that the first frame is drawn once available, even if the video isn't played, since
     // the engine is now expecting the texture to be populated.

@@ -2,19 +2,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// FIXME Do we even need if statement below? MacOS currently doesn't support
-// FlutterPlatformView.
-//  But can we complie code without it? And is it good to put iOS-specific code
-//  in the main directory (video_player_avfoundation?
-
 #import <Flutter/Flutter.h>
 
+/// A class used to create a native video view that can be embedded in a Flutter app.
+/// This class wraps an AVPlayer instance and displays its video content.
 @interface FVPNativeVideoView : NSObject <FlutterPlatformView>
+/// Initializes a new instance of a native view.
+/// It creates a video view instance and sets the provided AVPlayer instance to it.
 - (instancetype)initWithFrame:(CGRect)frame
                viewIdentifier:(int64_t)viewId
                     arguments:(id _Nullable)args
               binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                        player:(AVPlayer *)player;
 
+/// Returns the native UIView that displays the video content.
 - (UIView *)view;
 @end

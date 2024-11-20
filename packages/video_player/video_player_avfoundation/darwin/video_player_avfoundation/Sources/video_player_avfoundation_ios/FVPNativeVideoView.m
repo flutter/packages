@@ -6,7 +6,6 @@
 
 #import "./include/FVPNativeVideoView.h"
 
-// FIXME Add some docs for FVPNativeVideoView and possibly FVPPlayerView
 @interface FVPPlayerView : UIView
 @end
 

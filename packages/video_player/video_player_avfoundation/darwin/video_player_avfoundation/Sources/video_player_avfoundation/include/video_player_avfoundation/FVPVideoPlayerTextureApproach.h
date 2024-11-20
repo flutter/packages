@@ -6,7 +6,9 @@
 #import "FVPFrameUpdater.h"
 #import "FVPVideoPlayer.h"
 
-// FIXME Add docs - what functionality this class adds.
+/// A subclass of FVPVideoPlayer that adds functionality related to texture-based view as a way of
+/// displaying the video in the app. It manages the CALayer associated with the Flutter view,
+/// updates frames, and handles display link callbacks.
 @interface FVPVideoPlayerTextureApproach : FVPVideoPlayer
 // The CALayer associated with the Flutter view this plugin is associated with, if any.
 @property(nonatomic, readonly) CALayer *flutterViewLayer;
