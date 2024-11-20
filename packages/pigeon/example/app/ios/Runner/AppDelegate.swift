@@ -40,14 +40,16 @@ private class PigeonFlutterApi {
     aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void
   ) {
     flutterAPI.flutterMethod(aString: aStringArg) {
-      completion(.success($0))
+      completion(.success(try! $0.get()))
     }
   }
 }
 // #enddocregion swift-class-flutter
 
-@UIApplicationMain
+@main
 @objc class AppDelegate: FlutterAppDelegate {
+  var proxyApiRegistrar: MessagesPigeonProxyApiRegistrar?
+
   override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
@@ -58,7 +60,12 @@ private class PigeonFlutterApi {
     let api = PigeonApiImplementation()
     ExampleHostApiSetup.setUp(binaryMessenger: controller.binaryMessenger, api: api)
 
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    // #docregion registrar-setup
+    proxyApiRegistrar = MessagesPigeonProxyApiRegistrar(
+      binaryMessenger: controller.binaryMessenger, apiDelegate: ProxyAPIDelegate())
+    proxyApiRegistrar?.setUp()
+    // #enddocregion registrar-setup
 
+    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }

@@ -151,6 +151,22 @@ but reversed.  For more information look at the annotation `@FlutterApi()` which
 denotes APIs that live in Flutter but are invoked from the host platform. 
 [Example](./example/README.md#FlutterApi_Example).
 
+### Wrapping a Native API with ProxyApis
+
+**Supported Languages: Kotlin, Swift**
+
+Pigeon supports wrapping a native API with the `@ProxyApi` annotation. For each native class/type
+this annotation generates
+
+* A Dart class that acts as a proxy to the native class/type.
+* A native language API that handles creating native instances, methods calls from Dart to host,
+  and method calls from host to Dart.
+* A Dart and native language `InstanceManager` that automatically handles garbage collection of the
+  native instance.
+* A native language registrar for setting up all the native language APIs.
+
+See this [example](./example/README.md#Simple_ProxyApi_Example) for example usage.
+
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with 

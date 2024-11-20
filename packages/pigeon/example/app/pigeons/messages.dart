@@ -63,3 +63,63 @@ abstract class MessageFlutterApi {
   String flutterMethod(String? aString);
 }
 // #enddocregion flutter-definitions
+
+// #docregion simple-proxy-definition
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'dev.flutter.pigeon_example_app.SimpleExampleNativeClass',
+  ),
+  swiftOptions: SwiftProxyApiOptions(
+    name: 'SimpleExampleNativeClass',
+  ),
+)
+abstract class SimpleExampleNativeClass {
+  // ignore: avoid_unused_constructor_parameters
+  SimpleExampleNativeClass(String aParameter);
+
+  late String aField;
+
+  /// Makes a call from native language to Dart.
+  late void Function(String aParameter)? flutterMethod;
+
+  /// Makes a call from Dart to native language.
+  String hostMethod(String aParameter);
+}
+// #enddocregion simple-proxy-definition
+
+// #docregion complex-proxy-definition
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'dev.flutter.pigeon_example_app.ComplexExampleNativeClass',
+  ),
+)
+abstract class ComplexExampleNativeClass extends ExampleNativeSuperClass
+    implements ExampleNativeInterface {
+  @static
+  late ExampleNativeSuperClass aStaticField;
+
+  @attached
+  late ExampleNativeSuperClass anAttachedField;
+
+  @static
+  String staticHostMethod();
+}
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'dev.flutter.pigeon_example_app.ExampleNativeSuperClass',
+  ),
+)
+abstract class ExampleNativeSuperClass {
+  String inheritedSuperClassMethod();
+}
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'dev.flutter.pigeon_example_app.ExampleNativeInterface',
+  ),
+)
+abstract class ExampleNativeInterface {
+  late void Function()? inheritedInterfaceMethod;
+}
+// #enddocregion complex-proxy-definition

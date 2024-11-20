@@ -1,3 +1,7 @@
+## 22.6.2
+
+* Updates `README.md` with examples of using `@ProxyApi`.
+
 ## 22.6.1
 
 * [gobject] Moves class declarations to the header to work around a bug in some
