@@ -6,19 +6,13 @@
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe, easier, and faster.
 
-Pigeon works by reading special files which by convention are placed in a separate
-folder, `/pigeons`, alongside your `/lib` folder. You can put all of your definitions
-in a single file (e.g., `/pigeons/messages.dart`), or you can divide your methods
-and classes into separate files as you wish. After reading these files, Pigeon
-generates:
+Pigeon works by reading a special file or files, which are placed outside of the
+`/lib` directory which hosts all of your application code. You define special
+data classes and endpoints, which Pigeon will then consume and use to generate
+matching Dart and native code at the paths you specify.
 
- * New Dart source files within your `/lib` folder at the specific paths you
-specify, and
- * New native source files with matching code within your native projects at the
- specific paths you specify
-
-Internally, the generated code uses `MethodChannel`s to communicate across Flutter's
-UI thread and the Platform thread where your host app initially launched. The value
+Internally, the generated code uses `MethodChannel`s to communicate between Flutter's
+UI thread and the Platform thread where your host app is initially launched. The value
 in Pigeon comes from automatically keeping this unpleasant boilerplate in sync and
 efficiently marshalling data between languages.
 
@@ -41,9 +35,9 @@ $ flutter pub get
 
 ### Setup
 
-To specify what code Pigeon should generate, create a `/pigeons` directory and add
-a `.dart` configuration file. This guide will place all such configurations within
-`/pigeons/messages.dart`, but you are free to choose any file name(s) you like.
+To specify what code Pigeon should generate, create your interface definition file.
+This guide will place all such definitions at `/pigeons/messages.dart`, but you
+are free to choose any file name you like, inside a dedicated folder or not.
 
 Begin by instantiating a `PigeonOptions` object, wrapped in the `@ConfigurePigeon`
 decorator. Later, you will pass named parameters to your `PigeonOptions` object
@@ -63,7 +57,7 @@ import 'package:pigeon/pigeon.dart';
 
 The next step to use Pigeon is to define the data structures Dart will exchange
 with native code. You do this by writing plain Dart enums or classes in your
-`/pigeons` files. These messages should only contain simple constructors and direct
+definition file. These messages should only contain simple constructors and direct
 attributes. Methods, factory constructors, constructor bodies, and computed
 properties are all not allowed.
 
@@ -82,15 +76,15 @@ class MessageData {
 ```
 
 No extra steps are necessary to register these classes - their inclusion
-in a `pigeons/*.dart` ensures Pigeon will generate matching Dart and native
+in your definitions file ensures Pigeon will generate matching Dart and native
 implementations.
 
 ### Define which methods to expose
 
 The point of Pigeon and the `MethodChannel`s it utilizes is to call native functions
 living on the Platform thread from Dart, or to call Dart functions living on the UI
-thread from native code. Either way, you must declare methods in your `/pigeons/*`
-files which tell Pigeon what function signatures its generated code must support.
+thread from native code. Either way, you must declare methods in your definitions
+file which tell Pigeon what function signatures its generated code must support.
 
 #### Call native code from Dart
 
@@ -138,7 +132,7 @@ will be the bridge to the rest of your application's business logic.
 
 ### Configure your output
 
-It is time to pass values to the `PigeonOptions` object to configure our desired
+It is time to pass values to the `PigeonOptions` object to configure your desired
 behavior. To begin, specify a `dartOut` value where your Dart code should live and,
 optionally, a `DartOptions` instance.
 
@@ -155,7 +149,8 @@ Next, add sections for each native platform your app should support.
 > Note: The paths to your native projects can vary depending on whether your
 > app is entirely Flutter, or whether you are adding Flutter into an existing
 > native app. These code paths will assume your app is entirely Flutter, but
-> add-to-app users should see the `Add to app usage` section for specific guidance.
+> add-to-app users should see the [`Add to app usage`](Add-to-app-usage)
+> section for specific guidance.
 
 
 #### Add iOS and/or macOS support
@@ -195,7 +190,7 @@ for the `objcHeaderOut` and `objcSourceOut` parameters and, optionally, an
 > generated for two different platforms; e.g., Swift code on iOS and macOS. To
 > achieve this, you can either symlink your iOS files into your macOS directory,
 > or you can use a separate Pigeon file (e.g., `/pigeons/macos_messages.dart`)
-> which specifies macOS paths (e.g., `macos/Runner/file_name.g.swift`).
+> which specifies macOS paths (e.g., `macos/Runner/Messages.g.swift`).
 
 #### Add Android support
 
@@ -207,7 +202,7 @@ for the `kotlinOut` parameter and, optionally, a `KotlinOptions` instance.
    PigeonOptions(
       ...
       kotlinOut: 'android/app/src/main/kotlin/dev/flutter/my_app_name/Messages.g.kt',
-      kotlinOptions: KotlinOptions(),
+      kotlinOptions: KotlinOptions(), // Optional
    ),
 )
 ```
@@ -220,7 +215,7 @@ for the `javaOut` parameter and, optionally, a `JavaOptions` instance.
    PigeonOptions(
       ...
       javaOut: 'android/app/src/main/java/io/flutter/plugins/Messages.java',
-      javaOptions: JavaOptions(),
+      javaOptions: JavaOptions(), // Optional
    ),
 )
 ```
@@ -266,9 +261,9 @@ already directly call any JavaScript code without switching threads, as is
 currently required in Flutter on mobile or desktop. Pigeon generates code which
 performs two roles:
 
-1. Uses Flutter's `MethodChannel`s concept to jump from the UI thread to the
+1. Using Flutter's `MethodChannel`s concept to jump from the UI thread to the
 Platform thread (or in the other direction), and
-2. Marshalls data between Dart and the native language.
+2. Marshalling data between Dart and the native language.
 
 Flutter Web apps intrinsically do not encounter the first problem and only
 encounter a form of the second problem if you need to interface with a
@@ -283,11 +278,6 @@ you can run the builder:
 ```sh
 $ dart run pigeon --input pigeons/messages.dart
 ```
-
-You must run this command once per Pigeon file, specifying a single `--input` each
-time. Pigeon files may only import `package:pigeon/pigeon.dart`, so they cannot
-depend on each other. Pigeon files must also all have their own
-`@ConfigurePigeon(PigeonOptions())` declaration.
 
 ### Use the generated code
 
@@ -309,9 +299,11 @@ generated by Pigeon.
 In Dart, typical use within a `StatefulWidget` might look like this:
 
 ```dart
+late final ExampleHostApi;
+
 @override
 void initState() {
-   final ExampleHostApi _hostApi = ExampleHostApi();
+   _hostApi = ExampleHostApi();
    super.initState();
 }
 
@@ -328,7 +320,7 @@ Future<void> sendMessage(MessageData message) async
 #### Calling Dart code from native
 
 The sample code in this Quickstart defined an example Dart API named `MessageFlutterApi`.
-Define a concrete implementation of this abstract class with your real implementation:
+Define a concrete implementation of this abstract class with your real business logic:
 
 ```dart
 class _MessageFlutterApi implements MessageFlutterApi {
@@ -422,16 +414,6 @@ Host and Flutter APIs now support the ability to provide a unique message channe
 to the api to allow for multiple instances to be created and operate in parallel. 
 
 ## Usage
-
-1) Add pigeon as a `dev_dependency`.
-1) Make a ".dart" file outside of your "lib" directory for defining the
-   communication interface.
-1) Run pigeon on your ".dart" file to generate the required Dart and
-   host-language code: `flutter pub get` then `dart run pigeon`
-   with suitable arguments. [Example](./example/README.md#Configure_your_output).
-1) Add the generated Dart code to `./lib` for compilation.
-1) Implement the host-language code and add it to your build (see below).
-1) Call the generated Dart methods.
 
 ### Rules for defining your communication interface 
 [Example](./example/README.md#HostApi_Example)
