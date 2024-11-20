@@ -1169,57 +1169,59 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         final URLProtectionSpace protectionSpace =
             await challenge.getProtectionSpace();
 
-        final Completer<AuthenticationChallengeResponse> responseCompleter =
-            Completer<AuthenticationChallengeResponse>();
-
         final bool isBasicOrNtlm = protectionSpace.authenticationMethod ==
                 NSUrlAuthenticationMethod.httpBasic ||
             protectionSpace.authenticationMethod ==
                 NSUrlAuthenticationMethod.httpNtlm;
 
-        if (isBasicOrNtlm) {
-          final void Function(HttpAuthRequest)? callback =
-              weakThis.target?._onHttpAuthRequest;
+        final void Function(HttpAuthRequest)? callback =
+            weakThis.target?._onHttpAuthRequest;
+
+        final WebKitProxy? proxy =
+            (weakThis.target?.params as WebKitNavigationDelegateCreationParams?)
+                ?.webKitProxy;
+
+        if (isBasicOrNtlm && callback != null && proxy != null) {
           final String host = protectionSpace.host;
           final String? realm = protectionSpace.realm;
 
-          if (callback != null) {
-            callback(
-              HttpAuthRequest(
-                onProceed: (WebViewCredential credential) {
-                  final AuthenticationChallengeResponse response =
-                      AuthenticationChallengeResponse(
-                    disposition:
-                        UrlSessionAuthChallengeDisposition.useCredential,
-                    credential: URLCredential.withUser(
-                      user: credential.user,
-                      password: credential.password,
-                      persistence: UrlCredentialPersistence.session,
-                    ),
-                  );
-                  responseCompleter.complete(response);
-                },
-                onCancel: () {
-                  final AuthenticationChallengeResponse response =
-                      AuthenticationChallengeResponse(
-                    disposition: UrlSessionAuthChallengeDisposition
-                        .cancelAuthenticationChallenge,
-                  );
-                  responseCompleter.complete(response);
-                },
-                host: host,
-                realm: realm,
-              ),
-            );
-          }
-        } else {
-          return AuthenticationChallengeResponse(
-            disposition:
-                UrlSessionAuthChallengeDisposition.performDefaultHandling,
+          final Completer<AuthenticationChallengeResponse> responseCompleter =
+              Completer<AuthenticationChallengeResponse>();
+
+          callback(
+            HttpAuthRequest(
+              host: host,
+              realm: realm,
+              onProceed: (WebViewCredential credential) {
+                final AuthenticationChallengeResponse response =
+                    proxy.newAuthenticationChallengeResponse(
+                  disposition: UrlSessionAuthChallengeDisposition.useCredential,
+                  credential: URLCredential.withUser(
+                    user: credential.user,
+                    password: credential.password,
+                    persistence: UrlCredentialPersistence.session,
+                  ),
+                );
+                responseCompleter.complete(response);
+              },
+              onCancel: () {
+                final AuthenticationChallengeResponse response =
+                    proxy.newAuthenticationChallengeResponse(
+                  disposition: UrlSessionAuthChallengeDisposition
+                      .cancelAuthenticationChallenge,
+                );
+                responseCompleter.complete(response);
+              },
+            ),
           );
+
+          return responseCompleter.future;
         }
 
-        return responseCompleter.future;
+        return AuthenticationChallengeResponse(
+          disposition:
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+        );
       },
     );
   }

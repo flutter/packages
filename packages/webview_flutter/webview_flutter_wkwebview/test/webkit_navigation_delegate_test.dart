@@ -334,9 +334,19 @@ void main() {
     test('onHttpBasicAuthRequest emits host and realm', () async {
       final WebKitNavigationDelegate iosNavigationDelegate =
           WebKitNavigationDelegate(
-        const WebKitNavigationDelegateCreationParams(
+        WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newAuthenticationChallengeResponse: ({
+              required UrlSessionAuthChallengeDisposition disposition,
+              URLCredential? credential,
+            }) {
+              return AuthenticationChallengeResponse.pigeon_detached(
+                disposition: UrlSessionAuthChallengeDisposition
+                    .cancelAuthenticationChallenge,
+                pigeon_instanceManager: TestInstanceManager(),
+              );
+            },
           ),
         ),
       );
@@ -348,6 +358,7 @@ void main() {
         (HttpAuthRequest request) {
           callbackHost = request.host;
           callbackRealm = request.realm;
+          request.onCancel();
         },
       );
 
@@ -384,51 +395,71 @@ void main() {
       expect(callbackHost, expectedHost);
       expect(callbackRealm, expectedRealm);
     });
-    //
-    // test('onHttpNtlmAuthRequest emits host and realm', () async {
-    //   final WebKitNavigationDelegate iosNavigationDelegate =
-    //       WebKitNavigationDelegate(
-    //     const WebKitNavigationDelegateCreationParams(
-    //       webKitProxy: WebKitProxy(
-    //         newWKNavigationDelegate: CapturingNavigationDelegate.new,
-    //       ),
-    //     ),
-    //   );
-    //
-    //   String? callbackHost;
-    //   String? callbackRealm;
-    //
-    //   await iosNavigationDelegate.setOnHttpAuthRequest(
-    //     (HttpAuthRequest request) {
-    //       callbackHost = request.host;
-    //       callbackRealm = request.realm;
-    //     },
-    //   );
-    //
-    //   const String expectedHost = 'expectedHost';
-    //   const String expectedRealm = 'expectedRealm';
-    //
-    //   await CapturingNavigationDelegate
-    //       .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
-    //     WKNavigationDelegate.pigeon_detached(
-    //       pigeon_instanceManager: TestInstanceManager(),
-    //     ),
-    //     WKWebView.pigeon_detached(
-    //       pigeon_instanceManager: TestInstanceManager(),
-    //     ),
-    //     URLAuthenticationChallenge.pigeon_detached(
-    //       // protectionSpace: URLProtectionSpace.pigeon_detached(
-    //       //   host: expectedHost,
-    //       //   realm: expectedRealm,
-    //       //   authenticationMethod: NSUrlAuthenticationMethod.httpNtlm,
-    //       // ),
-    //       pigeon_instanceManager: TestInstanceManager(),
-    //     ),
-    //   );
-    //
-    //   expect(callbackHost, expectedHost);
-    //   expect(callbackRealm, expectedRealm);
-    // });
+
+    test('onHttpNtlmAuthRequest emits host and realm', () async {
+      final WebKitNavigationDelegate iosNavigationDelegate =
+          WebKitNavigationDelegate(
+        WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newAuthenticationChallengeResponse: ({
+              required UrlSessionAuthChallengeDisposition disposition,
+              URLCredential? credential,
+            }) {
+              return AuthenticationChallengeResponse.pigeon_detached(
+                disposition: UrlSessionAuthChallengeDisposition
+                    .cancelAuthenticationChallenge,
+                pigeon_instanceManager: TestInstanceManager(),
+              );
+            },
+          ),
+        ),
+      );
+
+      String? callbackHost;
+      String? callbackRealm;
+
+      await iosNavigationDelegate.setOnHttpAuthRequest(
+        (HttpAuthRequest request) {
+          callbackHost = request.host;
+          callbackRealm = request.realm;
+          request.onCancel();
+        },
+      );
+
+      const String expectedHost = 'expectedHost';
+      const String expectedRealm = 'expectedRealm';
+
+      final MockURLAuthenticationChallenge mockChallenge =
+          MockURLAuthenticationChallenge();
+      when(mockChallenge.getProtectionSpace()).thenAnswer(
+        (_) {
+          return Future<URLProtectionSpace>.value(
+            URLProtectionSpace.pigeon_detached(
+              port: 0,
+              host: expectedHost,
+              realm: expectedRealm,
+              authenticationMethod: NSUrlAuthenticationMethod.httpNtlm,
+              pigeon_instanceManager: TestInstanceManager(),
+            ),
+          );
+        },
+      );
+
+      await CapturingNavigationDelegate
+          .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        mockChallenge,
+      );
+
+      expect(callbackHost, expectedHost);
+      expect(callbackRealm, expectedRealm);
+    });
   });
 }
 
