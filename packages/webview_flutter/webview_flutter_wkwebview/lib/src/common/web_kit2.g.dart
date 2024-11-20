@@ -1818,7 +1818,6 @@ class NSError extends NSObject {
     required this.code,
     required this.domain,
     required this.userInfo,
-    required this.localizedDescription,
     super.observeValue,
   }) : super.pigeon_detached();
 
@@ -1831,9 +1830,6 @@ class NSError extends NSObject {
   /// The user info dictionary.
   final Map<String, Object?> userInfo;
 
-  /// A string containing the localized description of the error.
-  final String localizedDescription;
-
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -1842,7 +1838,6 @@ class NSError extends NSObject {
       int code,
       String domain,
       Map<String, Object?> userInfo,
-      String localizedDescription,
     )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -1876,21 +1871,16 @@ class NSError extends NSObject {
               (args[3] as Map<Object?, Object?>?)?.cast<String, Object?>();
           assert(arg_userInfo != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSError.pigeon_newInstance was null, expected non-null Map<String, Object?>.');
-          final String? arg_localizedDescription = (args[4] as String?);
-          assert(arg_localizedDescription != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSError.pigeon_newInstance was null, expected non-null String.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_code!, arg_domain!, arg_userInfo!,
-                      arg_localizedDescription!) ??
+              pigeon_newInstance?.call(arg_code!, arg_domain!, arg_userInfo!) ??
                   NSError.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     code: arg_code!,
                     domain: arg_domain!,
                     userInfo: arg_userInfo!,
-                    localizedDescription: arg_localizedDescription!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -1914,7 +1904,6 @@ class NSError extends NSObject {
       code: code,
       domain: domain,
       userInfo: userInfo,
-      localizedDescription: localizedDescription,
       observeValue: observeValue,
     );
   }

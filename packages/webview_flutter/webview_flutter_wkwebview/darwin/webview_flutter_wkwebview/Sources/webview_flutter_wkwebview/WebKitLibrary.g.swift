@@ -2431,8 +2431,6 @@ protocol PigeonApiDelegateNSError {
   func domain(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> String
   /// The user info dictionary.
   func userInfo(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> [String: Any?]
-  /// A string containing the localized description of the error.
-  func localizedDescription(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> String
 }
 
 protocol PigeonApiProtocolNSError {
@@ -2468,12 +2466,11 @@ final class PigeonApiNSError: PigeonApiProtocolNSError  {
     let codeArg = try! pigeonDelegate.code(pigeonApi: self, pigeonInstance: pigeonInstance)
     let domainArg = try! pigeonDelegate.domain(pigeonApi: self, pigeonInstance: pigeonInstance)
     let userInfoArg = try! pigeonDelegate.userInfo(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let localizedDescriptionArg = try! pigeonDelegate.localizedDescription(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSError.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, codeArg, domainArg, userInfoArg, localizedDescriptionArg] as [Any?]) { response in
+    channel.sendMessage([pigeonIdentifierArg, codeArg, domainArg, userInfoArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -2514,10 +2511,6 @@ class ErrorProxyAPIDelegate : PigeonApiDelegateNSError {
 
   func userInfo(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> [String: Any?] {
     return pigeon_instance.userInfo
-  }
-
-  func localizedDescription(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> String {
-    return pigeon_instance.localizedDescription
   }
 
 }
@@ -2563,16 +2556,6 @@ class ErrorProxyApiTests: XCTestCase {
     let value = try? api.pigeonDelegate.userInfo(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.userInfo)
-  }
-
-  func testLocalizedDescription() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSError(registrar)
-
-    let instance = TestError()
-    let value = try? api.pigeonDelegate.localizedDescription(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.localizedDescription)
   }
 
 }

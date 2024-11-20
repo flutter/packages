@@ -447,9 +447,6 @@ abstract class NSError extends NSObject {
 
   /// The user info dictionary.
   late Map<String, Object?> userInfo;
-
-  /// A string containing the localized description of the error.
-  late String localizedDescription;
 }
 
 /// An object that encapsulates a message sent by JavaScript code from a

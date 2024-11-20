@@ -1006,7 +1006,10 @@ class WebKitWebResourceError extends WebResourceError {
     required super.url,
   }) : super(
           errorCode: _nsError.code,
-          description: _nsError.localizedDescription,
+          description:
+              _nsError.userInfo[NSErrorUserInfoKey.NSLocalizedDescription]
+                      as String? ??
+                  '',
           errorType: _toWebResourceErrorType(_nsError.code),
           isForMainFrame: isForMainFrame,
         );
@@ -1151,7 +1154,6 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 // Value from https://developer.apple.com/documentation/webkit/wkerrordomain?language=objc.
                 domain: 'WKErrorDomain',
                 userInfo: const <String, Object?>{},
-                localizedDescription: '',
               ),
               isForMainFrame: true,
               url: null,
@@ -1217,7 +1219,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           );
         }
 
-        return await responseCompleter.future;
+        return responseCompleter.future;
       },
     );
   }
