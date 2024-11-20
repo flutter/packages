@@ -25,8 +25,8 @@
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
                                     viewIdentifier:(int64_t)viewId
                                          arguments:(id _Nullable)args {
-  NSNumber *viewIdFromArgs = args[@"playerId"];
-  FVPVideoPlayer *player = _playersByTextureId[viewIdFromArgs];
+  NSNumber *playerId = args[@"playerId"];
+  FVPVideoPlayer *player = _playersByTextureId[playerId];
   return [[FVPNativeVideoView alloc] initWithFrame:frame
                                     viewIdentifier:viewId
                                          arguments:args
