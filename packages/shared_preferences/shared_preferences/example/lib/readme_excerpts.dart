@@ -4,6 +4,7 @@
 
 // ignore_for_file: public_member_api_docs, unused_local_variable, invalid_use_of_visible_for_testing_member
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences_android/shared_preferences_android.dart';
 
 Future<void> readmeSnippets() async {
   // #docregion Write
@@ -92,3 +93,11 @@ Future<void> readmeTestSnippets() async {
   SharedPreferences.setMockInitialValues(values);
   // #enddocregion Tests
 }
+
+// #docregion Android_Options
+const SharedPreferencesAsyncAndroidOptions options =
+    SharedPreferencesAsyncAndroidOptions(
+        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+        originalSharedPreferencesOptions:
+            OriginalSharedPreferencesOptions(fileName: 'the_name_of_a_file'));
+// #enddocregion Android_Options

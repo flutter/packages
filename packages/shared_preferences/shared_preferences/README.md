@@ -50,9 +50,20 @@ latest data stored on the native platform regardless of what process was used to
 
 ### Android platform storage
 
-The [SharedPreferences] API uses the native [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
-
 The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs can use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) or [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) to store data.
+
+To use the `Android Shared Preferences` backend, use the `SharedPreferencesAsyncAndroidOptions` when using [SharedPreferencesAsync].
+
+<?code-excerpt "readme_excerpts.dart (Android_Options)"?>
+```dart
+const SharedPreferencesAsyncAndroidOptions options =
+    SharedPreferencesAsyncAndroidOptions(
+        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+        originalSharedPreferencesOptions:
+            OriginalSharedPreferencesOptions(fileName: 'the_name_of_a_file'));
+```
+
+The [SharedPreferences] API uses the native [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
 
 ## Examples
 Here are small examples that show you how to use the API.
