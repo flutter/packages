@@ -529,7 +529,6 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<Offset> getScrollPosition() async {
-    final WKWebView webView = _webView;
     if (Platform.isIOS) {
       final List<double> position =
           await _webView.UIWebViewExtensions.scrollView.getContentOffset();

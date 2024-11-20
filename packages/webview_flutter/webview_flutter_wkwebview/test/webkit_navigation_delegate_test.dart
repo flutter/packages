@@ -6,13 +6,14 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
-import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart';
-import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart';
-import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart';
+import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart';
+import 'package:webview_flutter_wkwebview/src/common/webkit_constants.dart';
 import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
+@GenerateMocks(<Type>[URLAuthenticationChallenge, URLRequest])
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -32,8 +33,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -42,7 +43,12 @@ void main() {
       webKitDelegate.setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFinishNavigation!(
-        WKWebViewIOS.detached(),
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
         'https://www.google.com',
       );
 
@@ -53,8 +59,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -64,7 +70,12 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didStartProvisionalNavigation!(
-        WKWebViewIOS.detached(),
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
         'https://www.google.com',
       );
 
@@ -75,8 +86,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -90,9 +101,20 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
-        WKWebViewIOS.detached(),
-        const WKNavigationResponse(
-            response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKNavigationResponse.pigeon_detached(
+          response: HTTPURLResponse.pigeon_detached(
+            statusCode: 401,
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+          forMainFrame: true,
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
       );
 
       expect(callbackError.response?.statusCode, 401);
@@ -102,8 +124,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -117,9 +139,20 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
-        WKWebViewIOS.detached(),
-        const WKNavigationResponse(
-            response: NSHttpUrlResponse(statusCode: 399), forMainFrame: true),
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKNavigationResponse.pigeon_detached(
+          response: HTTPURLResponse.pigeon_detached(
+            statusCode: 399,
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+          forMainFrame: true,
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
       );
 
       expect(callbackError, isNull);
@@ -129,8 +162,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -143,15 +176,21 @@ void main() {
       webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
-        WKWebViewIOS.detached(),
-        const NSError(
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        NSError.pigeon_detached(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
-          userInfo: <String, Object?>{
+          userInfo: const <String, Object?>{
             NSErrorUserInfoKey.NSURLErrorFailingURLStringError:
                 'www.flutter.dev',
             NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
           },
+          localizedDescription: 'description',
         ),
       );
 
@@ -167,8 +206,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -182,15 +221,21 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didFailProvisionalNavigation!(
-        WKWebViewIOS.detached(),
-        const NSError(
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        NSError.pigeon_detached(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
-          userInfo: <String, Object?>{
+          userInfo: const <String, Object?>{
             NSErrorUserInfoKey.NSURLErrorFailingURLStringError:
                 'www.flutter.dev',
             NSErrorUserInfoKey.NSLocalizedDescription: 'my desc',
           },
+          localizedDescription: 'my desc',
         ),
       );
 
@@ -206,8 +251,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -221,7 +266,12 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.webViewWebContentProcessDidTerminate!(
-        WKWebViewIOS.detached(),
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
       );
 
       expect(callbackError.description, '');
@@ -238,8 +288,8 @@ void main() {
       final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: CapturingUIDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
           ),
         ),
       );
@@ -256,28 +306,39 @@ void main() {
       expect(
         CapturingNavigationDelegate
             .lastCreatedDelegate.decidePolicyForNavigationAction!(
-          WKWebViewIOS.detached(),
-          const WKNavigationAction(
-            request: NSUrlRequest(url: 'https://www.google.com'),
-            targetFrame: WKFrameInfo(
-                isMainFrame: false,
-                request: NSUrlRequest(url: 'https://google.com')),
-            navigationType: WKNavigationType.linkActivated,
+          WKNavigationDelegate.pigeon_detached(
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+          WKWebView.pigeon_detached(
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+          WKNavigationAction.pigeon_detached(
+            request: URLRequest.pigeon_detached(
+              pigeon_instanceManager: TestInstanceManager(),
+            ),
+            targetFrame: WKFrameInfo.pigeon_detached(
+              isMainFrame: false,
+              request: URLRequest.pigeon_detached(
+                pigeon_instanceManager: TestInstanceManager(),
+              ),
+            ),
+            navigationType: NavigationType.linkActivated,
+            pigeon_instanceManager: TestInstanceManager(),
           ),
         ),
-        completion(WKNavigationActionPolicy.allow),
+        completion(NavigationActionPolicy.allow),
       );
 
       expect(callbackRequest.url, 'https://www.google.com');
       expect(callbackRequest.isMainFrame, isFalse);
     });
 
-    test('onHttpBasicAuthRequest emits host and realm', () {
+    test('onHttpBasicAuthRequest emits host and realm', () async {
       final WebKitNavigationDelegate iosNavigationDelegate =
           WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
           ),
         ),
       );
@@ -285,37 +346,44 @@ void main() {
       String? callbackHost;
       String? callbackRealm;
 
-      iosNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
-        callbackHost = request.host;
-        callbackRealm = request.realm;
-      });
+      await iosNavigationDelegate.setOnHttpAuthRequest(
+        (HttpAuthRequest request) {
+          callbackHost = request.host;
+          callbackRealm = request.realm;
+        },
+      );
 
       const String expectedHost = 'expectedHost';
       const String expectedRealm = 'expectedRealm';
 
-      CapturingNavigationDelegate
-              .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
-          WKWebViewIOS.detached(),
-          NSUrlAuthenticationChallenge.detached(
-            protectionSpace: NSUrlProtectionSpace.detached(
-              host: expectedHost,
-              realm: expectedRealm,
-              authenticationMethod: NSUrlAuthenticationMethod.httpBasic,
-            ),
-          ),
-          (NSUrlSessionAuthChallengeDisposition disposition,
-              NSUrlCredential? credential) {});
+      await CapturingNavigationDelegate
+          .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        URLAuthenticationChallenge.pigeon_detached(
+          // protectionSpace: URLProtectionSpace.pigeon_detached(
+          //   host: expectedHost,
+          //   realm: expectedRealm,
+          //   authenticationMethod: NSUrlAuthenticationMethod.httpBasic,
+          // ),
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+      );
 
       expect(callbackHost, expectedHost);
       expect(callbackRealm, expectedRealm);
     });
 
-    test('onHttpNtlmAuthRequest emits host and realm', () {
+    test('onHttpNtlmAuthRequest emits host and realm', () async {
       final WebKitNavigationDelegate iosNavigationDelegate =
           WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
           ),
         ),
       );
@@ -323,26 +391,33 @@ void main() {
       String? callbackHost;
       String? callbackRealm;
 
-      iosNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
-        callbackHost = request.host;
-        callbackRealm = request.realm;
-      });
+      await iosNavigationDelegate.setOnHttpAuthRequest(
+        (HttpAuthRequest request) {
+          callbackHost = request.host;
+          callbackRealm = request.realm;
+        },
+      );
 
       const String expectedHost = 'expectedHost';
       const String expectedRealm = 'expectedRealm';
 
-      CapturingNavigationDelegate
-              .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
-          WKWebViewIOS.detached(),
-          NSUrlAuthenticationChallenge.detached(
-            protectionSpace: NSUrlProtectionSpace.detached(
-              host: expectedHost,
-              realm: expectedRealm,
-              authenticationMethod: NSUrlAuthenticationMethod.httpNtlm,
-            ),
-          ),
-          (NSUrlSessionAuthChallengeDisposition disposition,
-              NSUrlCredential? credential) {});
+      await CapturingNavigationDelegate
+          .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
+        WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKWebView.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        URLAuthenticationChallenge.pigeon_detached(
+          // protectionSpace: URLProtectionSpace.pigeon_detached(
+          //   host: expectedHost,
+          //   realm: expectedRealm,
+          //   authenticationMethod: NSUrlAuthenticationMethod.httpNtlm,
+          // ),
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+      );
 
       expect(callbackHost, expectedHost);
       expect(callbackRealm, expectedRealm);
@@ -361,7 +436,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
     super.decidePolicyForNavigationAction,
     super.webViewWebContentProcessDidTerminate,
     super.didReceiveAuthenticationChallenge,
-  }) : super.detached() {
+  }) : super(pigeon_instanceManager: TestInstanceManager()) {
     lastCreatedDelegate = this;
   }
   static CapturingNavigationDelegate lastCreatedDelegate =
@@ -373,12 +448,20 @@ class CapturingUIDelegate extends WKUIDelegate {
   CapturingUIDelegate({
     super.onCreateWebView,
     super.requestMediaCapturePermission,
-    super.runJavaScriptAlertDialog,
-    super.runJavaScriptConfirmDialog,
-    super.runJavaScriptTextInputDialog,
-    super.instanceManager,
-  }) : super.detached() {
+    super.runJavaScriptAlertPanel,
+    super.runJavaScriptConfirmPanel,
+    super.runJavaScriptTextInputPanel,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) : super(
+          pigeon_instanceManager:
+              pigeon_instanceManager ?? TestInstanceManager(),
+        ) {
     lastCreatedDelegate = this;
   }
   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();
+}
+
+// Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.
+class TestInstanceManager extends PigeonInstanceManager {
+  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }
