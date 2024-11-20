@@ -9,11 +9,7 @@
 @interface FVPNativeVideoView : NSObject <FlutterPlatformView>
 /// Initializes a new instance of a native view.
 /// It creates a video view instance and sets the provided AVPlayer instance to it.
-- (instancetype)initWithFrame:(CGRect)frame
-               viewIdentifier:(int64_t)viewId
-                    arguments:(id _Nullable)args
-              binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       player:(AVPlayer *)player;
+- (instancetype)initWithPlayer:(AVPlayer *)player;
 
 /// Returns the native UIView that displays the video content.
 - (UIView *)view;

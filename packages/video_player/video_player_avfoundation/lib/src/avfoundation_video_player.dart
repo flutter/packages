@@ -158,16 +158,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   Widget _buildPlatformView(int playerId, VideoViewType viewType) {
-    // FIXME Use a separate class for creation params.
-    final Map<String, dynamic> creationParams = <String, dynamic>{
-      'playerId': playerId,
-    };
+    final PlatformVideoViewCreationParams creationParams =
+        PlatformVideoViewCreationParams(playerId: playerId);
     return IgnorePointer(
       // IgnorePointer so that GestureDetector can be used above the platform view.
       child: UiKitView(
         viewType: 'plugins.flutter.dev/video_player_ios',
         creationParams: creationParams,
-        creationParamsCodec: const StandardMessageCodec(),
+        creationParamsCodec: AVFoundationVideoPlayerApi.pigeonChannelCodec,
       ),
     );
   }

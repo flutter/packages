@@ -23,8 +23,11 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformVideoViewType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is CreationOptions) {
+    } else if (value is PlatformVideoViewCreationParams) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is CreationOptions) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -38,6 +41,8 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformVideoViewType.values[value];
       case 130:
+        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+      case 131:
         return CreationOptions.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

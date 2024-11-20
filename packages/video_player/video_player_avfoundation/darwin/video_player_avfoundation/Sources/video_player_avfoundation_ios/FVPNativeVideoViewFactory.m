@@ -24,17 +24,13 @@
 
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
                                     viewIdentifier:(int64_t)viewId
-                                         arguments:(id _Nullable)args {
-  NSNumber *playerId = args[@"playerId"];
+                                         arguments:(FVPPlatformVideoViewCreationParams *)args {
+  NSNumber *playerId = @(args.playerId);
   FVPVideoPlayer *player = _playersByTextureId[playerId];
-  return [[FVPNativeVideoView alloc] initWithFrame:frame
-                                    viewIdentifier:viewId
-                                         arguments:args
-                                   binaryMessenger:_messenger
-                                            player:player.player];
+  return [[FVPNativeVideoView alloc] initWithPlayer:player.player];
 }
 
 - (NSObject<FlutterMessageCodec> *)createArgsCodec {
-  return [FlutterStandardMessageCodec sharedInstance];
+  return FVPGetMessagesCodec();
 }
 @end

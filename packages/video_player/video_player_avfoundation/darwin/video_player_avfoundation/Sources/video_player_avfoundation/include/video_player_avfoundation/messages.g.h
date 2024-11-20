@@ -25,7 +25,16 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
 - (instancetype)initWithValue:(FVPPlatformVideoViewType)value;
 @end
 
+@class FVPPlatformVideoViewCreationParams;
 @class FVPCreationOptions;
+
+/// Information passed to the platform view creation.
+@interface FVPPlatformVideoViewCreationParams : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithPlayerId:(NSInteger )playerId;
+@property(nonatomic, assign) NSInteger  playerId;
+@end
 
 @interface FVPCreationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.

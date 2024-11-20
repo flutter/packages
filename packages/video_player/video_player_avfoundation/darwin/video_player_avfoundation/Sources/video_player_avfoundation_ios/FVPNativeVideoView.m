@@ -23,11 +23,7 @@
   FVPPlayerView *_view;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-               viewIdentifier:(int64_t)viewId
-                    arguments:(id _Nullable)args
-              binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       player:(AVPlayer *)player {
+- (instancetype)initWithPlayer:(AVPlayer *)player {
   if (self = [super init]) {
     _view = [[FVPPlayerView alloc] init];
     [_view setPlayer:player];

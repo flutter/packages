@@ -24,6 +24,15 @@ enum PlatformVideoViewType {
   platformView,
 }
 
+/// Information passed to the platform view creation.
+class PlatformVideoViewCreationParams {
+  const PlatformVideoViewCreationParams({
+    required this.playerId,
+  });
+
+  final int playerId;
+}
+
 class CreationOptions {
   CreationOptions({required this.httpHeaders});
   String? asset;
