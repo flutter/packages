@@ -1,3 +1,23 @@
+## 0.3.20+1
+
+* Prevent devices below iOS 15 or macOS 15 from enabling StoreKit2.
+
+## 0.3.20
+
+* Fixes manual invocation of `finishTransaction` causing a fatal crash.
+
+## 0.3.19+1
+
+* Removes unneeded platform availability annotations.
+
+## 0.3.19
+
+* Adds StoreKit2 Transaction expiration date.
+
+## 0.3.18+5
+
+* Updates README to remove contributor-focused documentation.
+
 ## 0.3.18+4
 
 * Adds StoreKit 2 support for restoring purchases.
