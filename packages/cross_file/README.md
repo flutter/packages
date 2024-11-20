@@ -46,7 +46,7 @@ programmatically.
 ## Testing
 
 This package supports both web and native platforms. Unit tests need to be split
-in two separate suites (because native code cannot use `dart:html`, and web code
+in two separate suites (because native code cannot use `package:web`, and web code
 cannot use `dart:io`).
 
 When adding new features, it is likely that tests need to be added for both the
