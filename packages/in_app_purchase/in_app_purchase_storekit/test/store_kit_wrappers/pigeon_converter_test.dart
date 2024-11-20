@@ -114,12 +114,10 @@ void main() {
         description: 'description',
         price: 9.99,
         type: SK2ProductType.consumable,
-        priceLocale: SK2PriceLocale(
-            currencyCode: 'USD',
-            currencySymbol: r'$')
-    );
+        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
 
-    final AppStoreProduct2Details details = AppStoreProduct2Details.fromSK2Product(product);
+    final AppStoreProduct2Details details =
+        AppStoreProduct2Details.fromSK2Product(product);
 
     expect(details.sk2Product, product);
     expect(details.price, product.displayPrice);
