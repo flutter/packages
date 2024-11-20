@@ -167,20 +167,27 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  MiniController.asset(this.dataSource, {this.package, required this.viewType})
-      : dataSourceType = DataSourceType.asset,
+  MiniController.asset(
+    this.dataSource, {
+    this.package,
+    this.viewType = VideoViewType.textureView,
+  })  : dataSourceType = DataSourceType.asset,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource, {required this.viewType})
-      : dataSourceType = DataSourceType.network,
+  MiniController.network(
+    this.dataSource, {
+    this.viewType = VideoViewType.textureView,
+  })  : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
-  MiniController.file(File file, {required this.viewType})
-      : dataSource = Uri.file(file.absolute.path).toString(),
+  MiniController.file(
+    File file, {
+    this.viewType = VideoViewType.textureView,
+  })  : dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -242,8 +249,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         );
     }
 
-    _textureId = (await _platform.create(dataSourceDescription, viewType)) ??
-        kUninitializedTextureId;
+    _textureId =
+        (await _platform.create(dataSourceDescription, viewType: viewType)) ??
+            kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 

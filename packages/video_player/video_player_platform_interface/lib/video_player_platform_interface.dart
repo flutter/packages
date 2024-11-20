@@ -49,7 +49,10 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create(DataSource dataSource, VideoViewType viewType) {
+  Future<int?> create(
+    DataSource dataSource, {
+    VideoViewType viewType = VideoViewType.textureView,
+  }) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
