@@ -192,6 +192,42 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertNotNil(player.playerLayer.superlayer, @"AVPlayerLayer should be added on screen.");
 }
 
+- (void)testPlayerForPlatformViewDoesNotRegisterTexture {
+  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
+      OCMProtocolMock(@protocol(FlutterTextureRegistry));
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"testPlayerTypeForPlatformView"];
+  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
+  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  FVPDisplayLink *mockDisplayLink =
+      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
+                                                      callback:^(){
+                                                      }]);
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
+      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+      displayLinkFactory:stubDisplayLinkFactory
+               registrar:partialRegistrar];
+
+  FlutterError *initalizationError;
+  [videoPlayerPlugin initialize:&initalizationError];
+  XCTAssertNil(initalizationError);
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}
+           viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                        initWithValue:FVPPlatformVideoViewTypePlatformView]];
+  FlutterError *createError;
+  [videoPlayerPlugin createWithOptions:create error:&createError];
+
+  OCMVerify(never(), [mockTextureRegistry registerTexture:[OCMArg any]]);
+}
+
 - (void)testSeekToWhilePausedStartsDisplayLinkTemporarily {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
@@ -801,6 +837,21 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   [self waitForExpectationsWithTimeout:10.0
                                handler:nil];  // No assertions needed. Lack of crash is a success.
 }
+
+#if TARGET_OS_IOS
+- (void)testNativeVideoViewFactoryRegistration {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"testNativeVideoViewFactoryRegistration"];
+  id mockRegistrar = OCMPartialMock(registrar);
+
+  OCMExpect([mockRegistrar
+      registerViewFactory:[OCMArg isKindOfClass:[FVPNativeVideoViewFactory class]]
+                   withId:@"plugins.flutter.dev/video_player_ios"]);
+  [FVPVideoPlayerPlugin registerWithRegistrar:mockRegistrar];
+
+  OCMVerifyAll(mockRegistrar);
+}
+#endif
 
 - (void)testPublishesInRegistration {
   NSString *pluginKey = @"TestRegistration";
