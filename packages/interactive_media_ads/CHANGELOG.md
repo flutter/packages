@@ -1,3 +1,7 @@
+## 0.2.3+2
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.35.1 to 3.36.0.
+
 ## 0.2.3+1
 
 * Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
