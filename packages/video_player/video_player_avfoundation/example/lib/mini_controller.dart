@@ -203,7 +203,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
 
-  // FIXME Document
+  /// The type of view used to display the video.
   final VideoViewType viewType;
 
   Timer? _timer;

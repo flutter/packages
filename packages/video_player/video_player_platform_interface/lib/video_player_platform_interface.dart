@@ -114,9 +114,12 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
 
-// FIXME Add docs
+/// Enum representing the type of video view to be used.
 enum VideoViewType {
+  /// Uses a texture view for rendering video.
   textureView,
+
+  ///  Uses a platform view for rendering video.
   platformView,
 }
 
