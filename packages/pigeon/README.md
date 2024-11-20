@@ -1,8 +1,5 @@
 # Pigeon
 
-// TODO: how to frame this?
-// To get started, see the Quickstart Guide in the [Example README](./example/README.md).
-
 Pigeon is a code generator tool to make communication between Flutter and the
 host platform type-safe, easier, and faster.
 
