@@ -1,6 +1,6 @@
 ## 0.7.4+2
 
-* Fixes to enable compilation to WebAssembly. 
+* Fixes pub.dev detection of WebAssembly support. 
 
 ## 0.7.4+1
 
