@@ -2,9 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FVPNativeVideoViewFactory.h"
-#import "FVPNativeVideoView.h"
-#import "FVPVideoPlayer.h"
+#import "../video_player_avfoundation/include/video_player_avfoundation/FVPVideoPlayer.h"
+
+#import "./include/FVPNativeVideoView.h"
+#import "./include/FVPNativeVideoViewFactory.h"
 
 @implementation FVPNativeVideoViewFactory {
   NSObject<FlutterBinaryMessenger> *_messenger;
