@@ -474,6 +474,66 @@ but reversed.  For more information look at the annotation `@FlutterApi()` which
 denotes APIs that live in Flutter but are invoked from the host platform. 
 [Example](./example/README.md#FlutterApi_Example).
 
+### Add to app usage
+
+Apps which are primarily Flutter from the beginning have slightly different structures
+from apps which are native from the beginning and then later introduce Flutter.
+These differences do not materially change how to use Pigeon, but they do of
+course influence the paths you supply to various commands.
+
+In Flutter-first apps, your structure might look like this:
+
+```
+android/
+  ...
+ios/
+  Runner/
+    Messages.g.swift
+lib/
+  main.dart
+  src/
+    pigeon_messages.g.dart
+pigeon_messages.dart
+pubspec.yaml
+```
+
+This would suggest `PigeonOptions` values like so:
+
+```dart
+PigeonOptions(
+   dartOut: 'lib/src/pigeon_messages.g.dart',
+   kotlinOut: 'android/app/src/main/kotlin/dev/flutter/app_name/Messages.g.kt'
+   swiftOut: 'ios/Runner/Messages.g.swift',
+)
+```
+
+However, in native-first apps, your structure might look like this:
+
+```
+android_app_name/
+  ...
+ios_app_name/
+  Messages.g.swift
+flutter_module/
+  .ios/
+  .android/
+  lib/
+    src/
+      pigeon_messages.dart
+  pigeon_messages.dart
+  pubspec.yaml
+```
+
+Such an add-to-app setup would suggest `PigeonValues` like so:
+
+```dart
+PigeonOptions(
+   dartOut: 'lib/src/pigeon_messages.g.dart',
+   kotlinOut: '../android_app_name/app/src/main/kotlin/dev/flutter/app_name/Messages.g.kt'
+   swiftOut: '../ios_app_name/Messages.g.swift',
+)
+```
+
 ## Feedback
 
 File an issue in [flutter/flutter](https://github.com/flutter/flutter) with 
