@@ -138,6 +138,8 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     CameraUpdateAnimationConfiguration configuration, {
     required int mapId,
   }) {
+    // TODO(jokerttu): Implement animation duration support
+    // https://github.com/flutter/flutter/issues/159265
     return animateCamera(cameraUpdate, mapId: mapId);
   }
 
