@@ -383,6 +383,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
 
     BOOL hasVideoTracks = [asset tracksWithMediaType:AVMediaTypeVideo].count != 0;
+    // In HLS streams, AVAsset may not always provide track information because it is a streaming format.
+    // For audio-only HLS files, track information must be checked using `currentItem.tracks.count`.
     BOOL hasNoTracks = currentItem.tracks.count == 0 && asset.tracks.count == 0;
 
     // The player has not yet initialized when it has no size, unless it is an audio-only track.
