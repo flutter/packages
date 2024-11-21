@@ -146,6 +146,7 @@ import java.util.Locale;
         .setOfferTags(subscriptionOfferDetails.getOfferTags())
         .setOfferToken(subscriptionOfferDetails.getOfferToken())
         .setPricingPhases(fromPricingPhases(subscriptionOfferDetails.getPricingPhases()))
+        .setInstallmentPlanDetails(fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
         .build();
   }
 
@@ -167,6 +168,18 @@ import java.util.Locale;
         .setBillingCycleCount((long) pricingPhase.getBillingCycleCount())
         .setBillingPeriod(pricingPhase.getBillingPeriod())
         .setRecurrenceMode(toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()))
+        .build();
+  }
+
+  static @Nullable Messages.PlatformInstallmentPlanDetails fromInstallmentPlanDetails(
+      @Nullable ProductDetails.InstallmentPlanDetails installmentPlanDetails) {
+    if (installmentPlanDetails == null) {
+      return null;
+    }
+
+    return new Messages.PlatformInstallmentPlanDetails.Builder()
+        .setCommitmentPaymentsCount((long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount())
+        .setSubsequentCommitmentPaymentsCount((long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount())
         .build();
   }
 

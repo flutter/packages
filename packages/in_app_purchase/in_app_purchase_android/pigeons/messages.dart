@@ -252,6 +252,7 @@ class PlatformSubscriptionOfferDetails {
   // internal API, we can always add that indirection later if we need it,
   // so for now this bypasses that unnecessary wrapper.
   final List<PlatformPricingPhase> pricingPhases;
+  final PlatformInstallmentPlanDetails? installmentPlanDetails;
 }
 
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
@@ -278,6 +279,17 @@ class PlatformUserChoiceProduct {
   final String id;
   final String? offerToken;
   final PlatformProductType type;
+}
+
+/// Pigeon version of ProductDetails.InstallmentPlanDetails.
+class PlatformInstallmentPlanDetails {
+  PlatformInstallmentPlanDetails({
+    required this.commitmentPaymentsCount,
+    required this.subsequentCommitmentPaymentsCount,
+  });
+
+  final int commitmentPaymentsCount;
+  final int subsequentCommitmentPaymentsCount;
 }
 
 /// Pigeon version of Java BillingClient.ProductType.
