@@ -837,14 +837,14 @@ public class MethodCallHandlerTest {
     String oldProductId = "oldFoo";
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
-    int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_FULL_PRICE;
+    int replacementMode = BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE;
     queryForProducts(unmodifiableList(asList(productId, oldProductId)));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(oldProductId);
     paramsBuilder.setPurchaseToken(purchaseToken);
-    paramsBuilder.setProrationMode((long) prorationMode);
+    paramsBuilder.setReplacementMode((long) replacementMode);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 

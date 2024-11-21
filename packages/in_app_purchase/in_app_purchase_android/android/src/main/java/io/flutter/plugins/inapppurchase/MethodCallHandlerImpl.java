@@ -51,15 +51,6 @@ import java.util.List;
 
 /** Handles method channel for the plugin. */
 class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, InAppPurchaseApi {
-  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
-  // ReplacementMode enum values.
-  // https://github.com/flutter/flutter/issues/128957.
-  @SuppressWarnings(value = "deprecation")
-  @VisibleForTesting
-  static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
-      com.android.billingclient.api.BillingFlowParams.ProrationMode
-          .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
-
   @VisibleForTesting
   static final int REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
       com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams.ReplacementMode
@@ -290,8 +281,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       }
     }
 
-    if (params.getProrationMode() != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY
-        && params.getReplacementMode()
+    if ( params.getReplacementMode()
             != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
       throw new FlutterError(
           "IN_APP_PURCHASE_CONFLICT_PRORATION_MODE_REPLACEMENT_MODE",
@@ -300,9 +290,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     }
 
     if (params.getOldProduct() == null
-        && (params.getProrationMode()
-                != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY
-            || params.getReplacementMode()
+        && (params.getReplacementMode()
                 != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)) {
       throw new FlutterError(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
@@ -352,11 +340,6 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
         && !params.getOldProduct().isEmpty()
         && params.getPurchaseToken() != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(params.getPurchaseToken());
-      if (params.getProrationMode()
-          != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
-        setReplaceProrationMode(
-            subscriptionUpdateParamsBuilder, params.getProrationMode().intValue());
-      }
       if (params.getReplacementMode()
           != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
         subscriptionUpdateParamsBuilder.setSubscriptionReplacementMode(
@@ -365,16 +348,6 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
     return fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build()));
-  }
-
-  // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode.
-  // https://github.com/flutter/flutter/issues/128957.
-  @SuppressWarnings(value = "deprecation")
-  private void setReplaceProrationMode(
-      BillingFlowParams.SubscriptionUpdateParams.Builder builder, int prorationMode) {
-    // The proration mode value has to match one of the following declared in
-    // https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode
-    builder.setReplaceProrationMode(prorationMode);
   }
 
   @Override
@@ -428,6 +401,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   }
 
   @Override
+  @Deprecated
   public void queryPurchaseHistoryAsync(
       @NonNull PlatformProductType productType,
       @NonNull Result<Messages.PlatformPurchaseHistoryResponse> result) {
