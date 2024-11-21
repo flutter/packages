@@ -15,8 +15,6 @@
 #import "FVPFrameUpdater.h"
 #import "FVPVideoPlayerPlugin_Test.h"
 
-#pragma mark -
-
 /// FVPVideoPlayer is responsible for managing video playback using AVPlayer.
 /// It provides methods to control playback, adjust volume, handle seeking, and
 /// notify the Flutter engine about new video frames.

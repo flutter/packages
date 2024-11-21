@@ -5,8 +5,6 @@
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
 
-#pragma mark -
-
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
 static void *presentationSizeContext = &presentationSizeContext;

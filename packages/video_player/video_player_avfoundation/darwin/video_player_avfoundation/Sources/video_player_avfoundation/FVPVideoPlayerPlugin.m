@@ -3,11 +3,9 @@
 // found in the LICENSE file.
 
 #import "FVPVideoPlayerPlugin.h"
-#import "FVPVideoPlayerPlugin_Test.h"
 
 #import <AVFoundation/AVFoundation.h>
 
-#import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
