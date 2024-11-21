@@ -11,13 +11,15 @@ final AdSense adSense = AdSense();
 
 /// Main class to work with the library
 class AdSense {
-  final String _adClient = '';
-
   /// Getter for adClient passed on initialization
-  String get adClient => _adClient;
+  late String adClientId;
 
   /// Initialization API. Should be called ASAP, ideally in the main method of your app.
-  void initialize(String adClient) {
+  void initialize(
+    String adClient, {
+    @visibleForTesting bool skipJsLoader = false,
+    @visibleForTesting Object? jsLoaderTarget,
+  }) {
     throw UnsupportedError('Only supported on web');
   }
 
