@@ -1,3 +1,6 @@
+## 1.1.15
+* Enhance error handling.
+
 ## 1.1.14
 
 * Relaxes dependency constraint on vector_graphics_codec.
