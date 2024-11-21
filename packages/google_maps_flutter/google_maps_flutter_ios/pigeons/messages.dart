@@ -478,16 +478,14 @@ class PlatformBitmap {
   final Object bitmap;
 }
 
-/// Pigeon equivalent of [DefaultMarker]. See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#defaultMarker(float)
+/// Pigeon equivalent of [DefaultMarker].
 class PlatformBitmapDefaultMarker {
   PlatformBitmapDefaultMarker({this.hue});
 
   final double? hue;
 }
 
-/// Pigeon equivalent of [BytesBitmap]. See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#fromBitmap(android.graphics.Bitmap)
+/// Pigeon equivalent of [BytesBitmap].
 class PlatformBitmapBytes {
   PlatformBitmapBytes({required this.byteData, this.size});
 
@@ -495,8 +493,7 @@ class PlatformBitmapBytes {
   final PlatformSize? size;
 }
 
-/// Pigeon equivalent of [AssetBitmap]. See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+/// Pigeon equivalent of [AssetBitmap].
 class PlatformBitmapAsset {
   PlatformBitmapAsset({required this.name, this.pkg});
 
@@ -504,8 +501,7 @@ class PlatformBitmapAsset {
   final String? pkg;
 }
 
-/// Pigeon equivalent of [AssetImageBitmap]. See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+/// Pigeon equivalent of [AssetImageBitmap].
 class PlatformBitmapAssetImage {
   PlatformBitmapAssetImage(
       {required this.name, required this.scale, this.size});
@@ -514,8 +510,7 @@ class PlatformBitmapAssetImage {
   final PlatformSize? size;
 }
 
-/// Pigeon equivalent of [AssetMapBitmap]. See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+/// Pigeon equivalent of [AssetMapBitmap].
 class PlatformBitmapAssetMap {
   PlatformBitmapAssetMap(
       {required this.assetName,
@@ -530,8 +525,7 @@ class PlatformBitmapAssetMap {
   final double? height;
 }
 
-/// Pigeon equivalent of [BytesMapBitmap]. See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-frombitmap-bitmap-image
+/// Pigeon equivalent of [BytesMapBitmap].
 class PlatformBitmapBytesMap {
   PlatformBitmapBytesMap(
       {required this.byteData,
