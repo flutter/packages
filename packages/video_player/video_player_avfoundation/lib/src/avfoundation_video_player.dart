@@ -153,11 +153,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   Widget buildView(int textureId, VideoViewType viewType) {
     return switch (viewType) {
       VideoViewType.textureView => Texture(textureId: textureId),
-      VideoViewType.platformView => _buildPlatformView(textureId, viewType),
+      VideoViewType.platformView => _buildPlatformView(textureId),
     };
   }
 
-  Widget _buildPlatformView(int playerId, VideoViewType viewType) {
+  Widget _buildPlatformView(int playerId) {
     final PlatformVideoViewCreationParams creationParams =
         PlatformVideoViewCreationParams(playerId: playerId);
     return IgnorePointer(
