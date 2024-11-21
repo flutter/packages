@@ -420,6 +420,15 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     NSLog("Received an updatedDownloads callback, but downloads are not supported.")
   }
 
+  public func supportsStoreKit2WithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
+    if #available(iOS 15.0, macOS 12.0, *) {
+      return true
+    }
+    return false
+  }
+
   // MARK: - Methods exposed for testing
   func getProduct(productID: String) -> SKProduct? {
     return self.productsCache[productID] as? SKProduct
