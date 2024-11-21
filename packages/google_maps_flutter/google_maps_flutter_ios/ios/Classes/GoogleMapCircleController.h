@@ -9,11 +9,8 @@
 
 // Defines circle controllable by Flutter.
 @interface FLTGoogleMapCircleController : NSObject
-- (instancetype)initCircleWithPosition:(CLLocationCoordinate2D)position
-                                radius:(CLLocationDistance)radius
-                              circleId:(NSString *)circleIdentifier
-                               mapView:(GMSMapView *)mapView
-                               options:(NSDictionary *)options;
+- (instancetype)initCircleWithPlatformCircle:(FGMPlatformCircle *)circle
+                                     mapView:(GMSMapView *)mapView;
 - (void)removeCircle;
 @end
 
