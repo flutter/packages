@@ -29,11 +29,14 @@ external AdsByGoogle? get _adsbygoogle;
 @JS('adsbygoogle')
 external set _adsbygoogle(JSAny? value);
 
+/// Whether or not the `window.adsbygoogle` object is defined and not null.
+bool get adsbygooglePresent => _adsbygoogle.isDefinedAndNotNull;
+
 /// Binding to the `adsbygoogle` JS global.
 ///
 /// See: https://support.google.com/adsense/answer/9274516?hl=en&ref_topic=28893&sjid=11495822575537499409-EU
 AdsByGoogle get adsbygoogle {
-  if (_adsbygoogle.isUndefinedOrNull) {
+  if (!adsbygooglePresent) {
     // Initialize _adsbygoole to "something that has a push method".
     _adsbygoogle = JSArray<JSObject>();
   }

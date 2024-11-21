@@ -9,6 +9,7 @@ import 'package:web/web.dart' as web;
 
 import 'ad_unit_configuration.dart';
 import 'ad_unit_widget.dart';
+import 'js_interop/adsbygoogle.dart' show adsbygooglePresent;
 import 'js_interop/package_web_tweaks.dart';
 
 /// Returns a singleton instance of Adsense library public interface
@@ -29,29 +30,44 @@ class AdSense {
   /// Should be called ASAP, ideally in the main method of your app.
   ///
   /// Noops after the first call.
-  void initialize(String adClient) {
+  void initialize(
+    String adClient, {
+    @visibleForTesting bool skipJsLoader = false,
+    @visibleForTesting web.HTMLElement? jsLoaderTarget,
+  }) {
     if (_isInitialized) {
-      web.console.warn('AdSense: sdk was already initialized, skipping'.toJS);
+      web.console.warn(
+          'AdSense: adSense.initialize called multiple times! Skipping.'.toJS);
       return;
     }
     _adClient = adClient;
-    _addMasterScript(_adClient);
+    if (!(skipJsLoader || _sdkAlreadyLoaded())) {
+      _loadJsSdk(_adClient, jsLoaderTarget);
+    } else {
+      web.console.debug('AdSense: SDK already on page, skipping'.toJS);
+    }
     _isInitialized = true;
   }
 
-  /// Returns a configurable [AdUnitWidget]<br>
-  /// `configuration`: see [AdUnitConfiguration]
+  /// Returns an [AdUnitWidget] with the specified [configuration].
   Widget adUnit(AdUnitConfiguration configuration) {
     return AdUnitWidget.fromConfig(configuration);
   }
 
-  void _addMasterScript(String adClient) {
+  bool _sdkAlreadyLoaded() {
+    return adsbygooglePresent ||
+        web.document.querySelector('script[src*=ca-pub-$adClient]') != null;
+  }
+
+  void _loadJsSdk(String adClient, web.HTMLElement? target) {
     final String finalUrl = _url + adClient;
 
-    web.TrustedScriptURL? trustedUrl;
+    final web.HTMLScriptElement script = web.HTMLScriptElement()
+      ..async = true
+      ..crossOrigin = 'anonymous';
+
     if (web.window.nullableTrustedTypes != null) {
-      final String finalUrl = _url + adClient;
-      const String trustedTypePolicyName = 'adsense-dart';
+      final String trustedTypePolicyName = 'adsense-dart-$adClient';
       web.console.debug(
         'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
       );
@@ -60,24 +76,16 @@ class AdSense {
             web.window.trustedTypes.createPolicy(
                 trustedTypePolicyName,
                 web.TrustedTypePolicyOptions(
-                  createScriptURL: ((JSString url) => finalUrl).toJS,
+                  createScriptURL: ((JSString url) => url).toJS,
                 ));
-        trustedUrl = policy.createScriptURLNoArgs(finalUrl);
+        script.trustedSrc = policy.createScriptURLNoArgs(finalUrl);
       } catch (e) {
         throw TrustedTypesException(e.toString());
       }
-    }
-
-    final web.HTMLScriptElement script = web.HTMLScriptElement()
-      ..async = true
-      ..crossOrigin = 'anonymous';
-    if (trustedUrl != null) {
-      script.trustedSrc = trustedUrl;
     } else {
       script.src = finalUrl;
     }
 
-    script.src = finalUrl;
-    web.document.head!.appendChild(script);
+    (target ?? web.document.head)!.appendChild(script);
   }
 }
