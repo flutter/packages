@@ -839,6 +839,8 @@ void runTests() {
       await tester.pumpAndSettle();
     },
     variant: _cameraUpdateTypeVariants,
+    // TODO(jokerttu): Remove skip once the web implementation is available.
+    // https://github.com/flutter/flutter/issues/159265
     skip: kIsWeb,
   );
 }
