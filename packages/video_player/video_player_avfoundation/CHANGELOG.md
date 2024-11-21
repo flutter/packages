@@ -1,3 +1,7 @@
+## 2.6.4
+
+* Extracts `FVPVideoPlayer` and `FVPFrameUpdater` from the `FVPVideoPlayerPlugin.m` file and places them into separate files.
+
 ## 2.6.3
 
 * Fixes VideoPlayerController.initialize() future never resolving with invalid video file.
