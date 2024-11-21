@@ -40,13 +40,13 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   @override
   bool get wantKeepAlive => true;
 
-  static final web.ResizeObserver adSenseResizeObserver = web.ResizeObserver(
+  static final web.ResizeObserver _adSenseResizeObserver = web.ResizeObserver(
       (JSArray<web.ResizeObserverEntry> entries, web.ResizeObserver observer) {
     // only check first one
     final web.Element target = entries.toDart[0].target;
     if (target.isConnected) {
       // First time resized since attached to DOM -> attachment callback from Flutter docs by David
-      onElementAttached(target as web.HTMLElement);
+      _onElementAttached(target as web.HTMLElement);
       observer.disconnect();
     }
   }.toJS);
@@ -61,7 +61,9 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     return SizedBox(
       height: _adSize.height,
       child: HtmlElementView.fromTagName(
-          tagName: 'div', onElementCreated: onElementCreated),
+        tagName: 'div',
+        onElementCreated: _onElementCreated,
+      ),
     );
   }
 
@@ -86,7 +88,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
       ..append(insElement);
 
     // Using Resize observer to detect element attached to DOM
-    adSenseResizeObserver.observe(adUnitDiv);
+    _adSenseResizeObserver.observe(adUnitDiv);
 
     // Using Mutation Observer to detect when adslot is being loaded based on https://support.google.com/adsense/answer/10762946?hl=en
     web.MutationObserver(
@@ -94,9 +96,9 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
       for (final JSObject entry in entries.toDart) {
         final web.HTMLElement target =
             (entry as web.MutationRecord).target as web.HTMLElement;
-        if (isLoaded(target)) {
-          if (isFilled(target)) {
-            updateWidgetSize(Size(
+        if (_isLoaded(target)) {
+          if (_isFilled(target)) {
+            _updateWidgetSize(Size(
               target.offsetWidth
                   .toDouble(), // This is always the width of the platform view!
               target.offsetHeight.toDouble(),
@@ -105,7 +107,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
             // Prevent scrolling issues over empty ad slot
             target.style.pointerEvents = 'none';
             target.style.height = '0px';
-            updateWidgetSize(Size.zero);
+            _updateWidgetSize(Size.zero);
           }
         }
       }
@@ -118,18 +120,18 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
             ));
   }
 
-  static void onElementAttached(web.HTMLElement element) {
+  static void _onElementAttached(web.HTMLElement element) {
     adsbygoogle.requestAd();
   }
 
-  bool isLoaded(web.HTMLElement target) {
+  bool _isLoaded(web.HTMLElement target) {
     final bool isLoaded =
         target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
     debugLog('Ad isLoaded: $isLoaded');
     return isLoaded;
   }
 
-  bool isFilled(web.HTMLElement target) {
+  bool _isFilled(web.HTMLElement target) {
     final String? adStatus =
         target.dataset.getProperty<JSString?>(_adStatusKey)?.toDart;
     debugLog('Ad isFilled? $adStatus');
@@ -139,7 +141,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     return false;
   }
 
-  void updateWidgetSize(Size newSize) {
+  void _updateWidgetSize(Size newSize) {
     debugLog('Resizing AdUnitWidget to $newSize');
     setState(() {
       _adSize = newSize;

@@ -6,14 +6,11 @@ import 'package:flutter/widgets.dart';
 
 import '../google_adsense.dart';
 
-/// Returns a singleton instance of Adsense library public interface
+/// A singleton instance of AdSense library public interface.
 final AdSense adSense = AdSense();
 
-/// Main class to work with the library
+/// AdSense package interface.
 class AdSense {
-  /// Getter for adClient passed on initialization
-  late String adClientId;
-
   /// Initialization API. Should be called ASAP, ideally in the main method of your app.
   void initialize(
     String adClient, {

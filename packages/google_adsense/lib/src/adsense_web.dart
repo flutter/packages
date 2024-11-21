@@ -22,7 +22,7 @@ class AdSense {
   bool _isInitialized = false;
 
   /// The ad client ID used by this client.
-  late String adClientId;
+  late String _adClient;
   static const String _url =
       'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-';
 
@@ -40,9 +40,9 @@ class AdSense {
       debugLog('adSense.initialize called multiple times. Skipping init.');
       return;
     }
-    adClientId = adClient;
+    _adClient = adClient;
     if (!(skipJsLoader || _sdkAlreadyLoaded(testingTarget: jsLoaderTarget))) {
-      _loadJsSdk(adClientId, jsLoaderTarget);
+      _loadJsSdk(_adClient, jsLoaderTarget);
     } else {
       debugLog('SDK already on page. Skipping init.');
     }
@@ -51,13 +51,13 @@ class AdSense {
 
   /// Returns an [AdUnitWidget] with the specified [configuration].
   Widget adUnit(AdUnitConfiguration configuration) {
-    return AdUnitWidget.fromConfig(adClientId, configuration);
+    return AdUnitWidget.fromConfig(_adClient, configuration);
   }
 
   bool _sdkAlreadyLoaded({
     web.HTMLElement? testingTarget,
   }) {
-    final String selector = 'script[src*=ca-pub-$adClientId]';
+    final String selector = 'script[src*=ca-pub-$_adClient]';
     return adsbygooglePresent ||
         web.document.querySelector(selector) != null ||
         testingTarget?.querySelector(selector) != null;
