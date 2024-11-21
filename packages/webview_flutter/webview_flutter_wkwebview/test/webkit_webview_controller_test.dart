@@ -13,22 +13,25 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart';
+import 'package:webview_flutter_wkwebview/src/common/webkit_constants.dart';
 import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'webkit_webview_controller_test.mocks.dart';
 
-@GenerateMocks(<Type>[
-  UIScrollView,
-  UIScrollViewDelegate,
-  URL,
-  WKPreferences,
-  WKScriptMessageHandler,
-  WKUserContentController,
-  WKWebView,
-  WKWebViewConfiguration,
-  WKWebViewUIExtensions,
-  WKWebsiteDataStore,
+@GenerateNiceMocks(<MockSpec<Object>>[
+  MockSpec<UIScrollView>(),
+  MockSpec<UIScrollViewDelegate>(),
+  MockSpec<URL>(),
+  MockSpec<URLRequest>(),
+  MockSpec<WKPreferences>(),
+  MockSpec<WKScriptMessageHandler>(),
+  MockSpec<WKUserContentController>(),
+  MockSpec<WKUserScript>(),
+  MockSpec<WKWebView>(),
+  MockSpec<WKWebViewConfiguration>(),
+  MockSpec<WKWebViewUIExtensions>(),
+  MockSpec<WKWebsiteDataStore>(),
 ])
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +54,7 @@ void main() {
         )? observeValue,
       })? createMockWebView,
       MockWKWebViewConfiguration? mockWebViewConfiguration,
+      MockURLRequest Function({required String url})? createURLRequest,
       PigeonInstanceManager? instanceManager,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
@@ -134,6 +138,20 @@ void main() {
                 CapturingUIScrollViewDelegate(
                   scrollViewDidScroll: scrollViewDidScroll,
                 );
+          },
+          newURLRequest:
+              createURLRequest ?? ({required String url}) => MockURLRequest(),
+          newWKUserScript: ({
+            required String source,
+            required UserScriptInjectionTime injectionTime,
+            required bool isMainFrameOnly,
+          }) {
+            return WKUserScript.pigeon_detached(
+              source: source,
+              injectionTime: injectionTime,
+              isMainFrameOnly: isMainFrameOnly,
+              pigeon_instanceManager: TestInstanceManager(),
+            );
           },
         ),
         instanceManager: instanceManager ?? TestInstanceManager(),
@@ -300,398 +318,415 @@ void main() {
       });
     });
 
-//     test('loadFile', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       await controller.loadFile('/path/to/file.html');
-//       verify(mockWebView.loadFileUrl(
-//         '/path/to/file.html',
-//         readAccessUrl: '/path/to',
-//       ));
-//     });
-//
-//     test('loadFlutterAsset', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       await controller.loadFlutterAsset('test_assets/index.html');
-//       verify(mockWebView.loadFlutterAsset('test_assets/index.html'));
-//     });
-//
-//     test('loadHtmlString', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       const String htmlString = '<html><body>Test data.</body></html>';
-//       await controller.loadHtmlString(htmlString, baseUrl: 'baseUrl');
-//
-//       verify(mockWebView.loadHtmlString(
-//         '<html><body>Test data.</body></html>',
-//         baseUrl: 'baseUrl',
-//       ));
-//     });
-//
-//     group('loadRequest', () {
-//       test('Throws ArgumentError for empty scheme', () async {
-//         final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//         final WebKitWebViewController controller = createControllerWithMocks(
-//           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//         );
-//
-//         expect(
-//           () async => controller.loadRequest(
-//             LoadRequestParams(uri: Uri.parse('www.google.com')),
-//           ),
-//           throwsA(isA<ArgumentError>()),
-//         );
-//       });
-//
-//       test('GET without headers', () async {
-//         final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//         final WebKitWebViewController controller = createControllerWithMocks(
-//           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//         );
-//
-//         await controller.loadRequest(
-//           LoadRequestParams(uri: Uri.parse('https://www.google.com')),
-//         );
-//
-//         final NSUrlRequest request = verify(mockWebView.loadRequest(captureAny))
-//             .captured
-//             .single as NSUrlRequest;
-//         expect(request.url, 'https://www.google.com');
-//         expect(request.allHttpHeaderFields, <String, String>{});
-//         expect(request.httpMethod, 'get');
-//       });
-//
-//       test('GET with headers', () async {
-//         final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//         final WebKitWebViewController controller = createControllerWithMocks(
-//           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//         );
-//
-//         await controller.loadRequest(
-//           LoadRequestParams(
-//             uri: Uri.parse('https://www.google.com'),
-//             headers: const <String, String>{'a': 'header'},
-//           ),
-//         );
-//
-//         final NSUrlRequest request = verify(mockWebView.loadRequest(captureAny))
-//             .captured
-//             .single as NSUrlRequest;
-//         expect(request.url, 'https://www.google.com');
-//         expect(request.allHttpHeaderFields, <String, String>{'a': 'header'});
-//         expect(request.httpMethod, 'get');
-//       });
-//
-//       test('POST without body', () async {
-//         final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//         final WebKitWebViewController controller = createControllerWithMocks(
-//           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//         );
-//
-//         await controller.loadRequest(LoadRequestParams(
-//           uri: Uri.parse('https://www.google.com'),
-//           method: LoadRequestMethod.post,
-//         ));
-//
-//         final NSUrlRequest request = verify(mockWebView.loadRequest(captureAny))
-//             .captured
-//             .single as NSUrlRequest;
-//         expect(request.url, 'https://www.google.com');
-//         expect(request.httpMethod, 'post');
-//       });
-//
-//       test('POST with body', () async {
-//         final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//         final WebKitWebViewController controller = createControllerWithMocks(
-//           createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//         );
-//
-//         await controller.loadRequest(LoadRequestParams(
-//           uri: Uri.parse('https://www.google.com'),
-//           method: LoadRequestMethod.post,
-//           body: Uint8List.fromList('Test Body'.codeUnits),
-//         ));
-//
-//         final NSUrlRequest request = verify(mockWebView.loadRequest(captureAny))
-//             .captured
-//             .single as NSUrlRequest;
-//         expect(request.url, 'https://www.google.com');
-//         expect(request.httpMethod, 'post');
-//         expect(
-//           request.httpBody,
-//           Uint8List.fromList('Test Body'.codeUnits),
-//         );
-//       });
-//     });
-//
-//     test('canGoBack', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       when(mockWebView.canGoBack()).thenAnswer(
-//         (_) => Future<bool>.value(false),
-//       );
-//       expect(controller.canGoBack(), completion(false));
-//     });
-//
-//     test('canGoForward', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       when(mockWebView.canGoForward()).thenAnswer(
-//         (_) => Future<bool>.value(true),
-//       );
-//       expect(controller.canGoForward(), completion(true));
-//     });
-//
-//     test('goBack', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       await controller.goBack();
-//       verify(mockWebView.goBack());
-//     });
-//
-//     test('goForward', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       await controller.goForward();
-//       verify(mockWebView.goForward());
-//     });
-//
-//     test('reload', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       await controller.reload();
-//       verify(mockWebView.reload());
-//     });
-//
-//     test('setAllowsBackForwardNavigationGestures', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       await controller.setAllowsBackForwardNavigationGestures(true);
-//       verify(mockWebView.setAllowsBackForwardNavigationGestures(true));
-//     });
-//
-//     test('runJavaScriptReturningResult', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       final Object result = Object();
-//       when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
-//         (_) => Future<Object>.value(result),
-//       );
-//       expect(
-//         controller.runJavaScriptReturningResult('runJavaScript'),
-//         completion(result),
-//       );
-//     });
-//
-//     test('runJavaScriptReturningResult throws error on null return value', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
-//         (_) => Future<String?>.value(),
-//       );
-//       expect(
-//         () => controller.runJavaScriptReturningResult('runJavaScript'),
-//         throwsArgumentError,
-//       );
-//     });
-//
-//     test('runJavaScript', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
-//         (_) => Future<String>.value('returnString'),
-//       );
-//       expect(
-//         controller.runJavaScript('runJavaScript'),
-//         completes,
-//       );
-//     });
-//
-//     test('runJavaScript ignores exception with unsupported javaScript type',
-//         () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       when(mockWebView.evaluateJavaScript('runJavaScript'))
-//           .thenThrow(PlatformException(
-//         code: '',
-//         details: const NSError(
-//           code: WKErrorCode.javaScriptResultTypeIsUnsupported,
-//           domain: '',
-//         ),
-//       ));
-//       expect(
-//         controller.runJavaScript('runJavaScript'),
-//         completes,
-//       );
-//     });
-//
-//     test('getTitle', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       when(mockWebView.getTitle())
-//           .thenAnswer((_) => Future<String>.value('Web Title'));
-//       expect(controller.getTitle(), completion('Web Title'));
-//     });
-//
-//     test('currentUrl', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       when(mockWebView.getUrl())
-//           .thenAnswer((_) => Future<String>.value('myUrl.com'));
-//       expect(controller.currentUrl(), completion('myUrl.com'));
-//     });
-//
-//     test('scrollTo', () async {
-//       final MockUIScrollView mockScrollView = MockUIScrollView();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         mockScrollView: mockScrollView,
-//       );
-//
-//       await controller.scrollTo(2, 4);
-//       verify(mockScrollView.setContentOffset(const Point<double>(2.0, 4.0)));
-//     });
-//
-//     test('scrollBy', () async {
-//       final MockUIScrollView mockScrollView = MockUIScrollView();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         mockScrollView: mockScrollView,
-//       );
-//
-//       await controller.scrollBy(2, 4);
-//       verify(mockScrollView.scrollBy(const Point<double>(2.0, 4.0)));
-//     });
-//
-//     test('getScrollPosition', () {
-//       final MockUIScrollView mockScrollView = MockUIScrollView();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         mockScrollView: mockScrollView,
-//       );
-//
-//       when(mockScrollView.getContentOffset()).thenAnswer(
-//         (_) => Future<Point<double>>.value(const Point<double>(8.0, 16.0)),
-//       );
-//       expect(
-//         controller.getScrollPosition(),
-//         completion(const Offset(8.0, 16.0)),
-//       );
-//     });
-//
-//     test('disable zoom', () async {
-//       final MockWKUserContentController mockUserContentController =
-//           MockWKUserContentController();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         mockUserContentController: mockUserContentController,
-//       );
-//
-//       await controller.enableZoom(false);
-//
-//       final WKUserScript zoomScript =
-//           verify(mockUserContentController.addUserScript(captureAny))
-//               .captured
-//               .first as WKUserScript;
-//       expect(zoomScript.isMainFrameOnly, isTrue);
-//       expect(zoomScript.injectionTime, WKUserScriptInjectionTime.atDocumentEnd);
-//       expect(
-//         zoomScript.source,
-//         "var meta = document.createElement('meta');\n"
-//         "meta.name = 'viewport';\n"
-//         "meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, "
-//         "user-scalable=no';\n"
-//         "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
-//       );
-//     });
-//
-//     test('setBackgroundColor', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//       final MockUIScrollView mockScrollView = MockUIScrollView();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//         mockScrollView: mockScrollView,
-//       );
-//
-//       await controller.setBackgroundColor(Colors.red);
-//
-//       // UIScrollView.setBackgroundColor must be called last.
-//       verifyInOrder(<Object>[
-//         mockWebView.setOpaque(false),
-//         mockWebView.setBackgroundColor(Colors.transparent),
-//         mockScrollView.setBackgroundColor(Colors.red),
-//       ]);
-//     });
+    test('loadFile', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.loadFile('/path/to/file.html');
+      verify(mockWebView.loadFileUrl('/path/to/file.html', '/path/to'));
+    });
+
+    test('loadFlutterAsset', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.loadFlutterAsset('test_assets/index.html');
+      verify(mockWebView.loadFlutterAsset('test_assets/index.html'));
+    });
+
+    test('loadHtmlString', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      const String htmlString = '<html lang=""><body>Test data.</body></html>';
+      await controller.loadHtmlString(htmlString, baseUrl: 'baseUrl');
+
+      verify(mockWebView.loadHtmlString(
+        '<html lang=""><body>Test data.</body></html>',
+        'baseUrl',
+      ));
+    });
+
+    group('loadRequest', () {
+      test('Throws ArgumentError for empty scheme', () async {
+        final MockWKWebView mockWebView = MockWKWebView();
+        when(mockWebView.UIWebViewExtensions).thenReturn(
+          MockWKWebViewUIExtensions(),
+        );
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        expect(
+          () async => controller.loadRequest(
+            LoadRequestParams(uri: Uri.parse('www.google.com')),
+          ),
+          throwsA(isA<ArgumentError>()),
+        );
+      });
+
+      test('GET without headers', () async {
+        final MockWKWebView mockWebView = MockWKWebView();
+        final MockURLRequest mockRequest = MockURLRequest();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+            createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+            createURLRequest: ({required String url}) {
+              expect(url, 'https://www.google.com');
+              return mockRequest;
+            });
+
+        await controller.loadRequest(
+          LoadRequestParams(uri: Uri.parse('https://www.google.com')),
+        );
+
+        final URLRequest request =
+            verify(mockWebView.load(captureAny)).captured.single as URLRequest;
+        verify(request.setAllHttpHeaderFields(<String, String>{}));
+        verify(request.setHttpMethod('get'));
+      });
+
+      test('GET with headers', () async {
+        final MockWKWebView mockWebView = MockWKWebView();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        await controller.loadRequest(
+          LoadRequestParams(
+            uri: Uri.parse('https://www.google.com'),
+            headers: const <String, String>{'a': 'header'},
+          ),
+        );
+
+        final URLRequest request =
+            verify(mockWebView.load(captureAny)).captured.single as URLRequest;
+        verify(request.setAllHttpHeaderFields(<String, String>{'a': 'header'}));
+        verify(request.setHttpMethod('get'));
+      });
+
+      test('POST without body', () async {
+        final MockWKWebView mockWebView = MockWKWebView();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        await controller.loadRequest(LoadRequestParams(
+          uri: Uri.parse('https://www.google.com'),
+          method: LoadRequestMethod.post,
+        ));
+
+        final URLRequest request =
+            verify(mockWebView.load(captureAny)).captured.single as URLRequest;
+        verify(request.setHttpMethod('post'));
+      });
+
+      test('POST with body', () async {
+        final MockWKWebView mockWebView = MockWKWebView();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        await controller.loadRequest(LoadRequestParams(
+          uri: Uri.parse('https://www.google.com'),
+          method: LoadRequestMethod.post,
+          body: Uint8List.fromList('Test Body'.codeUnits),
+        ));
+
+        final URLRequest request =
+            verify(mockWebView.load(captureAny)).captured.single as URLRequest;
+        verify(request.setHttpMethod('post'));
+        verify(request.setHttpBody(Uint8List.fromList('Test Body'.codeUnits)));
+      });
+    });
+
+    test('canGoBack', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      when(mockWebView.canGoBack()).thenAnswer(
+        (_) => Future<bool>.value(false),
+      );
+      expect(controller.canGoBack(), completion(false));
+    });
+
+    test('canGoForward', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      when(mockWebView.canGoForward()).thenAnswer(
+        (_) => Future<bool>.value(true),
+      );
+      expect(controller.canGoForward(), completion(true));
+    });
+
+    test('goBack', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.goBack();
+      verify(mockWebView.goBack());
+    });
+
+    test('goForward', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.goForward();
+      verify(mockWebView.goForward());
+    });
+
+    test('reload', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.reload();
+      verify(mockWebView.reload());
+    });
+
+    test('setAllowsBackForwardNavigationGestures', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setAllowsBackForwardNavigationGestures(true);
+      verify(mockWebView.setAllowsBackForwardNavigationGestures(true));
+    });
+
+    test('runJavaScriptReturningResult', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      final Object result = Object();
+      when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
+        (_) => Future<Object>.value(result),
+      );
+      expect(
+        controller.runJavaScriptReturningResult('runJavaScript'),
+        completion(result),
+      );
+    });
+
+    test('runJavaScriptReturningResult throws error on null return value', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
+        (_) => Future<String?>.value(),
+      );
+      expect(
+        () => controller.runJavaScriptReturningResult('runJavaScript'),
+        throwsArgumentError,
+      );
+    });
+
+    test('runJavaScript', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      when(mockWebView.evaluateJavaScript('runJavaScript')).thenAnswer(
+        (_) => Future<String>.value('returnString'),
+      );
+      expect(
+        controller.runJavaScript('runJavaScript'),
+        completes,
+      );
+    });
+
+    test('runJavaScript ignores exception with unsupported javaScript type',
+        () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      when(mockWebView.evaluateJavaScript('runJavaScript'))
+          .thenThrow(PlatformException(
+        code: '',
+        details: NSError.pigeon_detached(
+          code: WKErrorCode.javaScriptResultTypeIsUnsupported,
+          domain: '',
+          userInfo: const <String, Object?>{},
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+      ));
+      expect(
+        controller.runJavaScript('runJavaScript'),
+        completes,
+      );
+    });
+
+    test('getTitle', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      when(mockWebView.getTitle())
+          .thenAnswer((_) => Future<String>.value('Web Title'));
+      expect(controller.getTitle(), completion('Web Title'));
+    });
+
+    test('currentUrl', () {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      when(mockWebView.getUrl())
+          .thenAnswer((_) => Future<String>.value('myUrl.com'));
+      expect(controller.currentUrl(), completion('myUrl.com'));
+    });
+
+    test('scrollTo', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.scrollTo(2, 4);
+      verify(mockScrollView.setContentOffset(2.0, 4.0));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('scrollBy', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.scrollBy(2, 4);
+      verify(mockScrollView.scrollBy(2.0, 4.0));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('getScrollPosition', () {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      when(mockScrollView.getContentOffset()).thenAnswer(
+        (_) => Future<List<double>>.value(<double>[8.0, 16.0]),
+      );
+      expect(
+        controller.getScrollPosition(),
+        completion(const Offset(8.0, 16.0)),
+      );
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('disable zoom', () async {
+      final MockWKUserContentController mockUserContentController =
+          MockWKUserContentController();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.enableZoom(false);
+
+      final WKUserScript zoomScript =
+          verify(mockUserContentController.addUserScript(captureAny))
+              .captured
+              .first as WKUserScript;
+      expect(zoomScript.isMainFrameOnly, isTrue);
+      expect(zoomScript.injectionTime, UserScriptInjectionTime.atDocumentEnd);
+      expect(
+        zoomScript.source,
+        "var meta = document.createElement('meta');\n"
+        "meta.name = 'viewport';\n"
+        "meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, "
+        "user-scalable=no';\n"
+        "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
+      );
+    });
+
+    test('setBackgroundColor', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+      //when(mockWebView)
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.setBackgroundColor(Colors.red);
+
+      final MockWKWebViewUIExtensions extensions =
+          mockWebView.UIWebViewExtensions as MockWKWebViewUIExtensions;
+
+      // UIScrollView.setBackgroundColor must be called last.
+      verifyInOrder(<Object>[
+        extensions.setOpaque(false),
+        extensions.setBackgroundColor(
+          Colors.transparent.value,
+        ),
+        mockScrollView.setBackgroundColor(Colors.red.value),
+      ]);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
 //
 //     test('userAgent', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       final WebKitWebViewController controller = createControllerWithMocks(
 //         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -936,7 +971,7 @@ void main() {
 //     });
 //
 //     test('getUserAgent', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       final WebKitWebViewController controller = createControllerWithMocks(
 //         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -951,7 +986,7 @@ void main() {
 //     });
 //
 //     test('setPlatformNavigationDelegate', () {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       final WebKitWebViewController controller = createControllerWithMocks(
 //         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
@@ -977,7 +1012,7 @@ void main() {
 //     });
 //
 //     test('setPlatformNavigationDelegate onProgress', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       late final void Function(
 //         String keyPath,
@@ -1043,7 +1078,7 @@ void main() {
 //       // CapturingUIDelegate.lastCreatedDelegate.
 //       createControllerWithMocks();
 //
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //       const NSUrlRequest request = NSUrlRequest(url: 'https://www.google.com');
 //
 //       CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
@@ -1064,7 +1099,7 @@ void main() {
 //     test(
 //         'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegate',
 //         () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       late final void Function(
 //         String keyPath,
@@ -1116,7 +1151,7 @@ void main() {
 //     });
 //
 //     test('setPlatformNavigationDelegate onUrlChange', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       late final void Function(
 //         String keyPath,
@@ -1180,7 +1215,7 @@ void main() {
 //     });
 //
 //     test('setPlatformNavigationDelegate onUrlChange to null NSUrl', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       late final void Function(
 //         String keyPath,
@@ -1233,8 +1268,8 @@ void main() {
 //       final InstanceManager instanceManager = InstanceManager(
 //         onWeakReferenceRemoved: (_) {},
 //       );
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
-//       when(mockWebView.copy()).thenReturn(MockWKWebViewIOS());
+//       final MockWKWebView mockWebView = MockWKWebView();
+//       when(mockWebView.copy()).thenReturn(MockWKWebView());
 //       instanceManager.addHostCreatedInstance(mockWebView, 0);
 //
 //       final WebKitWebViewController controller = createControllerWithMocks(
@@ -1363,7 +1398,7 @@ void main() {
 //     });
 //
 //     test('inspectable', () async {
-//       final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+//       final MockWKWebView mockWebView = MockWKWebView();
 //
 //       final WebKitWebViewController controller = createControllerWithMocks(
 //         createMockWebView: (_, {dynamic observeValue}) => mockWebView,

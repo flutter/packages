@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
@@ -370,7 +371,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     }
 
     return _webView.load(
-      URLRequest(url: params.uri.toString())
+      _webKitParams.webKitProxy.newURLRequest(url: params.uri.toString())
         ..setAllHttpHeaderFields(params.headers)
         ..setHttpMethod(params.method.name)
         ..setHttpBody(params.body),
@@ -503,7 +504,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> scrollTo(int x, int y) {
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       return _webView.UIWebViewExtensions.scrollView.setContentOffset(
         x.toDouble(),
         y.toDouble(),
@@ -516,7 +517,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> scrollBy(int x, int y) {
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       return _webView.UIWebViewExtensions.scrollView.scrollBy(
         x.toDouble(),
         y.toDouble(),
@@ -529,7 +530,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<Offset> getScrollPosition() async {
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       final List<double> position =
           await _webView.UIWebViewExtensions.scrollView.getContentOffset();
       return Offset(position[0], position[1]);
@@ -546,15 +547,14 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setBackgroundColor(Color color) {
-    final WKWebView webView = _webView;
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       return Future.wait(<Future<void>>[
         _webView.UIWebViewExtensions.setOpaque(false),
         _webView.UIWebViewExtensions.setBackgroundColor(
           Colors.transparent.value,
         ),
         // This method must be called last.
-        webView.UIWebViewExtensions.scrollView.setBackgroundColor(color.value),
+        _webView.UIWebViewExtensions.scrollView.setBackgroundColor(color.value),
       ]);
     } else {
       // TODO(stuartmorgan): Implement background color support.
@@ -787,7 +787,7 @@ window.addEventListener("error", function(e) {
   Future<void> setOnScrollPositionChange(
       void Function(ScrollPositionChange scrollPositionChange)?
           onScrollPositionChange) async {
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       _onScrollPositionChangeCallback = onScrollPositionChange;
 
       if (onScrollPositionChange != null) {
