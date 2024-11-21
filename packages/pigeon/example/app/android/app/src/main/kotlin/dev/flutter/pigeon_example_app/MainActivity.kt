@@ -8,7 +8,6 @@ import ExampleHostApi
 import FlutterError
 import MessageData
 import MessageFlutterApi
-import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -37,22 +36,21 @@ private class PigeonApiImplementation : ExampleHostApi {
 // #enddocregion kotlin-class
 
 // #docregion kotlin-class-flutter
-private class PigeonFlutterApi {
-
+private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
   var flutterApi: MessageFlutterApi? = null
 
-  constructor(binding: FlutterPlugin.FlutterPluginBinding) {
-    flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
+  init {
+    flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
   }
 }
 // #enddocregion kotlin-class-flutter
 
 class MainActivity : FlutterActivity() {
-  override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+  override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
     super.configureFlutterEngine(flutterEngine)
 
     val api = PigeonApiImplementation()
