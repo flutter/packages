@@ -40,12 +40,7 @@
   self.polygon.zIndex = zIndex;
 }
 - (void)setPoints:(NSArray<CLLocation *> *)points {
-  GMSMutablePath *path = [GMSMutablePath path];
-
-  for (CLLocation *location in points) {
-    [path addCoordinate:location.coordinate];
-  }
-  self.polygon.path = path;
+  self.polygon.path = FGMGetPathFromPoints(points);
 }
 - (void)setHoles:(NSArray<NSArray<CLLocation *> *> *)rawHoles {
   NSMutableArray<GMSMutablePath *> *holes = [[NSMutableArray<GMSMutablePath *> alloc] init];
@@ -71,47 +66,16 @@
   self.polygon.strokeWidth = width;
 }
 
-- (void)interpretPolygonOptions:(NSDictionary *)data
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
-  if (consumeTapEvents) {
-    [self setConsumeTapEvents:[consumeTapEvents boolValue]];
-  }
-
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
-    [self setZIndex:[zIndex intValue]];
-  }
-
-  NSArray *points = FGMGetValueOrNilFromDict(data, @"points");
-  if (points) {
-    [self setPoints:[FLTGoogleMapJSONConversions pointsFromLatLongs:points]];
-  }
-
-  NSArray *holes = FGMGetValueOrNilFromDict(data, @"holes");
-  if (holes) {
-    [self setHoles:[FLTGoogleMapJSONConversions holesFromPointsArray:holes]];
-  }
-
-  NSNumber *fillColor = FGMGetValueOrNilFromDict(data, @"fillColor");
-  if (fillColor) {
-    [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:fillColor]];
-  }
-
-  NSNumber *strokeColor = FGMGetValueOrNilFromDict(data, @"strokeColor");
-  if (strokeColor) {
-    [self setStrokeColor:[FLTGoogleMapJSONConversions colorFromRGBA:strokeColor]];
-  }
-
-  NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"strokeWidth");
-  if (strokeWidth) {
-    [self setStrokeWidth:[strokeWidth intValue]];
-  }
+- (void)updateFromPlatformPolygon:(FGMPlatformPolygon *)polygon
+                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  [self setConsumeTapEvents:polygon.consumesTapEvents];
+  [self setVisible:polygon.visible];
+  [self setZIndex:(int)polygon.zIndex];
+  [self setPoints:FGMGetPointsForPigeonLatLngs(polygon.points)];
+  [self setHoles:FGMGetHolesForPigeonLatLngArrays(polygon.holes)];
+  [self setFillColor:FGMGetColorForRGBA(polygon.fillColor)];
+  [self setStrokeColor:FGMGetColorForRGBA(polygon.strokeColor)];
+  [self setStrokeWidth:polygon.strokeWidth];
 }
 
 @end
@@ -142,22 +106,22 @@
 
 - (void)addPolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToAdd {
   for (FGMPlatformPolygon *polygon in polygonsToAdd) {
-    GMSMutablePath *path = [FLTPolygonsController getPath:polygon.json];
-    NSString *identifier = polygon.json[@"polygonId"];
+    GMSMutablePath *path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polygon.points));
+    NSString *identifier = polygon.polygonId;
     FLTGoogleMapPolygonController *controller =
         [[FLTGoogleMapPolygonController alloc] initWithPath:path
                                                  identifier:identifier
                                                     mapView:self.mapView];
-    [controller interpretPolygonOptions:polygon.json registrar:self.registrar];
+    [controller updateFromPlatformPolygon:polygon registrar:self.registrar];
     self.polygonIdentifierToController[identifier] = controller;
   }
 }
 
 - (void)changePolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToChange {
   for (FGMPlatformPolygon *polygon in polygonsToChange) {
-    NSString *identifier = polygon.json[@"polygonId"];
+    NSString *identifier = polygon.polygonId;
     FLTGoogleMapPolygonController *controller = self.polygonIdentifierToController[identifier];
-    [controller interpretPolygonOptions:polygon.json registrar:self.registrar];
+    [controller updateFromPlatformPolygon:polygon registrar:self.registrar];
   }
 }
 
@@ -190,16 +154,6 @@
     return false;
   }
   return self.polygonIdentifierToController[identifier] != nil;
-}
-
-+ (GMSMutablePath *)getPath:(NSDictionary *)polygon {
-  NSArray *pointArray = polygon[@"points"];
-  NSArray<CLLocation *> *points = [FLTGoogleMapJSONConversions pointsFromLatLongs:pointArray];
-  GMSMutablePath *path = [GMSMutablePath path];
-  for (CLLocation *location in points) {
-    [path addCoordinate:location.coordinate];
-  }
-  return path;
 }
 
 @end

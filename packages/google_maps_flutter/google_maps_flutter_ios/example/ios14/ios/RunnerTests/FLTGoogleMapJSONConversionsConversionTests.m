@@ -72,8 +72,11 @@
 }
 
 - (void)testPointsFromLatLongs {
-  NSArray<NSArray *> *latlongs = @[ @[ @1, @2 ], @[ @(3), @(4) ] ];
-  NSArray<CLLocation *> *locations = [FLTGoogleMapJSONConversions pointsFromLatLongs:latlongs];
+  NSArray<FGMPlatformLatLng *> *latlongs = @[
+    [FGMPlatformLatLng makeWithLatitude:1 longitude:2], [FGMPlatformLatLng makeWithLatitude:3
+                                                                                  longitude:4]
+  ];
+  NSArray<CLLocation *> *locations = FGMGetPointsForPigeonLatLngs(latlongs);
   XCTAssertEqual(locations.count, 2);
   XCTAssertEqual(locations[0].coordinate.latitude, 1);
   XCTAssertEqual(locations[0].coordinate.longitude, 2);
@@ -82,10 +85,17 @@
 }
 
 - (void)testHolesFromPointsArray {
-  NSArray<NSArray *> *pointsArray =
-      @[ @[ @[ @1, @2 ], @[ @(3), @(4) ] ], @[ @[ @(5), @(6) ], @[ @(7), @(8) ] ] ];
-  NSArray<NSArray<CLLocation *> *> *holes =
-      [FLTGoogleMapJSONConversions holesFromPointsArray:pointsArray];
+  NSArray<NSArray<FGMPlatformLatLng *> *> *pointsArray = @[
+    @[
+      [FGMPlatformLatLng makeWithLatitude:1 longitude:2], [FGMPlatformLatLng makeWithLatitude:3
+                                                                                    longitude:4]
+    ],
+    @[
+      [FGMPlatformLatLng makeWithLatitude:5 longitude:6], [FGMPlatformLatLng makeWithLatitude:7
+                                                                                    longitude:8]
+    ]
+  ];
+  NSArray<NSArray<CLLocation *> *> *holes = FGMGetHolesForPigeonLatLngArrays(pointsArray);
   XCTAssertEqual(holes.count, 2);
   XCTAssertEqual(holes[0][0].coordinate.latitude, 1);
   XCTAssertEqual(holes[0][0].coordinate.longitude, 2);
@@ -134,23 +144,6 @@
                              DBL_EPSILON);
 }
 
-- (void)testCameraPostionFromDictionary {
-  XCTAssertNil([FLTGoogleMapJSONConversions cameraPostionFromDictionary:nil]);
-
-  NSDictionary *channelValue =
-      @{@"target" : @[ @1, @2 ], @"zoom" : @3, @"bearing" : @4, @"tilt" : @5};
-
-  GMSCameraPosition *cameraPosition =
-      [FLTGoogleMapJSONConversions cameraPostionFromDictionary:channelValue];
-
-  const CGFloat accuracy = 0.001;
-  XCTAssertEqualWithAccuracy(cameraPosition.target.latitude, 1, accuracy);
-  XCTAssertEqualWithAccuracy(cameraPosition.target.longitude, 2, accuracy);
-  XCTAssertEqualWithAccuracy(cameraPosition.zoom, 3, accuracy);
-  XCTAssertEqualWithAccuracy(cameraPosition.bearing, 4, accuracy);
-  XCTAssertEqualWithAccuracy(cameraPosition.viewingAngle, 5, accuracy);
-}
-
 - (void)testGetCameraPostionForPigeonCameraPosition {
   FGMPlatformCameraPosition *pigeonCameraPosition = [FGMPlatformCameraPosition
       makeWithBearing:1.0
@@ -180,11 +173,11 @@
 }
 
 - (void)testCoordinateBoundsFromLatLongs {
-  NSArray<NSNumber *> *latlong1 = @[ @1, @2 ];
-  NSArray<NSNumber *> *latlong2 = @[ @(3), @(4) ];
+  FGMPlatformLatLngBounds *pigeonBounds = [FGMPlatformLatLngBounds
+      makeWithNortheast:[FGMPlatformLatLng makeWithLatitude:3 longitude:4]
+              southwest:[FGMPlatformLatLng makeWithLatitude:1 longitude:2]];
 
-  GMSCoordinateBounds *bounds =
-      [FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:@[ latlong1, latlong2 ]];
+  GMSCoordinateBounds *bounds = FGMGetCoordinateBoundsForPigeonLatLngBounds(pigeonBounds);
 
   const CGFloat accuracy = 0.001;
   XCTAssertEqualWithAccuracy(bounds.southWest.latitude, 1, accuracy);
@@ -201,15 +194,20 @@
   XCTAssertEqual(kGMSTypeNone, FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapTypeNone));
 }
 
-- (void)testCameraUpdateFromArrayNewCameraPosition {
-  NSArray *channelValue = @[
-    @"newCameraPosition", @{@"target" : @[ @1, @2 ], @"zoom" : @3, @"bearing" : @4, @"tilt" : @5}
-  ];
+- (void)testCameraUpdateFromNewCameraPosition {
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
+  FGMPlatformCameraUpdateNewCameraPosition *newPositionUpdate =
+      [FGMPlatformCameraUpdateNewCameraPosition
+          makeWithCameraPosition:[FGMPlatformCameraPosition
+                                     makeWithBearing:4
+                                              target:[FGMPlatformLatLng makeWithLatitude:1
+                                                                               longitude:2]
+                                                tilt:5
+                                                zoom:3]];
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
-      [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
+      [FGMPlatformCameraUpdate makeWithCameraUpdate:newPositionUpdate]);
   [[classMockCameraUpdate expect]
-      setCamera:[FLTGoogleMapJSONConversions cameraPostionFromDictionary:channelValue[1]]];
+      setCamera:FGMGetCameraPositionForPigeonCameraPosition(newPositionUpdate.cameraPosition)];
   [classMockCameraUpdate stopMocking];
 }
 
@@ -249,13 +247,12 @@
 }
 
 - (void)testCameraUpdateFromNewLatLngBounds {
-  NSArray<NSNumber *> *latlong1 = @[ @1, @2 ];
-  NSArray<NSNumber *> *latlong2 = @[ @(3), @(4) ];
-  GMSCoordinateBounds *bounds =
-      [FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:@[ latlong1, latlong2 ]];
+  FGMPlatformLatLngBounds *pigeonBounds = [FGMPlatformLatLngBounds
+      makeWithNortheast:[FGMPlatformLatLng makeWithLatitude:1 longitude:2]
+              southwest:[FGMPlatformLatLng makeWithLatitude:3 longitude:4]];
+  GMSCoordinateBounds *bounds = FGMGetCoordinateBoundsForPigeonLatLngBounds(pigeonBounds);
 
   const CGFloat padding = 20;
-  NSArray *channelValue = @[ @"newLatLngBounds", @[ latlong1, latlong2 ], @20 ];
   FGMPlatformCameraUpdateNewLatLngBounds *platformUpdate = [FGMPlatformCameraUpdateNewLatLngBounds
       makeWithBounds:FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
              padding:padding];
@@ -271,47 +268,57 @@
   const CGFloat lat = 1;
   const CGFloat lng = 2;
   const CGFloat zoom = 3;
-  FGMPlatformCameraUpdateNewLatLngZoom *platformUpdate = [FGMPlatformCameraUpdateNewLatLngZoom makeWithLatLng:<#(nonnull FGMPlatformLatLng *)#> zoom:<#(double)#>
-  NSArray *channelValue = @[ @"newLatLngZoom", @[ @1, @2 ], @3 ];
+  FGMPlatformCameraUpdateNewLatLngZoom *platformUpdate = [FGMPlatformCameraUpdateNewLatLngZoom
+      makeWithLatLng:[FGMPlatformLatLng makeWithLatitude:lat longitude:lng]
+                zoom:zoom];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate([FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
+  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+      [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] setTarget:CLLocationCoordinate2DMake(lat, lng) zoom:zoom];
   [classMockCameraUpdate stopMocking];
 }
 
 - (void)testCameraUpdateFromScrollBy {
-  NSArray *channelValue = @[ @"scrollBy", @1, @2 ];
+  const CGFloat x = 1;
+  const CGFloat y = 2;
+  FGMPlatformCameraUpdateScrollBy *platformUpdate = [FGMPlatformCameraUpdateScrollBy makeWithDx:x
+                                                                                             dy:y];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
-  [[classMockCameraUpdate expect] scrollByX:1 Y:2];
+  [[classMockCameraUpdate expect] scrollByX:x Y:y];
   [classMockCameraUpdate stopMocking];
 }
 
 - (void)testCameraUpdateFromZoomBy {
-  NSArray *channelValueNoPoint = @[ @"zoomBy", @1 ];
+  const CGFloat zoom = 1;
+  FGMPlatformCameraUpdateZoomBy *platformUpdateNoPoint =
+      [FGMPlatformCameraUpdateZoomBy makeWithAmount:zoom focus:nil];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
+  GMSCameraUpdate *updateNoPoint = FGMGetCameraUpdateForPigeonCameraUpdate(
+      [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdateNoPoint]);
+
+  [[classMockCameraUpdate expect] zoomBy:zoom];
+
+  const CGFloat x = 2;
+  const CGFloat y = 3;
+  FGMPlatformCameraUpdateZoomBy *platformUpdate =
+      [FGMPlatformCameraUpdateZoomBy makeWithAmount:zoom focus:[FGMPlatformPoint makeWithX:x y:y]];
+
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
-  [[classMockCameraUpdate expect] zoomBy:1];
-
-  NSArray *channelValueWithPoint = @[ @"zoomBy", @1, @[ @2, @3 ] ];
-
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
-      [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] zoomBy:1 atPoint:CGPointMake(2, 3)];
+  [[classMockCameraUpdate expect] zoomBy:zoom atPoint:CGPointMake(x, y)];
   [classMockCameraUpdate stopMocking];
 }
 
 - (void)testCameraUpdateFromZoomIn {
-  NSArray *channelValueNoPoint = @[ @"zoomIn" ];
+  FGMPlatformCameraUpdateZoom *platformUpdate = [FGMPlatformCameraUpdateZoom makeWithOut:NO];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
@@ -322,7 +329,7 @@
 }
 
 - (void)testCameraUpdateFromZoomOut {
-  NSArray *channelValueNoPoint = @[ @"zoomOut" ];
+  FGMPlatformCameraUpdateZoom *platformUpdate = [FGMPlatformCameraUpdateZoom makeWithOut:YES];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
@@ -333,28 +340,50 @@
 }
 
 - (void)testCameraUpdateFromZoomTo {
-  NSArray *channelValueNoPoint = @[ @"zoomTo", @1 ];
+  const CGFloat zoom = 1;
+  FGMPlatformCameraUpdateZoomTo *platformUpdate = [FGMPlatformCameraUpdateZoomTo makeWithZoom:zoom];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
-  [[classMockCameraUpdate expect] zoomTo:1];
+  [[classMockCameraUpdate expect] zoomTo:zoom];
   [classMockCameraUpdate stopMocking];
 }
 
-- (void)testLengthsFromPatterns {
-  NSArray<NSArray<id> *> *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @6.4 ] ];
+- (void)testStrokeStylesFromPatterns {
+  NSArray<FGMPlatformPatternItem *> *patterns = @[
+    [FGMPlatformPatternItem makeWithType:FGMPlatformPatternItemTypeGap length:@(1)],
+    [FGMPlatformPatternItem makeWithType:FGMPlatformPatternItemTypeDash length:@(1)]
+  ];
+  UIColor *strokeColor = [UIColor redColor];
 
-  NSArray<NSNumber *> *spanLengths = [FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns];
+  NSArray<GMSStrokeStyle *> *patternStrokeStyle =
+      FGMGetStrokeStylesFromPatterns(patterns, strokeColor);
+
+  XCTAssertEqual([patternStrokeStyle count], 2);
+
+  // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
+  // the length of this output array.
+}
+
+- (void)testLengthsFromPatterns {
+  const CGFloat gapLength = 10;
+  const CGFloat dashLength = 6.4;
+  NSArray<FGMPlatformPatternItem *> *patterns = @[
+    [FGMPlatformPatternItem makeWithType:FGMPlatformPatternItemTypeGap length:@(gapLength)],
+    [FGMPlatformPatternItem makeWithType:FGMPlatformPatternItemTypeDash length:@(dashLength)]
+  ];
+
+  NSArray<NSNumber *> *spanLengths = FGMGetSpanLengthsFromPatterns(patterns);
 
   XCTAssertEqual([spanLengths count], 2);
 
   NSNumber *firstSpanLength = spanLengths[0];
   NSNumber *secondSpanLength = spanLengths[1];
 
-  XCTAssertEqual(firstSpanLength.doubleValue, 10);
-  XCTAssertEqual(secondSpanLength.doubleValue, 6.4);
+  XCTAssertEqual(firstSpanLength.doubleValue, gapLength);
+  XCTAssertEqual(secondSpanLength.doubleValue, dashLength);
 }
 
 - (void)testWeightedLatLngFromArray {

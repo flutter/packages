@@ -106,17 +106,19 @@
   self.marker.zIndex = zIndex;
 }
 
-- (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker {
+- (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
+                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                     screenScale:(CGFloat)screenScale {
   [self setAlpha:platformMarker.alpha];
   [self setAnchor:FGMGetCGPointForPigeonPoint(platformMarker.anchor)];
   [self setDraggable:platformMarker.draggable];
-  UIImage *image = [self extractIconFromData:platformMarker.icon
-                                   registrar:registrar
-                                 screenScale:screenScale];
+  UIImage *image = [self iconFromBitmap:platformMarker.icon
+                              registrar:registrar
+                            screenScale:screenScale];
   [self setIcon:image];
   [self setFlat:platformMarker.flat];
   [self setConsumeTapEvents:platformMarker.consumeTapEvents];
-  [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position);];
+  [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position)];
   [self setRotation:platformMarker.rotation];
   [self setVisible:platformMarker.visible];
   [self setZIndex:platformMarker.zIndex];
@@ -399,23 +401,23 @@
 
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd {
   for (FGMPlatformMarker *marker in markersToAdd) {
-    [self addJSONMarker:marker.json];
+    [self addMarker:marker];
   }
 }
 
-- (void)addJSONMarker:(NSDictionary<NSString *, id> *)markerToAdd {
-  CLLocationCoordinate2D position = [FLTMarkersController getPosition:markerToAdd];
-  NSString *markerIdentifier = markerToAdd[@"markerId"];
-  NSString *clusterManagerIdentifier = markerToAdd[@"clusterManagerId"];
+- (void)addMarker:(FGMPlatformMarker *)markerToAdd {
+  CLLocationCoordinate2D position = FGMGetCoordinateForPigeonLatLng(markerToAdd.position);
+  NSString *markerIdentifier = markerToAdd.markerId;
+  NSString *clusterManagerIdentifier = markerToAdd.clusterManagerId;
   GMSMarker *marker = [GMSMarker markerWithPosition:position];
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
                                           markerIdentifier:markerIdentifier
                                   clusterManagerIdentifier:clusterManagerIdentifier
                                                    mapView:self.mapView];
-  [controller interpretMarkerOptions:markerToAdd
-                           registrar:self.registrar
-                         screenScale:[self getScreenScale]];
+  [controller updateFromPlatformMarker:markerToAdd
+                             registrar:self.registrar
+                           screenScale:[self getScreenScale]];
   if (clusterManagerIdentifier) {
     GMUClusterManager *clusterManager =
         [_clusterManagersController clusterManagerWithIdentifier:clusterManagerIdentifier];
@@ -433,8 +435,8 @@
 }
 
 - (void)changeMarker:(FGMPlatformMarker *)markerToChange {
-  NSString *markerIdentifier = markerToChange.json[@"markerId"];
-  NSString *clusterManagerIdentifier = markerToChange.json[@"clusterManagerId"];
+  NSString *markerIdentifier = markerToChange.markerId;
+  NSString *clusterManagerIdentifier = markerToChange.clusterManagerId;
 
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[markerIdentifier];
   if (!controller) {
@@ -443,11 +445,11 @@
   NSString *previousClusterManagerIdentifier = [controller clusterManagerIdentifier];
   if (![previousClusterManagerIdentifier isEqualToString:clusterManagerIdentifier]) {
     [self removeMarker:markerIdentifier];
-    [self addJSONMarker:markerToChange.json];
+    [self addMarker:markerToChange];
   } else {
-    [controller interpretMarkerOptions:markerToChange.json
-                             registrar:self.registrar
-                           screenScale:[self getScreenScale]];
+    [controller updateFromPlatformMarker:markerToChange
+                               registrar:self.registrar
+                             screenScale:[self getScreenScale]];
   }
 }
 
@@ -587,11 +589,6 @@
   // should be done under the context of the following issue:
   // https://github.com/flutter/flutter/issues/125496.
   return self.mapView.traitCollection.displayScale;
-}
-
-+ (CLLocationCoordinate2D)getPosition:(NSDictionary *)marker {
-  NSArray *position = marker[@"position"];
-  return [FLTGoogleMapJSONConversions locationFromLatLong:position];
 }
 
 @end

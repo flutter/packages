@@ -64,9 +64,9 @@
   [self setZIndex:platformCircle.zIndex];
   [self setCenter:FGMGetCoordinateForPigeonLatLng(platformCircle.center)];
   [self setRadius:platformCircle.radius];
-  [self setStrokeColor:[FLTGoogleMapJSONConversions colorFromRGBA:@(platformCircle.strokeColor)]];
+  [self setStrokeColor:FGMGetColorForRGBA(platformCircle.strokeColor)];
   [self setStrokeWidth:platformCircle.strokeWidth];
-  [self setFillColor:[FLTGoogleMapJSONConversions colorFromRGBA:@(platformCircle.fillColor)]];
+  [self setFillColor:FGMGetColorForRGBA(platformCircle.fillColor)];
 }
 
 @end
