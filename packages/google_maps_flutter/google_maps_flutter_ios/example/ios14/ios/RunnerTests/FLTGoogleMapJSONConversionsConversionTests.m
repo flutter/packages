@@ -204,7 +204,7 @@
                                                                                longitude:2]
                                                 tilt:5
                                                 zoom:3]];
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:newPositionUpdate]);
   [[classMockCameraUpdate expect]
       setCamera:FGMGetCameraPositionForPigeonCameraPosition(newPositionUpdate.cameraPosition)];
@@ -257,7 +257,7 @@
       makeWithBounds:FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
              padding:padding];
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] fitBounds:bounds withPadding:padding];
@@ -273,7 +273,7 @@
                 zoom:zoom];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] setTarget:CLLocationCoordinate2DMake(lat, lng) zoom:zoom];
@@ -287,7 +287,7 @@
                                                                                              dy:y];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] scrollByX:x Y:y];
@@ -300,7 +300,7 @@
       [FGMPlatformCameraUpdateZoomBy makeWithAmount:zoom focus:nil];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *updateNoPoint = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdateNoPoint]);
 
   [[classMockCameraUpdate expect] zoomBy:zoom];
@@ -310,7 +310,7 @@
   FGMPlatformCameraUpdateZoomBy *platformUpdate =
       [FGMPlatformCameraUpdateZoomBy makeWithAmount:zoom focus:[FGMPlatformPoint makeWithX:x y:y]];
 
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] zoomBy:zoom atPoint:CGPointMake(x, y)];
@@ -321,7 +321,7 @@
   FGMPlatformCameraUpdateZoom *platformUpdate = [FGMPlatformCameraUpdateZoom makeWithOut:NO];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] zoomIn];
@@ -332,7 +332,7 @@
   FGMPlatformCameraUpdateZoom *platformUpdate = [FGMPlatformCameraUpdateZoom makeWithOut:YES];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] zoomOut];
@@ -344,7 +344,7 @@
   FGMPlatformCameraUpdateZoomTo *platformUpdate = [FGMPlatformCameraUpdateZoomTo makeWithZoom:zoom];
 
   id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
 
   [[classMockCameraUpdate expect] zoomTo:zoom];

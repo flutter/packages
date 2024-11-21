@@ -21,9 +21,6 @@
 ///
 ///  @return An object of FLTGoogleMapPolylineController
 - (FLTGoogleMapPolylineController *)polylineControllerWithMockedMap {
-  FGMPlatformCap *cap = [FGMPlatformCap makeWithType:FGMPlatformCapTypeRoundCap
-                                    bitmapDescriptor:nil
-                                            refWidth:nil];
   FGMPlatformPolyline *polyline = [FGMPlatformPolyline
       makeWithPolylineId:@"polyline_id_0"
        consumesTapEvents:NO
@@ -37,8 +34,6 @@
                     [FGMPlatformLatLng makeWithLatitude:54.1396 longitude:-4.2739],
                     [FGMPlatformLatLng makeWithLatitude:53.4153 longitude:-4.0829],
                   ]
-                startCap:cap
-                  endCap:cap
                  visible:NO
                    width:1
                   zIndex:0];
