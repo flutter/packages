@@ -109,9 +109,6 @@ class AdUnitConfiguration {
   /// See [AdUnitParams.AD_TEST]
   final bool isAdTest;
 
-  /// See [AdUnitParams.AD_CLIENT]
-  String get adClient => _adUnitParams[AdUnitParams.AD_CLIENT]!;
-
   /// See [AdUnitParams.AD_SLOT]
   String get adSlot => _adUnitParams[AdUnitParams.AD_SLOT]!;
 
