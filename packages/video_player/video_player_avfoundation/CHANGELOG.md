@@ -1,6 +1,6 @@
 ## 2.6.5
 
-* Supports the audio-only HLS (.m3u8) on iOS.
+* Bugfix to allow the audio-only HLS (.m3u8) on iOS.
 
 ## 2.6.4
 
