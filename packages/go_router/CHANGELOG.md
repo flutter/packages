@@ -1,4 +1,4 @@
-## 14.7.0
+## 14.6.1
 
 - Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
 
