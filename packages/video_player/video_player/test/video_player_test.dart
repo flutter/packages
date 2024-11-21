@@ -1315,7 +1315,9 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
       <int, VideoPlayerWebOptions>{};
 
   @override
-  Future<int?> create(DataSource dataSource) async {
+  Future<int?> create(DataSource dataSource,
+      {HlsCacheConfig? hlsCacheConfig,
+      BufferingConfig? bufferingConfig}) async {
     calls.add('create');
     final StreamController<VideoEvent> stream = StreamController<VideoEvent>();
     streams[nextTextureId] = stream;

@@ -15,8 +15,10 @@ import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
     show
+        BufferingConfig,
         DataSourceType,
         DurationRange,
+        HlsCacheConfig,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
@@ -394,6 +396,31 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   @visibleForTesting
   int get textureId => _textureId;
 
+  /// PreCache video without playing it.
+  static Future<bool?> preCache(String url,
+      {VideoPlayerOptions? videoPlayerOptions,
+      Map<String, String> httpHeaders = const <String, String>{}}) async {
+    final DataSource dataSource = DataSource(
+      sourceType: DataSourceType.network,
+      uri: url,
+      httpHeaders: httpHeaders,
+    );
+    return _videoPlayerPlatform.preCache(dataSource,
+        hlsCacheConfig: videoPlayerOptions?.hlsCacheConfig,
+        bufferingConfig: videoPlayerOptions?.bufferingConfig);
+  }
+
+  /// Check if a video is cached or not
+  static Future<bool> isCached(String cacheKey,
+      {int position = 0, int length = 100}) async {
+    return _videoPlayerPlatform.isCached(cacheKey, position, length);
+  }
+
+  /// Init the cache manager
+  static Future<void> initCache(int maxCacheSize) async {
+    return _videoPlayerPlatform.initCache(maxCacheSize);
+  }
+
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
     final bool allowBackgroundPlayback =
@@ -437,7 +464,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           .setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
-    _textureId = (await _videoPlayerPlatform.create(dataSourceDescription)) ??
+    _textureId = (await _videoPlayerPlatform.create(dataSourceDescription,
+            hlsCacheConfig: videoPlayerOptions?.hlsCacheConfig,
+            bufferingConfig: videoPlayerOptions?.bufferingConfig)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
