@@ -143,7 +143,8 @@
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                 screenScale:(CGFloat)screenScale {
   NSAssert(screenScale > 0, @"Screen scale must be greater than 0");
-  // See comment in messages.dart for why this is so loosely typed.
+  // See comment in messages.dart for why this is so loosely typed. See also
+  // https://github.com/flutter/flutter/issues/117819.
   id bitmap = platformBitmap.bitmap;
   UIImage *image;
   if ([bitmap isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {

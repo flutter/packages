@@ -356,12 +356,12 @@
     [FGMPlatformPatternItem makeWithType:FGMPlatformPatternItemTypeGap length:@(1)],
     [FGMPlatformPatternItem makeWithType:FGMPlatformPatternItemTypeDash length:@(1)]
   ];
-  UIColor *strokeColor = [UIColor redColor];
+  UIColor *strokeColor = UIColor.redColor;
 
   NSArray<GMSStrokeStyle *> *patternStrokeStyle =
       FGMGetStrokeStylesFromPatterns(patterns, strokeColor);
 
-  XCTAssertEqual([patternStrokeStyle count], 2);
+  XCTAssertEqual(patternStrokeStyle.count, 2);
 
   // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
   // the length of this output array.
@@ -377,7 +377,7 @@
 
   NSArray<NSNumber *> *spanLengths = FGMGetSpanLengthsFromPatterns(patterns);
 
-  XCTAssertEqual([spanLengths count], 2);
+  XCTAssertEqual(spanLengths.count, 2);
 
   NSNumber *firstSpanLength = spanLengths[0];
   NSNumber *secondSpanLength = spanLengths[1];

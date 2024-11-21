@@ -158,10 +158,10 @@ GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate
 }
 
 UIColor *FGMGetColorForRGBA(NSInteger rgba) {
-  return [UIColor colorWithRed:((float)((rgba & 0xFF0000) >> 16)) / 255.0
-                         green:((float)((rgba & 0xFF00) >> 8)) / 255.0
-                          blue:((float)(rgba & 0xFF)) / 255.0
-                         alpha:((float)((rgba & 0xFF000000) >> 24)) / 255.0];
+  return [UIColor colorWithRed:((CGFloat)((rgba & 0xFF0000) >> 16)) / 255.0
+                         green:((CGFloat)((rgba & 0xFF00) >> 8)) / 255.0
+                          blue:((CGFloat)(rgba & 0xFF)) / 255.0
+                         alpha:((CGFloat)((rgba & 0xFF000000) >> 24)) / 255.0];
 }
 
 NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
@@ -169,7 +169,7 @@ NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
   NSMutableArray *strokeStyles = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
   for (FGMPlatformPatternItem *pattern in patterns) {
     UIColor *color =
-        pattern.type == FGMPlatformPatternItemTypeGap ? [UIColor clearColor] : strokeColor;
+        pattern.type == FGMPlatformPatternItemTypeGap ? UIColor.clearColor : strokeColor;
     [strokeStyles addObject:[GMSStrokeStyle solidColor:color]];
   }
   return strokeStyles;

@@ -565,12 +565,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
 
   /// Converts a Pigeon [PlatformCluster] to the corresponding [Cluster].
   static Cluster clusterFromPlatformCluster(PlatformCluster cluster) {
-    return Cluster(
-        ClusterManagerId(cluster.clusterManagerId),
-        cluster.markerIds
-            // See comment in messages.dart for why the force unwrap is okay.
-            .map((String? markerId) => MarkerId(markerId!))
-            .toList(),
+    return Cluster(ClusterManagerId(cluster.clusterManagerId),
+        cluster.markerIds.map((String markerId) => MarkerId(markerId)).toList(),
         position: _latLngFromPlatformLatLng(cluster.position),
         bounds: _latLngBoundsFromPlatformLatLngBounds(cluster.bounds));
   }
@@ -749,7 +745,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     }
   }
 
-  /// Convert [MapBitmapScaling] from platform interface to [PlatformMapBitmapScaling] Pigeon.
+  /// Converts [MapBitmapScaling] from platform interface to [PlatformMapBitmapScaling] Pigeon.
   @visibleForTesting
   static PlatformMapBitmapScaling platformMapBitmapScalingFromScaling(
       MapBitmapScaling scaling) {
@@ -769,7 +765,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return PlatformMapBitmapScaling.auto;
   }
 
-  /// Convert [BitmapDescriptor] from platform interface to [PlatformBitmap] pigeon.
+  /// Converts [BitmapDescriptor] from platform interface to [PlatformBitmap] pigeon.
   @visibleForTesting
   static PlatformBitmap platformBitmapFromBitmapDescriptor(
       BitmapDescriptor bitmap) {

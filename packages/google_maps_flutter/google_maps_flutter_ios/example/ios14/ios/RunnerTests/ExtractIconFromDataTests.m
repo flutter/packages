@@ -369,7 +369,7 @@
   UIGraphicsImageRenderer *renderer = [[UIGraphicsImageRenderer alloc] initWithSize:size
                                                                              format:format];
   UIImage *image = [renderer imageWithActions:^(UIGraphicsImageRendererContext *_Nonnull context) {
-    [[UIColor whiteColor] setFill];
+    [UIColor.whiteColor setFill];
     [context fillRect:CGRectMake(0, 0, size.width, size.height)];
   }];
   return image;

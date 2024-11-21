@@ -59,7 +59,7 @@
 
 - (void)testSetPatterns {
   NSArray<GMSStrokeStyle *> *styles = @[
-    [GMSStrokeStyle solidColor:[UIColor clearColor]], [GMSStrokeStyle solidColor:[UIColor redColor]]
+    [GMSStrokeStyle solidColor:UIColor.clearColor], [GMSStrokeStyle solidColor:UIColor.redColor]
   ];
 
   NSArray<NSNumber *> *lengths = @[ @10, @10 ];
