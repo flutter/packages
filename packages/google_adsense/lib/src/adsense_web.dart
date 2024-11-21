@@ -18,12 +18,11 @@ final AdSense adSense = AdSense();
 /// Main class to work with the library
 class AdSense {
   bool _isInitialized = false;
-  String _adClient = '';
+
+  /// The ad client ID used by this client.
+  late String adClientId;
   static const String _url =
       'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-';
-
-  /// Getter for adClient passed on initialization
-  String get adClient => _adClient;
 
   /// Initializes the AdSense SDK with your [adClient].
   ///
@@ -40,9 +39,9 @@ class AdSense {
           'AdSense: adSense.initialize called multiple times! Skipping.'.toJS);
       return;
     }
-    _adClient = adClient;
-    if (!(skipJsLoader || _sdkAlreadyLoaded())) {
-      _loadJsSdk(_adClient, jsLoaderTarget);
+    adClientId = adClient;
+    if (!(skipJsLoader || _sdkAlreadyLoaded(testingTarget: jsLoaderTarget))) {
+      _loadJsSdk(adClientId, jsLoaderTarget);
     } else {
       web.console.debug('AdSense: SDK already on page, skipping'.toJS);
     }
@@ -51,15 +50,19 @@ class AdSense {
 
   /// Returns an [AdUnitWidget] with the specified [configuration].
   Widget adUnit(AdUnitConfiguration configuration) {
-    return AdUnitWidget.fromConfig(configuration);
+    return AdUnitWidget.fromConfig(adClientId, configuration);
   }
 
-  bool _sdkAlreadyLoaded() {
+  bool _sdkAlreadyLoaded({
+    web.HTMLElement? testingTarget,
+  }) {
+    final String selector = 'script[src*=ca-pub-$adClientId]';
     return adsbygooglePresent ||
-        web.document.querySelector('script[src*=ca-pub-$adClient]') != null;
+        web.document.querySelector(selector) != null ||
+        testingTarget?.querySelector(selector) != null;
   }
 
-  void _loadJsSdk(String adClient, web.HTMLElement? target) {
+  void _loadJsSdk(String adClient, web.HTMLElement? testingTarget) {
     final String finalUrl = _url + adClient;
 
     final web.HTMLScriptElement script = web.HTMLScriptElement()
@@ -86,6 +89,6 @@ class AdSense {
       script.src = finalUrl;
     }
 
-    (target ?? web.document.head)!.appendChild(script);
+    (testingTarget ?? web.document.head)!.appendChild(script);
   }
 }

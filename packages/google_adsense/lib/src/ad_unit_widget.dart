@@ -15,10 +15,12 @@ import 'js_interop/adsbygoogle.dart';
 /// Widget displaying an ad unit
 class AdUnitWidget extends StatefulWidget {
   /// Constructs [AdUnitWidget]
-  AdUnitWidget._internal({
+  AdUnitWidget._internal(
+    String adClient, {
     required bool isAdTest,
     required Map<String, String> unitParams,
-  })  : _isAdTest = isAdTest,
+  })  : _adClient = adClient,
+        _isAdTest = isAdTest,
         _unitParams = unitParams {
     final Map<String, String> dataAttrs = <String, String>{
       AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
@@ -31,11 +33,11 @@ class AdUnitWidget extends StatefulWidget {
   }
 
   /// Creates [AdUnitWidget] from [AdUnitConfiguration] object
-  AdUnitWidget.fromConfig(AdUnitConfiguration unitConfig)
-      : this._internal(
+  AdUnitWidget.fromConfig(String adClient, AdUnitConfiguration unitConfig)
+      : this._internal(adClient,
             isAdTest: unitConfig.isAdTest, unitParams: unitConfig.params);
 
-  final String _adClient = adSense.adClient;
+  final String _adClient;
 
   final bool _isAdTest;
 
