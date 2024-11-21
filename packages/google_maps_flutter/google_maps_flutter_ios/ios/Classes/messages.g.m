@@ -61,20 +61,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-/// Enumeration of possible types of PlatformCap, corresponding to the
-/// subclasses of Cap in the Google Maps Android SDK.
-/// See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
-@implementation FGMPlatformCapTypeBox
-- (instancetype)initWithValue:(FGMPlatformCapType)value {
-  self = [super init];
-  if (self) {
-    _value = value;
-  }
-  return self;
-}
-@end
-
 /// Enumeration of possible types for PatternItem.
 @implementation FGMPlatformPatternItemTypeBox
 - (instancetype)initWithValue:(FGMPlatformPatternItemType)value {
@@ -202,12 +188,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FGMPlatformPolyline ()
 + (FGMPlatformPolyline *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformPolyline *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
-@interface FGMPlatformCap ()
-+ (FGMPlatformCap *)fromList:(NSArray<id> *)list;
-+ (nullable FGMPlatformCap *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -862,8 +842,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                          jointType:(FGMPlatformJointType)jointType
                           patterns:(NSArray<FGMPlatformPatternItem *> *)patterns
                             points:(NSArray<FGMPlatformLatLng *> *)points
-                          startCap:(FGMPlatformCap *)startCap
-                            endCap:(FGMPlatformCap *)endCap
                            visible:(BOOL)visible
                              width:(NSInteger)width
                             zIndex:(NSInteger)zIndex {
@@ -875,8 +853,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.jointType = jointType;
   pigeonResult.patterns = patterns;
   pigeonResult.points = points;
-  pigeonResult.startCap = startCap;
-  pigeonResult.endCap = endCap;
   pigeonResult.visible = visible;
   pigeonResult.width = width;
   pigeonResult.zIndex = zIndex;
@@ -892,11 +868,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.jointType = boxedFGMPlatformJointType.value;
   pigeonResult.patterns = GetNullableObjectAtIndex(list, 5);
   pigeonResult.points = GetNullableObjectAtIndex(list, 6);
-  pigeonResult.startCap = GetNullableObjectAtIndex(list, 7);
-  pigeonResult.endCap = GetNullableObjectAtIndex(list, 8);
-  pigeonResult.visible = [GetNullableObjectAtIndex(list, 9) boolValue];
-  pigeonResult.width = [GetNullableObjectAtIndex(list, 10) integerValue];
-  pigeonResult.zIndex = [GetNullableObjectAtIndex(list, 11) integerValue];
+  pigeonResult.visible = [GetNullableObjectAtIndex(list, 7) boolValue];
+  pigeonResult.width = [GetNullableObjectAtIndex(list, 8) integerValue];
+  pigeonResult.zIndex = [GetNullableObjectAtIndex(list, 9) integerValue];
   return pigeonResult;
 }
 + (nullable FGMPlatformPolyline *)nullableFromList:(NSArray<id> *)list {
@@ -911,41 +885,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     [[FGMPlatformJointTypeBox alloc] initWithValue:self.jointType],
     self.patterns ?: [NSNull null],
     self.points ?: [NSNull null],
-    self.startCap ?: [NSNull null],
-    self.endCap ?: [NSNull null],
     @(self.visible),
     @(self.width),
     @(self.zIndex),
-  ];
-}
-@end
-
-@implementation FGMPlatformCap
-+ (instancetype)makeWithType:(FGMPlatformCapType)type
-            bitmapDescriptor:(nullable FGMPlatformBitmap *)bitmapDescriptor
-                    refWidth:(nullable NSNumber *)refWidth {
-  FGMPlatformCap *pigeonResult = [[FGMPlatformCap alloc] init];
-  pigeonResult.type = type;
-  pigeonResult.bitmapDescriptor = bitmapDescriptor;
-  pigeonResult.refWidth = refWidth;
-  return pigeonResult;
-}
-+ (FGMPlatformCap *)fromList:(NSArray<id> *)list {
-  FGMPlatformCap *pigeonResult = [[FGMPlatformCap alloc] init];
-  FGMPlatformCapTypeBox *boxedFGMPlatformCapType = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.type = boxedFGMPlatformCapType.value;
-  pigeonResult.bitmapDescriptor = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.refWidth = GetNullableObjectAtIndex(list, 2);
-  return pigeonResult;
-}
-+ (nullable FGMPlatformCap *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FGMPlatformCap fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    [[FGMPlatformCapTypeBox alloc] initWithValue:self.type],
-    self.bitmapDescriptor ?: [NSNull null],
-    self.refWidth ?: [NSNull null],
   ];
 }
 @end
@@ -1610,99 +1552,91 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     }
     case 131: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil
-                 ? nil
-                 : [[FGMPlatformCapTypeBox alloc] initWithValue:[enumAsNumber integerValue]];
-    }
-    case 132: {
-      NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[FGMPlatformPatternItemTypeBox alloc]
                                        initWithValue:[enumAsNumber integerValue]];
     }
-    case 133: {
+    case 132: {
       NSNumber *enumAsNumber = [self readValue];
       return enumAsNumber == nil ? nil
                                  : [[FGMPlatformMapBitmapScalingBox alloc]
                                        initWithValue:[enumAsNumber integerValue]];
     }
-    case 134:
+    case 133:
       return [FGMPlatformCameraPosition fromList:[self readValue]];
-    case 135:
+    case 134:
       return [FGMPlatformCameraUpdate fromList:[self readValue]];
-    case 136:
+    case 135:
       return [FGMPlatformCameraUpdateNewCameraPosition fromList:[self readValue]];
-    case 137:
+    case 136:
       return [FGMPlatformCameraUpdateNewLatLng fromList:[self readValue]];
-    case 138:
+    case 137:
       return [FGMPlatformCameraUpdateNewLatLngBounds fromList:[self readValue]];
-    case 139:
+    case 138:
       return [FGMPlatformCameraUpdateNewLatLngZoom fromList:[self readValue]];
-    case 140:
+    case 139:
       return [FGMPlatformCameraUpdateScrollBy fromList:[self readValue]];
-    case 141:
+    case 140:
       return [FGMPlatformCameraUpdateZoomBy fromList:[self readValue]];
-    case 142:
+    case 141:
       return [FGMPlatformCameraUpdateZoom fromList:[self readValue]];
-    case 143:
+    case 142:
       return [FGMPlatformCameraUpdateZoomTo fromList:[self readValue]];
-    case 144:
+    case 143:
       return [FGMPlatformCircle fromList:[self readValue]];
-    case 145:
+    case 144:
       return [FGMPlatformHeatmap fromList:[self readValue]];
-    case 146:
+    case 145:
       return [FGMPlatformInfoWindow fromList:[self readValue]];
-    case 147:
+    case 146:
       return [FGMPlatformCluster fromList:[self readValue]];
-    case 148:
+    case 147:
       return [FGMPlatformClusterManager fromList:[self readValue]];
-    case 149:
+    case 148:
       return [FGMPlatformMarker fromList:[self readValue]];
-    case 150:
+    case 149:
       return [FGMPlatformPolygon fromList:[self readValue]];
-    case 151:
+    case 150:
       return [FGMPlatformPolyline fromList:[self readValue]];
-    case 152:
-      return [FGMPlatformCap fromList:[self readValue]];
-    case 153:
+    case 151:
       return [FGMPlatformPatternItem fromList:[self readValue]];
-    case 154:
+    case 152:
       return [FGMPlatformTile fromList:[self readValue]];
-    case 155:
+    case 153:
       return [FGMPlatformTileOverlay fromList:[self readValue]];
-    case 156:
+    case 154:
       return [FGMPlatformEdgeInsets fromList:[self readValue]];
-    case 157:
+    case 155:
       return [FGMPlatformLatLng fromList:[self readValue]];
-    case 158:
+    case 156:
       return [FGMPlatformLatLngBounds fromList:[self readValue]];
-    case 159:
+    case 157:
       return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
-    case 160:
+    case 158:
       return [FGMPlatformMapViewCreationParams fromList:[self readValue]];
-    case 161:
+    case 159:
       return [FGMPlatformMapConfiguration fromList:[self readValue]];
-    case 162:
+    case 160:
       return [FGMPlatformPoint fromList:[self readValue]];
-    case 163:
+    case 161:
       return [FGMPlatformSize fromList:[self readValue]];
-    case 164:
+    case 162:
       return [FGMPlatformTileLayer fromList:[self readValue]];
-    case 165:
+    case 163:
       return [FGMPlatformZoomRange fromList:[self readValue]];
-    case 166:
+    case 164:
       return [FGMPlatformBitmap fromList:[self readValue]];
-    case 167:
+    case 165:
       return [FGMPlatformBitmapDefaultMarker fromList:[self readValue]];
-    case 168:
+    case 166:
       return [FGMPlatformBitmapBytes fromList:[self readValue]];
-    case 169:
+    case 167:
       return [FGMPlatformBitmapAsset fromList:[self readValue]];
-    case 170:
+    case 168:
       return [FGMPlatformBitmapAssetImage fromList:[self readValue]];
-    case 171:
+    case 169:
       return [FGMPlatformBitmapAssetMap fromList:[self readValue]];
-    case 172:
+    case 170:
       return [FGMPlatformBitmapBytesMap fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1722,134 +1656,127 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     FGMPlatformJointTypeBox *box = (FGMPlatformJointTypeBox *)value;
     [self writeByte:130];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[FGMPlatformCapTypeBox class]]) {
-    FGMPlatformCapTypeBox *box = (FGMPlatformCapTypeBox *)value;
-    [self writeByte:131];
-    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else if ([value isKindOfClass:[FGMPlatformPatternItemTypeBox class]]) {
     FGMPlatformPatternItemTypeBox *box = (FGMPlatformPatternItemTypeBox *)value;
-    [self writeByte:132];
+    [self writeByte:131];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else if ([value isKindOfClass:[FGMPlatformMapBitmapScalingBox class]]) {
     FGMPlatformMapBitmapScalingBox *box = (FGMPlatformMapBitmapScalingBox *)value;
-    [self writeByte:133];
+    [self writeByte:132];
     [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
   } else if ([value isKindOfClass:[FGMPlatformCameraPosition class]]) {
-    [self writeByte:134];
+    [self writeByte:133];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdate class]]) {
-    [self writeByte:135];
+    [self writeByte:134];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewCameraPosition class]]) {
-    [self writeByte:136];
+    [self writeByte:135];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewLatLng class]]) {
-    [self writeByte:137];
+    [self writeByte:136];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewLatLngBounds class]]) {
-    [self writeByte:138];
+    [self writeByte:137];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateNewLatLngZoom class]]) {
-    [self writeByte:139];
+    [self writeByte:138];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateScrollBy class]]) {
-    [self writeByte:140];
+    [self writeByte:139];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateZoomBy class]]) {
-    [self writeByte:141];
+    [self writeByte:140];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateZoom class]]) {
-    [self writeByte:142];
+    [self writeByte:141];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraUpdateZoomTo class]]) {
-    [self writeByte:143];
+    [self writeByte:142];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCircle class]]) {
-    [self writeByte:144];
+    [self writeByte:143];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformHeatmap class]]) {
-    [self writeByte:145];
+    [self writeByte:144];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformInfoWindow class]]) {
-    [self writeByte:146];
+    [self writeByte:145];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCluster class]]) {
-    [self writeByte:147];
+    [self writeByte:146];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformClusterManager class]]) {
-    [self writeByte:148];
+    [self writeByte:147];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformMarker class]]) {
-    [self writeByte:149];
+    [self writeByte:148];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformPolygon class]]) {
-    [self writeByte:150];
+    [self writeByte:149];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformPolyline class]]) {
-    [self writeByte:151];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCap class]]) {
-    [self writeByte:152];
+    [self writeByte:150];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformPatternItem class]]) {
-    [self writeByte:153];
+    [self writeByte:151];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformTile class]]) {
-    [self writeByte:154];
+    [self writeByte:152];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformTileOverlay class]]) {
-    [self writeByte:155];
+    [self writeByte:153];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformEdgeInsets class]]) {
-    [self writeByte:156];
+    [self writeByte:154];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
-    [self writeByte:157];
+    [self writeByte:155];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
-    [self writeByte:158];
+    [self writeByte:156];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
-    [self writeByte:159];
+    [self writeByte:157];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
-    [self writeByte:160];
+    [self writeByte:158];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
-    [self writeByte:161];
+    [self writeByte:159];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
-    [self writeByte:162];
+    [self writeByte:160];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformSize class]]) {
-    [self writeByte:163];
+    [self writeByte:161];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
-    [self writeByte:164];
+    [self writeByte:162];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
-    [self writeByte:165];
+    [self writeByte:163];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmap class]]) {
-    [self writeByte:166];
+    [self writeByte:164];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
-    [self writeByte:167];
+    [self writeByte:165];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapBytes class]]) {
-    [self writeByte:168];
+    [self writeByte:166];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapAsset class]]) {
-    [self writeByte:169];
+    [self writeByte:167];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
-    [self writeByte:170];
+    [self writeByte:168];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
-    [self writeByte:171];
+    [self writeByte:169];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
-    [self writeByte:172];
+    [self writeByte:170];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

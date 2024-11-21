@@ -553,18 +553,6 @@ void main() {
         expect(pattern?.encode(),
             platformPatternItemFromPatternItem(expected.patterns[i]).encode());
       }
-      final PlatformCap expectedStartCap =
-          GoogleMapsFlutterIOS.platformCapFromCap(expected.startCap);
-      final PlatformCap expectedEndCap =
-          GoogleMapsFlutterIOS.platformCapFromCap(expected.endCap);
-      expect(actual.startCap.type, expectedStartCap.type);
-      expect(actual.startCap.refWidth, expectedStartCap.refWidth);
-      expect(actual.startCap.bitmapDescriptor?.bitmap.runtimeType,
-          expectedStartCap.bitmapDescriptor?.bitmap.runtimeType);
-      expect(actual.endCap.type, expectedEndCap.type);
-      expect(actual.endCap.refWidth, expectedEndCap.refWidth);
-      expect(actual.endCap.bitmapDescriptor?.bitmap.runtimeType,
-          expectedEndCap.bitmapDescriptor?.bitmap.runtimeType);
     }
 
     // Object one should be removed.
@@ -969,22 +957,6 @@ void main() {
     expect(typedBitmap.imagePixelRatio, 2.0);
     expect(typedBitmap.width, 100.0);
     expect(typedBitmap.height, 200.0);
-  });
-
-  test('Cap to PlatformCap', () {
-    expect(GoogleMapsFlutterIOS.platformCapFromCap(Cap.buttCap).encode(),
-        PlatformCap(type: PlatformCapType.buttCap).encode());
-    expect(GoogleMapsFlutterIOS.platformCapFromCap(Cap.roundCap).encode(),
-        PlatformCap(type: PlatformCapType.roundCap).encode());
-    expect(GoogleMapsFlutterIOS.platformCapFromCap(Cap.squareCap).encode(),
-        PlatformCap(type: PlatformCapType.squareCap).encode());
-
-    const BitmapDescriptor bitmap = BitmapDescriptor.defaultMarker;
-    const CustomCap customCap = CustomCap(bitmap, refWidth: 15.0);
-    final PlatformCap platformCap =
-        GoogleMapsFlutterIOS.platformCapFromCap(customCap);
-    expect(platformCap.type, PlatformCapType.customCap);
-    expect(customCap.refWidth, 15.0);
   });
 
   testWidgets('cloudMapId is passed', (WidgetTester tester) async {

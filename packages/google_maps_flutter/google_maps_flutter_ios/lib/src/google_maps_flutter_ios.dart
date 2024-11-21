@@ -668,8 +668,6 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
       color: polyline.color.value,
-      startCap: platformCapFromCap(polyline.startCap),
-      endCap: platformCapFromCap(polyline.endCap),
       geodesic: polyline.geodesic,
       visible: polyline.visible,
       width: polyline.width,
@@ -816,26 +814,6 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       default:
         throw ArgumentError(
             'Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
-    }
-  }
-
-  /// Convert [Cap] from platform interface to [PlatformCap] pigeon.
-  @visibleForTesting
-  static PlatformCap platformCapFromCap(Cap cap) {
-    switch (cap.type) {
-      case CapType.butt:
-        return PlatformCap(type: PlatformCapType.buttCap);
-      case CapType.square:
-        return PlatformCap(type: PlatformCapType.squareCap);
-      case CapType.round:
-        return PlatformCap(type: PlatformCapType.roundCap);
-      case CapType.custom:
-        cap as CustomCap;
-        return PlatformCap(
-            type: PlatformCapType.customCap,
-            bitmapDescriptor:
-                platformBitmapFromBitmapDescriptor(cap.bitmapDescriptor),
-            refWidth: cap.refWidth);
     }
   }
 }

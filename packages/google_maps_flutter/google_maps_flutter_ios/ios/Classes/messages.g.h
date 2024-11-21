@@ -41,23 +41,6 @@ typedef NS_ENUM(NSUInteger, FGMPlatformJointType) {
 - (instancetype)initWithValue:(FGMPlatformJointType)value;
 @end
 
-/// Enumeration of possible types of PlatformCap, corresponding to the
-/// subclasses of Cap in the Google Maps Android SDK.
-/// See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
-typedef NS_ENUM(NSUInteger, FGMPlatformCapType) {
-  FGMPlatformCapTypeButtCap = 0,
-  FGMPlatformCapTypeRoundCap = 1,
-  FGMPlatformCapTypeSquareCap = 2,
-  FGMPlatformCapTypeCustomCap = 3,
-};
-
-/// Wrapper for FGMPlatformCapType to allow for nullability.
-@interface FGMPlatformCapTypeBox : NSObject
-@property(nonatomic, assign) FGMPlatformCapType value;
-- (instancetype)initWithValue:(FGMPlatformCapType)value;
-@end
-
 /// Enumeration of possible types for PatternItem.
 typedef NS_ENUM(NSUInteger, FGMPlatformPatternItemType) {
   FGMPlatformPatternItemTypeDot = 0,
@@ -101,7 +84,6 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformMarker;
 @class FGMPlatformPolygon;
 @class FGMPlatformPolyline;
-@class FGMPlatformCap;
 @class FGMPlatformPatternItem;
 @class FGMPlatformTile;
 @class FGMPlatformTileOverlay;
@@ -355,8 +337,6 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                          jointType:(FGMPlatformJointType)jointType
                           patterns:(NSArray<FGMPlatformPatternItem *> *)patterns
                             points:(NSArray<FGMPlatformLatLng *> *)points
-                          startCap:(FGMPlatformCap *)startCap
-                            endCap:(FGMPlatformCap *)endCap
                            visible:(BOOL)visible
                              width:(NSInteger)width
                             zIndex:(NSInteger)zIndex;
@@ -369,27 +349,9 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// The pattern data, as a list of pattern items.
 @property(nonatomic, copy) NSArray<FGMPlatformPatternItem *> *patterns;
 @property(nonatomic, copy) NSArray<FGMPlatformLatLng *> *points;
-/// The cap at the start and end vertex of a polyline.
-/// See
-/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
-@property(nonatomic, strong) FGMPlatformCap *startCap;
-@property(nonatomic, strong) FGMPlatformCap *endCap;
 @property(nonatomic, assign) BOOL visible;
 @property(nonatomic, assign) NSInteger width;
 @property(nonatomic, assign) NSInteger zIndex;
-@end
-
-/// Pigeon equivalent of Cap from the platform interface.
-/// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
-@interface FGMPlatformCap : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithType:(FGMPlatformCapType)type
-            bitmapDescriptor:(nullable FGMPlatformBitmap *)bitmapDescriptor
-                    refWidth:(nullable NSNumber *)refWidth;
-@property(nonatomic, assign) FGMPlatformCapType type;
-@property(nonatomic, strong, nullable) FGMPlatformBitmap *bitmapDescriptor;
-@property(nonatomic, strong, nullable) NSNumber *refWidth;
 @end
 
 /// Pigeon equivalent of the PatternItem class.
