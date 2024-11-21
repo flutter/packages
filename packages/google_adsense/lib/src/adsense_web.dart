@@ -12,6 +12,8 @@ import 'ad_unit_widget.dart';
 import 'js_interop/adsbygoogle.dart' show adsbygooglePresent;
 import 'js_interop/package_web_tweaks.dart';
 
+import 'logging.dart';
+
 /// Returns a singleton instance of Adsense library public interface
 final AdSense adSense = AdSense();
 
@@ -35,15 +37,14 @@ class AdSense {
     @visibleForTesting web.HTMLElement? jsLoaderTarget,
   }) {
     if (_isInitialized) {
-      web.console.warn(
-          'AdSense: adSense.initialize called multiple times! Skipping.'.toJS);
+      debugLog('adSense.initialize called multiple times. Skipping init.');
       return;
     }
     adClientId = adClient;
     if (!(skipJsLoader || _sdkAlreadyLoaded(testingTarget: jsLoaderTarget))) {
       _loadJsSdk(adClientId, jsLoaderTarget);
     } else {
-      web.console.debug('AdSense: SDK already on page, skipping'.toJS);
+      debugLog('SDK already on page. Skipping init.');
     }
     _isInitialized = true;
   }
@@ -71,9 +72,6 @@ class AdSense {
 
     if (web.window.nullableTrustedTypes != null) {
       final String trustedTypePolicyName = 'adsense-dart-$adClient';
-      web.console.debug(
-        'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
-      );
       try {
         final web.TrustedTypePolicy policy =
             web.window.trustedTypes.createPolicy(
@@ -86,6 +84,7 @@ class AdSense {
         throw TrustedTypesException(e.toString());
       }
     } else {
+      debugLog('TrustedTypes not available.');
       script.src = finalUrl;
     }
 

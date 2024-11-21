@@ -5,12 +5,12 @@
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import '../google_adsense.dart';
 import 'js_interop/adsbygoogle.dart';
+import 'logging.dart';
 
 /// Widget displaying an ad unit
 class AdUnitWidget extends StatefulWidget {
@@ -54,15 +54,10 @@ class AdUnitWidget extends StatefulWidget {
 
 class _AdUnitWidgetWebState extends State<AdUnitWidget>
     with AutomaticKeepAliveClientMixin {
-  static int adUnitCounter = 0;
-
-  // Make the ad as wide as the available space, so Adsense delivers the best
-  // possible size.
-  Size adSize = const Size(double.infinity, 1);
-
-  // Size adSize = const Size(600, 1); // It seems ads don't resize, do we need to define fixed sizes for ad units?
-  late web.HTMLElement adUnitDiv;
+  static int _adUnitCounter = 0;
   static final JSString _adStatusKey = 'adStatus'.toJS;
+  // Start with a 1x1 widget size so adsense has an uncollapsed space to render the ad.
+  Size _adSize = const Size(1, 1);
 
   @override
   bool get wantKeepAlive => true;
@@ -81,8 +76,12 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return SizedBox.fromSize(
-      size: adSize,
+    // If the ad is collapsed (0x0), return an empty widget
+    if (_adSize.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return SizedBox(
+      height: _adSize.height,
       child: HtmlElementView.fromTagName(
           tagName: 'div', onElementCreated: onElementCreated),
     );
@@ -90,14 +89,9 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
 
   void onElementCreated(Object element) {
     // Adding ins inside of the adUnit
-    adUnitDiv = element as web.HTMLElement
-      ..id = 'adUnit${adUnitCounter++}'
+    final web.HTMLDivElement adUnitDiv = element as web.HTMLDivElement
+      ..id = 'adUnit${_adUnitCounter++}'
       ..append(widget._insElement);
-
-    if (kDebugMode) {
-      debugPrint(
-          'onElementCreated: $adUnitDiv with style height=${element.offsetHeight} and width=${element.offsetWidth}');
-    }
 
     // Using Resize observer to detect element attached to DOM
     adSenseResizeObserver.observe(adUnitDiv);
@@ -108,14 +102,11 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
       for (final JSObject entry in entries.toDart) {
         final web.HTMLElement target =
             (entry as web.MutationRecord).target as web.HTMLElement;
-        if (kDebugMode) {
-          debugPrint('MO current entry: $target');
-        }
         if (isLoaded(target)) {
-          // observer.disconnect();
           if (isFilled(target)) {
             updateWidgetSize(Size(
-              target.offsetWidth.toDouble(),
+              target.offsetWidth
+                  .toDouble(), // This is always the width of the platform view!
               target.offsetHeight.toDouble(),
             ));
           } else {
@@ -135,58 +126,30 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   }
 
   static void onElementAttached(web.HTMLElement element) {
-    if (kDebugMode) {
-      debugPrint(
-          'Element ${element.id} attached with style: height=${element.offsetHeight} and width=${element.offsetWidth}');
-    }
     adsbygoogle.requestAd();
   }
 
   bool isLoaded(web.HTMLElement target) {
     final bool isLoaded =
         target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
-    if (kDebugMode) {
-      if (isLoaded) {
-        debugPrint('Ad is loaded');
-      } else {
-        debugPrint('Ad is loading');
-      }
-    }
+    debugLog('Ad isLoaded: $isLoaded');
     return isLoaded;
   }
 
   bool isFilled(web.HTMLElement target) {
-    final JSAny? adStatus = target.dataset.getProperty(_adStatusKey);
-    switch (adStatus) {
-      case AdStatus.FILLED:
-        {
-          if (kDebugMode) {
-            debugPrint('Ad filled');
-          }
-          return true;
-        }
-      case AdStatus.UNFILLED:
-        {
-          if (kDebugMode) {
-            debugPrint('Ad unfilled!');
-          }
-          return false;
-        }
-      default:
-        if (kDebugMode) {
-          // Printing warning as this scenario is unexpected
-          web.console.warn('No data-ad-status attribute found'.toJS);
-        }
-        return false;
+    final String? adStatus =
+        target.dataset.getProperty<JSString?>(_adStatusKey)?.toDart;
+    debugLog('Ad isFilled? $adStatus');
+    if (adStatus == AdStatus.FILLED) {
+      return true;
     }
+    return false;
   }
 
   void updateWidgetSize(Size newSize) {
-    if (kDebugMode) {
-      debugPrint('Resizing AdUnit to $newSize');
-    }
+    debugLog('Resizing AdUnitWidget to $newSize');
     setState(() {
-      adSize = newSize;
+      _adSize = newSize;
     });
   }
 }
