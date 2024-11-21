@@ -1,3 +1,8 @@
+## 2.6.3
+
+* Fixes VideoPlayerController.initialize() future never resolving with invalid video file.
+* Adds more details to the error message returned by VideoPlayerController.initialize().
+
 ## 2.6.2
 
 * Updates Pigeon for non-nullable collection type support.
