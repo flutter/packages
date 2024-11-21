@@ -51,7 +51,7 @@ class AdSense {
 
   /// Returns an [AdUnitWidget] with the specified [configuration].
   Widget adUnit(AdUnitConfiguration configuration) {
-    return AdUnitWidget.fromConfig(_adClient, configuration);
+    return AdUnitWidget(adClient: _adClient, configuration: configuration);
   }
 
   bool _sdkAlreadyLoaded({
