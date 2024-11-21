@@ -840,8 +840,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 #if TARGET_OS_IOS
 - (void)testNativeVideoViewFactoryRegistration {
+  NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
   NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testNativeVideoViewFactoryRegistration"];
+      [registry registrarForPlugin:@"testNativeVideoViewFactoryRegistration"];
   id mockRegistrar = OCMPartialMock(registrar);
 
   OCMExpect([mockRegistrar
@@ -857,10 +858,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSString *pluginKey = @"TestRegistration";
   NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
   NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:pluginKey];
+  id mockRegistrar = OCMPartialMock(registrar);
+  // Empty stub to pass a check in Flutter's engine (double factory registration).
+  // registerWithRegistrar gets called at the beginning of the test, and factory is registered
+  // there. Additional call would try to register the same factory another time, which would fail a
+  // check in the engine.
+  OCMStub([mockRegistrar registerViewFactory:[OCMArg any] withId:[OCMArg any]]);
 
-  // FIXME This line makes the test fail (or rather run forever) if native view factory is
-  // registered.
-  [FVPVideoPlayerPlugin registerWithRegistrar:registrar];
+  [FVPVideoPlayerPlugin registerWithRegistrar:mockRegistrar];
 
   id publishedValue = [registry valuePublishedByPlugin:pluginKey];
 
