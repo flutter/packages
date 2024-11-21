@@ -1,3 +1,7 @@
+## 0.3.20+2
+
+* Fixes price not being displayed correctly.
+
 ## 0.3.20+1
 
 * Prevent devices below iOS 15 or macOS 15 from enabling StoreKit2.
