@@ -15,38 +15,16 @@ import 'logging.dart';
 /// Widget displaying an ad unit
 class AdUnitWidget extends StatefulWidget {
   /// Constructs [AdUnitWidget]
-  AdUnitWidget._internal(
-    String adClient, {
-    required bool isAdTest,
-    required Map<String, String> unitParams,
+  const AdUnitWidget({
+    super.key,
+    required String adClient,
+    required AdUnitConfiguration configuration,
   })  : _adClient = adClient,
-        _isAdTest = isAdTest,
-        _unitParams = unitParams {
-    final Map<String, String> dataAttrs = <String, String>{
-      AdUnitParams.AD_CLIENT: 'ca-pub-$_adClient',
-      if (_isAdTest) AdUnitParams.AD_TEST: 'on',
-      ..._unitParams
-    };
-    for (final String key in dataAttrs.keys) {
-      _insElement.dataset.setProperty(key.toJS, dataAttrs[key]!.toJS);
-    }
-  }
-
-  /// Creates [AdUnitWidget] from [AdUnitConfiguration] object
-  AdUnitWidget.fromConfig(String adClient, AdUnitConfiguration unitConfig)
-      : this._internal(adClient,
-            isAdTest: unitConfig.isAdTest, unitParams: unitConfig.params);
+        _adUnitConfiguration = configuration;
 
   final String _adClient;
 
-  final bool _isAdTest;
-
-  final Map<String, String> _unitParams;
-
-  final web.HTMLElement _insElement =
-      (web.document.createElement('ins') as web.HTMLElement)
-        ..className = 'adsbygoogle'
-        ..style.display = 'block';
+  final AdUnitConfiguration _adUnitConfiguration;
 
   @override
   State<AdUnitWidget> createState() => _AdUnitWidgetWebState();
@@ -87,11 +65,25 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     );
   }
 
-  void onElementCreated(Object element) {
+  void _onElementCreated(Object element) {
+    // Create the `ins` element that is going to contain the actual ad.
+    final web.HTMLElement insElement =
+        (web.document.createElement('ins') as web.HTMLElement)
+          ..className = 'adsbygoogle'
+          ..style.display = 'block';
+
+    // Apply the widget configuration to insElement
+    <String, String>{
+      AdUnitParams.AD_CLIENT: 'ca-pub-${widget._adClient}',
+      ...widget._adUnitConfiguration.params,
+    }.forEach((String key, String value) {
+      insElement.dataset.setProperty(key.toJS, value.toJS);
+    });
+
     // Adding ins inside of the adUnit
     final web.HTMLDivElement adUnitDiv = element as web.HTMLDivElement
       ..id = 'adUnit${_adUnitCounter++}'
-      ..append(widget._insElement);
+      ..append(insElement);
 
     // Using Resize observer to detect element attached to DOM
     adSenseResizeObserver.observe(adUnitDiv);
@@ -119,10 +111,11 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
       }
     }.toJS)
         .observe(
-            widget._insElement,
+            insElement,
             web.MutationObserverInit(
-                attributes: true,
-                attributeFilter: <JSString>['data-ad-status'.toJS].toJS));
+              attributes: true,
+              attributeFilter: <JSString>['data-ad-status'.toJS].toJS,
+            ));
   }
 
   static void onElementAttached(web.HTMLElement element) {
