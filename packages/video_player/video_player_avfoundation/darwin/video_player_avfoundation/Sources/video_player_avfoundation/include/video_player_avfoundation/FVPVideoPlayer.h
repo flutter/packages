@@ -9,7 +9,6 @@
 #endif
 
 #import <AVFoundation/AVFoundation.h>
-#import <GLKit/GLKit.h>
 
 #import "FVPDisplayLink.h"
 #import "FVPFrameUpdater.h"
