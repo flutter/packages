@@ -753,9 +753,7 @@ window.addEventListener("error", function(e) {
   Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
     final WKUserContentController controller =
         await _webView.configuration.getUserContentController();
-    unawaited(
-      controller.removeAllUserScripts(),
-    );
+    unawaited(controller.removeAllUserScripts());
     // TODO(bparrishMines): This can be replaced with
     // `removeAllScriptMessageHandlers` once Dart supports runtime version
     // checking. (e.g. The equivalent to @availability in Objective-C.)

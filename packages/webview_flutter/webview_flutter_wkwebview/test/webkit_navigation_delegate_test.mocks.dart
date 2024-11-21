@@ -7,6 +7,7 @@ import 'dart:async' as _i3;
 import 'dart:typed_data' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i5;
 import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -57,6 +58,16 @@ class _FakeURLAuthenticationChallenge_2 extends _i1.SmartFake
 
 class _FakeURLRequest_3 extends _i1.SmartFake implements _i2.URLRequest {
   _FakeURLRequest_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeURL_4 extends _i1.SmartFake implements _i2.URL {
+  _FakeURL_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -251,6 +262,90 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
           ),
         ),
       ) as _i2.URLRequest);
+
+  @override
+  _i3.Future<void> addObserver(
+    _i2.NSObject? observer,
+    String? keyPath,
+    List<_i2.KeyValueObservingOptions>? options,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addObserver,
+          [
+            observer,
+            keyPath,
+            options,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> removeObserver(
+    _i2.NSObject? object,
+    String? keyPath,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeObserver,
+          [
+            object,
+            keyPath,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+}
+
+/// A class which mocks [URL].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockURL extends _i1.Mock implements _i2.URL {
+  MockURL() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i3.Future<String> getAbsoluteString() => (super.noSuchMethod(
+        Invocation.method(
+          #getAbsoluteString,
+          [],
+        ),
+        returnValue: _i3.Future<String>.value(_i5.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getAbsoluteString,
+            [],
+          ),
+        )),
+      ) as _i3.Future<String>);
+
+  @override
+  _i2.URL pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeURL_4(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.URL);
 
   @override
   _i3.Future<void> addObserver(

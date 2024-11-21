@@ -481,24 +481,6 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
       CapturingNavigationDelegate();
 }
 
-// // Records the last created instance of itself.
-// class CapturingUIDelegate extends WKUIDelegate {
-//   CapturingUIDelegate({
-//     super.onCreateWebView,
-//     super.requestMediaCapturePermission,
-//     super.runJavaScriptAlertPanel,
-//     super.runJavaScriptConfirmPanel,
-//     super.runJavaScriptTextInputPanel,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) : super(
-//           pigeon_instanceManager:
-//               pigeon_instanceManager ?? TestInstanceManager(),
-//         ) {
-//     lastCreatedDelegate = this;
-//   }
-//   static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();
-// }
-
 // Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.
 class TestInstanceManager extends PigeonInstanceManager {
   TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
