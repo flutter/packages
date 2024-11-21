@@ -28,7 +28,7 @@ class AdUnitConfiguration {
     int? rowsNum,
     int? columnsNum,
     bool? isFullWidthResponsive = true,
-    this.isAdTest = kDebugMode,
+    bool? isAdTest,
   }) : _adUnitParams = <String, String>{
           AdUnitParams.AD_SLOT: adSlot,
           if (adFormat != null) AdUnitParams.AD_FORMAT: adFormat.toString(),
@@ -44,6 +44,7 @@ class AdUnitConfiguration {
             AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
           if (rowsNum != null)
             AdUnitParams.MATCHED_CONTENT_ROWS_NUM: rowsNum.toString(),
+          if (isAdTest != null && isAdTest) AdUnitParams.AD_TEST: 'on',
         };
 
   /// Creates In-article ad unit configuration object
@@ -105,12 +106,6 @@ class AdUnitConfiguration {
             isAdTest: isAdTest);
 
   Map<String, String> _adUnitParams;
-
-  /// See [AdUnitParams.AD_TEST]
-  final bool isAdTest;
-
-  /// See [AdUnitParams.AD_SLOT]
-  String get adSlot => _adUnitParams[AdUnitParams.AD_SLOT]!;
 
   /// Map containing all additional parameters of this configuration
   Map<String, String> get params => _adUnitParams;
