@@ -43,9 +43,9 @@ void main() async {
       expectConfigValue('client_id', 'testing_1-2-3');
       expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('scope', 'one two three');
-      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('include_granted_scopes', true);
       expectConfigValue('prompt', 'some-prompt');
-      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('enable_granular_consent', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
       expectConfigValue('state', 'some-state');
@@ -66,9 +66,9 @@ void main() async {
           utils.createExpectConfigValue(config as JSObject);
 
       expectConfigValue('scope', 'one two three');
-      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('include_granted_scopes', true);
       expectConfigValue('prompt', 'some-prompt');
-      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('enable_granular_consent', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('state', 'some-state');
     });
@@ -93,15 +93,15 @@ void main() async {
           utils.createExpectConfigValue(config as JSObject);
 
       expectConfigValue('scope', 'one two three');
-      expectConfigValue('include_granted_scopes', isTrue);
+      expectConfigValue('include_granted_scopes', true);
       expectConfigValue('redirect_uri', 'https://www.example.com/login');
       expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('state', 'some-state');
-      expectConfigValue('enable_granular_consent', isTrue);
+      expectConfigValue('enable_granular_consent', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
       expectConfigValue('ux_mode', 'popup');
-      expectConfigValue('select_account', isTrue);
+      expectConfigValue('select_account', true);
       expectConfigValue('error_callback', utils.isAJs('function'));
     });
   });

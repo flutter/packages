@@ -141,6 +141,7 @@ class SK2TransactionMessage {
       required this.originalId,
       required this.productId,
       required this.purchaseDate,
+      this.expirationDate,
       this.purchasedQuantity = 1,
       this.appAccountToken,
       this.error,
@@ -150,6 +151,7 @@ class SK2TransactionMessage {
   final int originalId;
   final String productId;
   final String purchaseDate;
+  final String? expirationDate;
   final int purchasedQuantity;
   final String? appAccountToken;
   final bool restoring;

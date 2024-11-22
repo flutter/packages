@@ -469,6 +469,10 @@ abstract class ImaSdkFactory {
 
   /// Creates an AdsRequest object to contain the data used to request ads.
   AdsRequest createAdsRequest();
+
+  /// Creates an `AdsRenderingSettings` object to give the AdsManager parameters
+  /// that control the rendering of ads.
+  AdsRenderingSettings createAdsRenderingSettings();
 }
 
 /// Defines general SDK settings that are used when creating an `AdsLoader`.

@@ -135,6 +135,46 @@ final class InAppPurchasePluginTests: XCTestCase {
     XCTAssertNil(error)
   }
 
+  func testFinishTransactionNotCalledOnPurchasingTransactions() {
+    let args: [String: Any] = [
+      "transactionIdentifier": NSNull(),
+      "productIdentifier": "unique_identifier",
+    ]
+
+    let paymentMap: [String: Any] = [
+      "productIdentifier": "123",
+      "requestData": "abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh",
+      "quantity": 2,
+      "applicationUsername": "app user name",
+      "simulatesAskToBuyInSandbox": false,
+    ]
+
+    let transactionMap: [String: Any] = [
+      "transactionState": SKPaymentTransactionState.purchasing.rawValue,
+      "payment": paymentMap,
+      "error": FIAObjectTranslator.getMapFrom(
+        NSError(domain: "test_stub", code: 123, userInfo: [:])),
+      "transactionTimeStamp": NSDate().timeIntervalSince1970,
+    ]
+
+    let paymentTransactionStub = SKPaymentTransactionStub(map: transactionMap)
+
+    let handler = PaymentQueueHandlerStub()
+    plugin.paymentQueueHandler = handler
+
+    var finishTransactionInvokeCount = 0
+
+    handler.finishTransactionStub = { _ in
+      finishTransactionInvokeCount += 1
+    }
+
+    var error: FlutterError?
+    plugin.finishTransactionFinishMap(args, error: &error)
+
+    XCTAssertNil(error)
+    XCTAssertEqual(finishTransactionInvokeCount, 0)
+  }
+
   func testGetProductResponseWithRequestError() {
     let argument = ["123"]
     let expectation = self.expectation(description: "completion handler successfully called")
