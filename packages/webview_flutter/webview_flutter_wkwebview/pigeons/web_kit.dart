@@ -9,9 +9,9 @@ import 'package:pigeon/pigeon.dart';
     dartOut: 'lib/src/common/web_kit.g.dart',
     dartTestOut: 'test/src/common/test_web_kit.g.dart',
     objcHeaderOut:
-        'ios/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
+        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
     objcSourceOut:
-        'ios/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/FWFGeneratedWebKitApis.m',
+        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/FWFGeneratedWebKitApis.m',
     objcOptions: ObjcOptions(
       headerIncludePath:
           './include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',

@@ -23,6 +23,7 @@ import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
+import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -139,7 +140,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass});
+  const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -149,6 +150,14 @@ class ProxyApi {
   /// Note that using this instead of `extends` can cause unexpected conflicts
   /// with inherited method names.
   final Type? superClass;
+
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -736,6 +745,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
       errorClassName: swiftOptions.errorClassName,
+      includeErrorClass: swiftOptions.includeErrorClass,
     ));
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
@@ -966,22 +976,6 @@ List<Error> _validateAst(Root root, String source) {
               'Class field name must not begin with "$matchingPrefix" in field "${field.name}" of class "${classDefinition.name}"',
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
-      }
-      for (final TypeDeclaration typeArgument in field.type.typeArguments) {
-        if (!typeArgument.isNullable) {
-          result.add(Error(
-            message:
-                'Generic type parameters must be nullable in field "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
-        if (customEnums.contains(typeArgument.baseName)) {
-          result.add(Error(
-            message:
-                'Enum types aren\'t supported in type arguments in "${field.name}" in class "${classDefinition.name}".',
-            lineNumber: _calculateLineNumberNullable(source, field.offset),
-          ));
-        }
       }
       if (!(validTypes.contains(field.type.baseName) ||
           customClasses.contains(field.type.baseName) ||
@@ -1393,13 +1387,16 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         getReferencedTypes(_apis, _classes);
     final Set<String> referencedTypeNames =
         referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
-    final List<Class> referencedClasses = List<Class>.from(_classes);
-    referencedClasses
-        .removeWhere((Class x) => !referencedTypeNames.contains(x.name));
+    final List<Class> nonReferencedClasses = List<Class>.from(_classes);
+    nonReferencedClasses
+        .removeWhere((Class x) => referencedTypeNames.contains(x.name));
+    for (final Class x in nonReferencedClasses) {
+      x.isReferenced = false;
+    }
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
     final Root completeRoot =
-        Root(apis: _apis, classes: referencedClasses, enums: referencedEnums);
+        Root(apis: _apis, classes: _classes, enums: referencedEnums);
 
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     final List<Error> totalErrors = List<Error>.from(_errors);
@@ -1407,9 +1404,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
     for (final MapEntry<TypeDeclaration, List<int>> element
         in referencedTypes.entries) {
-      if (!referencedClasses
-              .map((Class e) => e.name)
-              .contains(element.key.baseName) &&
+      if (!_classes.map((Class e) => e.name).contains(element.key.baseName) &&
           !referencedEnums
               .map((Enum e) => e.name)
               .contains(element.key.baseName) &&
@@ -1430,7 +1425,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             lineNumber: lineNumber));
       }
     }
-    for (final Class classDefinition in referencedClasses) {
+    for (final Class classDefinition in _classes) {
       classDefinition.fields = _attachAssociatedDefinitions(
         classDefinition.fields,
       );
@@ -1685,6 +1680,50 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        SwiftProxyApiOptions? swiftOptions;
+        final Map<String, Object?>? swiftOptionsMap =
+            annotationMap['swiftOptions'] as Map<String, Object?>?;
+        if (swiftOptionsMap != null) {
+          swiftOptions = SwiftProxyApiOptions(
+            name: swiftOptionsMap['name'] as String?,
+            import: swiftOptionsMap['import'] as String?,
+            minIosApi: swiftOptionsMap['minIosApi'] as String?,
+            minMacosApi: swiftOptionsMap['minMacosApi'] as String?,
+            supportsIos: swiftOptionsMap['supportsIos'] as bool? ?? true,
+            supportsMacos: swiftOptionsMap['supportsMacos'] as bool? ?? true,
+          );
+        }
+
+        void tryParseApiRequirement(String? version) {
+          if (version == null) {
+            return;
+          }
+          try {
+            Version.parse(version);
+          } on FormatException catch (error) {
+            _errors.add(
+              Error(
+                message:
+                    'Could not parse version: ${error.message}. Please use semantic versioning format: "1.2.3".',
+                lineNumber: _calculateLineNumber(source, node.offset),
+              ),
+            );
+          }
+        }
+
+        tryParseApiRequirement(swiftOptions?.minIosApi);
+        tryParseApiRequirement(swiftOptions?.minMacosApi);
+
+        KotlinProxyApiOptions? kotlinOptions;
+        final Map<String, Object?>? kotlinOptionsMap =
+            annotationMap['kotlinOptions'] as Map<String, Object?>?;
+        if (kotlinOptionsMap != null) {
+          kotlinOptions = KotlinProxyApiOptions(
+            fullClassName: kotlinOptionsMap['fullClassName'] as String?,
+            minAndroidApi: kotlinOptionsMap['minAndroidApi'] as int?,
+          );
+        }
+
         _currentApi = AstProxyApi(
           name: node.name.lexeme,
           methods: <Method>[],
@@ -1692,6 +1731,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <ApiField>[],
           superClass: superClass,
           interfaces: interfaces,
+          swiftOptions: swiftOptions,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );

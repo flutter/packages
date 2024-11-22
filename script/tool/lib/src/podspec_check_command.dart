@@ -95,7 +95,8 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       }
     }
 
-    if (pluginSupportsPlatform(platformIOS, package) &&
+    if ((pluginSupportsPlatform(platformIOS, package) ||
+            pluginSupportsPlatform(platformMacOS, package)) &&
         !podspecs.any(_hasPrivacyManifest)) {
       printError('No PrivacyInfo.xcprivacy file specified. Please ensure that '
           'a privacy manifest is included in the build using '
@@ -151,7 +152,6 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       podspecPath,
       '--configuration=Debug', // Release targets unsupported arm64 simulators. Use Debug to only build against targeted x86_64 simulator devices.
       '--skip-tests',
-      '--use-modular-headers', // Flutter sets use_modular_headers! in its templates.
       if (libraryLint) '--use-libraries'
     ];
 

@@ -199,7 +199,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     setLogging(enabled: debugLogDiagnostics);
     WidgetsFlutterBinding.ensureInitialized();
 
-    navigatorKey ??= GlobalKey<NavigatorState>();
+    navigatorKey ??= GlobalKey<NavigatorState>(debugLabel: 'root');
 
     _routingConfig.addListener(_handleRoutingConfigChanged);
     configuration = RouteConfiguration(
@@ -230,6 +230,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       initialLocation: _effectiveInitialLocation(initialLocation),
       initialExtra: initialExtra,
       refreshListenable: refreshListenable,
+      routerNeglect: routerNeglect,
     );
 
     routerDelegate = GoRouterDelegate(
@@ -253,6 +254,14 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       return true;
     }());
   }
+
+  /// The top [GoRouterState], the state of the route that was
+  /// last used in either [GoRouter.go] or [GoRouter.push].
+  ///
+  /// Accessing this property via GoRouter.of(context).state will not
+  /// cause rebuild if the state has changed, consider using
+  /// GoRouterState.of(context) instead.
+  GoRouterState? get state => routerDelegate.state;
 
   /// Whether the imperative API affects browser URL bar.
   ///

@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.CustomCap;
 import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
+import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
@@ -43,7 +44,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,93 +61,82 @@ class Convert {
   public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
 
   private static BitmapDescriptor toBitmapDescriptor(
-      Object o, AssetManager assetManager, float density) {
-    final List<?> data = toList(o);
-    final String descriptorType = toString(data.get(0));
-    switch (descriptorType) {
-      case "defaultMarker":
-        if (data.size() == 1) {
-          return BitmapDescriptorFactory.defaultMarker();
-        } else {
-          final float hue = toFloat(data.get(1));
-          return BitmapDescriptorFactory.defaultMarker(hue);
-        }
-      case "fromAsset":
-        final String assetPath = toString(data.get(1));
-        if (data.size() == 2) {
-          return BitmapDescriptorFactory.fromAsset(
-              FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetPath));
-        } else {
-          final String assetPackage = toString(data.get(2));
-          return BitmapDescriptorFactory.fromAsset(
-              FlutterInjector.instance()
-                  .flutterLoader()
-                  .getLookupKeyForAsset(assetPath, assetPackage));
-        }
-      case "fromAssetImage":
-        final String assetImagePath = toString(data.get(1));
-        if (data.size() == 3) {
-          return BitmapDescriptorFactory.fromAsset(
-              FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
-        } else {
-          throw new IllegalArgumentException(
-              "'fromAssetImage' Expected exactly 3 arguments, got: " + data.size());
-        }
-      case "fromBytes":
-        return getBitmapFromBytesLegacy(data);
-      case "asset":
-        if (!(data.get(1) instanceof Map)) {
-          throw new IllegalArgumentException("'asset' expected a map as the second parameter");
-        }
-        final Map<?, ?> assetData = toMap(data.get(1));
-        return getBitmapFromAsset(
-            assetData,
-            assetManager,
-            density,
-            new BitmapDescriptorFactoryWrapper(),
-            new FlutterInjectorWrapper());
-      case "bytes":
-        if (!(data.get(1) instanceof Map)) {
-          throw new IllegalArgumentException("'bytes' expected a map as the second parameter");
-        }
-        final Map<?, ?> byteData = toMap(data.get(1));
-        return getBitmapFromBytes(byteData, density, new BitmapDescriptorFactoryWrapper());
-      default:
-        throw new IllegalArgumentException("Cannot interpret " + o + " as BitmapDescriptor");
+      Messages.PlatformBitmap platformBitmap, AssetManager assetManager, float density) {
+    return toBitmapDescriptor(
+        platformBitmap, assetManager, density, new BitmapDescriptorFactoryWrapper());
+  }
+
+  private static BitmapDescriptor toBitmapDescriptor(
+      Messages.PlatformBitmap platformBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
+    Object bitmap = platformBitmap.getBitmap();
+    if (bitmap instanceof Messages.PlatformBitmapDefaultMarker) {
+      Messages.PlatformBitmapDefaultMarker typedBitmap =
+          (Messages.PlatformBitmapDefaultMarker) bitmap;
+      if (typedBitmap.getHue() == null) {
+        return BitmapDescriptorFactory.defaultMarker();
+      } else {
+        final float hue = typedBitmap.getHue().floatValue();
+        return BitmapDescriptorFactory.defaultMarker(hue);
+      }
     }
+    if (bitmap instanceof Messages.PlatformBitmapAsset) {
+      Messages.PlatformBitmapAsset typedBitmap = (Messages.PlatformBitmapAsset) bitmap;
+      final String assetPath = typedBitmap.getName();
+      final String assetPackage = typedBitmap.getPkg();
+      if (assetPackage == null) {
+        return BitmapDescriptorFactory.fromAsset(
+            FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetPath));
+      } else {
+        return BitmapDescriptorFactory.fromAsset(
+            FlutterInjector.instance()
+                .flutterLoader()
+                .getLookupKeyForAsset(assetPath, assetPackage));
+      }
+    }
+    if (bitmap instanceof Messages.PlatformBitmapAssetImage) {
+      Messages.PlatformBitmapAssetImage typedBitmap = (Messages.PlatformBitmapAssetImage) bitmap;
+      final String assetImagePath = typedBitmap.getName();
+      return BitmapDescriptorFactory.fromAsset(
+          FlutterInjector.instance().flutterLoader().getLookupKeyForAsset(assetImagePath));
+    }
+    if (bitmap instanceof Messages.PlatformBitmapBytes) {
+      Messages.PlatformBitmapBytes typedBitmap = (Messages.PlatformBitmapBytes) bitmap;
+      return getBitmapFromBytesLegacy(typedBitmap);
+    }
+    if (bitmap instanceof Messages.PlatformBitmapAssetMap) {
+      Messages.PlatformBitmapAssetMap typedBitmap = (Messages.PlatformBitmapAssetMap) bitmap;
+      return getBitmapFromAsset(
+          typedBitmap, assetManager, density, wrapper, new FlutterInjectorWrapper());
+    }
+    if (bitmap instanceof Messages.PlatformBitmapBytesMap) {
+      Messages.PlatformBitmapBytesMap typedBitmap = (Messages.PlatformBitmapBytesMap) bitmap;
+      return getBitmapFromBytes(typedBitmap, density, wrapper);
+    }
+    throw new IllegalArgumentException("PlatformBitmap did not contain a supported subtype.");
   }
 
   // Used for deprecated fromBytes bitmap descriptor.
   // Can be removed after support for "fromBytes" bitmap descriptor type is
   // removed.
-  private static BitmapDescriptor getBitmapFromBytesLegacy(List<?> data) {
-    if (data.size() == 2) {
-      try {
-        Bitmap bitmap = toBitmap(data.get(1));
-        return BitmapDescriptorFactory.fromBitmap(bitmap);
-      } catch (Exception e) {
-        throw new IllegalArgumentException("Unable to interpret bytes as a valid image.", e);
-      }
-    } else {
-      throw new IllegalArgumentException(
-          "fromBytes should have exactly one argument, interpretTileOverlayOptions the bytes. Got: "
-              + data.size());
+  private static BitmapDescriptor getBitmapFromBytesLegacy(
+      Messages.PlatformBitmapBytes bitmapBytes) {
+    try {
+      Bitmap bitmap = toBitmap(bitmapBytes.getByteData());
+      return BitmapDescriptorFactory.fromBitmap(bitmap);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Unable to interpret bytes as a valid image.", e);
     }
   }
 
   /**
    * Creates a BitmapDescriptor object from bytes data.
    *
-   * <p>This method requires the `byteData` map to contain specific keys: 'byteData' for image
-   * bytes, 'bitmapScaling' for scaling mode, and 'imagePixelRatio' for scale ratio. It may
-   * optionally include 'width' and/or 'height' for explicit image dimensions.
-   *
-   * @param byteData a map containing the byte data and scaling instructions. Expected keys are:
-   *     'byteData': the actual bytes of the image, 'bitmapScaling': the scaling mode, either 'auto'
-   *     or 'none', 'imagePixelRatio': used with 'auto' bitmapScaling if width or height are not
-   *     provided, 'width' (optional): the desired width, which affects scaling if 'height' is not
-   *     provided, 'height' (optional): the desired height, which affects scaling if 'width' is not
-   *     provided
+   * @param bytesMap a [PlatformBitmapBytesMap] containing the byte data from which to construct a
+   *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
+   *     `height` is `null`, and the optional `height` affects scaling when `width` is `null.
    * @param density the density of the display, used to calculate pixel dimensions.
    * @param bitmapDescriptorFactory is an instance of the BitmapDescriptorFactoryWrapper.
    * @return BitmapDescriptor object from bytes data.
@@ -156,34 +145,16 @@ class Convert {
    */
   @VisibleForTesting
   public static BitmapDescriptor getBitmapFromBytes(
-      Map<?, ?> byteData, float density, BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
-
-    final String byteDataKey = "byteData";
-    final String bitmapScalingKey = "bitmapScaling";
-    final String imagePixelRatioKey = "imagePixelRatio";
-
-    if (!byteData.containsKey(byteDataKey)) {
-      throw new IllegalArgumentException("'bytes' requires '" + byteDataKey + "' key.");
-    }
-    if (!byteData.containsKey(bitmapScalingKey)) {
-      throw new IllegalArgumentException("'bytes' requires '" + bitmapScalingKey + "' key.");
-    }
-    if (!byteData.containsKey(imagePixelRatioKey)) {
-      throw new IllegalArgumentException("'bytes' requires '" + imagePixelRatioKey + "' key.");
-    }
-
+      Messages.PlatformBitmapBytesMap bytesMap,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
     try {
-      Bitmap bitmap = toBitmap(byteData.get(byteDataKey));
-      String scalingMode = toString(byteData.get(bitmapScalingKey));
+      Bitmap bitmap = toBitmap(bytesMap.getByteData());
+      Messages.PlatformMapBitmapScaling scalingMode = bytesMap.getBitmapScaling();
       switch (scalingMode) {
-        case "auto":
-          final String widthKey = "width";
-          final String heightKey = "height";
-
-          final Double width =
-              byteData.containsKey(widthKey) ? toDouble(byteData.get(widthKey)) : null;
-          final Double height =
-              byteData.containsKey(heightKey) ? toDouble(byteData.get(heightKey)) : null;
+        case AUTO:
+          final Double width = bytesMap.getWidth();
+          final Double height = bytesMap.getHeight();
 
           if (width != null || height != null) {
             int targetWidth = width != null ? toInt(width * density) : bitmap.getWidth();
@@ -202,10 +173,10 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale ratio
-            final float scale = density / toFloat(byteData.get(imagePixelRatioKey));
+            final float scale = density / bytesMap.getImagePixelRatio().floatValue();
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
-        case "none":
+        case NONE:
           break;
       }
       return bitmapDescriptorFactory.fromBitmap(bitmap);
@@ -218,15 +189,13 @@ class Convert {
    * Creates a BitmapDescriptor object from asset, using given details and density.
    *
    * <p>This method processes an asset specified by name and applies scaling based on the provided
-   * parameters. The `assetDetails` map must contain the keys 'assetName', 'bitmapScaling', and
-   * 'imagePixelRatio', and may optionally include 'width' and/or 'height' to explicitly set the
-   * dimensions of the output image.
+   * parameters. The `assetMap` object provides the asset name, bitmap scaling mode, and image pixel
+   * ratio, and may optionally include 'width' and/or 'height' to explicitly set the dimensions of
+   * the output image.
    *
-   * @param assetDetails a map containing the asset details and scaling instructions, with keys
-   *     'assetName': the name of the asset file, 'bitmapScaling': the scaling mode, either 'auto'
-   *     or 'none', 'imagePixelRatio': used with 'auto' scaling to compute the scale ratio, 'width'
-   *     (optional): the desired width, which affects scaling if 'height' is not provided, 'height'
-   *     (optional): the desired height, which affects scaling if 'width' is not provided
+   * @param assetMap a [PlatformBitmapAssetMap] containing the asset name from which to construct a
+   *     [BitmapDescriptor] and a bitmap scaling mode. The optional `width` affects scaling when
+   *     `height` is `null`, and the optional `height` affects scaling when `width` is `null.
    * @param assetManager assetManager An instance of Android's AssetManager, which provides access
    *     to any raw asset files stored in the application's assets directory.
    * @param density density the density of the display, used to calculate pixel dimensions.
@@ -238,39 +207,19 @@ class Convert {
    */
   @VisibleForTesting
   public static BitmapDescriptor getBitmapFromAsset(
-      Map<?, ?> assetDetails,
+      Messages.PlatformBitmapAssetMap assetMap,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory,
       FlutterInjectorWrapper flutterInjector) {
-
-    final String assetNameKey = "assetName";
-    final String bitmapScalingKey = "bitmapScaling";
-    final String imagePixelRatioKey = "imagePixelRatio";
-
-    if (!assetDetails.containsKey(assetNameKey)) {
-      throw new IllegalArgumentException("'asset' requires '" + assetNameKey + "' key.");
-    }
-    if (!assetDetails.containsKey(bitmapScalingKey)) {
-      throw new IllegalArgumentException("'asset' requires '" + bitmapScalingKey + "' key.");
-    }
-    if (!assetDetails.containsKey(imagePixelRatioKey)) {
-      throw new IllegalArgumentException("'asset' requires '" + imagePixelRatioKey + "' key.");
-    }
-
-    final String assetName = toString(assetDetails.get(assetNameKey));
+    final String assetName = assetMap.getAssetName();
     final String assetKey = flutterInjector.getLookupKeyForAsset(assetName);
 
-    String scalingMode = toString(assetDetails.get(bitmapScalingKey));
+    Messages.PlatformMapBitmapScaling scalingMode = assetMap.getBitmapScaling();
     switch (scalingMode) {
-      case "auto":
-        final String widthKey = "width";
-        final String heightKey = "height";
-
-        final Double width =
-            assetDetails.containsKey(widthKey) ? toDouble(assetDetails.get(widthKey)) : null;
-        final Double height =
-            assetDetails.containsKey(heightKey) ? toDouble(assetDetails.get(heightKey)) : null;
+      case AUTO:
+        final Double width = assetMap.getWidth();
+        final Double height = assetMap.getHeight();
         InputStream inputStream = null;
         try {
           inputStream = assetManager.open(assetKey);
@@ -293,7 +242,7 @@ class Convert {
                 toScaledBitmap(bitmap, targetWidth, targetHeight));
           } else {
             // Scale image using given scale.
-            final float scale = density / toFloat(assetDetails.get(imagePixelRatioKey));
+            final float scale = density / assetMap.getImagePixelRatio().floatValue();
             return bitmapDescriptorFactory.fromBitmap(toScaledBitmap(bitmap, scale));
           }
         } catch (Exception e) {
@@ -307,15 +256,11 @@ class Convert {
             }
           }
         }
-      case "none":
+      case NONE:
         break;
     }
 
     return bitmapDescriptorFactory.fromAsset(assetKey);
-  }
-
-  private static boolean toBoolean(Object o) {
-    return (Boolean) o;
   }
 
   static @NonNull CameraPosition cameraPositionFromPigeon(
@@ -328,47 +273,57 @@ class Convert {
     return builder.build();
   }
 
-  static CameraPosition toCameraPosition(Object o) {
-    final Map<?, ?> data = toMap(o);
-    final CameraPosition.Builder builder = CameraPosition.builder();
-    builder.bearing(toFloat(data.get("bearing")));
-    builder.target(toLatLng(data.get("target")));
-    builder.tilt(toFloat(data.get("tilt")));
-    builder.zoom(toFloat(data.get("zoom")));
-    return builder.build();
-  }
-
-  static CameraUpdate toCameraUpdate(Object o, float density) {
-    final List<?> data = toList(o);
-    switch (toString(data.get(0))) {
-      case "newCameraPosition":
-        return CameraUpdateFactory.newCameraPosition(toCameraPosition(data.get(1)));
-      case "newLatLng":
-        return CameraUpdateFactory.newLatLng(toLatLng(data.get(1)));
-      case "newLatLngBounds":
-        return CameraUpdateFactory.newLatLngBounds(
-            toLatLngBounds(data.get(1)), toPixels(data.get(2), density));
-      case "newLatLngZoom":
-        return CameraUpdateFactory.newLatLngZoom(toLatLng(data.get(1)), toFloat(data.get(2)));
-      case "scrollBy":
-        return CameraUpdateFactory.scrollBy( //
-            toFractionalPixels(data.get(1), density), //
-            toFractionalPixels(data.get(2), density));
-      case "zoomBy":
-        if (data.size() == 2) {
-          return CameraUpdateFactory.zoomBy(toFloat(data.get(1)));
-        } else {
-          return CameraUpdateFactory.zoomBy(toFloat(data.get(1)), toPoint(data.get(2), density));
-        }
-      case "zoomIn":
-        return CameraUpdateFactory.zoomIn();
-      case "zoomOut":
-        return CameraUpdateFactory.zoomOut();
-      case "zoomTo":
-        return CameraUpdateFactory.zoomTo(toFloat(data.get(1)));
-      default:
-        throw new IllegalArgumentException("Cannot interpret " + o + " as CameraUpdate");
+  static CameraUpdate cameraUpdateFromPigeon(Messages.PlatformCameraUpdate update, float density) {
+    Object cameraUpdate = update.getCameraUpdate();
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewCameraPosition) {
+      Messages.PlatformCameraUpdateNewCameraPosition newCameraPosition =
+          (Messages.PlatformCameraUpdateNewCameraPosition) cameraUpdate;
+      return CameraUpdateFactory.newCameraPosition(
+          cameraPositionFromPigeon(newCameraPosition.getCameraPosition()));
     }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLng) {
+      Messages.PlatformCameraUpdateNewLatLng newLatLng =
+          (Messages.PlatformCameraUpdateNewLatLng) cameraUpdate;
+      return CameraUpdateFactory.newLatLng(latLngFromPigeon(newLatLng.getLatLng()));
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngZoom) {
+      Messages.PlatformCameraUpdateNewLatLngZoom newLatLngZoom =
+          (Messages.PlatformCameraUpdateNewLatLngZoom) cameraUpdate;
+      return CameraUpdateFactory.newLatLngZoom(
+          latLngFromPigeon(newLatLngZoom.getLatLng()), newLatLngZoom.getZoom().floatValue());
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateNewLatLngBounds) {
+      Messages.PlatformCameraUpdateNewLatLngBounds newLatLngBounds =
+          (Messages.PlatformCameraUpdateNewLatLngBounds) cameraUpdate;
+      return CameraUpdateFactory.newLatLngBounds(
+          latLngBoundsFromPigeon(newLatLngBounds.getBounds()),
+          (int) (newLatLngBounds.getPadding() * density));
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateScrollBy) {
+      Messages.PlatformCameraUpdateScrollBy scrollBy =
+          (Messages.PlatformCameraUpdateScrollBy) cameraUpdate;
+      return CameraUpdateFactory.scrollBy(
+          scrollBy.getDx().floatValue() * density, scrollBy.getDy().floatValue() * density);
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomBy) {
+      Messages.PlatformCameraUpdateZoomBy zoomBy =
+          (Messages.PlatformCameraUpdateZoomBy) cameraUpdate;
+      final Point focus = pointFromPigeon(zoomBy.getFocus(), density);
+      return (focus != null)
+          ? CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue(), focus)
+          : CameraUpdateFactory.zoomBy(zoomBy.getAmount().floatValue());
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoomTo) {
+      Messages.PlatformCameraUpdateZoomTo zoomTo =
+          (Messages.PlatformCameraUpdateZoomTo) cameraUpdate;
+      return CameraUpdateFactory.zoomTo(zoomTo.getZoom().floatValue());
+    }
+    if (cameraUpdate instanceof Messages.PlatformCameraUpdateZoom) {
+      Messages.PlatformCameraUpdateZoom zoom = (Messages.PlatformCameraUpdateZoom) cameraUpdate;
+      return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
+    }
+    throw new IllegalArgumentException(
+        "PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case classes.");
   }
 
   private static double toDouble(Object o) {
@@ -492,16 +447,16 @@ class Convert {
     return new Point(point.getX().intValue(), point.getY().intValue());
   }
 
-  static Messages.PlatformPoint pointToPigeon(Point point) {
-    return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
-  }
-
-  private static LatLngBounds toLatLngBounds(Object o) {
-    if (o == null) {
+  @Nullable
+  static Point pointFromPigeon(@Nullable Messages.PlatformDoublePair point, float density) {
+    if (point == null) {
       return null;
     }
-    final List<?> data = toList(o);
-    return new LatLngBounds(toLatLng(data.get(0)), toLatLng(data.get(1)));
+    return new Point((int) (point.getX() * density), (int) (point.getY() * density));
+  }
+
+  static Messages.PlatformPoint pointToPigeon(Point point) {
+    return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
   }
 
   private static List<?> toList(Object o) {
@@ -512,28 +467,7 @@ class Convert {
     return (Map<?, ?>) o;
   }
 
-  private static Map<String, Object> toObjectMap(Object o) {
-    Map<String, Object> hashMap = new HashMap<>();
-    Map<?, ?> map = (Map<?, ?>) o;
-    for (Object key : map.keySet()) {
-      Object object = map.get(key);
-      if (object != null) {
-        hashMap.put((String) key, object);
-      }
-    }
-    return hashMap;
-  }
-
-  private static float toFractionalPixels(Object o, float density) {
-    return toFloat(o) * density;
-  }
-
-  private static int toPixels(Object o, float density) {
-    return (int) toFractionalPixels(o, density);
-  }
-
-  private static Bitmap toBitmap(Object o) {
-    byte[] bmpData = (byte[]) o;
+  private static Bitmap toBitmap(byte[] bmpData) {
     Bitmap bitmap = BitmapFactory.decodeByteArray(bmpData, 0, bmpData.length);
     if (bitmap == null) {
       throw new IllegalArgumentException("Unable to decode bytes as a valid bitmap.");
@@ -559,15 +493,6 @@ class Convert {
       return Bitmap.createScaledBitmap(bitmap, width, height, true);
     }
     return bitmap;
-  }
-
-  private static Point toPoint(Object o, float density) {
-    final List<?> data = toList(o);
-    return new Point(toPixels(data.get(0), density), toPixels(data.get(1), density));
-  }
-
-  private static String toString(Object o) {
-    return (String) o;
   }
 
   static void interpretMapConfiguration(
@@ -659,208 +584,89 @@ class Convert {
 
   /** Set the options in the given object to marker options sink. */
   static void interpretMarkerOptions(
-      Map<String, ?> data, MarkerOptionsSink sink, AssetManager assetManager, float density) {
-    final Object alpha = data.get("alpha");
-    if (alpha != null) {
-      sink.setAlpha(toFloat(alpha));
-    }
-    final Object anchor = data.get("anchor");
-    if (anchor != null) {
-      final List<?> anchorData = toList(anchor);
-      sink.setAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object draggable = data.get("draggable");
-    if (draggable != null) {
-      sink.setDraggable(toBoolean(draggable));
-    }
-    final Object flat = data.get("flat");
-    if (flat != null) {
-      sink.setFlat(toBoolean(flat));
-    }
-    final Object icon = data.get("icon");
-    if (icon != null) {
-      sink.setIcon(toBitmapDescriptor(icon, assetManager, density));
-    }
-
-    final Object infoWindow = data.get("infoWindow");
-    if (infoWindow != null) {
-      interpretInfoWindowOptions(sink, toObjectMap(infoWindow));
-    }
-    final Object position = data.get("position");
-    if (position != null) {
-      sink.setPosition(toLatLng(position));
-    }
-    final Object rotation = data.get("rotation");
-    if (rotation != null) {
-      sink.setRotation(toFloat(rotation));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
+      Messages.PlatformMarker marker,
+      MarkerOptionsSink sink,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper wrapper) {
+    sink.setAlpha(marker.getAlpha().floatValue());
+    sink.setAnchor(marker.getAnchor().getX().floatValue(), marker.getAnchor().getY().floatValue());
+    sink.setConsumeTapEvents(marker.getConsumeTapEvents());
+    sink.setDraggable(marker.getDraggable());
+    sink.setFlat(marker.getFlat());
+    sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
+    interpretInfoWindowOptions(sink, marker.getInfoWindow());
+    sink.setPosition(toLatLng(marker.getPosition().toList()));
+    sink.setRotation(marker.getRotation().floatValue());
+    sink.setVisible(marker.getVisible());
+    sink.setZIndex(marker.getZIndex().floatValue());
   }
 
   private static void interpretInfoWindowOptions(
-      MarkerOptionsSink sink, Map<String, Object> infoWindow) {
-    String title = (String) infoWindow.get("title");
-    String snippet = (String) infoWindow.get("snippet");
-    // snippet is nullable.
+      MarkerOptionsSink sink, Messages.PlatformInfoWindow infoWindow) {
+    String title = infoWindow.getTitle();
     if (title != null) {
-      sink.setInfoWindowText(title, snippet);
+      sink.setInfoWindowText(title, infoWindow.getSnippet());
     }
-    Object infoWindowAnchor = infoWindow.get("anchor");
-    if (infoWindowAnchor != null) {
-      final List<?> anchorData = toList(infoWindowAnchor);
-      sink.setInfoWindowAnchor(toFloat(anchorData.get(0)), toFloat(anchorData.get(1)));
-    }
+    Messages.PlatformDoublePair infoWindowAnchor = infoWindow.getAnchor();
+    sink.setInfoWindowAnchor(
+        infoWindowAnchor.getX().floatValue(), infoWindowAnchor.getY().floatValue());
   }
 
-  static String interpretPolygonOptions(Map<String, ?> data, PolygonOptionsSink sink) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
+  static String interpretPolygonOptions(Messages.PlatformPolygon polygon, PolygonOptionsSink sink) {
+    sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
+    sink.setGeodesic(polygon.getGeodesic());
+    sink.setVisible(polygon.getVisible());
+    sink.setFillColor(polygon.getFillColor().intValue());
+    sink.setStrokeColor(polygon.getStrokeColor().intValue());
+    sink.setStrokeWidth(polygon.getStrokeWidth());
+    sink.setZIndex(polygon.getZIndex());
+    sink.setPoints(pointsFromPigeon(polygon.getPoints()));
+    sink.setHoles(toHoles(polygon.getHoles()));
+    return polygon.getPolygonId();
+  }
+
+  static int jointTypeFromPigeon(Messages.PlatformJointType jointType) {
+    switch (jointType) {
+      case MITERED:
+        return JointType.DEFAULT;
+      case BEVEL:
+        return JointType.BEVEL;
+      case ROUND:
+        return JointType.ROUND;
     }
-    final Object geodesic = data.get("geodesic");
-    if (geodesic != null) {
-      sink.setGeodesic(toBoolean(geodesic));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object fillColor = data.get("fillColor");
-    if (fillColor != null) {
-      sink.setFillColor(toInt(fillColor));
-    }
-    final Object strokeColor = data.get("strokeColor");
-    if (strokeColor != null) {
-      sink.setStrokeColor(toInt(strokeColor));
-    }
-    final Object strokeWidth = data.get("strokeWidth");
-    if (strokeWidth != null) {
-      sink.setStrokeWidth(toInt(strokeWidth));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object points = data.get("points");
-    if (points != null) {
-      sink.setPoints(toPoints(points));
-    }
-    final Object holes = data.get("holes");
-    if (holes != null) {
-      sink.setHoles(toHoles(holes));
-    }
-    final String polygonId = (String) data.get("polygonId");
-    if (polygonId == null) {
-      throw new IllegalArgumentException("polygonId was null");
-    } else {
-      return polygonId;
-    }
+    return JointType.DEFAULT;
   }
 
   static String interpretPolylineOptions(
-      Map<String, ?> data, PolylineOptionsSink sink, AssetManager assetManager, float density) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object color = data.get("color");
-    if (color != null) {
-      sink.setColor(toInt(color));
-    }
-    final Object endCap = data.get("endCap");
-    if (endCap != null) {
-      sink.setEndCap(toCap(endCap, assetManager, density));
-    }
-    final Object geodesic = data.get("geodesic");
-    if (geodesic != null) {
-      sink.setGeodesic(toBoolean(geodesic));
-    }
-    final Object jointType = data.get("jointType");
-    if (jointType != null) {
-      sink.setJointType(toInt(jointType));
-    }
-    final Object startCap = data.get("startCap");
-    if (startCap != null) {
-      sink.setStartCap(toCap(startCap, assetManager, density));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object width = data.get("width");
-    if (width != null) {
-      sink.setWidth(toInt(width));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object points = data.get("points");
-    if (points != null) {
-      sink.setPoints(toPoints(points));
-    }
-    final Object pattern = data.get("pattern");
-    if (pattern != null) {
-      sink.setPattern(toPattern(pattern));
-    }
-    final String polylineId = (String) data.get("polylineId");
-    if (polylineId == null) {
-      throw new IllegalArgumentException("polylineId was null");
-    } else {
-      return polylineId;
-    }
+      Messages.PlatformPolyline polyline,
+      PolylineOptionsSink sink,
+      AssetManager assetManager,
+      float density) {
+    sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
+    sink.setColor(polyline.getColor().intValue());
+    sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
+    sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
+    sink.setGeodesic(polyline.getGeodesic());
+    sink.setJointType(jointTypeFromPigeon(polyline.getJointType()));
+    sink.setVisible(polyline.getVisible());
+    sink.setWidth(polyline.getWidth());
+    sink.setZIndex(polyline.getZIndex());
+    sink.setPoints(pointsFromPigeon(polyline.getPoints()));
+    sink.setPattern(patternFromPigeon(polyline.getPatterns()));
+    return polyline.getPolylineId();
   }
 
-  static String interpretCircleOptions(Map<String, ?> data, CircleOptionsSink sink) {
-    final Object consumeTapEvents = data.get("consumeTapEvents");
-    if (consumeTapEvents != null) {
-      sink.setConsumeTapEvents(toBoolean(consumeTapEvents));
-    }
-    final Object fillColor = data.get("fillColor");
-    if (fillColor != null) {
-      sink.setFillColor(toInt(fillColor));
-    }
-    final Object strokeColor = data.get("strokeColor");
-    if (strokeColor != null) {
-      sink.setStrokeColor(toInt(strokeColor));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final Object strokeWidth = data.get("strokeWidth");
-    if (strokeWidth != null) {
-      sink.setStrokeWidth(toInt(strokeWidth));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object center = data.get("center");
-    if (center != null) {
-      sink.setCenter(toLatLng(center));
-    }
-    final Object radius = data.get("radius");
-    if (radius != null) {
-      sink.setRadius(toDouble(radius));
-    }
-    final String circleId = (String) data.get("circleId");
-    if (circleId == null) {
-      throw new IllegalArgumentException("circleId was null");
-    } else {
-      return circleId;
-    }
+  static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
+    sink.setConsumeTapEvents(circle.getConsumeTapEvents());
+    sink.setFillColor(circle.getFillColor().intValue());
+    sink.setStrokeColor(circle.getStrokeColor().intValue());
+    sink.setStrokeWidth(circle.getStrokeWidth());
+    sink.setZIndex(circle.getZIndex().floatValue());
+    sink.setCenter(toLatLng(circle.getCenter().toList()));
+    sink.setRadius(circle.getRadius());
+    sink.setVisible(circle.getVisible());
+    return circle.getCircleId();
   }
 
   /**
@@ -912,14 +718,11 @@ class Convert {
     }
   }
 
-  @VisibleForTesting
-  static List<LatLng> toPoints(Object o) {
-    final List<?> data = toList(o);
+  static List<LatLng> pointsFromPigeon(List<Messages.PlatformLatLng> data) {
     final List<LatLng> points = new ArrayList<>(data.size());
 
-    for (Object rawPoint : data) {
-      final List<?> point = toList(rawPoint);
-      points.add(new LatLng(toDouble(point.get(0)), toDouble(point.get(1))));
+    for (Messages.PlatformLatLng rawPoint : data) {
+      points.add(new LatLng(rawPoint.getLatitude(), rawPoint.getLongitude()));
     }
     return points;
   }
@@ -980,96 +783,72 @@ class Convert {
     return new Gradient(colors, startPoints, colorMapSize);
   }
 
-  private static List<List<LatLng>> toHoles(Object o) {
-    final List<?> data = toList(o);
+  private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
     final List<List<LatLng>> holes = new ArrayList<>(data.size());
 
-    for (Object rawHole : data) {
-      holes.add(toPoints(rawHole));
+    for (List<Messages.PlatformLatLng> hole : data) {
+      holes.add(pointsFromPigeon(hole));
     }
     return holes;
   }
 
-  private static List<PatternItem> toPattern(Object o) {
-    final List<?> data = toList(o);
-
-    if (data.isEmpty()) {
+  private static List<PatternItem> patternFromPigeon(
+      List<Messages.PlatformPatternItem> patternItems) {
+    if (patternItems.isEmpty()) {
       return null;
     }
-
-    final List<PatternItem> pattern = new ArrayList<>(data.size());
-
-    for (Object ob : data) {
-      final List<?> patternItem = toList(ob);
-      switch (toString(patternItem.get(0))) {
-        case "dot":
+    final List<PatternItem> pattern = new ArrayList<>();
+    for (Messages.PlatformPatternItem patternItem : patternItems) {
+      switch (patternItem.getType()) {
+        case DOT:
           pattern.add(new Dot());
           break;
-        case "dash":
-          pattern.add(new Dash(toFloat(patternItem.get(1))));
+        case DASH:
+          assert patternItem.getLength() != null;
+          pattern.add(new Dash(patternItem.getLength().floatValue()));
           break;
-        case "gap":
-          pattern.add(new Gap(toFloat(patternItem.get(1))));
+        case GAP:
+          assert patternItem.getLength() != null;
+          pattern.add(new Gap(patternItem.getLength().floatValue()));
           break;
-        default:
-          throw new IllegalArgumentException("Cannot interpret " + pattern + " as PatternItem");
       }
     }
-
     return pattern;
   }
 
-  private static Cap toCap(Object o, AssetManager assetManager, float density) {
-    final List<?> data = toList(o);
-    switch (toString(data.get(0))) {
-      case "buttCap":
+  private static Cap capFromPigeon(
+      Messages.PlatformCap cap, AssetManager assetManager, float density) {
+    switch (cap.getType()) {
+      case BUTT_CAP:
         return new ButtCap();
-      case "roundCap":
+      case ROUND_CAP:
         return new RoundCap();
-      case "squareCap":
+      case SQUARE_CAP:
         return new SquareCap();
-      case "customCap":
-        if (data.size() == 2) {
-          return new CustomCap(toBitmapDescriptor(data.get(1), assetManager, density));
-        } else {
-          return new CustomCap(
-              toBitmapDescriptor(data.get(1), assetManager, density), toFloat(data.get(2)));
+      case CUSTOM_CAP:
+        if (cap.getRefWidth() == null) {
+          throw new IllegalArgumentException("A Custom Cap must specify a refWidth value.");
         }
-      default:
-        throw new IllegalArgumentException("Cannot interpret " + o + " as Cap");
+        return new CustomCap(
+            toBitmapDescriptor(cap.getBitmapDescriptor(), assetManager, density),
+            cap.getRefWidth().floatValue());
     }
+    throw new IllegalArgumentException("Unrecognized PlatformCap type: " + cap.getType());
   }
 
-  static String interpretTileOverlayOptions(Map<String, ?> data, TileOverlaySink sink) {
-    final Object fadeIn = data.get("fadeIn");
-    if (fadeIn != null) {
-      sink.setFadeIn(toBoolean(fadeIn));
-    }
-    final Object transparency = data.get("transparency");
-    if (transparency != null) {
-      sink.setTransparency(toFloat(transparency));
-    }
-    final Object zIndex = data.get("zIndex");
-    if (zIndex != null) {
-      sink.setZIndex(toFloat(zIndex));
-    }
-    final Object visible = data.get("visible");
-    if (visible != null) {
-      sink.setVisible(toBoolean(visible));
-    }
-    final String tileOverlayId = (String) data.get("tileOverlayId");
-    if (tileOverlayId == null) {
-      throw new IllegalArgumentException("tileOverlayId was null");
-    } else {
-      return tileOverlayId;
-    }
+  static String interpretTileOverlayOptions(
+      Messages.PlatformTileOverlay tileOverlay, TileOverlaySink sink) {
+    sink.setFadeIn(tileOverlay.getFadeIn());
+    sink.setTransparency(tileOverlay.getTransparency().floatValue());
+    sink.setZIndex(tileOverlay.getZIndex());
+    sink.setVisible(tileOverlay.getVisible());
+    return tileOverlay.getTileOverlayId();
   }
 
   static Tile tileFromPigeon(Messages.PlatformTile tile) {
     return new Tile(tile.getWidth().intValue(), tile.getHeight().intValue(), tile.getData());
   }
 
-  @VisibleForTesting
   static class BitmapDescriptorFactoryWrapper {
     /**
      * Creates a BitmapDescriptor from the provided asset key using the {@link

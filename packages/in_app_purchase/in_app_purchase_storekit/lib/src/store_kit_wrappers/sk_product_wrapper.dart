@@ -72,11 +72,9 @@ class SkProductResponseWrapper {
       SKProductsResponseMessage msg) {
     return SkProductResponseWrapper(
       products: msg.products!
-          .map((SKProductMessage? e) => SKProductWrapper.convertFromPigeon(e!))
+          .map((SKProductMessage e) => SKProductWrapper.convertFromPigeon(e))
           .toList(),
-      invalidProductIdentifiers: msg.invalidProductIdentifiers != null
-          ? msg.invalidProductIdentifiers!.cast<String>()
-          : <String>[],
+      invalidProductIdentifiers: msg.invalidProductIdentifiers ?? <String>[],
     );
   }
 
@@ -86,10 +84,9 @@ class SkProductResponseWrapper {
       SkProductResponseWrapper wrapper) {
     return SKProductsResponseMessage(
         products: wrapper.products
-            .map((SKProductWrapper? e) => SKProductWrapper.convertToPigeon(e!))
+            .map((SKProductWrapper e) => SKProductWrapper.convertToPigeon(e))
             .toList(),
-        invalidProductIdentifiers:
-            wrapper.invalidProductIdentifiers.cast<String>());
+        invalidProductIdentifiers: wrapper.invalidProductIdentifiers);
   }
 }
 
@@ -550,7 +547,7 @@ class SKProductWrapper {
     return SKProductWrapper(
         productIdentifier: msg.productIdentifier,
         localizedTitle: msg.localizedTitle,
-        localizedDescription: msg.localizedDescription,
+        localizedDescription: msg.localizedDescription ?? '',
         priceLocale: SKPriceLocaleWrapper.convertFromPigeon(msg.priceLocale),
         price: msg.price,
         subscriptionGroupIdentifier: msg.subscriptionGroupIdentifier,
@@ -563,8 +560,8 @@ class SKProductWrapper {
             : null,
         discounts: msg.discounts != null
             ? msg.discounts!
-                .map((SKProductDiscountMessage? e) =>
-                    SKProductDiscountWrapper.convertFromPigeon(e!))
+                .map((SKProductDiscountMessage e) =>
+                    SKProductDiscountWrapper.convertFromPigeon(e))
                 .toList()
             : <SKProductDiscountWrapper>[]);
   }
@@ -587,8 +584,8 @@ class SKProductWrapper {
                 wrapper.introductoryPrice!)
             : null,
         discounts: wrapper.discounts
-            .map((SKProductDiscountWrapper? e) =>
-                SKProductDiscountWrapper.convertToPigeon(e!))
+            .map((SKProductDiscountWrapper e) =>
+                SKProductDiscountWrapper.convertToPigeon(e))
             .toList());
   }
 }

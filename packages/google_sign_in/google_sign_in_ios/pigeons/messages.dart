@@ -24,10 +24,7 @@ class InitParams {
     this.serverClientId,
   });
 
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The Obj-C code treats the values as non-nullable.
-  final List<String?> scopes;
+  final List<String> scopes;
   final String? hostedDomain;
   final String? clientId;
   final String? serverClientId;

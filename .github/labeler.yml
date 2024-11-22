@@ -68,6 +68,12 @@
     - any-glob-to-any-file:
       - packages/flutter_plugin_android_lifecycle/**/*
 
+'p: flutter_svg':
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/flutter_svg/**/*
+      - third_party/packages/flutter_svg_test/**/*
+
 'p: flutter_template_images':
   - changed-files:
     - any-glob-to-any-file:
@@ -108,6 +114,11 @@
     - any-glob-to-any-file:
       - packages/in_app_purchase/**/*
 
+'p: interactive_media_ads':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/interactive_media_ads/**/*
+
 'p: ios_platform_images':
   - changed-files:
     - any-glob-to-any-file:
@@ -132,6 +143,11 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/palette_generator/**/*
+
+'p: path_parsing':
+  - changed-files:
+    - any-glob-to-any-file:
+      - third_party/packages/path_parsing/**/*
 
 'p: path_provider':
   - changed-files:
@@ -177,6 +193,13 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/url_launcher/**/*
+
+'p: vector_graphics':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/vector_graphics/**/*
+      - packages/vector_graphics_codec/**/*
+      - packages/vector_graphics_compiler/**/*
 
 'p: video_player':
   - changed-files:

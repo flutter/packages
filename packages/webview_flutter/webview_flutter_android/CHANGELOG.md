@@ -1,3 +1,37 @@
+## 4.1.0
+
+* Updates internal API wrapper to use `ProxyApi`s.
+
+## 4.0.3
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
+## 4.0.2
+
+* Updates README to remove contributor-focused documentation.
+
+## 4.0.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
+## 4.0.0
+
+* Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.
+* **Breaking Change** Bumps Android `minSdkVersion` from 19 to 21.
+
+## 3.16.9
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 3.16.8
+
+* Bumps androidx.webkit:webkit from 1.11.0 to 1.12.0.
+
+## 3.16.7
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
 ## 3.16.6
 
 * Bumps androidx.annotation:annotation from 1.7.1 to 1.8.1.

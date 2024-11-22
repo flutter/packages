@@ -41,7 +41,7 @@ dev_dependencies:
   cross_file: ^0.3.1+1 # Mockito generates a direct include.
   flutter_test:
     sdk: flutter
-  mockito: 5.4.4
+  mockito: ^5.4.4
   plugin_platform_interface: ^2.1.7
 
 topics:

@@ -218,6 +218,15 @@ void main() {
         expect(await preferences.getStringList(listKey), testList);
       });
 
+      testWidgets('getStringList returns mutable list', (WidgetTester _) async {
+        final SharedPreferencesAsync preferences = await getPreferences();
+
+        await preferences.setStringList(listKey, testList);
+        final List<String>? list = await preferences.getStringList(listKey);
+        list?.add('value');
+        expect(list?.length, testList.length + 1);
+      });
+
       testWidgets('getAll', (WidgetTester _) async {
         final SharedPreferencesAsync preferences = await getPreferences();
         await Future.wait(<Future<void>>[

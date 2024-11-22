@@ -2,11 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Uncomment this file once
-// https://github.com/flutter/packages/pull/6371 lands. This file uses the
-// Kotlin ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
-/*
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -210,6 +207,20 @@ enum AdEventType {
   unknown,
 }
 
+/// Describes an element of the ad UI, to be requested or rendered by the SDK.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UiElement.html.
+enum UiElement {
+  /// The ad attribution UI element, for example, "Ad".
+  adAttribution,
+
+  /// Ad attribution is required for a countdown timer to be displayed.
+  countdown,
+
+  /// The element is not recognized by this wrapper.
+  unknown,
+}
+
 /// A base class for more specialized container interfaces.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
@@ -327,7 +338,15 @@ abstract class AdsRequest {
         'com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider',
   ),
 )
-abstract class ContentProgressProvider {}
+abstract class ContentProgressProvider {
+  ContentProgressProvider();
+
+  /// Sets an update on the progress of the video.
+  ///
+  /// This is a custom method added to the native class because the native
+  /// method `getContentProgress` requires a synchronous return value.
+  void setContentProgress(VideoProgressUpdate update);
+}
 
 /// An object which handles playing ads after they've been received from the
 /// server.
@@ -347,6 +366,20 @@ abstract class AdsManager extends BaseManager {
 
   /// Starts playing the ads.
   void start();
+
+  /// List of content time offsets in seconds at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  List<double> getAdCuePoints();
+
+  /// Resumes the current ad.
+  void resume();
+
+  /// Skips the current ad.
+  ///
+  /// `AdsManager.skip()` only skips ads if IMA does not render the 'Skip ad'
+  /// button.
+  void skip();
 }
 
 /// Base interface for managing ads..
@@ -370,8 +403,23 @@ abstract class BaseManager {
   /// to play the ad.
   void destroy();
 
-  /// Initializes the ad experience using default rendering settings
-  void init();
+  /// Initializes the ad experience on the manager.
+  void init(AdsRenderingSettings? settings);
+
+  /// Generic focus endpoint that puts focus on the skip button if present.
+  void focus();
+
+  /// Returns the latest AdProgressInfo for the current playing ad.
+  AdProgressInfo? getAdProgressInfo();
+
+  /// Get currently playing ad.
+  Ad? getCurrentAd();
+
+  /// Removes a listener for error events.
+  void removeAdErrorListener(AdErrorListener errorListener);
+
+  /// Removes a listener for ad events.
+  void removeAdEventListener(AdEventListener adEventListener);
 }
 
 /// Event to notify publisher that an event occurred with an Ad.
@@ -421,6 +469,10 @@ abstract class ImaSdkFactory {
 
   /// Creates an AdsRequest object to contain the data used to request ads.
   AdsRequest createAdsRequest();
+
+  /// Creates an `AdsRenderingSettings` object to give the AdsManager parameters
+  /// that control the rendering of ads.
+  AdsRenderingSettings createAdsRenderingSettings();
 }
 
 /// Defines general SDK settings that are used when creating an `AdsLoader`.
@@ -523,7 +575,13 @@ abstract class FrameLayout extends ViewGroup {
   ),
 )
 abstract class ViewGroup extends View {
+  /// Adds a child view.
   void addView(View view);
+
+  /// Called by a ViewGroup subclass to remove child views from itself, when it
+  /// must first know its size on screen before it can calculate how many child
+  /// views it will render.
+  void removeView(View view);
 }
 
 /// Displays a video file.
@@ -548,7 +606,7 @@ abstract class VideoView extends View {
   late final void Function(MediaPlayer player, int what, int extra) onError;
 
   /// Sets the URI of the video.
-  void setVideoUri(String uri);
+  void setVideoUri(String? uri);
 
   /// The current position of the playing video.
   ///
@@ -724,4 +782,251 @@ abstract class AdEventListener {
   /// Respond to an occurrence of an AdEvent.
   late final void Function(AdEvent event) onAdEvent;
 }
-*/
+
+/// Defines parameters that control the rendering of ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRenderingSettings.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'com.google.ads.interactivemedia.v3.api.AdsRenderingSettings',
+  ),
+)
+abstract class AdsRenderingSettings {
+  /// Maximum recommended bitrate.
+  int getBitrateKbps();
+
+  /// Returns whether the click-through URL will be opened using Custom Tabs
+  /// feature.
+  bool getEnableCustomTabs();
+
+  /// Whether the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  bool getEnablePreloading();
+
+  /// Whether to focus on the skip button when the skippable ad can be skipped
+  /// on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  bool getFocusSkipButtonWhenAvailable();
+
+  /// The SDK will prioritize the media with MIME type on the list.
+  List<String> getMimeTypes();
+
+  /// Maximum recommended bitrate.
+  ///
+  /// The value is in kbit/s. Default value, -1, means the bitrate will be
+  /// selected by the SDK.
+  void setBitrateKbps(int bitrate);
+
+  /// Notifies the SDK whether to launch the click-through URL using Custom Tabs
+  /// feature.
+  ///
+  /// Default is false.
+  void setEnableCustomTabs(bool enableCustomTabs);
+
+  /// If set, the SDK will instruct the player to load the creative in response
+  /// to `BaseManager.init()`.
+  ///
+  /// This allows the player to preload the ad at any point before calling
+  /// `AdsManager.start()`.
+  void setEnablePreloading(bool enablePreloading);
+
+  /// Set whether to focus on the skip button when the skippable ad can be
+  /// skipped on Android TV.
+  ///
+  /// This is a no-op on non-Android TV devices.
+  ///
+  /// Default is true.
+  void setFocusSkipButtonWhenAvailable(bool enableFocusSkipButton);
+
+  /// Specifies a non-default amount of time to wait for media to load before
+  /// timing out, in milliseconds.
+  ///
+  /// This only applies to the IMA client-side SDK.
+  ///
+  /// Default time is 8000 ms.
+  void setLoadVideoTimeout(int loadVideoTimeout);
+
+  /// If specified, the SDK will prioritize the media with MIME type on the
+  /// list.
+  void setMimeTypes(List<String> mimeTypes);
+
+  /// For VMAP and ad rules playlists, only play ad breaks scheduled after this
+  /// time (in seconds).
+  void setPlayAdsAfterTime(double time);
+
+  /// Sets the ad UI elements to be rendered by the IMA SDK.
+  void setUiElements(List<UiElement> uiElements);
+}
+
+/// Represents the progress within this ad break.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdProgressInfo.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.AdProgressInfo',
+  ),
+)
+abstract class AdProgressInfo {
+  /// Total ad break duration (in seconds).
+  late final double adBreakDuration;
+
+  /// Total ad period duration (in seconds).
+  late final double adPeriodDuration;
+
+  /// The position of current ad within the ad break, starting with 1.
+  late final int adPosition;
+
+  /// Current time within the ad (in seconds).
+  late final double currentTime;
+
+  /// Duration of current ad (in seconds).
+  late final double duration;
+
+  /// The total number of ads in this ad break.
+  late final int totalAds;
+}
+
+/// An object that holds data corresponding to the companion Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAd.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.CompanionAd',
+  ),
+)
+abstract class CompanionAd {
+  /// The API needed to execute this ad, or null if unavailable.
+  late final String? apiFramework;
+
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int height;
+
+  /// The URL for the static resource of this companion.
+  late final String resourceValue;
+
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int width;
+}
+
+/// This object exposes information about the universal ad ID.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/UniversalAdId.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.UniversalAdId',
+  ),
+)
+abstract class UniversalAdId {
+  /// Returns the ad ID registry associated with the ad ID value.
+  ///
+  /// Returns "unknown" if the registry is not known.
+  late final String adIdRegistry;
+
+  /// Returns the universal ad ID value.
+  ///
+  /// Returns "unknown" if the value is not known.
+  late final String adIdValue;
+}
+
+/// An object that holds data corresponding to the main Ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/Ad.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'com.google.ads.interactivemedia.v3.api.Ad',
+  ),
+)
+abstract class Ad {
+  /// The ad ID as specified in the VAST response.
+  late final String adId;
+
+  /// The pod metadata object.
+  late final AdPodInfo adPodInfo;
+
+  /// The ad system as specified in the VAST response.
+  late final String adSystem;
+
+  /// The IDs of the ads' creatives, starting with the first wrapper ad.
+  late final List<String> adWrapperCreativeIds;
+
+  /// The wrapper ad IDs as specified in the VAST response.
+  late final List<String> adWrapperIds;
+
+  /// The wrapper ad systems as specified in the VAST response.
+  late final List<String> adWrapperSystems;
+
+  /// The advertiser name as defined by the serving party.
+  late final String advertiserName;
+
+  /// The companions for the current ad while using DAI.
+  ///
+  /// Returns an empty list in any other scenario.
+  late final List<CompanionAd> companionAds;
+
+  /// The content type of the currently selected creative, or null if no
+  /// creative is selected or the content type is unavailable.
+  late final String? contentType;
+
+  /// The ISCI (Industry Standard Commercial Identifier) code for an ad.
+  late final String creativeAdId;
+
+  /// The ID of the selected creative for the ad,
+  late final String creativeId;
+
+  /// The first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  late final String dealId;
+
+  /// The description of this ad from the VAST response.
+  late final String? description;
+
+  /// The duration of the ad in seconds, -1 if not available.
+  late final double duration;
+
+  /// The height of the selected creative if non-linear, else returns 0.
+  late final int height;
+
+  /// The number of seconds of playback before the ad becomes skippable.
+  late final double skipTimeOffset;
+
+  /// The URL associated with the survey for the given ad.
+  late final String? surveyUrl;
+
+  /// The title of this ad from the VAST response.
+  late final String? title;
+
+  /// The custom parameters associated with the ad at the time of ad
+  /// trafficking.
+  late final String traffickingParameters;
+
+  /// Te set of ad UI elements rendered by the IMA SDK for this ad.
+  late final List<UiElement> uiElements;
+
+  /// The list of all universal ad IDs for this ad.
+  late final List<UniversalAdId> universalAdIds;
+
+  /// The VAST bitrate in Kbps of the selected creative.
+  late final int vastMediaBitrate;
+
+  /// The VAST media height in pixels of the selected creative.
+  late final int vastMediaHeight;
+
+  /// The VAST media width in pixels of the selected creative.
+  late final int vastMediaWidth;
+
+  /// The width of the selected creative if non-linear, else returns 0.
+  late final int width;
+
+  /// Indicates whether the ad’s current mode of operation is linear or
+  /// non-linear.
+  late final bool isLinear;
+
+  /// Indicates whether the ad can be skipped by the user.
+  late final bool isSkippable;
+}

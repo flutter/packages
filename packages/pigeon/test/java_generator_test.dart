@@ -776,8 +776,10 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('public enum Foo'));
-    expect(code,
-        contains('return value == null ? null : Foo.values()[(int) value];'));
+    expect(
+        code,
+        contains(
+            'return value == null ? null : Foo.values()[((Long) value).intValue()];'));
     expect(
         code,
         contains(
@@ -1040,10 +1042,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('public void doit(@NonNull Result<Long> result)'));
-    expect(
-        code,
-        contains(
-            'Long output = listReply.get(0) == null ? null : ((Number) listReply.get(0)).longValue();'));
+    expect(code, contains('Long output = (Long) listReply.get(0);'));
   });
 
   test('host multiple args', () {
@@ -1080,12 +1079,9 @@ void main() {
     expect(code, contains('Long add(@NonNull Long x, @NonNull Long y)'));
     expect(code,
         contains('ArrayList<Object> args = (ArrayList<Object>) message;'));
-    expect(code, contains('Number xArg = (Number) args.get(0)'));
-    expect(code, contains('Number yArg = (Number) args.get(1)'));
-    expect(
-        code,
-        contains(
-            'Long output = api.add((xArg == null) ? null : xArg.longValue(), (yArg == null) ? null : yArg.longValue())'));
+    expect(code, contains('Long xArg = (Long) args.get(0)'));
+    expect(code, contains('Long yArg = (Long) args.get(1)'));
+    expect(code, contains('Long output = api.add(xArg, yArg)'));
   });
 
   test('if host argType is Object not cast', () {

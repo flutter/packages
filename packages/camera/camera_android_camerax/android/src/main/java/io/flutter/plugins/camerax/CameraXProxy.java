@@ -5,9 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.app.Activity;
-import android.graphics.SurfaceTexture;
 import android.util.Size;
-import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ImageAnalysis;
@@ -49,11 +47,6 @@ public class CameraXProxy {
   /** Creates a builder for an instance of the {@link Preview} use case. */
   public @NonNull Preview.Builder createPreviewBuilder() {
     return new Preview.Builder();
-  }
-
-  /** Creates a {@link Surface} instance from the specified {@link SurfaceTexture}. */
-  public @NonNull Surface createSurface(@NonNull SurfaceTexture surfaceTexture) {
-    return new Surface(surfaceTexture);
   }
 
   /**

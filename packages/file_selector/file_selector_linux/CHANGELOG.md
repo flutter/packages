@@ -1,5 +1,10 @@
-## NEXT
+## 0.9.3+1
 
+* Fixes a regression in 0.9.3 with handling of canceled dialogs.
+
+## 0.9.3
+
+* Updates method channel implementation to use Pigeon.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.9.2+1

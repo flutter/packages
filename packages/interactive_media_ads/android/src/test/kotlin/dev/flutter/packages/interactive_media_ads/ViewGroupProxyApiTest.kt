@@ -21,4 +21,15 @@ class ViewGroupProxyApiTest {
 
     verify(instance).addView(mockView)
   }
+
+  @Test
+  fun removeView() {
+    val api = TestProxyApiRegistrar().getPigeonApiViewGroup()
+
+    val instance = mock<ViewGroup>()
+    val mockView = mock<View>()
+    api.removeView(instance, mockView)
+
+    verify(instance).removeView(mockView)
+  }
 }

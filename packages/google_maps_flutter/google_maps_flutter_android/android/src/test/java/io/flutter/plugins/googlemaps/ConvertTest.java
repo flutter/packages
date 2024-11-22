@@ -43,8 +43,7 @@ import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.junit.After;
@@ -58,7 +57,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = Build.VERSION_CODES.P)
+@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class ConvertTest {
   @Mock private AssetManager assetManager;
 
@@ -86,15 +85,12 @@ public class ConvertTest {
   }
 
   @Test
-  public void ConvertToPointsConvertsThePointsWithFullPrecision() {
+  public void ConvertPointsFromPigeonConvertsThePointsWithFullPrecision() {
     double latitude = 43.03725568057;
     double longitude = -87.90466904649;
-    ArrayList<Double> point = new ArrayList<>();
-    point.add(latitude);
-    point.add(longitude);
-    ArrayList<ArrayList<Double>> pointsList = new ArrayList<>();
-    pointsList.add(point);
-    List<LatLng> latLngs = Convert.toPoints(pointsList);
+    Messages.PlatformLatLng platLng =
+        new Messages.PlatformLatLng.Builder().setLatitude(latitude).setLongitude(longitude).build();
+    List<LatLng> latLngs = Convert.pointsFromPigeon(Collections.singletonList(platLng));
     LatLng latLng = latLngs.get(0);
     Assert.assertEquals(latitude, latLng.latitude, 1e-15);
     Assert.assertEquals(longitude, latLng.longitude, 1e-15);
@@ -143,26 +139,24 @@ public class ConvertTest {
   public void GetBitmapFromAssetAuto() throws Exception {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("width", 15.0f);
-    assetDetails.put("height", 15.0f);
-    assetDetails.put("imagePixelRatio", 2.0f);
 
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setWidth(15.0)
+            .setHeight(15.0)
+            .setImagePixelRatio(2.0)
+            .setAssetName(fakeAssetName)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -172,25 +166,22 @@ public class ConvertTest {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("width", 15.0f);
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setAssetName(fakeAssetName)
+            .setWidth(15.0)
+            .setImagePixelRatio(2.0)
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -200,25 +191,22 @@ public class ConvertTest {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("height", 15.0f);
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setHeight(15.0)
+            .setImagePixelRatio(2.0)
+            .setAssetName(fakeAssetName)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -228,11 +216,6 @@ public class ConvertTest {
     String fakeAssetName = "fake_asset_name";
     String fakeAssetKey = "fake_asset_key";
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("assetName", fakeAssetName);
-    assetDetails.put("bitmapScaling", "noScaling");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
     when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
@@ -240,14 +223,16 @@ public class ConvertTest {
     when(bitmapDescriptorFactoryWrapper.fromAsset(any())).thenReturn(mockBitmapDescriptor);
 
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any());
+    Messages.PlatformBitmapAssetMap bitmap =
+        new Messages.PlatformBitmapAssetMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+            .setImagePixelRatio(2.0)
+            .setAssetName(fakeAssetName)
+            .build();
 
     BitmapDescriptor result =
         Convert.getBitmapFromAsset(
-            assetDetails,
-            assetManager,
-            1.0f,
-            bitmapDescriptorFactoryWrapper,
-            flutterInjectorWrapper);
+            bitmap, assetManager, 1.0f, bitmapDescriptorFactoryWrapper, flutterInjectorWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -256,15 +241,17 @@ public class ConvertTest {
   public void GetBitmapFromBytesAuto() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
 
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
+
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -273,16 +260,17 @@ public class ConvertTest {
   public void GetBitmapFromBytesAutoAndWidth() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("imagePixelRatio", 2.0f);
-    assetDetails.put("width", 15.0f);
-
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .setWidth(15.0)
+            .build();
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -291,16 +279,17 @@ public class ConvertTest {
   public void GetBitmapFromBytesAutoAndHeight() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "auto");
-    assetDetails.put("imagePixelRatio", 2.0f);
-    assetDetails.put("height", 15.0f);
-
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .setHeight(15.0)
+            .build();
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -309,15 +298,16 @@ public class ConvertTest {
   public void GetBitmapFromBytesNoScaling() {
     byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "noScaling");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
 
     BitmapDescriptor result =
-        Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+        Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
 
     Assert.assertEquals(mockBitmapDescriptor, result);
   }
@@ -327,15 +317,16 @@ public class ConvertTest {
     String invalidBase64Image = "not valid image data";
     byte[] bmpData = Base64.decode(invalidBase64Image, Base64.DEFAULT);
 
-    Map<String, Object> assetDetails = new HashMap<>();
-    assetDetails.put("byteData", bmpData);
-    assetDetails.put("bitmapScaling", "noScaling");
-    assetDetails.put("imagePixelRatio", 2.0f);
-
     verify(bitmapDescriptorFactoryWrapper, never()).fromBitmap(any());
+    Messages.PlatformBitmapBytesMap bitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.NONE)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
 
     try {
-      Convert.getBitmapFromBytes(assetDetails, 1f, bitmapDescriptorFactoryWrapper);
+      Convert.getBitmapFromBytes(bitmap, 1f, bitmapDescriptorFactoryWrapper);
     } catch (IllegalArgumentException e) {
       Assert.assertEquals(e.getMessage(), "Unable to interpret bytes as a valid image.");
       throw e; // rethrow the exception

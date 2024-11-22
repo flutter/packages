@@ -4,9 +4,12 @@
 
 export 'ad_error.dart';
 export 'ad_event.dart';
-export 'ads_request.dart';
+export 'ad_ui_element.dart';
 export 'interactive_media_ads_platform.dart';
 export 'platform_ad_display_container.dart';
 export 'platform_ads_loader.dart';
 export 'platform_ads_manager.dart';
 export 'platform_ads_manager_delegate.dart';
+export 'platform_ads_rendering_settings.dart';
+export 'platform_ads_request.dart';
+export 'platform_content_progress_provider.dart';

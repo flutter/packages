@@ -18,14 +18,11 @@ enum AnotherEnum {
   justInCase,
 }
 
-class SimpleClass {
-  SimpleClass({
-    this.aString,
-    this.aBool = true,
-  });
+// This exists to show that unused data classes still generate.
+class UnusedClass {
+  UnusedClass({this.aField});
 
-  String? aString;
-  bool aBool;
+  Object? aField;
 }
 
 /// A class containing all supported types.
@@ -46,15 +43,25 @@ class AllTypes {
 
     // Lists
     // This name is in a different format than the others to ensure that name
-    // collision with the work 'list' doesn't occur in the generated files.
+    // collision with the word 'list' doesn't occur in the generated files.
     required this.list,
     required this.stringList,
     required this.intList,
     required this.doubleList,
     required this.boolList,
+    required this.enumList,
+    required this.objectList,
+    required this.listList,
+    required this.mapList,
 
     // Maps
     required this.map,
+    required this.stringMap,
+    required this.intMap,
+    required this.enumMap,
+    required this.objectMap,
+    required this.listMap,
+    required this.mapMap,
   });
 
   bool aBool;
@@ -73,14 +80,24 @@ class AllTypes {
   // Lists
   // ignore: strict_raw_type, always_specify_types
   List list;
-  List<String?> stringList;
-  List<int?> intList;
-  List<double?> doubleList;
-  List<bool?> boolList;
+  List<String> stringList;
+  List<int> intList;
+  List<double> doubleList;
+  List<bool> boolList;
+  List<AnEnum> enumList;
+  List<Object> objectList;
+  List<List<Object?>> listList;
+  List<Map<Object?, Object?>> mapList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
   Map map;
+  Map<String, String> stringMap;
+  Map<int, int> intMap;
+  Map<AnEnum, AnEnum> enumMap;
+  Map<Object, Object> objectMap;
+  Map<int, List<Object?>> listMap;
+  Map<int, Map<Object?, Object?>> mapMap;
 }
 
 /// A class containing all supported nullable types.
@@ -95,9 +112,6 @@ class AllNullableTypes {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -105,15 +119,28 @@ class AllNullableTypes {
     this.allNullableTypes,
 
     // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the word 'list' doesn't occur in the generated files.
     this.list,
     this.stringList,
     this.intList,
     this.doubleList,
     this.boolList,
-    this.nestedClassList,
+    this.enumList,
+    this.objectList,
+    this.listList,
+    this.mapList,
+    this.recursiveClassList,
 
-    //Maps
+    // Maps
     this.map,
+    this.stringMap,
+    this.intMap,
+    this.enumMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
+    this.recursiveClassMap,
   );
 
   bool? aNullableBool;
@@ -124,9 +151,6 @@ class AllNullableTypes {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  List<List<bool?>?>? nullableNestedList;
-  Map<String?, String?>? nullableMapWithAnnotations;
-  Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
   AnotherEnum? anotherNullableEnum;
   String? aNullableString;
@@ -140,11 +164,22 @@ class AllNullableTypes {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
-  List<AllNullableTypes?>? nestedClassList;
+  List<AnEnum?>? enumList;
+  List<Object?>? objectList;
+  List<List<Object?>?>? listList;
+  List<Map<Object?, Object?>?>? mapList;
+  List<AllNullableTypes?>? recursiveClassList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
   Map? map;
+  Map<String?, String?>? stringMap;
+  Map<int?, int?>? intMap;
+  Map<AnEnum?, AnEnum?>? enumMap;
+  Map<Object?, Object?>? objectMap;
+  Map<int?, List<Object?>?>? listMap;
+  Map<int?, Map<Object?, Object?>?>? mapMap;
+  Map<int?, AllNullableTypes?>? recursiveClassMap;
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -160,23 +195,32 @@ class AllNullableTypesWithoutRecursion {
     this.aNullable4ByteArray,
     this.aNullable8ByteArray,
     this.aNullableFloatArray,
-    this.nullableNestedList,
-    this.nullableMapWithAnnotations,
-    this.nullableMapWithObject,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
     this.aNullableObject,
 
     // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the word 'list' doesn't occur in the generated files.
     this.list,
     this.stringList,
     this.intList,
     this.doubleList,
     this.boolList,
+    this.enumList,
+    this.objectList,
+    this.listList,
+    this.mapList,
 
-    //Maps
+    // Maps
     this.map,
+    this.stringMap,
+    this.intMap,
+    this.enumMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
   );
 
   bool? aNullableBool;
@@ -187,9 +231,6 @@ class AllNullableTypesWithoutRecursion {
   Int32List? aNullable4ByteArray;
   Int64List? aNullable8ByteArray;
   Float64List? aNullableFloatArray;
-  List<List<bool?>?>? nullableNestedList;
-  Map<String?, String?>? nullableMapWithAnnotations;
-  Map<String?, Object?>? nullableMapWithObject;
   AnEnum? aNullableEnum;
   AnotherEnum? anotherNullableEnum;
   String? aNullableString;
@@ -202,10 +243,20 @@ class AllNullableTypesWithoutRecursion {
   List<int?>? intList;
   List<double?>? doubleList;
   List<bool?>? boolList;
+  List<AnEnum?>? enumList;
+  List<Object?>? objectList;
+  List<List<Object?>?>? listList;
+  List<Map<Object?, Object?>?>? mapList;
 
   // Maps
   // ignore: strict_raw_type, always_specify_types
   Map? map;
+  Map<String?, String?>? stringMap;
+  Map<int?, int?>? intMap;
+  Map<AnEnum?, AnEnum?>? enumMap;
+  Map<Object?, Object?>? objectMap;
+  Map<int?, List<Object?>?>? listMap;
+  Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
 /// A class for testing nested class handling.
@@ -214,11 +265,22 @@ class AllNullableTypesWithoutRecursion {
 /// `AllNullableTypes` is non-nullable here as it is easier to instantiate
 /// than `AllTypes` when testing doesn't require both (ie. testing null classes).
 class AllClassesWrapper {
-  AllClassesWrapper(this.allNullableTypes,
-      this.allNullableTypesWithoutRecursion, this.allTypes);
+  AllClassesWrapper(
+    this.allNullableTypes,
+    this.allNullableTypesWithoutRecursion,
+    this.allTypes,
+    this.classList,
+    this.classMap,
+    this.nullableClassList,
+    this.nullableClassMap,
+  );
   AllNullableTypes allNullableTypes;
   AllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
   AllTypes? allTypes;
+  List<AllTypes?> classList;
+  List<AllNullableTypesWithoutRecursion?>? nullableClassList;
+  Map<int?, AllTypes?> classMap;
+  Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 }
 
 /// The core interface that each host language plugin must implement in
@@ -280,12 +342,74 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   List<Object?> echoList(List<Object?> list);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoEnumList:')
+  @SwiftFunction('echo(enumList:)')
+  List<AnEnum?> echoEnumList(List<AnEnum?> enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoClassList:')
+  @SwiftFunction('echo(classList:)')
+  List<AllNullableTypes?> echoClassList(List<AllNullableTypes?> classList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullEnumList:')
+  @SwiftFunction('echoNonNull(enumList:)')
+  List<AnEnum> echoNonNullEnumList(List<AnEnum> enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullClassList:')
+  @SwiftFunction('echoNonNull(classList:)')
+  List<AllNullableTypes> echoNonNullClassList(List<AllNullableTypes> classList);
+
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
   @SwiftFunction('echo(_:)')
-  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> map);
 
-  /// Returns the passed map to test nested class serialization and deserialization.
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoStringMap:')
+  @SwiftFunction('echo(stringMap:)')
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoIntMap:')
+  @SwiftFunction('echo(intMap:)')
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoEnumMap:')
+  @SwiftFunction('echo(enumMap:)')
+  Map<AnEnum?, AnEnum?> echoEnumMap(Map<AnEnum?, AnEnum?> enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoClassMap:')
+  @SwiftFunction('echo(classMap:)')
+  Map<int?, AllNullableTypes?> echoClassMap(
+      Map<int?, AllNullableTypes?> classMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullStringMap:')
+  @SwiftFunction('echoNonNull(stringMap:)')
+  Map<String, String> echoNonNullStringMap(Map<String, String> stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullIntMap:')
+  @SwiftFunction('echoNonNull(intMap:)')
+  Map<int, int> echoNonNullIntMap(Map<int, int> intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullEnumMap:')
+  @SwiftFunction('echoNonNull(enumMap:)')
+  Map<AnEnum, AnEnum> echoNonNullEnumMap(Map<AnEnum, AnEnum> enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullClassMap:')
+  @SwiftFunction('echoNonNull(classMap:)')
+  Map<int, AllNullableTypes> echoNonNullClassMap(
+      Map<int, AllNullableTypes> classMap);
+
+  /// Returns the passed class to test nested class serialization and deserialization.
   @ObjCSelector('echoClassWrapper:')
   @SwiftFunction('echo(_:)')
   AllClassesWrapper echoClassWrapper(AllClassesWrapper wrapper);
@@ -388,10 +512,76 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoNullable(_:)')
   List<Object?>? echoNullableList(List<Object?>? aNullableList);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableEnumList:')
+  @SwiftFunction('echoNullable(enumList:)')
+  List<AnEnum?>? echoNullableEnumList(List<AnEnum?>? enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableClassList:')
+  @SwiftFunction('echoNullable(classList:)')
+  List<AllNullableTypes?>? echoNullableClassList(
+      List<AllNullableTypes?>? classList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullEnumList:')
+  @SwiftFunction('echoNullableNonNull(enumList:)')
+  List<AnEnum>? echoNullableNonNullEnumList(List<AnEnum>? enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullClassList:')
+  @SwiftFunction('echoNullableNonNull(classList:)')
+  List<AllNullableTypes>? echoNullableNonNullClassList(
+      List<AllNullableTypes>? classList);
+
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
   @SwiftFunction('echoNullable(_:)')
-  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aNullableMap);
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableStringMap:')
+  @SwiftFunction('echoNullable(stringMap:)')
+  Map<String?, String?>? echoNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableIntMap:')
+  @SwiftFunction('echoNullable(intMap:)')
+  Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableEnumMap:')
+  @SwiftFunction('echoNullable(enumMap:)')
+  Map<AnEnum?, AnEnum?>? echoNullableEnumMap(Map<AnEnum?, AnEnum?>? enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableClassMap:')
+  @SwiftFunction('echoNullable(classMap:)')
+  Map<int?, AllNullableTypes?>? echoNullableClassMap(
+      Map<int?, AllNullableTypes?>? classMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullStringMap:')
+  @SwiftFunction('echoNullableNonNull(stringMap:)')
+  Map<String, String>? echoNullableNonNullStringMap(
+      Map<String, String>? stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullIntMap:')
+  @SwiftFunction('echoNullableNonNull(intMap:)')
+  Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullEnumMap:')
+  @SwiftFunction('echoNullableNonNull(enumMap:)')
+  Map<AnEnum, AnEnum>? echoNullableNonNullEnumMap(Map<AnEnum, AnEnum>? enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullClassMap:')
+  @SwiftFunction('echoNullableNonNull(classMap:)')
+  Map<int, AllNullableTypes>? echoNullableNonNullClassMap(
+      Map<int, AllNullableTypes>? classMap);
 
   @ObjCSelector('echoNullableEnum:')
   @SwiftFunction('echoNullable(_:)')
@@ -460,11 +650,48 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   List<Object?> echoAsyncList(List<Object?> list);
 
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncEnumList:')
+  @SwiftFunction('echoAsync(enumList:)')
+  List<AnEnum?> echoAsyncEnumList(List<AnEnum?> enumList);
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncClassList:')
+  @SwiftFunction('echoAsync(classList:)')
+  List<AllNullableTypes?> echoAsyncClassList(List<AllNullableTypes?> classList);
+
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncMap:')
   @SwiftFunction('echoAsync(_:)')
-  Map<String?, Object?> echoAsyncMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> echoAsyncMap(Map<Object?, Object?> map);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncStringMap:')
+  @SwiftFunction('echoAsync(stringMap:)')
+  Map<String?, String?> echoAsyncStringMap(Map<String?, String?> stringMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncIntMap:')
+  @SwiftFunction('echoAsync(intMap:)')
+  Map<int?, int?> echoAsyncIntMap(Map<int?, int?> intMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncEnumMap:')
+  @SwiftFunction('echoAsync(enumMap:)')
+  Map<AnEnum?, AnEnum?> echoAsyncEnumMap(Map<AnEnum?, AnEnum?> enumMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncClassMap:')
+  @SwiftFunction('echoAsync(classMap:)')
+  Map<int?, AllNullableTypes?> echoAsyncClassMap(
+      Map<int?, AllNullableTypes?> classMap);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
@@ -553,11 +780,51 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsyncNullable(_:)')
   List<Object?>? echoAsyncNullableList(List<Object?>? list);
 
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableEnumList:')
+  @SwiftFunction('echoAsyncNullable(enumList:)')
+  List<AnEnum?>? echoAsyncNullableEnumList(List<AnEnum?>? enumList);
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableClassList:')
+  @SwiftFunction('echoAsyncNullable(classList:)')
+  List<AllNullableTypes?>? echoAsyncNullableClassList(
+      List<AllNullableTypes?>? classList);
+
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableMap:')
   @SwiftFunction('echoAsyncNullable(_:)')
-  Map<String?, Object?>? echoAsyncNullableMap(Map<String?, Object?>? aMap);
+  Map<Object?, Object?>? echoAsyncNullableMap(Map<Object?, Object?>? map);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableStringMap:')
+  @SwiftFunction('echoAsyncNullable(stringMap:)')
+  Map<String?, String?>? echoAsyncNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableIntMap:')
+  @SwiftFunction('echoAsyncNullable(intMap:)')
+  Map<int?, int?>? echoAsyncNullableIntMap(Map<int?, int?>? intMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableEnumMap:')
+  @SwiftFunction('echoAsyncNullable(enumMap:)')
+  Map<AnEnum?, AnEnum?>? echoAsyncNullableEnumMap(
+      Map<AnEnum?, AnEnum?>? enumMap);
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableClassMap:')
+  @SwiftFunction('echoAsyncNullable(classMap:)')
+  Map<int?, AllNullableTypes?>? echoAsyncNullableClassMap(
+      Map<int?, AllNullableTypes?>? classMap);
 
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   @async
@@ -646,9 +913,76 @@ abstract class HostIntegrationCoreApi {
   List<Object?> callFlutterEchoList(List<Object?> list);
 
   @async
+  @ObjCSelector('callFlutterEchoEnumList:')
+  @SwiftFunction('callFlutterEcho(enumList:)')
+  List<AnEnum?> callFlutterEchoEnumList(List<AnEnum?> enumList);
+
+  @async
+  @ObjCSelector('callFlutterEchoClassList:')
+  @SwiftFunction('callFlutterEcho(classList:)')
+  List<AllNullableTypes?> callFlutterEchoClassList(
+      List<AllNullableTypes?> classList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNonNullEnumList:')
+  @SwiftFunction('callFlutterEchoNonNull(enumList:)')
+  List<AnEnum> callFlutterEchoNonNullEnumList(List<AnEnum> enumList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNonNullClassList:')
+  @SwiftFunction('callFlutterEchoNonNull(classList:)')
+  List<AllNullableTypes> callFlutterEchoNonNullClassList(
+      List<AllNullableTypes> classList);
+
+  @async
   @ObjCSelector('callFlutterEchoMap:')
   @SwiftFunction('callFlutterEcho(_:)')
-  Map<String?, Object?> callFlutterEchoMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> callFlutterEchoMap(Map<Object?, Object?> map);
+
+  @async
+  @ObjCSelector('callFlutterEchoStringMap:')
+  @SwiftFunction('callFlutterEcho(stringMap:)')
+  Map<String?, String?> callFlutterEchoStringMap(
+      Map<String?, String?> stringMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoIntMap:')
+  @SwiftFunction('callFlutterEcho(intMap:)')
+  Map<int?, int?> callFlutterEchoIntMap(Map<int?, int?> intMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoEnumMap:')
+  @SwiftFunction('callFlutterEcho(enumMap:)')
+  Map<AnEnum?, AnEnum?> callFlutterEchoEnumMap(Map<AnEnum?, AnEnum?> enumMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoClassMap:')
+  @SwiftFunction('callFlutterEcho(classMap:)')
+  Map<int?, AllNullableTypes?> callFlutterEchoClassMap(
+      Map<int?, AllNullableTypes?> classMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNonNullStringMap:')
+  @SwiftFunction('callFlutterEchoNonNull(stringMap:)')
+  Map<String, String> callFlutterEchoNonNullStringMap(
+      Map<String, String> stringMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNonNullIntMap:')
+  @SwiftFunction('callFlutterEchoNonNull(intMap:)')
+  Map<int, int> callFlutterEchoNonNullIntMap(Map<int, int> intMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNonNullEnumMap:')
+  @SwiftFunction('callFlutterEchoNonNull(enumMap:)')
+  Map<AnEnum, AnEnum> callFlutterEchoNonNullEnumMap(
+      Map<AnEnum, AnEnum> enumMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNonNullClassMap:')
+  @SwiftFunction('callFlutterEchoNonNull(classMap:)')
+  Map<int, AllNullableTypes> callFlutterEchoNonNullClassMap(
+      Map<int, AllNullableTypes> classMap);
 
   @async
   @ObjCSelector('callFlutterEchoEnum:')
@@ -691,10 +1025,77 @@ abstract class HostIntegrationCoreApi {
   List<Object?>? callFlutterEchoNullableList(List<Object?>? list);
 
   @async
+  @ObjCSelector('callFlutterEchoNullableEnumList:')
+  @SwiftFunction('callFlutterEchoNullable(enumList:)')
+  List<AnEnum?>? callFlutterEchoNullableEnumList(List<AnEnum?>? enumList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableClassList:')
+  @SwiftFunction('callFlutterEchoNullable(classList:)')
+  List<AllNullableTypes?>? callFlutterEchoNullableClassList(
+      List<AllNullableTypes?>? classList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableNonNullEnumList:')
+  @SwiftFunction('callFlutterEchoNullableNonNull(enumList:)')
+  List<AnEnum>? callFlutterEchoNullableNonNullEnumList(List<AnEnum>? enumList);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableNonNullClassList:')
+  @SwiftFunction('callFlutterEchoNullableNonNull(classList:)')
+  List<AllNullableTypes>? callFlutterEchoNullableNonNullClassList(
+      List<AllNullableTypes>? classList);
+
+  @async
   @ObjCSelector('callFlutterEchoNullableMap:')
   @SwiftFunction('callFlutterEchoNullable(_:)')
-  Map<String?, Object?>? callFlutterEchoNullableMap(
-      Map<String?, Object?>? aMap);
+  Map<Object?, Object?>? callFlutterEchoNullableMap(Map<Object?, Object?>? map);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableStringMap:')
+  @SwiftFunction('callFlutterEchoNullable(stringMap:)')
+  Map<String?, String?>? callFlutterEchoNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableIntMap:')
+  @SwiftFunction('callFlutterEchoNullable(intMap:)')
+  Map<int?, int?>? callFlutterEchoNullableIntMap(Map<int?, int?>? intMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableEnumMap:')
+  @SwiftFunction('callFlutterEchoNullable(enumMap:)')
+  Map<AnEnum?, AnEnum?>? callFlutterEchoNullableEnumMap(
+      Map<AnEnum?, AnEnum?>? enumMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableClassMap:')
+  @SwiftFunction('callFlutterEchoNullable(classMap:)')
+  Map<int?, AllNullableTypes?>? callFlutterEchoNullableClassMap(
+      Map<int?, AllNullableTypes?>? classMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableNonNullStringMap:')
+  @SwiftFunction('callFlutterEchoNullableNonNull(stringMap:)')
+  Map<String, String>? callFlutterEchoNullableNonNullStringMap(
+      Map<String, String>? stringMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableNonNullIntMap:')
+  @SwiftFunction('callFlutterEchoNullableNonNull(intMap:)')
+  Map<int, int>? callFlutterEchoNullableNonNullIntMap(Map<int, int>? intMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableNonNullEnumMap:')
+  @SwiftFunction('callFlutterEchoNullableNonNull(enumMap:)')
+  Map<AnEnum, AnEnum>? callFlutterEchoNullableNonNullEnumMap(
+      Map<AnEnum, AnEnum>? enumMap);
+
+  @async
+  @ObjCSelector('callFlutterEchoNullableNonNullClassMap:')
+  @SwiftFunction('callFlutterEchoNullableNonNull(classMap:)')
+  Map<int, AllNullableTypes>? callFlutterEchoNullableNonNullClassMap(
+      Map<int, AllNullableTypes>? classMap);
 
   @async
   @ObjCSelector('callFlutterEchoNullableEnum:')
@@ -791,10 +1192,72 @@ abstract class FlutterIntegrationCoreApi {
   @SwiftFunction('echo(_:)')
   List<Object?> echoList(List<Object?> list);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoEnumList:')
+  @SwiftFunction('echo(enumList:)')
+  List<AnEnum?> echoEnumList(List<AnEnum?> enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoClassList:')
+  @SwiftFunction('echo(classList:)')
+  List<AllNullableTypes?> echoClassList(List<AllNullableTypes?> classList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullEnumList:')
+  @SwiftFunction('echoNonNull(enumList:)')
+  List<AnEnum> echoNonNullEnumList(List<AnEnum> enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullClassList:')
+  @SwiftFunction('echoNonNull(classList:)')
+  List<AllNullableTypes> echoNonNullClassList(List<AllNullableTypes> classList);
+
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoMap:')
   @SwiftFunction('echo(_:)')
-  Map<String?, Object?> echoMap(Map<String?, Object?> aMap);
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoStringMap:')
+  @SwiftFunction('echo(stringMap:)')
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoIntMap:')
+  @SwiftFunction('echo(intMap:)')
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoEnumMap:')
+  @SwiftFunction('echo(enumMap:)')
+  Map<AnEnum?, AnEnum?> echoEnumMap(Map<AnEnum?, AnEnum?> enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoClassMap:')
+  @SwiftFunction('echo(classMap:)')
+  Map<int?, AllNullableTypes?> echoClassMap(
+      Map<int?, AllNullableTypes?> classMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullStringMap:')
+  @SwiftFunction('echoNonNull(stringMap:)')
+  Map<String, String> echoNonNullStringMap(Map<String, String> stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullIntMap:')
+  @SwiftFunction('echoNonNull(intMap:)')
+  Map<int, int> echoNonNullIntMap(Map<int, int> intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullEnumMap:')
+  @SwiftFunction('echoNonNull(enumMap:)')
+  Map<AnEnum, AnEnum> echoNonNullEnumMap(Map<AnEnum, AnEnum> enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNonNullClassMap:')
+  @SwiftFunction('echoNonNull(classMap:)')
+  Map<int, AllNullableTypes> echoNonNullClassMap(
+      Map<int, AllNullableTypes> classMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoEnum:')
@@ -838,10 +1301,76 @@ abstract class FlutterIntegrationCoreApi {
   @SwiftFunction('echoNullable(_:)')
   List<Object?>? echoNullableList(List<Object?>? list);
 
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableEnumList:')
+  @SwiftFunction('echoNullable(enumList:)')
+  List<AnEnum?>? echoNullableEnumList(List<AnEnum?>? enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableClassList:')
+  @SwiftFunction('echoNullable(classList:)')
+  List<AllNullableTypes?>? echoNullableClassList(
+      List<AllNullableTypes?>? classList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullEnumList:')
+  @SwiftFunction('echoNullableNonNull(enumList:)')
+  List<AnEnum>? echoNullableNonNullEnumList(List<AnEnum>? enumList);
+
+  /// Returns the passed list, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullClassList:')
+  @SwiftFunction('echoNullableNonNull(classList:)')
+  List<AllNullableTypes>? echoNullableNonNullClassList(
+      List<AllNullableTypes>? classList);
+
   /// Returns the passed map, to test serialization and deserialization.
   @ObjCSelector('echoNullableMap:')
   @SwiftFunction('echoNullable(_:)')
-  Map<String?, Object?>? echoNullableMap(Map<String?, Object?>? aMap);
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableStringMap:')
+  @SwiftFunction('echoNullable(stringMap:)')
+  Map<String?, String?>? echoNullableStringMap(
+      Map<String?, String?>? stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableIntMap:')
+  @SwiftFunction('echoNullable(intMap:)')
+  Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableEnumMap:')
+  @SwiftFunction('echoNullable(enumMap:)')
+  Map<AnEnum?, AnEnum?>? echoNullableEnumMap(Map<AnEnum?, AnEnum?>? enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableClassMap:')
+  @SwiftFunction('echoNullable(classMap:)')
+  Map<int?, AllNullableTypes?>? echoNullableClassMap(
+      Map<int?, AllNullableTypes?>? classMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullStringMap:')
+  @SwiftFunction('echoNullableNonNull(stringMap:)')
+  Map<String, String>? echoNullableNonNullStringMap(
+      Map<String, String>? stringMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullIntMap:')
+  @SwiftFunction('echoNullableNonNull(intMap:)')
+  Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullEnumMap:')
+  @SwiftFunction('echoNullableNonNull(enumMap:)')
+  Map<AnEnum, AnEnum>? echoNullableNonNullEnumMap(Map<AnEnum, AnEnum>? enumMap);
+
+  /// Returns the passed map, to test serialization and deserialization.
+  @ObjCSelector('echoNullableNonNullClassMap:')
+  @SwiftFunction('echoNullableNonNull(classMap:)')
+  Map<int, AllNullableTypes>? echoNullableNonNullClassMap(
+      Map<int, AllNullableTypes>? classMap);
 
   /// Returns the passed enum to test serialization and deserialization.
   @ObjCSelector('echoNullableEnum:')

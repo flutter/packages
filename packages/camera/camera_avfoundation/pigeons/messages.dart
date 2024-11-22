@@ -160,7 +160,7 @@ abstract class CameraApi {
   // The consuming code treats it as non-nullable.
   @async
   @ObjCSelector('availableCamerasWithCompletion')
-  List<PlatformCameraDescription?> getAvailableCameras();
+  List<PlatformCameraDescription> getAvailableCameras();
 
   /// Create a new camera with the given settings, and returns its ID.
   @async

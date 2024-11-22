@@ -3,10 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:local_auth_android/src/messages.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -30,56 +31,65 @@ class MockLocalAuthApi extends _i1.Mock implements _i2.LocalAuthApi {
   }
 
   @override
-  _i3.Future<bool> isDeviceSupported() => (super.noSuchMethod(
+  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
+        Invocation.getter(#pigeonVar_messageChannelSuffix),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+      ) as String);
+
+  @override
+  _i4.Future<bool> isDeviceSupported() => (super.noSuchMethod(
         Invocation.method(
           #isDeviceSupported,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> deviceCanSupportBiometrics() => (super.noSuchMethod(
+  _i4.Future<bool> deviceCanSupportBiometrics() => (super.noSuchMethod(
         Invocation.method(
           #deviceCanSupportBiometrics,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> stopAuthentication() => (super.noSuchMethod(
+  _i4.Future<bool> stopAuthentication() => (super.noSuchMethod(
         Invocation.method(
           #stopAuthentication,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<List<_i2.AuthClassificationWrapper?>> getEnrolledBiometrics() =>
+  _i4.Future<List<_i2.AuthClassification>> getEnrolledBiometrics() =>
       (super.noSuchMethod(
         Invocation.method(
           #getEnrolledBiometrics,
           [],
         ),
-        returnValue: _i3.Future<List<_i2.AuthClassificationWrapper?>>.value(
-            <_i2.AuthClassificationWrapper?>[]),
-      ) as _i3.Future<List<_i2.AuthClassificationWrapper?>>);
+        returnValue: _i4.Future<List<_i2.AuthClassification>>.value(
+            <_i2.AuthClassification>[]),
+      ) as _i4.Future<List<_i2.AuthClassification>>);
 
   @override
-  _i3.Future<_i2.AuthResult> authenticate(
-    _i2.AuthOptions? arg_options,
-    _i2.AuthStrings? arg_strings,
+  _i4.Future<_i2.AuthResult> authenticate(
+    _i2.AuthOptions? options,
+    _i2.AuthStrings? strings,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #authenticate,
           [
-            arg_options,
-            arg_strings,
+            options,
+            strings,
           ],
         ),
-        returnValue: _i3.Future<_i2.AuthResult>.value(_i2.AuthResult.success),
-      ) as _i3.Future<_i2.AuthResult>);
+        returnValue: _i4.Future<_i2.AuthResult>.value(_i2.AuthResult.success),
+      ) as _i4.Future<_i2.AuthResult>);
 }

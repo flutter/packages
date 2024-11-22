@@ -8,21 +8,25 @@ import 'adaptive_layout.dart';
 import 'breakpoints.dart';
 import 'slot_layout.dart';
 
-/// Gutter value between different parts of the body slot depending on
-/// material 3 design spec.
-const double kMaterialGutterValue = 8;
+/// Spacing value of the compact breakpoint according to
+/// the material 3 design spec.
+const double kMaterialCompactSpacing = 0;
 
-/// Margin value of the compact breakpoint layout according to the material
-/// design 3 spec.
-const double kMaterialCompactMinMargin = 8;
+/// Spacing value of the medium and up breakpoint according to
+/// the material 3 design spec.
+const double kMaterialMediumAndUpSpacing = 24;
 
-/// Margin value of the medium breakpoint layout according to the material
+/// Margin value of the compact breakpoint according to the material
 /// design 3 spec.
-const double kMaterialMediumMinMargin = 12;
+const double kMaterialCompactMargin = 16;
 
-//// Margin value of the expanded breakpoint layout according to the material
+/// Margin value of the medium breakpoint according to the material
 /// design 3 spec.
-const double kMaterialExpandedMinMargin = 32;
+const double kMaterialMediumAndUpMargin = 24;
+
+/// Padding value of the compact breakpoint according to the material
+/// design 3 spec.
+const double kMaterialPadding = 4;
 
 /// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
 /// [NavigationDestination] to a [NavigationRailDestination].
@@ -358,7 +362,7 @@ class AdaptiveScaffold extends StatefulWidget {
         padding: padding,
         child: SizedBox(
           width: width,
-          height: MediaQuery.of(context).size.height,
+          height: MediaQuery.sizeOf(context).height,
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return SingleChildScrollView(
@@ -429,40 +433,19 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Public helper method to be used for creating a staggered grid following m3
   /// specs from a list of [Widget]s
   static Builder toMaterialGrid({
-    List<Widget> thisWidgets = const <Widget>[],
-    List<Breakpoint> breakpoints = const <Breakpoint>[
-      Breakpoints.small,
-      Breakpoints.medium,
-      Breakpoints.mediumLarge,
-      Breakpoints.large,
-      Breakpoints.extraLarge,
-    ],
-    double margin = 8,
-    int itemColumns = 1,
-    required BuildContext context,
+    List<Widget> widgets = const <Widget>[],
+    List<Breakpoint> breakpoints = Breakpoints.all,
+    double? margin,
+    int? itemColumns,
   }) {
     return Builder(builder: (BuildContext context) {
-      Breakpoint? currentBreakpoint;
-      for (final Breakpoint breakpoint in breakpoints) {
-        if (breakpoint.isActive(context)) {
-          currentBreakpoint = breakpoint;
-        }
-      }
-      double? thisMargin = margin;
+      final Breakpoint? currentBreakpoint =
+          Breakpoint.activeBreakpointIn(context, breakpoints);
+      final double thisMargin =
+          margin ?? currentBreakpoint?.margin ?? kMaterialCompactMargin;
+      final int thisColumns =
+          itemColumns ?? currentBreakpoint?.recommendedPanes ?? 1;
 
-      if (currentBreakpoint == Breakpoints.small) {
-        if (thisMargin < kMaterialCompactMinMargin) {
-          thisMargin = kMaterialCompactMinMargin;
-        }
-      } else if (currentBreakpoint == Breakpoints.medium) {
-        if (thisMargin < kMaterialMediumMinMargin) {
-          thisMargin = kMaterialMediumMinMargin;
-        }
-      } else if (currentBreakpoint == Breakpoints.mediumLarge) {
-        if (thisMargin < kMaterialExpandedMinMargin) {
-          thisMargin = kMaterialExpandedMinMargin;
-        }
-      }
       return CustomScrollView(
         primary: false,
         controller: ScrollController(),
@@ -473,11 +456,10 @@ class AdaptiveScaffold extends StatefulWidget {
             child: Padding(
               padding: EdgeInsets.all(thisMargin),
               child: _BrickLayout(
-                columns: itemColumns,
-                columnSpacing: kMaterialGutterValue,
-                itemPadding:
-                    const EdgeInsets.only(bottom: kMaterialGutterValue),
-                children: thisWidgets,
+                columns: thisColumns,
+                columnSpacing: thisMargin,
+                itemPadding: EdgeInsets.only(bottom: thisMargin),
+                children: widgets,
               ),
             ),
           ),

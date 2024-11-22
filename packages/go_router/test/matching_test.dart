@@ -92,8 +92,8 @@ void main() {
     );
     final RouteMatchListCodec codec = RouteMatchListCodec(configuration);
 
-    final RouteMatchList list1 = configuration.findMatch('/a');
-    final RouteMatchList list2 = configuration.findMatch('/b');
+    final RouteMatchList list1 = configuration.findMatch(Uri.parse('/a'));
+    final RouteMatchList list2 = configuration.findMatch(Uri.parse('/b'));
     list1.push(ImperativeRouteMatch(
         pageKey: const ValueKey<String>('/b-p0'),
         matches: list2,

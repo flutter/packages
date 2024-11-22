@@ -226,6 +226,7 @@ bool _isExampleBuildFile(List<String> pathComponents) {
       pathComponents.contains('Podfile') ||
       pathComponents.contains('CMakeLists.txt') ||
       pathComponents.contains('.pluginToolsConfig.yaml') ||
+      pathComponents.contains('settings.gradle') ||
       pathComponents.contains('pubspec.yaml');
 }
 

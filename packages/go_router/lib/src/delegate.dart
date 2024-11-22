@@ -13,6 +13,7 @@ import 'configuration.dart';
 import 'match.dart';
 import 'misc/errors.dart';
 import 'route.dart';
+import 'state.dart';
 
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
@@ -46,38 +47,32 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   late final RouteBuilder builder;
 
   /// Set to true to disable creating history entries on the web.
+  // TODO(tolo): This field is obsolete and should be removed in the next major
+  // version.
   final bool routerNeglect;
 
   final RouteConfiguration _configuration;
 
   @override
   Future<bool> popRoute() async {
-    NavigatorState? state = navigatorKey.currentState;
-    if (state == null) {
-      return false;
-    }
-    if (!state.canPop()) {
-      state = null;
-    }
-    RouteMatchBase walker = currentConfiguration.matches.last;
-    while (walker is ShellRouteMatch) {
-      if (walker.navigatorKey.currentState?.canPop() ?? false) {
-        state = walker.navigatorKey.currentState;
-      }
-      walker = walker.matches.last;
-    }
-    assert(walker is RouteMatch);
+    final NavigatorState? state = _findCurrentNavigator();
     if (state != null) {
-      return state.maybePop();
+      final bool didPop = await state.maybePop(); // Call maybePop() directly
+      if (didPop) {
+        return true; // Return true if maybePop handled the pop
+      }
     }
-    // This should be the only place where the last GoRoute exit the screen.
+
+    // Fallback to onExit if maybePop did not handle the pop
     final GoRoute lastRoute = currentConfiguration.last.route;
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
       return !(await lastRoute.onExit!(
         navigatorKey.currentContext!,
-        walker.buildState(_configuration, currentConfiguration),
+        currentConfiguration.last
+            .buildState(_configuration, currentConfiguration),
       ));
     }
+
     return false;
   }
 
@@ -98,29 +93,36 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pops the top-most route.
   void pop<T extends Object?>([T? result]) {
-    NavigatorState? state;
-    if (navigatorKey.currentState?.canPop() ?? false) {
-      state = navigatorKey.currentState;
-    }
-    RouteMatchBase walker = currentConfiguration.matches.last;
-    while (walker is ShellRouteMatch) {
-      if (walker.navigatorKey.currentState?.canPop() ?? false) {
-        state = walker.navigatorKey.currentState;
-      }
-      walker = walker.matches.last;
-    }
-    if (state == null) {
+    final NavigatorState? state = _findCurrentNavigator();
+    if (state == null || !state.canPop()) {
       throw GoError('There is nothing to pop');
     }
     state.pop(result);
   }
 
-  void _debugAssertMatchListNotEmpty() {
-    assert(
-      currentConfiguration.isNotEmpty,
-      'You have popped the last page off of the stack,'
-      ' there are no pages left to show',
-    );
+  NavigatorState? _findCurrentNavigator() {
+    NavigatorState? state;
+    state =
+        navigatorKey.currentState; // Set state directly without canPop check
+
+    RouteMatchBase walker = currentConfiguration.matches.last;
+    while (walker is ShellRouteMatch) {
+      final NavigatorState potentialCandidate =
+          walker.navigatorKey.currentState!;
+
+      final ModalRoute<dynamic>? modalRoute =
+          ModalRoute.of(potentialCandidate.context);
+      if (modalRoute == null || !modalRoute.isCurrent) {
+        // Stop if there is a pageless route on top of the shell route.
+        break;
+      }
+
+      if (potentialCandidate.canPop()) {
+        state = walker.navigatorKey.currentState;
+      }
+      walker = walker.matches.last;
+    }
+    return state;
   }
 
   bool _handlePopPageWithRouteMatch(
@@ -152,6 +154,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return false;
   }
 
+  void _debugAssertMatchListNotEmpty() {
+    assert(
+      currentConfiguration.isNotEmpty,
+      'You have popped the last page off of the stack,'
+      ' there are no pages left to show',
+    );
+  }
+
   void _completeRouteMatch(Object? result, RouteMatchBase match) {
     RouteMatchBase walker = match;
     while (walker is ShellRouteMatch) {
@@ -160,13 +170,20 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (walker is ImperativeRouteMatch) {
       walker.complete(result);
     }
+
+    // Unconditionally remove the match from the current configuration
     currentConfiguration = currentConfiguration.remove(match);
+
     notifyListeners();
-    assert(() {
-      _debugAssertMatchListNotEmpty();
-      return true;
-    }());
+
+    // Ensure the configuration is not empty
+    _debugAssertMatchListNotEmpty();
   }
+
+  /// The top [GoRouterState], the state of the route that was
+  /// last used in either [GoRouter.go] or [GoRouter.push].
+  GoRouterState? get state => currentConfiguration.last
+      .buildState(_configuration, currentConfiguration);
 
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;

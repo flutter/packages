@@ -9,9 +9,9 @@ A Flutter plugin that provides a WebView widget.
 On iOS the WebView widget is backed by a [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview).
 On Android the WebView widget is backed by a [WebView](https://developer.android.com/reference/android/webkit/WebView).
 
-|             | Android        | iOS   |
-|-------------|----------------|-------|
-| **Support** | SDK 19+ or 20+ | 12.0+ |
+|             | Android | iOS   | macOS  |
+|-------------|---------|-------|--------|
+| **Support** | SDK 21+ | 12.0+ | 10.14+ |
 
 ## Usage
 
@@ -23,7 +23,6 @@ You can now display a WebView by:
 ```dart
 controller = WebViewController()
   ..setJavaScriptMode(JavaScriptMode.unrestricted)
-  ..setBackgroundColor(const Color(0x00000000))
   ..setNavigationDelegate(
     NavigationDelegate(
       onProgress: (int progress) {
@@ -86,7 +85,7 @@ To access platform-specific features, start by adding the platform implementatio
 app or package:
 
 * **Android**: [webview_flutter_android](https://pub.dev/packages/webview_flutter_android/install)
-* **iOS**: [webview_flutter_wkwebview](https://pub.dev/packages/webview_flutter_wkwebview/install)
+* **iOS/macOS**: [webview_flutter_wkwebview](https://pub.dev/packages/webview_flutter_wkwebview/install)
 
 Next, add the imports of the implementation packages to your app or package:
 
@@ -94,7 +93,7 @@ Next, add the imports of the implementation packages to your app or package:
 ```dart
 // Import for Android features.
 import 'package:webview_flutter_android/webview_flutter_android.dart';
-// Import for iOS features.
+// Import for iOS/macOS features.
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 ```
 
@@ -109,7 +108,7 @@ additional functionality provided by the platform and is followed by an example.
 2. Call methods on a platform implementation of a class by using the `platform` field (e.g.
    `WebViewController.platform`, `WebViewWidget.platform`, etc.).
 
-Below is an example of setting additional iOS and Android parameters on the `WebViewController`.
+Below is an example of setting additional iOS/macOS and Android parameters on the `WebViewController`.
 
 <?code-excerpt "main.dart (platform_features)"?>
 ```dart
@@ -137,7 +136,7 @@ See https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter
 for more details on Android features.
 
 See https://pub.dev/documentation/webview_flutter_wkwebview/latest/webview_flutter_wkwebview/webview_flutter_wkwebview-library.html
-for more details on iOS features.
+for more details on iOS/macOS features.
 
 ### Enable Material Components for Android
 

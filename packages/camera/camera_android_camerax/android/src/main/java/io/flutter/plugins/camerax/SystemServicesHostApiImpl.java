@@ -106,16 +106,16 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
   }
 
   /**
-   * Returns whether or not a {@code SurfaceTexture} backs the {@code Surface} provided to CameraX
-   * to build the camera preview. If it is backed by a {@code Surface}, then the transformation
-   * needed to correctly rotate the preview has already been applied.
+   * Returns whether or not Impeller uses an {@code ImageReader} backend to provide a {@code
+   * Surface} to CameraX to build the preview. If it is backed by an {@code ImageReader}, then
+   * CameraX will not automatically apply the transformation needed to correct the preview.
    *
-   * <p>This is determined by the engine, who uses {@code SurfaceTexture}s on Android SDKs 29 and
-   * below.
+   * <p>This is determined by the engine, which approximately uses {@code SurfaceTexture}s on
+   * Android SDKs below 29.
    */
   @Override
   @NonNull
   public Boolean isPreviewPreTransformed() {
-    return Build.VERSION.SDK_INT <= 29;
+    return Build.VERSION.SDK_INT < 29;
   }
 }

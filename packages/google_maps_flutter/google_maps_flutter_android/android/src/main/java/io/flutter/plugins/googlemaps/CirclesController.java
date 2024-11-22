@@ -34,13 +34,13 @@ class CirclesController {
 
   void addCircles(@NonNull List<Messages.PlatformCircle> circlesToAdd) {
     for (Messages.PlatformCircle circleToAdd : circlesToAdd) {
-      addJsonCircle(circleToAdd.getJson());
+      addCircle(circleToAdd);
     }
   }
 
   void changeCircles(@NonNull List<Messages.PlatformCircle> circlesToChange) {
     for (Messages.PlatformCircle circleToChange : circlesToChange) {
-      changeJsonCircle(circleToChange.getJson());
+      changeCircle(circleToChange);
     }
   }
 
@@ -67,10 +67,7 @@ class CirclesController {
     return false;
   }
 
-  private void addJsonCircle(Map<String, ?> circle) {
-    if (circle == null) {
-      return;
-    }
+  void addCircle(@NonNull Messages.PlatformCircle circle) {
     CircleBuilder circleBuilder = new CircleBuilder(density);
     String circleId = Convert.interpretCircleOptions(circle, circleBuilder);
     CircleOptions options = circleBuilder.build();
@@ -84,18 +81,11 @@ class CirclesController {
     googleMapsCircleIdToDartCircleId.put(circle.getId(), circleId);
   }
 
-  private void changeJsonCircle(Map<String, ?> circle) {
-    if (circle == null) {
-      return;
-    }
-    String circleId = getCircleId(circle);
+  private void changeCircle(@NonNull Messages.PlatformCircle circle) {
+    String circleId = circle.getCircleId();
     CircleController circleController = circleIdToController.get(circleId);
     if (circleController != null) {
       Convert.interpretCircleOptions(circle, circleController);
     }
-  }
-
-  private static String getCircleId(Map<String, ?> circle) {
-    return (String) circle.get("circleId");
   }
 }

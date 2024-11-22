@@ -80,25 +80,17 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       });
     }
 
-    late final RouteMatchList initialMatches;
-    if (routeInformation.uri.hasEmptyPath) {
-      String newUri = '${routeInformation.uri.origin}/';
-      if (routeInformation.uri.hasQuery) {
-        newUri += '?${routeInformation.uri.query}';
-      }
-      if (routeInformation.uri.hasFragment) {
-        newUri += '#${routeInformation.uri.fragment}';
-      }
-      initialMatches = configuration.findMatch(
-        newUri,
-        extra: state.extra,
-      );
-    } else {
-      initialMatches = configuration.findMatch(
-        routeInformation.uri.toString(),
-        extra: state.extra,
-      );
+    Uri uri = routeInformation.uri;
+    if (uri.hasEmptyPath) {
+      uri = uri.replace(path: '/');
+    } else if (uri.path.length > 1 && uri.path.endsWith('/')) {
+      // Remove trailing `/`.
+      uri = uri.replace(path: uri.path.substring(0, uri.path.length - 1));
     }
+    final RouteMatchList initialMatches = configuration.findMatch(
+      uri,
+      extra: state.extra,
+    );
     if (initialMatches.isError) {
       log('No initial matches: ${routeInformation.uri.path}');
     }
@@ -160,7 +152,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         location = safeRoute.matches.uri.toString();
       }
     }
-
     return RouteInformation(
       uri: Uri.parse(location ?? configuration.uri.toString()),
       state: _routeMatchListCodec.encode(configuration),
@@ -194,22 +185,30 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         );
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
-        return baseRouteMatchList.remove(routeMatch).push(
-              ImperativeRouteMatch(
-                pageKey: _getUniqueValueKey(),
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+        baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
+        if (baseRouteMatchList.isEmpty) {
+          return newMatchList;
+        }
+        return baseRouteMatchList.push(
+          ImperativeRouteMatch(
+            pageKey: _getUniqueValueKey(),
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
-        return baseRouteMatchList.remove(routeMatch).push(
-              ImperativeRouteMatch(
-                pageKey: routeMatch.pageKey,
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+        baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
+        if (baseRouteMatchList.isEmpty) {
+          return newMatchList;
+        }
+        return baseRouteMatchList.push(
+          ImperativeRouteMatch(
+            pageKey: routeMatch.pageKey,
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.go:
         return newMatchList;
       case NavigatingType.restore:
