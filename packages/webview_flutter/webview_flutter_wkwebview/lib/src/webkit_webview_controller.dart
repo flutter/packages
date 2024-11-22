@@ -222,7 +222,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           final JavaScriptAlertDialogRequest request =
               JavaScriptAlertDialogRequest(
             message: message,
-            url: (await frame.request.getUrl())!,
+            url: await frame.request.getUrl() ?? '',
           );
           await callback.call(request);
           return;
@@ -235,7 +235,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           final JavaScriptConfirmDialogRequest request =
               JavaScriptConfirmDialogRequest(
             message: message,
-            url: (await frame.request.getUrl())!,
+            url: await frame.request.getUrl() ?? '',
           );
           final bool result = await callback.call(request);
           return result;
@@ -255,7 +255,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           final JavaScriptTextInputDialogRequest request =
               JavaScriptTextInputDialogRequest(
                   message: prompt,
-                  url: (await frame.request.getUrl())!,
+                  url: await frame.request.getUrl() ?? '',
                   defaultText: defaultText);
           final String result = await callback.call(request);
           return result;
@@ -1111,7 +1111,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         if (weakThis.target?._onNavigationRequest != null) {
           final NavigationDecision decision =
               await weakThis.target!._onNavigationRequest!(NavigationRequest(
-            url: (await action.request.getUrl())!,
+            url: await action.request.getUrl() ?? '',
             isMainFrame: action.targetFrame.isMainFrame,
           ));
           switch (decision) {
