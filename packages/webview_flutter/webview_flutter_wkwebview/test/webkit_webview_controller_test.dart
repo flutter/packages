@@ -927,6 +927,72 @@ void main() {
       verifyNoMoreInteractions(mockUserContentController);
     });
 
+    test('removeJavaScriptChannel multiple times', () async {
+      final WebKitProxy webKitProxy = WebKitProxy(
+        createScriptMessageHandler: ({
+          required void Function(
+            WKUserContentController userContentController,
+            WKScriptMessage message,
+          ) didReceiveScriptMessage,
+        }) {
+          return WKScriptMessageHandler.detached(
+            didReceiveScriptMessage: didReceiveScriptMessage,
+          );
+        },
+      );
+
+      final WebKitJavaScriptChannelParams javaScriptChannelParams1 =
+          WebKitJavaScriptChannelParams(
+        name: 'name1',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
+
+      final WebKitJavaScriptChannelParams javaScriptChannelParams2 =
+          WebKitJavaScriptChannelParams(
+        name: 'name2',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
+
+      final MockWKUserContentController mockUserContentController =
+          MockWKUserContentController();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addJavaScriptChannel(javaScriptChannelParams1);
+      await controller.addJavaScriptChannel(javaScriptChannelParams2);
+      reset(mockUserContentController);
+
+      await controller.removeJavaScriptChannel('name1');
+
+      verify(mockUserContentController.removeAllUserScripts());
+      verify(mockUserContentController.removeScriptMessageHandler('name1'));
+      verify(mockUserContentController.removeScriptMessageHandler('name2'));
+
+      verify(mockUserContentController.addScriptMessageHandler(
+        argThat(isA<WKScriptMessageHandler>()),
+        'name2',
+      ));
+
+      final WKUserScript userScript =
+          verify(mockUserContentController.addUserScript(captureAny))
+              .captured
+              .single as WKUserScript;
+      expect(userScript.source, 'window.name2 = webkit.messageHandlers.name2;');
+      expect(
+        userScript.injectionTime,
+        WKUserScriptInjectionTime.atDocumentStart,
+      );
+
+      await controller.removeJavaScriptChannel('name2');
+      verify(mockUserContentController.removeAllUserScripts());
+      verify(mockUserContentController.removeScriptMessageHandler('name2'));
+      verifyNoMoreInteractions(mockUserContentController);
+    });
+
     test('removeJavaScriptChannel with zoom disabled', () async {
       final WebKitProxy webKitProxy = WebKitProxy(
         newWKScriptMessageHandler: ({
