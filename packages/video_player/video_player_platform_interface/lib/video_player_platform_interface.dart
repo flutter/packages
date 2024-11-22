@@ -48,7 +48,9 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
-  /// Creates an instance of a video player and returns its textureId.
+  /// Creates an instance of a video player with and returns its textureId.
+  /// The [viewType] parameter specifies the type of view to be used for the
+  /// video player.
   Future<int?> create(
     DataSource dataSource, {
     VideoViewType viewType = VideoViewType.textureView,
@@ -96,7 +98,8 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
-  /// Returns a widget displaying the video with a given textureID.
+  /// Returns a widget displaying the video with a given textureID, using given
+  /// viewType.
   Widget buildView(int textureId, VideoViewType viewType) {
     throw UnimplementedError('buildView() has not been implemented.');
   }
