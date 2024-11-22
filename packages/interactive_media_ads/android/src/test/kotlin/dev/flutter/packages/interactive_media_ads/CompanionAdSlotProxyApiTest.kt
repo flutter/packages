@@ -96,7 +96,7 @@ class CompanionAdSlotProxyApiTest {
 
     val instance = mock<CompanionAdSlot>()
     val width = 0L
-    val height = 0L
+    val height = 1L
     api.setSize(instance, width, height)
 
     verify(instance).setSize(width.toInt(), height.toInt())
