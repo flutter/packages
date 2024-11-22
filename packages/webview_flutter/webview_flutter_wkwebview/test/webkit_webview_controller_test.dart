@@ -124,11 +124,22 @@ void main() {
                     runJavaScriptConfirmPanel: runJavaScriptConfirmPanel,
                     runJavaScriptTextInputPanel: runJavaScriptTextInputPanel);
           },
-          newWKScriptMessageHandler: WKScriptMessageHandler.pigeon_detached,
+          newWKScriptMessageHandler: ({
+            required void Function(
+              WKScriptMessageHandler,
+              WKUserContentController,
+              WKScriptMessage,
+            ) didReceiveScriptMessage,
+          }) {
+            return WKScriptMessageHandler.pigeon_detached(
+              didReceiveScriptMessage: didReceiveScriptMessage,
+              pigeon_instanceManager: TestInstanceManager(),
+            );
+          },
           newUIScrollViewDelegate: ({
             void Function(
               UIScrollViewDelegate,
-              UIScrollViewDelegate,
+              UIScrollView,
               double,
               double,
             )? scrollViewDidScroll,
@@ -1537,206 +1548,243 @@ void main() {
       await controller.setInspectable(true);
       verify(mockWebView.setInspectable(true));
     });
-//
-//     group('Console logging', () {
-//       test('setConsoleLogCallback should inject the correct JavaScript',
-//           () async {
-//         final MockWKUserContentController mockUserContentController =
-//             MockWKUserContentController();
-//         final WebKitWebViewController controller = createControllerWithMocks(
-//           mockUserContentController: mockUserContentController,
-//         );
-//
-//         await controller
-//             .setOnConsoleMessage((JavaScriptConsoleMessage message) {});
-//
-//         final List<dynamic> capturedScripts =
-//             verify(mockUserContentController.addUserScript(captureAny))
-//                 .captured
-//                 .toList();
-//         final WKUserScript messageHandlerScript =
-//             capturedScripts[0] as WKUserScript;
-//         final WKUserScript overrideConsoleScript =
-//             capturedScripts[1] as WKUserScript;
-//
-//         expect(messageHandlerScript.isMainFrameOnly, isFalse);
-//         expect(messageHandlerScript.injectionTime,
-//             WKUserScriptInjectionTime.atDocumentStart);
-//         expect(messageHandlerScript.source,
-//             'window.fltConsoleMessage = webkit.messageHandlers.fltConsoleMessage;');
-//
-//         expect(overrideConsoleScript.isMainFrameOnly, isTrue);
-//         expect(overrideConsoleScript.injectionTime,
-//             WKUserScriptInjectionTime.atDocumentStart);
-//         expect(overrideConsoleScript.source, '''
-// var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
-//   removeCyclicObject: function() {
-//     const traversalStack = [];
-//     return function (k, v) {
-//       if (typeof v !== "object" || v === null) { return v; }
-//       const currentParentObj = this;
-//       while (
-//         traversalStack.length > 0 &&
-//         traversalStack[traversalStack.length - 1] !== currentParentObj
-//       ) {
-//         traversalStack.pop();
-//       }
-//       if (traversalStack.includes(v)) { return; }
-//       traversalStack.push(v);
-//       return v;
-//     };
-//   },
-//   log: function (type, args) {
-//     var message =  Object.values(args)
-//         .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, _flutter_webview_plugin_overrides.removeCyclicObject()) : v.toString())
-//         .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
-//         .join(", ");
-//
-//     var log = {
-//       level: type,
-//       message: message
-//     };
-//
-//     window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
-//   }
-// };
-//
-// let originalLog = console.log;
-// let originalInfo = console.info;
-// let originalWarn = console.warn;
-// let originalError = console.error;
-// let originalDebug = console.debug;
-//
-// console.log = function() { _flutter_webview_plugin_overrides.log("log", arguments); originalLog.apply(null, arguments) };
-// console.info = function() { _flutter_webview_plugin_overrides.log("info", arguments); originalInfo.apply(null, arguments) };
-// console.warn = function() { _flutter_webview_plugin_overrides.log("warning", arguments); originalWarn.apply(null, arguments) };
-// console.error = function() { _flutter_webview_plugin_overrides.log("error", arguments); originalError.apply(null, arguments) };
-// console.debug = function() { _flutter_webview_plugin_overrides.log("debug", arguments); originalDebug.apply(null, arguments) };
-//
-// window.addEventListener("error", function(e) {
-//   log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
-// });
-//       ''');
-//       });
-//
-//       test('setConsoleLogCallback should parse levels correctly', () async {
-//         final MockWKUserContentController mockUserContentController =
-//             MockWKUserContentController();
-//         final WebKitWebViewController controller = createControllerWithMocks(
-//           mockUserContentController: mockUserContentController,
-//         );
-//
-//         final Map<JavaScriptLogLevel, String> logs =
-//             <JavaScriptLogLevel, String>{};
-//         await controller.setOnConsoleMessage(
-//             (JavaScriptConsoleMessage message) =>
-//                 logs[message.level] = message.message);
-//
-//         final List<dynamic> capturedParameters = verify(
-//                 mockUserContentController.addScriptMessageHandler(
-//                     captureAny, any))
-//             .captured
-//             .toList();
-//         final WKScriptMessageHandler scriptMessageHandler =
-//             capturedParameters[0] as WKScriptMessageHandler;
-//
-//         scriptMessageHandler.didReceiveScriptMessage(
-//             mockUserContentController,
-//             const WKScriptMessage(
-//                 name: 'test',
-//                 body: '{"level": "debug", "message": "Debug message"}'));
-//         scriptMessageHandler.didReceiveScriptMessage(
-//             mockUserContentController,
-//             const WKScriptMessage(
-//                 name: 'test',
-//                 body: '{"level": "error", "message": "Error message"}'));
-//         scriptMessageHandler.didReceiveScriptMessage(
-//             mockUserContentController,
-//             const WKScriptMessage(
-//                 name: 'test',
-//                 body: '{"level": "info", "message": "Info message"}'));
-//         scriptMessageHandler.didReceiveScriptMessage(
-//             mockUserContentController,
-//             const WKScriptMessage(
-//                 name: 'test',
-//                 body: '{"level": "log", "message": "Log message"}'));
-//         scriptMessageHandler.didReceiveScriptMessage(
-//             mockUserContentController,
-//             const WKScriptMessage(
-//                 name: 'test',
-//                 body: '{"level": "warning", "message": "Warning message"}'));
-//
-//         expect(logs.length, 5);
-//         expect(logs[JavaScriptLogLevel.debug], 'Debug message');
-//         expect(logs[JavaScriptLogLevel.error], 'Error message');
-//         expect(logs[JavaScriptLogLevel.info], 'Info message');
-//         expect(logs[JavaScriptLogLevel.log], 'Log message');
-//         expect(logs[JavaScriptLogLevel.warning], 'Warning message');
-//       });
-//     });
-//
-//     test('setOnScrollPositionChange', () async {
-//       final WebKitWebViewController controller = createControllerWithMocks();
-//
-//       final Completer<ScrollPositionChange> changeCompleter =
-//           Completer<ScrollPositionChange>();
-//       await controller.setOnScrollPositionChange(
-//         (ScrollPositionChange change) {
-//           changeCompleter.complete(change);
-//         },
-//       );
-//
-//       final void Function(
-//         UIScrollView scrollView,
-//         double,
-//         double,
-//       ) onScrollViewDidScroll = CapturingUIScrollViewDelegate
-//           .lastCreatedDelegate.scrollViewDidScroll!;
-//
-//       final MockUIScrollView mockUIScrollView = MockUIScrollView();
-//       onScrollViewDidScroll(mockUIScrollView, 1.0, 2.0);
-//
-//       final ScrollPositionChange change = await changeCompleter.future;
-//       expect(change.x, 1.0);
-//       expect(change.y, 2.0);
-//     });
+
+    group('Console logging', () {
+      test('setConsoleLogCallback should inject the correct JavaScript',
+          () async {
+        final MockWKUserContentController mockUserContentController =
+            MockWKUserContentController();
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
+
+        await controller
+            .setOnConsoleMessage((JavaScriptConsoleMessage message) {});
+
+        final List<dynamic> capturedScripts =
+            verify(mockUserContentController.addUserScript(captureAny))
+                .captured
+                .toList();
+        final WKUserScript messageHandlerScript =
+            capturedScripts[0] as WKUserScript;
+        final WKUserScript overrideConsoleScript =
+            capturedScripts[1] as WKUserScript;
+
+        expect(messageHandlerScript.isMainFrameOnly, isFalse);
+        expect(messageHandlerScript.injectionTime,
+            UserScriptInjectionTime.atDocumentStart);
+        expect(messageHandlerScript.source,
+            'window.fltConsoleMessage = webkit.messageHandlers.fltConsoleMessage;');
+
+        expect(overrideConsoleScript.isMainFrameOnly, isTrue);
+        expect(overrideConsoleScript.injectionTime,
+            UserScriptInjectionTime.atDocumentStart);
+        expect(overrideConsoleScript.source, '''
+var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {
+  removeCyclicObject: function() {
+    const traversalStack = [];
+    return function (k, v) {
+      if (typeof v !== "object" || v === null) { return v; }
+      const currentParentObj = this;
+      while (
+        traversalStack.length > 0 &&
+        traversalStack[traversalStack.length - 1] !== currentParentObj
+      ) {
+        traversalStack.pop();
+      }
+      if (traversalStack.includes(v)) { return; }
+      traversalStack.push(v);
+      return v;
+    };
+  },
+  log: function (type, args) {
+    var message =  Object.values(args)
+        .map(v => typeof(v) === "undefined" ? "undefined" : typeof(v) === "object" ? JSON.stringify(v, _flutter_webview_plugin_overrides.removeCyclicObject()) : v.toString())
+        .map(v => v.substring(0, 3000)) // Limit msg to 3000 chars
+        .join(", ");
+
+    var log = {
+      level: type,
+      message: message
+    };
+
+    window.webkit.messageHandlers.fltConsoleMessage.postMessage(JSON.stringify(log));
+  }
+};
+
+let originalLog = console.log;
+let originalInfo = console.info;
+let originalWarn = console.warn;
+let originalError = console.error;
+let originalDebug = console.debug;
+
+console.log = function() { _flutter_webview_plugin_overrides.log("log", arguments); originalLog.apply(null, arguments) };
+console.info = function() { _flutter_webview_plugin_overrides.log("info", arguments); originalInfo.apply(null, arguments) };
+console.warn = function() { _flutter_webview_plugin_overrides.log("warning", arguments); originalWarn.apply(null, arguments) };
+console.error = function() { _flutter_webview_plugin_overrides.log("error", arguments); originalError.apply(null, arguments) };
+console.debug = function() { _flutter_webview_plugin_overrides.log("debug", arguments); originalDebug.apply(null, arguments) };
+
+window.addEventListener("error", function(e) {
+  log("error", e.message + " at " + e.filename + ":" + e.lineno + ":" + e.colno);
+});
+      ''');
+      });
+
+      test('setConsoleLogCallback should parse levels correctly', () async {
+        final MockWKUserContentController mockUserContentController =
+            MockWKUserContentController();
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockUserContentController: mockUserContentController,
+        );
+
+        final Map<JavaScriptLogLevel, String> logs =
+            <JavaScriptLogLevel, String>{};
+        await controller.setOnConsoleMessage(
+            (JavaScriptConsoleMessage message) =>
+                logs[message.level] = message.message);
+
+        final List<dynamic> capturedParameters = verify(
+                mockUserContentController.addScriptMessageHandler(
+                    captureAny, any))
+            .captured
+            .toList();
+        final WKScriptMessageHandler scriptMessageHandler =
+            capturedParameters[0] as WKScriptMessageHandler;
+
+        scriptMessageHandler.didReceiveScriptMessage(
+          scriptMessageHandler,
+          mockUserContentController,
+          WKScriptMessage.pigeon_detached(
+            name: 'test',
+            body: '{"level": "debug", "message": "Debug message"}',
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+        scriptMessageHandler.didReceiveScriptMessage(
+          scriptMessageHandler,
+          mockUserContentController,
+          WKScriptMessage.pigeon_detached(
+            name: 'test',
+            body: '{"level": "error", "message": "Error message"}',
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+        scriptMessageHandler.didReceiveScriptMessage(
+          scriptMessageHandler,
+          mockUserContentController,
+          WKScriptMessage.pigeon_detached(
+            name: 'test',
+            body: '{"level": "info", "message": "Info message"}',
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+        scriptMessageHandler.didReceiveScriptMessage(
+          scriptMessageHandler,
+          mockUserContentController,
+          WKScriptMessage.pigeon_detached(
+            name: 'test',
+            body: '{"level": "log", "message": "Log message"}',
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+        scriptMessageHandler.didReceiveScriptMessage(
+          scriptMessageHandler,
+          mockUserContentController,
+          WKScriptMessage.pigeon_detached(
+            name: 'test',
+            body: '{"level": "warning", "message": "Warning message"}',
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+
+        expect(logs.length, 5);
+        expect(logs[JavaScriptLogLevel.debug], 'Debug message');
+        expect(logs[JavaScriptLogLevel.error], 'Error message');
+        expect(logs[JavaScriptLogLevel.info], 'Info message');
+        expect(logs[JavaScriptLogLevel.log], 'Log message');
+        expect(logs[JavaScriptLogLevel.warning], 'Warning message');
+      });
+    });
+
+    test('setOnScrollPositionChange', () async {
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      final Completer<ScrollPositionChange> changeCompleter =
+          Completer<ScrollPositionChange>();
+      await controller.setOnScrollPositionChange(
+        (ScrollPositionChange change) {
+          changeCompleter.complete(change);
+        },
+      );
+
+      final void Function(
+        UIScrollViewDelegate,
+        UIScrollView scrollView,
+        double,
+        double,
+      ) onScrollViewDidScroll = CapturingUIScrollViewDelegate
+          .lastCreatedDelegate.scrollViewDidScroll!;
+
+      final MockUIScrollView mockUIScrollView = MockUIScrollView();
+      onScrollViewDidScroll(
+        CapturingUIScrollViewDelegate.lastCreatedDelegate,
+        mockUIScrollView,
+        1.0,
+        2.0,
+      );
+
+      final ScrollPositionChange change = await changeCompleter.future;
+      expect(change.x, 1.0);
+      expect(change.y, 2.0);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
   });
 
-  // group('WebKitJavaScriptChannelParams', () {
-  //   test('onMessageReceived', () async {
-  //     late final WKScriptMessageHandler messageHandler;
-  //
-  //     final WebKitProxy webKitProxy = WebKitProxy(
-  //       createScriptMessageHandler: ({
-  //         required void Function(
-  //           WKUserContentController userContentController,
-  //           WKScriptMessage message,
-  //         ) didReceiveScriptMessage,
-  //       }) {
-  //         messageHandler = WKScriptMessageHandler.detached(
-  //           didReceiveScriptMessage: didReceiveScriptMessage,
-  //         );
-  //         return messageHandler;
-  //       },
-  //     );
-  //
-  //     late final String callbackMessage;
-  //     WebKitJavaScriptChannelParams(
-  //       name: 'name',
-  //       onMessageReceived: (JavaScriptMessage message) {
-  //         callbackMessage = message.message;
-  //       },
-  //       webKitProxy: webKitProxy,
-  //     );
-  //
-  //     messageHandler.didReceiveScriptMessage(
-  //       MockWKUserContentController(),
-  //       const WKScriptMessage(name: 'name', body: 'myMessage'),
-  //     );
-  //
-  //     expect(callbackMessage, 'myMessage');
-  //   });
-  // });
+  group('WebKitJavaScriptChannelParams', () {
+    test('onMessageReceived', () async {
+      late final WKScriptMessageHandler messageHandler;
+
+      final WebKitProxy webKitProxy = WebKitProxy(
+        newWKScriptMessageHandler: ({
+          required void Function(
+            WKScriptMessageHandler,
+            WKUserContentController userContentController,
+            WKScriptMessage message,
+          ) didReceiveScriptMessage,
+        }) {
+          messageHandler = WKScriptMessageHandler.pigeon_detached(
+            didReceiveScriptMessage: didReceiveScriptMessage,
+            pigeon_instanceManager: TestInstanceManager(),
+          );
+          return messageHandler;
+        },
+      );
+
+      late final String callbackMessage;
+      WebKitJavaScriptChannelParams(
+        name: 'name',
+        onMessageReceived: (JavaScriptMessage message) {
+          callbackMessage = message.message;
+        },
+        webKitProxy: webKitProxy,
+      );
+
+      messageHandler.didReceiveScriptMessage(
+        messageHandler,
+        MockWKUserContentController(),
+        WKScriptMessage.pigeon_detached(
+          name: 'name',
+          body: 'myMessage',
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+      );
+
+      expect(callbackMessage, 'myMessage');
+    });
+  });
 }
 
 // Records the last created instance of itself.

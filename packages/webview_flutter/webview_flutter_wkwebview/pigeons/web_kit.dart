@@ -921,7 +921,7 @@ abstract class UIScrollViewDelegate extends NSObject {
   /// Note that this is a convenient method that includes the `contentOffset` of
   /// the `scrollView`.
   void Function(
-    UIScrollViewDelegate scrollView,
+    UIScrollView scrollView,
     double x,
     double y,
   )? scrollViewDidScroll;

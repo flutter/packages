@@ -7420,7 +7420,7 @@ protocol PigeonApiProtocolUIScrollViewDelegate {
   ///
   /// Note that this is a convenient method that includes the `contentOffset` of
   /// the `scrollView`.
-  func scrollViewDidScroll(pigeonInstance pigeonInstanceArg: UIScrollViewDelegate, scrollView scrollViewArg: UIScrollViewDelegate, x xArg: Double, y yArg: Double, completion: @escaping (Result<Void, PigeonError>) -> Void)  #endif
+  func scrollViewDidScroll(pigeonInstance pigeonInstanceArg: UIScrollViewDelegate, scrollView scrollViewArg: UIScrollView, x xArg: Double, y yArg: Double, completion: @escaping (Result<Void, PigeonError>) -> Void)  #endif
 
 }
 
@@ -7505,7 +7505,7 @@ withIdentifier: pigeonIdentifierArg)
   ///
   /// Note that this is a convenient method that includes the `contentOffset` of
   /// the `scrollView`.
-  func scrollViewDidScroll(pigeonInstance pigeonInstanceArg: UIScrollViewDelegate, scrollView scrollViewArg: UIScrollViewDelegate, x xArg: Double, y yArg: Double, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func scrollViewDidScroll(pigeonInstance pigeonInstanceArg: UIScrollViewDelegate, scrollView scrollViewArg: UIScrollView, x xArg: Double, y yArg: Double, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -7544,6 +7544,7 @@ withIdentifier: pigeonIdentifierArg)
 
 import Foundation
 import UIKit
+import UIKit
 
 /// Implementation of `UIScrollViewDelegate` that calls to Dart in callback methods.
 class ScrollViewDelegateImpl: UIScrollViewDelegate {
@@ -7576,6 +7577,7 @@ class ScrollViewDelegateProxyAPIDelegate : PigeonApiDelegateUIScrollViewDelegate
 // found in the LICENSE file.
 
 import UIKit
+import UIKit
 import Flutter
 import XCTest
 
@@ -7593,7 +7595,7 @@ class ScrollViewDelegateProxyApiTests: XCTestCase {
   func testScrollViewDidScroll() {
     let api = TestScrollViewDelegateApi()
     let instance = ScrollViewDelegateImpl(api: api)
-    let scrollView = TestScrollViewDelegate
+    let scrollView = TestScrollView
     let x = 1.0
     let y = 1.0
     instance.scrollViewDidScroll(scrollView: scrollView, x: x, y: y)
@@ -7605,7 +7607,7 @@ class ScrollViewDelegateProxyApiTests: XCTestCase {
 class TestScrollViewDelegateApi: PigeonApiProtocolUIScrollViewDelegate {
   var scrollViewDidScrollArgs: [AnyHashable?]? = nil
 
-  func scrollViewDidScroll(scrollView: UIScrollViewDelegate, x: Double, y: Double) throws {
+  func scrollViewDidScroll(scrollView: UIScrollView, x: Double, y: Double) throws {
     scrollViewDidScrollArgs = [scrollViewArg, xArg, yArg]
   }
 }

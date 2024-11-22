@@ -567,7 +567,7 @@ class InteractiveMediaAdsProxy {
   final UIScrollViewDelegate Function(
       {void Function(
         UIScrollViewDelegate,
-        UIScrollViewDelegate,
+        UIScrollView,
         double,
         double,
       )? scrollViewDidScroll}) newUIScrollViewDelegate;
@@ -6387,7 +6387,7 @@ class UIScrollViewDelegate extends NSObject {
   /// release the associated Native object manually.
   final void Function(
     UIScrollViewDelegate pigeon_instance,
-    UIScrollViewDelegate scrollView,
+    UIScrollView scrollView,
     double x,
     double y,
   )? scrollViewDidScroll;
@@ -6399,7 +6399,7 @@ class UIScrollViewDelegate extends NSObject {
     UIScrollViewDelegate Function()? pigeon_newInstance,
     void Function(
       UIScrollViewDelegate pigeon_instance,
-      UIScrollViewDelegate scrollView,
+      UIScrollView scrollView,
       double x,
       double y,
     )? scrollViewDidScroll,
@@ -6464,10 +6464,9 @@ class UIScrollViewDelegate extends NSObject {
               (args[0] as UIScrollViewDelegate?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.scrollViewDidScroll was null, expected non-null UIScrollViewDelegate.');
-          final UIScrollViewDelegate? arg_scrollView =
-              (args[1] as UIScrollViewDelegate?);
+          final UIScrollView? arg_scrollView = (args[1] as UIScrollView?);
           assert(arg_scrollView != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.scrollViewDidScroll was null, expected non-null UIScrollViewDelegate.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.scrollViewDidScroll was null, expected non-null UIScrollView.');
           final double? arg_x = (args[2] as double?);
           assert(arg_x != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.scrollViewDidScroll was null, expected non-null double.');

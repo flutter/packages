@@ -202,12 +202,13 @@ class WebKitProxy {
   final WKWebViewConfiguration Function() newWKWebViewConfiguration;
 
   /// Constructs [WKScriptMessageHandler].
-  final WKScriptMessageHandler Function(
-      {required void Function(
-        WKScriptMessageHandler,
-        WKUserContentController,
-        WKScriptMessage,
-      ) didReceiveScriptMessage}) newWKScriptMessageHandler;
+  final WKScriptMessageHandler Function({
+    required void Function(
+      WKScriptMessageHandler,
+      WKUserContentController,
+      WKScriptMessage,
+    ) didReceiveScriptMessage,
+  }) newWKScriptMessageHandler;
 
   /// Constructs [WKNavigationDelegate].
   final WKNavigationDelegate Function({
@@ -306,13 +307,14 @@ class WebKitProxy {
   }) newWKUIDelegate;
 
   /// Constructs [UIScrollViewDelegate].
-  final UIScrollViewDelegate Function(
-      {void Function(
-        UIScrollViewDelegate,
-        UIScrollViewDelegate,
-        double,
-        double,
-      )? scrollViewDidScroll}) newUIScrollViewDelegate;
+  final UIScrollViewDelegate Function({
+    void Function(
+      UIScrollViewDelegate,
+      UIScrollView,
+      double,
+      double,
+    )? scrollViewDidScroll,
+  }) newUIScrollViewDelegate;
 
   /// Constructs [URLCredential].
   final URLCredential Function({
