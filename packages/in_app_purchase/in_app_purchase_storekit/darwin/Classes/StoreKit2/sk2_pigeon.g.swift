@@ -312,6 +312,7 @@ struct SK2TransactionMessage {
   var originalId: Int64
   var productId: String
   var purchaseDate: String
+  var expirationDate: String? = nil
   var purchasedQuantity: Int64
   var appAccountToken: String? = nil
   var restoring: Bool
@@ -324,17 +325,19 @@ struct SK2TransactionMessage {
     let originalId = pigeonVar_list[1] as! Int64
     let productId = pigeonVar_list[2] as! String
     let purchaseDate = pigeonVar_list[3] as! String
-    let purchasedQuantity = pigeonVar_list[4] as! Int64
-    let appAccountToken: String? = nilOrValue(pigeonVar_list[5])
-    let restoring = pigeonVar_list[6] as! Bool
-    let receiptData: String? = nilOrValue(pigeonVar_list[7])
-    let error: SK2ErrorMessage? = nilOrValue(pigeonVar_list[8])
+    let expirationDate: String? = nilOrValue(pigeonVar_list[4])
+    let purchasedQuantity = pigeonVar_list[5] as! Int64
+    let appAccountToken: String? = nilOrValue(pigeonVar_list[6])
+    let restoring = pigeonVar_list[7] as! Bool
+    let receiptData: String? = nilOrValue(pigeonVar_list[8])
+    let error: SK2ErrorMessage? = nilOrValue(pigeonVar_list[9])
 
     return SK2TransactionMessage(
       id: id,
       originalId: originalId,
       productId: productId,
       purchaseDate: purchaseDate,
+      expirationDate: expirationDate,
       purchasedQuantity: purchasedQuantity,
       appAccountToken: appAccountToken,
       restoring: restoring,
@@ -348,6 +351,7 @@ struct SK2TransactionMessage {
       originalId,
       productId,
       purchaseDate,
+      expirationDate,
       purchasedQuantity,
       appAccountToken,
       restoring,
