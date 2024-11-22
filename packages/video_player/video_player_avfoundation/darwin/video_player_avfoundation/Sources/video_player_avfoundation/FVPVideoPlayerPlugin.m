@@ -410,7 +410,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _displayLink.running = _isPlaying || self.waitingForFrame;
 }
 
-/// Synchronizes the player's playback rate with targetPlaybackSpeed, constrained by the playback rate capabilities of the player.
+/// Synchronizes the player's playback rate with targetPlaybackSpeed, constrained by the playback
+/// rate capabilities of the player's current item.
 - (void)updateRate {
   // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
   // these checks.
