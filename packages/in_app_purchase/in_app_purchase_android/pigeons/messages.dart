@@ -241,6 +241,7 @@ class PlatformSubscriptionOfferDetails {
     required this.offerToken,
     required this.offerTags,
     required this.pricingPhases,
+    required this.installmentPlanDetails,
   });
 
   final String basePlanId;

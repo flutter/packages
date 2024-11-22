@@ -215,6 +215,8 @@ SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
     offerIdToken: offer.offerToken,
     pricingPhases:
         offer.pricingPhases.map(pricingPhaseWrapperFromPlatform).toList(),
+    installmentPlanDetails:
+        installmentPlanDetailsFromPlatform(offer.installmentPlanDetails),
   );
 }
 
@@ -236,5 +238,19 @@ UserChoiceDetailsProductWrapper userChoiceDetailsProductFromPlatform(
     id: product.id,
     offerToken: product.offerToken ?? '',
     productType: productTypeFromPlatform(product.type),
+  );
+}
+
+/// Creates a [InstallmentPlanDetailsWrapper] from the Pigeon equivalent.
+InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
+    PlatformInstallmentPlanDetails? details) {
+  if (details == null) {
+    return null;
+  }
+
+  return InstallmentPlanDetailsWrapper(
+    commitmentPaymentsCount: details.commitmentPaymentsCount,
+    subsequentCommitmentPaymentsCount:
+        details.subsequentCommitmentPaymentsCount,
   );
 }
