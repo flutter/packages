@@ -162,6 +162,24 @@ void main() {
       }
     });
 
+    test('ignores FlutterGeneratedPluginSwiftPackage', () async {
+      final Directory packageDir = root
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+        ..createSync();
+      packageDir.childFile('Package.swift').createSync();
+      packageDir
+          .childDirectory('Sources')
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+          .childFile('FlutterGeneratedPluginSwiftPackage.swift')
+          .createSync(recursive: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['license-check']);
+
+      expect(output,
+          isNot(contains('Checking FlutterGeneratedPluginSwiftPackage')));
+    });
+
     test('passes if all checked files have license blocks', () async {
       final File checked = root.childFile('checked.cc');
       checked.createSync();
