@@ -456,7 +456,7 @@ class WebKitWebViewController extends PlatformWebViewController {
         WebsiteDataType.diskCache,
         WebsiteDataType.offlineWebApplicationCache,
       ],
-      DateTime.fromMillisecondsSinceEpoch(0).millisecondsSinceEpoch / 1000,
+      0,
     );
   }
 
@@ -466,7 +466,7 @@ class WebKitWebViewController extends PlatformWebViewController {
         await _webView.configuration.getWebsiteDataStore();
     await dataStore.removeDataOfTypes(
       <WebsiteDataType>[WebsiteDataType.localStorage],
-      DateTime.fromMillisecondsSinceEpoch(0).millisecondsSinceEpoch / 1000,
+      0,
     );
   }
 
