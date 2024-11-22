@@ -9,6 +9,7 @@
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
 #import "./include/video_player_avfoundation/messages.g.h"
 
 #if !__has_feature(objc_arc)
