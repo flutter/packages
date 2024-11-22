@@ -66,7 +66,7 @@
 
 /// Initializes a new instance of FVPVideoPlayer with the given asset, frame updater, display link,
 /// AV factory, and registrar.
-- (instancetype)initWithAsset:(AVPlayerItem *)item
+- (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(FVPDisplayLink *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
