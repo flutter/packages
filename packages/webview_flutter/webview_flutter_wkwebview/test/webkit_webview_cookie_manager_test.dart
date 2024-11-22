@@ -7,14 +7,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
-import 'package:webview_flutter_wkwebview/src/foundation/foundation.dart';
-import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart';
+import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart';
 import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'webkit_webview_cookie_manager_test.mocks.dart';
 
-@GenerateMocks(<Type>[WKWebsiteDataStore, WKHttpCookieStore])
+@GenerateMocks(<Type>[WKWebsiteDataStore, WKHTTPCookieStore])
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -26,14 +25,14 @@ void main() {
       final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
-            defaultWebsiteDataStore: () => mockWKWebsiteDataStore,
+            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
           ),
         ),
       );
 
       when(
         mockWKWebsiteDataStore.removeDataOfTypes(
-          <WKWebsiteDataType>{WKWebsiteDataType.cookies},
+          <WebsiteDataType>[WebsiteDataType.cookies],
           any,
         ),
       ).thenAnswer((_) => Future<bool>.value(true));
@@ -41,7 +40,7 @@ void main() {
 
       when(
         mockWKWebsiteDataStore.removeDataOfTypes(
-          <WKWebsiteDataType>{WKWebsiteDataType.cookies},
+          <WebsiteDataType>[WebsiteDataType.cookies],
           any,
         ),
       ).thenAnswer((_) => Future<bool>.value(false));
@@ -52,13 +51,21 @@ void main() {
       final MockWKWebsiteDataStore mockWKWebsiteDataStore =
           MockWKWebsiteDataStore();
 
-      final MockWKHttpCookieStore mockCookieStore = MockWKHttpCookieStore();
+      final MockWKHTTPCookieStore mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
       final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
-            defaultWebsiteDataStore: () => mockWKWebsiteDataStore,
+            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
+            newHTTPCookie: ({
+              required Map<HttpCookiePropertyKey, Object?> properties,
+            }) {
+              return HTTPCookie.pigeon_detached(
+                properties: properties,
+                pigeon_instanceManager: TestInstanceManager(),
+              );
+            },
           ),
         ),
       );
@@ -67,16 +74,16 @@ void main() {
         const WebViewCookie(name: 'a', value: 'b', domain: 'c', path: 'd'),
       );
 
-      final NSHttpCookie cookie = verify(mockCookieStore.setCookie(captureAny))
+      final HTTPCookie cookie = verify(mockCookieStore.setCookie(captureAny))
           .captured
-          .single as NSHttpCookie;
+          .single as HTTPCookie;
       expect(
         cookie.properties,
-        <NSHttpCookiePropertyKey, Object>{
-          NSHttpCookiePropertyKey.name: 'a',
-          NSHttpCookiePropertyKey.value: 'b',
-          NSHttpCookiePropertyKey.domain: 'c',
-          NSHttpCookiePropertyKey.path: 'd',
+        <HttpCookiePropertyKey, Object>{
+          HttpCookiePropertyKey.name: 'a',
+          HttpCookiePropertyKey.value: 'b',
+          HttpCookiePropertyKey.domain: 'c',
+          HttpCookiePropertyKey.path: 'd',
         },
       );
     });
@@ -85,13 +92,13 @@ void main() {
       final MockWKWebsiteDataStore mockWKWebsiteDataStore =
           MockWKWebsiteDataStore();
 
-      final MockWKHttpCookieStore mockCookieStore = MockWKHttpCookieStore();
+      final MockWKHTTPCookieStore mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
       final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
-            defaultWebsiteDataStore: () => mockWKWebsiteDataStore,
+            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
           ),
         ),
       );
@@ -109,4 +116,9 @@ void main() {
       );
     });
   });
+}
+
+// Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.
+class TestInstanceManager extends PigeonInstanceManager {
+  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }
