@@ -6,7 +6,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences/src/shared_preferences_dev_tools_extension_data.dart';
+import 'package:shared_preferences/src/shared_preferences_devtools_extension_data.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
 import 'shared_preferences_async_test.dart';

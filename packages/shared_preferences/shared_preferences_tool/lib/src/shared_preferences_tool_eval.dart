@@ -69,7 +69,7 @@ class SharedPreferencesToolEval {
 
     late final StreamSubscription<Event> streamSubscription;
     streamSubscription = _service.onExtensionEvent.listen((Event event) {
-      // The event prefix and event kind are defined in `shared_preferences_dev_tools_extension_data.dart`
+      // The event prefix and event kind are defined in `shared_preferences_devtools_extension_data.dart`
       // from the `shared_preferences` package.
       if (event.extensionKind == 'shared_preferences.$eventKind') {
         streamSubscription.cancel();
