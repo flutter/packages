@@ -16,16 +16,6 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-
-  quick_actions_platform_interface:
-    path: ../../../quick_actions/quick_actions_platform_interface
-  quick_actions_ios:
-    path: ../../../quick_actions/quick_actions_ios
 
 dev_dependencies:
   espresso: ^0.4.0
