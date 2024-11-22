@@ -13,7 +13,7 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
   /// The current version of the `interactive_media_ads` plugin.
   ///
   /// This must match the version in pubspec.yaml.
-  static let pluginVersion = "0.2.3+3"
+  static let pluginVersion = "0.2.3+4"
 
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer,
