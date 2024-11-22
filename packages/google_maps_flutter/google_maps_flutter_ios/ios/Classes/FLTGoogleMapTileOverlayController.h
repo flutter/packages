@@ -13,9 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// The layer managed by this controller instance.
 @property(readonly, nonatomic) GMSTileLayer *layer;
 
-- (instancetype)initWithTileLayer:(GMSTileLayer *)tileLayer
-                          mapView:(GMSMapView *)mapView
-                          options:(NSDictionary *)optionsData;
+- (instancetype)initWithTileOverlay:(FGMPlatformTileOverlay *)tileOverlay
+                          tileLayer:(GMSTileLayer *)tileLayer
+                            mapView:(GMSMapView *)mapView;
 - (void)removeTileOverlay;
 - (void)clearTileCache;
 @end
