@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -929,14 +928,16 @@ void main() {
 
     test('removeJavaScriptChannel multiple times', () async {
       final WebKitProxy webKitProxy = WebKitProxy(
-        createScriptMessageHandler: ({
+        newWKScriptMessageHandler: ({
           required void Function(
-            WKUserContentController userContentController,
-            WKScriptMessage message,
+            WKScriptMessageHandler,
+            WKUserContentController,
+            WKScriptMessage,
           ) didReceiveScriptMessage,
         }) {
-          return WKScriptMessageHandler.detached(
+          return WKScriptMessageHandler.pigeon_detached(
             didReceiveScriptMessage: didReceiveScriptMessage,
+            pigeon_instanceManager: TestInstanceManager(),
           );
         },
       );
@@ -984,7 +985,7 @@ void main() {
       expect(userScript.source, 'window.name2 = webkit.messageHandlers.name2;');
       expect(
         userScript.injectionTime,
-        WKUserScriptInjectionTime.atDocumentStart,
+        UserScriptInjectionTime.atDocumentStart,
       );
 
       await controller.removeJavaScriptChannel('name2');
@@ -1113,10 +1114,8 @@ void main() {
       verify(
         mockWebView.addObserver(
           mockWebView,
-          keyPath: 'estimatedProgress',
-          options: <NSKeyValueObservingOptions>{
-            NSKeyValueObservingOptions.newValue,
-          },
+          'estimatedProgress',
+          <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
         ),
       );
 
@@ -1124,8 +1123,7 @@ void main() {
           WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
-            createNavigationDelegate: CapturingNavigationDelegate.new,
-            createUIDelegate: WKUIDelegate.detached,
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
           ),
         ),
       );
@@ -1138,351 +1136,407 @@ void main() {
       await controller.setPlatformNavigationDelegate(navigationDelegate);
 
       webViewObserveValue(
+        mockWebView,
         'estimatedProgress',
         mockWebView,
-        <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: 0.0},
+        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: 0.0},
       );
 
       expect(callbackProgress, 0);
     });
-//
-//     test('Requests to open a new window loads request in same window', () {
-//       // Reset last created delegate.
-//       CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate();
-//
-//       // Create a new WebKitWebViewController that sets
-//       // CapturingUIDelegate.lastCreatedDelegate.
-//       createControllerWithMocks();
-//
-//       final MockWKWebView mockWebView = MockWKWebView();
-//       const NSUrlRequest request = NSUrlRequest(url: 'https://www.google.com');
-//
-//       CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
-//         mockWebView,
-//         WKWebViewConfiguration.detached(),
-//         const WKNavigationAction(
-//           request: request,
-//           targetFrame: WKFrameInfo(
-//               isMainFrame: false,
-//               request: NSUrlRequest(url: 'https://google.com')),
-//           navigationType: WKNavigationType.linkActivated,
-//         ),
-//       );
-//
-//       verify(mockWebView.loadRequest(request));
-//     });
-//
-//     test(
-//         'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegate',
-//         () async {
-//       final MockWKWebView mockWebView = MockWKWebView();
-//
-//       late final void Function(
-//         String keyPath,
-//         NSObject object,
-//         Map<NSKeyValueChangeKey, Object?> change,
-//       ) webViewObserveValue;
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (
-//           _, {
-//           void Function(
-//             String keyPath,
-//             NSObject object,
-//             Map<NSKeyValueChangeKey, Object?> change,
-//           )? observeValue,
-//         }) {
-//           webViewObserveValue = observeValue!;
-//           return mockWebView;
-//         },
-//       );
-//
-//       final WebKitNavigationDelegate navigationDelegate =
-//           WebKitNavigationDelegate(
-//         const WebKitNavigationDelegateCreationParams(
-//           webKitProxy: WebKitProxy(
-//             createNavigationDelegate: CapturingNavigationDelegate.new,
-//             createUIDelegate: WKUIDelegate.detached,
-//           ),
-//         ),
-//       );
-//
-//       // First value of onProgress does nothing.
-//       await navigationDelegate.setOnProgress((_) {});
-//       await controller.setPlatformNavigationDelegate(navigationDelegate);
-//
-//       // Second value of onProgress sets `callbackProgress`.
-//       late final int callbackProgress;
-//       await navigationDelegate.setOnProgress(
-//         (int progress) => callbackProgress = progress,
-//       );
-//
-//       webViewObserveValue(
-//         'estimatedProgress',
-//         mockWebView,
-//         <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: 0.0},
-//       );
-//
-//       expect(callbackProgress, 0);
-//     });
-//
-//     test('setPlatformNavigationDelegate onUrlChange', () async {
-//       final MockWKWebView mockWebView = MockWKWebView();
-//
-//       late final void Function(
-//         String keyPath,
-//         NSObject object,
-//         Map<NSKeyValueChangeKey, Object?> change,
-//       ) webViewObserveValue;
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (
-//           _, {
-//           void Function(
-//             String keyPath,
-//             NSObject object,
-//             Map<NSKeyValueChangeKey, Object?> change,
-//           )? observeValue,
-//         }) {
-//           webViewObserveValue = observeValue!;
-//           return mockWebView;
-//         },
-//       );
-//
-//       verify(
-//         mockWebView.addObserver(
-//           mockWebView,
-//           keyPath: 'URL',
-//           options: <NSKeyValueObservingOptions>{
-//             NSKeyValueObservingOptions.newValue,
-//           },
-//         ),
-//       );
-//
-//       final WebKitNavigationDelegate navigationDelegate =
-//           WebKitNavigationDelegate(
-//         const WebKitNavigationDelegateCreationParams(
-//           webKitProxy: WebKitProxy(
-//             createNavigationDelegate: CapturingNavigationDelegate.new,
-//             createUIDelegate: WKUIDelegate.detached,
-//           ),
-//         ),
-//       );
-//
-//       final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
-//       await navigationDelegate.setOnUrlChange(
-//         (UrlChange change) => urlChangeCompleter.complete(change),
-//       );
-//
-//       await controller.setPlatformNavigationDelegate(navigationDelegate);
-//
-//       final MockNSUrl mockNSUrl = MockNSUrl();
-//       when(mockNSUrl.getAbsoluteString()).thenAnswer((_) {
-//         return Future<String>.value('https://www.google.com');
-//       });
-//       webViewObserveValue(
-//         'URL',
-//         mockWebView,
-//         <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: mockNSUrl},
-//       );
-//
-//       final UrlChange urlChange = await urlChangeCompleter.future;
-//       expect(urlChange.url, 'https://www.google.com');
-//     });
-//
-//     test('setPlatformNavigationDelegate onUrlChange to null NSUrl', () async {
-//       final MockWKWebView mockWebView = MockWKWebView();
-//
-//       late final void Function(
-//         String keyPath,
-//         NSObject object,
-//         Map<NSKeyValueChangeKey, Object?> change,
-//       ) webViewObserveValue;
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (
-//           _, {
-//           void Function(
-//             String keyPath,
-//             NSObject object,
-//             Map<NSKeyValueChangeKey, Object?> change,
-//           )? observeValue,
-//         }) {
-//           webViewObserveValue = observeValue!;
-//           return mockWebView;
-//         },
-//       );
-//
-//       final WebKitNavigationDelegate navigationDelegate =
-//           WebKitNavigationDelegate(
-//         const WebKitNavigationDelegateCreationParams(
-//           webKitProxy: WebKitProxy(
-//             createNavigationDelegate: CapturingNavigationDelegate.new,
-//             createUIDelegate: WKUIDelegate.detached,
-//           ),
-//         ),
-//       );
-//
-//       final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
-//       await navigationDelegate.setOnUrlChange(
-//         (UrlChange change) => urlChangeCompleter.complete(change),
-//       );
-//
-//       await controller.setPlatformNavigationDelegate(navigationDelegate);
-//
-//       webViewObserveValue(
-//         'URL',
-//         mockWebView,
-//         <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: null},
-//       );
-//
-//       final UrlChange urlChange = await urlChangeCompleter.future;
-//       expect(urlChange.url, isNull);
-//     });
-//
-//     test('webViewIdentifier', () {
-//       final InstanceManager instanceManager = InstanceManager(
-//         onWeakReferenceRemoved: (_) {},
-//       );
-//       final MockWKWebView mockWebView = MockWKWebView();
-//       when(mockWebView.copy()).thenReturn(MockWKWebView());
-//       instanceManager.addHostCreatedInstance(mockWebView, 0);
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//         instanceManager: instanceManager,
-//       );
-//
-//       expect(
-//         controller.webViewIdentifier,
-//         instanceManager.getIdentifier(mockWebView),
-//       );
-//     });
-//
-//     test('setOnPermissionRequest', () async {
-//       final WebKitWebViewController controller = createControllerWithMocks();
-//
-//       late final PlatformWebViewPermissionRequest permissionRequest;
-//       await controller.setOnPlatformPermissionRequest(
-//         (PlatformWebViewPermissionRequest request) async {
-//           permissionRequest = request;
-//           await request.grant();
-//         },
-//       );
-//
-//       final Future<WKPermissionDecision> Function(
-//         WKUIDelegate instance,
-//         WKWebView webView,
-//         WKSecurityOrigin origin,
-//         WKFrameInfo frame,
-//         WKMediaCaptureType type,
-//       ) onPermissionRequestCallback = CapturingUIDelegate
-//           .lastCreatedDelegate.requestMediaCapturePermission!;
-//
-//       final WKPermissionDecision decision = await onPermissionRequestCallback(
-//         CapturingUIDelegate.lastCreatedDelegate,
-//         WKWebViewIOS.detached(),
-//         const WKSecurityOrigin(host: '', port: 0, protocol: ''),
-//         const WKFrameInfo(
-//             isMainFrame: false,
-//             request: NSUrlRequest(url: 'https://google.com')),
-//         WKMediaCaptureType.microphone,
-//       );
-//
-//       expect(permissionRequest.types, <WebViewPermissionResourceType>[
-//         WebViewPermissionResourceType.microphone,
-//       ]);
-//       expect(decision, WKPermissionDecision.grant);
-//     });
-//
-//     group('JavaScript Dialog', () {
-//       test('setOnJavaScriptAlertDialog', () async {
-//         final WebKitWebViewController controller = createControllerWithMocks();
-//         late final String message;
-//         await controller.setOnJavaScriptAlertDialog(
-//             (JavaScriptAlertDialogRequest request) async {
-//           message = request.message;
-//           return;
-//         });
-//
-//         const String callbackMessage = 'Message';
-//         final Future<void> Function(String message, WKFrameInfo frame)
-//             onJavaScriptAlertDialog =
-//             CapturingUIDelegate.lastCreatedDelegate.runJavaScriptAlertDialog!;
-//         await onJavaScriptAlertDialog(
-//             callbackMessage,
-//             const WKFrameInfo(
-//                 isMainFrame: false,
-//                 request: NSUrlRequest(url: 'https://google.com')));
-//
-//         expect(message, callbackMessage);
-//       });
-//
-//       test('setOnJavaScriptConfirmDialog', () async {
-//         final WebKitWebViewController controller = createControllerWithMocks();
-//         late final String message;
-//         const bool callbackReturnValue = true;
-//         await controller.setOnJavaScriptConfirmDialog(
-//             (JavaScriptConfirmDialogRequest request) async {
-//           message = request.message;
-//           return callbackReturnValue;
-//         });
-//
-//         const String callbackMessage = 'Message';
-//         final Future<bool> Function(String message, WKFrameInfo frame)
-//             onJavaScriptConfirmDialog =
-//             CapturingUIDelegate.lastCreatedDelegate.runJavaScriptConfirmDialog!;
-//         final bool returnValue = await onJavaScriptConfirmDialog(
-//             callbackMessage,
-//             const WKFrameInfo(
-//                 isMainFrame: false,
-//                 request: NSUrlRequest(url: 'https://google.com')));
-//
-//         expect(message, callbackMessage);
-//         expect(returnValue, callbackReturnValue);
-//       });
-//
-//       test('setOnJavaScriptTextInputDialog', () async {
-//         final WebKitWebViewController controller = createControllerWithMocks();
-//         late final String message;
-//         late final String? defaultText;
-//         const String callbackReturnValue = 'Return Value';
-//         await controller.setOnJavaScriptTextInputDialog(
-//             (JavaScriptTextInputDialogRequest request) async {
-//           message = request.message;
-//           defaultText = request.defaultText;
-//           return callbackReturnValue;
-//         });
-//
-//         const String callbackMessage = 'Message';
-//         const String callbackDefaultText = 'Default Text';
-//         final Future<String> Function(
-//                 String prompt, String defaultText, WKFrameInfo frame)
-//             onJavaScriptTextInputDialog = CapturingUIDelegate
-//                 .lastCreatedDelegate.runJavaScriptTextInputDialog!;
-//         final String returnValue = await onJavaScriptTextInputDialog(
-//             callbackMessage,
-//             callbackDefaultText,
-//             const WKFrameInfo(
-//                 isMainFrame: false,
-//                 request: NSUrlRequest(url: 'https://google.com')));
-//
-//         expect(message, callbackMessage);
-//         expect(defaultText, callbackDefaultText);
-//         expect(returnValue, callbackReturnValue);
-//       });
-//     });
-//
-//     test('inspectable', () async {
-//       final MockWKWebView mockWebView = MockWKWebView();
-//
-//       final WebKitWebViewController controller = createControllerWithMocks(
-//         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
-//       );
-//
-//       await controller.setInspectable(true);
-//       verify(mockWebView.setInspectable(true));
-//     });
+
+    test('Requests to open a new window loads request in same window', () {
+      // Reset last created delegate.
+      CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate();
+
+      // Create a new WebKitWebViewController that sets
+      // CapturingUIDelegate.lastCreatedDelegate.
+      createControllerWithMocks();
+
+      final MockWKWebView mockWebView = MockWKWebView();
+      final MockURLRequest mockRequest = MockURLRequest();
+
+      CapturingUIDelegate.lastCreatedDelegate.onCreateWebView!(
+        CapturingUIDelegate.lastCreatedDelegate,
+        mockWebView,
+        MockWKWebViewConfiguration(),
+        WKNavigationAction.pigeon_detached(
+          request: mockRequest,
+          targetFrame: WKFrameInfo.pigeon_detached(
+            isMainFrame: false,
+            request: MockURLRequest(),
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+          navigationType: NavigationType.linkActivated,
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+      );
+
+      verify(mockWebView.load(mockRequest));
+    });
+
+    test(
+        'setPlatformNavigationDelegate onProgress can be changed by the WebKitNavigationDelegate',
+        () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      late final void Function(
+        NSObject,
+        String keyPath,
+        NSObject object,
+        Map<KeyValueChangeKey, Object?> change,
+      ) webViewObserveValue;
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (
+          WKWebViewConfiguration configuration, {
+          void Function(
+            NSObject,
+            String keyPath,
+            NSObject object,
+            Map<KeyValueChangeKey, Object?> change,
+          )? observeValue,
+        }) {
+          webViewObserveValue = observeValue!;
+          return mockWebView;
+        },
+      );
+
+      final WebKitNavigationDelegate navigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
+
+      // First value of onProgress does nothing.
+      await navigationDelegate.setOnProgress((_) {});
+      await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+      // Second value of onProgress sets `callbackProgress`.
+      late final int callbackProgress;
+      await navigationDelegate.setOnProgress(
+        (int progress) => callbackProgress = progress,
+      );
+
+      webViewObserveValue(
+        mockWebView,
+        'estimatedProgress',
+        mockWebView,
+        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: 0.0},
+      );
+
+      expect(callbackProgress, 0);
+    });
+
+    test('setPlatformNavigationDelegate onUrlChange', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      late final void Function(
+        NSObject,
+        String keyPath,
+        NSObject object,
+        Map<KeyValueChangeKey, Object?> change,
+      ) webViewObserveValue;
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (
+          WKWebViewConfiguration configuration, {
+          void Function(
+            NSObject,
+            String keyPath,
+            NSObject object,
+            Map<KeyValueChangeKey, Object?> change,
+          )? observeValue,
+        }) {
+          webViewObserveValue = observeValue!;
+          return mockWebView;
+        },
+      );
+
+      verify(
+        mockWebView.addObserver(
+          mockWebView,
+          'URL',
+          <KeyValueObservingOptions>[
+            KeyValueObservingOptions.newValue,
+          ],
+        ),
+      );
+
+      final WebKitNavigationDelegate navigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
+
+      final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
+      await navigationDelegate.setOnUrlChange(
+        (UrlChange change) => urlChangeCompleter.complete(change),
+      );
+
+      await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+      final MockURL mockUrl = MockURL();
+      when(mockUrl.getAbsoluteString()).thenAnswer((_) {
+        return Future<String>.value('https://www.google.com');
+      });
+      webViewObserveValue(
+        mockWebView,
+        'URL',
+        mockWebView,
+        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: mockUrl},
+      );
+
+      final UrlChange urlChange = await urlChangeCompleter.future;
+      expect(urlChange.url, 'https://www.google.com');
+    });
+
+    test('setPlatformNavigationDelegate onUrlChange to null NSUrl', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      late final void Function(
+        NSObject,
+        String keyPath,
+        NSObject object,
+        Map<KeyValueChangeKey, Object?> change,
+      ) webViewObserveValue;
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (
+          WKWebViewConfiguration configuration, {
+          void Function(
+            NSObject,
+            String keyPath,
+            NSObject object,
+            Map<KeyValueChangeKey, Object?> change,
+          )? observeValue,
+        }) {
+          webViewObserveValue = observeValue!;
+          return mockWebView;
+        },
+      );
+
+      final WebKitNavigationDelegate navigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
+
+      final Completer<UrlChange> urlChangeCompleter = Completer<UrlChange>();
+      await navigationDelegate.setOnUrlChange(
+        (UrlChange change) => urlChangeCompleter.complete(change),
+      );
+
+      await controller.setPlatformNavigationDelegate(navigationDelegate);
+
+      webViewObserveValue(
+        mockWebView,
+        'URL',
+        mockWebView,
+        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: null},
+      );
+
+      final UrlChange urlChange = await urlChangeCompleter.future;
+      expect(urlChange.url, isNull);
+    });
+
+    test('webViewIdentifier', () {
+      final PigeonInstanceManager instanceManager = TestInstanceManager();
+
+      final MockWKWebView mockWebView = MockWKWebView();
+      when(mockWebView.pigeon_copy()).thenReturn(MockWKWebView());
+      instanceManager.addHostCreatedInstance(mockWebView, 0);
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        instanceManager: instanceManager,
+      );
+
+      expect(
+        controller.webViewIdentifier,
+        instanceManager.getIdentifier(mockWebView),
+      );
+    });
+
+    test('setOnPermissionRequest', () async {
+      final WebKitWebViewController controller = createControllerWithMocks();
+
+      late final PlatformWebViewPermissionRequest permissionRequest;
+      await controller.setOnPlatformPermissionRequest(
+        (PlatformWebViewPermissionRequest request) async {
+          permissionRequest = request;
+          await request.grant();
+        },
+      );
+
+      final Future<PermissionDecision> Function(
+        WKUIDelegate instance,
+        WKWebView webView,
+        WKSecurityOrigin origin,
+        WKFrameInfo frame,
+        MediaCaptureType type,
+      ) onPermissionRequestCallback = CapturingUIDelegate
+          .lastCreatedDelegate.requestMediaCapturePermission!;
+
+      final PermissionDecision decision = await onPermissionRequestCallback(
+        CapturingUIDelegate.lastCreatedDelegate,
+        MockWKWebView(),
+        WKSecurityOrigin.pigeon_detached(
+          host: '',
+          port: 0,
+          securityProtocol: '',
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        WKFrameInfo.pigeon_detached(
+          isMainFrame: false,
+          request: MockURLRequest(),
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        MediaCaptureType.microphone,
+      );
+
+      expect(permissionRequest.types, <WebViewPermissionResourceType>[
+        WebViewPermissionResourceType.microphone,
+      ]);
+      expect(decision, PermissionDecision.grant);
+    });
+
+    group('JavaScript Dialog', () {
+      test('setOnJavaScriptAlertPanel', () async {
+        final WebKitWebViewController controller = createControllerWithMocks();
+        late final String message;
+        await controller.setOnJavaScriptAlertDialog(
+            (JavaScriptAlertDialogRequest request) async {
+          message = request.message;
+          return;
+        });
+
+        const String callbackMessage = 'Message';
+        final Future<void> Function(
+          WKUIDelegate,
+          String message,
+          WKFrameInfo frame,
+        ) onJavaScriptAlertPanel =
+            CapturingUIDelegate.lastCreatedDelegate.runJavaScriptAlertPanel!;
+
+        final MockURLRequest mockRequest = MockURLRequest();
+        when(mockRequest.getUrl()).thenAnswer(
+          (_) => Future<String>.value('https://google.com'),
+        );
+
+        await onJavaScriptAlertPanel(
+          CapturingUIDelegate.lastCreatedDelegate,
+          callbackMessage,
+          WKFrameInfo.pigeon_detached(
+            isMainFrame: false,
+            request: mockRequest,
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+
+        expect(message, callbackMessage);
+      });
+
+      test('setOnJavaScriptConfirmPanel', () async {
+        final WebKitWebViewController controller = createControllerWithMocks();
+        late final String message;
+        const bool callbackReturnValue = true;
+        await controller.setOnJavaScriptConfirmDialog(
+            (JavaScriptConfirmDialogRequest request) async {
+          message = request.message;
+          return callbackReturnValue;
+        });
+
+        const String callbackMessage = 'Message';
+        final Future<bool> Function(
+          WKUIDelegate,
+          String message,
+          WKFrameInfo frame,
+        ) onJavaScriptConfirmPanel =
+            CapturingUIDelegate.lastCreatedDelegate.runJavaScriptConfirmPanel!;
+
+        final MockURLRequest mockRequest = MockURLRequest();
+        when(mockRequest.getUrl()).thenAnswer(
+          (_) => Future<String>.value('https://google.com'),
+        );
+
+        final bool returnValue = await onJavaScriptConfirmPanel(
+          CapturingUIDelegate.lastCreatedDelegate,
+          callbackMessage,
+          WKFrameInfo.pigeon_detached(
+            isMainFrame: false,
+            request: mockRequest,
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+
+        expect(message, callbackMessage);
+        expect(returnValue, callbackReturnValue);
+      });
+
+      test('setOnJavaScriptTextInputPanel', () async {
+        final WebKitWebViewController controller = createControllerWithMocks();
+        late final String message;
+        late final String? defaultText;
+        const String callbackReturnValue = 'Return Value';
+        await controller.setOnJavaScriptTextInputDialog(
+            (JavaScriptTextInputDialogRequest request) async {
+          message = request.message;
+          defaultText = request.defaultText;
+          return callbackReturnValue;
+        });
+
+        const String callbackMessage = 'Message';
+        const String callbackDefaultText = 'Default Text';
+        final Future<String> Function(
+          WKUIDelegate,
+          String prompt,
+          String defaultText,
+          WKFrameInfo frame,
+        ) onJavaScriptTextInputPanel = CapturingUIDelegate
+            .lastCreatedDelegate.runJavaScriptTextInputPanel!;
+
+        final MockURLRequest mockRequest = MockURLRequest();
+        when(mockRequest.getUrl()).thenAnswer(
+          (_) => Future<String>.value('https://google.com'),
+        );
+
+        final String returnValue = await onJavaScriptTextInputPanel(
+          CapturingUIDelegate.lastCreatedDelegate,
+          callbackMessage,
+          callbackDefaultText,
+          WKFrameInfo.pigeon_detached(
+            isMainFrame: false,
+            request: mockRequest,
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+        );
+
+        expect(message, callbackMessage);
+        expect(defaultText, callbackDefaultText);
+        expect(returnValue, callbackReturnValue);
+      });
+    });
+
+    test('inspectable', () async {
+      final MockWKWebView mockWebView = MockWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setInspectable(true);
+      verify(mockWebView.setInspectable(true));
+    });
 //
 //     group('Console logging', () {
 //       test('setConsoleLogCallback should inject the correct JavaScript',
