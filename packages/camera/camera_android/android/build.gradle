@@ -51,6 +51,10 @@ buildFeatures {
         unitTests.includeAndroidResources = true
         unitTests.returnDefaultValues = true
         unitTests.all {
+            // The org.gradle.jvmargs property that may be set in gradle.properties does not impact
+            // the Java heap size when running the Android unit tests. The following property here
+            // sets the heap size to a size large enough to run the robolectric tests across
+            // multiple SDK levels.
             jvmArgs "-Xmx1g"
             testLogging {
                events "passed", "skipped", "failed", "standardOut", "standardError"
@@ -62,7 +66,7 @@ buildFeatures {
 }
 
 dependencies {
-    implementation 'androidx.annotation:annotation:1.8.2'
+    implementation 'androidx.annotation:annotation:1.9.0'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-inline:5.0.0'
     testImplementation 'androidx.test:core:1.4.0'

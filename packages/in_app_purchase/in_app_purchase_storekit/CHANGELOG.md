@@ -1,6 +1,42 @@
+## 0.3.20+2
+
+* Fixes price not being displayed correctly.
+
+## 0.3.20+1
+
+* Prevent devices below iOS 15 or macOS 15 from enabling StoreKit2.
+
+## 0.3.20
+
+* Fixes manual invocation of `finishTransaction` causing a fatal crash.
+
+## 0.3.19+1
+
+* Removes unneeded platform availability annotations.
+
+## 0.3.19
+
+* Adds StoreKit2 Transaction expiration date.
+
+## 0.3.18+5
+
+* Updates README to remove contributor-focused documentation.
+
+## 0.3.18+4
+
+* Adds StoreKit 2 support for restoring purchases.
+
+## 0.3.18+3
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 0.3.18+2
+
+* Adds support for StoreKit2's `purchase` and `transactions`
+
 ## 0.3.18+1
 
-* Adds support for StoreKit2's `canMakePayments` and `products` 
+* Adds support for StoreKit2's `canMakePayments` and `products`
 
 ## 0.3.18
 
@@ -49,7 +85,7 @@
 
 ## 0.3.12
 
-* Converts `refreshReceipt()`, `startObservingPaymentQueue()`, `stopObservingPaymentQueue()`, 
+* Converts `refreshReceipt()`, `startObservingPaymentQueue()`, `stopObservingPaymentQueue()`,
 `registerPaymentQueueDelegate()`, `removePaymentQueueDelegate()`, `showPriceConsentIfNeeded()` to pigeon.
 
 ## 0.3.11
@@ -76,7 +112,7 @@
 
 ## 0.3.7
 
-* Adds `Future<SKStorefrontWrapper?> storefront()` in SKPaymentQueueWrapper class. 
+* Adds `Future<SKStorefrontWrapper?> storefront()` in SKPaymentQueueWrapper class.
 
 ## 0.3.6+7
 

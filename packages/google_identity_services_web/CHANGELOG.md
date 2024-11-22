@@ -1,6 +1,17 @@
-## NEXT
+## 0.3.3
+
+* Moves all the JavaScript types to extend `JSObject`.
+
+## 0.3.2
+
+* Adds the `nonce` parameter to `loadWebSdk`.
+
+## 0.3.1+5
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Cleans up documentation of callbacks in `CodeClientConfig`,
+  `TokenClientConfig`, `onGoogleLibraryLoad`, and `revoke` to indicate they only
+  accept Dart functions and not JS functions.
 
 ## 0.3.1+4
 

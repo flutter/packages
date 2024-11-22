@@ -1,6 +1,7 @@
-## NEXT
+## 2.3.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Corrects the behavior of muting/unmuting videos in Chrome's Tap Emulation mode.
 
 ## 2.3.2
 

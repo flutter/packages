@@ -1,3 +1,35 @@
+## 0.2.3+2
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.35.1 to 3.36.0.
+
+## 0.2.3+1
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
+## 0.2.3
+
+* Adds parameters to control the rendering of ads. See `AdsManager.init`.
+
+## 0.2.2+15
+
+* Adds remaining methods for internal wrapper of the Android native `BaseManager`.
+
+## 0.2.2+14
+
+* Adds internal wrapper for iOS native `IMACompanionAdSlot` and `IMACompanionDelegate`.
+
+## 0.2.2+13
+
+* Adds internal wrapper for Android native `Ad`.
+
+## 0.2.2+12
+
+* Adds internal wrapper for iOS native `IMACompanionAd`.
+
+## 0.2.2+11
+
+* Adds internal wrapper for Android native `UniversalAdId`.
+
 ## 0.2.2+10
 
 * Fixes bug where Android would show the last frame of the previous Ad before playing the current
