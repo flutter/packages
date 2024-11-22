@@ -82,8 +82,8 @@
 @property(nonatomic) CGAffineTransform preferredTransform;
 @property(nonatomic, readonly) BOOL disposed;
 @property(nonatomic, readonly) BOOL isPlaying;
-// Playback speed when video is playing.
-@property(nonatomic, readonly) NSNumber *playbackSpeed;
+// The target playback speed requested by the plugin client.
+@property(nonatomic, readonly) NSNumber *targetPlaybackSpeed;
 @property(nonatomic) BOOL isLooping;
 @property(nonatomic, readonly) BOOL isInitialized;
 // The updater that drives callbacks to the engine to indicate that a new frame is ready.
@@ -399,11 +399,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     return;
   }
   if (_isPlaying) {
-    // Calling play is the same as setting the rate to 1.0 (or to defaultRate depending on ios
+    // Calling play is the same as setting the rate to 1.0 (or to defaultRate depending on iOS
     // version) so last set playback speed must be set here if any instead.
     // https://github.com/flutter/flutter/issues/71264
     // https://github.com/flutter/flutter/issues/73643
-    if (_playbackSpeed) {
+    if (_targetPlaybackSpeed) {
       [self updateRate];
     } else {
       [_player play];
@@ -416,6 +416,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _displayLink.running = _isPlaying || self.waitingForFrame;
 }
 
+/// Synchronizes the player's playback rate with targetPlaybackSpeed, constrained by the playback rate capabilities of the player.
 - (void)updateRate {
   // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
   // these checks.
@@ -423,8 +424,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // and canPlaySlowForward are always false and it is unknown whether video can
   // be played at these speeds, updatePlayingState will be called again when
   // status changes to AVPlayerItemStatusReadyToPlay.
-  float speed = _playbackSpeed.floatValue;
-  bool readyToPlay = _player.currentItem.status == AVPlayerItemStatusReadyToPlay;
+  float speed = _targetPlaybackSpeed.floatValue;
+  BOOL readyToPlay = _player.currentItem.status == AVPlayerItemStatusReadyToPlay;
   if (speed > 2.0 && !_player.currentItem.canPlayFastForward) {
     if (!readyToPlay) {
       return;
@@ -553,7 +554,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setPlaybackSpeed:(double)speed {
-  _playbackSpeed = @(speed);
+  _targetPlaybackSpeed = @(speed);
   [self updatePlayingState];
 }
 
