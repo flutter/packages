@@ -18,6 +18,7 @@ import 'web_kit_webview_widget_test.mocks.dart';
 
 @GenerateMocks(<Type>[
   UIScrollView,
+  URLRequest,
   WKNavigationDelegate,
   WKPreferences,
   WKScriptMessageHandler,
@@ -172,24 +173,26 @@ void main() {
     });
 
     group('CreationParams', () {
-      //     testWidgets('initialUrl', (WidgetTester tester) async {
-      //       final _WebViewMocks mocks = configureMocks();
-      //       await buildWidget(
-      //         tester,
-      //         mocks,
-      //         creationParams: CreationParams(
-      //           initialUrl: 'https://www.google.com',
-      //           webSettings: WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             hasNavigationDelegate: false,
-      //           ),
-      //         ),
-      //       );
-      //       final NSUrlRequest request =
-      //           verify(mocks.webView.loadRequest(captureAny)).captured.single
-      //               as NSUrlRequest;
-      //       expect(request.url, 'https://www.google.com');
-      //     });
+      testWidgets('initialUrl', (WidgetTester tester) async {
+        final _WebViewMocks mocks = configureMocks();
+        when(
+          mocks.webViewWidgetProxy.createRequest(url: 'https://www.google.com'),
+        ).thenReturn(MockURLRequest());
+
+        await buildWidget(
+          tester,
+          mocks,
+          creationParams: CreationParams(
+            initialUrl: 'https://www.google.com',
+            webSettings: WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              hasNavigationDelegate: false,
+            ),
+          ),
+        );
+
+        verify(mocks.webView.load(captureAny)).captured.single as URLRequest;
+      });
       //
       //     testWidgets('backgroundColor', (WidgetTester tester) async {
       //       final _WebViewMocks mocks = configureMocks();

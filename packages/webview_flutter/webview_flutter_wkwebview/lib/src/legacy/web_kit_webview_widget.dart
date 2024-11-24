@@ -318,7 +318,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
   @override
   Future<void> loadUrl(String url, Map<String, String>? headers) async {
-    final URLRequest request = URLRequest(url: url);
+    final URLRequest request = webViewProxy.createRequest(url: url);
     unawaited(
       request.setAllHttpHeaderFields(headers ?? const <String, String>{}),
     );
@@ -699,6 +699,11 @@ class WebViewWidgetProxy {
     )? observeValue,
   }) {
     return WKWebView(initialConfiguration: configuration);
+  }
+
+  /// Constructs a [URLRequest].
+  URLRequest createRequest({required String url}) {
+    return URLRequest(url: url);
   }
 
   /// Constructs a [WKScriptMessageHandler].
