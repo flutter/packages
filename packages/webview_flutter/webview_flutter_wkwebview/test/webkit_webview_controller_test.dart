@@ -727,9 +727,9 @@ void main() {
       verifyInOrder(<Object>[
         extensions.setOpaque(false),
         extensions.setBackgroundColor(
-          Colors.transparent.value,
+          Colors.transparent.toARGB32(),
         ),
-        mockScrollView.setBackgroundColor(Colors.red.value),
+        mockScrollView.setBackgroundColor(Colors.red.toARGB32()),
       ]);
 
       debugDefaultTargetPlatformOverride = null;

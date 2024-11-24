@@ -551,10 +551,12 @@ class WebKitWebViewController extends PlatformWebViewController {
       return Future.wait(<Future<void>>[
         _webView.UIWebViewExtensions.setOpaque(false),
         _webView.UIWebViewExtensions.setBackgroundColor(
-          Colors.transparent.value,
+          Colors.transparent.toARGB32(),
         ),
         // This method must be called last.
-        _webView.UIWebViewExtensions.scrollView.setBackgroundColor(color.value),
+        _webView.UIWebViewExtensions.scrollView.setBackgroundColor(
+          color.toARGB32(),
+        ),
       ]);
     } else {
       // TODO(stuartmorgan): Implement background color support.

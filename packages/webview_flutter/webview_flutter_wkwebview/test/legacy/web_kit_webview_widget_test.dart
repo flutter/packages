@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -193,81 +194,91 @@ void main() {
 
         verify(mocks.webView.load(captureAny)).captured.single as URLRequest;
       });
-      //
-      //     testWidgets('backgroundColor', (WidgetTester tester) async {
-      //       final _WebViewMocks mocks = configureMocks();
-      //       await buildWidget(
-      //         tester,
-      //         mocks,
-      //         creationParams: CreationParams(
-      //           backgroundColor: Colors.red,
-      //           webSettings: WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             hasNavigationDelegate: false,
-      //           ),
-      //         ),
-      //       );
-      //
-      //       verify(mocks.webView.setOpaque(false));
-      //       verify(mocks.webView.setBackgroundColor(Colors.transparent));
-      //       verify(mocks.scrollView.setBackgroundColor(Colors.red));
-      //     });
-      //
-      //     testWidgets('userAgent', (WidgetTester tester) async {
-      //       final _WebViewMocks mocks = configureMocks();
-      //       await buildWidget(
-      //         tester,
-      //         mocks,
-      //         creationParams: CreationParams(
-      //           userAgent: 'MyUserAgent',
-      //           webSettings: WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             hasNavigationDelegate: false,
-      //           ),
-      //         ),
-      //       );
-      //
-      //       verify(mocks.webView.setCustomUserAgent('MyUserAgent'));
-      //     });
-      //
-      //     testWidgets('autoMediaPlaybackPolicy true', (WidgetTester tester) async {
-      //       final _WebViewMocks mocks = configureMocks();
-      //       await buildWidget(
-      //         tester,
-      //         mocks,
-      //         creationParams: CreationParams(
-      //           webSettings: WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             hasNavigationDelegate: false,
-      //           ),
-      //         ),
-      //       );
-      //
-      //       verify(mocks.webViewConfiguration
-      //           .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
-      //         WKAudiovisualMediaType.all,
-      //       }));
-      //     });
-      //
-      //     testWidgets('autoMediaPlaybackPolicy false', (WidgetTester tester) async {
-      //       final _WebViewMocks mocks = configureMocks();
-      //       await buildWidget(
-      //         tester,
-      //         mocks,
-      //         creationParams: CreationParams(
-      //           autoMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-      //           webSettings: WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             hasNavigationDelegate: false,
-      //           ),
-      //         ),
-      //       );
-      //
-      //       verify(mocks.webViewConfiguration
-      //           .setMediaTypesRequiringUserActionForPlayback(<WKAudiovisualMediaType>{
-      //         WKAudiovisualMediaType.none,
-      //       }));
-      //     });
+
+      testWidgets('backgroundColor', (WidgetTester tester) async {
+        final _WebViewMocks mocks = configureMocks();
+
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+        await buildWidget(
+          tester,
+          mocks,
+          creationParams: CreationParams(
+            backgroundColor: Colors.red,
+            webSettings: WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              hasNavigationDelegate: false,
+            ),
+          ),
+        );
+
+        final WKWebViewUIExtensions mockWebViewUIExtensions =
+            mocks.webView.UIWebViewExtensions;
+        final UIScrollView mockScrollView = mockWebViewUIExtensions.scrollView;
+        verify(mockWebViewUIExtensions.setOpaque(false));
+        verify(mockWebViewUIExtensions.setBackgroundColor(
+          Colors.transparent.toARGB32(),
+        ));
+        verify(mockScrollView.setBackgroundColor(Colors.red.toARGB32()));
+
+        debugDefaultTargetPlatformOverride = null;
+      });
+
+      testWidgets('userAgent', (WidgetTester tester) async {
+        final _WebViewMocks mocks = configureMocks();
+        await buildWidget(
+          tester,
+          mocks,
+          creationParams: CreationParams(
+            userAgent: 'MyUserAgent',
+            webSettings: WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              hasNavigationDelegate: false,
+            ),
+          ),
+        );
+
+        verify(mocks.webView.setCustomUserAgent('MyUserAgent'));
+      });
+
+      testWidgets('autoMediaPlaybackPolicy true', (WidgetTester tester) async {
+        final _WebViewMocks mocks = configureMocks();
+        await buildWidget(
+          tester,
+          mocks,
+          creationParams: CreationParams(
+            webSettings: WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              hasNavigationDelegate: false,
+            ),
+          ),
+        );
+
+        verify(mocks.webViewConfiguration
+            .setMediaTypesRequiringUserActionForPlayback(<AudiovisualMediaType>[
+          AudiovisualMediaType.all,
+        ]));
+      });
+
+          testWidgets('autoMediaPlaybackPolicy false', (WidgetTester tester) async {
+            final _WebViewMocks mocks = configureMocks();
+            await buildWidget(
+              tester,
+              mocks,
+              creationParams: CreationParams(
+                autoMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+                webSettings: WebSettings(
+                  userAgent: const WebSetting<String?>.absent(),
+                  hasNavigationDelegate: false,
+                ),
+              ),
+            );
+
+            verify(mocks.webViewConfiguration
+                .setMediaTypesRequiringUserActionForPlayback(<AudiovisualMediaType>[
+              AudiovisualMediaType.none,
+            ]));
+          });
       //
       //     testWidgets('javascriptChannelNames', (WidgetTester tester) async {
       //       final _WebViewMocks mocks = configureMocks();
