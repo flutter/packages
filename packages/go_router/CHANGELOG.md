@@ -1,3 +1,7 @@
+## 14.6.2
+
+- Fixed `PopScope`, and `WillPopScop` was not handled properly in root Shell routes.
+
 ## 14.6.1
 
 - Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
@@ -9,7 +13,6 @@
 ## 14.5.0
 
 - Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
-
 
 ## 14.4.1
 
@@ -29,7 +32,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 

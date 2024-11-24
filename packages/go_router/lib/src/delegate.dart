@@ -55,24 +55,52 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   @override
   Future<bool> popRoute() async {
-    final NavigatorState? state = _findCurrentNavigator();
-    if (state != null) {
-      final bool didPop = await state.maybePop(); // Call maybePop() directly
+    // Walk up the tree to gather the navigator states that are present.
+    final List<(NavigatorState, RouteBase)> navigatorStates =
+        <(NavigatorState, RouteBase)>[
+      (navigatorKey.currentState!, currentConfiguration.matches.first.route),
+    ];
+
+    RouteMatchBase walker = currentConfiguration.matches.last;
+
+    while (walker is ShellRouteMatch) {
+      final NavigatorState potentialCandidate =
+          walker.navigatorKey.currentState!;
+
+      navigatorStates.add((potentialCandidate, walker.matches.last.route));
+
+      walker = walker.matches.last;
+    }
+
+    // Now we have a list of all the navigator states that are present in the
+    // current matched path. We now go through them in reverse order to check
+    // if they have an onExit callback and call it. If it returns false, we
+    // return true to indicate that the route pop was handled.
+    // If it returns true we proceed by trying to pop the route from the respective
+    // navigator. If this is successful (or prevented by doNotPop) we return true.
+    // If this (child) navigator cannot be popped because it has only one entry
+    // we continue with the next (parent) navigator.
+    for (final (NavigatorState navigatorState, RouteBase route)
+        in navigatorStates.reversed) {
+      // If the route has an onExit callback, call it and return false if it
+      // returns false.
+      if (route is GoRoute &&
+          route.onExit != null &&
+          !await route.onExit!(
+              navigatorKey.currentContext!,
+              currentConfiguration.last
+                  .buildState(_configuration, currentConfiguration))) {
+        return true;
+      }
+
+      // Try to pop the navigator state.
+      final bool didPop = await navigatorState.maybePop();
       if (didPop) {
-        return true; // Return true if maybePop handled the pop
+        return true;
       }
     }
-
-    // Fallback to onExit if maybePop did not handle the pop
-    final GoRoute lastRoute = currentConfiguration.last.route;
-    if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
-      return !(await lastRoute.onExit!(
-        navigatorKey.currentContext!,
-        currentConfiguration.last
-            .buildState(_configuration, currentConfiguration),
-      ));
-    }
-
+    // Even the final (root) navigator cannot be popped, return false to exit
+    // the app
     return false;
   }
 
