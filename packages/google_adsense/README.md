@@ -24,7 +24,8 @@ To start displaying ads, initialize the AdSense with your [client/publisher ID](
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  adSense.initialize('0556581589806023'); // TODO: Replace with your own AdClient ID
+  adSense.initialize(
+      '0556581589806023'); // TODO: Replace with your own AdClient ID
   runApp(const MyApp());
 }
 

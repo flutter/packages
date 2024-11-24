@@ -35,11 +35,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   static int _adUnitCounter = 0;
   static final JSString _adStatusKey = 'adStatus'.toJS;
 
-  // Start with a 1x1 widget size so adsense has an uncollapsed space to render the ad.
+  // Limit height to minimize layout shift in case ad is not loaded
   Size _adSize = const Size(double.infinity, 1.0);
-
-  // double _adHeight = 1.0;
-  late BoxConstraints _constraints;
 
   @override
   bool get wantKeepAlive => true;
