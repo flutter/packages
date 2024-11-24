@@ -3,4 +3,5 @@
 // found in the LICENSE file.
 export 'src/ad_unit_configuration.dart';
 export 'src/ad_unit_params.dart';
-export 'src/adsense_stub.dart' if (dart.library.html) 'src/adsense_web.dart';
+export 'src/adsense_stub.dart'
+    if (dart.library.js_interop) 'src/adsense_web.dart';

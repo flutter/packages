@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  adSense.initialize('your_ad_client_id');
+  adSense.initialize('0556581589806023'); // TODO: Replace with your own AdClient ID
   runApp(const MyApp());
 }
 
@@ -56,40 +56,54 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('AdSense for Flutter demo app'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Row(
-              children: <Widget>[
-                const Text('Some text'),
-                Expanded(
-                  child:
-                      // #docregion adUnit
-                      adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                          adSlot: 'your_ad_slot_id',
-                          adFormat: AdFormat.AUTO,
-                          isFullWidthResponsive: false))
-                  // #enddocregion adUnit
-                  ,
-                )
-              ],
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'Responsive Ad Constrained by width of 150px:',
+              ),
+              Container(
+                constraints: const BoxConstraints(maxWidth: 150),
+                padding: const EdgeInsets.only(bottom: 10),
+                child:
+                    // #docregion adUnit
+                    adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+                  adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
+                  adFormat: AdFormat
+                      .AUTO, // Remove AdFormat to make ads limited by height
+                ))
+                // #enddocregion adUnit
+                ,
+              ),
+              const Text(
+                'Responsive Ad Constrained by height of 100px:',
+              ),
+              Container(
+                constraints: const BoxConstraints(maxHeight: 100),
+                padding: const EdgeInsets.only(bottom: 10),
+                child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+                  adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
+                  // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
+                )),
+              ),
+              const Text(
+                'Fixed 125x125 size Ad:',
+              ),
+              Container(
+                height: 125,
+                width: 125,
+                padding: const EdgeInsets.only(bottom: 10),
+                child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+                    adSlot: '8937810400',
+                    // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
+                    isFullWidthResponsive: false)),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

@@ -24,7 +24,7 @@ To start displaying ads, initialize the AdSense with your [client/publisher ID](
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  adSense.initialize('your_ad_client_id');
+  adSense.initialize('0556581589806023'); // TODO: Replace with your own AdClient ID
   runApp(const MyApp());
 }
 
@@ -33,10 +33,11 @@ You are all set to start displaying [Auto ads](https://support.google.com/adsens
 #### Display ad unit Widget
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
-adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-    adSlot: 'your_ad_slot_id',
-    adFormat: AdFormat.AUTO,
-    isFullWidthResponsive: false))
+    adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+  adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
+  adFormat: AdFormat
+      .AUTO, // Remove AdFormat to make ads limited by height
+))
 ```
 
 #### Customize ad unit Widget

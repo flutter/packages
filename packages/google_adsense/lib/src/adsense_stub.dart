@@ -6,18 +6,17 @@ import 'package:flutter/widgets.dart';
 
 import '../google_adsense.dart';
 
-/// Returns a singleton instance of Adsense library public interface
+/// A singleton instance of AdSense library public interface.
 final AdSense adSense = AdSense();
 
-/// Main class to work with the library
+/// AdSense package interface.
 class AdSense {
-  final String _adClient = '';
-
-  /// Getter for adClient passed on initialization
-  String get adClient => _adClient;
-
   /// Initialization API. Should be called ASAP, ideally in the main method of your app.
-  void initialize(String adClient) {
+  void initialize(
+    String adClient, {
+    @visibleForTesting bool skipJsLoader = false,
+    @visibleForTesting Object? jsLoaderTarget,
+  }) {
     throw UnsupportedError('Only supported on web');
   }
 

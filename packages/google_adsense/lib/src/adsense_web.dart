@@ -9,7 +9,10 @@ import 'package:web/web.dart' as web;
 
 import 'ad_unit_configuration.dart';
 import 'ad_unit_widget.dart';
+import 'js_interop/adsbygoogle.dart' show adsbygooglePresent;
 import 'js_interop/package_web_tweaks.dart';
+
+import 'logging.dart';
 
 /// Returns a singleton instance of Adsense library public interface
 final AdSense adSense = AdSense();
@@ -17,67 +20,74 @@ final AdSense adSense = AdSense();
 /// Main class to work with the library
 class AdSense {
   bool _isInitialized = false;
-  String _adClient = '';
+
+  /// The ad client ID used by this client.
+  late String _adClient;
   static const String _url =
       'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-';
-
-  /// Getter for adClient passed on initialization
-  String get adClient => _adClient;
 
   /// Initializes the AdSense SDK with your [adClient].
   ///
   /// Should be called ASAP, ideally in the main method of your app.
   ///
   /// Noops after the first call.
-  void initialize(String adClient) {
+  void initialize(
+    String adClient, {
+    @visibleForTesting bool skipJsLoader = false,
+    @visibleForTesting web.HTMLElement? jsLoaderTarget,
+  }) {
     if (_isInitialized) {
-      web.console.warn('AdSense: sdk was already initialized, skipping'.toJS);
+      debugLog('adSense.initialize called multiple times. Skipping init.');
       return;
     }
     _adClient = adClient;
-    _addMasterScript(_adClient);
+    if (!(skipJsLoader || _sdkAlreadyLoaded(testingTarget: jsLoaderTarget))) {
+      _loadJsSdk(_adClient, jsLoaderTarget);
+    } else {
+      debugLog('SDK already on page. Skipping init.');
+    }
     _isInitialized = true;
   }
 
-  /// Returns a configurable [AdUnitWidget]<br>
-  /// `configuration`: see [AdUnitConfiguration]
+  /// Returns an [AdUnitWidget] with the specified [configuration].
   Widget adUnit(AdUnitConfiguration configuration) {
-    return AdUnitWidget.fromConfig(configuration);
+    return AdUnitWidget(adClient: _adClient, configuration: configuration);
   }
 
-  void _addMasterScript(String adClient) {
+  bool _sdkAlreadyLoaded({
+    web.HTMLElement? testingTarget,
+  }) {
+    final String selector = 'script[src*=ca-pub-$_adClient]';
+    return adsbygooglePresent ||
+        web.document.querySelector(selector) != null ||
+        testingTarget?.querySelector(selector) != null;
+  }
+
+  void _loadJsSdk(String adClient, web.HTMLElement? testingTarget) {
     final String finalUrl = _url + adClient;
 
-    web.TrustedScriptURL? trustedUrl;
+    final web.HTMLScriptElement script = web.HTMLScriptElement()
+      ..async = true
+      ..crossOrigin = 'anonymous';
+
     if (web.window.nullableTrustedTypes != null) {
-      final String finalUrl = _url + adClient;
-      const String trustedTypePolicyName = 'adsense-dart';
-      web.console.debug(
-        'TrustedTypes available. Creating policy: $trustedTypePolicyName'.toJS,
-      );
+      final String trustedTypePolicyName = 'adsense-dart-$adClient';
       try {
         final web.TrustedTypePolicy policy =
             web.window.trustedTypes.createPolicy(
                 trustedTypePolicyName,
                 web.TrustedTypePolicyOptions(
-                  createScriptURL: ((JSString url) => finalUrl).toJS,
+                  createScriptURL: ((JSString url) => url).toJS,
                 ));
-        trustedUrl = policy.createScriptURLNoArgs(finalUrl);
+        script.trustedSrc = policy.createScriptURLNoArgs(finalUrl);
       } catch (e) {
         throw TrustedTypesException(e.toString());
       }
-    }
-
-    final web.HTMLScriptElement script = web.HTMLScriptElement()
-      ..async = true
-      ..crossOrigin = 'anonymous';
-    if (trustedUrl != null) {
-      script.trustedSrc = trustedUrl;
     } else {
+      debugLog('TrustedTypes not available.');
       script.src = finalUrl;
     }
 
-    script.src = finalUrl;
-    web.document.head!.appendChild(script);
+    (testingTarget ?? web.document.head)!.appendChild(script);
   }
 }
