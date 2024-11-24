@@ -331,7 +331,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
 
-    final URLRequest urlRequest = URLRequest(url: request.uri.toString());
+    final URLRequest urlRequest = webViewProxy.createRequest(
+      url: request.uri.toString(),
+    );
     unawaited(urlRequest.setAllHttpHeaderFields(request.headers));
     unawaited(urlRequest.setHttpMethod(request.method.name));
     unawaited(urlRequest.setHttpBody(request.body));
