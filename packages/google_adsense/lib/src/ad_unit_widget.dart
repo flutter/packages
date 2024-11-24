@@ -62,8 +62,6 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     // }
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      _constraints = constraints;
-
       if (!widget._adUnitConfiguration.params
               .containsKey(AdUnitParams.AD_FORMAT) &&
           !_adSize.isEmpty) {
