@@ -260,230 +260,230 @@ void main() {
         ]));
       });
 
-          testWidgets('autoMediaPlaybackPolicy false', (WidgetTester tester) async {
+      testWidgets('autoMediaPlaybackPolicy false', (WidgetTester tester) async {
+        final _WebViewMocks mocks = configureMocks();
+        await buildWidget(
+          tester,
+          mocks,
+          creationParams: CreationParams(
+            autoMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+            webSettings: WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              hasNavigationDelegate: false,
+            ),
+          ),
+        );
+
+        verify(mocks.webViewConfiguration
+            .setMediaTypesRequiringUserActionForPlayback(<AudiovisualMediaType>[
+          AudiovisualMediaType.none,
+        ]));
+      });
+
+      testWidgets('javascriptChannelNames', (WidgetTester tester) async {
+        final _WebViewMocks mocks = configureMocks();
+        when(
+          mocks.webViewWidgetProxy.createScriptMessageHandler(
+            didReceiveScriptMessage: anyNamed('didReceiveScriptMessage'),
+          ),
+        ).thenReturn(
+          MockWKScriptMessageHandler(),
+        );
+
+        await buildWidget(
+          tester,
+          mocks,
+          creationParams: CreationParams(
+            javascriptChannelNames: <String>{'a', 'b'},
+            webSettings: WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              hasNavigationDelegate: false,
+            ),
+          ),
+        );
+
+        final List<dynamic> javaScriptChannels = verify(
+          mocks.userContentController.addScriptMessageHandler(
+            captureAny,
+            captureAny,
+          ),
+        ).captured;
+        expect(
+          javaScriptChannels[0],
+          isA<WKScriptMessageHandler>(),
+        );
+        expect(javaScriptChannels[1], 'a');
+        expect(
+          javaScriptChannels[2],
+          isA<WKScriptMessageHandler>(),
+        );
+        expect(javaScriptChannels[3], 'b');
+      });
+
+      group('WebSettings', () {
+        testWidgets('javascriptMode', (WidgetTester tester) async {
+          final _WebViewMocks mocks = configureMocks();
+          await buildWidget(
+            tester,
+            mocks,
+            creationParams: CreationParams(
+              webSettings: WebSettings(
+                userAgent: const WebSetting<String?>.absent(),
+                javascriptMode: JavascriptMode.unrestricted,
+                hasNavigationDelegate: false,
+              ),
+            ),
+          );
+
+          verify(mocks.preferences.setJavaScriptEnabled(true));
+        });
+
+        testWidgets('userAgent', (WidgetTester tester) async {
+          final _WebViewMocks mocks = configureMocks();
+          await buildWidget(
+            tester,
+            mocks,
+            creationParams: CreationParams(
+              webSettings: WebSettings(
+                userAgent: const WebSetting<String?>.of('myUserAgent'),
+                hasNavigationDelegate: false,
+              ),
+            ),
+          );
+
+          verify(mocks.webView.setCustomUserAgent('myUserAgent'));
+        });
+
+        testWidgets(
+          'enabling zoom re-adds JavaScript channels',
+          (WidgetTester tester) async {
             final _WebViewMocks mocks = configureMocks();
-            await buildWidget(
+            when(
+              mocks.webViewWidgetProxy.createScriptMessageHandler(
+                didReceiveScriptMessage: anyNamed('didReceiveScriptMessage'),
+              ),
+            ).thenReturn(
+              MockWKScriptMessageHandler(),
+            );
+
+            final WebKitWebViewPlatformController testController =
+                await buildWidget(
               tester,
               mocks,
               creationParams: CreationParams(
-                autoMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
                 webSettings: WebSettings(
                   userAgent: const WebSetting<String?>.absent(),
+                  zoomEnabled: false,
+                  hasNavigationDelegate: false,
+                ),
+                javascriptChannelNames: <String>{'myChannel'},
+              ),
+            );
+
+            clearInteractions(mocks.userContentController);
+
+            await testController.updateSettings(WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              zoomEnabled: true,
+            ));
+
+            final List<dynamic> javaScriptChannels = verifyInOrder(<Object>[
+              mocks.userContentController.removeAllUserScripts(),
+              mocks.userContentController
+                  .removeScriptMessageHandler('myChannel'),
+              mocks.userContentController.addScriptMessageHandler(
+                captureAny,
+                captureAny,
+              ),
+            ]).captured[2];
+
+            expect(
+              javaScriptChannels[0],
+              isA<WKScriptMessageHandler>(),
+            );
+            expect(javaScriptChannels[1], 'myChannel');
+          },
+        );
+
+        testWidgets(
+          'enabling zoom removes script',
+          (WidgetTester tester) async {
+            final _WebViewMocks mocks = configureMocks();
+            final WebKitWebViewPlatformController testController =
+                await buildWidget(
+              tester,
+              mocks,
+              creationParams: CreationParams(
+                webSettings: WebSettings(
+                  userAgent: const WebSetting<String?>.absent(),
+                  zoomEnabled: false,
                   hasNavigationDelegate: false,
                 ),
               ),
             );
 
-            verify(mocks.webViewConfiguration
-                .setMediaTypesRequiringUserActionForPlayback(<AudiovisualMediaType>[
-              AudiovisualMediaType.none,
-            ]));
-          });
-      //
-      //     testWidgets('javascriptChannelNames', (WidgetTester tester) async {
-      //       final _WebViewMocks mocks = configureMocks();
-      //       when(
-      //         mocks.webViewWidgetProxy.createScriptMessageHandler(
-      //           didReceiveScriptMessage: anyNamed('didReceiveScriptMessage'),
-      //         ),
-      //       ).thenReturn(
-      //         MockWKScriptMessageHandler(),
-      //       );
-      //
-      //       await buildWidget(
-      //         tester,
-      //         mocks,
-      //         creationParams: CreationParams(
-      //           javascriptChannelNames: <String>{'a', 'b'},
-      //           webSettings: WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             hasNavigationDelegate: false,
-      //           ),
-      //         ),
-      //       );
-      //
-      //       final List<dynamic> javaScriptChannels = verify(
-      //         mocks.userContentController.addScriptMessageHandler(
-      //           captureAny,
-      //           captureAny,
-      //         ),
-      //       ).captured;
-      //       expect(
-      //         javaScriptChannels[0],
-      //         isA<WKScriptMessageHandler>(),
-      //       );
-      //       expect(javaScriptChannels[1], 'a');
-      //       expect(
-      //         javaScriptChannels[2],
-      //         isA<WKScriptMessageHandler>(),
-      //       );
-      //       expect(javaScriptChannels[3], 'b');
-      //     });
-      //
-      //     group('WebSettings', () {
-      //       testWidgets('javascriptMode', (WidgetTester tester) async {
-      //         final _WebViewMocks mocks = configureMocks();
-      //         await buildWidget(
-      //           tester,
-      //           mocks,
-      //           creationParams: CreationParams(
-      //             webSettings: WebSettings(
-      //               userAgent: const WebSetting<String?>.absent(),
-      //               javascriptMode: JavascriptMode.unrestricted,
-      //               hasNavigationDelegate: false,
-      //             ),
-      //           ),
-      //         );
-      //
-      //         verify(mocks.preferences.setJavaScriptEnabled(true));
-      //       });
-      //
-      //       testWidgets('userAgent', (WidgetTester tester) async {
-      //         final _WebViewMocks mocks = configureMocks();
-      //         await buildWidget(
-      //           tester,
-      //           mocks,
-      //           creationParams: CreationParams(
-      //             webSettings: WebSettings(
-      //               userAgent: const WebSetting<String?>.of('myUserAgent'),
-      //               hasNavigationDelegate: false,
-      //             ),
-      //           ),
-      //         );
-      //
-      //         verify(mocks.webView.setCustomUserAgent('myUserAgent'));
-      //       });
-      //
-      //       testWidgets(
-      //         'enabling zoom re-adds JavaScript channels',
-      //         (WidgetTester tester) async {
-      //           final _WebViewMocks mocks = configureMocks();
-      //           when(
-      //             mocks.webViewWidgetProxy.createScriptMessageHandler(
-      //               didReceiveScriptMessage: anyNamed('didReceiveScriptMessage'),
-      //             ),
-      //           ).thenReturn(
-      //             MockWKScriptMessageHandler(),
-      //           );
-      //
-      //           final WebKitWebViewPlatformController testController =
-      //               await buildWidget(
-      //             tester,
-      //             mocks,
-      //             creationParams: CreationParams(
-      //               webSettings: WebSettings(
-      //                 userAgent: const WebSetting<String?>.absent(),
-      //                 zoomEnabled: false,
-      //                 hasNavigationDelegate: false,
-      //               ),
-      //               javascriptChannelNames: <String>{'myChannel'},
-      //             ),
-      //           );
-      //
-      //           clearInteractions(mocks.userContentController);
-      //
-      //           await testController.updateSettings(WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             zoomEnabled: true,
-      //           ));
-      //
-      //           final List<dynamic> javaScriptChannels = verifyInOrder(<Object>[
-      //             mocks.userContentController.removeAllUserScripts(),
-      //             mocks.userContentController
-      //                 .removeScriptMessageHandler('myChannel'),
-      //             mocks.userContentController.addScriptMessageHandler(
-      //               captureAny,
-      //               captureAny,
-      //             ),
-      //           ]).captured[2];
-      //
-      //           expect(
-      //             javaScriptChannels[0],
-      //             isA<WKScriptMessageHandler>(),
-      //           );
-      //           expect(javaScriptChannels[1], 'myChannel');
-      //         },
-      //       );
-      //
-      //       testWidgets(
-      //         'enabling zoom removes script',
-      //         (WidgetTester tester) async {
-      //           final _WebViewMocks mocks = configureMocks();
-      //           final WebKitWebViewPlatformController testController =
-      //               await buildWidget(
-      //             tester,
-      //             mocks,
-      //             creationParams: CreationParams(
-      //               webSettings: WebSettings(
-      //                 userAgent: const WebSetting<String?>.absent(),
-      //                 zoomEnabled: false,
-      //                 hasNavigationDelegate: false,
-      //               ),
-      //             ),
-      //           );
-      //
-      //           clearInteractions(mocks.userContentController);
-      //
-      //           await testController.updateSettings(WebSettings(
-      //             userAgent: const WebSetting<String?>.absent(),
-      //             zoomEnabled: true,
-      //           ));
-      //
-      //           verify(mocks.userContentController.removeAllUserScripts());
-      //           verifyNever(mocks.userContentController.addScriptMessageHandler(
-      //             any,
-      //             any,
-      //           ));
-      //         },
-      //       );
-      //
-      //       testWidgets('zoomEnabled is false', (WidgetTester tester) async {
-      //         final _WebViewMocks mocks = configureMocks();
-      //         await buildWidget(
-      //           tester,
-      //           mocks,
-      //           creationParams: CreationParams(
-      //             webSettings: WebSettings(
-      //               userAgent: const WebSetting<String?>.absent(),
-      //               zoomEnabled: false,
-      //               hasNavigationDelegate: false,
-      //             ),
-      //           ),
-      //         );
-      //
-      //         final WKUserScript zoomScript =
-      //             verify(mocks.userContentController.addUserScript(captureAny))
-      //                 .captured
-      //                 .first as WKUserScript;
-      //         expect(zoomScript.isMainFrameOnly, isTrue);
-      //         expect(zoomScript.injectionTime,
-      //             WKUserScriptInjectionTime.atDocumentEnd);
-      //         expect(
-      //           zoomScript.source,
-      //           "var meta = document.createElement('meta');\n"
-      //           "meta.name = 'viewport';\n"
-      //           "meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, "
-      //           "user-scalable=no';\n"
-      //           "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
-      //         );
-      //       });
-      //
-      //       testWidgets('allowsInlineMediaPlayback', (WidgetTester tester) async {
-      //         final _WebViewMocks mocks = configureMocks();
-      //         await buildWidget(
-      //           tester,
-      //           mocks,
-      //           creationParams: CreationParams(
-      //             webSettings: WebSettings(
-      //               userAgent: const WebSetting<String?>.absent(),
-      //               allowsInlineMediaPlayback: true,
-      //             ),
-      //           ),
-      //         );
-      //
-      //         verify(mocks.webViewConfiguration.setAllowsInlineMediaPlayback(true));
-      //       });
-      //     });
+            clearInteractions(mocks.userContentController);
+
+            await testController.updateSettings(WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              zoomEnabled: true,
+            ));
+
+            verify(mocks.userContentController.removeAllUserScripts());
+            verifyNever(mocks.userContentController.addScriptMessageHandler(
+              any,
+              any,
+            ));
+          },
+        );
+
+        testWidgets('zoomEnabled is false', (WidgetTester tester) async {
+          final _WebViewMocks mocks = configureMocks();
+          await buildWidget(
+            tester,
+            mocks,
+            creationParams: CreationParams(
+              webSettings: WebSettings(
+                userAgent: const WebSetting<String?>.absent(),
+                zoomEnabled: false,
+                hasNavigationDelegate: false,
+              ),
+            ),
+          );
+
+          final WKUserScript zoomScript =
+              verify(mocks.userContentController.addUserScript(captureAny))
+                  .captured
+                  .first as WKUserScript;
+          expect(zoomScript.isMainFrameOnly, isTrue);
+          expect(
+              zoomScript.injectionTime, UserScriptInjectionTime.atDocumentEnd);
+          expect(
+            zoomScript.source,
+            "var meta = document.createElement('meta');\n"
+            "meta.name = 'viewport';\n"
+            "meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, "
+            "user-scalable=no';\n"
+            "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
+          );
+        });
+
+        testWidgets('allowsInlineMediaPlayback', (WidgetTester tester) async {
+          final _WebViewMocks mocks = configureMocks();
+          await buildWidget(
+            tester,
+            mocks,
+            creationParams: CreationParams(
+              webSettings: WebSettings(
+                userAgent: const WebSetting<String?>.absent(),
+                allowsInlineMediaPlayback: true,
+              ),
+            ),
+          );
+
+          verify(mocks.webViewConfiguration.setAllowsInlineMediaPlayback(true));
+        });
+      });
     });
     //
     //   group('WebKitWebViewPlatformController', () {
