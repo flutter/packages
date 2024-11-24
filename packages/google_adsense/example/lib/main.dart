@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  adSense.initialize('your_ad_client_id');
+  adSense.initialize('0556581589806023');
   runApp(const MyApp());
 }
 
@@ -63,21 +63,24 @@ class _MyHomePageState extends State<MyHomePage> {
             const Text(
               'You have pushed the button this many times:',
             ),
-            Row(
-              children: <Widget>[
-                const Text('Some text'),
-                Expanded(
-                  child:
-                      // #docregion adUnit
-                      adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                          adSlot: 'your_ad_slot_id',
-                          adFormat: AdFormat.AUTO,
-                          isFullWidthResponsive: false))
-                  // #enddocregion adUnit
-                  ,
-                )
-              ],
+            // #docregion adUnit
+            // Responsive ad example
+            Container(
+              child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+                  adSlot: '4773943862',
+                  adFormat: AdFormat.AUTO, // Remove AdFormat to make ads limited by height
+                  isFullWidthResponsive: false)),
             ),
+            // Fixed size ad example
+            SizedBox(
+              height: 125,
+              width: 125,
+              child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+                  adSlot: '8937810400',
+                  // adFormat: AdFormat.AUTO, // Not using AdFormat to make ads limited by height
+                  isFullWidthResponsive: false)),
+            ),
+            // #enddocregion adUnit
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,

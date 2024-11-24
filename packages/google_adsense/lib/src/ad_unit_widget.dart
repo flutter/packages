@@ -34,20 +34,25 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     with AutomaticKeepAliveClientMixin {
   static int _adUnitCounter = 0;
   static final JSString _adStatusKey = 'adStatus'.toJS;
+
   // Start with a 1x1 widget size so adsense has an uncollapsed space to render the ad.
-  Size _adSize = const Size(1, 1);
+  Size _adSize = const Size(double.infinity, 1.0);
+
+  // double _adHeight = 1.0;
+  late BoxConstraints _constraints;
 
   @override
   bool get wantKeepAlive => true;
 
   static final web.ResizeObserver _adSenseResizeObserver = web.ResizeObserver(
       (JSArray<web.ResizeObserverEntry> entries, web.ResizeObserver observer) {
-    // only check first one
-    final web.Element target = entries.toDart[0].target;
-    if (target.isConnected) {
-      // First time resized since attached to DOM -> attachment callback from Flutter docs by David
-      _onElementAttached(target as web.HTMLElement);
-      observer.disconnect();
+    for (final web.ResizeObserverEntry entry in entries.toDart) {
+      final web.Element target = entry.target;
+      if (target.isConnected) {
+        // First time resized since attached to DOM -> attachment callback from Flutter docs by David
+        _onElementAttached(target as web.HTMLElement);
+        observer.disconnect();
+      }
     }
   }.toJS);
 
@@ -55,16 +60,27 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   Widget build(BuildContext context) {
     super.build(context);
     // If the ad is collapsed (0x0), return an empty widget
-    if (_adSize.isEmpty) {
-      return const SizedBox.shrink();
-    }
-    return SizedBox(
-      height: _adSize.height,
-      child: HtmlElementView.fromTagName(
-        tagName: 'div',
-        onElementCreated: _onElementCreated,
-      ),
-    );
+    // if (_adSize.isEmpty) {
+    //   return const SizedBox.shrink();
+    // }
+    return LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+      _constraints = constraints;
+
+      if (!widget._adUnitConfiguration.params
+              .containsKey(AdUnitParams.AD_FORMAT) &&
+          !_adSize.isEmpty) {
+        _adSize = Size(_adSize.width, constraints.maxHeight);
+      }
+      return SizedBox(
+        height: _adSize.height,
+        width: _adSize.width,
+        child: HtmlElementView.fromTagName(
+          tagName: 'div',
+          onElementCreated: _onElementCreated,
+        ),
+      );
+    });
   }
 
   void _onElementCreated(Object element) {
@@ -72,6 +88,10 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     final web.HTMLElement insElement =
         (web.document.createElement('ins') as web.HTMLElement)
           ..className = 'adsbygoogle'
+          ..style.width = '100%'
+          ..style.height = '100%'
+          ..style.maxWidth = '${_constraints.maxWidth}px'
+          ..style.height = '${_constraints.maxHeight}px'
           ..style.display = 'block';
 
     // Apply the widget configuration to insElement
@@ -99,8 +119,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
         if (_isLoaded(target)) {
           if (_isFilled(target)) {
             _updateWidgetSize(Size(
-              target.offsetWidth
-                  .toDouble(), // This is always the width of the platform view!
+              target.offsetWidth.toDouble(),
+              // This is always the width of the platform view!
               target.offsetHeight.toDouble(),
             ));
           } else {
@@ -121,6 +141,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   }
 
   static void _onElementAttached(web.HTMLElement element) {
+    debugLog(
+        '$element attached with w=${element.offsetWidth} and h=${element.offsetHeight}');
     adsbygoogle.requestAd();
   }
 
