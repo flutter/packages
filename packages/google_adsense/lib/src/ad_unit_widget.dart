@@ -88,10 +88,6 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     final web.HTMLElement insElement =
         (web.document.createElement('ins') as web.HTMLElement)
           ..className = 'adsbygoogle'
-          ..style.width = '100%'
-          ..style.height = '100%'
-          ..style.maxWidth = '${_constraints.maxWidth}px'
-          ..style.height = '${_constraints.maxHeight}px'
           ..style.display = 'block';
 
     // Apply the widget configuration to insElement
@@ -125,8 +121,10 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
             ));
           } else {
             // Prevent scrolling issues over empty ad slot
-            target.style.pointerEvents = 'none';
-            target.style.height = '0px';
+            target
+              ..style.pointerEvents = 'none'
+              ..style.height = '0px'
+              ..style.width = '0px';
             _updateWidgetSize(Size.zero);
           }
         }
