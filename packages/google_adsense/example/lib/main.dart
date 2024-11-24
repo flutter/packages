@@ -2,13 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: flutter_style_todos
+
 import 'package:flutter/material.dart';
 
 // #docregion init
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  adSense.initialize('0556581589806023'); // TODO: Replace with your own AdClient ID
+  adSense.initialize(
+      '0556581589806023'); // TODO: Replace with your own AdClient ID
   runApp(const MyApp());
 }
 
@@ -41,14 +44,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
