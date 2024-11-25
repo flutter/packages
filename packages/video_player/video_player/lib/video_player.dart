@@ -9,6 +9,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:meta/meta.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'src/closed_caption_file.dart';
@@ -20,7 +21,12 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
-        VideoPlayerWebOptionsControls;
+        VideoPlayerWebOptionsControls,
+        TrackSelection,
+        TrackSelectionType,
+        TrackSelectionRoleType,
+        TrackSelectionChannelType,
+        TrackSelectionNameResource;
 
 export 'src/closed_caption_file.dart';
 
@@ -47,6 +53,7 @@ class VideoPlayerValue {
     required this.duration,
     this.size = Size.zero,
     this.position = Duration.zero,
+    this.trackSelections = const <TrackSelection>[],
     this.caption = Caption.none,
     this.captionOffset = Duration.zero,
     this.buffered = const <DurationRange>[],
@@ -59,6 +66,7 @@ class VideoPlayerValue {
     this.rotationCorrection = 0,
     this.errorDescription,
     this.isCompleted = false,
+    this.subtitle = const [],
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -83,6 +91,9 @@ class VideoPlayerValue {
 
   /// The current playback position.
   final Duration position;
+
+  /// The current playback track selections.
+  final List<TrackSelection> trackSelections;
 
   /// The [Caption] that should be displayed based on the current [position].
   ///
@@ -154,12 +165,15 @@ class VideoPlayerValue {
     return aspectRatio;
   }
 
+  final List<String> subtitle;
+
   /// Returns a new instance that has the same values as this current instance,
   /// except for any overrides passed in as arguments to [copyWith].
   VideoPlayerValue copyWith({
     Duration? duration,
     Size? size,
     Duration? position,
+    List<TrackSelection>? trackSelections,
     Caption? caption,
     Duration? captionOffset,
     List<DurationRange>? buffered,
@@ -171,12 +185,14 @@ class VideoPlayerValue {
     double? playbackSpeed,
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
+    List<String>? subtitle,
     bool? isCompleted,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
       size: size ?? this.size,
       position: position ?? this.position,
+      trackSelections: trackSelections ?? this.trackSelections,
       caption: caption ?? this.caption,
       captionOffset: captionOffset ?? this.captionOffset,
       buffered: buffered ?? this.buffered,
@@ -191,6 +207,7 @@ class VideoPlayerValue {
           ? errorDescription
           : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
+      subtitle: subtitle ?? this.subtitle,
     );
   }
 
@@ -200,6 +217,8 @@ class VideoPlayerValue {
         'duration: $duration, '
         'size: $size, '
         'position: $position, '
+        'trackSelections: $trackSelections, '
+        'subtitle:[${subtitle.join(",")}], '
         'caption: $caption, '
         'captionOffset: $captionOffset, '
         'buffered: [${buffered.join(', ')}], '
@@ -223,6 +242,7 @@ class VideoPlayerValue {
           caption == other.caption &&
           captionOffset == other.captionOffset &&
           listEquals(buffered, other.buffered) &&
+          listEquals(subtitle, other.subtitle) &&
           isPlaying == other.isPlaying &&
           isLooping == other.isLooping &&
           isBuffering == other.isBuffering &&
@@ -251,6 +271,7 @@ class VideoPlayerValue {
         rotationCorrection,
         isInitialized,
         isCompleted,
+        subtitle,
       );
 }
 
@@ -499,6 +520,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
+          break;
+        case VideoEventType.subtitle:
+          final subtitle = event.subtitle;
+          value = value.copyWith(subtitle: subtitle);
+          break;
         case VideoEventType.unknown:
           break;
       }
@@ -660,6 +686,22 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
     await _videoPlayerPlatform.seekTo(_textureId, position);
     _updatePosition(position);
+  }
+
+  /// The track selections in the current video.
+  Future<List<TrackSelection>?> get trackSelections async {
+    if (!value.isInitialized || _isDisposed) {
+      return null;
+    }
+    return await _videoPlayerPlatform.getTrackSelections(_textureId);
+  }
+
+  /// Sets the selected video track selection.
+  Future<void> setTrackSelection(TrackSelection trackSelection) async {
+    if (!value.isInitialized || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.setTrackSelection(_textureId, trackSelection);
   }
 
   /// Sets the audio volume of [this].
