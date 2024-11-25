@@ -382,7 +382,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler {
-  CMTime previousCMTime = _player.currentTime;
   CMTime targetCMTime = CMTimeMake(location, 1000);
   CMTimeValue duration = _player.currentItem.asset.duration.value;
   // Without adding tolerance when seeking to duration,
