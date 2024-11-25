@@ -6,6 +6,9 @@ package io.flutter.plugins.videoplayer;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.media3.common.text.Cue;
+
+import java.util.List;
 
 /**
  * Callbacks representing events invoked by {@link VideoPlayer}.
@@ -30,4 +33,6 @@ interface VideoPlayerCallbacks {
   void onError(@NonNull String code, @Nullable String message, @Nullable Object details);
 
   void onIsPlayingStateUpdate(boolean isPlaying);
+
+  void onSubtitleCues(List<String> cues);
 }

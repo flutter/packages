@@ -23,8 +23,14 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  path_provider: ^2.0.6
+  path_provider: ^2.1.5
   test: any
+
+dependency_overrides:
+  video_player_platform_interface:
+    path: ../../video_player_platform_interface
+
+
 
 flutter:
   uses-material-design: true

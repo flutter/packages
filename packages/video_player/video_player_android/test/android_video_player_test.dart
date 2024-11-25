@@ -86,6 +86,22 @@ class _ApiLogger implements TestHostVideoPlayerApi {
     log.add('setPlaybackSpeed');
     playbackSpeedMessage = arg;
   }
+
+  @override
+  void setTrackSelection(TrackSelectionsMessage msg) {
+    log.add('setTrackSelection');
+  }
+
+  @override
+  TrackSelectionsMessage trackSelections(TextureMessage msg) {
+    log.add('trackSelections');
+    return TrackSelectionsMessage(
+        textureId: msg.textureId,
+        trackId: 'trackId',
+        trackSelections: <Object>[],
+        trackType: 0,
+        trackIndex: 0);
+  }
 }
 
 void main() {

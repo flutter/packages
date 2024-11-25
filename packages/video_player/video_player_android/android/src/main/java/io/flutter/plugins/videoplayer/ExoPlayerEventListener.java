@@ -11,7 +11,14 @@ import androidx.media3.common.Format;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
+import androidx.media3.common.text.Cue;
+import androidx.media3.common.text.CueGroup;
 import androidx.media3.exoplayer.ExoPlayer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 final class ExoPlayerEventListener implements Player.Listener {
@@ -189,5 +196,15 @@ final class ExoPlayerEventListener implements Player.Listener {
   @Override
   public void onIsPlayingChanged(boolean isPlaying) {
     events.onIsPlayingStateUpdate(isPlaying);
+  }
+
+  @Override
+  public void onCues(@NonNull CueGroup cueGroup) {
+      final List<String> cues = new ArrayList<>();
+      for(int i=0; i<cueGroup.cues.size() ;i++){
+        final Cue cue = cueGroup.cues.get(i);
+        cues.add(cue.text != null ? cue.text.toString() : null);
+      }
+      events.onSubtitleCues(cues);
   }
 }

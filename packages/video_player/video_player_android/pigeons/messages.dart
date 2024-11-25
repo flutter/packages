@@ -36,6 +36,21 @@ class PlaybackSpeedMessage {
   double speed;
 }
 
+class TrackSelectionsMessage {
+  TrackSelectionsMessage({
+    required this.textureId,
+    required this.trackId,
+    required this.trackSelections,
+    this.trackIndex,
+    required this.trackType,
+  });
+  int textureId;
+  String trackId;
+  List<Object> trackSelections;
+  int trackType;
+  int? trackIndex;
+}
+
 class PositionMessage {
   PositionMessage(this.textureId, this.position);
   int textureId;
@@ -67,6 +82,8 @@ abstract class AndroidVideoPlayerApi {
   void play(TextureMessage msg);
   PositionMessage position(TextureMessage msg);
   void seekTo(PositionMessage msg);
+  TrackSelectionsMessage trackSelections(TextureMessage msg);
+  void setTrackSelection(TrackSelectionsMessage msg);
   void pause(TextureMessage msg);
   void setMixWithOthers(MixWithOthersMessage msg);
 }

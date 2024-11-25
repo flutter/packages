@@ -7,6 +7,9 @@ package io.flutter.plugins.videoplayer;
 import android.content.Context;
 import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
+import androidx.media3.common.util.UnstableApi;
+
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -19,10 +22,17 @@ import io.flutter.plugins.videoplayer.Messages.MixWithOthersMessage;
 import io.flutter.plugins.videoplayer.Messages.PlaybackSpeedMessage;
 import io.flutter.plugins.videoplayer.Messages.PositionMessage;
 import io.flutter.plugins.videoplayer.Messages.TextureMessage;
+import io.flutter.plugins.videoplayer.Messages.TrackSelectionsMessage;
 import io.flutter.plugins.videoplayer.Messages.VolumeMessage;
 import io.flutter.view.TextureRegistry;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.net.ssl.HttpsURLConnection;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
+@OptIn(markerClass = UnstableApi.class)
 public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   private static final String TAG = "VideoPlayerPlugin";
   private final LongSparseArray<VideoPlayer> videoPlayers = new LongSparseArray<>();
@@ -181,6 +191,25 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     player.seekTo(arg.getPosition().intValue());
   }
 
+  @NonNull
+  @OptIn(markerClass = UnstableApi.class)
+  public TrackSelectionsMessage trackSelections(TextureMessage arg) {
+    System.err.println("xxx : tracks 5 ...");
+    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    TrackSelectionsMessage result = new TrackSelectionsMessage();
+    result.setTextureId(arg.getTextureId());
+    result.setTrackSelections(player.getTrackSelections());
+    System.err.println("xxx : tracks 51 ...");
+    System.err.println(result.toString());
+    return result;
+  }
+
+  public void setTrackSelection(TrackSelectionsMessage arg) {
+    System.err.println("xxx : setTrackSelection : " + arg.toList());
+    VideoPlayer player = videoPlayers.get(arg.getTextureId());
+    player.setTrackSelection(arg.getTrackId(), arg.getTrackType().intValue());
+
+  }
   public void pause(@NonNull TextureMessage arg) {
     VideoPlayer player = getPlayer(arg.getTextureId());
     player.pause();

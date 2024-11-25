@@ -128,6 +128,47 @@ class PlaybackSpeedMessage {
   }
 }
 
+class TrackSelectionsMessage {
+  TrackSelectionsMessage({
+    required this.textureId,
+    required this.trackId,
+    required this.trackSelections,
+    required this.trackType,
+    this.trackIndex,
+  });
+
+  int textureId;
+
+  String trackId;
+
+  List<Object> trackSelections;
+
+  int trackType;
+
+  int? trackIndex;
+
+  Object encode() {
+    return <Object?>[
+      textureId,
+      trackId,
+      trackSelections,
+      trackType,
+      trackIndex,
+    ];
+  }
+
+  static TrackSelectionsMessage decode(Object result) {
+    result as List<Object?>;
+    return TrackSelectionsMessage(
+      textureId: result[0]! as int,
+      trackId: result[1]! as String,
+      trackSelections: (result[2] as List<Object?>?)!.cast<Object>(),
+      trackType: result[3]! as int,
+      trackIndex: result[4] as int?,
+    );
+  }
+}
+
 class PositionMessage {
   PositionMessage({
     required this.textureId,
@@ -245,6 +286,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is MixWithOthersMessage) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
+    }  else if (value is TrackSelectionsMessage) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -267,6 +311,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return CreateMessage.decode(readValue(buffer)!);
       case 135:
         return MixWithOthersMessage.decode(readValue(buffer)!);
+      case 136:
+        return TrackSelectionsMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

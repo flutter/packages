@@ -101,4 +101,12 @@ final class VideoPlayerEventCallbacks implements VideoPlayerCallbacks {
     event.put("isPlaying", isPlaying);
     eventSink.success(event);
   }
+
+  @Override
+  public void onSubtitleCues(List<String> cues) {
+    Map<String, Object> event = new HashMap<>();
+    event.put("event", "subtitle");
+    event.put("cues", cues);
+    eventSink.success(event);
+  }
 }

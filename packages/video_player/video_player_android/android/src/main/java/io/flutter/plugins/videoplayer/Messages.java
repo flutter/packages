@@ -21,6 +21,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,7 +41,8 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
+    {
       super(message);
       this.code = code;
       this.details = details;
@@ -56,7 +61,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -409,6 +414,166 @@ public class Messages {
   }
 
   /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class TrackSelectionsMessage {
+    private @NonNull Long textureId;
+
+    public @NonNull Long getTextureId() {
+      return textureId;
+    }
+
+    public void setTextureId(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"textureId\" is null.");
+      }
+      this.textureId = setterArg;
+    }
+
+    private @NonNull String trackId;
+
+    public @NonNull String getTrackId() {
+      return trackId;
+    }
+
+    public void setTrackId(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"trackId\" is null.");
+      }
+      this.trackId = setterArg;
+    }
+
+    private @NonNull List<Object> trackSelections;
+
+    public @NonNull List<Object> getTrackSelections() {
+      return trackSelections;
+    }
+
+    public void setTrackSelections(@NonNull List<Object> setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"trackSelections\" is null.");
+      }
+      this.trackSelections = setterArg;
+    }
+
+    private @NonNull Long trackType;
+
+    public @NonNull Long getTrackType() {
+      return trackType;
+    }
+
+    public void setTrackType(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"trackType\" is null.");
+      }
+      this.trackType = setterArg;
+    }
+
+    private @Nullable Long trackIndex;
+
+    public @Nullable Long getTrackIndex() {
+      return trackIndex;
+    }
+
+    public void setTrackIndex(@Nullable Long setterArg) {
+      this.trackIndex = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    TrackSelectionsMessage() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
+      TrackSelectionsMessage that = (TrackSelectionsMessage) o;
+      return textureId.equals(that.textureId) && trackId.equals(that.trackId) && trackSelections.equals(that.trackSelections) && trackType.equals(that.trackType) && Objects.equals(trackIndex, that.trackIndex);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(textureId, trackId, trackSelections, trackType, trackIndex);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long textureId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTextureId(@NonNull Long setterArg) {
+        this.textureId = setterArg;
+        return this;
+      }
+
+      private @Nullable String trackId;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTrackId(@NonNull String setterArg) {
+        this.trackId = setterArg;
+        return this;
+      }
+
+      private @Nullable List<Object> trackSelections;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTrackSelections(@NonNull List<Object> setterArg) {
+        this.trackSelections = setterArg;
+        return this;
+      }
+
+      private @Nullable Long trackType;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTrackType(@NonNull Long setterArg) {
+        this.trackType = setterArg;
+        return this;
+      }
+
+      private @Nullable Long trackIndex;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setTrackIndex(@Nullable Long setterArg) {
+        this.trackIndex = setterArg;
+        return this;
+      }
+
+      public @NonNull TrackSelectionsMessage build() {
+        TrackSelectionsMessage pigeonReturn = new TrackSelectionsMessage();
+        pigeonReturn.setTextureId(textureId);
+        pigeonReturn.setTrackId(trackId);
+        pigeonReturn.setTrackSelections(trackSelections);
+        pigeonReturn.setTrackType(trackType);
+        pigeonReturn.setTrackIndex(trackIndex);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(5);
+      toListResult.add(textureId);
+      toListResult.add(trackId);
+      toListResult.add(trackSelections);
+      toListResult.add(trackType);
+      toListResult.add(trackIndex);
+      return toListResult;
+    }
+
+    static @NonNull TrackSelectionsMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      TrackSelectionsMessage pigeonResult = new TrackSelectionsMessage();
+      Object textureId = pigeonVar_list.get(0);
+      pigeonResult.setTextureId((Long) textureId);
+      Object trackId = pigeonVar_list.get(1);
+      pigeonResult.setTrackId((String) trackId);
+      Object trackSelections = pigeonVar_list.get(2);
+      pigeonResult.setTrackSelections((List<Object>) trackSelections);
+      Object trackType = pigeonVar_list.get(3);
+      pigeonResult.setTrackType((Long) trackType);
+      Object trackIndex = pigeonVar_list.get(4);
+      pigeonResult.setTrackIndex((Long) trackIndex);
+      return pigeonResult;
+    }
+  }
+
+  /** Generated class from Pigeon that represents data sent in messages. */
   public static final class PositionMessage {
     private @NonNull Long textureId;
 
@@ -748,6 +913,8 @@ public class Messages {
           return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
           return MixWithOthersMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
+          return TrackSelectionsMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -776,6 +943,9 @@ public class Messages {
       } else if (value instanceof MixWithOthersMessage) {
         stream.write(135);
         writeValue(stream, ((MixWithOthersMessage) value).toList());
+      }else if (value instanceof TrackSelectionsMessage) {
+        stream.write(136);
+        writeValue(stream, ((TrackSelectionsMessage) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -804,6 +974,11 @@ public class Messages {
     PositionMessage position(@NonNull TextureMessage msg);
 
     void seekTo(@NonNull PositionMessage msg);
+
+    @NonNull 
+    TrackSelectionsMessage trackSelections(@NonNull TextureMessage msg);
+
+    void setTrackSelection(@NonNull TrackSelectionsMessage msg);
 
     void pause(@NonNull TextureMessage msg);
 

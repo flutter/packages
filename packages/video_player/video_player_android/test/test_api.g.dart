@@ -41,6 +41,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is MixWithOthersMessage) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
+    }   else if (value is TrackSelectionsMessage) {
+      buffer.putUint8(136);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -63,6 +66,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return CreateMessage.decode(readValue(buffer)!);
       case 135:
         return MixWithOthersMessage.decode(readValue(buffer)!);
+      case 136:
+        return TrackSelectionsMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -91,6 +96,10 @@ abstract class TestHostVideoPlayerApi {
   PositionMessage position(TextureMessage msg);
 
   void seekTo(PositionMessage msg);
+
+  TrackSelectionsMessage trackSelections(TextureMessage msg);
+
+  void setTrackSelection(TrackSelectionsMessage msg);
 
   void pause(TextureMessage msg);
 
