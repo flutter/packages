@@ -57,14 +57,13 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   Widget build(BuildContext context) {
     super.build(context);
     // If the ad is collapsed (0x0), return an empty widget
-    // if (_adSize.isEmpty) {
-    //   return const SizedBox.shrink();
-    // }
+    if (_adSize.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
       if (!widget._adUnitConfiguration.params
-              .containsKey(AdUnitParams.AD_FORMAT) &&
-          !_adSize.isEmpty) {
+          .containsKey(AdUnitParams.AD_FORMAT)) {
         _adSize = Size(_adSize.width, constraints.maxHeight);
       }
       return SizedBox(
@@ -83,6 +82,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     final web.HTMLElement insElement =
         (web.document.createElement('ins') as web.HTMLElement)
           ..className = 'adsbygoogle'
+          ..style.width = '100%'
+          ..style.height = '100%'
           ..style.display = 'block';
 
     // Apply the widget configuration to insElement
@@ -109,6 +110,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
             (entry as web.MutationRecord).target as web.HTMLElement;
         if (_isLoaded(target)) {
           if (_isFilled(target)) {
+            debugLog('Resizing widget based on target $target size of ${target.offsetWidth} x ${target.offsetHeight}');
             _updateWidgetSize(Size(
               target.offsetWidth.toDouble(),
               // This is always the width of the platform view!
@@ -136,6 +138,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   static void _onElementAttached(web.HTMLElement element) {
     debugLog(
         '$element attached with w=${element.offsetWidth} and h=${element.offsetHeight}');
+    debugLog('${element.firstChild} size is ${(element.firstChild! as web.HTMLElement).offsetWidth}x${(element.firstChild! as web.HTMLElement).offsetHeight} ');
     adsbygoogle.requestAd();
   }
 
