@@ -731,6 +731,7 @@ void main() {
 
   test('stroke-width with unit value', () {
     const SvgTheme theme = SvgTheme();
+    const double ptConversionFactor = 96 / 72;
 
     const String svg_px =
         '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1px"/></svg>';
@@ -757,7 +758,7 @@ void main() {
 
     expect(instructionsPt.paints, <Paint>[
       const Paint(
-          stroke: Stroke(color: Color(0xff0000ff), width: 1 + 1 / 3),
+          stroke: Stroke(color: Color(0xff0000ff), width: 1 * ptConversionFactor),
           fill: Fill(color: Color(0xffff0000))),
     ]);
 
