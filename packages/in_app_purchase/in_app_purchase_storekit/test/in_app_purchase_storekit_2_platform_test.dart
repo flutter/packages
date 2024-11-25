@@ -12,6 +12,7 @@ import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 
 import 'fakes/fake_storekit_platform.dart';
 import 'sk2_test_api.g.dart';
+import 'test_api.g.dart';
 
 void main() {
   final SK2Product dummyProductWrapper = SK2Product(
@@ -26,17 +27,20 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final FakeStoreKit2Platform fakeStoreKit2Platform = FakeStoreKit2Platform();
+  final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
     TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
+    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
   });
 
   setUp(() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =
         InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
-    iapStoreKitPlatform.enableStoreKit2();
+    InAppPurchaseStoreKitPlatform.enableStoreKit2();
     fakeStoreKit2Platform.reset();
   });
 
