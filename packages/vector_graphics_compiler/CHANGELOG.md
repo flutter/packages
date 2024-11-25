@@ -1,6 +1,6 @@
 ## 1.1.16
 
-* Fixes an issue when parsing stroke-width with an invalid value
+* Set stroke-width to 1 by default when an invalid value is parsed instead of throwing an exception.
 
 ## 1.1.15
 
