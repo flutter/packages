@@ -109,7 +109,6 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
-      authContext = LAContext()
     self.authContext.localizedFallbackTitle = strings.localizedFallbackTitle
     self.lastCallState = nil
 
