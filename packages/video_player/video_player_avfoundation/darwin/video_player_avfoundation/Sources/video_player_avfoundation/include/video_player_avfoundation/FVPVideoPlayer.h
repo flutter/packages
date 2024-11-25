@@ -19,15 +19,15 @@
 /// notify the Flutter engine about new video frames.
 @interface FVPVideoPlayer ()
 /// The AVPlayerItemVideoOutput associated with this video player.
-@property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
+@property(readonly, nonatomic, nonnull) AVPlayerItemVideoOutput *videoOutput;
 /// The plugin registrar, to obtain view information from.
-@property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
+@property(nonatomic, weak, nullable) NSObject<FlutterPluginRegistrar> *registrar;
 /// The CALayer associated with the Flutter view this plugin is associated with, if any.
-@property(nonatomic, readonly) CALayer *flutterViewLayer;
+@property(nonatomic, readonly, nullable) CALayer *flutterViewLayer;
 /// The Flutter event channel used to communicate with the Flutter engine.
-@property(nonatomic) FlutterEventChannel *eventChannel;
+@property(nonatomic, nonnull) FlutterEventChannel *eventChannel;
 /// The Flutter event sink used to send events to the Flutter engine.
-@property(nonatomic) FlutterEventSink eventSink;
+@property(nonatomic, nonnull) FlutterEventSink eventSink;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.
 @property(nonatomic) CGAffineTransform preferredTransform;
 /// Indicates whether the video player has been disposed.
@@ -39,13 +39,15 @@
 /// Indicates whether the video player has been initialized.
 @property(nonatomic, readonly) BOOL isInitialized;
 /// The updater that drives callbacks to the engine to indicate that a new frame is ready.
-@property(nonatomic) FVPFrameUpdater *frameUpdater;
+@property(nonatomic, nullable) FVPFrameUpdater *frameUpdater;
 /// The display link that drives frameUpdater.
-@property(nonatomic) FVPDisplayLink *displayLink;
+@property(nonatomic, nullable) FVPDisplayLink *displayLink;
 /// Whether a new frame needs to be provided to the engine regardless of the current play/pause
 /// state (e.g., after a seek while paused). If YES, the display link should continue to run until
 /// the next frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
+
+NS_ASSUME_NONNULL_BEGIN
 
 /// Initializes a new instance of FVPVideoPlayer with the given URL, frame updater, display link,
 /// HTTP headers, AV factory, and registrar.
@@ -72,6 +74,8 @@
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
+NS_ASSUME_NONNULL_END
+
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
 
@@ -95,8 +99,9 @@
 /// Pauses the video.
 - (void)pause;
 
-/// Seeks to the specified location in the video and calls the completion handler when done.
-- (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler;
+/// Seeks to the specified location in the video and calls the completion handler when done, if one
+/// is supplied.
+- (void)seekTo:(int64_t)location completionHandler:(void (^_Nullable)(BOOL))completionHandler;
 
 /// Tells the player to run its frame updater until it receives a frame, regardless of the
 /// play/pause state.
