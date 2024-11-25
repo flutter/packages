@@ -16,29 +16,4 @@ protocol AuthContext {
     _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
 }
 
-/// Default implementation of AuthContext.
-class DefaultAuthContext: AuthContext {
-  private let context = LAContext()
-}
-
-/// Default implementation of AuthContext. This is a thin wrapper around LAContext.
-extension DefaultAuthContext {
-  var biometryType: LABiometryType {
-    context.biometryType
-  }
-
-  var localizedFallbackTitle: String? {
-    get { context.localizedFallbackTitle }
-    set { context.localizedFallbackTitle = newValue }
-  }
-
-  func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
-    context.canEvaluatePolicy(policy, error: error)
-  }
-
-  func evaluatePolicy(
-    _ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void
-  ) {
-    context.evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
-  }
-}
+extension LAContext: AuthContext {}

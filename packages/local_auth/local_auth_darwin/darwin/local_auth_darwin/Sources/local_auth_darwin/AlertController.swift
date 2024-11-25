@@ -2,23 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Protocol for the UIAlertController API.
+/// Protocol for the AlertController API.
 ///
 /// This protocol exists to allow injecting an alternate implementation for testing.
 protocol AlertController {
   func showAlert(
     message: String, dismissTitle: String, openSettingsTitle: String?,
-    completion: @escaping (Bool) -> Void)
+    completion: @escaping (Bool) -> Void
+  )
 }
 
-/// Defines the empty `DefaultAlertController` class so that extensions can implement `showAlert`.
-class DefaultAlertController {}
-
+/// Default implementation of AlertController for iOS and macOS.
 #if os(iOS)
   import UIKit
 
-  // Extension for AlertControllerProtocol on iOS
-  extension DefaultAlertController: AlertController {
+  class DefaultAlertController: AlertController {
     func showAlert(
       message: String, dismissTitle: String, openSettingsTitle: String?,
       completion: @escaping (Bool) -> Void
@@ -30,8 +28,7 @@ class DefaultAlertController {}
       alert.addAction(dismissAction)
 
       if let openSettingsTitle = openSettingsTitle {
-        let openSettingsAction = UIAlertAction(title: openSettingsTitle, style: .default) {
-          _ in
+        let openSettingsAction = UIAlertAction(title: openSettingsTitle, style: .default) { _ in
           if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
           }
@@ -40,16 +37,14 @@ class DefaultAlertController {}
         alert.addAction(openSettingsAction)
       }
 
-      UIApplication.shared.delegate?.window??.rootViewController?.present(
-        alert, animated: true)
+      UIApplication.shared.delegate?.window??.rootViewController?.present(alert, animated: true)
     }
   }
 
 #elseif os(macOS)
   import AppKit
 
-  // Extension for AlertControllerProtocol on macOS
-  extension DefaultAlertController: AlertController {
+  class DefaultAlertController: AlertController {
     func showAlert(
       message: String, dismissTitle: String, openSettingsTitle: String?,
       completion: @escaping (Bool) -> Void
@@ -65,8 +60,7 @@ class DefaultAlertController {}
       alert.beginSheetModal(for: NSApplication.shared.keyWindow!) { response in
         if response == .alertSecondButtonReturn,
           let url = URL(
-            string:
-              "x-apple.systempreferences:com.apple.preference.security?Privacy_Biometric"
+            string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Biometric"
           )
         {
           NSWorkspace.shared.open(url)

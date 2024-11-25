@@ -32,7 +32,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   private var lastCallState: StickyAuthState?
 
   init(
-    authContext: AuthContext = DefaultAuthContext(),
+    authContext: AuthContext = LAContext(),
     alertController: AlertController = DefaultAlertController()
   ) {
     self.authContext = authContext
@@ -56,19 +56,16 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin()
     #if os(iOS)
-      // iOS-specific implementation
       let messenger = registrar.messenger()
-      LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
     #elseif os(macOS)
-      // macOS-specific implementation
       let messenger = registrar.messenger
-      LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
     #endif
+
+    LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   func isDeviceSupported() throws -> Bool {
-    var error: NSError?
-    return authContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error)
+    return authContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
   }
 
   func deviceCanSupportBiometrics() throws -> Bool {
