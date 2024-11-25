@@ -23,6 +23,13 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
 
   FakeController.value(super.value);
 
+  /// The track selections in the current video.
+  Future<List<TrackSelection>?> get trackSelections async {
+    return null;
+  }
+
+  Future<void> setTrackSelection(TrackSelection trackSelection) async {}
+
   @override
   Future<void> dispose() async {
     super.dispose();

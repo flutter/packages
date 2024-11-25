@@ -30,6 +30,13 @@ dependencies:
   video_player_platform_interface: ^6.2.0
   video_player_web: ^2.1.0
 
+
+dependency_overrides:
+  video_player_android:
+    path: ../video_player_android
+  video_player_platform_interface:
+    path: ../video_player_platform_interface
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -23,7 +23,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  path_provider: ^2.0.6
+  path_provider: ^2.1.5
   test: any
 
 flutter:
