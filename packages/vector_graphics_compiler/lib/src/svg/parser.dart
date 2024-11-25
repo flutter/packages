@@ -895,7 +895,10 @@ class SvgParser {
       return false;
     }
     final ParentNode parent = _parentDrawables.last.drawable;
-    final Path path = pathFunc(this)!;
+    final Path? path = pathFunc(this);
+    if (path == null) {
+      return false;
+    }
     final PathNode drawable = PathNode(path, _currentAttributes);
     checkForIri(drawable);
 
@@ -1584,7 +1587,7 @@ class SvgParser {
       cap: _parseCap(rawStrokeCap, null),
       join: _parseJoin(rawLineJoin, null),
       miterLimit: parseDouble(rawMiterLimit),
-      width: parseDoubleWithUnits(rawStrokeWidth),
+      width: parseDoubleWithUnits(rawStrokeWidth, tryParse: true),
       dashArray: _parseDashArray(rawStrokeDashArray),
       dashOffset: _parseDashOffset(rawStrokeDashOffset),
       hasPattern: hasPattern,

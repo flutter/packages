@@ -653,6 +653,28 @@ void main() {
     expect(matrix.row0.x, -1);
     expect(matrix.row1.y, 1);
   });
+
+  testWidgets('VectorGraphicsWidget can handle errors from bytes loader',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      VectorGraphic(
+        loader: const ThrowingBytesLoader(),
+        width: 100,
+        height: 100,
+        errorBuilder:
+            (BuildContext context, Object error, StackTrace stackTrace) {
+          return const Directionality(
+            textDirection: TextDirection.ltr,
+            child: Text('Error is handled'),
+          );
+        },
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Error is handled'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
 
 class TestBundle extends Fake implements AssetBundle {
@@ -718,4 +740,13 @@ class TestBytesLoader extends BytesLoader {
 
   @override
   String toString() => 'TestBytesLoader: $source';
+}
+
+class ThrowingBytesLoader extends BytesLoader {
+  const ThrowingBytesLoader();
+
+  @override
+  Future<ByteData> loadBytes(BuildContext? context) {
+    throw UnimplementedError('Test exception');
+  }
 }

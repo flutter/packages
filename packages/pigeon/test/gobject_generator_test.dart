@@ -95,6 +95,10 @@ void main() {
           code,
           contains(
               'static void test_package_api_init(TestPackageApi* self) {'));
+      // See https://github.com/flutter/flutter/issues/153083. If a private type
+      // is ever needed, this should be updated to ensure that any type declared
+      // in the implementation file has a corresponding _IS_ call in the file.
+      expect(code, isNot(contains('G_DECLARE_FINAL_TYPE(')));
     }
   });
 

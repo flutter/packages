@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics_compiler/src/svg/numbers.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+
 import 'test_svg_strings.dart';
 
 void main() {
@@ -700,6 +701,87 @@ void main() {
           CloseCommand(),
         ],
       ),
+    ]);
+  });
+
+  test('stroke-width with invalid value', () {
+    const String svg =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="invalid"/></svg>';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(svg);
+
+    expect(instructions.paints, const <Paint>[
+      Paint(
+          stroke: Stroke(color: Color(0xff0000ff)),
+          fill: Fill(color: Color(0xffff0000))),
+    ]);
+
+    expect(instructions.paths, <Path>[
+      Path(
+        commands: const <PathCommand>[
+          MoveToCommand(100.0, 10.0),
+          LineToCommand(180.0, 10.0),
+          LineToCommand(180.0, 90.0),
+          LineToCommand(100.0, 90.0),
+          CloseCommand(),
+        ],
+      ),
+    ]);
+  });
+
+  test('stroke-width with unit value', () {
+    const SvgTheme theme = SvgTheme();
+    const double ptConversionFactor = 96 / 72;
+
+    const String svg_px =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1px"/></svg>';
+    const String svg_pt =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1pt"/></svg>';
+    const String svg_ex =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1ex"/></svg>';
+    const String svg_em =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1em"/></svg>';
+    const String svg_rem =
+        '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1rem"/></svg>';
+
+    final VectorInstructions instructionsPx = parseWithoutOptimizers(svg_px);
+    final VectorInstructions instructionsPt = parseWithoutOptimizers(svg_pt);
+    final VectorInstructions instructionsEx = parseWithoutOptimizers(svg_ex);
+    final VectorInstructions instructionsEm = parseWithoutOptimizers(svg_em);
+    final VectorInstructions instructionsRem = parseWithoutOptimizers(svg_rem);
+
+    expect(instructionsPx.paints, <Paint>[
+      const Paint(
+          stroke: Stroke(color: Color(0xff0000ff), width: 1.0),
+          fill: Fill(color: Color(0xffff0000))),
+    ]);
+
+    expect(instructionsPt.paints, <Paint>[
+      const Paint(
+          stroke:
+              Stroke(color: Color(0xff0000ff), width: 1 * ptConversionFactor),
+          fill: Fill(color: Color(0xffff0000))),
+    ]);
+
+    expect(instructionsEx.paints, <Paint>[
+      Paint(
+          stroke: Stroke(
+              color: const Color(0xff0000ff), width: 1.0 * theme.xHeight),
+          fill: const Fill(color: Color(0xffff0000))),
+    ]);
+
+    expect(instructionsEm.paints, <Paint>[
+      Paint(
+          stroke: Stroke(
+              color: const Color(0xff0000ff), width: 1.0 * theme.fontSize),
+          fill: const Fill(color: Color(0xffff0000))),
+    ]);
+
+    expect(instructionsRem.paints, <Paint>[
+      Paint(
+          stroke: Stroke(
+              color: const Color(0xff0000ff), width: 1.0 * theme.fontSize),
+          fill: const Fill(color: Color(0xffff0000))),
     ]);
   });
 
@@ -1947,6 +2029,19 @@ void main() {
             objectId: 239, paintId: 45, debugString: 'path964'),
       ],
     );
+  });
+
+  test('Parse empty tag', () {
+    const String svgStr = '''
+     <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+        <polygon
+            fill="#0a287d"
+            points=""
+            id="triangle"/>
+     </svg>
+    ''';
+
+    expect(parseWithoutOptimizers(svgStr), isA<VectorInstructions>());
   });
 }
 

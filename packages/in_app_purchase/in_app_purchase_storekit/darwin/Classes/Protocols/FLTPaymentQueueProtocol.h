@@ -14,11 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A list of SKPaymentTransactions, which each represents a single transaction
 @property(nonatomic, strong) NSArray<SKPaymentTransaction *> *transactions API_AVAILABLE(
-    ios(3.0), macos(10.7), watchos(6.2), visionos(1.0));
+    ios(3.0), macos(10.7), watchos(6.2));
 
 /// An object that provides information needed to complete transactions.
 @property(nonatomic, weak, nullable) id<SKPaymentQueueDelegate> delegate API_AVAILABLE(
-    ios(13.0), macos(10.15), watchos(6.2), visionos(1.0));
+    ios(13.0), macos(10.15), watchos(6.2));
 
 /// Remove a finished (i.e. failed or completed) transaction from the queue.  Attempting to finish a
 /// purchasing transaction will throw an exception.
@@ -40,19 +40,17 @@ NS_ASSUME_NONNULL_BEGIN
 /// Will add completed transactions for the current user back to the queue to be re-completed. This
 /// version requires an identifier to the user's account.
 - (void)restoreCompletedTransactionsWithApplicationUsername:(nullable NSString *)username
-    API_AVAILABLE(ios(7.0), macos(10.9), watchos(6.2), visionos(1.0));
+    API_AVAILABLE(ios(7.0), macos(10.9), watchos(6.2));
 
 /// Call this method to have StoreKit present a sheet enabling the user to redeem codes provided by
 /// your app. Only for iOS.
-- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0), visionos(1.0))
-    API_UNAVAILABLE(tvos, macos, watchos);
+- (void)presentCodeRedemptionSheet API_AVAILABLE(ios(14.0))API_UNAVAILABLE(tvos, macos, watchos);
 
 /// If StoreKit has called your SKPaymentQueueDelegate's "paymentQueueShouldShowPriceConsent:"
 /// method and you returned NO, you can use this method to show the price consent UI at a later time
 /// that is more appropriate for your app. If there is no pending price consent, this method will do
 /// nothing.
-- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4), visionos(1.0))
-    API_UNAVAILABLE(tvos, macos, watchos);
+- (void)showPriceConsentIfNeeded API_AVAILABLE(ios(13.4))API_UNAVAILABLE(tvos, macos, watchos);
 
 @end
 

@@ -12,6 +12,7 @@ import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 
 import 'fakes/fake_storekit_platform.dart';
 import 'sk2_test_api.g.dart';
+import 'test_api.g.dart';
 
 void main() {
   final SK2Product dummyProductWrapper = SK2Product(
@@ -26,17 +27,20 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final FakeStoreKit2Platform fakeStoreKit2Platform = FakeStoreKit2Platform();
+  final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
     TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
+    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
   });
 
   setUp(() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =
         InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
-    iapStoreKitPlatform.enableStoreKit2();
+    InAppPurchaseStoreKitPlatform.enableStoreKit2();
     fakeStoreKit2Platform.reset();
   });
 
@@ -149,6 +153,43 @@ void main() {
           () => iapStoreKitPlatform.buyConsumable(
               purchaseParam: purchaseParam, autoConsume: false),
           throwsA(isInstanceOf<AssertionError>()));
+    });
+  });
+
+  group('restore purchases', () {
+    test('should emit restored transactions on purchase stream', () async {
+      fakeStoreKit2Platform.transactionList
+          .add(fakeStoreKit2Platform.createRestoredTransaction('foo', 'RT1'));
+      fakeStoreKit2Platform.transactionList
+          .add(fakeStoreKit2Platform.createRestoredTransaction('foo', 'RT2'));
+      final Completer<List<PurchaseDetails>> completer =
+          Completer<List<PurchaseDetails>>();
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
+
+      late StreamSubscription<List<PurchaseDetails>> subscription;
+      subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        if (purchaseDetailsList.first.status == PurchaseStatus.restored) {
+          subscription.cancel();
+          completer.complete(purchaseDetailsList);
+        }
+      });
+
+      await iapStoreKitPlatform.restorePurchases();
+      final List<PurchaseDetails> details = await completer.future;
+
+      expect(details.length, 2);
+      for (int i = 0; i < fakeStoreKit2Platform.transactionList.length; i++) {
+        final SK2TransactionMessage expected =
+            fakeStoreKit2Platform.transactionList[i];
+        final PurchaseDetails actual = details[i];
+
+        expect(actual.purchaseID, expected.id.toString());
+        expect(actual.verificationData, isNotNull);
+        expect(actual.status, PurchaseStatus.restored);
+        // In storekit 2, restored purchases don't have to finished.
+        expect(actual.pendingCompletePurchase, false);
+      }
     });
   });
 }
