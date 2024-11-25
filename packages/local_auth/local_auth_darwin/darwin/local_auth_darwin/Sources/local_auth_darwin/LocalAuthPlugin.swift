@@ -241,11 +241,13 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     completion(.success(resultDetails))
   }
 
-  @objc private func applicationDidBecomeActive() {
-    guard self.lastCallState != nil else { return }
-    authenticate(
-      options: self.lastCallState!.options, strings: self.lastCallState!.strings,
-      completion: self.lastCallState!.resultHandler
-    )
+  public func applicationDidBecomeActive(_ application: UIApplication) {
+    if let lastCallState = lastCallState {
+      authenticate(
+        options: lastCallState.options,
+        strings: lastCallState.strings,
+        completion: lastCallState.resultHandler
+      )
+    }
   }
 }
