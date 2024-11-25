@@ -110,7 +110,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
             (entry as web.MutationRecord).target as web.HTMLElement;
         if (_isLoaded(target)) {
           if (_isFilled(target)) {
-            debugLog('Resizing widget based on target $target size of ${target.offsetWidth} x ${target.offsetHeight}');
+            debugLog(
+                'Resizing widget based on target $target size of ${target.offsetWidth} x ${target.offsetHeight}');
             _updateWidgetSize(Size(
               target.offsetWidth.toDouble(),
               // This is always the width of the platform view!
@@ -138,7 +139,8 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   static void _onElementAttached(web.HTMLElement element) {
     debugLog(
         '$element attached with w=${element.offsetWidth} and h=${element.offsetHeight}');
-    debugLog('${element.firstChild} size is ${(element.firstChild! as web.HTMLElement).offsetWidth}x${(element.firstChild! as web.HTMLElement).offsetHeight} ');
+    debugLog(
+        '${element.firstChild} size is ${(element.firstChild! as web.HTMLElement).offsetWidth}x${(element.firstChild! as web.HTMLElement).offsetHeight} ');
     adsbygoogle.requestAd();
   }
 
