@@ -281,20 +281,12 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       }
     }
 
-    if ( params.getReplacementMode()
-            != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
-      throw new FlutterError(
-          "IN_APP_PURCHASE_CONFLICT_PRORATION_MODE_REPLACEMENT_MODE",
-          "launchBillingFlow failed because you provided both prorationMode and replacementMode. You can only provide one of them.",
-          null);
-    }
-
     if (params.getOldProduct() == null
         && (params.getReplacementMode()
                 != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)) {
       throw new FlutterError(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
-          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
+          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a replacement mode.",
           null);
     } else if (params.getOldProduct() != null
         && !cachedProducts.containsKey(params.getOldProduct())) {

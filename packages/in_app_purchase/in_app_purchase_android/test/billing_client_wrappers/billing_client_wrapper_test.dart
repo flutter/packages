@@ -343,8 +343,8 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeProratedPrice;
+      const ReplacementMode replacementMode =
+          ReplacementMode.chargeProratedPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -352,7 +352,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: replacementMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final VerificationResult result =
@@ -364,8 +364,8 @@ void main() {
       expect(params.oldProduct, equals(dummyOldPurchase.products.first));
       expect(params.obfuscatedProfileId, equals(profileId));
       expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
-      expect(params.prorationMode,
-          const ProrationModeConverter().toJson(prorationMode));
+      expect(params.replacementMode,
+          const ReplacementModeConverter().toJson(replacementMode));
     });
 
     test(
@@ -380,8 +380,7 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeFullPrice;
+      const ReplacementMode replacementMode = ReplacementMode.chargeFullPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -389,7 +388,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: replacementMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final VerificationResult result =
@@ -401,8 +400,8 @@ void main() {
       expect(params.oldProduct, equals(dummyOldPurchase.products.first));
       expect(params.obfuscatedProfileId, equals(profileId));
       expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
-      expect(params.prorationMode,
-          const ProrationModeConverter().toJson(prorationMode));
+      expect(params.replacementMode,
+          const ReplacementModeConverter().toJson(replacementMode));
     });
 
     test('handles null accountId', () async {

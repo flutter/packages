@@ -555,8 +555,6 @@ public class MethodCallHandlerTest {
     queryForProducts(singletonList(productId));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
@@ -582,8 +580,6 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
@@ -613,8 +609,6 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
@@ -638,8 +632,6 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
@@ -667,8 +659,6 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
@@ -872,8 +862,6 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
@@ -895,8 +883,6 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
@@ -921,8 +907,6 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
         (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 

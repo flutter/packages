@@ -1027,19 +1027,6 @@ public class Messages {
       this.product = setterArg;
     }
 
-    private @NonNull Long prorationMode;
-
-    public @NonNull Long getProrationMode() {
-      return prorationMode;
-    }
-
-    public void setProrationMode(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"prorationMode\" is null.");
-      }
-      this.prorationMode = setterArg;
-    }
-
     private @NonNull Long replacementMode;
 
     public @NonNull Long getReplacementMode() {
@@ -1111,12 +1098,12 @@ public class Messages {
       if (this == o) { return true; }
       if (o == null || getClass() != o.getClass()) { return false; }
       PlatformBillingFlowParams that = (PlatformBillingFlowParams) o;
-      return product.equals(that.product) && prorationMode.equals(that.prorationMode) && replacementMode.equals(that.replacementMode) && Objects.equals(offerToken, that.offerToken) && Objects.equals(accountId, that.accountId) && Objects.equals(obfuscatedProfileId, that.obfuscatedProfileId) && Objects.equals(oldProduct, that.oldProduct) && Objects.equals(purchaseToken, that.purchaseToken);
+      return product.equals(that.product) && replacementMode.equals(that.replacementMode) && Objects.equals(offerToken, that.offerToken) && Objects.equals(accountId, that.accountId) && Objects.equals(obfuscatedProfileId, that.obfuscatedProfileId) && Objects.equals(oldProduct, that.oldProduct) && Objects.equals(purchaseToken, that.purchaseToken);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(product, prorationMode, replacementMode, offerToken, accountId, obfuscatedProfileId, oldProduct, purchaseToken);
+      return Objects.hash(product, replacementMode, offerToken, accountId, obfuscatedProfileId, oldProduct, purchaseToken);
     }
 
     public static final class Builder {
@@ -1126,14 +1113,6 @@ public class Messages {
       @CanIgnoreReturnValue
       public @NonNull Builder setProduct(@NonNull String setterArg) {
         this.product = setterArg;
-        return this;
-      }
-
-      private @Nullable Long prorationMode;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setProrationMode(@NonNull Long setterArg) {
-        this.prorationMode = setterArg;
         return this;
       }
 
@@ -1188,7 +1167,6 @@ public class Messages {
       public @NonNull PlatformBillingFlowParams build() {
         PlatformBillingFlowParams pigeonReturn = new PlatformBillingFlowParams();
         pigeonReturn.setProduct(product);
-        pigeonReturn.setProrationMode(prorationMode);
         pigeonReturn.setReplacementMode(replacementMode);
         pigeonReturn.setOfferToken(offerToken);
         pigeonReturn.setAccountId(accountId);
@@ -1201,9 +1179,8 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(8);
+      ArrayList<Object> toListResult = new ArrayList<>(7);
       toListResult.add(product);
-      toListResult.add(prorationMode);
       toListResult.add(replacementMode);
       toListResult.add(offerToken);
       toListResult.add(accountId);
@@ -1217,19 +1194,17 @@ public class Messages {
       PlatformBillingFlowParams pigeonResult = new PlatformBillingFlowParams();
       Object product = pigeonVar_list.get(0);
       pigeonResult.setProduct((String) product);
-      Object prorationMode = pigeonVar_list.get(1);
-      pigeonResult.setProrationMode((Long) prorationMode);
-      Object replacementMode = pigeonVar_list.get(2);
+      Object replacementMode = pigeonVar_list.get(1);
       pigeonResult.setReplacementMode((Long) replacementMode);
-      Object offerToken = pigeonVar_list.get(3);
+      Object offerToken = pigeonVar_list.get(2);
       pigeonResult.setOfferToken((String) offerToken);
-      Object accountId = pigeonVar_list.get(4);
+      Object accountId = pigeonVar_list.get(3);
       pigeonResult.setAccountId((String) accountId);
-      Object obfuscatedProfileId = pigeonVar_list.get(5);
+      Object obfuscatedProfileId = pigeonVar_list.get(4);
       pigeonResult.setObfuscatedProfileId((String) obfuscatedProfileId);
-      Object oldProduct = pigeonVar_list.get(6);
+      Object oldProduct = pigeonVar_list.get(5);
       pigeonResult.setOldProduct((String) oldProduct);
-      Object purchaseToken = pigeonVar_list.get(7);
+      Object purchaseToken = pigeonVar_list.get(6);
       pigeonResult.setPurchaseToken((String) purchaseToken);
       return pigeonResult;
     }

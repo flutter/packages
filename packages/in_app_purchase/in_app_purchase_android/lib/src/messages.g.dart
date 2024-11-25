@@ -314,7 +314,6 @@ class PlatformBillingConfigResponse {
 class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
     required this.product,
-    required this.prorationMode,
     required this.replacementMode,
     this.offerToken,
     this.accountId,
@@ -324,8 +323,6 @@ class PlatformBillingFlowParams {
   });
 
   String product;
-
-  int prorationMode;
 
   int replacementMode;
 
@@ -342,7 +339,6 @@ class PlatformBillingFlowParams {
   Object encode() {
     return <Object?>[
       product,
-      prorationMode,
       replacementMode,
       offerToken,
       accountId,
@@ -356,13 +352,12 @@ class PlatformBillingFlowParams {
     result as List<Object?>;
     return PlatformBillingFlowParams(
       product: result[0]! as String,
-      prorationMode: result[1]! as int,
-      replacementMode: result[2]! as int,
-      offerToken: result[3] as String?,
-      accountId: result[4] as String?,
-      obfuscatedProfileId: result[5] as String?,
-      oldProduct: result[6] as String?,
-      purchaseToken: result[7] as String?,
+      replacementMode: result[1]! as int,
+      offerToken: result[2] as String?,
+      accountId: result[3] as String?,
+      obfuscatedProfileId: result[4] as String?,
+      oldProduct: result[5] as String?,
+      purchaseToken: result[6] as String?,
     );
   }
 }

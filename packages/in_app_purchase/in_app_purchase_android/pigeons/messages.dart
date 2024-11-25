@@ -110,7 +110,6 @@ class PlatformBillingConfigResponse {
 class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
     required this.product,
-    required this.prorationMode,
     required this.replacementMode,
     required this.offerToken,
     required this.accountId,
@@ -123,7 +122,6 @@ class PlatformBillingFlowParams {
   // Ideally this would be replaced with an enum on the dart side that maps
   // to constants on the Java side, but it's deprecated anyway so that will be
   // resolved during the update to the new API.
-  final int prorationMode;
   final int replacementMode;
   final String? offerToken;
   final String? accountId;

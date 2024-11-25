@@ -424,8 +424,8 @@ class _MyAppState extends State<_MyApp> {
                               changeSubscriptionParam: oldSubscription != null
                                   ? ChangeSubscriptionParam(
                                       oldPurchaseDetails: oldSubscription,
-                                      prorationMode: ProrationMode
-                                          .immediateWithTimeProration)
+                                      replacementMode:
+                                          ReplacementMode.withTimeProration)
                                   : null);
                       if (productDetails.id == _kConsumableId) {
                         _inAppPurchasePlatform.buyConsumable(
