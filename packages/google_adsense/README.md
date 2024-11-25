@@ -46,6 +46,20 @@ To [modify your responsive ad code](https://support.google.com/adsense/answer/91
 1. Make sure your modifications are not breaking AdSense policies (e.g. avoid driving [unnatural attention to ads](https://support.google.com/adsense/answer/1346295?sjid=11551379421978541034-EU#Unnatural_attention_to_ads))
 2. Use Flutter instruments for [adaptive and responsive design](https://docs.flutter.dev/ui/adaptive-responsive)
 
+For example, when not using responsive `AdFormat` it is recommended to wrap adUnit widget in the `Container` with width and/or height constraints.
+Note some [policies and restrictions](https://support.google.com/adsense/answer/9185043?hl=en#:~:text=Policies%20and%20restrictions) related to ad unit sizing:
+
+<?code-excerpt "example/lib/main.dart (constraints)"?>
+```dart
+Container(
+  constraints: const BoxConstraints(maxHeight: 100),
+  padding: const EdgeInsets.only(bottom: 10),
+  child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+    adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
+    // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
+  )),
+),
+```
 ## Testing and common errors
 
 ### Failed to load resource: the server responded with a status of 400

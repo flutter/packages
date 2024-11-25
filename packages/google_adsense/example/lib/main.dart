@@ -75,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const Text(
                 'Responsive Ad Constrained by height of 100px:',
               ),
+              // #docregion constraints
               Container(
                 constraints: const BoxConstraints(maxHeight: 100),
                 padding: const EdgeInsets.only(bottom: 10),
@@ -83,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
                 )),
               ),
+              // #enddocregion constraints
               const Text(
                 'Fixed 125x125 size Ad:',
               ),
