@@ -105,9 +105,11 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   }
 
   func authenticate(
-    options: AuthOptions, strings: AuthStrings,
+    options: AuthOptions,
+    strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
+      authContext = LAContext()
     self.authContext.localizedFallbackTitle = strings.localizedFallbackTitle
     self.lastCallState = nil
 
@@ -119,13 +121,28 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       authContext.evaluatePolicy(policy, localizedReason: strings.reason) { success, error in
         DispatchQueue.main.async {
           self.handleAuthReply(
-            success: success, error: error as NSError?, options: options, strings: strings,
-            completion: completion)
+            success: success,
+            error: error as NSError?,
+            options: options,
+            strings: strings,
+            completion: completion
+          )
         }
       }
     } else {
-      let error = authError ?? NSError(domain: "", code: 0, userInfo: nil)
-      handleError(authError: error, options: options, strings: strings, completion: completion)
+      let error =
+        authError
+        ?? NSError(
+          domain: "LocalAuthError", code: -1,
+          userInfo: [
+            NSLocalizedDescriptionKey: "Failed to initialize authentication context."
+          ])
+      handleError(
+        authError: error,
+        options: options,
+        strings: strings,
+        completion: completion
+      )
     }
   }
 
