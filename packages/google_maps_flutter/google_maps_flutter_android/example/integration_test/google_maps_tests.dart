@@ -1551,7 +1551,7 @@ void googleMapsTests() {
       final StreamQueue<void> cameraFiredQueue =
           StreamQueue<void>(cameraFiredStream.stream);
 
-      const int shortCameraAnimationDurationMS = 10;
+      const int shortCameraAnimationDurationMS = 200;
       const int longCameraAnimationDurationMS = 1000;
 
       /// Calculate the midpoint duration of the animation test, which will
