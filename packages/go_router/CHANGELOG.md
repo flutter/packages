@@ -1,3 +1,7 @@
+## 14.6.2
+
+- Fixes return type of current state getter on `GoRouter` and `GoRouterDelegate` to be non-nullable.
+
 ## 14.6.1
 
 - Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
