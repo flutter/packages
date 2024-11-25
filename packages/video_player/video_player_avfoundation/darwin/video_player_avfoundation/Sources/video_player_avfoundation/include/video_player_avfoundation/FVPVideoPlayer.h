@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// notify the Flutter engine about new video frames.
 @interface FVPVideoPlayer : NSObject
 /// The Flutter event channel used to communicate with the Flutter engine.
-@property(nonatomic) FlutterEventChannel *eventChannel;
+@property(nonatomic, nonnull) FlutterEventChannel *eventChannel;
 /// Indicates whether the video player has been disposed.
 @property(nonatomic, readonly) BOOL disposed;
 /// Indicates whether the video player is set to loop.
@@ -29,11 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// The current playback position of the video, in milliseconds.
 @property(readonly, nonatomic) int64_t position;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// Initializes a new instance of FVPVideoPlayer with the given URL, frame updater, display link,
 /// HTTP headers, AV factory, and registrar.
 - (instancetype)initWithURL:(NSURL *)url
-               frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
@@ -41,16 +41,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
 /// link, AV factory, and registrar.
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                      frameUpdater:(FVPFrameUpdater *)frameUpdater
-                       displayLink:(FVPDisplayLink *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory
                          registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 /// Initializes a new instance of FVPVideoPlayer with the given asset, frame updater, display link,
 /// AV factory, and registrar.
 - (instancetype)initWithAsset:(NSString *)asset
-                 frameUpdater:(FVPFrameUpdater *)frameUpdater
-                  displayLink:(FVPDisplayLink *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
