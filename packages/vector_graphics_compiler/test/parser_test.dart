@@ -758,7 +758,8 @@ void main() {
 
     expect(instructionsPt.paints, <Paint>[
       const Paint(
-          stroke: Stroke(color: Color(0xff0000ff), width: 1 * ptConversionFactor),
+          stroke:
+              Stroke(color: Color(0xff0000ff), width: 1 * ptConversionFactor),
           fill: Fill(color: Color(0xffff0000))),
     ]);
 
