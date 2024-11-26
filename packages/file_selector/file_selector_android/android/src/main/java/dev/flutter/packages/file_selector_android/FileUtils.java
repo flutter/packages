@@ -141,8 +141,7 @@ public class FileUtils {
         copy(inputStream, outputStream);
         return file.getPath();
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       // If closing the output stream fails, we cannot be sure that the
       // target file was written in full. Flushing the stream merely moves
       // the bytes into the OS, not necessarily to the file.
