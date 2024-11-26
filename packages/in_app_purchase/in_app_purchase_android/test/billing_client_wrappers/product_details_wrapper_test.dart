@@ -42,6 +42,10 @@ const ProductDetailsWrapper dummySubscriptionProductDetails =
           recurrenceMode: RecurrenceMode.finiteRecurring,
         ),
       ],
+      installmentPlanDetails: InstallmentPlanDetailsWrapper(
+        commitmentPaymentsCount: 1,
+        subsequentCommitmentPaymentsCount: 2,
+      ),
     ),
   ],
 );
@@ -191,6 +195,10 @@ void main() {
                 recurrenceMode: RecurrenceMode.finiteRecurring,
               ),
             ],
+            installmentPlanDetails: InstallmentPlanDetailsWrapper(
+              commitmentPaymentsCount: 1,
+              subsequentCommitmentPaymentsCount: 2,
+            ),
           ),
         ],
       );
@@ -221,6 +229,10 @@ void main() {
                 recurrenceMode: RecurrenceMode.finiteRecurring,
               ),
             ],
+            installmentPlanDetails: InstallmentPlanDetailsWrapper(
+              commitmentPaymentsCount: 1,
+              subsequentCommitmentPaymentsCount: 2,
+            ),
           ),
         ],
       );
@@ -291,6 +303,8 @@ Map<String, dynamic> buildSubscriptionMap(
     'offerTags': original.offerTags,
     'offerIdToken': original.offerIdToken,
     'pricingPhases': buildPricingPhaseMapList(original.pricingPhases),
+    'installmentPlanDetails':
+        buildInstallmentPlanMap(original.installmentPlanDetails),
   };
 }
 
@@ -311,5 +325,18 @@ Map<String, dynamic> buildPricingPhaseMap(PricingPhaseWrapper original) {
     'billingPeriod': original.billingPeriod,
     'recurrenceMode':
         const RecurrenceModeConverter().toJson(original.recurrenceMode),
+  };
+}
+
+Map<String, dynamic> buildInstallmentPlanMap(
+    InstallmentPlanDetailsWrapper? installmentPlanDetails) {
+  if (installmentPlanDetails == null) {
+    return <String, dynamic>{};
+  }
+
+  return <String, dynamic>{
+    'commitmentPaymentsCount': installmentPlanDetails.commitmentPaymentsCount,
+    'subsequentCommitmentPaymentsCount':
+        installmentPlanDetails.subsequentCommitmentPaymentsCount,
   };
 }

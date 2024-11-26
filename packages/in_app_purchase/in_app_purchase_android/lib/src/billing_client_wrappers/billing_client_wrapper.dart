@@ -250,6 +250,7 @@ class BillingClient {
   ///
   /// This wraps
   /// [`BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchaseHistoryAsync(com.android.billingclient.api.QueryPurchaseHistoryParams,%20com.android.billingclient.api.PurchaseHistoryResponseListener)).
+  @Deprecated('Use queryPurchases')
   Future<PurchasesHistoryResult> queryPurchaseHistory(
       ProductType productType) async {
     return purchaseHistoryResultFromPlatform(

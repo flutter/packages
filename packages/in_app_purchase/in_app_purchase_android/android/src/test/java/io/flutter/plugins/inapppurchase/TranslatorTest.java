@@ -242,6 +242,7 @@ public class TranslatorTest {
     assertEquals(expected.getOfferTags(), serialized.getOfferTags());
     assertEquals(expected.getOfferToken(), serialized.getOfferToken());
     assertSerialized(expected.getPricingPhases(), serialized.getPricingPhases());
+    assertSerialized(expected.getInstallmentPlanDetails(), serialized.getInstallmentPlanDetails());
   }
 
   private void assertSerialized(
@@ -285,6 +286,16 @@ public class TranslatorTest {
     assertEquals(
         expected.getAccountIdentifiers().getObfuscatedProfileId(),
         Objects.requireNonNull(serialized.getAccountIdentifiers()).getObfuscatedProfileId());
+  }
+
+  private void assertSerialized(ProductDetails.InstallmentPlanDetails expected,
+                                Messages.PlatformInstallmentPlanDetails serialized) {
+    assertEquals(
+            expected.getInstallmentPlanCommitmentPaymentsCount(),
+            serialized.getCommitmentPaymentsCount().intValue());
+    assertEquals(
+            expected.getSubsequentInstallmentPlanCommitmentPaymentsCount(),
+            serialized.getSubsequentCommitmentPaymentsCount().intValue());
   }
 
   private String productTypeFromPlatform(Messages.PlatformProductType type) {

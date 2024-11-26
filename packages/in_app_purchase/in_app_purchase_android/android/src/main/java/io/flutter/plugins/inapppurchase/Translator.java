@@ -146,7 +146,8 @@ import java.util.Locale;
         .setOfferTags(subscriptionOfferDetails.getOfferTags())
         .setOfferToken(subscriptionOfferDetails.getOfferToken())
         .setPricingPhases(fromPricingPhases(subscriptionOfferDetails.getPricingPhases()))
-        .setInstallmentPlanDetails(fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
+        .setInstallmentPlanDetails(
+            fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
         .build();
   }
 
@@ -178,8 +179,10 @@ import java.util.Locale;
     }
 
     return new Messages.PlatformInstallmentPlanDetails.Builder()
-        .setCommitmentPaymentsCount((long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount())
-        .setSubsequentCommitmentPaymentsCount((long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount())
+        .setCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount())
+        .setSubsequentCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount())
         .build();
   }
 
