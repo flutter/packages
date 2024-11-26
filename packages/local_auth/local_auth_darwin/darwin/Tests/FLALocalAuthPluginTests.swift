@@ -25,7 +25,7 @@ class MockAuthContext: AuthContext {
   var expectBiometrics = false
 
   /// The error to return from the next call to `canEvaluatePolicy`.
-  var canEvaluatePolicyReturnValue: Bool = true
+  var canEvaluatePolicy: Bool = true
 
   /// The error to return from the next call to `evaluatePolicy`.
   var canEvaluateError: NSError?
@@ -54,7 +54,7 @@ class MockAuthContext: AuthContext {
       return false
     }
 
-    return canEvaluatePolicyReturnValue
+    return canEvaluatePolicy
   }
 
   func evaluatePolicy(
@@ -101,7 +101,7 @@ class FLALocalAuthPluginTests: XCTestCase {
     let strings = createAuthStrings()
     mockAuthContext.expectBiometrics = true
     mockAuthContext.evaluatePolicyResult = (true, nil)
-    mockAuthContext.canEvaluatePolicyReturnValue = true
+    mockAuthContext.canEvaluatePolicy = true
 
     let expectation = expectation(description: "Result is called")
 
