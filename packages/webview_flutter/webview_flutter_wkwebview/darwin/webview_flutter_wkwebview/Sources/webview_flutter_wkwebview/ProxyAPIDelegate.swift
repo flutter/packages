@@ -86,7 +86,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKScriptMessageHandler(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKScriptMessageHandler {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiWKScriptMessageHandler(pigeonRegistrar: registrar, delegate: ScriptMessageHandlerProxyAPIDelegate())
   }
   
   func pigeonApiWKNavigationDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKNavigationDelegate {

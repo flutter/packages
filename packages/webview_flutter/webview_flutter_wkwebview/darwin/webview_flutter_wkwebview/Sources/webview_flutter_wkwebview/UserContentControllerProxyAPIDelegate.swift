@@ -4,8 +4,6 @@
 
 import Foundation
 import WebKit
-import WebKit
-import WebKit
 
 /// ProxyApi implementation for `WKUserContentController`.
 ///

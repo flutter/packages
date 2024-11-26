@@ -5,7 +5,6 @@
 import Foundation
 import WebKit
 
-
 /// ProxyApi implementation for `WKPreferences`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
