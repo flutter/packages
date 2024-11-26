@@ -111,51 +111,48 @@ public class FileUtils {
    * or if a security exception is encountered when opening the input stream to start the copying.
    */
   @Nullable
-  public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) throws IOException {
-    if (!uri.getPath().startsWith(context.getFilesDir().getCanonicalPath())) {
-      throw new IllegalArgumentException();
-    }
+  public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) {
+    try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
+      String uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes()).toString();
+      File targetDirectory = new File(context.getCacheDir(), uuid);
+      targetDirectory.mkdir();
+      targetDirectory.deleteOnExit();
+      String fileName = getFileName(context, uri);
+      String extension = getFileExtension(context, uri);
 
-    String uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes()).toString();
-    File targetDirectory = new File(context.getCacheDir(), uuid);
-    targetDirectory.mkdir();
-    targetDirectory.deleteOnExit();
-    String fileName = getFileName(context, uri);
-    String extension = getFileExtension(context, uri);
-
-    if (fileName == null) {
-      if (extension == null) {
-        throw new IllegalArgumentException("No name nor extension found for file.");
-      } else {
-        fileName = "file_selector" + extension;
+      if (fileName == null) {
+        if (extension == null) {
+          throw new IllegalArgumentException("No name nor extension found for file.");
+        } else {
+          fileName = "file_selector" + extension;
+        }
+      } else if (extension != null) {
+        fileName = getBaseName(fileName) + extension;
       }
-    } else if (extension != null) {
-      fileName = getBaseName(fileName) + extension;
-    }
 
-    String filePath = new File(targetDirectory, fileName + extension).getPath();
-    File file = saferOpenFile(targetDirectory.getCanonicalPath(), filePath);
+      String filePath = new File(targetDirectory, fileName + extension).getPath();
+      File inputFile = saferOpenFile(targetDirectory.getCanonicalPath(), filePath);
 
 
-    try (
-            InputStream inputStream = context.getContentResolver().openInputStream(Uri.fromFile(file));
-            OutputStream outputStream = new FileOutputStream(file)
-    ) {
-      assert inputStream != null;
-      copy(inputStream, outputStream);
-      return file.getPath();
-    } catch (IOException e) {
-      // If closing the output stream fails, we cannot be sure that the
-      // target file was written in full. Flushing the stream merely moves
-      // the bytes into the OS, not necessarily to the file.
-      return null;
-    } catch (SecurityException e) {
-      // Calling `ContentResolver#openInputStream()` has been reported to throw a
-      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
-      // return `null`.
-      //
-      // See https://github.com/flutter/flutter/issues/100025 for more details.
-      return null;
+      try (
+              OutputStream outputStream = new FileOutputStream(file)
+      ) {
+        assert inputStream != null;
+        copy(inputStream, outputStream);
+        return file.getPath();
+      } catch (IOException e) {
+        // If closing the output stream fails, we cannot be sure that the
+        // target file was written in full. Flushing the stream merely moves
+        // the bytes into the OS, not necessarily to the file.
+        return null;
+      } catch (SecurityException e) {
+        // Calling `ContentResolver#openInputStream()` has been reported to throw a
+        // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
+        // return `null`.
+        //
+        // See https://github.com/flutter/flutter/issues/100025 for more details.
+        return null;
+      }
     }
   }
 
