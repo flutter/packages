@@ -8,10 +8,10 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class CookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
+class HTTPCookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]) throws -> HTTPCookie {
     let keyValueTuples = try! properties.map<[(HTTPCookiePropertyKey, Any)], PigeonError> { key, value in
-      var newKey: HTTPCookiePropertyKey
+      let newKey: HTTPCookiePropertyKey
         switch key {
         case .comment:
           newKey = .comment
@@ -62,7 +62,7 @@ class CookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
     }
     
     let keyValueTuples = pigeonInstance.properties!.map { key, value in
-      var newKey: HttpCookiePropertyKey
+      let newKey: HttpCookiePropertyKey
       if #available(iOS 13.0, macOS 10.15, *), key == .sameSitePolicy {
         newKey = .sameSitePolicy
       } else {

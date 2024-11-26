@@ -830,6 +830,8 @@ enum UrlSessionAuthChallengeDisposition {
   /// Reject this challenge, and call the authentication delegate method again
   /// with the next authentication protection space.
   rejectProtectionSpace,
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// Specifies how long a credential will be kept.

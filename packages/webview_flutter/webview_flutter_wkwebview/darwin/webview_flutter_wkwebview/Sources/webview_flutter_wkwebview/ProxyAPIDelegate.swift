@@ -50,19 +50,19 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKSecurityOrigin(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKSecurityOrigin {
-    PigeonApiWKSecurityOrigin(pigeonRegistrar: registrar, delegate: SecurityOriginProxyAPIDelegate())
+    return PigeonApiWKSecurityOrigin(pigeonRegistrar: registrar, delegate: SecurityOriginProxyAPIDelegate())
   }
   
   func pigeonApiHTTPCookie(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiHTTPCookie {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiHTTPCookie(pigeonRegistrar: registrar, delegate: HTTPCookieProxyAPIDelegate())
   }
   
   func pigeonApiAuthenticationChallengeResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiAuthenticationChallengeResponse {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiAuthenticationChallengeResponse(pigeonRegistrar: registrar, delegate: AuthenticationChallengeResponseProxyAPIDelegate())
   }
   
   func pigeonApiWKWebsiteDataStore(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebsiteDataStore {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiWKWebsiteDataStore(pigeonRegistrar: registrar, delegate: WebsiteDataStoreProxyAPIDelegate())
   }
   
   func pigeonApiUIView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIView {
