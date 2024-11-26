@@ -98,6 +98,11 @@ public class FileUtils {
    * Copies the file from the given content URI to a temporary directory, retaining the original
    * file name if possible.
    *
+   * <p>If the filename contains path indirection or separators (.. or /), the end file name will be
+   * the segment after the final separator, with indirection replaced by underscores.
+   * E.g. "example/../..file.png" -> "_file.png".
+   * See: <a href="https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename">Improperly trusting ContentProvider-provided filename</a>.
+   *
    * <p>Each file is placed in its own directory to avoid conflicts according to the following
    * scheme: {cacheDir}/{randomUuid}/{fileName}
    *
@@ -213,6 +218,7 @@ public class FileUtils {
     return fileName.substring(0, lastDotIndex);
   }
 
+  // From https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#sanitize-provided-filenames.
   protected static @Nullable String sanitizeFilename(@Nullable String displayName) {
     if (displayName == null) {
       return null;
@@ -227,6 +233,7 @@ public class FileUtils {
     return fileName;
   }
 
+  // From https://developer.android.com/privacy-and-security/risks/path-traversal#path-traversal-mitigations.
   protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir) throws IllegalArgumentException, IOException {
     File f = new File(path);
     String canonicalPath = f.getCanonicalPath();
