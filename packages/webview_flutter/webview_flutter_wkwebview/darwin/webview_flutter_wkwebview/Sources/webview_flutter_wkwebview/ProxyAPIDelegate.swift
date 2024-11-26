@@ -34,11 +34,11 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKFrameInfo(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKFrameInfo {
-    throw PigeonError(code: "", message: "", details: "")
+    PigeonApiWKFrameInfo(pigeonRegistrar: registrar, delegate: FrameInfoProxyAPIDelegate())
   }
   
   func pigeonApiNSError(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSError {
-    throw PigeonError(code: "", message: "", details: "")
+    PigeonApiNSError(pigeonRegistrar: registrar, delegate: ErrorProxyAPIDelegate())
   }
   
   func pigeonApiWKScriptMessage(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKScriptMessage {
