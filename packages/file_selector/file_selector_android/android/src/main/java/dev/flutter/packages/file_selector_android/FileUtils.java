@@ -40,6 +40,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import io.flutter.Log;
+
 public class FileUtils {
 
   /** URI authority that represents access to external storage providers. */
@@ -130,16 +132,14 @@ public class FileUtils {
         fileName = getBaseName(fileName) + extension;
       }
 
-      String filePath = new File(targetDirectory, fileName + extension).getPath();
-      File inputFile = saferOpenFile(targetDirectory.getCanonicalPath(), filePath);
+      String filePath = new File(targetDirectory, fileName).getPath();
+      File outputFile = saferOpenFile(filePath, targetDirectory.getCanonicalPath());
 
 
-      try (
-              OutputStream outputStream = new FileOutputStream(file)
-      ) {
+      try (OutputStream outputStream = new FileOutputStream(outputFile)) {
         assert inputStream != null;
         copy(inputStream, outputStream);
-        return file.getPath();
+        return outputFile.getPath();
       }
     } catch (IOException e) {
       // If closing the output stream fails, we cannot be sure that the
