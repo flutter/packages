@@ -12,7 +12,14 @@ import WebKit
 /// or handle method calls on the associated native class or an instance of that class.
 class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isMainFrameOnly: Bool) throws -> WKUserScript {
-    return WKUserScript()
+    var nativeInjectionTime: WKUserScriptInjectionTime
+    switch injectionTime {
+    case .atDocumentStart:
+      nativeInjectionTime = .atDocumentStart
+    case .atDocumentEnd:
+      nativeInjectionTime = .atDocumentEnd
+    }
+    return WKUserScript(source: source, injectionTime: nativeInjectionTime, forMainFrameOnly: isMainFrameOnly)
   }
 
   func source(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> String {

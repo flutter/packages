@@ -190,7 +190,7 @@ class WebKitProxy {
 
   /// Constructs [HTTPCookie].
   final HTTPCookie Function(
-      {required Map<HttpCookiePropertyKey, Object?> properties}) newHTTPCookie;
+      {required Map<HttpCookiePropertyKey, Object> properties}) newHTTPCookie;
 
   /// Constructs [AuthenticationChallengeResponse].
   final AuthenticationChallengeResponse Function({

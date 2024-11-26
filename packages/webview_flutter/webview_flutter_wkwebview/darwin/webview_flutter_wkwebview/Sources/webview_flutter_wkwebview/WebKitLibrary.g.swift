@@ -1131,6 +1131,8 @@ enum HttpCookiePropertyKey: Int {
   case value = 12
   /// A String object that specifies the version of the cookie.
   case version = 13
+  /// The value is not recognized by the wrapper.
+  case unknown = 14
 }
 
 /// The type of action that triggered the navigation.
@@ -2924,9 +2926,9 @@ class SecurityOriginProxyApiTests: XCTestCase {
 */
 
 protocol PigeonApiDelegateHTTPCookie {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any?]) throws -> HTTPCookie
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]) throws -> HTTPCookie
   /// The cookie’s properties.
-  func properties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any?]
+  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any]?
 }
 
 protocol PigeonApiProtocolHTTPCookie {
@@ -2955,7 +2957,7 @@ final class PigeonApiHTTPCookie: PigeonApiProtocolHTTPCookie  {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
-        let propertiesArg = args[1] as? [HttpCookiePropertyKey: Any?]
+        let propertiesArg = args[1] as? [HttpCookiePropertyKey: Any]
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
 try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, properties: propertiesArg!),
@@ -2967,6 +2969,21 @@ withIdentifier: pigeonIdentifierArg)
       }
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
+    }
+    let getPropertiesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.getProperties", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getPropertiesChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! HTTPCookie
+        do {
+          let result = try api.pigeonDelegate.getProperties(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getPropertiesChannel.setMessageHandler(nil)
     }
   }
 
@@ -2985,12 +3002,11 @@ withIdentifier: pigeonIdentifierArg)
       return
     }
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-    let propertiesArg = try! pigeonDelegate.properties(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, propertiesArg] as [Any?]) { response in
+    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -3021,12 +3037,12 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class CookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any?]) throws -> HTTPCookie {
-    return HTTPCookie()
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]) throws -> HTTPCookie {
+    return HTTPCookie(,properties: properties)
   }
 
-  func properties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any?] {
-    return pigeonInstance.properties
+  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any]? {
+    return pigeonInstance.getProperties()
   }
 
 }
@@ -3048,20 +3064,29 @@ class CookieProxyApiTests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiHTTPCookie(registrar)
 
-    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api properties: [.comment: -1])
+    let instance = try? api.pigeonDefaultConstructor(pigeonApi: api, properties: [.comment: -1])
     XCTAssertNotNil(instance)
   }
 
-  func testProperties() {
+  func testGetProperties() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiHTTPCookie(registrar)
 
     let instance = TestCookie()
-    let value = try? api.pigeonDelegate.properties(pigeonApi: api, pigeonInstance: instance)
+    let value = api.pigeonDelegate.getProperties(pigeonApi: api, pigeonInstance: instance )
 
-    XCTAssertEqual(value, instance.properties)
+    XCTAssertTrue(instance.getPropertiesCalled)
+    XCTAssertEqual(value, instance.getProperties())
   }
 
+}
+class TestCookie: HTTPCookie {
+  var getPropertiesCalled = false
+
+
+  override func getProperties() {
+    getPropertiesCalled = true
+  }
 }
 */
 

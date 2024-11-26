@@ -9,11 +9,98 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class CookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any?]) throws -> HTTPCookie {
-    return HTTPCookie()
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]) throws -> HTTPCookie {
+    let keyValueTuples = try! properties.map<[(HTTPCookiePropertyKey, Any)], PigeonError> { key, value in
+      var newKey: HTTPCookiePropertyKey
+        switch key {
+        case .comment:
+          newKey = .comment
+        case .commentUrl:
+          newKey = .commentURL
+        case .discard:
+          newKey = .discard
+        case .domain:
+          newKey = .domain
+        case .expires:
+          newKey = .expires
+        case .maximumAge:
+          newKey = .maximumAge
+        case .name:
+          newKey = .name
+        case .originUrl:
+          newKey = .originURL
+        case .path:
+          newKey = .path
+        case .port:
+          newKey = .port
+        case .secure:
+          newKey = .secure
+        case .value:
+          newKey = .value
+        case .version:
+          newKey = .version
+        case .sameSitePolicy:
+          if #available(iOS 13.0, macOS 10.15, *) {
+            newKey = .sameSitePolicy
+          } else {
+            throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnsupportedVersionError(method: "HTTPCookiePropertyKey.sameSitePolicy", versionRequirements: "iOS 13.0, macOS 10.15")
+          }
+        case .unknown:
+        throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnknownEnumError(
+          withEnum: key)
+        }
+      
+      return (newKey, value)
+    }
+    
+    return HTTPCookie(properties: Dictionary(uniqueKeysWithValues: keyValueTuples))!
   }
 
-  func properties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any?] {
-    return pigeonInstance.properties
+  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any]? {
+    if pigeonInstance.properties == nil {
+      return nil
+    }
+    
+    let keyValueTuples = pigeonInstance.properties!.map { key, value in
+      var newKey: HttpCookiePropertyKey
+      if #available(iOS 13.0, macOS 10.15, *), key == .sameSitePolicy {
+        newKey = .sameSitePolicy
+      } else {
+        switch key {
+        case .comment:
+          newKey = .comment
+        case .commentURL:
+          newKey = .commentUrl
+        case .discard:
+          newKey = .discard
+        case .domain:
+          newKey = .domain
+        case .expires:
+          newKey = .expires
+        case .maximumAge:
+          newKey = .maximumAge
+        case .name:
+          newKey = .name
+        case .originURL:
+          newKey = .originUrl
+        case .path:
+          newKey = .path
+        case .port:
+          newKey = .port
+        case .secure:
+          newKey = .secure
+        case .value:
+          newKey = .value
+        case .version:
+          newKey = .version
+        default:
+          newKey = .unknown
+        }
+      }
+      
+      return (newKey, value)
+    }
+    
+    return Dictionary(uniqueKeysWithValues: keyValueTuples)
   }
 }

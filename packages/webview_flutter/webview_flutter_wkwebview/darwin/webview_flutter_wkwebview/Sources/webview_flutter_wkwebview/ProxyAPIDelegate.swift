@@ -13,6 +13,10 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
       details: nil)
   }
   
+  func createUnsupportedVersionError(method: String, versionRequirements: String) -> PigeonError {
+    return PigeonError(code: "UnsupportedVersionError", message: "`\(method)` requires \(versionRequirements).", details: nil)
+  }
+  
   func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest {
     return PigeonApiURLRequest(pigeonRegistrar: registrar, delegate: URLRequestProxyAPIDelegate())
   }

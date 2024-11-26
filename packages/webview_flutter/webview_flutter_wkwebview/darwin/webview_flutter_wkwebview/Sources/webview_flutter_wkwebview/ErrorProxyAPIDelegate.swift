@@ -10,7 +10,7 @@ import Foundation
 /// or handle method calls on the associated native class or an instance of that class.
 class ErrorProxyAPIDelegate : PigeonApiDelegateNSError {
   func code(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> Int64 {
-    return pigeonInstance.code
+    return Int64(pigeonInstance.code)
   }
 
   func domain(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> String {

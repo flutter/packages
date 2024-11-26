@@ -234,6 +234,9 @@ enum HttpCookiePropertyKey {
 
   /// A String object that specifies the version of the cookie.
   version,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The type of action that triggered the navigation.
@@ -491,10 +494,10 @@ abstract class WKSecurityOrigin extends NSObject {
 /// See https://developer.apple.com/documentation/foundation/httpcookie.
 @ProxyApi()
 abstract class HTTPCookie extends NSObject {
-  HTTPCookie();
+  HTTPCookie(Map<HttpCookiePropertyKey, Object> properties);
 
   /// The cookie’s properties.
-  late Map<HttpCookiePropertyKey, Object?> properties;
+  Map<HttpCookiePropertyKey, Object>? getProperties();
 }
 
 /// Response object used to return multiple values to an auth challenge received

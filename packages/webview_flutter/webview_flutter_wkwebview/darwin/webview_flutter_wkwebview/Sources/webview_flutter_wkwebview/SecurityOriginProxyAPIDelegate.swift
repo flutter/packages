@@ -15,10 +15,10 @@ class SecurityOriginProxyAPIDelegate : PigeonApiDelegateWKSecurityOrigin {
   }
 
   func port(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> Int64 {
-    return pigeonInstance.port
+    return Int64(pigeonInstance.port)
   }
 
   func securityProtocol(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> String {
-    return pigeonInstance.securityProtocol
+    return pigeonInstance.protocol
   }
 }

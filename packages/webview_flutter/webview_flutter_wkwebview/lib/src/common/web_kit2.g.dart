@@ -455,7 +455,7 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [HTTPCookie].
   final HTTPCookie Function(
-      {required Map<HttpCookiePropertyKey, Object?> properties}) newHTTPCookie;
+      {required Map<HttpCookiePropertyKey, Object> properties}) newHTTPCookie;
 
   /// Constructs [AuthenticationChallengeResponse].
   final AuthenticationChallengeResponse Function({
@@ -766,6 +766,8 @@ enum HttpCookiePropertyKey {
   value,
   /// A String object that specifies the version of the cookie.
   version,
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The type of action that triggered the navigation.
@@ -2191,8 +2193,8 @@ class HTTPCookie extends NSObject {
   HTTPCookie({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required this.properties,
     super.observeValue,
+    required Map<HttpCookiePropertyKey, Object> properties,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -2233,22 +2235,17 @@ class HTTPCookie extends NSObject {
   HTTPCookie.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required this.properties,
     super.observeValue,
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecHTTPCookie =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
-  /// The cookie’s properties.
-  final Map<HttpCookiePropertyKey, Object?> properties;
-
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    HTTPCookie Function(Map<HttpCookiePropertyKey, Object?> properties)?
-        pigeon_newInstance,
+    HTTPCookie Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -2271,19 +2268,13 @@ class HTTPCookie extends NSObject {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance was null, expected non-null int.');
-          final Map<HttpCookiePropertyKey, Object?>? arg_properties =
-              (args[1] as Map<Object?, Object?>?)
-                  ?.cast<HttpCookiePropertyKey, Object?>();
-          assert(arg_properties != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance was null, expected non-null Map<HttpCookiePropertyKey, Object?>.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_properties!) ??
+              pigeon_newInstance?.call() ??
                   HTTPCookie.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
-                    properties: arg_properties!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -2299,12 +2290,40 @@ class HTTPCookie extends NSObject {
     }
   }
 
+  /// The cookie’s properties.
+  Future<Map<HttpCookiePropertyKey, Object>?> getProperties() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecHTTPCookie;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.getProperties';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<HttpCookiePropertyKey, Object>();
+    }
+  }
+
   @override
   HTTPCookie pigeon_copy() {
     return HTTPCookie.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
-      properties: properties,
       observeValue: observeValue,
     );
   }

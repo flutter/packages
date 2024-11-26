@@ -24,6 +24,8 @@ void main() {
     late MockWKHTTPCookieStore mockWKHttpCookieStore;
 
     late WKWebViewCookieManager cookieManager;
+    late HTTPCookie cookie;
+    late Map<HttpCookiePropertyKey, Object?> cookieProperties;
 
     setUp(() {
       mockWebsiteDataStore = MockWKWebsiteDataStore();
@@ -35,10 +37,10 @@ void main() {
         websiteDataStore: mockWebsiteDataStore,
         webKitProxy: WebKitProxy(
           newHTTPCookie: ({
-            required Map<HttpCookiePropertyKey, Object?> properties,
+            required Map<HttpCookiePropertyKey, Object> properties,
           }) {
-            return HTTPCookie.pigeon_detached(
-              properties: properties,
+            cookieProperties = properties;
+            return cookie = HTTPCookie.pigeon_detached(
               pigeon_instanceManager: TestInstanceManager(),
             );
           },
@@ -63,11 +65,9 @@ void main() {
         const WebViewCookie(name: 'a', value: 'b', domain: 'c', path: 'd'),
       );
 
-      final HTTPCookie cookie =
-          verify(mockWKHttpCookieStore.setCookie(captureAny)).captured.single
-              as HTTPCookie;
+      verify(mockWKHttpCookieStore.setCookie(cookie));
       expect(
-        cookie.properties,
+        cookieProperties,
         <HttpCookiePropertyKey, Object>{
           HttpCookiePropertyKey.name: 'a',
           HttpCookiePropertyKey.value: 'b',
