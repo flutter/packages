@@ -1,6 +1,6 @@
 ## 0.8.12+2
 
-* Removes use of PHAsset when using PHPickerViewController in image_picker to remove needing permissions.
+* Removes the need for user permissions to pick an image on iOS 14+.
 
 ## 0.8.12+1
 
