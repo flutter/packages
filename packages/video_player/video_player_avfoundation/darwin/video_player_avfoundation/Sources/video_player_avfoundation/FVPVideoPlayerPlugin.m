@@ -91,24 +91,23 @@
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
   BOOL usesTextureApproach =
       frameUpdater != nil && [player isKindOfClass:[FVPVideoPlayerTextureApproach class]];
-  // FIXME Rename textureId to playerId, in all other places as well.
-  int64_t textureId;
+  int64_t playerId;
   if (usesTextureApproach) {
-    textureId = [self.registry registerTexture:(FVPVideoPlayerTextureApproach *)player];
-    frameUpdater.textureId = textureId;
+    playerId = [self.registry registerTexture:(FVPVideoPlayerTextureApproach *)player];
+    frameUpdater.textureId = playerId;
   } else {
     // FIXME Possibly start with a predefined prefix and then increment it to avoid
     //  collisions withtextureId.
-    textureId = arc4random();
+    playerId = arc4random();
   }
 
   FlutterEventChannel *eventChannel = [FlutterEventChannel
-      eventChannelWithName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld",
-                                                      textureId]
+      eventChannelWithName:[NSString
+                               stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld", playerId]
            binaryMessenger:_messenger];
   [eventChannel setStreamHandler:player];
   player.eventChannel = eventChannel;
-  self.playersByTextureId[@(textureId)] = player;
+  self.playersByTextureId[@(playerId)] = player;
 
   if (usesTextureApproach) {
     // Ensure that the first frame is drawn once available, even if the video isn't played, since
@@ -116,7 +115,7 @@
     [(FVPVideoPlayerTextureApproach *)player expectFrame];
   }
 
-  return textureId;
+  return playerId;
 }
 
 - (void)initialize:(FlutterError *__autoreleasing *)error {
