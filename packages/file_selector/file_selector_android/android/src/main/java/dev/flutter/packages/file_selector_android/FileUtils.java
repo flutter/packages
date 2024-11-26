@@ -144,6 +144,18 @@ public class FileUtils {
       assert inputStream != null;
       copy(inputStream, outputStream);
       return file.getPath();
+    } catch (IOException e) {
+      // If closing the output stream fails, we cannot be sure that the
+      // target file was written in full. Flushing the stream merely moves
+      // the bytes into the OS, not necessarily to the file.
+      return null;
+    } catch (SecurityException e) {
+      // Calling `ContentResolver#openInputStream()` has been reported to throw a
+      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
+      // return `null`.
+      //
+      // See https://github.com/flutter/flutter/issues/100025 for more details.
+      return null;
     }
   }
 
