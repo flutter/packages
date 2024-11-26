@@ -365,10 +365,17 @@ abstract class URLRequest extends NSObject {
 ///
 /// See https://developer.apple.com/documentation/foundation/httpurlresponse.
 @ProxyApi()
-abstract class HTTPURLResponse extends NSObject {
+abstract class HTTPURLResponse extends URLResponse {
   /// The response’s HTTP status code.
   late int statusCode;
 }
+
+/// The metadata associated with the response to a URL load request, independent
+/// of protocol and URL scheme.
+///
+/// See https://developer.apple.com/documentation/foundation/urlresponse.
+@ProxyApi()
+abstract class URLResponse extends NSObject {}
 
 /// A script that the web view injects into a webpage.
 ///
@@ -415,11 +422,11 @@ abstract class WKNavigationAction extends NSObject {
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
 abstract class WKNavigationResponse extends NSObject {
   /// The frame’s response.
-  late HTTPURLResponse response;
+  late URLResponse response;
 
   /// A Boolean value that indicates whether the response targets the web view’s
   /// main frame.
-  late bool forMainFrame;
+  late bool isForMainFrame;
 }
 
 /// An object that contains information about a frame on a webpage.

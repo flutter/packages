@@ -112,7 +112,7 @@ void main() {
             statusCode: 401,
             pigeon_instanceManager: TestInstanceManager(),
           ),
-          forMainFrame: true,
+          isForMainFrame: true,
           pigeon_instanceManager: TestInstanceManager(),
         ),
       );
@@ -149,7 +149,7 @@ void main() {
             statusCode: 399,
             pigeon_instanceManager: TestInstanceManager(),
           ),
-          forMainFrame: true,
+          isForMainFrame: true,
           pigeon_instanceManager: TestInstanceManager(),
         ),
       );

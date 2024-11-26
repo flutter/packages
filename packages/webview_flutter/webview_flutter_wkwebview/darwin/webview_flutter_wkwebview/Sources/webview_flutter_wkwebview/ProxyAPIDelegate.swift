@@ -30,7 +30,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKNavigationResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKNavigationResponse {
-    throw PigeonError(code: "", message: "", details: "")
+    PigeonApiWKNavigationResponse(pigeonRegistrar: registrar, delegate: NavigationResponseProxyAPIDelegate())
   }
   
   func pigeonApiWKFrameInfo(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKFrameInfo {
