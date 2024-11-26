@@ -66,7 +66,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiUIView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIView {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiUIView(pigeonRegistrar: registrar, delegate: UIViewProxyAPIDelegate())
   }
   
   func pigeonApiUIScrollView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIScrollView {
