@@ -111,43 +111,39 @@ public class FileUtils {
    * or if a security exception is encountered when opening the input stream to start the copying.
    */
   @Nullable
-  public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) {
-    try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
-      String uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes()).toString();
-      File targetDirectory = new File(context.getCacheDir(), uuid);
-      targetDirectory.mkdir();
-      targetDirectory.deleteOnExit();
-      String fileName = getFileName(context, uri);
-      String extension = getFileExtension(context, uri);
+  public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) throws IOException {
+    if (!uri.getPath().startsWith(context.getFilesDir().getCanonicalPath())) {
+      throw new IllegalArgumentException();
+    }
 
-      if (fileName == null) {
-        if (extension == null) {
-          throw new IllegalArgumentException("No name nor extension found for file.");
-        } else {
-          fileName = "file_selector" + extension;
-        }
-      } else if (extension != null) {
-        fileName = getBaseName(fileName) + extension;
+    String uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes()).toString();
+    File targetDirectory = new File(context.getCacheDir(), uuid);
+    targetDirectory.mkdir();
+    targetDirectory.deleteOnExit();
+    String fileName = getFileName(context, uri);
+    String extension = getFileExtension(context, uri);
+
+    if (fileName == null) {
+      if (extension == null) {
+        throw new IllegalArgumentException("No name nor extension found for file.");
+      } else {
+        fileName = "file_selector" + extension;
       }
+    } else if (extension != null) {
+      fileName = getBaseName(fileName) + extension;
+    }
 
-      File file = new File(targetDirectory, fileName);
+    String filePath = new File(targetDirectory, fileName + extension).getPath();
+    File file = saferOpenFile(targetDirectory.getCanonicalPath(), filePath);
 
-      try (OutputStream outputStream = new FileOutputStream(file)) {
-        copy(inputStream, outputStream);
-        return file.getPath();
-      }
-    } catch (IOException e) {
-      // If closing the output stream fails, we cannot be sure that the
-      // target file was written in full. Flushing the stream merely moves
-      // the bytes into the OS, not necessarily to the file.
-      return null;
-    } catch (SecurityException e) {
-      // Calling `ContentResolver#openInputStream()` has been reported to throw a
-      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
-      // return `null`.
-      //
-      // See https://github.com/flutter/flutter/issues/100025 for more details.
-      return null;
+
+    try (
+            InputStream inputStream = context.getContentResolver().openInputStream(Uri.fromFile(file));
+            OutputStream outputStream = new FileOutputStream(file)
+    ) {
+      assert inputStream != null;
+      copy(inputStream, outputStream);
+      return file.getPath();
     }
   }
 
@@ -172,14 +168,17 @@ public class FileUtils {
       return null;
     }
 
-    return "." + extension;
+    return "." + sanitizeFilename(extension);
   }
 
   /** Returns the name of the file provided by ContentResolver; this may be null. */
   private static String getFileName(Context context, Uri uriFile) {
     try (Cursor cursor = queryFileName(context, uriFile)) {
-      if (cursor == null || !cursor.moveToFirst() || cursor.getColumnCount() < 1) return null;
-      return cursor.getString(0);
+      if (cursor == null || !cursor.moveToFirst() || cursor.getColumnCount() < 1) {
+        return null;
+      }
+      String unsanitizedFileName = cursor.getString(0);
+      return sanitizeFilename(unsanitizedFileName);
     }
   }
 
@@ -205,5 +204,28 @@ public class FileUtils {
     }
     // Basename is everything before the last '.'.
     return fileName.substring(0, lastDotIndex);
+  }
+
+  protected static String sanitizeFilename(String displayName) {
+    if (displayName == null) {
+      return null;
+    }
+
+    String[] badCharacters = new String[] { "..", "/" };
+    String[] segments = displayName.split("/");
+    String fileName = segments[segments.length - 1];
+    for (String suspString : badCharacters) {
+      fileName = fileName.replace(suspString, "_");
+    }
+    return fileName;
+  }
+
+  public static File saferOpenFile(String path, String expectedDir) throws IllegalArgumentException, IOException {
+    File f = new File(path);
+    String canonicalPath = f.getCanonicalPath();
+    if (!canonicalPath.startsWith(expectedDir)) {
+      throw new IllegalArgumentException();
+    }
+    return f;
   }
 }
