@@ -17,6 +17,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.preference.PreferenceManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import java.io.ByteArrayInputStream
@@ -243,8 +244,11 @@ class SharedPreferencesBackend(
   }
 
   private fun createSharedPreferences(options: SharedPreferencesPigeonOptions): SharedPreferences {
-    return context.getSharedPreferences(
-        options.fileName ?: SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
+    return if (options.fileName == null) {
+      PreferenceManager.getDefaultSharedPreferences(context)
+    } else {
+      context.getSharedPreferences(options.fileName, Context.MODE_PRIVATE)
+    }
   }
 
   /** Adds property to data store of type bool. */

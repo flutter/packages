@@ -98,6 +98,6 @@ Future<void> readmeTestSnippets() async {
 const SharedPreferencesAsyncAndroidOptions options =
     SharedPreferencesAsyncAndroidOptions(
         backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-        originalSharedPreferencesOptions:
-            OriginalSharedPreferencesOptions(fileName: 'the_name_of_a_file'));
+        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+            fileName: 'the_name_of_a_file'));
 // #enddocregion Android_Options

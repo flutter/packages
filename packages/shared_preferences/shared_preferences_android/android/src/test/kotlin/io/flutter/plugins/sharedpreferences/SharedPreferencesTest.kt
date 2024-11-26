@@ -5,6 +5,8 @@
 package io.flutter.plugins.sharedpreferences
 
 import android.content.Context
+import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -39,10 +41,9 @@ internal class SharedPreferencesTest {
 
   private val dataStoreOptions = SharedPreferencesPigeonOptions(useDataStore = true)
   private val sharedPreferencesOptions = SharedPreferencesPigeonOptions(useDataStore = false)
+  private val testContext: Context = ApplicationProvider.getApplicationContext()
 
   private fun pluginSetup(options: SharedPreferencesPigeonOptions): SharedPreferencesAsyncApi {
-    val testContext: Context = ApplicationProvider.getApplicationContext()
-
     val plugin = SharedPreferencesPlugin()
     val binaryMessenger = mockk<BinaryMessenger>()
     val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
@@ -310,5 +311,14 @@ internal class SharedPreferencesTest {
     plugin.setInt(intKey, 2, optionsWithNewFile)
     Assert.assertEquals(plugin.getInt(intKey, sharedPreferencesOptions), 1L)
     Assert.assertEquals(plugin.getInt(intKey, optionsWithNewFile), 2L)
+  }
+
+  @Test
+  fun testSharedPreferencesDefaultFile() {
+    val defaultPreferences: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(testContext)
+    defaultPreferences.edit().putString(stringKey, testString).commit()
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    Assert.assertEquals(plugin.getString(stringKey, sharedPreferencesOptions), testString)
   }
 }

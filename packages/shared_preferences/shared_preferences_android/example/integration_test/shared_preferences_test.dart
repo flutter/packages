@@ -517,7 +517,7 @@ void main() {
           : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
       originalSharedPreferencesOptions: fileName == null
           ? null
-          : OriginalSharedPreferencesOptions(fileName: fileName),
+          : AndroidSharedPreferencesStoreOptions(fileName: fileName),
     );
   }
 
@@ -781,5 +781,16 @@ void main() {
     expect(
         await preferences.getInt(intKey, getOptions(false, fileName: 'file2')),
         2);
+  });
+
+  testWidgets('Shared Preferences can read default sharedPreferences',
+      (WidgetTester _) async {
+    final SharedPreferencesAsyncPlatform preferences =
+        await getPreferences(false);
+
+    expect(
+        await preferences.getString(
+            'thisStringIsWrittenInTheExampleAppKotlinCode', getOptions(false)),
+        'testString');
   });
 }

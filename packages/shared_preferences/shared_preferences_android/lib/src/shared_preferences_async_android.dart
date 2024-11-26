@@ -257,14 +257,14 @@ class SharedPreferencesAsyncAndroidOptions extends SharedPreferencesOptions {
     this.originalSharedPreferencesOptions,
   });
 
-  /// Which backend should be used with
+  /// Which backend should be used for this method call.
   final SharedPreferencesAndroidBackendLibrary backend;
 
-  /// These options define how the `SharedPreferences` library should behave.
+  /// These options define how the `SharedPreferences` backend should behave.
   ///
   /// Any options in this field will be ignored unless the backend that is selected
   /// is `SharedPreferences`.
-  final OriginalSharedPreferencesOptions? originalSharedPreferencesOptions;
+  final AndroidSharedPreferencesStoreOptions? originalSharedPreferencesOptions;
 }
 
 /// Options necessary for defining the use of the original `SharedPreferences`
@@ -272,10 +272,10 @@ class SharedPreferencesAsyncAndroidOptions extends SharedPreferencesOptions {
 ///
 /// These options are only ever used with the original `SharedPreferences` and
 /// have no purpose when using the default DataStore Preferences.
-class OriginalSharedPreferencesOptions {
-  /// Constructor for OriginalSharedPreferencesOptions.
-  const OriginalSharedPreferencesOptions({this.fileName = ''});
+class AndroidSharedPreferencesStoreOptions {
+  /// Constructor for AndroidSharedPreferencesStoreOptions.
+  const AndroidSharedPreferencesStoreOptions({this.fileName});
 
   /// The name of the file in which the preferences are stored.
-  final String fileName;
+  final String? fileName;
 }

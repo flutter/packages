@@ -13,9 +13,9 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Options
 
-The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs can use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) or [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) to store data.
+The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs can use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) or [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) to store data.
 
-To use the `Android Shared Preferences` backend, use the `SharedPreferencesAsyncAndroidOptions` when using [SharedPreferencesAsync].
+To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncAndroidOptions` when using [SharedPreferencesAsync].
 
 <?code-excerpt "readme_excerpts.dart (Android_Options)"?>
 ```dart
@@ -23,10 +23,10 @@ const SharedPreferencesAsyncAndroidOptions options =
     SharedPreferencesAsyncAndroidOptions(
         backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
         originalSharedPreferencesOptions:
-            OriginalSharedPreferencesOptions(fileName: 'the_name_of_a_file'));
+            AndroidSharedPreferencesStoreOptions(fileName: 'the_name_of_a_file'));
 ```
 
-The [SharedPreferences] API uses the native [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
+The [SharedPreferences] API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
 
 [1]: https://pub.dev/packages/shared_preferences
 [2]: https://flutter.dev/to/endorsed-federated-plugin
