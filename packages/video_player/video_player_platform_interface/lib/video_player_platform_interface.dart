@@ -208,7 +208,7 @@ enum VideoFormat {
   other,
 }
 
-/// Enum representing the type of video view to be used.
+/// The type of video view to be used.
 enum VideoViewType {
   /// Uses a texture view for rendering video.
   textureView,
