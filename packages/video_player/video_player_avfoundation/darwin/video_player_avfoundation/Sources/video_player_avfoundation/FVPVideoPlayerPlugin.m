@@ -89,9 +89,11 @@
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
+  BOOL usesTextureApproach =
+      frameUpdater != nil && [player isKindOfClass:[FVPVideoPlayerTextureApproach class]];
   // FIXME Rename textureId to playerId, in all other places as well.
   int64_t textureId;
-  if (frameUpdater && [player isKindOfClass:[FVPVideoPlayerTextureApproach class]]) {
+  if (usesTextureApproach) {
     textureId = [self.registry registerTexture:(FVPVideoPlayerTextureApproach *)player];
     frameUpdater.textureId = textureId;
   } else {
@@ -108,10 +110,9 @@
   player.eventChannel = eventChannel;
   self.playersByTextureId[@(textureId)] = player;
 
-  if (frameUpdater) {
+  if (usesTextureApproach) {
     // Ensure that the first frame is drawn once available, even if the video isn't played, since
     // the engine is now expecting the texture to be populated.
-    // We can safely cast to FVPVideoPlayerTextureApproach since frameUpdater is non-nil.
     [(FVPVideoPlayerTextureApproach *)player expectFrame];
   }
 
