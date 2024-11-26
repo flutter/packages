@@ -227,11 +227,11 @@ public class FileUtils {
     return fileName;
   }
 
-  public static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir) throws IllegalArgumentException, IOException {
+  protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir) throws IllegalArgumentException, IOException {
     File f = new File(path);
     String canonicalPath = f.getCanonicalPath();
     if (!canonicalPath.startsWith(expectedDir)) {
-      throw new IllegalArgumentException();
+      throw new IllegalArgumentException("Trying to open path outside of the expected directory. File: " + f.getCanonicalPath() + " was expected to be within directory: " + expectedDir + ".");
     }
     return f;
   }

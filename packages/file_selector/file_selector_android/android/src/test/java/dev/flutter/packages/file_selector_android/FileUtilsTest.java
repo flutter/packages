@@ -196,6 +196,17 @@ public class FileUtilsTest {
     assertTrue(path.endsWith("e.f.g"));
   }
 
+  @Test
+  public void getFileExtension_throwsIllegalArgumentExceptionForFileInWrongDirectory() {
+    Uri uri = Uri.parse(MockMaliciousContentProvider.PNG_URI);
+    Robolectric.buildContentProvider(MockMaliciousContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+            uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+    String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
+    System.out.println(path);
+    assertTrue(path.endsWith("_bar.png"));
+  }
+
   private static class MockContentProvider extends ContentProvider {
     public static final Uri TXT_URI = Uri.parse("content://dummy/dummydocument");
     public static final Uri PNG_URI = Uri.parse("content://dummy/a.b.png");
@@ -249,6 +260,53 @@ public class FileUtilsTest {
         @Nullable ContentValues values,
         @Nullable String selection,
         @Nullable String[] selectionArgs) {
+      return 0;
+    }
+  }
+
+  // Mocks a malicious content provider attempting to use path indirection to modify files outside
+  // of the intended directory.
+  // See https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
+  private static class MockMaliciousContentProvider extends ContentProvider {
+    public static String PNG_URI = "content://dummy/a.png";
+
+    @Override
+    public boolean onCreate() {
+      return true;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(
+            @NonNull Uri uri,
+            @Nullable String[] projection,
+            @Nullable String selection,
+            @Nullable String[] selectionArgs,
+            @Nullable String sortOrder) {
+      MatrixCursor cursor = new MatrixCursor(new String[] {MediaStore.MediaColumns.DISPLAY_NAME});
+      cursor.addRow(new Object[] {"foo/../..bar.png"});
+      return cursor;
+    }
+
+    @Nullable
+    @Override
+    public String getType(@NonNull Uri uri) {
+      return "image/png";
+    }
+
+    @Nullable
+    @Override
+    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+      return null;
+    }
+
+    @Override
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+      return 0;
+    }
+
+    @Override
+    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
       return 0;
     }
   }
