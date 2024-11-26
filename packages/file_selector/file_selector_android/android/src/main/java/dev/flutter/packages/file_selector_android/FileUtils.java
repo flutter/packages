@@ -40,8 +40,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import io.flutter.Log;
-
 public class FileUtils {
 
   /** URI authority that represents access to external storage providers. */
