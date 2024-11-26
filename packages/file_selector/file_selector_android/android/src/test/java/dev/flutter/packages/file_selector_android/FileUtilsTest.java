@@ -6,6 +6,7 @@ package dev.flutter.packages.file_selector_android;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -197,13 +198,13 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void getFileExtension_throwsIllegalArgumentExceptionForFileInWrongDirectory() {
+  public void getPathFromCopyOfFileFromUri_sanitizesPathIndirection() {
     Uri uri = Uri.parse(MockMaliciousContentProvider.PNG_URI);
     Robolectric.buildContentProvider(MockMaliciousContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
             uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
-    System.out.println(path);
+    assertNotNull(path);
     assertTrue(path.endsWith("_bar.png"));
   }
 
