@@ -185,7 +185,7 @@ class PigeonApiImplementation : public ExampleHostApi {
   }
   void SendMessage(const MessageData& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
-    if (message.code == Code.kOne) {
+    if (message.code() == Code::kOne) {
       result(FlutterError("code", "message", "details"));
       return;
     }
@@ -281,10 +281,10 @@ private class PigeonFlutterApi {
   }
 
   func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
   ) {
     flutterAPI.flutterMethod(aString: aStringArg) {
-      completion(.success($0))
+      completion($0)
     }
   }
 }
@@ -294,16 +294,15 @@ private class PigeonFlutterApi {
 
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-flutter)"?>
 ```kotlin
-private class PigeonFlutterApi {
-
+private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
   var flutterApi: MessageFlutterApi? = null
 
-  constructor(binding: FlutterPlugin.FlutterPluginBinding) {
-    flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
+  init {
+    flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
   }
 }
 ```
@@ -312,12 +311,22 @@ private class PigeonFlutterApi {
 
 <?code-excerpt "windows/runner/flutter_window.cpp (cpp-method-flutter)"?>
 ```c++
-void TestPlugin::CallFlutterMethod(
-    String aString, std::function<void(ErrorOr<int64_t> reply)> result) {
-  MessageFlutterApi->FlutterMethod(
-      aString, [result](String echo) { result(echo); },
-      [result](const FlutterError& error) { result(error); });
-}
+class PigeonFlutterApi {
+ public:
+  PigeonFlutterApi(flutter::BinaryMessenger* messenger)
+      : flutterApi_(std::make_unique<MessageFlutterApi>(messenger)) {}
+
+  void CallFlutterMethod(
+      const std::string& a_string,
+      std::function<void(ErrorOr<std::string> reply)> result) {
+    flutterApi_->FlutterMethod(
+        &a_string, [result](const std::string& echo) { result(echo); },
+        [result](const FlutterError& error) { result(error); });
+  }
+
+ private:
+  std::unique_ptr<MessageFlutterApi> flutterApi_;
+};
 ```
 
 ### GObject

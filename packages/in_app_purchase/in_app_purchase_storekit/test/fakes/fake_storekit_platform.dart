@@ -280,12 +280,17 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   void stopObservingPaymentQueue() {
     queueIsActive = false;
   }
+
+  @override
+  bool supportsStoreKit2() {
+    return true;
+  }
 }
 
 class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   late Set<String> validProductIDs;
   late Map<String, SK2Product> validProducts;
-  late List<SK2TransactionMessage> transactionList;
+  late List<SK2TransactionMessage> transactionList = <SK2TransactionMessage>[];
   late bool testTransactionFail;
   late int testTransactionCancel;
   late List<SK2Transaction> finishedTransactions;
@@ -308,6 +313,18 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
               SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
       validProducts[validID] = product;
     }
+  }
+
+  SK2TransactionMessage createRestoredTransaction(
+      String productId, String transactionId,
+      {int quantity = 1}) {
+    return SK2TransactionMessage(
+        id: 123,
+        originalId: 321,
+        productId: '',
+        purchaseDate: '',
+        appAccountToken: '',
+        restoring: true);
   }
 
   @override
@@ -340,8 +357,8 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
       {SK2ProductPurchaseOptionsMessage? options}) {
     final SK2TransactionMessage transaction = createPendingTransaction(id);
 
-    InAppPurchaseStoreKitPlatform.sk2transactionObserver
-        .onTransactionsUpdated(transaction);
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+        .onTransactionsUpdated(<SK2TransactionMessage>[transaction]);
     return Future<SK2ProductPurchaseResultMessage>.value(
         SK2ProductPurchaseResultMessage.success);
   }
@@ -370,6 +387,12 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   @override
   void stopListeningToTransactions() {
     isListenerRegistered = false;
+  }
+
+  @override
+  Future<void> restorePurchases() async {
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+        .onTransactionsUpdated(transactionList);
   }
 }
 

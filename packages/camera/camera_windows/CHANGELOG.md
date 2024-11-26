@@ -1,3 +1,7 @@
+## 0.2.6+1
+
+* Fixes black bars on camera preview [#122966](https://github.com/flutter/flutter/issues/122966).
+
 ## 0.2.6
 
 * Reverts streaming frame support, as the implementation was incorrect and never
