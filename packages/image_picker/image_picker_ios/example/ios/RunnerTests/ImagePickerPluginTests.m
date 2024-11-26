@@ -514,37 +514,6 @@
   OCMVerifyAll(mockPhotoLibrary);
 }
 
-- (void)testPickImageAuthorizationDenied API_AVAILABLE(ios(14)) {
-  id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
-  OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])
-      .andReturn(PHAuthorizationStatusDenied);
-
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
-
-  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
-
-  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
-                                                            camera:FLTSourceCameraFront]
-                      maxSize:[[FLTMaxSize alloc] init]
-                      quality:nil
-                 fullMetadata:YES
-                   completion:^(NSString *result, FlutterError *error) {
-                     // Does not error due to access denied
-                     XCTAssertNil(result);
-                     XCTAssertEqualObjects(error.code, @"multiple_request");
-                     XCTAssertEqualObjects(error.message, @"Cancelled by a second request");
-                     [resultExpectation fulfill];
-                   }];
-  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
-                                                            camera:FLTSourceCameraFront]
-                      maxSize:[[FLTMaxSize alloc] init]
-                      quality:nil
-                 fullMetadata:YES
-                   completion:^(NSString *result, FlutterError *error){
-                   }];
-  [self waitForExpectationsWithTimeout:30 handler:nil];
-}
-
 - (void)testPickMultiImageDuplicateCallCancels API_AVAILABLE(ios(14)) {
   id mockPhotoLibrary = OCMClassMock([PHPhotoLibrary class]);
   OCMStub([mockPhotoLibrary authorizationStatusForAccessLevel:PHAccessLevelReadWrite])

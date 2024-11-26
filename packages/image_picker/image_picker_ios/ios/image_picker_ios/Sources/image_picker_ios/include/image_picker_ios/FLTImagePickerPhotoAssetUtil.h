@@ -14,8 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable PHAsset *)getAssetFromImagePickerInfo:(NSDictionary *)info;
 
-+ (nullable PHAsset *)getAssetFromPHPickerResult:(PHPickerResult *)result API_AVAILABLE(ios(14));
-
 // Saves video to temporary URL. Returns nil on failure;
 + (NSURL *)saveVideoFromURL:(NSURL *)videoURL;
 
