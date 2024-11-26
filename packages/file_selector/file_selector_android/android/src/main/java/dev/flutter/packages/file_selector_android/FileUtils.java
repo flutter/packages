@@ -140,7 +140,6 @@ public class FileUtils {
 
 
       try (OutputStream outputStream = new FileOutputStream(outputFile)) {
-        assert inputStream != null;
         copy(inputStream, outputStream);
         return outputFile.getPath();
       }
