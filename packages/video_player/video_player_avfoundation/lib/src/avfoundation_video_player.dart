@@ -32,10 +32,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create(
-    DataSource dataSource, {
-    VideoViewType viewType = VideoViewType.textureView,
-  }) async {
+  Future<int?> create(DataSource dataSource) async {
     String? asset;
     String? packageName;
     String? uri;
@@ -60,7 +57,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
-      viewType: _platformVideoViewTypeFromVideoViewType(viewType),
+      viewType: _platformVideoViewTypeFromVideoViewType(dataSource.viewType),
     );
 
     return _api.create(options);
