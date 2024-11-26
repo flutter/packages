@@ -5,7 +5,7 @@
 import Foundation
 
 class URLRequestWrapper {
-  let value: URLRequest
+  var value: URLRequest
   
   init(value: URLRequest) {
     self.value = value
