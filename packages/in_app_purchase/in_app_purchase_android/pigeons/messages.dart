@@ -167,6 +167,7 @@ class PlatformPurchase {
     required this.quantity,
     required this.purchaseState,
     required this.accountIdentifiers,
+    required this.pendingPurchaseUpdate,
   });
 
   final String? orderId;
@@ -182,6 +183,20 @@ class PlatformPurchase {
   final int quantity;
   final PlatformPurchaseState purchaseState;
   final PlatformAccountIdentifiers? accountIdentifiers;
+  final PlatformPendingPurchaseUpdate? pendingPurchaseUpdate;
+}
+
+/// Pigeon version of Java Purchase.
+///
+/// See also PendingPurchaseUpdateWrapper on the Dart side.
+class PlatformPendingPurchaseUpdate {
+  PlatformPendingPurchaseUpdate({
+    required this.products,
+    required this.purchaseToken,
+  });
+
+  final List<String> products;
+  final String purchaseToken;
 }
 
 /// Pigeon version of PurchaseHistoryRecord.

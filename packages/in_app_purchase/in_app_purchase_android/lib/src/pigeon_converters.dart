@@ -182,7 +182,21 @@ PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
     developerPayload: purchase.developerPayload,
     obfuscatedAccountId: purchase.accountIdentifiers?.obfuscatedAccountId,
     obfuscatedProfileId: purchase.accountIdentifiers?.obfuscatedProfileId,
+    pendingPurchaseUpdate:
+        pendingPurchaseUpdateFromPlatform(purchase.pendingPurchaseUpdate),
   );
+}
+
+/// Creates a [PendingPurchaseUpdateWrapper] from the Pigeon equivalent.
+PendingPurchaseUpdateWrapper? pendingPurchaseUpdateFromPlatform(
+    PlatformPendingPurchaseUpdate? pendingPurchaseUpdate) {
+  if (pendingPurchaseUpdate == null) {
+    return null;
+  }
+
+  return PendingPurchaseUpdateWrapper(
+      purchaseToken: pendingPurchaseUpdate.purchaseToken,
+      products: pendingPurchaseUpdate.products);
 }
 
 /// Creates a [PurchaseStateWrapper] from the Pigeon equivalent.

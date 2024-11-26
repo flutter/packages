@@ -427,6 +427,7 @@ class PlatformPurchase {
     required this.quantity,
     required this.purchaseState,
     this.accountIdentifiers,
+    this.pendingPurchaseUpdate,
   });
 
   String? orderId;
@@ -455,6 +456,8 @@ class PlatformPurchase {
 
   PlatformAccountIdentifiers? accountIdentifiers;
 
+  PlatformPendingPurchaseUpdate? pendingPurchaseUpdate;
+
   Object encode() {
     return <Object?>[
       orderId,
@@ -470,6 +473,7 @@ class PlatformPurchase {
       quantity,
       purchaseState,
       accountIdentifiers,
+      pendingPurchaseUpdate,
     ];
   }
 
@@ -489,6 +493,36 @@ class PlatformPurchase {
       quantity: result[10]! as int,
       purchaseState: result[11]! as PlatformPurchaseState,
       accountIdentifiers: result[12] as PlatformAccountIdentifiers?,
+      pendingPurchaseUpdate: result[13] as PlatformPendingPurchaseUpdate?,
+    );
+  }
+}
+
+/// Pigeon version of Java Purchase.
+///
+/// See also PendingPurchaseUpdateWrapper on the Dart side.
+class PlatformPendingPurchaseUpdate {
+  PlatformPendingPurchaseUpdate({
+    required this.products,
+    required this.purchaseToken,
+  });
+
+  List<String> products;
+
+  String purchaseToken;
+
+  Object encode() {
+    return <Object?>[
+      products,
+      purchaseToken,
+    ];
+  }
+
+  static PlatformPendingPurchaseUpdate decode(Object result) {
+    result as List<Object?>;
+    return PlatformPendingPurchaseUpdate(
+      products: (result[0] as List<Object?>?)!.cast<String>(),
+      purchaseToken: result[1]! as String,
     );
   }
 }
@@ -794,26 +828,29 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PlatformPurchase) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPurchaseHistoryRecord) {
+    }    else if (value is PlatformPendingPurchaseUpdate) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPurchaseHistoryResponse) {
+    }    else if (value is PlatformPurchaseHistoryRecord) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPurchasesResponse) {
+    }    else if (value is PlatformPurchaseHistoryResponse) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformSubscriptionOfferDetails) {
+    }    else if (value is PlatformPurchasesResponse) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformUserChoiceDetails) {
+    }    else if (value is PlatformSubscriptionOfferDetails) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformUserChoiceProduct) {
+    }    else if (value is PlatformUserChoiceDetails) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformInstallmentPlanDetails) {
+    }    else if (value is PlatformUserChoiceProduct) {
       buffer.putUint8(150);
+      writeValue(buffer, value.encode());
+    }    else if (value is PlatformInstallmentPlanDetails) {
+      buffer.putUint8(151);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -858,18 +895,20 @@ class _PigeonCodec extends StandardMessageCodec {
       case 143: 
         return PlatformPurchase.decode(readValue(buffer)!);
       case 144: 
-        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
+        return PlatformPendingPurchaseUpdate.decode(readValue(buffer)!);
       case 145: 
-        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
+        return PlatformPurchaseHistoryRecord.decode(readValue(buffer)!);
       case 146: 
-        return PlatformPurchasesResponse.decode(readValue(buffer)!);
+        return PlatformPurchaseHistoryResponse.decode(readValue(buffer)!);
       case 147: 
-        return PlatformSubscriptionOfferDetails.decode(readValue(buffer)!);
+        return PlatformPurchasesResponse.decode(readValue(buffer)!);
       case 148: 
-        return PlatformUserChoiceDetails.decode(readValue(buffer)!);
+        return PlatformSubscriptionOfferDetails.decode(readValue(buffer)!);
       case 149: 
-        return PlatformUserChoiceProduct.decode(readValue(buffer)!);
+        return PlatformUserChoiceDetails.decode(readValue(buffer)!);
       case 150: 
+        return PlatformUserChoiceProduct.decode(readValue(buffer)!);
+      case 151: 
         return PlatformInstallmentPlanDetails.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

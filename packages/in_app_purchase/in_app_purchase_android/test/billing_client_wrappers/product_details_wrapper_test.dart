@@ -328,10 +328,10 @@ Map<String, dynamic> buildPricingPhaseMap(PricingPhaseWrapper original) {
   };
 }
 
-Map<String, dynamic> buildInstallmentPlanMap(
+Map<String, dynamic>? buildInstallmentPlanMap(
     InstallmentPlanDetailsWrapper? installmentPlanDetails) {
   if (installmentPlanDetails == null) {
-    return <String, dynamic>{};
+    return null;
   }
 
   return <String, dynamic>{
