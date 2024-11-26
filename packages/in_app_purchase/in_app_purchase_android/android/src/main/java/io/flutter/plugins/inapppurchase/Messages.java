@@ -21,11 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /** Generated class from Pigeon. */
@@ -41,8 +38,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,14 +57,15 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
 
   @NonNull
   protected static FlutterError createConnectionError(@NonNull String channelName) {
-    return new FlutterError("channel-error",  "Unable to establish connection on channel: " + channelName + ".", "");
+    return new FlutterError(
+        "channel-error", "Unable to establish connection on channel: " + channelName + ".", "");
   }
 
   @Target(METHOD)
@@ -92,7 +89,7 @@ public class Messages {
     /**
      * Billing through google play.
      *
-     * Default state.
+     * <p>Default state.
      */
     PLAY_BILLING_ONLY(0),
     /** Billing through app provided flow. */
@@ -136,7 +133,7 @@ public class Messages {
   /**
    * Pigeon version of Java QueryProductDetailsParams.Product.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformQueryProduct {
     private @NonNull String productId;
@@ -170,8 +167,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformQueryProduct that = (PlatformQueryProduct) o;
       return productId.equals(that.productId) && productType.equals(that.productType);
     }
@@ -228,7 +229,7 @@ public class Messages {
   /**
    * Pigeon version of Java AccountIdentifiers.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformAccountIdentifiers {
     private @Nullable String obfuscatedAccountId;
@@ -253,10 +254,15 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformAccountIdentifiers that = (PlatformAccountIdentifiers) o;
-      return Objects.equals(obfuscatedAccountId, that.obfuscatedAccountId) && Objects.equals(obfuscatedProfileId, that.obfuscatedProfileId);
+      return Objects.equals(obfuscatedAccountId, that.obfuscatedAccountId)
+          && Objects.equals(obfuscatedProfileId, that.obfuscatedProfileId);
     }
 
     @Override
@@ -311,7 +317,7 @@ public class Messages {
   /**
    * Pigeon version of Java BillingResult.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformBillingResult {
     private @NonNull Long responseCode;
@@ -345,8 +351,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformBillingResult that = (PlatformBillingResult) o;
       return responseCode.equals(that.responseCode) && debugMessage.equals(that.debugMessage);
     }
@@ -403,7 +413,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.OneTimePurchaseOfferDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformOneTimePurchaseOfferDetails {
     private @NonNull Long priceAmountMicros;
@@ -450,10 +460,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformOneTimePurchaseOfferDetails that = (PlatformOneTimePurchaseOfferDetails) o;
-      return priceAmountMicros.equals(that.priceAmountMicros) && formattedPrice.equals(that.formattedPrice) && priceCurrencyCode.equals(that.priceCurrencyCode);
+      return priceAmountMicros.equals(that.priceAmountMicros)
+          && formattedPrice.equals(that.formattedPrice)
+          && priceCurrencyCode.equals(that.priceCurrencyCode);
     }
 
     @Override
@@ -488,7 +504,8 @@ public class Messages {
       }
 
       public @NonNull PlatformOneTimePurchaseOfferDetails build() {
-        PlatformOneTimePurchaseOfferDetails pigeonReturn = new PlatformOneTimePurchaseOfferDetails();
+        PlatformOneTimePurchaseOfferDetails pigeonReturn =
+            new PlatformOneTimePurchaseOfferDetails();
         pigeonReturn.setPriceAmountMicros(priceAmountMicros);
         pigeonReturn.setFormattedPrice(formattedPrice);
         pigeonReturn.setPriceCurrencyCode(priceCurrencyCode);
@@ -505,7 +522,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformOneTimePurchaseOfferDetails fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformOneTimePurchaseOfferDetails fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformOneTimePurchaseOfferDetails pigeonResult = new PlatformOneTimePurchaseOfferDetails();
       Object priceAmountMicros = pigeonVar_list.get(0);
       pigeonResult.setPriceAmountMicros((Long) priceAmountMicros);
@@ -520,7 +538,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformProductDetails {
     private @NonNull String description;
@@ -594,7 +612,8 @@ public class Messages {
       return oneTimePurchaseOfferDetails;
     }
 
-    public void setOneTimePurchaseOfferDetails(@Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
+    public void setOneTimePurchaseOfferDetails(
+        @Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
       this.oneTimePurchaseOfferDetails = setterArg;
     }
 
@@ -604,7 +623,8 @@ public class Messages {
       return subscriptionOfferDetails;
     }
 
-    public void setSubscriptionOfferDetails(@Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
+    public void setSubscriptionOfferDetails(
+        @Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
       this.subscriptionOfferDetails = setterArg;
     }
 
@@ -613,15 +633,32 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformProductDetails that = (PlatformProductDetails) o;
-      return description.equals(that.description) && name.equals(that.name) && productId.equals(that.productId) && productType.equals(that.productType) && title.equals(that.title) && Objects.equals(oneTimePurchaseOfferDetails, that.oneTimePurchaseOfferDetails) && Objects.equals(subscriptionOfferDetails, that.subscriptionOfferDetails);
+      return description.equals(that.description)
+          && name.equals(that.name)
+          && productId.equals(that.productId)
+          && productType.equals(that.productType)
+          && title.equals(that.title)
+          && Objects.equals(oneTimePurchaseOfferDetails, that.oneTimePurchaseOfferDetails)
+          && Objects.equals(subscriptionOfferDetails, that.subscriptionOfferDetails);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(description, name, productId, productType, title, oneTimePurchaseOfferDetails, subscriptionOfferDetails);
+      return Objects.hash(
+          description,
+          name,
+          productId,
+          productType,
+          title,
+          oneTimePurchaseOfferDetails,
+          subscriptionOfferDetails);
     }
 
     public static final class Builder {
@@ -669,7 +706,8 @@ public class Messages {
       private @Nullable PlatformOneTimePurchaseOfferDetails oneTimePurchaseOfferDetails;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setOneTimePurchaseOfferDetails(@Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
+      public @NonNull Builder setOneTimePurchaseOfferDetails(
+          @Nullable PlatformOneTimePurchaseOfferDetails setterArg) {
         this.oneTimePurchaseOfferDetails = setterArg;
         return this;
       }
@@ -677,7 +715,8 @@ public class Messages {
       private @Nullable List<PlatformSubscriptionOfferDetails> subscriptionOfferDetails;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setSubscriptionOfferDetails(@Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
+      public @NonNull Builder setSubscriptionOfferDetails(
+          @Nullable List<PlatformSubscriptionOfferDetails> setterArg) {
         this.subscriptionOfferDetails = setterArg;
         return this;
       }
@@ -721,18 +760,20 @@ public class Messages {
       Object title = pigeonVar_list.get(4);
       pigeonResult.setTitle((String) title);
       Object oneTimePurchaseOfferDetails = pigeonVar_list.get(5);
-      pigeonResult.setOneTimePurchaseOfferDetails((PlatformOneTimePurchaseOfferDetails) oneTimePurchaseOfferDetails);
+      pigeonResult.setOneTimePurchaseOfferDetails(
+          (PlatformOneTimePurchaseOfferDetails) oneTimePurchaseOfferDetails);
       Object subscriptionOfferDetails = pigeonVar_list.get(6);
-      pigeonResult.setSubscriptionOfferDetails((List<PlatformSubscriptionOfferDetails>) subscriptionOfferDetails);
+      pigeonResult.setSubscriptionOfferDetails(
+          (List<PlatformSubscriptionOfferDetails>) subscriptionOfferDetails);
       return pigeonResult;
     }
   }
 
   /**
-   * Pigeon version of ProductDetailsResponseWrapper, which contains the
-   * components of the Java ProductDetailsResponseListener callback.
+   * Pigeon version of ProductDetailsResponseWrapper, which contains the components of the Java
+   * ProductDetailsResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformProductDetailsResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -766,8 +807,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformProductDetailsResponse that = (PlatformProductDetailsResponse) o;
       return billingResult.equals(that.billingResult) && productDetails.equals(that.productDetails);
     }
@@ -811,7 +856,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformProductDetailsResponse fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformProductDetailsResponse fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformProductDetailsResponse pigeonResult = new PlatformProductDetailsResponse();
       Object billingResult = pigeonVar_list.get(0);
       pigeonResult.setBillingResult((PlatformBillingResult) billingResult);
@@ -822,11 +868,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
-   * contains the components of the Java
-   * AlternativeBillingOnlyReportingDetailsListener callback.
+   * Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which contains the components
+   * of the Java AlternativeBillingOnlyReportingDetailsListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformAlternativeBillingOnlyReportingDetailsResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -860,10 +905,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
-      PlatformAlternativeBillingOnlyReportingDetailsResponse that = (PlatformAlternativeBillingOnlyReportingDetailsResponse) o;
-      return billingResult.equals(that.billingResult) && externalTransactionToken.equals(that.externalTransactionToken);
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformAlternativeBillingOnlyReportingDetailsResponse that =
+          (PlatformAlternativeBillingOnlyReportingDetailsResponse) o;
+      return billingResult.equals(that.billingResult)
+          && externalTransactionToken.equals(that.externalTransactionToken);
     }
 
     @Override
@@ -890,7 +941,8 @@ public class Messages {
       }
 
       public @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse build() {
-        PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonReturn = new PlatformAlternativeBillingOnlyReportingDetailsResponse();
+        PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonReturn =
+            new PlatformAlternativeBillingOnlyReportingDetailsResponse();
         pigeonReturn.setBillingResult(billingResult);
         pigeonReturn.setExternalTransactionToken(externalTransactionToken);
         return pigeonReturn;
@@ -905,8 +957,10 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonResult = new PlatformAlternativeBillingOnlyReportingDetailsResponse();
+    static @NonNull PlatformAlternativeBillingOnlyReportingDetailsResponse fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformAlternativeBillingOnlyReportingDetailsResponse pigeonResult =
+          new PlatformAlternativeBillingOnlyReportingDetailsResponse();
       Object billingResult = pigeonVar_list.get(0);
       pigeonResult.setBillingResult((PlatformBillingResult) billingResult);
       Object externalTransactionToken = pigeonVar_list.get(1);
@@ -916,10 +970,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of BillingConfigWrapper, which contains the components of the
-   * Java BillingConfigResponseListener callback.
+   * Pigeon version of BillingConfigWrapper, which contains the components of the Java
+   * BillingConfigResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformBillingConfigResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -953,8 +1007,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformBillingConfigResponse that = (PlatformBillingConfigResponse) o;
       return billingResult.equals(that.billingResult) && countryCode.equals(that.countryCode);
     }
@@ -998,7 +1056,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformBillingConfigResponse fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformBillingConfigResponse fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformBillingConfigResponse pigeonResult = new PlatformBillingConfigResponse();
       Object billingResult = pigeonVar_list.get(0);
       pigeonResult.setBillingResult((PlatformBillingResult) billingResult);
@@ -1011,7 +1070,7 @@ public class Messages {
   /**
    * Pigeon version of Java BillingFlowParams.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformBillingFlowParams {
     private @NonNull String product;
@@ -1095,15 +1154,32 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformBillingFlowParams that = (PlatformBillingFlowParams) o;
-      return product.equals(that.product) && replacementMode.equals(that.replacementMode) && Objects.equals(offerToken, that.offerToken) && Objects.equals(accountId, that.accountId) && Objects.equals(obfuscatedProfileId, that.obfuscatedProfileId) && Objects.equals(oldProduct, that.oldProduct) && Objects.equals(purchaseToken, that.purchaseToken);
+      return product.equals(that.product)
+          && replacementMode.equals(that.replacementMode)
+          && Objects.equals(offerToken, that.offerToken)
+          && Objects.equals(accountId, that.accountId)
+          && Objects.equals(obfuscatedProfileId, that.obfuscatedProfileId)
+          && Objects.equals(oldProduct, that.oldProduct)
+          && Objects.equals(purchaseToken, that.purchaseToken);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(product, replacementMode, offerToken, accountId, obfuscatedProfileId, oldProduct, purchaseToken);
+      return Objects.hash(
+          product,
+          replacementMode,
+          offerToken,
+          accountId,
+          obfuscatedProfileId,
+          oldProduct,
+          purchaseToken);
     }
 
     public static final class Builder {
@@ -1213,7 +1289,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.PricingPhase.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPricingPhase {
     private @NonNull Long billingCycleCount;
@@ -1299,15 +1375,30 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPricingPhase that = (PlatformPricingPhase) o;
-      return billingCycleCount.equals(that.billingCycleCount) && recurrenceMode.equals(that.recurrenceMode) && priceAmountMicros.equals(that.priceAmountMicros) && billingPeriod.equals(that.billingPeriod) && formattedPrice.equals(that.formattedPrice) && priceCurrencyCode.equals(that.priceCurrencyCode);
+      return billingCycleCount.equals(that.billingCycleCount)
+          && recurrenceMode.equals(that.recurrenceMode)
+          && priceAmountMicros.equals(that.priceAmountMicros)
+          && billingPeriod.equals(that.billingPeriod)
+          && formattedPrice.equals(that.formattedPrice)
+          && priceCurrencyCode.equals(that.priceCurrencyCode);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(billingCycleCount, recurrenceMode, priceAmountMicros, billingPeriod, formattedPrice, priceCurrencyCode);
+      return Objects.hash(
+          billingCycleCount,
+          recurrenceMode,
+          priceAmountMicros,
+          billingPeriod,
+          formattedPrice,
+          priceCurrencyCode);
     }
 
     public static final class Builder {
@@ -1405,9 +1496,9 @@ public class Messages {
   /**
    * Pigeon version of Java Purchase.
    *
-   * See also PurchaseWrapper on the Dart side.
+   * <p>See also PurchaseWrapper on the Dart side.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchase {
     private @Nullable String orderId;
@@ -1588,15 +1679,46 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPurchase that = (PlatformPurchase) o;
-      return Objects.equals(orderId, that.orderId) && packageName.equals(that.packageName) && purchaseTime.equals(that.purchaseTime) && purchaseToken.equals(that.purchaseToken) && signature.equals(that.signature) && products.equals(that.products) && isAutoRenewing.equals(that.isAutoRenewing) && originalJson.equals(that.originalJson) && developerPayload.equals(that.developerPayload) && isAcknowledged.equals(that.isAcknowledged) && quantity.equals(that.quantity) && purchaseState.equals(that.purchaseState) && Objects.equals(accountIdentifiers, that.accountIdentifiers) && Objects.equals(pendingPurchaseUpdate, that.pendingPurchaseUpdate);
+      return Objects.equals(orderId, that.orderId)
+          && packageName.equals(that.packageName)
+          && purchaseTime.equals(that.purchaseTime)
+          && purchaseToken.equals(that.purchaseToken)
+          && signature.equals(that.signature)
+          && products.equals(that.products)
+          && isAutoRenewing.equals(that.isAutoRenewing)
+          && originalJson.equals(that.originalJson)
+          && developerPayload.equals(that.developerPayload)
+          && isAcknowledged.equals(that.isAcknowledged)
+          && quantity.equals(that.quantity)
+          && purchaseState.equals(that.purchaseState)
+          && Objects.equals(accountIdentifiers, that.accountIdentifiers)
+          && Objects.equals(pendingPurchaseUpdate, that.pendingPurchaseUpdate);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(orderId, packageName, purchaseTime, purchaseToken, signature, products, isAutoRenewing, originalJson, developerPayload, isAcknowledged, quantity, purchaseState, accountIdentifiers, pendingPurchaseUpdate);
+      return Objects.hash(
+          orderId,
+          packageName,
+          purchaseTime,
+          purchaseToken,
+          signature,
+          products,
+          isAutoRenewing,
+          originalJson,
+          developerPayload,
+          isAcknowledged,
+          quantity,
+          purchaseState,
+          accountIdentifiers,
+          pendingPurchaseUpdate);
     }
 
     public static final class Builder {
@@ -1700,7 +1822,8 @@ public class Messages {
       private @Nullable PlatformAccountIdentifiers accountIdentifiers;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setAccountIdentifiers(@Nullable PlatformAccountIdentifiers setterArg) {
+      public @NonNull Builder setAccountIdentifiers(
+          @Nullable PlatformAccountIdentifiers setterArg) {
         this.accountIdentifiers = setterArg;
         return this;
       }
@@ -1708,7 +1831,8 @@ public class Messages {
       private @Nullable PlatformPendingPurchaseUpdate pendingPurchaseUpdate;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setPendingPurchaseUpdate(@Nullable PlatformPendingPurchaseUpdate setterArg) {
+      public @NonNull Builder setPendingPurchaseUpdate(
+          @Nullable PlatformPendingPurchaseUpdate setterArg) {
         this.pendingPurchaseUpdate = setterArg;
         return this;
       }
@@ -1790,9 +1914,9 @@ public class Messages {
   /**
    * Pigeon version of Java Purchase.
    *
-   * See also PendingPurchaseUpdateWrapper on the Dart side.
+   * <p>See also PendingPurchaseUpdateWrapper on the Dart side.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPendingPurchaseUpdate {
     private @NonNull List<String> products;
@@ -1826,8 +1950,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPendingPurchaseUpdate that = (PlatformPendingPurchaseUpdate) o;
       return products.equals(that.products) && purchaseToken.equals(that.purchaseToken);
     }
@@ -1871,7 +1999,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformPendingPurchaseUpdate fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformPendingPurchaseUpdate fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformPendingPurchaseUpdate pigeonResult = new PlatformPendingPurchaseUpdate();
       Object products = pigeonVar_list.get(0);
       pigeonResult.setProducts((List<String>) products);
@@ -1884,9 +2013,9 @@ public class Messages {
   /**
    * Pigeon version of PurchaseHistoryRecord.
    *
-   * See also PurchaseHistoryRecordWrapper on the Dart side.
+   * <p>See also PurchaseHistoryRecordWrapper on the Dart side.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchaseHistoryRecord {
     private @NonNull Long quantity;
@@ -1982,15 +2111,32 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPurchaseHistoryRecord that = (PlatformPurchaseHistoryRecord) o;
-      return quantity.equals(that.quantity) && purchaseTime.equals(that.purchaseTime) && Objects.equals(developerPayload, that.developerPayload) && originalJson.equals(that.originalJson) && purchaseToken.equals(that.purchaseToken) && signature.equals(that.signature) && products.equals(that.products);
+      return quantity.equals(that.quantity)
+          && purchaseTime.equals(that.purchaseTime)
+          && Objects.equals(developerPayload, that.developerPayload)
+          && originalJson.equals(that.originalJson)
+          && purchaseToken.equals(that.purchaseToken)
+          && signature.equals(that.signature)
+          && products.equals(that.products);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(quantity, purchaseTime, developerPayload, originalJson, purchaseToken, signature, products);
+      return Objects.hash(
+          quantity,
+          purchaseTime,
+          developerPayload,
+          originalJson,
+          purchaseToken,
+          signature,
+          products);
     }
 
     public static final class Builder {
@@ -2077,7 +2223,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformPurchaseHistoryRecord fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformPurchaseHistoryRecord fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformPurchaseHistoryRecord pigeonResult = new PlatformPurchaseHistoryRecord();
       Object quantity = pigeonVar_list.get(0);
       pigeonResult.setQuantity((Long) quantity);
@@ -2098,10 +2245,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of PurchasesHistoryResult, which contains the components of
-   * the Java PurchaseHistoryResponseListener callback.
+   * Pigeon version of PurchasesHistoryResult, which contains the components of the Java
+   * PurchaseHistoryResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchaseHistoryResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -2135,8 +2282,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPurchaseHistoryResponse that = (PlatformPurchaseHistoryResponse) o;
       return billingResult.equals(that.billingResult) && purchases.equals(that.purchases);
     }
@@ -2180,7 +2331,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformPurchaseHistoryResponse fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformPurchaseHistoryResponse fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformPurchaseHistoryResponse pigeonResult = new PlatformPurchaseHistoryResponse();
       Object billingResult = pigeonVar_list.get(0);
       pigeonResult.setBillingResult((PlatformBillingResult) billingResult);
@@ -2191,10 +2343,10 @@ public class Messages {
   }
 
   /**
-   * Pigeon version of PurchasesResultWrapper, which contains the components of
-   * the Java PurchasesResponseListener callback.
+   * Pigeon version of PurchasesResultWrapper, which contains the components of the Java
+   * PurchasesResponseListener callback.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformPurchasesResponse {
     private @NonNull PlatformBillingResult billingResult;
@@ -2228,8 +2380,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformPurchasesResponse that = (PlatformPurchasesResponse) o;
       return billingResult.equals(that.billingResult) && purchases.equals(that.purchases);
     }
@@ -2286,7 +2442,7 @@ public class Messages {
   /**
    * Pigeon version of Java ProductDetails.SubscriptionOfferDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformSubscriptionOfferDetails {
     private @NonNull String basePlanId;
@@ -2366,15 +2522,25 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformSubscriptionOfferDetails that = (PlatformSubscriptionOfferDetails) o;
-      return basePlanId.equals(that.basePlanId) && Objects.equals(offerId, that.offerId) && offerToken.equals(that.offerToken) && offerTags.equals(that.offerTags) && pricingPhases.equals(that.pricingPhases) && Objects.equals(installmentPlanDetails, that.installmentPlanDetails);
+      return basePlanId.equals(that.basePlanId)
+          && Objects.equals(offerId, that.offerId)
+          && offerToken.equals(that.offerToken)
+          && offerTags.equals(that.offerTags)
+          && pricingPhases.equals(that.pricingPhases)
+          && Objects.equals(installmentPlanDetails, that.installmentPlanDetails);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(basePlanId, offerId, offerToken, offerTags, pricingPhases, installmentPlanDetails);
+      return Objects.hash(
+          basePlanId, offerId, offerToken, offerTags, pricingPhases, installmentPlanDetails);
     }
 
     public static final class Builder {
@@ -2422,7 +2588,8 @@ public class Messages {
       private @Nullable PlatformInstallmentPlanDetails installmentPlanDetails;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setInstallmentPlanDetails(@Nullable PlatformInstallmentPlanDetails setterArg) {
+      public @NonNull Builder setInstallmentPlanDetails(
+          @Nullable PlatformInstallmentPlanDetails setterArg) {
         this.installmentPlanDetails = setterArg;
         return this;
       }
@@ -2451,7 +2618,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformSubscriptionOfferDetails fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformSubscriptionOfferDetails fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformSubscriptionOfferDetails pigeonResult = new PlatformSubscriptionOfferDetails();
       Object basePlanId = pigeonVar_list.get(0);
       pigeonResult.setBasePlanId((String) basePlanId);
@@ -2464,7 +2632,8 @@ public class Messages {
       Object pricingPhases = pigeonVar_list.get(4);
       pigeonResult.setPricingPhases((List<PlatformPricingPhase>) pricingPhases);
       Object installmentPlanDetails = pigeonVar_list.get(5);
-      pigeonResult.setInstallmentPlanDetails((PlatformInstallmentPlanDetails) installmentPlanDetails);
+      pigeonResult.setInstallmentPlanDetails(
+          (PlatformInstallmentPlanDetails) installmentPlanDetails);
       return pigeonResult;
     }
   }
@@ -2472,7 +2641,7 @@ public class Messages {
   /**
    * Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformUserChoiceDetails {
     private @Nullable String originalExternalTransactionId;
@@ -2516,10 +2685,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformUserChoiceDetails that = (PlatformUserChoiceDetails) o;
-      return Objects.equals(originalExternalTransactionId, that.originalExternalTransactionId) && externalTransactionToken.equals(that.externalTransactionToken) && products.equals(that.products);
+      return Objects.equals(originalExternalTransactionId, that.originalExternalTransactionId)
+          && externalTransactionToken.equals(that.externalTransactionToken)
+          && products.equals(that.products);
     }
 
     @Override
@@ -2586,7 +2761,7 @@ public class Messages {
   /**
    * Pigeon version of UserChoiseDetails.Product.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformUserChoiceProduct {
     private @NonNull String id;
@@ -2630,10 +2805,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformUserChoiceProduct that = (PlatformUserChoiceProduct) o;
-      return id.equals(that.id) && Objects.equals(offerToken, that.offerToken) && type.equals(that.type);
+      return id.equals(that.id)
+          && Objects.equals(offerToken, that.offerToken)
+          && type.equals(that.type);
     }
 
     @Override
@@ -2700,7 +2881,7 @@ public class Messages {
   /**
    * Pigeon version of ProductDetails.InstallmentPlanDetails.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformInstallmentPlanDetails {
     private @NonNull Long commitmentPaymentsCount;
@@ -2724,7 +2905,8 @@ public class Messages {
 
     public void setSubsequentCommitmentPaymentsCount(@NonNull Long setterArg) {
       if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"subsequentCommitmentPaymentsCount\" is null.");
+        throw new IllegalStateException(
+            "Nonnull field \"subsequentCommitmentPaymentsCount\" is null.");
       }
       this.subsequentCommitmentPaymentsCount = setterArg;
     }
@@ -2734,10 +2916,15 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       PlatformInstallmentPlanDetails that = (PlatformInstallmentPlanDetails) o;
-      return commitmentPaymentsCount.equals(that.commitmentPaymentsCount) && subsequentCommitmentPaymentsCount.equals(that.subsequentCommitmentPaymentsCount);
+      return commitmentPaymentsCount.equals(that.commitmentPaymentsCount)
+          && subsequentCommitmentPaymentsCount.equals(that.subsequentCommitmentPaymentsCount);
     }
 
     @Override
@@ -2779,7 +2966,8 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PlatformInstallmentPlanDetails fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+    static @NonNull PlatformInstallmentPlanDetails fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
       PlatformInstallmentPlanDetails pigeonResult = new PlatformInstallmentPlanDetails();
       Object commitmentPaymentsCount = pigeonVar_list.get(0);
       pigeonResult.setCommitmentPaymentsCount((Long) commitmentPaymentsCount);
@@ -2797,22 +2985,30 @@ public class Messages {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 129: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformProductType.values()[((Long) value).intValue()];
-        }
-        case (byte) 130: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformBillingChoiceMode.values()[((Long) value).intValue()];
-        }
-        case (byte) 131: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformPurchaseState.values()[((Long) value).intValue()];
-        }
-        case (byte) 132: {
-          Object value = readValue(buffer);
-          return value == null ? null : PlatformRecurrenceMode.values()[((Long) value).intValue()];
-        }
+        case (byte) 129:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformProductType.values()[((Long) value).intValue()];
+          }
+        case (byte) 130:
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformBillingChoiceMode.values()[((Long) value).intValue()];
+          }
+        case (byte) 131:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformPurchaseState.values()[((Long) value).intValue()];
+          }
+        case (byte) 132:
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformRecurrenceMode.values()[((Long) value).intValue()];
+          }
         case (byte) 133:
           return PlatformQueryProduct.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
@@ -2820,13 +3016,15 @@ public class Messages {
         case (byte) 135:
           return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 136:
-          return PlatformOneTimePurchaseOfferDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformOneTimePurchaseOfferDetails.fromList(
+              (ArrayList<Object>) readValue(buffer));
         case (byte) 137:
           return PlatformProductDetails.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 138:
           return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 139:
-          return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList(
+              (ArrayList<Object>) readValue(buffer));
         case (byte) 140:
           return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 141:
@@ -2890,7 +3088,8 @@ public class Messages {
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
       } else if (value instanceof PlatformAlternativeBillingOnlyReportingDetailsResponse) {
         stream.write(139);
-        writeValue(stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
+        writeValue(
+            stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
       } else if (value instanceof PlatformBillingConfigResponse) {
         stream.write(140);
         writeValue(stream, ((PlatformBillingConfigResponse) value).toList());
@@ -2933,7 +3132,6 @@ public class Messages {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -2961,51 +3159,86 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface InAppPurchaseApi {
     /** Wraps BillingClient#isReady. */
-    @NonNull 
+    @NonNull
     Boolean isReady();
     /** Wraps BillingClient#startConnection(BillingClientStateListener). */
-    void startConnection(@NonNull Long callbackHandle, @NonNull PlatformBillingChoiceMode billingMode, @NonNull Result<PlatformBillingResult> result);
+    void startConnection(
+        @NonNull Long callbackHandle,
+        @NonNull PlatformBillingChoiceMode billingMode,
+        @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#endConnection(BillingClientStateListener). */
     void endConnection();
-    /** Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams, BillingConfigResponseListener). */
+    /**
+     * Wraps BillingClient#getBillingConfigAsync(GetBillingConfigParams,
+     * BillingConfigResponseListener).
+     */
     void getBillingConfigAsync(@NonNull Result<PlatformBillingConfigResponse> result);
     /** Wraps BillingClient#launchBillingFlow(Activity, BillingFlowParams). */
-    @NonNull 
+    @NonNull
     PlatformBillingResult launchBillingFlow(@NonNull PlatformBillingFlowParams params);
-    /** Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams, AcknowledgePurchaseResponseListener). */
-    void acknowledgePurchase(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
+    /**
+     * Wraps BillingClient#acknowledgePurchase(AcknowledgePurchaseParams,
+     * AcknowledgePurchaseResponseListener).
+     */
+    void acknowledgePurchase(
+        @NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#consumeAsync(ConsumeParams, ConsumeResponseListener). */
     void consumeAsync(@NonNull String purchaseToken, @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener). */
-    void queryPurchasesAsync(@NonNull PlatformProductType productType, @NonNull Result<PlatformPurchasesResponse> result);
-    /** Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener). */
-    void queryPurchaseHistoryAsync(@NonNull PlatformProductType productType, @NonNull Result<PlatformPurchaseHistoryResponse> result);
-    /** Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener). */
-    void queryProductDetailsAsync(@NonNull List<PlatformQueryProduct> products, @NonNull Result<PlatformProductDetailsResponse> result);
+    void queryPurchasesAsync(
+        @NonNull PlatformProductType productType,
+        @NonNull Result<PlatformPurchasesResponse> result);
+    /**
+     * Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams,
+     * PurchaseHistoryResponseListener).
+     */
+    void queryPurchaseHistoryAsync(
+        @NonNull PlatformProductType productType,
+        @NonNull Result<PlatformPurchaseHistoryResponse> result);
+    /**
+     * Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams,
+     * ProductDetailsResponseListener).
+     */
+    void queryProductDetailsAsync(
+        @NonNull List<PlatformQueryProduct> products,
+        @NonNull Result<PlatformProductDetailsResponse> result);
     /** Wraps BillingClient#isFeatureSupported(String). */
-    @NonNull 
+    @NonNull
     Boolean isFeatureSupported(@NonNull String feature);
     /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
     void isAlternativeBillingOnlyAvailableAsync(@NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
     void showAlternativeBillingOnlyInformationDialog(@NonNull Result<PlatformBillingResult> result);
-    /** Wraps BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener). */
-    void createAlternativeBillingOnlyReportingDetailsAsync(@NonNull Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> result);
+    /**
+     * Wraps
+     * BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
+     */
+    void createAlternativeBillingOnlyReportingDetailsAsync(
+        @NonNull Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> result);
 
     /** The codec used by InAppPurchaseApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`. */
+    /**
+     * Sets up an instance of `InAppPurchaseApi` to handle messages through the `binaryMessenger`.
+     */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable InAppPurchaseApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable InAppPurchaseApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable InAppPurchaseApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isReady"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3013,8 +3246,7 @@ public class Messages {
                 try {
                   Boolean output = api.isReady();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -3026,7 +3258,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.startConnection"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3056,7 +3291,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.endConnection"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3064,8 +3302,7 @@ public class Messages {
                 try {
                   api.endConnection();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -3077,7 +3314,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.getBillingConfigAsync"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3104,7 +3344,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.launchBillingFlow"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3114,8 +3357,7 @@ public class Messages {
                 try {
                   PlatformBillingResult output = api.launchBillingFlow(paramsArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -3127,7 +3369,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.acknowledgePurchase"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3156,7 +3401,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.consumeAsync"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3185,7 +3433,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchasesAsync"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3214,7 +3465,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3243,7 +3497,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryProductDetailsAsync"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3272,7 +3529,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isFeatureSupported"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3282,8 +3542,7 @@ public class Messages {
                 try {
                   Boolean output = api.isFeatureSupported(featureArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -3295,7 +3554,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.isAlternativeBillingOnlyAvailableAsync"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3322,7 +3584,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.showAlternativeBillingOnlyInformationDialog"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -3349,14 +3614,18 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.createAlternativeBillingOnlyReportingDetailsAsync"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 Result<PlatformAlternativeBillingOnlyReportingDetailsResponse> resultCallback =
                     new Result<PlatformAlternativeBillingOnlyReportingDetailsResponse>() {
-                      public void success(PlatformAlternativeBillingOnlyReportingDetailsResponse result) {
+                      public void success(
+                          PlatformAlternativeBillingOnlyReportingDetailsResponse result) {
                         wrapped.add(0, result);
                         reply.reply(wrapped);
                       }
@@ -3383,79 +3652,90 @@ public class Messages {
     public InAppPurchaseCallbackApi(@NonNull BinaryMessenger argBinaryMessenger) {
       this(argBinaryMessenger, "");
     }
-    public InAppPurchaseCallbackApi(@NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
+
+    public InAppPurchaseCallbackApi(
+        @NonNull BinaryMessenger argBinaryMessenger, @NonNull String messageChannelSuffix) {
       this.binaryMessenger = argBinaryMessenger;
       this.messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
     }
 
-    /**
-     * Public interface for sending reply.
-     * The codec used by InAppPurchaseCallbackApi.
-     */
+    /** Public interface for sending reply. The codec used by InAppPurchaseCallbackApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
     /** Called for BillingClientStateListener#onBillingServiceDisconnected(). */
-    public void onBillingServiceDisconnected(@NonNull Long callbackHandleArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected" + messageChannelSuffix;
+    public void onBillingServiceDisconnected(
+        @NonNull Long callbackHandleArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onBillingServiceDisconnected"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<>(Collections.singletonList(callbackHandleArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called for PurchasesUpdatedListener#onPurchasesUpdated(BillingResult, List<Purchase>). */
-    public void onPurchasesUpdated(@NonNull PlatformPurchasesResponse updateArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated" + messageChannelSuffix;
+    public void onPurchasesUpdated(
+        @NonNull PlatformPurchasesResponse updateArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.onPurchasesUpdated"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<>(Collections.singletonList(updateArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
     /** Called for UserChoiceBillingListener#userSelectedAlternativeBilling(UserChoiceDetails). */
-    public void userSelectedalternativeBilling(@NonNull PlatformUserChoiceDetails detailsArg, @NonNull VoidResult result) {
-      final String channelName = "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling" + messageChannelSuffix;
+    public void userSelectedalternativeBilling(
+        @NonNull PlatformUserChoiceDetails detailsArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseCallbackApi.userSelectedalternativeBilling"
+              + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
-          new BasicMessageChannel<>(
-              binaryMessenger, channelName, getCodec());
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
       channel.send(
           new ArrayList<>(Collections.singletonList(detailsArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;
               if (listReply.size() > 1) {
-                result.error(new FlutterError((String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
               } else {
                 result.success();
               }
-            }  else {
+            } else {
               result.error(createConnectionError(channelName));
-            } 
+            }
           });
     }
   }

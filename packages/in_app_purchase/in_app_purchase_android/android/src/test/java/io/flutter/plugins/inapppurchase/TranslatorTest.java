@@ -288,14 +288,15 @@ public class TranslatorTest {
         Objects.requireNonNull(serialized.getAccountIdentifiers()).getObfuscatedProfileId());
   }
 
-  private void assertSerialized(ProductDetails.InstallmentPlanDetails expected,
-                                Messages.PlatformInstallmentPlanDetails serialized) {
+  private void assertSerialized(
+      ProductDetails.InstallmentPlanDetails expected,
+      Messages.PlatformInstallmentPlanDetails serialized) {
     assertEquals(
-            expected.getInstallmentPlanCommitmentPaymentsCount(),
-            serialized.getCommitmentPaymentsCount().intValue());
+        expected.getInstallmentPlanCommitmentPaymentsCount(),
+        serialized.getCommitmentPaymentsCount().intValue());
     assertEquals(
-            expected.getSubsequentInstallmentPlanCommitmentPaymentsCount(),
-            serialized.getSubsequentCommitmentPaymentsCount().intValue());
+        expected.getSubsequentInstallmentPlanCommitmentPaymentsCount(),
+        serialized.getSubsequentCommitmentPaymentsCount().intValue());
   }
 
   private String productTypeFromPlatform(Messages.PlatformProductType type) {

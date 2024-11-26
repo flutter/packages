@@ -684,7 +684,7 @@ public class MethodCallHandlerTest {
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
     int replacementMode =
-            BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
+        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, oldProductId)));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);

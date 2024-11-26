@@ -244,7 +244,7 @@ import java.util.Locale;
   }
 
   static @Nullable PlatformPendingPurchaseUpdate fromPendingPurchaseUpdate(
-          @Nullable Purchase.PendingPurchaseUpdate pendingPurchaseUpdate) {
+      @Nullable Purchase.PendingPurchaseUpdate pendingPurchaseUpdate) {
     if (pendingPurchaseUpdate == null) {
       return null;
     }
