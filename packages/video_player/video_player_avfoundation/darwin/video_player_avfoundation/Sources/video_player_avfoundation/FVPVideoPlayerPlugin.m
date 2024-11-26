@@ -40,6 +40,10 @@
 
 #pragma mark -
 
+/// The next non-texture player ID, initialized to a high number to avoid collisions with
+/// texture IDs (which are generated separately).
+static int64_t nextNonTexturePlayerId = 1000000;
+
 @interface FVPVideoPlayerPlugin ()
 @property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry> *registry;
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
@@ -96,9 +100,9 @@
     playerId = [self.registry registerTexture:(FVPVideoPlayerTextureApproach *)player];
     frameUpdater.textureId = playerId;
   } else {
-    // FIXME Possibly start with a predefined prefix and then increment it to avoid
-    //  collisions withtextureId.
-    playerId = arc4random();
+    @synchronized(self) {
+      playerId = nextNonTexturePlayerId++;
+    }
   }
 
   FlutterEventChannel *eventChannel = [FlutterEventChannel
