@@ -19,4 +19,3 @@ class URLWrapper {
     self.value = value
   }
 }
-
