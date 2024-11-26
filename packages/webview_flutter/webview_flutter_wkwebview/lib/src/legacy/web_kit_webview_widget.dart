@@ -123,7 +123,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       WKWebViewConfiguration configuration,
       WKNavigationAction navigationAction,
     ) {
-      if (!navigationAction.targetFrame.isMainFrame) {
+      final bool isForMainFrame =
+          navigationAction.targetFrame?.isMainFrame ?? false;
+      if (!isForMainFrame) {
         webView.load(navigationAction.request);
       }
     },
@@ -157,7 +159,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
           final bool allow =
               await weakReference.target!.callbacksHandler.onNavigationRequest(
             url: await action.request.getUrl() ?? '',
-            isForMainFrame: action.targetFrame.isMainFrame,
+            isForMainFrame: action.targetFrame?.isMainFrame ?? false,
           );
 
           return allow

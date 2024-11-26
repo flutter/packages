@@ -161,7 +161,9 @@ class WebKitWebViewController extends PlatformWebViewController {
         WKWebViewConfiguration configuration,
         WKNavigationAction navigationAction,
       ) {
-        if (navigationAction.targetFrame?.isMainFrame ?? false) {
+        final bool isForMainFrame =
+            navigationAction.targetFrame?.isMainFrame ?? false;
+        if (!isForMainFrame) {
           webView.load(navigationAction.request);
         }
       },
@@ -1112,7 +1114,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           final NavigationDecision decision =
               await weakThis.target!._onNavigationRequest!(NavigationRequest(
             url: await action.request.getUrl() ?? '',
-            isMainFrame: action.targetFrame.isMainFrame,
+            isMainFrame: action.targetFrame?.isMainFrame ?? false,
           ));
           switch (decision) {
             case NavigationDecision.prevent:
