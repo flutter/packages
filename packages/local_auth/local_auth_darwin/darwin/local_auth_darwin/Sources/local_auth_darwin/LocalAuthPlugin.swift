@@ -27,15 +27,15 @@ class StickyAuthState {
 }
 
 public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
-  private var authContext: AuthContext
+  private let authContextProvider: () -> AuthContext
   private let alertController: AlertController
   private var lastCallState: StickyAuthState?
 
   init(
-    authContext: AuthContext = LAContext(),
+    authContextProvider: @escaping () -> AuthContext = { LAContext() },
     alertController: AlertController = DefaultAlertController()
   ) {
-    self.authContext = authContext
+    self.authContextProvider = authContextProvider
     self.alertController = alertController
 
     super.init()
@@ -53,6 +53,10 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     #endif
   }
 
+  private func makeAuthContext() -> AuthContext {
+    return authContextProvider()
+  }
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin()
     #if os(iOS)
@@ -65,13 +69,15 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   }
 
   func isDeviceSupported() throws -> Bool {
-    return authContext.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+    let context = makeAuthContext()
+    return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
   }
 
   func deviceCanSupportBiometrics() throws -> Bool {
+    let context = makeAuthContext()
     var authError: NSError?
 
-    if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
+    if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
       return true
     }
 
@@ -83,19 +89,20 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   }
 
   func getEnrolledBiometrics() throws -> [AuthBiometric] {
+    let context = makeAuthContext()
     var biometrics: [AuthBiometric] = []
 
     var authError: NSError?
-    if authContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
+    if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
       if authError == nil {
         if #available(macOS 10.15, iOS 11.0, *) {
-          if authContext.biometryType == .faceID {
+          if context.biometryType == .faceID {
             biometrics.append(.face)
             return biometrics
           }
         }
 
-        if authContext.biometryType == .touchID {
+        if context.biometryType == .touchID {
           biometrics.append(.fingerprint)
         }
       }
@@ -109,15 +116,16 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
-    self.authContext.localizedFallbackTitle = strings.localizedFallbackTitle
+    var context = makeAuthContext()
+    context.localizedFallbackTitle = strings.localizedFallbackTitle
     self.lastCallState = nil
 
     let policy: LAPolicy =
       options.biometricOnly ? .deviceOwnerAuthenticationWithBiometrics : .deviceOwnerAuthentication
     var authError: NSError?
 
-    if authContext.canEvaluatePolicy(policy, error: &authError) {
-      authContext.evaluatePolicy(policy, localizedReason: strings.reason) { success, error in
+    if context.canEvaluatePolicy(policy, error: &authError) {
+      context.evaluatePolicy(policy, localizedReason: strings.reason) { success, error in
         DispatchQueue.main.async {
           self.handleAuthReply(
             success: success,
