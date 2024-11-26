@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds support for platform views as the optional way of displaying a video.
+
 ## 2.6.4
 
 * Refactors native code structure.
