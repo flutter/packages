@@ -78,11 +78,11 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKUserContentController(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUserContentController {
-    PigeonApiWKUserContentController(pigeonRegistrar: registrar, delegate: UserContentControllerProxyAPIDelegate())
+    return PigeonApiWKUserContentController(pigeonRegistrar: registrar, delegate: UserContentControllerProxyAPIDelegate())
   }
   
   func pigeonApiWKPreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKPreferences {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiWKPreferences(pigeonRegistrar: registrar, delegate: PreferencesProxyAPIDelegate())
   }
   
   func pigeonApiWKScriptMessageHandler(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKScriptMessageHandler {
