@@ -277,11 +277,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
         requiresUserAction = false;
     }
 
-    configuration
-        .setMediaTypesRequiringUserActionForPlayback(<AudiovisualMediaType>[
-      if (requiresUserAction) AudiovisualMediaType.all,
-      if (!requiresUserAction) AudiovisualMediaType.none,
-    ]);
+    configuration.setMediaTypesRequiringUserActionForPlayback(
+      requiresUserAction ? AudiovisualMediaType.all : AudiovisualMediaType.none,
+    );
   }
 
   @override
@@ -544,7 +542,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
   Future<void> _setJavaScriptMode(JavascriptMode mode) async {
     final WKPreferences preferences =
-        await webView.configuration.getUserPreferences();
+        await webView.configuration.getPreferences();
     switch (mode) {
       case JavascriptMode.disabled:
         await preferences.setJavaScriptEnabled(false);

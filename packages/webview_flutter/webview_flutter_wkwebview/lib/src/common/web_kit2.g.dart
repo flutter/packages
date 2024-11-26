@@ -3228,7 +3228,7 @@ class WKWebViewConfiguration extends NSObject {
   }
 
   /// The object that manages the preference-related settings for the web view.
-  Future<void> setPreferences(WKPreferences controller) async {
+  Future<void> setPreferences(WKPreferences preferences) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWKWebViewConfiguration;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3241,7 +3241,7 @@ class WKWebViewConfiguration extends NSObject {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, controller]) as List<Object?>?;
+        .send(<Object?>[this, preferences]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -3256,12 +3256,12 @@ class WKWebViewConfiguration extends NSObject {
   }
 
   /// The object that manages the preference-related settings for the web view.
-  Future<WKPreferences> getUserPreferences() async {
+  Future<WKPreferences> getPreferences() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWKWebViewConfiguration;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getUserPreferences';
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getPreferences';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -3348,7 +3348,7 @@ class WKWebViewConfiguration extends NSObject {
 
   /// The media types that require a user gesture to begin playing.
   Future<void> setMediaTypesRequiringUserActionForPlayback(
-      List<AudiovisualMediaType> types) async {
+      AudiovisualMediaType type) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWKWebViewConfiguration;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3361,7 +3361,7 @@ class WKWebViewConfiguration extends NSObject {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this, types]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[this, type]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

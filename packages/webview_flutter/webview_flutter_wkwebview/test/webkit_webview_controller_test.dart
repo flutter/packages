@@ -181,7 +181,7 @@ void main() {
       when(nonNullMockWebView.configuration)
           .thenReturn(nonNullMockWebViewConfiguration);
 
-      when(nonNullMockWebViewConfiguration.getUserPreferences()).thenAnswer(
+      when(nonNullMockWebViewConfiguration.getPreferences()).thenAnswer(
         (_) => Future<MockWKPreferences>.value(
           mockPreferences ?? MockWKPreferences(),
         ),
@@ -276,7 +276,7 @@ void main() {
 
         verify(
           mockConfiguration.setMediaTypesRequiringUserActionForPlayback(
-            <AudiovisualMediaType>[AudiovisualMediaType.video],
+            AudiovisualMediaType.video,
           ),
         );
       });
@@ -297,10 +297,7 @@ void main() {
 
         verify(
           mockConfiguration.setMediaTypesRequiringUserActionForPlayback(
-            <AudiovisualMediaType>[
-              AudiovisualMediaType.audio,
-              AudiovisualMediaType.video,
-            ],
+            AudiovisualMediaType.all,
           ),
         );
       });
@@ -322,7 +319,7 @@ void main() {
 
         verify(
           mockConfiguration.setMediaTypesRequiringUserActionForPlayback(
-            <AudiovisualMediaType>[AudiovisualMediaType.none],
+            AudiovisualMediaType.none,
           ),
         );
       });

@@ -70,11 +70,11 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiUIScrollView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIScrollView {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiUIScrollView(pigeonRegistrar: registrar, delegate: ScrollViewProxyAPIDelegate())
   }
   
   func pigeonApiWKWebViewConfiguration(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebViewConfiguration {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiWKWebViewConfiguration(pigeonRegistrar: registrar, delegate: WebViewConfigurationProxyAPIDelegate())
   }
   
   func pigeonApiWKUserContentController(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUserContentController {

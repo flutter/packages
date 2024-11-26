@@ -3930,9 +3930,9 @@ protocol PigeonApiDelegateWKWebViewConfiguration {
   /// cached data objects.
   func getWebsiteDataStore(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKWebsiteDataStore
   /// The object that manages the preference-related settings for the web view.
-  func setPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, controller: WKPreferences) throws
+  func setPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, preferences: WKPreferences) throws
   /// The object that manages the preference-related settings for the web view.
-  func getUserPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKPreferences
+  func getPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKPreferences
   /// A Boolean value that indicates whether HTML5 videos play inline or use the
   /// native full-screen controller.
   func setAllowsInlineMediaPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool) throws
@@ -3940,7 +3940,7 @@ protocol PigeonApiDelegateWKWebViewConfiguration {
   /// pages within the app’s domain.
   func setLimitsNavigationsToAppBoundDomains(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, limit: Bool) throws
   /// The media types that require a user gesture to begin playing.
-  func setMediaTypesRequiringUserActionForPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, types: [AudiovisualMediaType]) throws
+  func setMediaTypesRequiringUserActionForPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, type: AudiovisualMediaType) throws
 }
 
 protocol PigeonApiProtocolWKWebViewConfiguration {
@@ -4048,9 +4048,9 @@ withIdentifier: pigeonIdentifierArg)
       setPreferencesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
-        let controllerArg = args[1] as! WKPreferences
+        let preferencesArg = args[1] as! WKPreferences
         do {
-          try api.pigeonDelegate.setPreferences(pigeonApi: api, pigeonInstance: pigeonInstanceArg, controller: controllerArg)
+          try api.pigeonDelegate.setPreferences(pigeonApi: api, pigeonInstance: pigeonInstanceArg, preferences: preferencesArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4059,20 +4059,20 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setPreferencesChannel.setMessageHandler(nil)
     }
-    let getUserPreferencesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getUserPreferences", binaryMessenger: binaryMessenger, codec: codec)
+    let getPreferencesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getPreferences", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getUserPreferencesChannel.setMessageHandler { message, reply in
+      getPreferencesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         do {
-          let result = try api.pigeonDelegate.getUserPreferences(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
       }
     } else {
-      getUserPreferencesChannel.setMessageHandler(nil)
+      getPreferencesChannel.setMessageHandler(nil)
     }
     let setAllowsInlineMediaPlaybackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setAllowsInlineMediaPlayback", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -4111,9 +4111,9 @@ withIdentifier: pigeonIdentifierArg)
       setMediaTypesRequiringUserActionForPlaybackChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
-        let typesArg = args[1] as! [AudiovisualMediaType]
+        let typeArg = args[1] as! AudiovisualMediaType
         do {
-          try api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(pigeonApi: api, pigeonInstance: pigeonInstanceArg, types: typesArg)
+          try api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(pigeonApi: api, pigeonInstance: pigeonInstanceArg, type: typeArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4197,12 +4197,12 @@ class WebViewConfigurationProxyAPIDelegate : PigeonApiDelegateWKWebViewConfigura
     return pigeonInstance.getWebsiteDataStore()
   }
 
-  func setPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, controller: WKPreferences) throws {
-    pigeonInstance.setPreferences(controller: controller)
+  func setPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, preferences: WKPreferences) throws {
+    pigeonInstance.setPreferences(preferences: preferences)
   }
 
-  func getUserPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKPreferences {
-    return pigeonInstance.getUserPreferences()
+  func getPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKPreferences {
+    return pigeonInstance.getPreferences()
   }
 
   func setAllowsInlineMediaPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool) throws {
@@ -4213,8 +4213,8 @@ class WebViewConfigurationProxyAPIDelegate : PigeonApiDelegateWKWebViewConfigura
     pigeonInstance.setLimitsNavigationsToAppBoundDomains(limit: limit)
   }
 
-  func setMediaTypesRequiringUserActionForPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, types: [AudiovisualMediaType]) throws {
-    pigeonInstance.setMediaTypesRequiringUserActionForPlayback(types: types)
+  func setMediaTypesRequiringUserActionForPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, type: AudiovisualMediaType) throws {
+    pigeonInstance.setMediaTypesRequiringUserActionForPlayback(type: type)
   }
 
 }
@@ -4292,21 +4292,21 @@ class WebViewConfigurationProxyApiTests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = TestWebViewConfiguration()
-    let controller = TestPreferences
-    api.pigeonDelegate.setPreferences(pigeonApi: api, pigeonInstance: instance, controller: controller)
+    let preferences = TestPreferences
+    api.pigeonDelegate.setPreferences(pigeonApi: api, pigeonInstance: instance, preferences: preferences)
 
-    XCTAssertEqual(instance.setPreferencesArgs, [controller])
+    XCTAssertEqual(instance.setPreferencesArgs, [preferences])
   }
 
-  func testGetUserPreferences() {
+  func testGetPreferences() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = TestWebViewConfiguration()
-    let value = api.pigeonDelegate.getUserPreferences(pigeonApi: api, pigeonInstance: instance )
+    let value = api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance )
 
-    XCTAssertTrue(instance.getUserPreferencesCalled)
-    XCTAssertEqual(value, instance.getUserPreferences())
+    XCTAssertTrue(instance.getPreferencesCalled)
+    XCTAssertEqual(value, instance.getPreferences())
   }
 
   func testSetAllowsInlineMediaPlayback() {
@@ -4336,10 +4336,10 @@ class WebViewConfigurationProxyApiTests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = TestWebViewConfiguration()
-    let types = [.none]
-    api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(pigeonApi: api, pigeonInstance: instance, types: types)
+    let type = .none
+    api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(pigeonApi: api, pigeonInstance: instance, type: type)
 
-    XCTAssertEqual(instance.setMediaTypesRequiringUserActionForPlaybackArgs, [types])
+    XCTAssertEqual(instance.setMediaTypesRequiringUserActionForPlaybackArgs, [type])
   }
 
 }
@@ -4349,7 +4349,7 @@ class TestWebViewConfiguration: WKWebViewConfiguration {
   var setWebsiteDataStoreArgs: [AnyHashable?]? = nil
   var getWebsiteDataStoreCalled = false
   var setPreferencesArgs: [AnyHashable?]? = nil
-  var getUserPreferencesCalled = false
+  var getPreferencesCalled = false
   var setAllowsInlineMediaPlaybackArgs: [AnyHashable?]? = nil
   var setLimitsNavigationsToAppBoundDomainsArgs: [AnyHashable?]? = nil
   var setMediaTypesRequiringUserActionForPlaybackArgs: [AnyHashable?]? = nil
@@ -4368,10 +4368,10 @@ class TestWebViewConfiguration: WKWebViewConfiguration {
     getWebsiteDataStoreCalled = true
   }
   override func setPreferences() {
-    setPreferencesArgs = [controller]
+    setPreferencesArgs = [preferences]
   }
-  override func getUserPreferences() {
-    getUserPreferencesCalled = true
+  override func getPreferences() {
+    getPreferencesCalled = true
   }
   override func setAllowsInlineMediaPlayback() {
     setAllowsInlineMediaPlaybackArgs = [allow]
@@ -4380,7 +4380,7 @@ class TestWebViewConfiguration: WKWebViewConfiguration {
     setLimitsNavigationsToAppBoundDomainsArgs = [limit]
   }
   override func setMediaTypesRequiringUserActionForPlayback() {
-    setMediaTypesRequiringUserActionForPlaybackArgs = [types]
+    setMediaTypesRequiringUserActionForPlaybackArgs = [type]
   }
 }
 */

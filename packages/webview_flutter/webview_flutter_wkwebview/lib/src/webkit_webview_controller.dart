@@ -56,15 +56,15 @@ class WebKitWebViewControllerCreationParams
 
     if (mediaTypesRequiringUserAction.isEmpty) {
       _configuration.setMediaTypesRequiringUserActionForPlayback(
-        <AudiovisualMediaType>[AudiovisualMediaType.none],
+        AudiovisualMediaType.none,
+      );
+    } else if (mediaTypesRequiringUserAction.length == 1) {
+      _configuration.setMediaTypesRequiringUserActionForPlayback(
+        mediaTypesRequiringUserAction.single._toWKAudiovisualMediaType(),
       );
     } else {
       _configuration.setMediaTypesRequiringUserActionForPlayback(
-        mediaTypesRequiringUserAction
-            .map<AudiovisualMediaType>(
-              (PlaybackMediaTypes type) => type._toWKAudiovisualMediaType(),
-            )
-            .toList(),
+        AudiovisualMediaType.all,
       );
     }
     _configuration.setAllowsInlineMediaPlayback(allowsInlineMediaPlayback);
@@ -569,7 +569,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   @override
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {
     final WKPreferences preferences =
-        await _webView.configuration.getUserPreferences();
+        await _webView.configuration.getPreferences();
     switch (javaScriptMode) {
       case JavaScriptMode.disabled:
         await preferences.setJavaScriptEnabled(false);

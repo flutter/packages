@@ -1230,26 +1230,26 @@ class MockWKWebViewConfiguration extends _i1.Mock
       ) as _i3.Future<_i2.WKWebsiteDataStore>);
 
   @override
-  _i3.Future<void> setPreferences(_i2.WKPreferences? controller) =>
+  _i3.Future<void> setPreferences(_i2.WKPreferences? preferences) =>
       (super.noSuchMethod(
         Invocation.method(
           #setPreferences,
-          [controller],
+          [preferences],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i2.WKPreferences> getUserPreferences() => (super.noSuchMethod(
+  _i3.Future<_i2.WKPreferences> getPreferences() => (super.noSuchMethod(
         Invocation.method(
-          #getUserPreferences,
+          #getPreferences,
           [],
         ),
         returnValue: _i3.Future<_i2.WKPreferences>.value(_FakeWKPreferences_4(
           this,
           Invocation.method(
-            #getUserPreferences,
+            #getPreferences,
             [],
           ),
         )),
@@ -1279,11 +1279,11 @@ class MockWKWebViewConfiguration extends _i1.Mock
 
   @override
   _i3.Future<void> setMediaTypesRequiringUserActionForPlayback(
-          List<_i2.AudiovisualMediaType>? types) =>
+          _i2.AudiovisualMediaType? type) =>
       (super.noSuchMethod(
         Invocation.method(
           #setMediaTypesRequiringUserActionForPlayback,
-          [types],
+          [type],
         ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),

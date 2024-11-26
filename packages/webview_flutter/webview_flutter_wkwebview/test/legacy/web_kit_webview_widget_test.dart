@@ -79,7 +79,7 @@ void main() {
           mocks.userContentController,
         ),
       );
-      when(mocks.webViewConfiguration.getUserPreferences())
+      when(mocks.webViewConfiguration.getPreferences())
           .thenAnswer((_) => Future<WKPreferences>.value(mocks.preferences));
 
       final MockWKWebViewUIExtensions mockWKWebViewUIExtensions =
@@ -255,9 +255,9 @@ void main() {
         );
 
         verify(mocks.webViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<AudiovisualMediaType>[
+            .setMediaTypesRequiringUserActionForPlayback(
           AudiovisualMediaType.all,
-        ]));
+        ));
       });
 
       testWidgets('autoMediaPlaybackPolicy false', (WidgetTester tester) async {
@@ -275,9 +275,9 @@ void main() {
         );
 
         verify(mocks.webViewConfiguration
-            .setMediaTypesRequiringUserActionForPlayback(<AudiovisualMediaType>[
+            .setMediaTypesRequiringUserActionForPlayback(
           AudiovisualMediaType.none,
-        ]));
+        ));
       });
 
       testWidgets('javascriptChannelNames', (WidgetTester tester) async {

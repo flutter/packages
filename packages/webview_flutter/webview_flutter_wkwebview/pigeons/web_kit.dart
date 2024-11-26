@@ -601,10 +601,10 @@ abstract class WKWebViewConfiguration extends NSObject {
   WKWebsiteDataStore getWebsiteDataStore();
 
   /// The object that manages the preference-related settings for the web view.
-  void setPreferences(WKPreferences controller);
+  void setPreferences(WKPreferences preferences);
 
   /// The object that manages the preference-related settings for the web view.
-  WKPreferences getUserPreferences();
+  WKPreferences getPreferences();
 
   /// A Boolean value that indicates whether HTML5 videos play inline or use the
   /// native full-screen controller.
@@ -615,9 +615,7 @@ abstract class WKWebViewConfiguration extends NSObject {
   void setLimitsNavigationsToAppBoundDomains(bool limit);
 
   /// The media types that require a user gesture to begin playing.
-  void setMediaTypesRequiringUserActionForPlayback(
-    List<AudiovisualMediaType> types,
-  );
+  void setMediaTypesRequiringUserActionForPlayback(AudiovisualMediaType type);
 }
 
 /// An object for managing interactions between JavaScript code and your web

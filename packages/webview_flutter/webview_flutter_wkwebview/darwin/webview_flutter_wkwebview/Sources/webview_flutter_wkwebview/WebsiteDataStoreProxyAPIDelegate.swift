@@ -4,7 +4,6 @@
 
 import Foundation
 import WebKit
-import WebKit
 
 /// ProxyApi implementation for `WKWebsiteDataStore`.
 ///
