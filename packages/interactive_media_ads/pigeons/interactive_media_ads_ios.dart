@@ -649,6 +649,6 @@ abstract class IMACompanionDelegate extends NSObject {
   )? companionAdSlotFilled;
 
   /// Called when the slot is clicked on by the user and will successfully
-  /// navigate away.
+  /// navigate away
   late void Function(IMACompanionAdSlot slot)? companionSlotWasClicked;
 }

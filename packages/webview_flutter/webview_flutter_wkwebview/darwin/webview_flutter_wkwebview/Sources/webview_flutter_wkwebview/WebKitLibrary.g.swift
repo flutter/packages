@@ -1123,7 +1123,7 @@ enum NavigationType: Int {
   /// A link activation.
   case linkActivated = 0
   /// A request to submit a form.
-  case submitted = 1
+  case formSubmitted = 1
   /// A request for the frame’s next or previous item.
   case backForward = 2
   /// A request to reload the webpage.
@@ -2031,7 +2031,7 @@ protocol PigeonApiDelegateWKNavigationAction {
   /// The URL request object associated with the navigation action.
   func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> URLRequestWrapper
   /// The frame in which to display the new content.
-  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo
+  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo?
   /// The type of action that triggered the navigation.
   func navigationType(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> NavigationType
 }
@@ -2109,7 +2109,7 @@ class NavigationActionProxyAPIDelegate : PigeonApiDelegateWKNavigationAction {
     return pigeon_instance.request
   }
 
-  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo {
+  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo? {
     return pigeon_instance.targetFrame
   }
 
@@ -2117,8 +2117,8 @@ class NavigationActionProxyAPIDelegate : PigeonApiDelegateWKNavigationAction {
     switch pigeon_instance.navigationType {
       case .linkActivated
         return .linkActivated
-            case .submitted
-        return .submitted
+            case .formSubmitted
+        return .formSubmitted
             case .backForward
         return .backForward
             case .reload

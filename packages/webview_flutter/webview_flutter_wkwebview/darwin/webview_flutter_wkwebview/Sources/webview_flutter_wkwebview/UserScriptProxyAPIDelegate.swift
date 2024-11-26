@@ -11,7 +11,7 @@ import WebKit
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
-  func pigeon_defaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isMainFrameOnly: Bool) throws -> WKUserScript {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isMainFrameOnly: Bool) throws -> WKUserScript {
     return WKUserScript()
   }
 
@@ -25,13 +25,10 @@ class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
       return .atDocumentStart
     case .atDocumentEnd:
       return .atDocumentEnd
-    @unknown default:
-      return .unknown
     }
   }
 
   func isMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> Bool {
     return pigeonInstance.isForMainFrameOnly
   }
-
 }

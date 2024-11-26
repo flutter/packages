@@ -155,14 +155,13 @@ class WebKitWebViewController extends PlatformWebViewController {
     final WeakReference<WebKitWebViewController> weakThis =
         WeakReference<WebKitWebViewController>(this);
     _uiDelegate = _webKitParams.webKitProxy.newWKUIDelegate(
-      //instanceManager: _webKitParams._instanceManager,
       onCreateWebView: (
         _,
         WKWebView webView,
         WKWebViewConfiguration configuration,
         WKNavigationAction navigationAction,
       ) {
-        if (!navigationAction.targetFrame.isMainFrame) {
+        if (navigationAction.targetFrame?.isMainFrame ?? false) {
           webView.load(navigationAction.request);
         }
       },
@@ -304,7 +303,6 @@ class WebKitWebViewController extends PlatformWebViewController {
         }
       };
     }),
-    //instanceManager: _webKitParams._instanceManager,
   );
 
   late final WKUIDelegate _uiDelegate;

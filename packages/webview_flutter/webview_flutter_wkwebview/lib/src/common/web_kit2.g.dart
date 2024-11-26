@@ -775,7 +775,7 @@ enum NavigationType {
   /// A link activation.
   linkActivated,
   /// A request to submit a form.
-  submitted,
+  formSubmitted,
   /// A request for the frame’s next or previous item.
   backForward,
   /// A request to reload the webpage.
@@ -1515,7 +1515,7 @@ class WKNavigationAction extends NSObject {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.request,
-    required this.targetFrame,
+    this.targetFrame,
     required this.navigationType,
     super.observeValue,
   }) : super.pigeon_detached();
@@ -1524,7 +1524,7 @@ class WKNavigationAction extends NSObject {
   final URLRequest request;
 
   /// The frame in which to display the new content.
-  final WKFrameInfo targetFrame;
+  final WKFrameInfo? targetFrame;
 
   /// The type of action that triggered the navigation.
   final NavigationType navigationType;
@@ -1535,7 +1535,7 @@ class WKNavigationAction extends NSObject {
     PigeonInstanceManager? pigeon_instanceManager,
     WKNavigationAction Function(
       URLRequest request,
-      WKFrameInfo targetFrame,
+      WKFrameInfo? targetFrame,
       NavigationType navigationType,
     )? pigeon_newInstance,
   }) {
@@ -1564,8 +1564,6 @@ class WKNavigationAction extends NSObject {
           assert(arg_request != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationAction.pigeon_newInstance was null, expected non-null URLRequest.');
           final WKFrameInfo? arg_targetFrame = (args[2] as WKFrameInfo?);
-          assert(arg_targetFrame != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationAction.pigeon_newInstance was null, expected non-null WKFrameInfo.');
           final NavigationType? arg_navigationType =
               (args[3] as NavigationType?);
           assert(arg_navigationType != null,
@@ -1574,12 +1572,12 @@ class WKNavigationAction extends NSObject {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(
-                      arg_request!, arg_targetFrame!, arg_navigationType!) ??
+                      arg_request!, arg_targetFrame, arg_navigationType!) ??
                   WKNavigationAction.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     request: arg_request!,
-                    targetFrame: arg_targetFrame!,
+                    targetFrame: arg_targetFrame,
                     navigationType: arg_navigationType!,
                   ),
               arg_pigeon_instanceIdentifier!,

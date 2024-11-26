@@ -244,7 +244,7 @@ enum NavigationType {
   linkActivated,
 
   /// A request to submit a form.
-  submitted,
+  formSubmitted,
 
   /// A request for the frame’s next or previous item.
   backForward,
@@ -400,7 +400,9 @@ abstract class WKNavigationAction extends NSObject {
   late URLRequest request;
 
   /// The frame in which to display the new content.
-  late WKFrameInfo targetFrame;
+  ///
+  /// If the target of the navigation is a new window, this property is nil.
+  late WKFrameInfo? targetFrame;
 
   /// The type of action that triggered the navigation.
   late NavigationType navigationType;
