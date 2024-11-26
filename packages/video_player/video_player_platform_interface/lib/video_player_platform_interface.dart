@@ -48,13 +48,8 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
-  /// Creates an instance of a video player with and returns its textureId.
-  /// The [viewType] parameter specifies the type of view to be used for the
-  /// video player.
-  Future<int?> create(
-    DataSource dataSource, {
-    VideoViewType viewType = VideoViewType.textureView,
-  }) {
+  /// Creates an instance of a video player and returns its textureId.
+  Future<int?> create(DataSource dataSource) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
@@ -98,10 +93,15 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
-  /// Returns a widget displaying the video with a given textureID, using given
-  /// viewType.
-  Widget buildView(int textureId, VideoViewType viewType) {
+  /// Returns a widget displaying the video with a given textureID.
+  @Deprecated('Use buildViewWithOptions() instead.')
+  Widget buildView(int textureId) {
     throw UnimplementedError('buildView() has not been implemented.');
+  }
+
+  /// Returns a widget displaying the video based on given options.
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    return buildView(options.playerId);
   }
 
   /// Sets the audio mode to mix with other sources
@@ -116,15 +116,6 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
-
-/// Enum representing the type of video view to be used.
-enum VideoViewType {
-  /// Uses a texture view for rendering video.
-  textureView,
-
-  ///  Uses a platform view for rendering video.
-  platformView,
-}
 
 /// Description of the data source used to create an instance of
 /// the video player.
@@ -149,6 +140,7 @@ class DataSource {
     this.asset,
     this.package,
     this.httpHeaders = const <String, String>{},
+    this.viewType = VideoViewType.textureView,
   });
 
   /// The way in which the video was originally loaded.
@@ -178,6 +170,9 @@ class DataSource {
   /// The package that the asset was loaded from. Only set for
   /// [DataSourceType.asset] videos.
   final String? package;
+
+  /// The type of view to be used for displaying the video player.
+  final VideoViewType viewType;
 }
 
 /// The way in which the video was originally loaded.
@@ -211,6 +206,15 @@ enum VideoFormat {
 
   /// Any format other than the other ones defined in this enum.
   other,
+}
+
+/// Enum representing the type of video view to be used.
+enum VideoViewType {
+  /// Uses a texture view for rendering video.
+  textureView,
+
+  ///  Uses a platform view for rendering video.
+  platformView,
 }
 
 /// Event emitted from the platform implementation.
@@ -490,4 +494,20 @@ class VideoPlayerWebOptionsControls {
 
     return controlsList.join(' ');
   }
+}
+
+/// [VideoViewOptions] contains configuration options for a video view.
+@immutable
+class VideoViewOptions {
+  /// Constructs an instance of [VideoViewOptions].
+  const VideoViewOptions({
+    required this.playerId,
+    required this.viewType,
+  });
+
+  /// The identifier of the video player.
+  final int playerId;
+
+  /// The type of the video view.
+  final VideoViewType viewType;
 }

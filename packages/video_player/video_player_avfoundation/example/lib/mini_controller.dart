@@ -231,27 +231,30 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.asset,
           asset: dataSource,
           package: package,
+          viewType: viewType,
         );
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
           uri: dataSource,
+          viewType: viewType,
         );
       case DataSourceType.file:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
+          viewType: viewType,
         );
       case DataSourceType.contentUri:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.contentUri,
           uri: dataSource,
+          viewType: viewType,
         );
     }
 
-    _textureId =
-        (await _platform.create(dataSourceDescription, viewType: viewType)) ??
-            kUninitializedTextureId;
+    _textureId = (await _platform.create(dataSourceDescription)) ??
+        kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
@@ -433,7 +436,12 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Widget build(BuildContext context) {
     return _textureId == MiniController.kUninitializedTextureId
         ? Container()
-        : _platform.buildView(_textureId, widget.controller.viewType);
+        : _platform.buildViewWithOptions(
+            VideoViewOptions(
+              playerId: _textureId,
+              viewType: widget.controller.viewType,
+            ),
+          );
   }
 }
 

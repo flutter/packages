@@ -150,10 +150,25 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId, VideoViewType viewType) {
-    return switch (viewType) {
-      VideoViewType.textureView => Texture(textureId: textureId),
-      VideoViewType.platformView => _buildPlatformView(textureId),
+  Widget buildView(int textureId) {
+    return buildViewWithOptions(
+      VideoViewOptions(
+        playerId: textureId,
+        // Texture view was the only supported view type before
+        // buildViewWithOptions was introduced. We pass it here to maintain
+        // backwards compatibility.
+        viewType: VideoViewType.textureView,
+      ),
+    );
+  }
+
+  @override
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    final int playerId = options.playerId;
+
+    return switch (options.viewType) {
+      VideoViewType.textureView => Texture(textureId: playerId),
+      VideoViewType.platformView => _buildPlatformView(playerId),
     };
   }
 
