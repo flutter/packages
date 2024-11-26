@@ -78,7 +78,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKUserContentController(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUserContentController {
-    throw PigeonError(code: "", message: "", details: "")
+    PigeonApiWKUserContentController(pigeonRegistrar: registrar, delegate: UserContentControllerProxyAPIDelegate())
   }
   
   func pigeonApiWKPreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKPreferences {
