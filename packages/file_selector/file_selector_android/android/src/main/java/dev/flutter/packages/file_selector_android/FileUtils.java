@@ -213,7 +213,7 @@ public class FileUtils {
     return fileName.substring(0, lastDotIndex);
   }
 
-  protected static String sanitizeFilename(String displayName) {
+  protected static @Nullable String sanitizeFilename(@Nullable String displayName) {
     if (displayName == null) {
       return null;
     }
@@ -227,7 +227,7 @@ public class FileUtils {
     return fileName;
   }
 
-  public static File saferOpenFile(String path, String expectedDir) throws IllegalArgumentException, IOException {
+  public static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir) throws IllegalArgumentException, IOException {
     File f = new File(path);
     String canonicalPath = f.getCanonicalPath();
     if (!canonicalPath.startsWith(expectedDir)) {
