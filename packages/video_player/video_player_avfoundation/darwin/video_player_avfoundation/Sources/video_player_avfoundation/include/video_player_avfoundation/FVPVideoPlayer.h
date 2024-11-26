@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FVPVideoPlayer : NSObject
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic, nonnull) FlutterEventChannel *eventChannel;
-/// The Flutter event sink used to send events to the Flutter engine.
-@property(nonatomic, nonnull) FlutterEventSink eventSink;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.
 @property(nonatomic) CGAffineTransform preferredTransform;
 /// Indicates whether the video player has been disposed.
@@ -32,8 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL isLooping;
 /// The current playback position of the video, in milliseconds.
 @property(readonly, nonatomic) int64_t position;
-
-NS_ASSUME_NONNULL_BEGIN
 
 /// Initializes a new instance of FVPVideoPlayer with the given URL, frame updater, display link,
 /// HTTP headers, AV factory, and registrar.

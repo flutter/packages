@@ -91,8 +91,8 @@
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
   // FIXME Rename textureId to playerId, in all other places as well.
   int64_t textureId;
-  if (frameUpdater) {
-    textureId = [self.registry registerTexture:player];
+  if (frameUpdater && [player isKindOfClass:[FVPVideoPlayerTextureApproach class]]) {
+    textureId = [self.registry registerTexture:(FVPVideoPlayerTextureApproach *)player];
     frameUpdater.textureId = textureId;
   } else {
     // FIXME Possibly start with a predefined prefix and then increment it to avoid

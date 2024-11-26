@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "../video_player_avfoundation/include/video_player_avfoundation/FVPVideoPlayer.h"
+#import "../video_player_avfoundation/include/video_player_avfoundation/messages.g.h"
 
 #import "./include/FVPNativeVideoView.h"
 #import "./include/FVPNativeVideoViewFactory.h"
