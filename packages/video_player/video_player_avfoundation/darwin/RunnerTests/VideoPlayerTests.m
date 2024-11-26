@@ -276,7 +276,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // Seeking to a new position should start the display link temporarily.
   OCMVerify([mockDisplayLink setRunning:YES]);
 
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  FVPVideoPlayerTextureApproach *player =
+      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersByTextureId[textureId];
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
@@ -342,7 +343,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       .ignoringNonObjectArgs()
       .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  FVPVideoPlayerTextureApproach *player =
+      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersByTextureId[textureId];
   [player copyPixelBuffer];
   // Since a frame was found, and the video is paused, the display link should be paused again.
   OCMVerify([mockDisplayLink setRunning:NO]);
@@ -394,7 +396,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
   OCMVerify([mockDisplayLink setRunning:YES]);
 
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  FVPVideoPlayerTextureApproach *player =
+      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersByTextureId[textureId];
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
@@ -814,7 +817,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
     XCTAssertNil(error);
     XCTAssertNotNil(textureId);
 
-    FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+    FVPVideoPlayerTextureApproach *player =
+        (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersByTextureId[textureId];
     XCTAssertNotNil(player);
     weakPlayer = player;
 
@@ -882,11 +886,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   [videoPlayerPlugin initialize:&error];
 
-  FVPCreationOptions *create = [FVPCreationOptions makeWithAsset:nil
-                                                             uri:@""
-                                                     packageName:nil
-                                                      formatHint:nil
-                                                     httpHeaders:@{}];
+  FVPCreationOptions *create =
+      [FVPCreationOptions makeWithAsset:nil
+                                    uri:@""
+                            packageName:nil
+                             formatHint:nil
+                            httpHeaders:@{}
+                               viewType:[[FVPPlatformVideoViewTypeBox alloc]
+                                            initWithValue:FVPPlatformVideoViewTypePlatformView]];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
   XCTAssertNotNil(player);
