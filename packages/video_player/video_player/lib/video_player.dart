@@ -280,7 +280,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSourceType = DataSourceType.asset,
         formatHint = null,
         httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(const VideoPlayerValue(duration: Duration.zero)) {
+    _validateConstructorInput();
+  }
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -302,7 +304,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.network,
         package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(const VideoPlayerValue(duration: Duration.zero)) {
+    _validateConstructorInput();
+  }
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -324,7 +328,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSource = url.toString(),
         dataSourceType = DataSourceType.network,
         package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(const VideoPlayerValue(duration: Duration.zero)) {
+    _validateConstructorInput();
+  }
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
@@ -341,7 +347,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSourceType = DataSourceType.file,
         package = null,
         formatHint = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(const VideoPlayerValue(duration: Duration.zero)) {
+    _validateConstructorInput();
+  }
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
   ///
@@ -360,7 +368,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         package = null,
         formatHint = null,
         httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero));
+        super(const VideoPlayerValue(duration: Duration.zero)) {
+    _validateConstructorInput();
+  }
 
   /// The URI to the video file. This will be in different formats depending on
   /// the [DataSourceType] of the original video.
@@ -405,6 +415,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// on the plugin.
   @visibleForTesting
   int get textureId => _textureId;
+
+  /// Validates the values passed in the constructor.
+  void _validateConstructorInput() {
+    assert(
+        viewType != VideoViewType.platformView ||
+            defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS,
+        'VideoViewType.platformView is only supported on Android and iOS.');
+  }
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
