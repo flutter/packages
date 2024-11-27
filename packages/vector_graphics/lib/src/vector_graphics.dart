@@ -517,21 +517,21 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         _stackTrace ?? StackTrace.empty,
       );
     } else {
-      child = widget.placeholderBuilder!=null?
-      AnimatedSwitcher(
-        duration: widget.transitionDuration, // User-defined duration
-        child: widget.placeholderBuilder!.call(context),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-      ):
-       SizedBox(
-          width: widget.width,
-          height: widget.height,
-       );
+      child = widget.placeholderBuilder != null
+          ? AnimatedSwitcher(
+              duration: widget.transitionDuration, // User-defined duration
+              child: widget.placeholderBuilder!.call(context),
+              transitionBuilder: (Widget child, Animation<double> animation) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            )
+          : SizedBox(
+              width: widget.width,
+              height: widget.height,
+            );
     }
 
     if (!widget.excludeFromSemantics) {
