@@ -1187,6 +1187,62 @@ void SetUpFWFUIScrollViewHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMess
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",
                                                    @"dev.flutter.pigeon.webview_flutter_wkwebview."
+                                                   @"UIScrollViewHostApi.verticalScrollBarEnabled",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FWFUIScrollViewHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (verticalScrollBarEnabledForScrollViewWithIdentifier:isEnabled:error:)],
+                @"FWFWKPreferencesHostApi api (%@) doesn't respond to "
+                @"@selector(verticalScrollBarEnabledForScrollViewWithIdentifier:isEnabled:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
+        BOOL arg_enabled = [GetNullableObjectAtIndex(args, 1) boolValue];
+        FlutterError *error;
+        [api verticalScrollBarEnabledForScrollViewWithIdentifier:arg_identifier
+                                                    isEnabled:arg_enabled
+                                                   error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.webview_flutter_wkwebview."
+                                                   @"UIScrollViewHostApi.horizontalScrollBarEnabled",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FWFUIScrollViewHostApiGetCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (horizontalScrollBarEnabledForScrollViewWithIdentifier:isEnabled:error:)],
+                @"FWFWKPreferencesHostApi api (%@) doesn't respond to "
+                @"@selector(horizontalScrollBarEnabledForScrollViewWithIdentifier:isEnabled:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray *args = message;
+        NSInteger arg_identifier = [GetNullableObjectAtIndex(args, 0) integerValue];
+        BOOL arg_enabled = [GetNullableObjectAtIndex(args, 1) boolValue];
+        FlutterError *error;
+        [api horizontalScrollBarEnabledForScrollViewWithIdentifier:arg_identifier
+                                                    isEnabled:arg_enabled
+                                                   error:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.webview_flutter_wkwebview."
                                                    @"UIScrollViewHostApi.setContentOffset",
                                                    messageChannelSuffix]
         binaryMessenger:binaryMessenger

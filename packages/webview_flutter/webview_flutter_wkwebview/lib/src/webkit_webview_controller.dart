@@ -518,6 +518,28 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
+  Future<void> verticalScrollBarEnabled(bool enabled) {
+    final WKWebView webView = _webView;
+    if (webView is WKWebViewIOS) {
+      return webView.scrollView.verticalScrollBarEnabled(enabled);
+    } else {
+      // TODO(stuartmorgan): Investigate doing this via JS instead.
+      throw UnimplementedError('verticalScrollBarEnabled is not implemented on macOS');
+    }
+  }
+
+  @override
+  Future<void> horizontalScrollBarEnabled(bool enabled) {
+    final WKWebView webView = _webView;
+    if (webView is WKWebViewIOS) {
+      return webView.scrollView.horizontalScrollBarEnabled(enabled);
+    } else {
+      // TODO(stuartmorgan): Investigate doing this via JS instead.
+      throw UnimplementedError('horizontalScrollBarEnabled is not implemented on macOS');
+    }
+  }
+
+  @override
   Future<Offset> getScrollPosition() async {
     final WKWebView webView = _webView;
     if (webView is WKWebViewIOS) {

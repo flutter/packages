@@ -64,6 +64,28 @@ class UIScrollViewHostApiImpl extends UIScrollViewHostApi {
     );
   }
 
+  /// Calls [verticalScrollBarEnabled] with the ids of the provided object instances.
+   Future<void> verticalScrollBarEnabledForInstances(
+    UIView instance,
+    bool enabled,
+  ) async {
+    return verticalScrollBarEnabled(
+      instanceManager.getIdentifier(instance)!,
+      enabled,
+    );
+  }
+
+  /// Calls [horizontalScrollBarEnabled] with the ids of the provided object instances.
+   Future<void> horizontalScrollBarEnabledForInstances(
+    UIView instance,
+    bool enabled,
+  ) async {
+    return horizontalScrollBarEnabled(
+      instanceManager.getIdentifier(instance)!,
+      enabled,
+    );
+  }
+
   /// Calls [setContentOffset] with the ids of the provided object instances.
   Future<void> setContentOffsetForInstances(
     UIScrollView instance,
