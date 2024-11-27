@@ -6,6 +6,7 @@ package io.flutter.plugins.imagepicker;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -139,6 +140,7 @@ public class FileUtilTest {
     String path = fileUtils.getPathFromUri(context, uri);
     assertNotNull(path);
     assertTrue(path.endsWith("_bar.png"));
+    assertFalse(path.contains(".."));
   }
 
   @Test
