@@ -117,15 +117,15 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKUIDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUIDelegate {
-    PigeonApiWKUIDelegate(pigeonRegistrar: registrar, delegate: UIDelegateProxyAPIDelegate())
+    return PigeonApiWKUIDelegate(pigeonRegistrar: registrar, delegate: UIDelegateProxyAPIDelegate())
   }
   
   func pigeonApiWKHTTPCookieStore(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKHTTPCookieStore {
-    PigeonApiWKHTTPCookieStore(pigeonRegistrar: registrar, delegate: HTTPCookieStoreProxyAPIDelegate())
+    return PigeonApiWKHTTPCookieStore(pigeonRegistrar: registrar, delegate: HTTPCookieStoreProxyAPIDelegate())
   }
   
   func pigeonApiUIScrollViewDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIScrollViewDelegate {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiUIScrollViewDelegate(pigeonRegistrar: registrar, delegate: ScrollViewDelegateProxyAPIDelegate())
   }
   
   func pigeonApiURLCredential(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLCredential {
