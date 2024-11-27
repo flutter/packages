@@ -96,6 +96,10 @@ class FileUtils {
       //
       // See https://github.com/flutter/flutter/issues/100025 for more details.
       return null;
+    } catch (IllegalArgumentException e) {
+      // This is likely a result of an IllegalArgumentException that we have thrown in
+      // saferOpenFile(). TODO(gmackall): surface this error in dart.
+      return null;
     }
   }
 
