@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 void main() {
   group('finds', () {
     group('with bytesLoader', () {
+      // #docregion ByLoader
       testWidgets('asset svg', (WidgetTester widgetTester) async {
         final SvgPicture asset = SvgPicture.asset('test/flutter_logo.svg');
         await widgetTester.pumpWidget(
@@ -22,6 +23,7 @@ void main() {
 
         expect(find.svg(asset.bytesLoader), findsOneWidget);
       });
+      // #enddocregion ByLoader
 
       testWidgets('network svg', (WidgetTester widgetTester) async {
         final http.Client fakeClient = _FakeHttpClient();
@@ -57,6 +59,7 @@ void main() {
       });
     });
 
+    // #docregion ByPath
     testWidgets('asset svg with path', (WidgetTester widgetTester) async {
       const String svgPath = 'test/flutter_logo.svg';
       await widgetTester.pumpWidget(
@@ -68,6 +71,7 @@ void main() {
 
       expect(find.svgAssetWithPath(svgPath), findsOneWidget);
     });
+    // #enddocregion ByPath
 
     testWidgets('network svg with url', (WidgetTester widgetTester) async {
       const String svgUri = 'svg.dart';
@@ -76,7 +80,7 @@ void main() {
       expect(find.svgNetworkWithUrl(svgUri), findsOneWidget);
     });
 
-    testWidgets('file svg wit path', (WidgetTester widgetTester) async {
+    testWidgets('file svg with path', (WidgetTester widgetTester) async {
       const String svgPath = 'test/flutter_logo.svg';
 
       await widgetTester.pumpWidget(SvgPicture.file(File(svgPath)));
