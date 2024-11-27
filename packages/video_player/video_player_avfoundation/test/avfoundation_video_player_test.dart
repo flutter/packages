@@ -188,6 +188,28 @@ void main() {
       expect(textureId, 3);
     });
 
+    test('create with texture view', () async {
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.file,
+        uri: 'someUri',
+        // Texture view is a default view type.
+      ));
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.viewType, PlatformVideoViewType.textureView);
+      expect(textureId, 3);
+    });
+
+    test('create with platform view', () async {
+      final int? textureId = await player.create(DataSource(
+        sourceType: DataSourceType.file,
+        uri: 'someUri',
+        viewType: VideoViewType.platformView,
+      ));
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.viewType, PlatformVideoViewType.platformView);
+      expect(textureId, 3);
+    });
+
     test('setLooping', () async {
       await player.setLooping(1, true);
       expect(log.log.last, 'setLooping');
