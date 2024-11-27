@@ -4,7 +4,6 @@
 
 /// A representation of a Java IllegalArgumentException in dart.
 class NativeIllegalArgumentException implements Exception {
-
   /// Creates a [NativeIllegalArgumentException].
   NativeIllegalArgumentException(this.message);
 

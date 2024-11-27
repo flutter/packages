@@ -123,7 +123,6 @@ class FileTypes {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -131,16 +130,16 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is FileSelectorExceptionCode) {
+    } else if (value is FileSelectorExceptionCode) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is FileSelectorNativeException) {
+    } else if (value is FileSelectorNativeException) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is FileResponse) {
+    } else if (value is FileResponse) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is FileTypes) {
+    } else if (value is FileTypes) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
@@ -151,14 +150,14 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : FileSelectorExceptionCode.values[value];
-      case 130: 
+      case 130:
         return FileSelectorNativeException.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return FileResponse.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return FileTypes.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -171,9 +170,11 @@ class FileSelectorApi {
   /// Constructor for [FileSelectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  FileSelectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  FileSelectorApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -183,15 +184,18 @@ class FileSelectorApi {
   /// Opens a file dialog for loading files and returns a file path.
   ///
   /// Returns `null` if user cancels the operation.
-  Future<FileResponse?> openFile(String? initialDirectory, FileTypes allowedTypes) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFile$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<FileResponse?> openFile(
+      String? initialDirectory, FileTypes allowedTypes) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFile$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[initialDirectory, allowedTypes]) as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[initialDirectory, allowedTypes]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -207,15 +211,18 @@ class FileSelectorApi {
 
   /// Opens a file dialog for loading files and returns a list of file responses
   /// chosen by the user.
-  Future<List<FileResponse>> openFiles(String? initialDirectory, FileTypes allowedTypes) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFiles$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<List<FileResponse>> openFiles(
+      String? initialDirectory, FileTypes allowedTypes) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_android.FileSelectorApi.openFiles$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[initialDirectory, allowedTypes]) as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[initialDirectory, allowedTypes]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -238,14 +245,16 @@ class FileSelectorApi {
   ///
   /// Returns `null` if user cancels the operation.
   Future<String?> getDirectoryPath(String? initialDirectory) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.file_selector_android.FileSelectorApi.getDirectoryPath$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[initialDirectory]) as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[initialDirectory]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

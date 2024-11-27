@@ -44,6 +44,7 @@ public class FileUtils {
 
   /** URI authority that represents access to external storage providers. */
   public static final String EXTERNAL_DOCUMENT_AUTHORITY = "com.android.externalstorage.documents";
+
   public static final String FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH = "FILE_SELECTOR_EXCEPTION";
 
   /**
@@ -118,7 +119,8 @@ public class FileUtils {
    * or if a security exception is encountered when opening the input stream to start the copying.
    */
   @Nullable
-  public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri) throws IOException, SecurityException, IllegalArgumentException {
+  public static String getPathFromCopyOfFileFromUri(@NonNull Context context, @NonNull Uri uri)
+      throws IOException, SecurityException, IllegalArgumentException {
     try (InputStream inputStream = context.getContentResolver().openInputStream(uri)) {
       String uuid = UUID.nameUUIDFromBytes(uri.toString().getBytes()).toString();
       File targetDirectory = new File(context.getCacheDir(), uuid);
@@ -231,7 +233,7 @@ public class FileUtils {
     String canonicalPath = f.getCanonicalPath();
     if (!canonicalPath.startsWith(expectedDir)) {
       throw new IllegalArgumentException(
-              "Trying to open path outside of the expected directory. File: "
+          "Trying to open path outside of the expected directory. File: "
               + f.getCanonicalPath()
               + " was expected to be within directory: "
               + expectedDir

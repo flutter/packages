@@ -16,7 +16,6 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
-
 enum FileSelectorExceptionCode {
   securityException, // unused
   ioException, // unused

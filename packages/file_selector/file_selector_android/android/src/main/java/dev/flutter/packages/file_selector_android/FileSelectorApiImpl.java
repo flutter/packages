@@ -378,9 +378,11 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       uriPath = null;
     } catch (IllegalArgumentException e) {
       uriPath = FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
-      nativeError = new GeneratedFileSelectorApi.FileSelectorNativeException.Builder()
+      nativeError =
+          new GeneratedFileSelectorApi.FileSelectorNativeException.Builder()
               .setMessage(e.getMessage() == null ? "" : e.getMessage())
-              .setFileSelectorExceptionCode(GeneratedFileSelectorApi.FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION)
+              .setFileSelectorExceptionCode(
+                  GeneratedFileSelectorApi.FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION)
               .build();
     }
 

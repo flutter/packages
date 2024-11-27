@@ -100,12 +100,16 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     );
   }
 
-  void _resolveErrorCodeAndThrow(FileSelectorNativeException fileSelectorNativeException) {
+  void _resolveErrorCodeAndThrow(
+      FileSelectorNativeException fileSelectorNativeException) {
     switch (fileSelectorNativeException.fileSelectorExceptionCode) {
       case FileSelectorExceptionCode.illegalArgumentException:
-        throw NativeIllegalArgumentException(fileSelectorNativeException.message);
-      case (FileSelectorExceptionCode.illegalStateException || FileSelectorExceptionCode.ioException || FileSelectorExceptionCode.securityException):
-        // unused for now
+        throw NativeIllegalArgumentException(
+            fileSelectorNativeException.message);
+      case (FileSelectorExceptionCode.illegalStateException ||
+            FileSelectorExceptionCode.ioException ||
+            FileSelectorExceptionCode.securityException):
+      // unused for now
     }
   }
 }
