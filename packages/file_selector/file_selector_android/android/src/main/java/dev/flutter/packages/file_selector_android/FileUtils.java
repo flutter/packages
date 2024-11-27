@@ -99,9 +99,10 @@ public class FileUtils {
    * file name if possible.
    *
    * <p>If the filename contains path indirection or separators (.. or /), the end file name will be
-   * the segment after the final separator, with indirection replaced by underscores.
-   * E.g. "example/../..file.png" -> "_file.png".
-   * See: <a href="https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename">Improperly trusting ContentProvider-provided filename</a>.
+   * the segment after the final separator, with indirection replaced by underscores. E.g.
+   * "example/../..file.png" -> "_file.png". See: <a
+   * href="https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename">Improperly
+   * trusting ContentProvider-provided filename</a>.
    *
    * <p>Each file is placed in its own directory to avoid conflicts according to the following
    * scheme: {cacheDir}/{randomUuid}/{fileName}
@@ -137,7 +138,6 @@ public class FileUtils {
 
       String filePath = new File(targetDirectory, fileName).getPath();
       File outputFile = saferOpenFile(filePath, targetDirectory.getCanonicalPath());
-
 
       try (OutputStream outputStream = new FileOutputStream(outputFile)) {
         copy(inputStream, outputStream);
@@ -223,7 +223,7 @@ public class FileUtils {
       return null;
     }
 
-    String[] badCharacters = new String[] { "..", "/" };
+    String[] badCharacters = new String[] {"..", "/"};
     String[] segments = displayName.split("/");
     String fileName = segments[segments.length - 1];
     for (String suspString : badCharacters) {
@@ -233,11 +233,17 @@ public class FileUtils {
   }
 
   // From https://developer.android.com/privacy-and-security/risks/path-traversal#path-traversal-mitigations.
-  protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir) throws IllegalArgumentException, IOException {
+  protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir)
+      throws IllegalArgumentException, IOException {
     File f = new File(path);
     String canonicalPath = f.getCanonicalPath();
     if (!canonicalPath.startsWith(expectedDir)) {
-      throw new IllegalArgumentException("Trying to open path outside of the expected directory. File: " + f.getCanonicalPath() + " was expected to be within directory: " + expectedDir + ".");
+      throw new IllegalArgumentException(
+          "Trying to open path outside of the expected directory. File: "
+              + f.getCanonicalPath()
+              + " was expected to be within directory: "
+              + expectedDir
+              + ".");
     }
     return f;
   }

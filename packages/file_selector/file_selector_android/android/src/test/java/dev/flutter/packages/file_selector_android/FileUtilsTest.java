@@ -202,7 +202,7 @@ public class FileUtilsTest {
     Uri uri = Uri.parse(MockMaliciousContentProvider.PNG_URI);
     Robolectric.buildContentProvider(MockMaliciousContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
-            uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
     assertNotNull(path);
     assertTrue(path.endsWith("_bar.png"));
@@ -279,11 +279,11 @@ public class FileUtilsTest {
     @Nullable
     @Override
     public Cursor query(
-            @NonNull Uri uri,
-            @Nullable String[] projection,
-            @Nullable String selection,
-            @Nullable String[] selectionArgs,
-            @Nullable String sortOrder) {
+        @NonNull Uri uri,
+        @Nullable String[] projection,
+        @Nullable String selection,
+        @Nullable String[] selectionArgs,
+        @Nullable String sortOrder) {
       MatrixCursor cursor = new MatrixCursor(new String[] {MediaStore.MediaColumns.DISPLAY_NAME});
       cursor.addRow(new Object[] {"foo/../..bar.png"});
       return cursor;
@@ -302,12 +302,17 @@ public class FileUtilsTest {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+    public int delete(
+        @NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
       return 0;
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
+    public int update(
+        @NonNull Uri uri,
+        @Nullable ContentValues values,
+        @Nullable String selection,
+        @Nullable String[] selectionArgs) {
       return 0;
     }
   }
