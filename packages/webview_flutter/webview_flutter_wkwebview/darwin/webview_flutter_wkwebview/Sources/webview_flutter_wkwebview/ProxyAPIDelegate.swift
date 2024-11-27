@@ -102,7 +102,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKWebViewUIExtensions(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebViewUIExtensions {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiWKWebViewUIExtensions(pigeonRegistrar: registrar, delegate: WebViewUIExtensionsProxyAPIDelegate())
   }
   
   func pigeonApiWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebView {
