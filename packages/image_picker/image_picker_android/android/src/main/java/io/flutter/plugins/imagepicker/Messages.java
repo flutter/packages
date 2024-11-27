@@ -21,11 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 /** Generated class from Pigeon. */
@@ -41,8 +37,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,7 +56,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -146,10 +141,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       GeneralOptions that = (GeneralOptions) o;
-      return allowMultiple.equals(that.allowMultiple) && usePhotoPicker.equals(that.usePhotoPicker) && Objects.equals(limit, that.limit);
+      return allowMultiple.equals(that.allowMultiple)
+          && usePhotoPicker.equals(that.usePhotoPicker)
+          && Objects.equals(limit, that.limit);
     }
 
     @Override
@@ -216,7 +217,7 @@ public class Messages {
   /**
    * Options for image selection and output.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class ImageSelectionOptions {
     /** If set, the max width that the image should be resized to fit in. */
@@ -244,7 +245,7 @@ public class Messages {
     /**
      * The quality of the output image, from 0-100.
      *
-     * 100 indicates original quality.
+     * <p>100 indicates original quality.
      */
     private @NonNull Long quality;
 
@@ -264,10 +265,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       ImageSelectionOptions that = (ImageSelectionOptions) o;
-      return Objects.equals(maxWidth, that.maxWidth) && Objects.equals(maxHeight, that.maxHeight) && quality.equals(that.quality);
+      return Objects.equals(maxWidth, that.maxWidth)
+          && Objects.equals(maxHeight, that.maxHeight)
+          && quality.equals(that.quality);
     }
 
     @Override
@@ -351,8 +358,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       MediaSelectionOptions that = (MediaSelectionOptions) o;
       return imageSelectionOptions.equals(that.imageSelectionOptions);
     }
@@ -397,7 +408,7 @@ public class Messages {
   /**
    * Options for image selection and output.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class VideoSelectionOptions {
     /** The maximum desired length for the video, in seconds. */
@@ -413,8 +424,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       VideoSelectionOptions that = (VideoSelectionOptions) o;
       return Objects.equals(maxDurationSeconds, that.maxDurationSeconds);
     }
@@ -459,7 +474,7 @@ public class Messages {
   /**
    * Specification for the source of an image or video selection.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class SourceSpecification {
     private @NonNull SourceType type;
@@ -490,8 +505,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       SourceSpecification that = (SourceSpecification) o;
       return type.equals(that.type) && Objects.equals(camera, that.camera);
     }
@@ -548,9 +567,9 @@ public class Messages {
   /**
    * An error that occurred during lost result retrieval.
    *
-   * The data here maps to the `PlatformException` that will be created from it.
+   * <p>The data here maps to the `PlatformException` that will be created from it.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class CacheRetrievalError {
     private @NonNull String code;
@@ -581,8 +600,12 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       CacheRetrievalError that = (CacheRetrievalError) o;
       return code.equals(that.code) && Objects.equals(message, that.message);
     }
@@ -639,7 +662,7 @@ public class Messages {
   /**
    * The result of retrieving cached results from a previous run.
    *
-   * Generated class from Pigeon that represents data sent in messages.
+   * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class CacheRetrievalResult {
     /** The type of the retrieved data. */
@@ -686,10 +709,16 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       CacheRetrievalResult that = (CacheRetrievalResult) o;
-      return type.equals(that.type) && Objects.equals(error, that.error) && paths.equals(that.paths);
+      return type.equals(that.type)
+          && Objects.equals(error, that.error)
+          && paths.equals(that.paths);
     }
 
     @Override
@@ -761,18 +790,21 @@ public class Messages {
     @Override
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
-        case (byte) 129: {
-          Object value = readValue(buffer);
-          return value == null ? null : SourceCamera.values()[((Long) value).intValue()];
-        }
-        case (byte) 130: {
-          Object value = readValue(buffer);
-          return value == null ? null : SourceType.values()[((Long) value).intValue()];
-        }
-        case (byte) 131: {
-          Object value = readValue(buffer);
-          return value == null ? null : CacheRetrievalType.values()[((Long) value).intValue()];
-        }
+        case (byte) 129:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : SourceCamera.values()[((Long) value).intValue()];
+          }
+        case (byte) 130:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : SourceType.values()[((Long) value).intValue()];
+          }
+        case (byte) 131:
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : CacheRetrievalType.values()[((Long) value).intValue()];
+          }
         case (byte) 132:
           return GeneralOptions.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
@@ -830,7 +862,6 @@ public class Messages {
     }
   }
 
-
   /** Asynchronous error handling return type for non-nullable API method returns. */
   public interface Result<T> {
     /** Success case callback method for handling returns. */
@@ -858,30 +889,49 @@ public class Messages {
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface ImagePickerApi {
     /** Selects images and returns their paths. */
-    void pickImages(@NonNull SourceSpecification source, @NonNull ImageSelectionOptions options, @NonNull GeneralOptions generalOptions, @NonNull Result<List<String>> result);
+    void pickImages(
+        @NonNull SourceSpecification source,
+        @NonNull ImageSelectionOptions options,
+        @NonNull GeneralOptions generalOptions,
+        @NonNull Result<List<String>> result);
     /** Selects video and returns their paths. */
-    void pickVideos(@NonNull SourceSpecification source, @NonNull VideoSelectionOptions options, @NonNull GeneralOptions generalOptions, @NonNull Result<List<String>> result);
+    void pickVideos(
+        @NonNull SourceSpecification source,
+        @NonNull VideoSelectionOptions options,
+        @NonNull GeneralOptions generalOptions,
+        @NonNull Result<List<String>> result);
     /** Selects images and videos and returns their paths. */
-    void pickMedia(@NonNull MediaSelectionOptions mediaSelectionOptions, @NonNull GeneralOptions generalOptions, @NonNull Result<List<String>> result);
+    void pickMedia(
+        @NonNull MediaSelectionOptions mediaSelectionOptions,
+        @NonNull GeneralOptions generalOptions,
+        @NonNull Result<List<String>> result);
     /** Returns results from a previous app session, if any. */
-    @Nullable 
+    @Nullable
     CacheRetrievalResult retrieveLostResults();
 
     /** The codec used by ImagePickerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `ImagePickerApi` to handle messages through the `binaryMessenger`. */
+    /** Sets up an instance of `ImagePickerApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable ImagePickerApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable ImagePickerApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable ImagePickerApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickImages"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -913,7 +963,11 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickVideos"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -944,13 +998,17 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.pickMedia"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                MediaSelectionOptions mediaSelectionOptionsArg = (MediaSelectionOptions) args.get(0);
+                MediaSelectionOptions mediaSelectionOptionsArg =
+                    (MediaSelectionOptions) args.get(0);
                 GeneralOptions generalOptionsArg = (GeneralOptions) args.get(1);
                 Result<List<String>> resultCallback =
                     new Result<List<String>>() {
@@ -975,7 +1033,11 @@ public class Messages {
         BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults" + messageChannelSuffix, getCodec(), taskQueue);
+                binaryMessenger,
+                "dev.flutter.pigeon.image_picker_android.ImagePickerApi.retrieveLostResults"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -983,8 +1045,7 @@ public class Messages {
                 try {
                   CacheRetrievalResult output = api.retrieveLostResults();
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);

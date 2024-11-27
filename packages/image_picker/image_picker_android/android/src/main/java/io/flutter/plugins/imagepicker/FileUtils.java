@@ -29,10 +29,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import io.flutter.Log;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,9 +45,10 @@ class FileUtils {
    * file name if possible.
    *
    * <p>If the filename contains path indirection or separators (.. or /), the end file name will be
-   * the segment after the final separator, with indirection replaced by underscores.
-   * E.g. "example/../..file.png" -> "_file.png".
-   * See: <a href="https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename">Improperly trusting ContentProvider-provided filename</a>.
+   * the segment after the final separator, with indirection replaced by underscores. E.g.
+   * "example/../..file.png" -> "_file.png". See: <a
+   * href="https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename">Improperly
+   * trusting ContentProvider-provided filename</a>.
    *
    * <p>Each file is placed in its own directory to avoid conflicts according to the following
    * scheme: {cacheDir}/{randomUuid}/{fileName}
@@ -133,7 +132,7 @@ class FileUtils {
       return null;
     }
 
-    String[] badCharacters = new String[] { "..", "/" };
+    String[] badCharacters = new String[] {"..", "/"};
     String[] segments = displayName.split("/");
     String fileName = segments[segments.length - 1];
     for (String suspString : badCharacters) {
@@ -143,14 +142,20 @@ class FileUtils {
   }
 
   /**
-   * Use with file name sanitization and an non-guessable directory.
-   * From <a href="https://developer.android.com/privacy-and-security/risks/path-traversal#path-traversal-mitigations">...</a>.
+   * Use with file name sanitization and an non-guessable directory. From <a
+   * href="https://developer.android.com/privacy-and-security/risks/path-traversal#path-traversal-mitigations">...</a>.
    */
-  protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir) throws IllegalArgumentException, IOException {
+  protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir)
+      throws IllegalArgumentException, IOException {
     File f = new File(path);
     String canonicalPath = f.getCanonicalPath();
     if (!canonicalPath.startsWith(expectedDir)) {
-      throw new IllegalArgumentException("Trying to open path outside of the expected directory. File: " + f.getCanonicalPath() + " was expected to be within directory: " + expectedDir + ".");
+      throw new IllegalArgumentException(
+          "Trying to open path outside of the expected directory. File: "
+              + f.getCanonicalPath()
+              + " was expected to be within directory: "
+              + expectedDir
+              + ".");
     }
     return f;
   }
