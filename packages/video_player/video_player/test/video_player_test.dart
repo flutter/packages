@@ -47,6 +47,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<Duration> get position async => value.position;
 
   @override
+  VideoViewType get viewType => VideoViewType.textureView;
+
+  @override
   Future<void> seekTo(Duration moment) async {}
 
   @override
