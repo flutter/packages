@@ -4,7 +4,6 @@
 
 import Foundation
 
-
 /// Implementation of `NSObject` that calls to Dart in callback methods.
 class NSObjectImpl: NSObject {
   let api: PigeonApiProtocolNSObject
@@ -13,8 +12,7 @@ class NSObjectImpl: NSObject {
     self.api = api
   }
   
-  override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-    
+  static func handleObserveValue(withApi api: PigeonApiProtocolNSObject, instance: NSObject, forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
     let wrapperKeys: [KeyValueChangeKey : Any]?
     if change != nil {
       let keyValueTuples = change!.map { key, value in
@@ -42,7 +40,11 @@ class NSObjectImpl: NSObject {
       wrapperKeys = nil
     }
     
-    api.observeValue(pigeonInstance: self as NSObject, keyPath: keyPath, object: object as? NSObject, change: wrapperKeys) {  _ in }
+    api.observeValue(pigeonInstance: instance, keyPath: keyPath, object: object as? NSObject, change: wrapperKeys) {  _ in }
+  }
+  
+  override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    NSObjectImpl.handleObserveValue(withApi: api, instance: self as NSObject, forKeyPath: keyPath, of: object, change: change, context: context)
   }
 }
 

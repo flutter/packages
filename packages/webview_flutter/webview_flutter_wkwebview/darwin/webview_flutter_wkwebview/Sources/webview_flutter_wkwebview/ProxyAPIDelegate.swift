@@ -7,6 +7,9 @@ import Foundation
 /// Implementation of `WebKitLibraryPigeonProxyApiDelegate` that provides each ProxyApi delegate implementation
 /// and any additional resources needed by an implementation.
 open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
+  let assetManager: FlutterAssetManager = FlutterAssetManager()
+  let bundle: Bundle = Bundle.main
+
   func createUnknownEnumError(withEnum enumValue: Any) -> PigeonError {
     return PigeonError(
       code: "UnknownEnumError", message: "\(enumValue) doesn't represent a native value.",
@@ -14,11 +17,15 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func createUnsupportedVersionError(method: String, versionRequirements: String) -> PigeonError {
-    return PigeonError(code: "UnsupportedVersionError", message: createUnsupportedVersionMessage(method, versionRequirements: versionRequirements), details: nil)
+    return PigeonError(code: "FWFUnsupportedVersionError", message: createUnsupportedVersionMessage(method, versionRequirements: versionRequirements), details: nil)
   }
   
   func createUnsupportedVersionMessage(_ method: String, versionRequirements: String) -> String {
     return "`\(method)` requires \(versionRequirements)."
+  }
+  
+  func createNullURLError(url: String) -> PigeonError {
+    return PigeonError(code: "FWFURLParsingError", message: "Failed parsing file path.", details: "Initializing URL with the supplied '\(url)' path resulted in a nil value.")
   }
   
   func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest {
@@ -106,7 +113,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebView {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
   }
   
   func pigeonApiWKUIDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUIDelegate {
