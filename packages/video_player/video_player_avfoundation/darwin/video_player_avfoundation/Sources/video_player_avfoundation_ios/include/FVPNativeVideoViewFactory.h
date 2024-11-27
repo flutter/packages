@@ -6,7 +6,11 @@
 
 #import "FVPVideoPlayer.h"
 
+/// A factory class responsible for creating native video views that can be embedded in a
+/// Flutter app.
 @interface FVPNativeVideoViewFactory : NSObject <FlutterPlatformViewFactory>
+/// Initializes a new instance of FVPNativeVideoViewFactory with the given messenger and
+/// playersByTextureId dictionary which stores the video players associated with the texture IDs.
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                playersByTextureId:
                    (NSMutableDictionary<NSNumber *, FVPVideoPlayer *> *)playersByTextureId;

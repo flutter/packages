@@ -23,6 +23,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Initializes a new instance of FVPVideoPlayerTextureApproach with the given URL, frame updater,
+/// display link, HTTP headers, AV factory, and registrar.
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
                 displayLink:(FVPDisplayLink *)displayLink
@@ -30,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
                   avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
+/// Initializes a new instance of FVPVideoPlayerTextureApproach with the given asset, frame updater,
+/// display link, AV factory, and registrar.
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(FVPDisplayLink *)displayLink
