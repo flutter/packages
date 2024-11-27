@@ -141,6 +141,6 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiURL(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURL {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiURL(pigeonRegistrar: registrar, delegate: URLProxyAPIDelegate())
   }
 }
