@@ -133,7 +133,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiURLProtectionSpace(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLProtectionSpace {
-    throw PigeonError(code: "", message: "", details: "")
+    PigeonApiURLProtectionSpace(pigeonRegistrar: registrar, delegate: URLProtectionSpaceProxyAPIDelegate())
   }
   
   func pigeonApiURLAuthenticationChallenge(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLAuthenticationChallenge {
