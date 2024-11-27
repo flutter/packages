@@ -14,7 +14,7 @@ class URLProtectionSpaceProxyAPIDelegate : PigeonApiDelegateURLProtectionSpace {
   }
 
   func port(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> Int64 {
-    return pigeonInstance.port
+    return Int64(pigeonInstance.port)
   }
 
   func realm(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String? {
