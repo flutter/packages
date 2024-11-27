@@ -199,7 +199,7 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void getPathFromCopyOfFileFromUri_sanitizesPathIndirection() {
+  public void getPathFromCopyOfFileFromUri_sanitizesPathIndirection() throws IOException {
     Uri uri = Uri.parse(MockMaliciousContentProvider.PNG_URI);
     Robolectric.buildContentProvider(MockMaliciousContentProvider.class).create("dummy");
     shadowContentResolver.registerInputStream(
