@@ -13,7 +13,7 @@ flutter:
     implements: webview_flutter
     platforms:
       ios:
-        pluginClass: FLTWebViewFlutterPlugin
+        pluginClass: WebViewFlutterPlugin
         dartPluginClass: WebKitWebViewPlatform
         sharedDarwinSource: true
       macos:
