@@ -58,7 +58,7 @@ class FileSelectorAndroid extends FileSelectorPlatform {
 
   XFile _xFileFromFileResponse(FileResponse file) {
     if (file.fileSelectorNativeException != null) {
-      _resolveErrorCodeAndThrow(file.fileSelectorNativeException!);
+      _resolveErrorCodeAndMaybeThrow(file.fileSelectorNativeException!);
     }
     return XFile.fromData(
       file.bytes,
@@ -100,7 +100,9 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     );
   }
 
-  void _resolveErrorCodeAndThrow(
+  /// Translates a [FileSelectorExceptionCode] to its corresponding error and
+  /// handles throwing.
+  void _resolveErrorCodeAndMaybeThrow(
       FileSelectorNativeException fileSelectorNativeException) {
     switch (fileSelectorNativeException.fileSelectorExceptionCode) {
       case FileSelectorExceptionCode.illegalArgumentException:
