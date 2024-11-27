@@ -180,9 +180,9 @@ WebKitWebViewController createTestWebViewController(
           required WKWebViewConfiguration initialConfiguration,
           void Function(
             NSObject,
-            String,
-            NSObject,
-            Map<KeyValueChangeKey, Object?>,
+            String?,
+            NSObject?,
+            Map<KeyValueChangeKey, Object>?,
           )? observeValue,
         }) {
           final WKWebView webView = WKWebView.pigeon_detached(

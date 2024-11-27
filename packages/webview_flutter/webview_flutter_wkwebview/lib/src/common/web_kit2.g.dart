@@ -521,9 +521,9 @@ class InteractiveMediaAdsProxy {
   final NSObject Function(
       {void Function(
         NSObject,
-        String,
-        NSObject,
-        Map<KeyValueChangeKey, Object?>,
+        String?,
+        NSObject?,
+        Map<KeyValueChangeKey, Object>?,
       )? observeValue}) newNSObject;
 
   /// Constructs [WKWebView].
@@ -664,6 +664,8 @@ enum UserScriptInjectionTime {
   /// A constant to inject the script after the document finishes loading, but
   /// before loading any other subresources.
   atDocumentEnd,
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The media types that require a user gesture to begin playing.
@@ -4629,9 +4631,9 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
   /// release the associated Native object manually.
   final void Function(
     NSObject pigeon_instance,
-    String keyPath,
-    NSObject object,
-    Map<KeyValueChangeKey, Object?> change,
+    String? keyPath,
+    NSObject? object,
+    Map<KeyValueChangeKey, Object>? change,
   )? observeValue;
 
   static void pigeon_setUpMessageHandlers({
@@ -4641,9 +4643,9 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
     NSObject Function()? pigeon_newInstance,
     void Function(
       NSObject pigeon_instance,
-      String keyPath,
-      NSObject object,
-      Map<KeyValueChangeKey, Object?> change,
+      String? keyPath,
+      NSObject? object,
+      Map<KeyValueChangeKey, Object>? change,
     )? observeValue,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -4706,19 +4708,13 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.observeValue was null, expected non-null NSObject.');
           final String? arg_keyPath = (args[1] as String?);
-          assert(arg_keyPath != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.observeValue was null, expected non-null String.');
           final NSObject? arg_object = (args[2] as NSObject?);
-          assert(arg_object != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.observeValue was null, expected non-null NSObject.');
-          final Map<KeyValueChangeKey, Object?>? arg_change =
+          final Map<KeyValueChangeKey, Object>? arg_change =
               (args[3] as Map<Object?, Object?>?)
-                  ?.cast<KeyValueChangeKey, Object?>();
-          assert(arg_change != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.observeValue was null, expected non-null Map<KeyValueChangeKey, Object?>.');
+                  ?.cast<KeyValueChangeKey, Object>();
           try {
             (observeValue ?? arg_pigeon_instance!.observeValue)?.call(
-                arg_pigeon_instance!, arg_keyPath!, arg_object!, arg_change!);
+                arg_pigeon_instance!, arg_keyPath, arg_object, arg_change);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

@@ -105,6 +105,9 @@ enum UserScriptInjectionTime {
   /// A constant to inject the script after the document finishes loading, but
   /// before loading any other subresources.
   atDocumentEnd,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The media types that require a user gesture to begin playing.
@@ -728,9 +731,9 @@ abstract class NSObject {
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
   late void Function(
-    String keyPath,
-    NSObject object,
-    Map<KeyValueChangeKey, Object?> change,
+    String? keyPath,
+    NSObject? object,
+    Map<KeyValueChangeKey, Object>? change,
   )? observeValue;
 
   /// Registers the observer object to receive KVO notifications for the key

@@ -18,6 +18,9 @@ class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
       nativeInjectionTime = .atDocumentStart
     case .atDocumentEnd:
       nativeInjectionTime = .atDocumentEnd
+    case .unknown:
+      throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnknownEnumError(
+        withEnum: injectionTime)
     }
     return WKUserScript(source: source, injectionTime: nativeInjectionTime, forMainFrameOnly: isMainFrameOnly)
   }
@@ -32,6 +35,8 @@ class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
       return .atDocumentStart
     case .atDocumentEnd:
       return .atDocumentEnd
+    @unknown default:
+      return .unknown
     }
   }
 

@@ -257,9 +257,9 @@ class WebKitProxy {
   final NSObject Function(
       {void Function(
         NSObject,
-        String,
-        NSObject,
-        Map<KeyValueChangeKey, Object?>,
+        String?,
+        NSObject?,
+        Map<KeyValueChangeKey, Object>?,
       )? observeValue}) newNSObject;
 
   /// Constructs [WKWebView].
@@ -267,9 +267,9 @@ class WebKitProxy {
     required WKWebViewConfiguration initialConfiguration,
     void Function(
       NSObject,
-      String,
-      NSObject,
-      Map<KeyValueChangeKey, Object?>,
+      String?,
+      NSObject?,
+      Map<KeyValueChangeKey, Object>?,
     )? observeValue,
   }) newWKWebView;
 

@@ -47,9 +47,9 @@ void main() {
         WKWebViewConfiguration configuration, {
         void Function(
           NSObject,
-          String keyPath,
-          NSObject object,
-          Map<KeyValueChangeKey, Object?> change,
+          String? keyPath,
+          NSObject? object,
+          Map<KeyValueChangeKey, Object>? change,
         )? observeValue,
       })? createMockWebView,
       MockWKWebViewConfiguration? mockWebViewConfiguration,
@@ -71,9 +71,9 @@ void main() {
             required WKWebViewConfiguration initialConfiguration,
             void Function(
               NSObject,
-              String,
-              NSObject,
-              Map<KeyValueChangeKey, Object?>,
+              String?,
+              NSObject?,
+              Map<KeyValueChangeKey, Object>?,
             )? observeValue,
           }) {
             nonNullMockWebView = createMockWebView == null
@@ -1099,9 +1099,9 @@ void main() {
 
       late final void Function(
         NSObject,
-        String keyPath,
-        NSObject object,
-        Map<KeyValueChangeKey, Object?> change,
+        String? keyPath,
+        NSObject? object,
+        Map<KeyValueChangeKey, Object>? change,
       ) webViewObserveValue;
 
       final WebKitWebViewController controller = createControllerWithMocks(
@@ -1109,9 +1109,9 @@ void main() {
           WKWebViewConfiguration configuration, {
           void Function(
             NSObject,
-            String keyPath,
-            NSObject object,
-            Map<KeyValueChangeKey, Object?> change,
+            String? keyPath,
+            NSObject? object,
+            Map<KeyValueChangeKey, Object>? change,
           )? observeValue,
         }) {
           webViewObserveValue = observeValue!;
@@ -1147,7 +1147,7 @@ void main() {
         mockWebView,
         'estimatedProgress',
         mockWebView,
-        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: 0.0},
+        <KeyValueChangeKey, Object>{KeyValueChangeKey.newValue: 0.0},
       );
 
       expect(callbackProgress, 0);
@@ -1190,9 +1190,9 @@ void main() {
 
       late final void Function(
         NSObject,
-        String keyPath,
-        NSObject object,
-        Map<KeyValueChangeKey, Object?> change,
+        String? keyPath,
+        NSObject? object,
+        Map<KeyValueChangeKey, Object>? change,
       ) webViewObserveValue;
 
       final WebKitWebViewController controller = createControllerWithMocks(
@@ -1200,9 +1200,9 @@ void main() {
           WKWebViewConfiguration configuration, {
           void Function(
             NSObject,
-            String keyPath,
-            NSObject object,
-            Map<KeyValueChangeKey, Object?> change,
+            String? keyPath,
+            NSObject? object,
+            Map<KeyValueChangeKey, Object>? change,
           )? observeValue,
         }) {
           webViewObserveValue = observeValue!;
@@ -1233,7 +1233,7 @@ void main() {
         mockWebView,
         'estimatedProgress',
         mockWebView,
-        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: 0.0},
+        <KeyValueChangeKey, Object>{KeyValueChangeKey.newValue: 0.0},
       );
 
       expect(callbackProgress, 0);
@@ -1244,9 +1244,9 @@ void main() {
 
       late final void Function(
         NSObject,
-        String keyPath,
-        NSObject object,
-        Map<KeyValueChangeKey, Object?> change,
+        String? keyPath,
+        NSObject? object,
+        Map<KeyValueChangeKey, Object>? change,
       ) webViewObserveValue;
 
       final WebKitWebViewController controller = createControllerWithMocks(
@@ -1254,9 +1254,9 @@ void main() {
           WKWebViewConfiguration configuration, {
           void Function(
             NSObject,
-            String keyPath,
-            NSObject object,
-            Map<KeyValueChangeKey, Object?> change,
+            String? keyPath,
+            NSObject? object,
+            Map<KeyValueChangeKey, Object>? change,
           )? observeValue,
         }) {
           webViewObserveValue = observeValue!;
@@ -1298,21 +1298,21 @@ void main() {
         mockWebView,
         'URL',
         mockWebView,
-        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: mockUrl},
+        <KeyValueChangeKey, Object>{KeyValueChangeKey.newValue: mockUrl},
       );
 
       final UrlChange urlChange = await urlChangeCompleter.future;
       expect(urlChange.url, 'https://www.google.com');
     });
 
-    test('setPlatformNavigationDelegate onUrlChange to null NSUrl', () async {
+    test('setPlatformNavigationDelegate onUrlChange to empty NSUrl', () async {
       final MockWKWebView mockWebView = MockWKWebView();
 
       late final void Function(
         NSObject,
-        String keyPath,
-        NSObject object,
-        Map<KeyValueChangeKey, Object?> change,
+        String? keyPath,
+        NSObject? object,
+        Map<KeyValueChangeKey, Object>? change,
       ) webViewObserveValue;
 
       final WebKitWebViewController controller = createControllerWithMocks(
@@ -1320,9 +1320,9 @@ void main() {
           WKWebViewConfiguration configuration, {
           void Function(
             NSObject,
-            String keyPath,
-            NSObject object,
-            Map<KeyValueChangeKey, Object?> change,
+            String? keyPath,
+            NSObject? object,
+            Map<KeyValueChangeKey, Object>? change,
           )? observeValue,
         }) {
           webViewObserveValue = observeValue!;
@@ -1346,15 +1346,20 @@ void main() {
 
       await controller.setPlatformNavigationDelegate(navigationDelegate);
 
+      final MockURL mockURL = MockURL();
+      when(mockURL.getAbsoluteString()).thenAnswer(
+        (_) => Future<String>.value(''),
+      );
+
       webViewObserveValue(
         mockWebView,
         'URL',
         mockWebView,
-        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: null},
+        <KeyValueChangeKey, Object>{KeyValueChangeKey.newValue: mockURL},
       );
 
       final UrlChange urlChange = await urlChangeCompleter.future;
-      expect(urlChange.url, isNull);
+      expect(urlChange.url, '');
     });
 
     test('webViewIdentifier', () {
