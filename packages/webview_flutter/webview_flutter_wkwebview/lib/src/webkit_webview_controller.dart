@@ -1209,7 +1209,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                   credential: URLCredential.withUser(
                     user: credential.user,
                     password: credential.password,
-                    persistence: UrlCredentialPersistence.session,
+                    persistence: UrlCredentialPersistence.forSession,
                   ),
                 );
                 responseCompleter.complete(response);

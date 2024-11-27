@@ -329,7 +329,7 @@ enum UrlCredentialPersistence {
   none,
 
   /// The credential should be stored only for this session.
-  session,
+  forSession,
 
   /// The credential should be stored in the keychain.
   permanent,
