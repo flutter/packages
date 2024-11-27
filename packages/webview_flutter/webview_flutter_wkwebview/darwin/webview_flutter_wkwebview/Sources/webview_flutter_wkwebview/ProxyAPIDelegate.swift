@@ -121,7 +121,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKHTTPCookieStore(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKHTTPCookieStore {
-    throw PigeonError(code: "", message: "", details: "")
+    PigeonApiWKHTTPCookieStore(pigeonRegistrar: registrar, delegate: HTTPCookieStoreProxyAPIDelegate())
   }
   
   func pigeonApiUIScrollViewDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIScrollViewDelegate {
