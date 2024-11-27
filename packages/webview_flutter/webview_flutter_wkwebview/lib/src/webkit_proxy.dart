@@ -298,10 +298,10 @@ class WebKitProxy {
       String,
       WKFrameInfo,
     )? runJavaScriptConfirmPanel,
-    Future<String> Function(
+    Future<String?> Function(
       WKUIDelegate,
       String,
-      String,
+      String?,
       WKFrameInfo,
     )? runJavaScriptTextInputPanel,
   }) newWKUIDelegate;

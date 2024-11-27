@@ -108,10 +108,10 @@ void main() {
               String,
               WKFrameInfo,
             )? runJavaScriptConfirmPanel,
-            Future<String> Function(
+            Future<String?> Function(
               WKUIDelegate,
               String,
-              String,
+              String?,
               WKFrameInfo,
             )? runJavaScriptTextInputPanel,
           }) {
@@ -1510,10 +1510,10 @@ void main() {
 
         const String callbackMessage = 'Message';
         const String callbackDefaultText = 'Default Text';
-        final Future<String> Function(
+        final Future<String?> Function(
           WKUIDelegate,
           String prompt,
-          String defaultText,
+          String? defaultText,
           WKFrameInfo frame,
         ) onJavaScriptTextInputPanel = CapturingUIDelegate
             .lastCreatedDelegate.runJavaScriptTextInputPanel!;
@@ -1523,7 +1523,7 @@ void main() {
           (_) => Future<String>.value('https://google.com'),
         );
 
-        final String returnValue = await onJavaScriptTextInputPanel(
+        final String? returnValue = await onJavaScriptTextInputPanel(
           CapturingUIDelegate.lastCreatedDelegate,
           callbackMessage,
           callbackDefaultText,

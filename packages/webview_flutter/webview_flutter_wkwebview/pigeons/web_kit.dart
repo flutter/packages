@@ -758,36 +758,6 @@ abstract class NSObject {
   swiftOptions: SwiftProxyApiOptions(
     import: 'WebKit',
     name: 'WKWebView',
-    supportsMacos: false,
-  ),
-)
-abstract class WKWebViewUIExtensions extends UIView {
-  /// The scroll view associated with the web view.
-  @attached
-  late UIScrollView scrollView;
-}
-
-/// An object that displays interactive web content, such as for an in-app
-/// browser.
-///
-/// See https://developer.apple.com/documentation/webkit/wkwebview.
-@ProxyApi(
-  swiftOptions: SwiftProxyApiOptions(
-    import: 'WebKit',
-    name: 'WKWebView',
-    supportsIos: false,
-  ),
-)
-abstract class WKWebViewNSExtensions extends NSObject {}
-
-/// An object that displays interactive web content, such as for an in-app
-/// browser.
-///
-/// See https://developer.apple.com/documentation/webkit/wkwebview.
-@ProxyApi(
-  swiftOptions: SwiftProxyApiOptions(
-    import: 'WebKit',
-    name: 'WKWebView',
   ),
 )
 abstract class WKWebView extends NSObject {
@@ -868,6 +838,36 @@ abstract class WKWebView extends NSObject {
   String? getCustomUserAgent();
 }
 
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+    supportsMacos: false,
+  ),
+)
+abstract class WKWebViewUIExtensions extends UIView {
+  /// The scroll view associated with the web view.
+  @attached
+  late UIScrollView scrollView;
+}
+
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+    supportsIos: false,
+  ),
+)
+abstract class WKWebViewNSExtensions extends NSObject {}
+
 /// The methods for presenting native user interface elements on behalf of a
 /// webpage.
 ///
@@ -903,9 +903,9 @@ abstract class WKUIDelegate extends NSObject {
 
   /// Displays a JavaScript text input panel.
   @async
-  String Function(
+  String? Function(
     String prompt,
-    String defaultText,
+    String? defaultText,
     WKFrameInfo frame,
   )? runJavaScriptTextInputPanel;
 }

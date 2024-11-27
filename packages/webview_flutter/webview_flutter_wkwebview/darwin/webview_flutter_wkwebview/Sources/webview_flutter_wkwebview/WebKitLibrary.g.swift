@@ -7008,7 +7008,7 @@ protocol PigeonApiProtocolWKUIDelegate {
   /// Displays a JavaScript confirm panel.
   func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void)
   /// Displays a JavaScript text input panel.
-  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, prompt promptArg: String, defaultText defaultTextArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<String, PigeonError>) -> Void)
+  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)
 }
 
 final class PigeonApiWKUIDelegate: PigeonApiProtocolWKUIDelegate  {
@@ -7210,7 +7210,7 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Displays a JavaScript text input panel.
-  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, prompt promptArg: String, defaultText defaultTextArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<String, PigeonError>) -> Void)   {
+  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)   {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -7233,10 +7233,8 @@ withIdentifier: pigeonIdentifierArg)
         let message: String? = nilOrValue(listResponse[1])
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
-      } else if listResponse[0] == nil {
-        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result = listResponse[0] as! String
+        let result: String? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }
@@ -7397,7 +7395,7 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   func runJavaScriptConfirmPanel(message: String, frame: WKFrameInfo) throws -> Bool {
     runJavaScriptConfirmPanelArgs = [messageArg, frameArg]
   }
-  func runJavaScriptTextInputPanel(prompt: String, defaultText: String, frame: WKFrameInfo) throws -> String {
+  func runJavaScriptTextInputPanel(prompt: String, defaultText: String?, frame: WKFrameInfo) throws -> String? {
     runJavaScriptTextInputPanelArgs = [promptArg, defaultTextArg, frameArg]
   }
 }

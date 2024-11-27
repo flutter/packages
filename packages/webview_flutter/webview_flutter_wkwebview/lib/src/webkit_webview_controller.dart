@@ -247,7 +247,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       runJavaScriptTextInputPanel: (
         _,
         String prompt,
-        String defaultText,
+        String? defaultText,
         WKFrameInfo frame,
       ) async {
         final Future<String> Function(JavaScriptTextInputDialogRequest request)?
