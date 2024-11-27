@@ -28,29 +28,70 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   ) {
     api.decidePolicyForNavigationAction(pigeonInstance: self, webView: webView, navigationAction: navigationAction) { result in
       switch result {
-        
+      case .success(let policy):
+        switch policy {
+        case .allow:
+          decisionHandler(.allow)
+        case .cancel:
+          decisionHandler(.cancel)
+        case .download:
+          if #available(iOS 14.5, *) {
+            decisionHandler(.download)
+          } else {
+            let apiDelegate = ((self.api as! PigeonApiWKNavigationDelegate).pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+            assertionFailure(apiDelegate.createUnsupportedVersionMessage("WKNavigationActionPolicy.download", versionRequirements: "iOS 14.5"))
+          }
+        }
+      case .failure(let error):
+        assertionFailure("\(error)")
       }
     }
   }
-
-  func fixMe() {
-    api.decidePolicyForNavigationResponse(pigeonInstance: self, webView: webView, navigationResponse: navigationResponse) {  _ in }
+  
+  func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping @MainActor (WKNavigationResponsePolicy) -> Void) {
+    api.decidePolicyForNavigationResponse(pigeonInstance: self, webView: webView, navigationResponse: navigationResponse) { result in
+      switch result {
+      case .success(let policy):
+        switch policy {
+        case .allow:
+          decisionHandler(.allow)
+        case .cancel:
+          decisionHandler(.cancel)
+        case .download:
+          if #available(iOS 14.5, *) {
+            decisionHandler(.download)
+          } else {
+            let apiDelegate = ((self.api as! PigeonApiWKNavigationDelegate).pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+            assertionFailure(apiDelegate.createUnsupportedVersionMessage("WKNavigationResponsePolicy.download", versionRequirements: "iOS 14.5"))
+          }
+        }
+      case .failure(let error):
+        assertionFailure("\(error)")
+      }
+    }
   }
-
-  func fixMe() {
-    api.didFailNavigation(pigeonInstance: self, webView: webView, error: error) {  _ in }
+  
+  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error) {
+    api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) {  _ in }
   }
-
-  func fixMe() {
-    api.didFailProvisionalNavigation(pigeonInstance: self, webView: webView, error: error) {  _ in }
+  
+  func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: any Error) {
+    api.didFailProvisionalNavigation(pigeonInstance: self, webView: webView, error: error as NSError) {  _ in }
   }
-
-  func fixMe() {
+  
+  func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
     api.webViewWebContentProcessDidTerminate(pigeonInstance: self, webView: webView) {  _ in }
   }
 
-  func fixMe() {
-    api.didReceiveAuthenticationChallenge(pigeonInstance: self, webView: webView, challenge: challenge) {  _ in }
+  func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    api.didReceiveAuthenticationChallenge(pigeonInstance: self, webView: webView, challenge: challenge) { result in
+      switch result {
+      case .success(let response):
+        completionHandler(response.disposition, response.credential)
+      case .failure(let error):
+        assertionFailure("\(error)")
+      }
+    }
   }
 }
 
@@ -60,6 +101,6 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
 /// or handle method calls on the associated native class or an instance of that class.
 class NavigationDelegateProxyAPIDelegate : PigeonApiDelegateWKNavigationDelegate {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKNavigationDelegate) throws -> WKNavigationDelegate {
-    return WKNavigationDelegateImpl(api: pigeonApi)
+    return NavigationDelegateImpl(api: pigeonApi)
   }
 }

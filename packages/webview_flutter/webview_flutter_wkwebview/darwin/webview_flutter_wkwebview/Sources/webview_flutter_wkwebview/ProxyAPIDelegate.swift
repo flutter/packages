@@ -14,7 +14,11 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func createUnsupportedVersionError(method: String, versionRequirements: String) -> PigeonError {
-    return PigeonError(code: "UnsupportedVersionError", message: "`\(method)` requires \(versionRequirements).", details: nil)
+    return PigeonError(code: "UnsupportedVersionError", message: createUnsupportedVersionMessage(method, versionRequirements: versionRequirements), details: nil)
+  }
+  
+  func createUnsupportedVersionMessage(_ method: String, versionRequirements: String) -> String {
+    return "`\(method)` requires \(versionRequirements)."
   }
   
   func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest {
@@ -90,7 +94,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiWKNavigationDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKNavigationDelegate {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiWKNavigationDelegate(pigeonRegistrar: registrar, delegate: NavigationDelegateProxyAPIDelegate())
   }
   
   func pigeonApiNSObject(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSObject {
