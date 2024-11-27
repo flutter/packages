@@ -25,7 +25,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     return _api.initialize();
   }
 
-  // FIXME Rename textureId to playerId everywhere.
+  // TODO(FirentisTFW): Rename textureId to playerId everywhere.
   @override
   Future<void> dispose(int textureId) {
     return _api.dispose(textureId);

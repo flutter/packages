@@ -101,6 +101,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
   /// Returns a widget displaying the video based on given options.
   Widget buildViewWithOptions(VideoViewOptions options) {
+    // Default implementation for backwards compatibility.
     return buildView(options.playerId);
   }
 
