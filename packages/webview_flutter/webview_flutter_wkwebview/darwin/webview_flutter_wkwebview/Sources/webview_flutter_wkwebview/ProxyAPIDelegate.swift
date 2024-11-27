@@ -129,15 +129,15 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   func pigeonApiURLCredential(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLCredential {
-    PigeonApiURLCredential(pigeonRegistrar: registrar, delegate: URLCredentialProxyAPIDelegate())
+    return PigeonApiURLCredential(pigeonRegistrar: registrar, delegate: URLCredentialProxyAPIDelegate())
   }
   
   func pigeonApiURLProtectionSpace(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLProtectionSpace {
-    PigeonApiURLProtectionSpace(pigeonRegistrar: registrar, delegate: URLProtectionSpaceProxyAPIDelegate())
+    return PigeonApiURLProtectionSpace(pigeonRegistrar: registrar, delegate: URLProtectionSpaceProxyAPIDelegate())
   }
   
   func pigeonApiURLAuthenticationChallenge(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLAuthenticationChallenge {
-    throw PigeonError(code: "", message: "", details: "")
+    return PigeonApiURLAuthenticationChallenge(pigeonRegistrar: registrar, delegate: URLAuthenticationChallengeProxyAPIDelegate())
   }
   
   func pigeonApiURL(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURL {
