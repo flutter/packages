@@ -137,9 +137,9 @@ API_AVAILABLE(ios(14))
   // maxWidth and maxHeight are used only for GIF images.
   NSString *savedPath =
       [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:pickerImageData
-                                                              image:localImage
+                                                             image:localImage
                                                           maxWidth:self.maxWidth
-                                                          maxHeight:self.maxHeight
+                                                         maxHeight:self.maxHeight
                                                       imageQuality:self.desiredImageQuality];
   [self completeOperationWithPath:savedPath error:nil];
 }
