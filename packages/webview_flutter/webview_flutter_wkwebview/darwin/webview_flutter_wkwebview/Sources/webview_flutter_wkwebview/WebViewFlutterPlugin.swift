@@ -17,7 +17,7 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = WebViewFlutterPlugin(binaryMessenger: registrar.messenger())
     let viewFactory = FlutterViewFactory(instanceManager: plugin.proxyApiRegistrar!.instanceManager)
-    registrar.register(viewFactory, withId: "interactive_media_ads.packages.flutter.dev/view")
+    registrar.register(viewFactory, withId: "plugins.flutter.io/webview")
     registrar.publish(plugin)
   }
 
