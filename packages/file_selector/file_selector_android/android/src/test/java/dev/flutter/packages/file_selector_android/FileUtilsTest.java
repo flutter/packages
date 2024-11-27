@@ -206,6 +206,7 @@ public class FileUtilsTest {
     String path = FileUtils.getPathFromCopyOfFileFromUri(context, uri);
     assertNotNull(path);
     assertTrue(path.endsWith("_bar.png"));
+    assertFalse(path.contains(".."));
   }
 
   private static class MockContentProvider extends ContentProvider {

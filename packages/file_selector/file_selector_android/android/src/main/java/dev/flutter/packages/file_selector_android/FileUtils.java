@@ -232,7 +232,10 @@ public class FileUtils {
     return fileName;
   }
 
-  // From https://developer.android.com/privacy-and-security/risks/path-traversal#path-traversal-mitigations.
+  /**
+   * Use with file name sanatization and an non-guessable directory.
+   * From https://developer.android.com/privacy-and-security/risks/path-traversal#path-traversal-mitigations.
+   */
   protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir)
       throws IllegalArgumentException, IOException {
     File f = new File(path);
