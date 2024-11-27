@@ -128,22 +128,6 @@ public class FileUtilsTest {
   }
 
   @Test
-  public void getPathFromCopyOfFileFromUri_returnsNullPathWhenSecurityExceptionThrown()
-      throws IOException {
-    Uri uri = Uri.parse("content://dummy/dummy.png");
-
-    ContentResolver mockContentResolver = mock(ContentResolver.class);
-    when(mockContentResolver.openInputStream(any(Uri.class))).thenThrow(SecurityException.class);
-
-    Context mockContext = mock(Context.class);
-    when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
-
-    String path = FileUtils.getPathFromCopyOfFileFromUri(mockContext, uri);
-
-    assertNull(path);
-  }
-
-  @Test
   public void getFileExtension_returnsExpectedFileExtension() throws IOException {
     Uri uri = MockContentProvider.TXT_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");

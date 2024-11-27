@@ -38,13 +38,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.InvalidPathException;
 import java.util.UUID;
 
 public class FileUtils {
 
   /** URI authority that represents access to external storage providers. */
   public static final String EXTERNAL_DOCUMENT_AUTHORITY = "com.android.externalstorage.documents";
+  public static final String FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH = "FILE_SELECTOR_EXCEPTION";
 
   /**
    * Retrieves path of directory represented by the specified {@code Uri}.

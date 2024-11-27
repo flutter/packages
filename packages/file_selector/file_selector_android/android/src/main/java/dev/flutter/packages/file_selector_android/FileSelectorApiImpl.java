@@ -4,6 +4,8 @@
 
 package dev.flutter.packages.file_selector_android;
 
+import static dev.flutter.packages.file_selector_android.FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
@@ -375,7 +377,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       // See https://github.com/flutter/flutter/issues/100025 for more details.
       uriPath = null;
     } catch (IllegalArgumentException e) {
-      uriPath = null;
+      uriPath = FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
       nativeError = new GeneratedFileSelectorApi.FileSelectorNativeException.Builder()
               .setMessage(e.getMessage() == null ? "" : e.getMessage())
               .setFileSelectorExceptionCode(GeneratedFileSelectorApi.FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION)
