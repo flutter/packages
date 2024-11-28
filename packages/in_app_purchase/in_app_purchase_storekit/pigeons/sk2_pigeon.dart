@@ -69,9 +69,7 @@ class SK2SubscriptionInfoMessage {
   });
 
   /// An array of all the promotional offers configured for this subscription.
-  /// This should be List<SK2SubscriptionOfferMessage> but pigeon doesnt support
-  /// null-safe generics. https://github.com/flutter/flutter/issues/97848
-  final List<SK2SubscriptionOfferMessage?> promotionalOffers;
+  final List<SK2SubscriptionOfferMessage> promotionalOffers;
 
   /// The group identifier for this subscription.
   final String subscriptionGroupID;
@@ -128,14 +126,79 @@ class SK2PriceLocaleMessage {
   final String currencySymbol;
 }
 
+class SK2ProductPurchaseOptionsMessage {
+  SK2ProductPurchaseOptionsMessage({
+    this.appAccountToken,
+    this.quantity = 1,
+  });
+  final String? appAccountToken;
+  final int? quantity;
+}
+
+class SK2TransactionMessage {
+  SK2TransactionMessage(
+      {required this.id,
+      required this.originalId,
+      required this.productId,
+      required this.purchaseDate,
+      this.expirationDate,
+      this.purchasedQuantity = 1,
+      this.appAccountToken,
+      this.error,
+      this.receiptData,
+      this.restoring = false});
+  final int id;
+  final int originalId;
+  final String productId;
+  final String purchaseDate;
+  final String? expirationDate;
+  final int purchasedQuantity;
+  final String? appAccountToken;
+  final bool restoring;
+  final String? receiptData;
+  final SK2ErrorMessage? error;
+}
+
+class SK2ErrorMessage {
+  const SK2ErrorMessage(
+      {required this.code, required this.domain, required this.userInfo});
+
+  final int code;
+  final String domain;
+  final Map<String, Object>? userInfo;
+}
+
+enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }
+
 @HostApi(dartHostTestHandler: 'TestInAppPurchase2Api')
 abstract class InAppPurchase2API {
   // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
-  // SK1 canMakePayments
   bool canMakePayments();
 
   // https://developer.apple.com/documentation/storekit/product/3851116-products
-  // SK1 startProductRequest
   @async
   List<SK2ProductMessage> products(List<String> identifiers);
+
+  // https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  @async
+  SK2ProductPurchaseResultMessage purchase(String id,
+      {SK2ProductPurchaseOptionsMessage? options});
+
+  @async
+  List<SK2TransactionMessage> transactions();
+
+  @async
+  void finish(int id);
+
+  void startListeningToTransactions();
+
+  void stopListeningToTransactions();
+
+  @async
+  void restorePurchases();
+}
+
+@FlutterApi()
+abstract class InAppPurchase2CallbackAPI {
+  void onTransactionsUpdated(List<SK2TransactionMessage> newTransactions);
 }

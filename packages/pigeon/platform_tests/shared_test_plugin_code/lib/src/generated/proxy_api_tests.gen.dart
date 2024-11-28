@@ -54,7 +54,6 @@ abstract class PigeonInternalProxyApiBaseClass {
   final BinaryMessenger? pigeon_binaryMessenger;
 
   /// Maintains instances stored to communicate with native language objects.
-  @protected
   final PigeonInstanceManager pigeon_instanceManager;
 
   /// Instantiates and returns a functionally identical object to oneself.

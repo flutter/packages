@@ -1,3 +1,17 @@
+## 22.6.2
+
+* Removes the `@protected` annotation from the InstanceManager field of the
+  `PigeonInternalProxyApiBaseClass`.
+
+## 22.6.1
+
+* [gobject] Moves class declarations to the header to work around a bug in some
+  versions of glib.
+
+## 22.6.0
+
+* [swift] Adds `includeErrorClass` to `SwiftOptions`.
+
 ## 22.5.0
 
 * [swift] Adds implementation for `@ProxyApi`.
@@ -217,8 +231,6 @@
     `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
-
-
 
 ## 12.0.1
 

@@ -1,3 +1,11 @@
+## 2.2.14
+
+* Updates annotations lib to 1.9.1.
+
+## 2.2.13
+
+* Updates annotations lib to 1.9.0.
+
 ## 2.2.12
 
 * Updates Pigeon for non-nullable collection type support.
