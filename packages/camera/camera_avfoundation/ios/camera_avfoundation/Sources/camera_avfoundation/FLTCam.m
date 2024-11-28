@@ -1418,7 +1418,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 
   dispatch_block_t block = ^{
-    // Setup options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other plugins like video_player.
+    // Setup options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other
+    // plugins like video_player.
     upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
                                 AVAudioSessionCategoryOptionDefaultToSpeaker |
                                     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
