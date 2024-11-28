@@ -1,4 +1,4 @@
-## 2.6.3
+## 2.6.4
 
 * Fixes changing global audio session category to be collision free.
 

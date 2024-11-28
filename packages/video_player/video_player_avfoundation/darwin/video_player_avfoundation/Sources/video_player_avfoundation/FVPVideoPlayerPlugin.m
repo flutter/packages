@@ -706,7 +706,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 // This function, although slightly modified, is also in camera_avfoundation.
-// Both need to do the same thing and run on the same thread.
+// Both need to do the same thing and run on the same thread (for example main thread).
 // Do not overwrite PlayAndRecord with Playback which causes inability to record
 // audio, do not overwrite all options.
 // Only change category if it is considered an upgrade which means it can only enable

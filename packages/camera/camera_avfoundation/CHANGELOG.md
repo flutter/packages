@@ -1,6 +1,6 @@
-## 0.9.17+5
+## 0.9.17+6
 
-* Fixes changing global audio session category to be collision free.
+* Fixes changing global audio session category to be collision free across plugins.
 
 ## 0.9.17+4
 

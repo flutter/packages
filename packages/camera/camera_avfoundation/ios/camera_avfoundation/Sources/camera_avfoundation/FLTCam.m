@@ -1315,7 +1315,7 @@ NSString *const errorMethod = @"error";
 }
 
 // This function, although slightly modified, is also in video_player_avfoundation.
-// Both need to do the same thing and run on the same thread.
+// Both need to do the same thing and run on the same thread (for example main thread).
 // Configure application wide audio session manually to prevent overwriting flag
 // MixWithOthers by capture session.
 // Only change category if it is considered an upgrade which means it can only enable
@@ -1366,7 +1366,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 
   dispatch_block_t block = ^{
-    // Setup options implicit to AVAudioSessionCategoryPlayback to not disturb video_player.
+    // Setup options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other plugins like video_player.
     upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
                                 AVAudioSessionCategoryOptionDefaultToSpeaker |
                                     AVAudioSessionCategoryOptionAllowBluetoothA2DP |
