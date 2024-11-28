@@ -7,6 +7,7 @@ class ProductDetails {
   /// Creates a new product details object with the provided details.
   ProductDetails({
     required this.id,
+    required this.name,
     required this.title,
     required this.description,
     required this.price,
@@ -20,6 +21,12 @@ class ProductDetails {
   /// For example, on iOS it is specified in App Store Connect; on Android, it is specified in Google Play Console.
   final String id;
 
+  /// The product name.
+  ///
+  /// For example, on iOS it is specified in App Store Connect; on Android, it is specified in Google Play Console.
+  final String name;
+
+  
   /// The title of the product.
   ///
   /// For example, on iOS it is specified in App Store Connect; on Android, it is specified in Google Play Console.
