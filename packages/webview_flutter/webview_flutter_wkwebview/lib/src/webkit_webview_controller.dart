@@ -503,9 +503,10 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<String?> getTitle() => _webView.getTitle();
 
   @override
-  Future<void> scrollTo(int x, int y) {
+  Future<void> scrollTo(int x, int y) async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return _webView.UIWebViewExtensions.scrollView.setContentOffset(
+      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
+      return webViewUI.scrollView.setContentOffset(
         x.toDouble(),
         y.toDouble(),
       );
@@ -516,9 +517,10 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> scrollBy(int x, int y) {
+  Future<void> scrollBy(int x, int y) async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return _webView.UIWebViewExtensions.scrollView.scrollBy(
+      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
+      return webViewUI.scrollView.scrollBy(
         x.toDouble(),
         y.toDouble(),
       );
@@ -531,8 +533,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   @override
   Future<Offset> getScrollPosition() async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
+      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
       final List<double> position =
-          await _webView.UIWebViewExtensions.scrollView.getContentOffset();
+          await webViewUI.scrollView.getContentOffset();
       return Offset(position[0], position[1]);
     } else {
       // TODO(stuartmorgan): Investigate doing this via JS instead.
@@ -546,17 +549,14 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> setBackgroundColor(Color color) {
+  Future<void> setBackgroundColor(Color color) async {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return Future.wait(<Future<void>>[
-        _webView.UIWebViewExtensions.setOpaque(false),
-        _webView.UIWebViewExtensions.setBackgroundColor(
-          Colors.transparent.toARGB32(),
-        ),
+      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
+      await Future.wait(<Future<void>>[
+        webViewUI.setOpaque(false),
+        webViewUI.setBackgroundColor(Colors.transparent.toARGB32()),
         // This method must be called last.
-        _webView.UIWebViewExtensions.scrollView.setBackgroundColor(
-          color.toARGB32(),
-        ),
+        webViewUI.scrollView.setBackgroundColor(color.toARGB32()),
       ]);
     } else {
       // TODO(stuartmorgan): Implement background color support.
@@ -807,12 +807,12 @@ window.addEventListener("error", function(e) {
             );
           },
         );
-        return _webView.UIWebViewExtensions.scrollView.setDelegate(
-          _uiScrollViewDelegate,
-        );
+        final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
+        return webViewUI.scrollView.setDelegate(_uiScrollViewDelegate);
       } else {
         _uiScrollViewDelegate = null;
-        return _webView.UIWebViewExtensions.scrollView.setDelegate(null);
+        final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
+        return webViewUI.scrollView.setDelegate(null);
       }
     } else {
       // TODO(stuartmorgan): Investigate doing this via JS instead.

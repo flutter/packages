@@ -10,8 +10,8 @@ import UIKit
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class WebViewUIExtensionsProxyAPIDelegate : PigeonApiDelegateWKWebViewUIExtensions {
-  func scrollView(pigeonApi: PigeonApiWKWebViewUIExtensions, pigeonInstance: WKWebView) -> UIScrollView {
+class WebViewUIProxyAPIDelegate : PigeonApiDelegateWKWebViewUI {
+  func scrollView(pigeonApi: PigeonApiWKWebViewUI, pigeonInstance: WKWebView) -> UIScrollView {
     return pigeonInstance.scrollView
   }
 }

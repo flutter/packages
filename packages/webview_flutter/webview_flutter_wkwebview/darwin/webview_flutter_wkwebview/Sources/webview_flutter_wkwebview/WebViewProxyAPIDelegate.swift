@@ -35,7 +35,7 @@ class WebViewProxyAPIDelegate : PigeonApiDelegateWKWebView {
     return pigeonInstance.configuration
   }
 
-  func UIWebViewExtensions(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView) -> WKWebView {
+  func asWKWebViewUI(pigeonApi: PigeonApiWKWebView, pigeonInstance: WKWebView) -> WKWebView {
     return pigeonInstance
   }
 

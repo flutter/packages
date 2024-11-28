@@ -234,18 +234,14 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     }
 
     if (params.backgroundColor != null) {
-      final WKWebView webView = this.webView;
+      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
       if (defaultTargetPlatform == TargetPlatform.iOS) {
+        unawaited(webViewUI.setOpaque(false));
         unawaited(
-          webView.UIWebViewExtensions.setOpaque(false),
+          webViewUI.setBackgroundColor(Colors.transparent.value),
         );
         unawaited(
-          webView.UIWebViewExtensions.setBackgroundColor(
-            Colors.transparent.value,
-          ),
-        );
-        unawaited(
-          webView.UIWebViewExtensions.scrollView.setBackgroundColor(
+          webViewUI.scrollView.setBackgroundColor(
             params.backgroundColor?.value,
           ),
         );
@@ -401,10 +397,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<void> scrollTo(int x, int y) async {
     final WKWebView webView = this.webView;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return webView.UIWebViewExtensions.scrollView.setContentOffset(
-        x.toDouble(),
-        y.toDouble(),
-      );
+      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
+      return webViewUI.scrollView.setContentOffset(x.toDouble(), y.toDouble());
     } else {
       throw UnimplementedError('scrollTo is not supported on macOS');
     }
@@ -414,10 +408,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<void> scrollBy(int x, int y) async {
     final WKWebView webView = this.webView;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      await webView.UIWebViewExtensions.scrollView.scrollBy(
-        x.toDouble(),
-        y.toDouble(),
-      );
+      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
+      await webViewUI.scrollView.scrollBy(x.toDouble(), y.toDouble());
     } else {
       throw UnimplementedError('scrollBy is not supported on macOS');
     }
@@ -427,8 +419,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<int> getScrollX() async {
     final WKWebView webView = this.webView;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final List<double> offset =
-          await webView.UIWebViewExtensions.scrollView.getContentOffset();
+      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
+      final List<double> offset = await webViewUI.scrollView.getContentOffset();
       return offset[0].toInt();
     } else {
       throw UnimplementedError('getScrollX is not supported on macOS');
@@ -439,8 +431,8 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<int> getScrollY() async {
     final WKWebView webView = this.webView;
     if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final List<double> offset =
-          await webView.UIWebViewExtensions.scrollView.getContentOffset();
+      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
+      final List<double> offset = await webViewUI.scrollView.getContentOffset();
       return offset[1].toInt();
     } else {
       throw UnimplementedError('getScrollY is not supported on macOS');

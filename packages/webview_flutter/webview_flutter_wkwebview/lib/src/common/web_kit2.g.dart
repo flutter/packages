@@ -153,8 +153,7 @@ class PigeonInstanceManager {
     WKNavigationDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     NSObject.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    WKWebViewUIExtensions.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    WKWebViewNSExtensions.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKWebViewUI.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKUIDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKHTTPCookieStore.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     UIScrollViewDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -4862,12 +4861,6 @@ class WKWebView extends NSObject {
   /// The object that contains the configuration details for the web view.
   late final WKWebViewConfiguration configuration = pigeonVar_configuration();
 
-  late final WKWebViewUIExtensions UIWebViewExtensions =
-      pigeonVar_UIWebViewExtensions();
-
-  late final WKWebViewNSExtensions NSWebViewExtensions =
-      pigeonVar_NSWebViewExtensions();
-
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -4955,80 +4948,36 @@ class WKWebView extends NSObject {
     return pigeonVar_instance;
   }
 
-  WKWebViewUIExtensions pigeonVar_UIWebViewExtensions() {
-    final WKWebViewUIExtensions pigeonVar_instance =
-        WKWebViewUIExtensions.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-    );
+  Future<WKWebViewUI> asWKWebViewUI() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWKWebView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
-    () async {
-      const String pigeonVar_channelName =
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.UIWebViewExtensions';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
-          BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
-      );
-      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[this, pigeonVar_instanceIdentifier])
-          as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
-    }();
-    return pigeonVar_instance;
-  }
-
-  WKWebViewNSExtensions pigeonVar_NSWebViewExtensions() {
-    final WKWebViewNSExtensions pigeonVar_instance =
-        WKWebViewNSExtensions.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.asWKWebViewUI';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
-    () async {
-      const String pigeonVar_channelName =
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.NSWebViewExtensions';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
-          BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
       );
-      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[this, pigeonVar_instanceIdentifier])
-          as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
-    }();
-    return pigeonVar_instance;
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as WKWebViewUI?)!;
+    }
   }
 
   /// The object you use to integrate custom user interface elements, such as
@@ -5604,20 +5553,19 @@ class WKWebView extends NSObject {
 /// browser.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebview.
-class WKWebViewUIExtensions extends UIView {
-  /// Constructs [WKWebViewUIExtensions] without creating the associated native object.
+class WKWebViewUI extends UIView {
+  /// Constructs [WKWebViewUI] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
   /// create copies for an [PigeonInstanceManager].
   @protected
-  WKWebViewUIExtensions.pigeon_detached({
+  WKWebViewUI.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     super.observeValue,
   }) : super.pigeon_detached();
 
-  late final _PigeonInternalProxyApiBaseCodec
-      _pigeonVar_codecWKWebViewUIExtensions =
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecWKWebViewUI =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   /// The scroll view associated with the web view.
@@ -5627,7 +5575,7 @@ class WKWebViewUIExtensions extends UIView {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    WKWebViewUIExtensions Function()? pigeon_newInstance,
+    WKWebViewUI Function()? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -5637,7 +5585,7 @@ class WKWebViewUIExtensions extends UIView {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUIExtensions.pigeon_newInstance',
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.pigeon_newInstance',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
@@ -5645,16 +5593,16 @@ class WKWebViewUIExtensions extends UIView {
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUIExtensions.pigeon_newInstance was null.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUIExtensions.pigeon_newInstance was null, expected non-null int.');
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.pigeon_newInstance was null, expected non-null int.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call() ??
-                  WKWebViewUIExtensions.pigeon_detached(
+                  WKWebViewUI.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                   ),
@@ -5678,13 +5626,13 @@ class WKWebViewUIExtensions extends UIView {
       pigeon_instanceManager: pigeon_instanceManager,
     );
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebViewUIExtensions;
+        _pigeonVar_codecWKWebViewUI;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
     () async {
       const String pigeonVar_channelName =
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUIExtensions.scrollView';
+          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.scrollView';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
         pigeonVar_channelName,
@@ -5710,83 +5658,8 @@ class WKWebViewUIExtensions extends UIView {
   }
 
   @override
-  WKWebViewUIExtensions pigeon_copy() {
-    return WKWebViewUIExtensions.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-      observeValue: observeValue,
-    );
-  }
-}
-
-/// An object that displays interactive web content, such as for an in-app
-/// browser.
-///
-/// See https://developer.apple.com/documentation/webkit/wkwebview.
-class WKWebViewNSExtensions extends NSObject {
-  /// Constructs [WKWebViewNSExtensions] without creating the associated native object.
-  ///
-  /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInstanceManager].
-  @protected
-  WKWebViewNSExtensions.pigeon_detached({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    super.observeValue,
-  }) : super.pigeon_detached();
-
-  static void pigeon_setUpMessageHandlers({
-    bool pigeon_clearHandlers = false,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-    WKWebViewNSExtensions Function()? pigeon_newInstance,
-  }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewNSExtensions.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewNSExtensions.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewNSExtensions.pigeon_newInstance was null, expected non-null int.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WKWebViewNSExtensions.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-  }
-
-  @override
-  WKWebViewNSExtensions pigeon_copy() {
-    return WKWebViewNSExtensions.pigeon_detached(
+  WKWebViewUI pigeon_copy() {
+    return WKWebViewUI.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       observeValue: observeValue,

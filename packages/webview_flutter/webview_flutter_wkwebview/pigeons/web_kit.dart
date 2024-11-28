@@ -767,11 +767,7 @@ abstract class WKWebView extends NSObject {
   @attached
   late WKWebViewConfiguration configuration;
 
-  @attached
-  late WKWebViewUIExtensions UIWebViewExtensions;
-
-  @attached
-  late WKWebViewNSExtensions NSWebViewExtensions;
+  WKWebViewUI asWKWebViewUI();
 
   /// The object you use to integrate custom user interface elements, such as
   /// contextual menus or panels, into web view interactions.
@@ -849,24 +845,11 @@ abstract class WKWebView extends NSObject {
     supportsMacos: false,
   ),
 )
-abstract class WKWebViewUIExtensions extends UIView {
+abstract class WKWebViewUI extends UIView {
   /// The scroll view associated with the web view.
   @attached
   late UIScrollView scrollView;
 }
-
-/// An object that displays interactive web content, such as for an in-app
-/// browser.
-///
-/// See https://developer.apple.com/documentation/webkit/wkwebview.
-@ProxyApi(
-  swiftOptions: SwiftProxyApiOptions(
-    import: 'WebKit',
-    name: 'WKWebView',
-    supportsIos: false,
-  ),
-)
-abstract class WKWebViewNSExtensions extends NSObject {}
 
 /// The methods for presenting native user interface elements on behalf of a
 /// webpage.
