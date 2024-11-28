@@ -110,8 +110,8 @@
   id mockTransactionWrapper = OCMProtocolMock(@protocol(FGMCATransactionProtocol));
   controller.callHandler.transactionWrapper = mockTransactionWrapper;
 
-  NSArray *zoomToArray = @[ @"zoomTo", @(10.0) ];
-  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithJson:zoomToArray];
+  FGMPlatformCameraUpdateZoomTo *zoomTo = [FGMPlatformCameraUpdateZoomTo makeWithZoom:10.0];
+  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithCameraUpdate:zoomTo];
   FlutterError *error = nil;
 
   OCMReject([mockTransactionWrapper begin]);
@@ -144,8 +144,8 @@
   id mockTransactionWrapper = OCMProtocolMock(@protocol(FGMCATransactionProtocol));
   controller.callHandler.transactionWrapper = mockTransactionWrapper;
 
-  NSArray *zoomToArray = @[ @"zoomTo", @(10.0) ];
-  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithJson:zoomToArray];
+  FGMPlatformCameraUpdateZoomTo *zoomTo = [FGMPlatformCameraUpdateZoomTo makeWithZoom:10.0];
+  FGMPlatformCameraUpdate *cameraUpdate = [FGMPlatformCameraUpdate makeWithCameraUpdate:zoomTo];
   FlutterError *error = nil;
 
   NSNumber *durationMilliseconds = @100;
