@@ -66,7 +66,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           }
         }
       case .failure(let error):
-        assertionFailure("\(error)")
+        assertionFailure("\(String(describing: error)): \(String(describing: error.message))")
       }
     }
   }

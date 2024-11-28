@@ -973,7 +973,7 @@ abstract class URLAuthenticationChallenge extends NSObject {
 /// remote server or the path to a local file..
 ///
 /// See https://developer.apple.com/documentation/foundation/url.
-@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URLWrapper'))
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URL'))
 abstract class URL extends NSObject {
   /// The absolute string for the URL.
   String getAbsoluteString();

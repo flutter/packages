@@ -9,7 +9,7 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class URLProxyAPIDelegate : PigeonApiDelegateURL {
-  func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URLWrapper) throws -> String {
-    return pigeonInstance.value.absoluteString
+  func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String {
+    return pigeonInstance.absoluteString
   }
 }

@@ -887,7 +887,7 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
       }
 
 
-      if let instance = value as? URLWrapper {
+      if let instance = value as? URL {
         pigeonRegistrar.apiDelegate.pigeonApiURL(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
@@ -8018,7 +8018,7 @@ class TestAuthenticationChallenge: URLAuthenticationChallenge {
 
 protocol PigeonApiDelegateURL {
   /// The absolute string for the URL.
-  func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URLWrapper) throws -> String
+  func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String
 }
 
 protocol PigeonApiProtocolURL {
@@ -8046,7 +8046,7 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
     if let api = api {
       getAbsoluteStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! URLWrapper
+        let pigeonInstanceArg = args[0] as! URL
         do {
           let result = try api.pigeonDelegate.getAbsoluteString(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
@@ -8060,7 +8060,7 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
   }
 
   ///Creates a Dart instance of URL and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: URLWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(pigeonInstance: URL, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8109,7 +8109,7 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class LProxyAPIDelegate : PigeonApiDelegateURL {
-  func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URLWrapper) throws -> String {
+  func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String {
     return pigeonInstance.getAbsoluteString()
   }
 
