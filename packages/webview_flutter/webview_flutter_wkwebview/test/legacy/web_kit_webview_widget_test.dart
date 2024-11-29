@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
+import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart';
 import 'package:webview_flutter_wkwebview/src/common/webkit_constants.dart';
 import 'package:webview_flutter_wkwebview/src/legacy/web_kit_webview_widget.dart';
@@ -24,7 +25,7 @@ import 'web_kit_webview_widget_test.mocks.dart';
   WKPreferences,
   WKScriptMessageHandler,
   WKWebView,
-  WKWebViewUIExtensions,
+  UIViewWKWebView,
   WKWebViewConfiguration,
   WKWebsiteDataStore,
   WKUIDelegate,
@@ -39,7 +40,7 @@ void main() {
   group('WebKitWebViewWidget', () {
     _WebViewMocks configureMocks() {
       final _WebViewMocks mocks = _WebViewMocks(
-          webView: MockWKWebView(),
+          webView: MockUIViewWKWebView(),
           webViewWidgetProxy: MockWebViewWidgetProxy(),
           userContentController: MockWKUserContentController(),
           preferences: MockWKPreferences(),
@@ -56,7 +57,7 @@ void main() {
           any,
           observeValue: anyNamed('observeValue'),
         ),
-      ).thenReturn(mocks.webView);
+      ).thenReturn(PlatformWebView.fromNativeWebView(mocks.webView));
       when(
         mocks.webViewWidgetProxy.createUIDelgate(
           onCreateWebView: captureAnyNamed('onCreateWebView'),
@@ -82,11 +83,7 @@ void main() {
       when(mocks.webViewConfiguration.getPreferences())
           .thenAnswer((_) => Future<WKPreferences>.value(mocks.preferences));
 
-      final MockWKWebViewUIExtensions mockWKWebViewUIExtensions =
-          MockWKWebViewUIExtensions();
-      when(mocks.webView.UIWebViewExtensions)
-          .thenReturn(mockWKWebViewUIExtensions);
-      when(mockWKWebViewUIExtensions.scrollView).thenReturn(mocks.scrollView);
+      when(mocks.webView.scrollView).thenReturn(mocks.scrollView);
 
       when(mocks.webViewConfiguration.getWebsiteDataStore()).thenAnswer(
         (_) => Future<WKWebsiteDataStore>.value(mocks.websiteDataStore),
@@ -212,14 +209,9 @@ void main() {
           ),
         );
 
-        final WKWebViewUIExtensions mockWebViewUIExtensions =
-            mocks.webView.UIWebViewExtensions;
-        final UIScrollView mockScrollView = mockWebViewUIExtensions.scrollView;
-        verify(mockWebViewUIExtensions.setOpaque(false));
-        verify(mockWebViewUIExtensions.setBackgroundColor(
-          Colors.transparent.toARGB32(),
-        ));
-        verify(mockScrollView.setBackgroundColor(Colors.red.toARGB32()));
+        verify(mocks.webView.setOpaque(false));
+        verify(mocks.webView.setBackgroundColor(Colors.transparent.toARGB32()));
+        verify(mocks.scrollView.setBackgroundColor(Colors.red.toARGB32()));
 
         debugDefaultTargetPlatformOverride = null;
       });
@@ -1480,7 +1472,7 @@ class _WebViewMocks {
     required this.javascriptChannelRegistry,
   });
 
-  final MockWKWebView webView;
+  final MockUIViewWKWebView webView;
   final MockWebViewWidgetProxy webViewWidgetProxy;
   final MockWKUserContentController userContentController;
   final MockWKPreferences preferences;

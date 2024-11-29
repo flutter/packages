@@ -152,8 +152,9 @@ class PigeonInstanceManager {
     WKScriptMessageHandler.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKNavigationDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     NSObject.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    UIViewWKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    NSViewWKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    WKWebViewUI.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKUIDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     WKHTTPCookieStore.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     UIScrollViewDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -434,7 +435,8 @@ class InteractiveMediaAdsProxy {
     this.newWKScriptMessageHandler = WKScriptMessageHandler.new,
     this.newWKNavigationDelegate = WKNavigationDelegate.new,
     this.newNSObject = NSObject.new,
-    this.newWKWebView = WKWebView.new,
+    this.newUIViewWKWebView = UIViewWKWebView.new,
+    this.newNSViewWKWebView = NSViewWKWebView.new,
     this.newWKUIDelegate = WKUIDelegate.new,
     this.newUIScrollViewDelegate = UIScrollViewDelegate.new,
     this.withUserURLCredential = URLCredential.withUser,
@@ -525,9 +527,15 @@ class InteractiveMediaAdsProxy {
         Map<KeyValueChangeKey, Object>?,
       )? observeValue}) newNSObject;
 
-  /// Constructs [WKWebView].
-  final WKWebView Function(
-      {required WKWebViewConfiguration initialConfiguration}) newWKWebView;
+  /// Constructs [UIViewWKWebView].
+  final UIViewWKWebView Function(
+          {required WKWebViewConfiguration initialConfiguration})
+      newUIViewWKWebView;
+
+  /// Constructs [NSViewWKWebView].
+  final NSViewWKWebView Function(
+          {required WKWebViewConfiguration initialConfiguration})
+      newNSViewWKWebView;
 
   /// Constructs [WKUIDelegate].
   final WKUIDelegate Function({
@@ -4806,8 +4814,8 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
 /// browser.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebview.
-class WKWebView extends NSObject {
-  WKWebView({
+class UIViewWKWebView extends UIView implements WKWebView {
+  UIViewWKWebView({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     super.observeValue,
@@ -4816,11 +4824,11 @@ class WKWebView extends NSObject {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
+        _pigeonVar_codecUIViewWKWebView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     () async {
       const String pigeonVar_channelName =
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.pigeon_defaultConstructor';
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_defaultConstructor';
       final BasicMessageChannel<Object?> pigeonVar_channel =
           BasicMessageChannel<Object?>(
         pigeonVar_channelName,
@@ -4844,6 +4852,1439 @@ class WKWebView extends NSObject {
     }();
   }
 
+  /// Constructs [UIViewWKWebView] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  UIViewWKWebView.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    super.observeValue,
+  }) : super.pigeon_detached();
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecUIViewWKWebView =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// The object that contains the configuration details for the web view.
+  late final WKWebViewConfiguration configuration = pigeonVar_configuration();
+
+  /// The scroll view associated with the web view.
+  late final UIScrollView scrollView = pigeonVar_scrollView();
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    UIViewWKWebView Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  UIViewWKWebView.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  WKWebViewConfiguration pigeonVar_configuration() {
+    final WKWebViewConfiguration pigeonVar_instance =
+        WKWebViewConfiguration.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.configuration';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+              .send(<Object?>[this, pigeonVar_instanceIdentifier])
+          as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+    return pigeonVar_instance;
+  }
+
+  UIScrollView pigeonVar_scrollView() {
+    final UIScrollView pigeonVar_instance = UIScrollView.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.scrollView';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+              .send(<Object?>[this, pigeonVar_instanceIdentifier])
+          as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+    return pigeonVar_instance;
+  }
+
+  /// The object you use to integrate custom user interface elements, such as
+  /// contextual menus or panels, into web view interactions.
+  Future<void> setUIDelegate(WKUIDelegate delegate) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setUIDelegate';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, delegate]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The object you use to manage navigation behavior for the web view.
+  Future<void> setNavigationDelegate(WKNavigationDelegate delegate) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setNavigationDelegate';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, delegate]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The URL for the current webpage.
+  Future<String?> getUrl() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getUrl';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// An estimate of what fraction of the current navigation has been loaded.
+  Future<double> getEstimatedProgress() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getEstimatedProgress';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as double?)!;
+    }
+  }
+
+  /// Loads the web content that the specified URL request object references and
+  /// navigates to that content.
+  Future<void> load(URLRequest request) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.load';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, request]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Loads the contents of the specified HTML string and navigates to it.
+  Future<void> loadHtmlString(
+    String string,
+    String? baseUrl,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadHtmlString';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, string, baseUrl]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Loads the web content from the specified file and navigates to it.
+  Future<void> loadFileUrl(
+    String url,
+    String readAccessUrl,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadFileUrl';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, url, readAccessUrl]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Convenience method to load a Flutter asset.
+  Future<void> loadFlutterAsset(String key) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadFlutterAsset';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this, key]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// A Boolean value that indicates whether there is a valid back item in the
+  /// back-forward list.
+  Future<bool> canGoBack() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.canGoBack';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?)!;
+    }
+  }
+
+  /// A Boolean value that indicates whether there is a valid forward item in
+  /// the back-forward list.
+  Future<bool> canGoForward() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.canGoForward';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Navigates to the back item in the back-forward list.
+  Future<void> goBack() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.goBack';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Navigates to the forward item in the back-forward list.
+  Future<void> goForward() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.goForward';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Reloads the current webpage.
+  Future<void> reload() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.reload';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The page title.
+  Future<String?> getTitle() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getTitle';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// A Boolean value that indicates whether horizontal swipe gestures trigger
+  /// backward and forward page navigation.
+  Future<void> setAllowsBackForwardNavigationGestures(bool allow) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setAllowsBackForwardNavigationGestures';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this, allow]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The custom user agent string.
+  Future<void> setCustomUserAgent(String? userAgent) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setCustomUserAgent';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, userAgent]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Evaluates the specified JavaScript string.
+  Future<Object?> evaluateJavaScript(String javaScriptString) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.evaluateJavaScript';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, javaScriptString]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return pigeonVar_replyList[0];
+    }
+  }
+
+  /// A Boolean value that indicates whether you can inspect the view with
+  /// Safari Web Inspector.
+  Future<void> setInspectable(bool inspectable) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setInspectable';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, inspectable]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The custom user agent string.
+  Future<String?> getCustomUserAgent() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getCustomUserAgent';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  @override
+  UIViewWKWebView pigeon_copy() {
+    return UIViewWKWebView.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
+    );
+  }
+}
+
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+class NSViewWKWebView extends NSObject implements WKWebView {
+  NSViewWKWebView({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    super.observeValue,
+    required WKWebViewConfiguration initialConfiguration,
+  }) : super.pigeon_detached() {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel.send(
+              <Object?>[pigeonVar_instanceIdentifier, initialConfiguration])
+          as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [NSViewWKWebView] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  NSViewWKWebView.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    super.observeValue,
+  }) : super.pigeon_detached();
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecNSViewWKWebView =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  /// The object that contains the configuration details for the web view.
+  late final WKWebViewConfiguration configuration = pigeonVar_configuration();
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    NSViewWKWebView Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  NSViewWKWebView.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  WKWebViewConfiguration pigeonVar_configuration() {
+    final WKWebViewConfiguration pigeonVar_instance =
+        WKWebViewConfiguration.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.configuration';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+              .send(<Object?>[this, pigeonVar_instanceIdentifier])
+          as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+    return pigeonVar_instance;
+  }
+
+  /// The object you use to integrate custom user interface elements, such as
+  /// contextual menus or panels, into web view interactions.
+  Future<void> setUIDelegate(WKUIDelegate delegate) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setUIDelegate';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, delegate]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The object you use to manage navigation behavior for the web view.
+  Future<void> setNavigationDelegate(WKNavigationDelegate delegate) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setNavigationDelegate';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, delegate]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The URL for the current webpage.
+  Future<String?> getUrl() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getUrl';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// An estimate of what fraction of the current navigation has been loaded.
+  Future<double> getEstimatedProgress() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getEstimatedProgress';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as double?)!;
+    }
+  }
+
+  /// Loads the web content that the specified URL request object references and
+  /// navigates to that content.
+  Future<void> load(URLRequest request) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.load';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, request]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Loads the contents of the specified HTML string and navigates to it.
+  Future<void> loadHtmlString(
+    String string,
+    String? baseUrl,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadHtmlString';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, string, baseUrl]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Loads the web content from the specified file and navigates to it.
+  Future<void> loadFileUrl(
+    String url,
+    String readAccessUrl,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadFileUrl';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, url, readAccessUrl]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Convenience method to load a Flutter asset.
+  Future<void> loadFlutterAsset(String key) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadFlutterAsset';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this, key]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// A Boolean value that indicates whether there is a valid back item in the
+  /// back-forward list.
+  Future<bool> canGoBack() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.canGoBack';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?)!;
+    }
+  }
+
+  /// A Boolean value that indicates whether there is a valid forward item in
+  /// the back-forward list.
+  Future<bool> canGoForward() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.canGoForward';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Navigates to the back item in the back-forward list.
+  Future<void> goBack() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.goBack';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Navigates to the forward item in the back-forward list.
+  Future<void> goForward() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.goForward';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Reloads the current webpage.
+  Future<void> reload() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.reload';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The page title.
+  Future<String?> getTitle() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getTitle';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// A Boolean value that indicates whether horizontal swipe gestures trigger
+  /// backward and forward page navigation.
+  Future<void> setAllowsBackForwardNavigationGestures(bool allow) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setAllowsBackForwardNavigationGestures';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this, allow]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The custom user agent string.
+  Future<void> setCustomUserAgent(String? userAgent) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setCustomUserAgent';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, userAgent]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Evaluates the specified JavaScript string.
+  Future<Object?> evaluateJavaScript(String javaScriptString) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.evaluateJavaScript';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, javaScriptString]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return pigeonVar_replyList[0];
+    }
+  }
+
+  /// A Boolean value that indicates whether you can inspect the view with
+  /// Safari Web Inspector.
+  Future<void> setInspectable(bool inspectable) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setInspectable';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, inspectable]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// The custom user agent string.
+  Future<String?> getCustomUserAgent() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecNSViewWKWebView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getCustomUserAgent';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  @override
+  NSViewWKWebView pigeon_copy() {
+    return NSViewWKWebView.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
+    );
+  }
+}
+
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+class WKWebView extends NSObject {
   /// Constructs [WKWebView] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -4854,12 +6295,6 @@ class WKWebView extends NSObject {
     super.pigeon_instanceManager,
     super.observeValue,
   }) : super.pigeon_detached();
-
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecWKWebView =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
-
-  /// The object that contains the configuration details for the web view.
-  late final WKWebViewConfiguration configuration = pigeonVar_configuration();
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -4910,756 +6345,9 @@ class WKWebView extends NSObject {
     }
   }
 
-  WKWebViewConfiguration pigeonVar_configuration() {
-    final WKWebViewConfiguration pigeonVar_instance =
-        WKWebViewConfiguration.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-    );
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
-    () async {
-      const String pigeonVar_channelName =
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.configuration';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
-          BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
-      );
-      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[this, pigeonVar_instanceIdentifier])
-          as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
-    }();
-    return pigeonVar_instance;
-  }
-
-  Future<WKWebViewUI> asWKWebViewUI() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.asWKWebViewUI';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as WKWebViewUI?)!;
-    }
-  }
-
-  /// The object you use to integrate custom user interface elements, such as
-  /// contextual menus or panels, into web view interactions.
-  Future<void> setUIDelegate(WKUIDelegate delegate) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.setUIDelegate';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, delegate]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// The object you use to manage navigation behavior for the web view.
-  Future<void> setNavigationDelegate(WKNavigationDelegate delegate) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.setNavigationDelegate';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, delegate]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// The URL for the current webpage.
-  Future<String?> getUrl() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.getUrl';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
-  }
-
-  /// An estimate of what fraction of the current navigation has been loaded.
-  Future<double> getEstimatedProgress() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.getEstimatedProgress';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as double?)!;
-    }
-  }
-
-  /// Loads the web content that the specified URL request object references and
-  /// navigates to that content.
-  Future<void> load(URLRequest request) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.load';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, request]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Loads the contents of the specified HTML string and navigates to it.
-  Future<void> loadHtmlString(
-    String string,
-    String? baseUrl,
-  ) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.loadHtmlString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, string, baseUrl]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Loads the web content from the specified file and navigates to it.
-  Future<void> loadFileUrl(
-    String url,
-    String readAccessUrl,
-  ) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.loadFileUrl';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, url, readAccessUrl]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Convenience method to load a Flutter asset.
-  Future<void> loadFlutterAsset(String key) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.loadFlutterAsset';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this, key]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// A Boolean value that indicates whether there is a valid back item in the
-  /// back-forward list.
-  Future<bool> canGoBack() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.canGoBack';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?)!;
-    }
-  }
-
-  /// A Boolean value that indicates whether there is a valid forward item in
-  /// the back-forward list.
-  Future<bool> canGoForward() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.canGoForward';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?)!;
-    }
-  }
-
-  /// Navigates to the back item in the back-forward list.
-  Future<void> goBack() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.goBack';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Navigates to the forward item in the back-forward list.
-  Future<void> goForward() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.goForward';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Reloads the current webpage.
-  Future<void> reload() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.reload';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// The page title.
-  Future<String?> getTitle() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.getTitle';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
-  }
-
-  /// A Boolean value that indicates whether horizontal swipe gestures trigger
-  /// backward and forward page navigation.
-  Future<void> setAllowsBackForwardNavigationGestures(bool allow) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.setAllowsBackForwardNavigationGestures';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this, allow]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// The custom user agent string.
-  Future<void> setCustomUserAgent(String? userAgent) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.setCustomUserAgent';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, userAgent]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Evaluates the specified JavaScript string.
-  Future<Object?> evaluateJavaScript(String javaScriptString) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.evaluateJavaScript';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, javaScriptString]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return pigeonVar_replyList[0];
-    }
-  }
-
-  /// A Boolean value that indicates whether you can inspect the view with
-  /// Safari Web Inspector.
-  Future<void> setInspectable(bool inspectable) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.setInspectable';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, inspectable]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// The custom user agent string.
-  Future<String?> getCustomUserAgent() async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebView;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.getCustomUserAgent';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?);
-    }
-  }
-
   @override
   WKWebView pigeon_copy() {
     return WKWebView.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-      observeValue: observeValue,
-    );
-  }
-}
-
-/// An object that displays interactive web content, such as for an in-app
-/// browser.
-///
-/// See https://developer.apple.com/documentation/webkit/wkwebview.
-class WKWebViewUI extends UIView {
-  /// Constructs [WKWebViewUI] without creating the associated native object.
-  ///
-  /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInstanceManager].
-  @protected
-  WKWebViewUI.pigeon_detached({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    super.observeValue,
-  }) : super.pigeon_detached();
-
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecWKWebViewUI =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
-
-  /// The scroll view associated with the web view.
-  late final UIScrollView scrollView = pigeonVar_scrollView();
-
-  static void pigeon_setUpMessageHandlers({
-    bool pigeon_clearHandlers = false,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-    WKWebViewUI Function()? pigeon_newInstance,
-  }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.pigeon_newInstance was null, expected non-null int.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WKWebViewUI.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-  }
-
-  UIScrollView pigeonVar_scrollView() {
-    final UIScrollView pigeonVar_instance = UIScrollView.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-    );
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWKWebViewUI;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(pigeonVar_instance);
-    () async {
-      const String pigeonVar_channelName =
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewUI.scrollView';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
-          BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
-      );
-      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[this, pigeonVar_instanceIdentifier])
-          as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
-    }();
-    return pigeonVar_instance;
-  }
-
-  @override
-  WKWebViewUI pigeon_copy() {
-    return WKWebViewUI.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       observeValue: observeValue,

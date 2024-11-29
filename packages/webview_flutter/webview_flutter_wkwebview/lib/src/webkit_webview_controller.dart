@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
+import 'common/platform_webview.dart';
 import 'common/weak_reference_utils.dart';
 import 'common/web_kit2.g.dart';
 import 'common/webkit_constants.dart';
@@ -141,13 +141,12 @@ class WebKitWebViewController extends PlatformWebViewController {
             : WebKitWebViewControllerCreationParams
                 .fromPlatformWebViewControllerCreationParams(params)) {
     _webView.addObserver(
-      _webView,
+      _webView.nativeWebView,
       'estimatedProgress',
       <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
     );
-
     _webView.addObserver(
-      _webView,
+      _webView.nativeWebView,
       'URL',
       <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
     );
@@ -164,7 +163,9 @@ class WebKitWebViewController extends PlatformWebViewController {
         final bool isForMainFrame =
             navigationAction.targetFrame?.isMainFrame ?? false;
         if (!isForMainFrame) {
-          webView.load(navigationAction.request);
+          PlatformWebView.fromNativeWebView(webView).load(
+            navigationAction.request,
+          );
         }
       },
       requestMediaCapturePermission: (
@@ -270,7 +271,8 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   /// The WebKit WebView being controlled.
-  late final WKWebView _webView = _webKitParams.webKitProxy.newWKWebView(
+  late final PlatformWebView _webView =
+      _webKitParams.webKitProxy.newPlatformWebView(
     initialConfiguration: _webKitParams._configuration,
     observeValue: withWeakReferenceTo(this, (
       WeakReference<WebKitWebViewController> weakReference,
@@ -341,7 +343,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   /// See Objective-C method
   /// `FLTWebViewFlutterPlugin:webViewForIdentifier:withPluginRegistry`.
   int get webViewIdentifier =>
-      _webKitParams._instanceManager.getIdentifier(_webView)!;
+      _webKitParams._instanceManager.getIdentifier(_webView.nativeWebView)!;
 
   @override
   Future<void> loadFile(String absoluteFilePath) {
@@ -503,44 +505,22 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<String?> getTitle() => _webView.getTitle();
 
   @override
-  Future<void> scrollTo(int x, int y) async {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
-      return webViewUI.scrollView.setContentOffset(
-        x.toDouble(),
-        y.toDouble(),
-      );
-    } else {
-      // TODO(stuartmorgan): Investigate doing this via JS instead.
-      throw UnimplementedError('scrollTo is not implemented on macOS');
-    }
+  Future<void> scrollTo(int x, int y) {
+    // TODO(stuartmorgan): Investigate doing this via on macOS with JS instead.
+    return _webView.scrollView.setContentOffset(x.toDouble(), y.toDouble());
   }
 
   @override
   Future<void> scrollBy(int x, int y) async {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
-      return webViewUI.scrollView.scrollBy(
-        x.toDouble(),
-        y.toDouble(),
-      );
-    } else {
-      // TODO(stuartmorgan): Investigate doing this via JS instead.
-      throw UnimplementedError('scrollBy is not implemented on macOS');
-    }
+    // TODO(stuartmorgan): Investigate doing this via on macOS with JS instead.
+    return _webView.scrollView.scrollBy(x.toDouble(), y.toDouble());
   }
 
   @override
   Future<Offset> getScrollPosition() async {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
-      final List<double> position =
-          await webViewUI.scrollView.getContentOffset();
-      return Offset(position[0], position[1]);
-    } else {
-      // TODO(stuartmorgan): Investigate doing this via JS instead.
-      throw UnimplementedError('scrollTo is not implemented on macOS');
-    }
+    // TODO(stuartmorgan): Investigate doing this via on macOS with JS instead.
+    final List<double> position = await _webView.scrollView.getContentOffset();
+    return Offset(position[0], position[1]);
   }
 
   /// Whether horizontal swipe gestures trigger page navigation.
@@ -549,21 +529,13 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> setBackgroundColor(Color color) async {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
-      await Future.wait(<Future<void>>[
-        webViewUI.setOpaque(false),
-        webViewUI.setBackgroundColor(Colors.transparent.toARGB32()),
-        // This method must be called last.
-        webViewUI.scrollView.setBackgroundColor(color.toARGB32()),
-      ]);
-    } else {
-      // TODO(stuartmorgan): Implement background color support.
-      throw UnimplementedError(
-        'Background color is not yet supported on macOS.',
-      );
-    }
+  Future<void> setBackgroundColor(Color color) {
+    return Future.wait(<Future<void>>[
+      _webView.setOpaque(false),
+      _webView.setBackgroundColor(Colors.transparent.toARGB32()),
+      // This method must be called last.
+      _webView.scrollView.setBackgroundColor(color.toARGB32()),
+    ]);
   }
 
   @override
@@ -792,7 +764,7 @@ window.addEventListener("error", function(e) {
   @override
   Future<void> setOnScrollPositionChange(
       void Function(ScrollPositionChange scrollPositionChange)?
-          onScrollPositionChange) async {
+          onScrollPositionChange) {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       _onScrollPositionChangeCallback = onScrollPositionChange;
 
@@ -807,12 +779,10 @@ window.addEventListener("error", function(e) {
             );
           },
         );
-        final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
-        return webViewUI.scrollView.setDelegate(_uiScrollViewDelegate);
+        return _webView.scrollView.setDelegate(_uiScrollViewDelegate);
       } else {
         _uiScrollViewDelegate = null;
-        final WKWebViewUI webViewUI = await _webView.asWKWebViewUI();
-        return webViewUI.scrollView.setDelegate(null);
+        return _webView.scrollView.setDelegate(null);
       }
     } else {
       // TODO(stuartmorgan): Investigate doing this via JS instead.
@@ -976,7 +946,7 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
     final Key key = _webKitParams.key ??
         ValueKey<WebKitWebViewWidgetCreationParams>(
             params as WebKitWebViewWidgetCreationParams);
-    if (Platform.isMacOS) {
+    if (defaultTargetPlatform == TargetPlatform.macOS) {
       return AppKitView(
         key: key,
         viewType: 'plugins.flutter.io/webview',
@@ -984,7 +954,8 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
         layoutDirection: params.layoutDirection,
         gestureRecognizers: params.gestureRecognizers,
         creationParams: _webKitParams._instanceManager.getIdentifier(
-            (params.controller as WebKitWebViewController)._webView),
+          (params.controller as WebKitWebViewController)._webView.nativeWebView,
+        ),
         creationParamsCodec: const StandardMessageCodec(),
       );
     } else {
@@ -995,7 +966,9 @@ class WebKitWebViewWidget extends PlatformWebViewWidget {
         layoutDirection: params.layoutDirection,
         gestureRecognizers: params.gestureRecognizers,
         creationParams: _webKitParams._instanceManager.getIdentifier(
-            (params.controller as WebKitWebViewController)._webView),
+            (params.controller as WebKitWebViewController)
+                ._webView
+                .nativeWebView),
         creationParamsCodec: const StandardMessageCodec(),
       );
     }

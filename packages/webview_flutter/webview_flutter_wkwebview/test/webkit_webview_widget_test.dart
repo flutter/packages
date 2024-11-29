@@ -4,10 +4,12 @@
 
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart';
 import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -41,8 +43,14 @@ void main() {
         Builder(builder: (BuildContext context) => widget.build(context)),
       );
 
-      expect(find.byType(Platform.isMacOS ? AppKitView : UiKitView),
-          findsOneWidget);
+      expect(
+        find.byType(
+          defaultTargetPlatform == TargetPlatform.macOS
+              ? AppKitView
+              : UiKitView,
+        ),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('keyValue')), findsOneWidget);
     });
 
@@ -176,7 +184,7 @@ WebKitWebViewController createTestWebViewController(
   return WebKitWebViewController(
     WebKitWebViewControllerCreationParams(
       webKitProxy: WebKitProxy(
-        newWKWebView: ({
+        newPlatformWebView: ({
           required WKWebViewConfiguration initialConfiguration,
           void Function(
             NSObject,
@@ -185,11 +193,11 @@ WebKitWebViewController createTestWebViewController(
             Map<KeyValueChangeKey, Object>?,
           )? observeValue,
         }) {
-          final WKWebView webView = WKWebView.pigeon_detached(
+          final UIViewWKWebView webView = UIViewWKWebView.pigeon_detached(
             pigeon_instanceManager: testInstanceManager,
           );
           testInstanceManager.addDartCreatedInstance(webView);
-          return webView;
+          return PlatformWebView.fromNativeWebView(webView);
         },
         newWKWebViewConfiguration: () {
           return MockWKWebViewConfiguration();

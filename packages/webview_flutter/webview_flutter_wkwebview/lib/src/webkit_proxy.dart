@@ -147,6 +147,7 @@
 //   }) createUIScrollViewDelegate;
 // }
 
+import 'common/platform_webview.dart';
 import 'common/web_kit2.g.dart';
 
 /// Handles constructing objects and calling static methods for the Darwin
@@ -170,7 +171,7 @@ class WebKitProxy {
     this.newWKScriptMessageHandler = WKScriptMessageHandler.new,
     this.newWKNavigationDelegate = WKNavigationDelegate.new,
     this.newNSObject = NSObject.new,
-    this.newWKWebView = WKWebView.new,
+    this.newPlatformWebView = PlatformWebView.new,
     this.newWKUIDelegate = WKUIDelegate.new,
     this.newUIScrollViewDelegate = UIScrollViewDelegate.new,
     this.withUserURLCredential = URLCredential.withUser,
@@ -262,8 +263,8 @@ class WebKitProxy {
         Map<KeyValueChangeKey, Object>?,
       )? observeValue}) newNSObject;
 
-  /// Constructs [WKWebView].
-  final WKWebView Function({
+  /// Constructs [PlatformWebView].
+  final PlatformWebView Function({
     required WKWebViewConfiguration initialConfiguration,
     void Function(
       NSObject,
@@ -271,7 +272,7 @@ class WebKitProxy {
       NSObject?,
       Map<KeyValueChangeKey, Object>?,
     )? observeValue,
-  }) newWKWebView;
+  }) newPlatformWebView;
 
   /// Constructs [WKUIDelegate].
   final WKUIDelegate Function({

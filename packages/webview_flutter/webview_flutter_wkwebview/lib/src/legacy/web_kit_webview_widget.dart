@@ -12,6 +12,7 @@ import 'package:path/path.dart' as path;
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
+import '../common/platform_webview.dart';
 import '../common/weak_reference_utils.dart';
 import '../common/web_kit2.g.dart';
 import '../common/webkit_constants.dart';
@@ -112,7 +113,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   final WebViewWidgetProxy webViewProxy;
 
   /// Represents the WebView maintained by platform code.
-  late final WKWebView webView;
+  late final PlatformWebView webView;
 
   /// Used to integrate custom user interface elements into web view interactions.
   @visibleForTesting
@@ -126,7 +127,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       final bool isForMainFrame =
           navigationAction.targetFrame?.isMainFrame ?? false;
       if (!isForMainFrame) {
-        webView.load(navigationAction.request);
+        PlatformWebView.fromNativeWebView(webView).load(
+          navigationAction.request,
+        );
       }
     },
   );
@@ -234,21 +237,11 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     }
 
     if (params.backgroundColor != null) {
-      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
-      if (defaultTargetPlatform == TargetPlatform.iOS) {
-        unawaited(webViewUI.setOpaque(false));
-        unawaited(
-          webViewUI.setBackgroundColor(Colors.transparent.value),
-        );
-        unawaited(
-          webViewUI.scrollView.setBackgroundColor(
-            params.backgroundColor?.value,
-          ),
-        );
-      } else {
-        // TODO(stuartmorgan): Investigate doing this via JS instead.
-        throw UnimplementedError('Background color is yet supported on macOS');
-      }
+      unawaited(webView.setOpaque(false));
+      unawaited(webView.setBackgroundColor(Colors.transparent.value));
+      unawaited(
+        webView.scrollView.setBackgroundColor(params.backgroundColor?.value),
+      );
     }
 
     if (params.initialUrl != null) {
@@ -394,49 +387,25 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   Future<String?> currentUrl() => webView.getUrl();
 
   @override
-  Future<void> scrollTo(int x, int y) async {
-    final WKWebView webView = this.webView;
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
-      return webViewUI.scrollView.setContentOffset(x.toDouble(), y.toDouble());
-    } else {
-      throw UnimplementedError('scrollTo is not supported on macOS');
-    }
+  Future<void> scrollTo(int x, int y) {
+    return webView.scrollView.setContentOffset(x.toDouble(), y.toDouble());
   }
 
   @override
   Future<void> scrollBy(int x, int y) async {
-    final WKWebView webView = this.webView;
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
-      await webViewUI.scrollView.scrollBy(x.toDouble(), y.toDouble());
-    } else {
-      throw UnimplementedError('scrollBy is not supported on macOS');
-    }
+    return webView.scrollView.scrollBy(x.toDouble(), y.toDouble());
   }
 
   @override
   Future<int> getScrollX() async {
-    final WKWebView webView = this.webView;
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
-      final List<double> offset = await webViewUI.scrollView.getContentOffset();
-      return offset[0].toInt();
-    } else {
-      throw UnimplementedError('getScrollX is not supported on macOS');
-    }
+    final List<double> offset = await webView.scrollView.getContentOffset();
+    return offset[0].toInt();
   }
 
   @override
   Future<int> getScrollY() async {
-    final WKWebView webView = this.webView;
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      final WKWebViewUI webViewUI = await webView.asWKWebViewUI();
-      final List<double> offset = await webViewUI.scrollView.getContentOffset();
-      return offset[1].toInt();
-    } else {
-      throw UnimplementedError('getScrollY is not supported on macOS');
-    }
+    final List<double> offset = await webView.scrollView.getContentOffset();
+    return offset[1].toInt();
   }
 
   @override
@@ -521,14 +490,14 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     if (hasProgressTracking) {
       _progressObserverSet = true;
       await webView.addObserver(
-        webView,
+        webView.nativeWebView,
         'estimatedProgress',
         <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
       );
     } else if (_progressObserverSet) {
       // Calls to removeObserver before addObserver causes a crash.
       _progressObserverSet = false;
-      await webView.removeObserver(webView, 'estimatedProgress');
+      await webView.removeObserver(webView.nativeWebView, 'estimatedProgress');
     }
   }
 
@@ -684,7 +653,7 @@ class WebViewWidgetProxy {
   final bool? overriddenIsMacOS;
 
   /// Constructs a [WKWebView].
-  WKWebView createWebView(
+  PlatformWebView createWebView(
     WKWebViewConfiguration configuration, {
     void Function(
       String keyPath,
@@ -692,7 +661,7 @@ class WebViewWidgetProxy {
       Map<KeyValueChangeKey, Object?> change,
     )? observeValue,
   }) {
-    return WKWebView(initialConfiguration: configuration);
+    return PlatformWebView(initialConfiguration: configuration);
   }
 
   /// Constructs a [URLRequest].

@@ -42,8 +42,9 @@ class CupertinoWebView implements WebViewPlatform {
             }
           },
           gestureRecognizers: gestureRecognizers,
-          creationParams:
-              PigeonInstanceManager.instance.getIdentifier(controller.webView),
+          creationParams: PigeonInstanceManager.instance.getIdentifier(
+            controller.webView.nativeWebView,
+          ),
           creationParamsCodec: const StandardMessageCodec(),
         );
       },

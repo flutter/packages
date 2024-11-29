@@ -758,16 +758,19 @@ abstract class NSObject {
   swiftOptions: SwiftProxyApiOptions(
     import: 'WebKit',
     name: 'WKWebView',
+    supportsMacos: false,
   ),
 )
-abstract class WKWebView extends NSObject {
-  WKWebView(WKWebViewConfiguration initialConfiguration);
+abstract class UIViewWKWebView extends UIView implements WKWebView {
+  UIViewWKWebView(WKWebViewConfiguration initialConfiguration);
 
   /// The object that contains the configuration details for the web view.
   @attached
   late WKWebViewConfiguration configuration;
 
-  WKWebViewUI asWKWebViewUI();
+  /// The scroll view associated with the web view.
+  @attached
+  late UIScrollView scrollView;
 
   /// The object you use to integrate custom user interface elements, such as
   /// contextual menus or panels, into web view interactions.
@@ -842,14 +845,92 @@ abstract class WKWebView extends NSObject {
   swiftOptions: SwiftProxyApiOptions(
     import: 'WebKit',
     name: 'WKWebView',
-    supportsMacos: false,
+    supportsIos: false,
   ),
 )
-abstract class WKWebViewUI extends UIView {
-  /// The scroll view associated with the web view.
+abstract class NSViewWKWebView extends NSObject implements WKWebView {
+  NSViewWKWebView(WKWebViewConfiguration initialConfiguration);
+
+  /// The object that contains the configuration details for the web view.
   @attached
-  late UIScrollView scrollView;
+  late WKWebViewConfiguration configuration;
+
+  /// The object you use to integrate custom user interface elements, such as
+  /// contextual menus or panels, into web view interactions.
+  void setUIDelegate(WKUIDelegate delegate);
+
+  /// The object you use to manage navigation behavior for the web view.
+  void setNavigationDelegate(WKNavigationDelegate delegate);
+
+  /// The URL for the current webpage.
+  String? getUrl();
+
+  /// An estimate of what fraction of the current navigation has been loaded.
+  double getEstimatedProgress();
+
+  /// Loads the web content that the specified URL request object references and
+  /// navigates to that content.
+  void load(URLRequest request);
+
+  /// Loads the contents of the specified HTML string and navigates to it.
+  void loadHtmlString(String string, String? baseUrl);
+
+  /// Loads the web content from the specified file and navigates to it.
+  void loadFileUrl(String url, String readAccessUrl);
+
+  /// Convenience method to load a Flutter asset.
+  void loadFlutterAsset(String key);
+
+  /// A Boolean value that indicates whether there is a valid back item in the
+  /// back-forward list.
+  bool canGoBack();
+
+  /// A Boolean value that indicates whether there is a valid forward item in
+  /// the back-forward list.
+  bool canGoForward();
+
+  /// Navigates to the back item in the back-forward list.
+  void goBack();
+
+  /// Navigates to the forward item in the back-forward list.
+  void goForward();
+
+  /// Reloads the current webpage.
+  void reload();
+
+  /// The page title.
+  String? getTitle();
+
+  /// A Boolean value that indicates whether horizontal swipe gestures trigger
+  /// backward and forward page navigation.
+  void setAllowsBackForwardNavigationGestures(bool allow);
+
+  /// The custom user agent string.
+  void setCustomUserAgent(String? userAgent);
+
+  /// Evaluates the specified JavaScript string.
+  @async
+  Object? evaluateJavaScript(String javaScriptString);
+
+  /// A Boolean value that indicates whether you can inspect the view with
+  /// Safari Web Inspector.
+  void setInspectable(bool inspectable);
+
+  /// The custom user agent string.
+  String? getCustomUserAgent();
 }
+
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+  ),
+)
+abstract class WKWebView extends NSObject {}
 
 /// The methods for presenting native user interface elements on behalf of a
 /// webpage.
