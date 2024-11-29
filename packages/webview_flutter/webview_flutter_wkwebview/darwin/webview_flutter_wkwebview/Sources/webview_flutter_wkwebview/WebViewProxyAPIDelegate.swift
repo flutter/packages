@@ -64,7 +64,10 @@ class WebViewProxyAPIDelegate : PigeonApiDelegateWKWebView, PigeonApiDelegateUIV
   }
 
   func loadFileUrl(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, url: String, readAccessUrl: String) throws {
-    pigeonInstance.loadFileURL(URL(string: url)!, allowingReadAccessTo: URL(string: readAccessUrl)!)
+    let fileURL = URL(fileURLWithPath: url, isDirectory: false)
+    let readAccessURL = URL(fileURLWithPath: readAccessUrl, isDirectory: true)
+  
+    pigeonInstance.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
   }
 
   func loadFlutterAsset(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, key: String) throws {
