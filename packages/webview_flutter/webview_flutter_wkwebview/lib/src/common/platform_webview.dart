@@ -13,7 +13,7 @@ class PlatformWebView {
       NSObject instance,
       String? keyPath,
       NSObject? object,
-      Map<KeyValueChangeKey, Object>? change,
+      Map<KeyValueChangeKey, Object?>? change,
     )? observeValue,
   }) {
     switch (defaultTargetPlatform) {

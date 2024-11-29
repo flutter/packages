@@ -524,7 +524,7 @@ class InteractiveMediaAdsProxy {
         NSObject,
         String?,
         NSObject?,
-        Map<KeyValueChangeKey, Object>?,
+        Map<KeyValueChangeKey, Object?>?,
       )? observeValue}) newNSObject;
 
   /// Constructs [UIViewWKWebView].
@@ -4640,7 +4640,7 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
     NSObject pigeon_instance,
     String? keyPath,
     NSObject? object,
-    Map<KeyValueChangeKey, Object>? change,
+    Map<KeyValueChangeKey, Object?>? change,
   )? observeValue;
 
   static void pigeon_setUpMessageHandlers({
@@ -4652,7 +4652,7 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
       NSObject pigeon_instance,
       String? keyPath,
       NSObject? object,
-      Map<KeyValueChangeKey, Object>? change,
+      Map<KeyValueChangeKey, Object?>? change,
     )? observeValue,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -4716,9 +4716,9 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.observeValue was null, expected non-null NSObject.');
           final String? arg_keyPath = (args[1] as String?);
           final NSObject? arg_object = (args[2] as NSObject?);
-          final Map<KeyValueChangeKey, Object>? arg_change =
+          final Map<KeyValueChangeKey, Object?>? arg_change =
               (args[3] as Map<Object?, Object?>?)
-                  ?.cast<KeyValueChangeKey, Object>();
+                  ?.cast<KeyValueChangeKey, Object?>();
           try {
             (observeValue ?? arg_pigeon_instance!.observeValue)?.call(
                 arg_pigeon_instance!, arg_keyPath, arg_object, arg_change);

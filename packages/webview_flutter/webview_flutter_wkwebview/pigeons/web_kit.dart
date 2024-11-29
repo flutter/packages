@@ -733,7 +733,7 @@ abstract class NSObject {
   late void Function(
     String? keyPath,
     NSObject? object,
-    Map<KeyValueChangeKey, Object>? change,
+    Map<KeyValueChangeKey, Object?>? change,
   )? observeValue;
 
   /// Registers the observer object to receive KVO notifications for the key

@@ -281,7 +281,7 @@ class WebKitWebViewController extends PlatformWebViewController {
         _,
         String? keyPath,
         NSObject? object,
-        Map<KeyValueChangeKey, Object>? change,
+        Map<KeyValueChangeKey, Object?>? change,
       ) async {
         final WebKitWebViewController? controller = weakReference.target;
         if (controller == null || change == null) {

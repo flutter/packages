@@ -260,7 +260,7 @@ class WebKitProxy {
         NSObject,
         String?,
         NSObject?,
-        Map<KeyValueChangeKey, Object>?,
+        Map<KeyValueChangeKey, Object?>?,
       )? observeValue}) newNSObject;
 
   /// Constructs [PlatformWebView].
@@ -270,7 +270,7 @@ class WebKitProxy {
       NSObject,
       String?,
       NSObject?,
-      Map<KeyValueChangeKey, Object>?,
+      Map<KeyValueChangeKey, Object?>?,
     )? observeValue,
   }) newPlatformWebView;
 

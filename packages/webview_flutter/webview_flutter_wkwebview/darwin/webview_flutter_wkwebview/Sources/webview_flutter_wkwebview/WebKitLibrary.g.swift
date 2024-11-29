@@ -5549,7 +5549,7 @@ protocol PigeonApiDelegateNSObject {
 protocol PigeonApiProtocolNSObject {
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
-  func observeValue(pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?, object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any]?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func observeValue(pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?, object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any?]?, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
 final class PigeonApiNSObject: PigeonApiProtocolNSObject  {
@@ -5655,7 +5655,7 @@ withIdentifier: pigeonIdentifierArg)
   }
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
-  func observeValue(pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?, object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any]?, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func observeValue(pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?, object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any?]?, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5799,7 +5799,7 @@ class TestObject: NSObject {
 class TestObjectApi: PigeonApiProtocolNSObject {
   var observeValueArgs: [AnyHashable?]? = nil
 
-  func observeValue(keyPath: String?, object: NSObject?, change: [KeyValueChangeKey: Any]?) throws {
+  func observeValue(keyPath: String?, object: NSObject?, change: [KeyValueChangeKey: Any?]?) throws {
     observeValueArgs = [keyPathArg, objectArg, changeArg]
   }
 }

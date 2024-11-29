@@ -50,7 +50,7 @@ void main() {
           NSObject,
           String? keyPath,
           NSObject? object,
-          Map<KeyValueChangeKey, Object>? change,
+          Map<KeyValueChangeKey, Object?>? change,
         )? observeValue,
       })? createMockWebView,
       MockWKWebViewConfiguration? mockWebViewConfiguration,
@@ -74,7 +74,7 @@ void main() {
               NSObject,
               String?,
               NSObject?,
-              Map<KeyValueChangeKey, Object>?,
+              Map<KeyValueChangeKey, Object?>?,
             )? observeValue,
           }) {
             nonNullMockWebView = createMockWebView == null
@@ -1295,14 +1295,14 @@ void main() {
       expect(urlChange.url, 'https://www.google.com');
     });
 
-    test('setPlatformNavigationDelegate onUrlChange to empty NSUrl', () async {
+    test('setPlatformNavigationDelegate onUrlChange to null NSUrl', () async {
       final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
 
       late final void Function(
         NSObject,
         String? keyPath,
         NSObject? object,
-        Map<KeyValueChangeKey, Object>? change,
+        Map<KeyValueChangeKey, Object?>? change,
       ) webViewObserveValue;
 
       final WebKitWebViewController controller = createControllerWithMocks(
@@ -1312,7 +1312,7 @@ void main() {
             NSObject,
             String? keyPath,
             NSObject? object,
-            Map<KeyValueChangeKey, Object>? change,
+            Map<KeyValueChangeKey, Object?>? change,
           )? observeValue,
         }) {
           webViewObserveValue = observeValue!;
@@ -1336,20 +1336,15 @@ void main() {
 
       await controller.setPlatformNavigationDelegate(navigationDelegate);
 
-      final MockURL mockURL = MockURL();
-      when(mockURL.getAbsoluteString()).thenAnswer(
-        (_) => Future<String>.value(''),
-      );
-
       webViewObserveValue(
         mockWebView,
         'URL',
         mockWebView,
-        <KeyValueChangeKey, Object>{KeyValueChangeKey.newValue: mockURL},
+        <KeyValueChangeKey, Object?>{KeyValueChangeKey.newValue: null},
       );
 
       final UrlChange urlChange = await urlChangeCompleter.future;
-      expect(urlChange.url, '');
+      expect(urlChange.url, null);
     });
 
     test('webViewIdentifier', () {
