@@ -1064,13 +1064,9 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       },
       decidePolicyForNavigationResponse:
           (_, __, WKNavigationResponse response) async {
-        // URLResponse doesn't contain the status code so it must be cast to
-        // HTTPURLResponse. This cast will always succeed because the
-        // `URLResponse` object actually is an instance of HTTPURLResponse. See:
-        // https://developer.apple.com/documentation/foundation/urlresponse#overview
-        final HTTPURLResponse urlResponse =
-            response.response as HTTPURLResponse;
+        final URLResponse urlResponse = response.response;
         if (weakThis.target?._onHttpError != null &&
+            urlResponse is HTTPURLResponse &&
             urlResponse.statusCode >= 400) {
           weakThis.target!._onHttpError!(
             HttpResponseError(
