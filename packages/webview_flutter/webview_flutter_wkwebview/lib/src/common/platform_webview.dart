@@ -23,7 +23,7 @@ class PlatformWebView {
           observeValue: observeValue,
         );
       case TargetPlatform.macOS:
-        nativeWebView = UIViewWKWebView(
+        nativeWebView = NSViewWKWebView(
           initialConfiguration: initialConfiguration,
           observeValue: observeValue,
         );
