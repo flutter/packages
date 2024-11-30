@@ -8,8 +8,10 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class URLAuthenticationChallengeProxyAPIDelegate : PigeonApiDelegateURLAuthenticationChallenge {
-  func getProtectionSpace(pigeonApi: PigeonApiURLAuthenticationChallenge, pigeonInstance: URLAuthenticationChallenge) throws -> URLProtectionSpace {
+class URLAuthenticationChallengeProxyAPIDelegate: PigeonApiDelegateURLAuthenticationChallenge {
+  func getProtectionSpace(
+    pigeonApi: PigeonApiURLAuthenticationChallenge, pigeonInstance: URLAuthenticationChallenge
+  ) throws -> URLProtectionSpace {
     return pigeonInstance.protectionSpace
   }
 }

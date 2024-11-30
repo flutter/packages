@@ -9,48 +9,75 @@ import WebKit
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class WebViewConfigurationProxyAPIDelegate : PigeonApiDelegateWKWebViewConfiguration {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKWebViewConfiguration) throws -> WKWebViewConfiguration {
+class WebViewConfigurationProxyAPIDelegate: PigeonApiDelegateWKWebViewConfiguration {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKWebViewConfiguration) throws
+    -> WKWebViewConfiguration
+  {
     return WKWebViewConfiguration()
   }
 
-  func setUserContentController(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, controller: WKUserContentController) throws {
+  func setUserContentController(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    controller: WKUserContentController
+  ) throws {
     pigeonInstance.userContentController = controller
   }
 
-  func getUserContentController(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKUserContentController {
+  func getUserContentController(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKUserContentController {
     return pigeonInstance.userContentController
   }
 
-  func setWebsiteDataStore(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, dataStore: WKWebsiteDataStore) throws {
+  func setWebsiteDataStore(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    dataStore: WKWebsiteDataStore
+  ) throws {
     pigeonInstance.websiteDataStore = dataStore
   }
 
-  func getWebsiteDataStore(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKWebsiteDataStore {
+  func getWebsiteDataStore(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKWebsiteDataStore {
     return pigeonInstance.websiteDataStore
   }
 
-  func setPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, preferences: WKPreferences) throws {
+  func setPreferences(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    preferences: WKPreferences
+  ) throws {
     pigeonInstance.preferences = preferences
   }
 
-  func getPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKPreferences {
+  func getPreferences(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKPreferences {
     return pigeonInstance.preferences
   }
 
-  func setAllowsInlineMediaPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool) throws {
+  func setAllowsInlineMediaPlayback(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool
+  ) throws {
     pigeonInstance.allowsInlineMediaPlayback = allow
   }
 
-  func setLimitsNavigationsToAppBoundDomains(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, limit: Bool) throws {
+  func setLimitsNavigationsToAppBoundDomains(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, limit: Bool
+  ) throws {
     if #available(iOS 14.0, macOS 11.0, *) {
       pigeonInstance.limitsNavigationsToAppBoundDomains = limit
     } else {
-      throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnsupportedVersionError(method: "WKWebViewConfiguration.limitsNavigationsToAppBoundDomains", versionRequirements: "iOS 14.0, macOS 11.0")
+      throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+        .createUnsupportedVersionError(
+          method: "WKWebViewConfiguration.limitsNavigationsToAppBoundDomains",
+          versionRequirements: "iOS 14.0, macOS 11.0")
     }
   }
 
-  func setMediaTypesRequiringUserActionForPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, type: AudiovisualMediaType) throws {
+  func setMediaTypesRequiringUserActionForPlayback(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    type: AudiovisualMediaType
+  ) throws {
     switch type {
     case .none:
       pigeonInstance.mediaTypesRequiringUserActionForPlayback = []

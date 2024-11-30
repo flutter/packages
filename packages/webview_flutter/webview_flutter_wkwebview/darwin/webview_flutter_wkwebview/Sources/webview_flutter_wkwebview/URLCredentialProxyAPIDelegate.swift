@@ -8,8 +8,11 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class URLCredentialProxyAPIDelegate : PigeonApiDelegateURLCredential {
-  func withUser(pigeonApi: PigeonApiURLCredential, user: String, password: String, persistence: UrlCredentialPersistence) throws -> URLCredential {
+class URLCredentialProxyAPIDelegate: PigeonApiDelegateURLCredential {
+  func withUser(
+    pigeonApi: PigeonApiURLCredential, user: String, password: String,
+    persistence: UrlCredentialPersistence
+  ) throws -> URLCredential {
     let nativePersistence: URLCredential.Persistence
     switch persistence {
     case .none:

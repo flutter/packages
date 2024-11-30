@@ -9,12 +9,16 @@ import WebKit
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class NavigationResponseProxyAPIDelegate : PigeonApiDelegateWKNavigationResponse {
-  func response(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> URLResponse {
+class NavigationResponseProxyAPIDelegate: PigeonApiDelegateWKNavigationResponse {
+  func response(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse)
+    throws -> URLResponse
+  {
     return pigeonInstance.response
   }
 
-  func isForMainFrame(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> Bool {
+  func isForMainFrame(
+    pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse
+  ) throws -> Bool {
     return pigeonInstance.isForMainFrame
   }
 }

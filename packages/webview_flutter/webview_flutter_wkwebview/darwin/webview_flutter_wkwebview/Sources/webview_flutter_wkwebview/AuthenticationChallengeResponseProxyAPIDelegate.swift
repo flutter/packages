@@ -8,10 +8,15 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class AuthenticationChallengeResponseProxyAPIDelegate : PigeonApiDelegateAuthenticationChallengeResponse {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiAuthenticationChallengeResponse, disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?) throws -> AuthenticationChallengeResponse {
+class AuthenticationChallengeResponseProxyAPIDelegate:
+  PigeonApiDelegateAuthenticationChallengeResponse
+{
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?
+  ) throws -> AuthenticationChallengeResponse {
     let nativeDisposition: URLSession.AuthChallengeDisposition
-    
+
     switch disposition {
     case .useCredential:
       nativeDisposition = .useCredential
@@ -24,27 +29,33 @@ class AuthenticationChallengeResponseProxyAPIDelegate : PigeonApiDelegateAuthent
     case .unknown:
       throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnknownEnumError(
         withEnum: disposition)
-      }
-  
+    }
+
     return AuthenticationChallengeResponse(disposition: nativeDisposition, credential: credential)
   }
 
-  func disposition(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> UrlSessionAuthChallengeDisposition {
+  func disposition(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    pigeonInstance: AuthenticationChallengeResponse
+  ) throws -> UrlSessionAuthChallengeDisposition {
     switch pigeonInstance.disposition {
-      case .useCredential:
-        return .useCredential
-            case .performDefaultHandling:
-        return .performDefaultHandling
-            case .cancelAuthenticationChallenge:
-        return .cancelAuthenticationChallenge
-            case .rejectProtectionSpace:
-        return .rejectProtectionSpace
-            @unknown default:
-        return .unknown
+    case .useCredential:
+      return .useCredential
+    case .performDefaultHandling:
+      return .performDefaultHandling
+    case .cancelAuthenticationChallenge:
+      return .cancelAuthenticationChallenge
+    case .rejectProtectionSpace:
+      return .rejectProtectionSpace
+    @unknown default:
+      return .unknown
     }
   }
 
-  func credential(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> URLCredential? {
+  func credential(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    pigeonInstance: AuthenticationChallengeResponse
+  ) throws -> URLCredential? {
     return pigeonInstance.credential
   }
 }

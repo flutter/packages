@@ -8,59 +8,67 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class HTTPCookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]) throws -> HTTPCookie {
-    let keyValueTuples = try! properties.map<[(HTTPCookiePropertyKey, Any)], PigeonError> { key, value in
+class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]
+  ) throws -> HTTPCookie {
+    let keyValueTuples = try! properties.map<[(HTTPCookiePropertyKey, Any)], PigeonError> {
+      key, value in
       let newKey: HTTPCookiePropertyKey
-        switch key {
-        case .comment:
-          newKey = .comment
-        case .commentUrl:
-          newKey = .commentURL
-        case .discard:
-          newKey = .discard
-        case .domain:
-          newKey = .domain
-        case .expires:
-          newKey = .expires
-        case .maximumAge:
-          newKey = .maximumAge
-        case .name:
-          newKey = .name
-        case .originUrl:
-          newKey = .originURL
-        case .path:
-          newKey = .path
-        case .port:
-          newKey = .port
-        case .secure:
-          newKey = .secure
-        case .value:
-          newKey = .value
-        case .version:
-          newKey = .version
-        case .sameSitePolicy:
-          if #available(iOS 13.0, macOS 10.15, *) {
-            newKey = .sameSitePolicy
-          } else {
-            throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnsupportedVersionError(method: "HTTPCookiePropertyKey.sameSitePolicy", versionRequirements: "iOS 13.0, macOS 10.15")
-          }
-        case .unknown:
+      switch key {
+      case .comment:
+        newKey = .comment
+      case .commentUrl:
+        newKey = .commentURL
+      case .discard:
+        newKey = .discard
+      case .domain:
+        newKey = .domain
+      case .expires:
+        newKey = .expires
+      case .maximumAge:
+        newKey = .maximumAge
+      case .name:
+        newKey = .name
+      case .originUrl:
+        newKey = .originURL
+      case .path:
+        newKey = .path
+      case .port:
+        newKey = .port
+      case .secure:
+        newKey = .secure
+      case .value:
+        newKey = .value
+      case .version:
+        newKey = .version
+      case .sameSitePolicy:
+        if #available(iOS 13.0, macOS 10.15, *) {
+          newKey = .sameSitePolicy
+        } else {
+          throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+            .createUnsupportedVersionError(
+              method: "HTTPCookiePropertyKey.sameSitePolicy",
+              versionRequirements: "iOS 13.0, macOS 10.15")
+        }
+      case .unknown:
         throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnknownEnumError(
           withEnum: key)
-        }
-      
+      }
+
       return (newKey, value)
     }
-    
+
     return HTTPCookie(properties: Dictionary(uniqueKeysWithValues: keyValueTuples))!
   }
 
-  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any]? {
+  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws
+    -> [HttpCookiePropertyKey: Any]?
+  {
     if pigeonInstance.properties == nil {
       return nil
     }
-    
+
     let keyValueTuples = pigeonInstance.properties!.map { key, value in
       let newKey: HttpCookiePropertyKey
       if #available(iOS 13.0, macOS 10.15, *), key == .sameSitePolicy {
@@ -97,10 +105,10 @@ class HTTPCookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
           newKey = .unknown
         }
       }
-      
+
       return (newKey, value)
     }
-    
+
     return Dictionary(uniqueKeysWithValues: keyValueTuples)
   }
 }

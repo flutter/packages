@@ -9,8 +9,11 @@ import WebKit
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class HTTPCookieStoreProxyAPIDelegate : PigeonApiDelegateWKHTTPCookieStore {
-  func setCookie(pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie, completion: @escaping (Result<Void, Error>) -> Void) {
+class HTTPCookieStoreProxyAPIDelegate: PigeonApiDelegateWKHTTPCookieStore {
+  func setCookie(
+    pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie,
+    completion: @escaping (Result<Void, Error>) -> Void
+  ) {
     pigeonInstance.setCookie(cookie)
   }
 }

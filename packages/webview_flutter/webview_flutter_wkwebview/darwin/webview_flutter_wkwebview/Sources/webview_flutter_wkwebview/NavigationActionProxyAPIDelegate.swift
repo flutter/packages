@@ -4,35 +4,40 @@
 
 import Foundation
 import WebKit
-import WebKit
 
 /// ProxyApi implementation for [WKNavigationAction].
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class NavigationActionProxyAPIDelegate : PigeonApiDelegateWKNavigationAction {
-  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> URLRequestWrapper {
+class NavigationActionProxyAPIDelegate: PigeonApiDelegateWKNavigationAction {
+  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws
+    -> URLRequestWrapper
+  {
     return URLRequestWrapper(value: pigeonInstance.request)
   }
 
-  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo? {
+  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction)
+    throws -> WKFrameInfo?
+  {
     return pigeonInstance.targetFrame
   }
 
-  func navigationType(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> NavigationType {
+  func navigationType(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction)
+    throws -> NavigationType
+  {
     switch pigeonInstance.navigationType {
     case .linkActivated:
-        return .linkActivated
+      return .linkActivated
     case .formSubmitted:
-        return .formSubmitted
+      return .formSubmitted
     case .backForward:
-        return .backForward
+      return .backForward
     case .reload:
-        return .reload
+      return .reload
     case .formResubmitted:
-        return .formResubmitted
+      return .formResubmitted
     case .other:
-        return .other
+      return .other
     @unknown default:
       return .unknown
     }

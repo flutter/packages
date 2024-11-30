@@ -8,20 +8,29 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class URLRequestProxyAPIDelegate : PigeonApiDelegateURLRequest {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws -> URLRequestWrapper {
+class URLRequestProxyAPIDelegate: PigeonApiDelegateURLRequest {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws
+    -> URLRequestWrapper
+  {
     return URLRequestWrapper(value: URLRequest(url: URL(string: url)!))
   }
-  
-  func setHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, method: String?) throws {
+
+  func setHttpMethod(
+    pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, method: String?
+  ) throws {
     pigeonInstance.value.httpMethod = method
   }
-  
-  func setHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, body: FlutterStandardTypedData?) throws {
+
+  func setHttpBody(
+    pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper,
+    body: FlutterStandardTypedData?
+  ) throws {
     pigeonInstance.value.httpBody = body?.data
   }
-  
-  func setAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, fields: [String : String]?) throws {
+
+  func setAllHttpHeaderFields(
+    pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, fields: [String: String]?
+  ) throws {
     pigeonInstance.value.allHTTPHeaderFields = fields
   }
 
@@ -29,19 +38,25 @@ class URLRequestProxyAPIDelegate : PigeonApiDelegateURLRequest {
     return pigeonInstance.value.url?.absoluteString
   }
 
-  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String? {
+  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws
+    -> String?
+  {
     return pigeonInstance.value.httpMethod
   }
 
-  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> FlutterStandardTypedData? {
+  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws
+    -> FlutterStandardTypedData?
+  {
     if let httpBody = pigeonInstance.value.httpBody {
       return FlutterStandardTypedData(bytes: httpBody)
     }
-    
+
     return nil
   }
 
-  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> [String: String]? {
+  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper)
+    throws -> [String: String]?
+  {
     return pigeonInstance.value.allHTTPHeaderFields
   }
 }

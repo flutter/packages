@@ -6,7 +6,7 @@ import Foundation
 
 class URLRequestWrapper {
   var value: URLRequest
-  
+
   init(value: URLRequest) {
     self.value = value
   }
@@ -14,7 +14,7 @@ class URLRequestWrapper {
 
 class URLWrapper {
   let value: URL
-  
+
   init(value: URL) {
     self.value = value
   }

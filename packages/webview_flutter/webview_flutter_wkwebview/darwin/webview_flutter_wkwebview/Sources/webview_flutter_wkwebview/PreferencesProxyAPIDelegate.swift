@@ -9,8 +9,10 @@ import WebKit
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class PreferencesProxyAPIDelegate : PigeonApiDelegateWKPreferences {
-  func setJavaScriptEnabled(pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool) throws {
+class PreferencesProxyAPIDelegate: PigeonApiDelegateWKPreferences {
+  func setJavaScriptEnabled(
+    pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool
+  ) throws {
     pigeonInstance.javaScriptEnabled = enabled
   }
 }

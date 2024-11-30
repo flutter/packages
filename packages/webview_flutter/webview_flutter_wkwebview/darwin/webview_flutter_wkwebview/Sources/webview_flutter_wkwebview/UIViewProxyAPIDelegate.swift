@@ -9,8 +9,9 @@ import UIKit
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class UIViewProxyAPIDelegate : PigeonApiDelegateUIView {
-  func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: Int64?) throws {
+class UIViewProxyAPIDelegate: PigeonApiDelegateUIView {
+  func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: Int64?) throws
+  {
     if value == nil {
       pigeonInstance.backgroundColor = nil
     } else {
@@ -18,7 +19,7 @@ class UIViewProxyAPIDelegate : PigeonApiDelegateUIView {
       let green = CGFloat(Double(value! >> 8 & 0xff) / 255.0)
       let blue = CGFloat(Double(value! & 0xff) / 255.0)
       let alpha = CGFloat(Double(value! >> 24 & 0xff) / 255.0)
-                        
+
       pigeonInstance.backgroundColor = UIColor(red: red, green: green, blue: blue, alpha: alpha)
     }
   }

@@ -9,12 +9,14 @@ import WebKit
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class FrameInfoProxyAPIDelegate : PigeonApiDelegateWKFrameInfo {
+class FrameInfoProxyAPIDelegate: PigeonApiDelegateWKFrameInfo {
   func isMainFrame(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> Bool {
     return pigeonInstance.isMainFrame
   }
 
-  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> URLRequestWrapper {
+  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws
+    -> URLRequestWrapper
+  {
     return URLRequestWrapper(value: pigeonInstance.request)
   }
 }

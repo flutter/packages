@@ -12,9 +12,12 @@ class ScrollViewDelegateImpl: NSObject, UIScrollViewDelegate {
   init(api: PigeonApiProtocolUIScrollViewDelegate) {
     self.api = api
   }
-  
+
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    api.scrollViewDidScroll(pigeonInstance: self, scrollView: scrollView, x: scrollView.contentOffset.x, y: scrollView.contentOffset.y) {  _ in }
+    api.scrollViewDidScroll(
+      pigeonInstance: self, scrollView: scrollView, x: scrollView.contentOffset.x,
+      y: scrollView.contentOffset.y
+    ) { _ in }
   }
 }
 
@@ -22,8 +25,10 @@ class ScrollViewDelegateImpl: NSObject, UIScrollViewDelegate {
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class ScrollViewDelegateProxyAPIDelegate : PigeonApiDelegateUIScrollViewDelegate {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws -> UIScrollViewDelegate {
+class ScrollViewDelegateProxyAPIDelegate: PigeonApiDelegateUIScrollViewDelegate {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws
+    -> UIScrollViewDelegate
+  {
     return ScrollViewDelegateImpl(api: pigeonApi)
   }
 }
