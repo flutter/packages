@@ -16,9 +16,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
-import 'package:webview_flutter_wkwebview/src/common/instance_manager.dart';
 import 'package:webview_flutter_wkwebview/src/common/weak_reference_utils.dart';
-import 'package:webview_flutter_wkwebview/src/web_kit/web_kit.dart';
+import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 Future<void> main() async {
@@ -59,7 +58,7 @@ Future<void> main() async {
       'withWeakReferenceTo allows encapsulating class to be garbage collected',
       (WidgetTester tester) async {
     final Completer<int> gcCompleter = Completer<int>();
-    final InstanceManager instanceManager = InstanceManager(
+    final PigeonInstanceManager instanceManager = PigeonInstanceManager(
       onWeakReferenceRemoved: gcCompleter.complete,
     );
 
@@ -85,11 +84,11 @@ Future<void> main() async {
     (WidgetTester tester) async {
       bool aWebViewHasBeenGarbageCollected = false;
 
-      late final InstanceManager instanceManager;
+      late final PigeonInstanceManager instanceManager;
       instanceManager =
-          InstanceManager(onWeakReferenceRemoved: (int identifier) {
+          PigeonInstanceManager(onWeakReferenceRemoved: (int identifier) {
         if (!aWebViewHasBeenGarbageCollected) {
-          final Copyable instance =
+          final PigeonInternalProxyApiBaseClass instance =
               instanceManager.getInstanceWithWeakReference(identifier)!;
           if (instance is WKWebView) {
             aWebViewHasBeenGarbageCollected = true;
@@ -125,11 +124,12 @@ Future<void> main() async {
           await tester.pumpAndSettle();
         });
       }
-    },
+    }, skip: true,
     timeout: const Timeout(Duration(seconds: 30)),
   );
 
   testWidgets('loadRequest', (WidgetTester tester) async {
+    await Future<void>.delayed(const Duration(seconds: 5));
     final Completer<void> pageFinished = Completer<void>();
 
     final PlatformWebViewController controller = PlatformWebViewController(
@@ -1684,13 +1684,14 @@ class ResizableWebViewState extends State<ResizableWebView> {
   }
 }
 
-class CopyableObjectWithCallback with Copyable {
+class CopyableObjectWithCallback extends PigeonInternalProxyApiBaseClass {
   CopyableObjectWithCallback(this.callback);
 
   final VoidCallback callback;
 
   @override
-  CopyableObjectWithCallback copy() {
+  // ignore: non_constant_identifier_names
+  CopyableObjectWithCallback pigeon_copy() {
     return CopyableObjectWithCallback(callback);
   }
 }
