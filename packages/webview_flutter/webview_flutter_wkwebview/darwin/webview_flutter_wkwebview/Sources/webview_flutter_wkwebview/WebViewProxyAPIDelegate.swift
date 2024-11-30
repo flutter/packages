@@ -11,6 +11,12 @@ class WebViewImpl: WKWebView {
   init(api: PigeonApiProtocolWKWebView, frame: CGRect, configuration: WKWebViewConfiguration) {
     self.api = api
     super.init(frame: frame, configuration: configuration)
+#if os(iOS)
+      scrollView.contentInsetAdjustmentBehavior = .never
+      if #available(iOS 13.0, *) {
+        scrollView.automaticallyAdjustsScrollIndicatorInsets = false
+      }
+#endif
   }
 
   required init?(coder: NSCoder) {
@@ -24,6 +30,25 @@ class WebViewImpl: WKWebView {
     NSObjectImpl.handleObserveValue(
       withApi: (api as! PigeonApiWKWebView).pigeonApiNSObject, instance: self as NSObject,
       forKeyPath: keyPath, of: object, change: change, context: context)
+  }
+  
+  override var frame: CGRect {
+    get {
+      return super.frame
+    }
+    set {
+#if os(iOS)
+      // Prevents the contentInsets from being adjusted by iOS and gives control to Flutter.
+      scrollView.contentInset = .zero
+      
+      // Adjust contentInset to compensate the adjustedContentInset so the sum will
+      //  always be 0.
+      if scrollView.adjustedContentInset != .zero {
+        let insetToAdjust = scrollView.adjustedContentInset
+        scrollView.contentInset = UIEdgeInsets(top: -insetToAdjust.top, left: -insetToAdjust.left, bottom: -insetToAdjust.bottom, right: -insetToAdjust.right)
+      }
+#endif
+    }
   }
 }
 

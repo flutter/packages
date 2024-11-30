@@ -4,7 +4,7 @@
 
 import Foundation
 
-class FlutterAssetManager {
+open class FlutterAssetManager {
   func lookupKeyForAsset(_ asset: String) -> String {
     return FlutterDartProject.lookupKey(forAsset: asset)
   }
