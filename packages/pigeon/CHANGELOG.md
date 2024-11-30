@@ -1,3 +1,7 @@
+## 22.6.3
+
+* [swift] Fixes channel names of named constructors for ProxyApis. 
+
 ## 22.6.2
 
 * Removes the `@protected` annotation from the InstanceManager field of the

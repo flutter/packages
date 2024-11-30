@@ -1237,6 +1237,18 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
         return ProxyApiTestClass()
       }
 
+      func namedConstructor(
+        pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
+        aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
+        anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
+        aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
+        aNullableUint8List: FlutterStandardTypedData?, aNullableList: [Any?]?,
+        aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
+        aNullableProxyApi: ProxyApiSuperClass?
+      ) throws -> ProxyApiTestClass {
+        return ProxyApiTestClass()
+      }
+
       func attachedField(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
         throws -> ProxyApiSuperClass
       {
