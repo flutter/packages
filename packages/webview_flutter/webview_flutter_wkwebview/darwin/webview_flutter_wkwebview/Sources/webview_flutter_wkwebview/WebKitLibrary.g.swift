@@ -8646,7 +8646,7 @@ final class PigeonApiURLCredential: PigeonApiProtocolURLCredential  {
       ? FlutterStandardMessageCodec(
         readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let withUserChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let withUserChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.withUser", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       withUserChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

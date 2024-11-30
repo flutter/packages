@@ -129,7 +129,6 @@ Future<void> main() async {
   );
 
   testWidgets('loadRequest', (WidgetTester tester) async {
-    await Future<void>.delayed(const Duration(seconds: 5));
     final Completer<void> pageFinished = Completer<void>();
 
     final PlatformWebViewController controller = PlatformWebViewController(

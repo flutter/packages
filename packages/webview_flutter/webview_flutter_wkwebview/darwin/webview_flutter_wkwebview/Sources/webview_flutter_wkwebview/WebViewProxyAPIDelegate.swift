@@ -118,12 +118,19 @@ class WebViewProxyAPIDelegate : PigeonApiDelegateWKWebView, PigeonApiDelegateUIV
   func evaluateJavaScript(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String, completion: @escaping (Result<Any?, Error>) -> Void) {
     pigeonInstance.evaluateJavaScript(javaScriptString) { result, error in
       if error == nil {
-        if result == nil, result is String {
-          completion(.success(result))
-        } else {
-          let className = String(describing: result)
-          debugPrint("Return type of evaluateJavaScript is not directly supported: \(className). Returned description of value.")
-          completion(.success(result.debugDescription))
+        if let optionalResult = result as Optional<Any?> {
+          switch optionalResult {
+          case .none:
+            completion(.success(nil))
+          case .some(let value):
+            if (value is String || value is NSNumber) {
+              completion(.success(value))
+            } else {
+              let className = String(describing: value)
+              debugPrint("Return type of evaluateJavaScript is not directly supported: \(className). Returned description of value.")
+              completion(.success((value as AnyObject).description))
+            }
+          }
         }
       } else {
         let error = PigeonError(code: "FWFEvaluateJavaScriptError", message: "Failed evaluating JavaScript.", details: error! as NSError)
