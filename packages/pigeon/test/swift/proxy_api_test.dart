@@ -381,7 +381,8 @@ void main() {
         expect(
           collapsedCode,
           contains(
-              'func myConstructorName(pigeonApi: PigeonApiApi) throws -> Api'),
+            'func myConstructorName(pigeonApi: PigeonApiApi) throws -> Api',
+          ),
         );
         expect(
           collapsedCode,
