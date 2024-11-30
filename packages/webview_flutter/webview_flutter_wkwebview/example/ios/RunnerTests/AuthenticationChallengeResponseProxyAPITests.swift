@@ -14,7 +14,7 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class AuthenticationChallengeResponseProxyApiTests: XCTestCase {
+class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
