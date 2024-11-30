@@ -7,7 +7,7 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class ErrorProxyApiTests: XCTestCase {
+class ErrorProxyAPITests: XCTestCase {
   func testCode() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiNSError(registrar)
