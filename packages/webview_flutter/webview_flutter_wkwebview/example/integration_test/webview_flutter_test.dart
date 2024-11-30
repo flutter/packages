@@ -18,6 +18,8 @@ import 'package:integration_test/integration_test.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/src/common/weak_reference_utils.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart';
+import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart';
+import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 Future<void> main() async {
@@ -82,49 +84,59 @@ Future<void> main() async {
   testWidgets(
     'WKWebView is released by garbage collection',
     (WidgetTester tester) async {
-      bool aWebViewHasBeenGarbageCollected = false;
+      final Completer<void> webViewGCCompleter = Completer<void>();
 
-      late final PigeonInstanceManager instanceManager;
-      instanceManager =
-          PigeonInstanceManager(onWeakReferenceRemoved: (int identifier) {
-        if (!aWebViewHasBeenGarbageCollected) {
-          final PigeonInternalProxyApiBaseClass instance =
-              instanceManager.getInstanceWithWeakReference(identifier)!;
-          if (instance is WKWebView) {
-            aWebViewHasBeenGarbageCollected = true;
-          }
+      const int webViewToken = -1;
+      final Finalizer<int> finalizer = Finalizer<int>((int token) {
+        if (token == webViewToken) {
+          webViewGCCompleter.complete();
         }
       });
 
       // Wait for any WebView to be garbage collected.
-      while (!aWebViewHasBeenGarbageCollected) {
-        await tester.pumpWidget(
-          Builder(
-            builder: (BuildContext context) {
-              return PlatformWebViewWidget(
-                WebKitWebViewWidgetCreationParams(
-                  instanceManager: instanceManager,
-                  controller: PlatformWebViewController(
-                    WebKitWebViewControllerCreationParams(
-                      instanceManager: instanceManager,
-                    ),
+      await tester.pumpWidget(
+        Builder(
+          builder: (BuildContext context) {
+            return PlatformWebViewWidget(
+              WebKitWebViewWidgetCreationParams(
+                controller: PlatformWebViewController(
+                  WebKitWebViewControllerCreationParams(
+                    webKitProxy: WebKitProxy(newPlatformWebView: ({
+                      required WKWebViewConfiguration initialConfiguration,
+                      void Function(
+                        NSObject,
+                        String?,
+                        NSObject?,
+                        Map<KeyValueChangeKey, Object?>?,
+                      )? observeValue,
+                    }) {
+                      final PlatformWebView platformWebView = PlatformWebView(
+                        initialConfiguration: initialConfiguration,
+                      );
+                      finalizer.attach(
+                        platformWebView.nativeWebView,
+                        webViewToken,
+                      );
+                      return platformWebView;
+                    }),
                   ),
                 ),
-              ).build(context);
-            },
-          ),
-        );
+              ),
+            ).build(context);
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(Container());
+
+      // Force garbage collection.
+      await IntegrationTestWidgetsFlutterBinding.instance
+          .watchPerformance(() async {
         await tester.pumpAndSettle();
+      });
 
-        await tester.pumpWidget(Container());
-
-        // Force garbage collection.
-        await IntegrationTestWidgetsFlutterBinding.instance
-            .watchPerformance(() async {
-          await tester.pumpAndSettle();
-        });
-      }
-    }, skip: true,
+      await expectLater(webViewGCCompleter.future, completes);
+    },
     timeout: const Timeout(Duration(seconds: 30)),
   );
 
