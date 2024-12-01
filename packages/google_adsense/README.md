@@ -15,7 +15,6 @@ run `flutter pub add google_adsense`
 #### Setup your AdSense account
 1. [Make sure your site's pages are ready for AdSense](https://support.google.com/adsense/answer/7299563?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1319756&rd=1)
 2. [Create your AdSense account](https://support.google.com/adsense/answer/10162?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1250103&rd=1)
-3. (Optionally) To use ad unit `Widget`, create [ad units](https://support.google.com/adsense/answer/9183549?hl=en&ref_topic=9183242&sjid=5790642343077592212-EU) in your AdSense account
 
 #### Initialize AdSense
 To start displaying ads, initialize the AdSense with your [client/publisher ID](https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU) (only use numbers).
@@ -31,7 +30,42 @@ void main() {
 
 ```
 You are all set to start displaying [Auto ads](https://support.google.com/adsense/answer/9261805?hl=en)!
+
+#### Create ad unit in Google AdSense UI 
+To use ad unit `Widget`, create [ad units](https://support.google.com/adsense/answer/9183549?hl=en&ref_topic=9183242&sjid=5790642343077592212-EU) in your AdSense account
+
 #### Display ad unit Widget
+1. Translate HTML snippet into package APIs
+
+| HTML attribute                      | Package API                                           |
+|-------------------------------------|-------------------------------------------------------|
+| `data-ad-client`                    | `AdUnitParams.AD_CLIENT`                              |
+| `data-ad-slot`                      | `AdUnitParams.AD_SLOT`                                |
+| `data-ad-format`                    | `AdUnitParams.AD_FORMAT`                              |
+| `data-full-width-responsive`        | `AdUnitParams.FULL_WIDTH_RESPONSIVE`                  |
+| `data-ad-layout-key`                | `AdUnitParams.AD_LAYOUT_KEY`                          |
+| `data-ad-layout`                    | `AdUnitParams.AD_LAYOUT`                              |
+| `data-matched-content-ui-type`      | `AdUnitParams.MATCHED_CONTENT_UI_TYPE`                |
+| `data-matched-content-rows-num`     | `AdUnitParams.MATCHED_CONTENT_ROWS_NUM`               |
+| `data-matched-content-columns-num`  | `AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM`            |
+
+For example:
+```html
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-0556581589806023"
+     data-ad-slot="4773943862"
+     data-ad-format="auto"
+     data-full-width-responsive="true"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+```
+Translates into: 
+```dart
+adSense.initialize('0556581589806023');
+```
+and
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
     adSense.adUnit(AdUnitConfiguration.displayAdUnit(

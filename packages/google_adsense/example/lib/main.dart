@@ -73,15 +73,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 ,
               ),
               const Text(
-                'Responsive Ad Constrained by height of 100px:',
+                'Responsive Ad Constrained by height of 100px and width of 1200px (to keep ad centered):',
               ),
               // #docregion constraints
               Container(
-                constraints: const BoxConstraints(maxHeight: 100),
+                constraints:
+                    const BoxConstraints(maxHeight: 100, maxWidth: 1200),
                 padding: const EdgeInsets.only(bottom: 10),
                 child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
                   adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
-                  // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
+                  adFormat: AdFormat
+                      .AUTO, // Not using AdFormat to make ad unit respect height constraint
                 )),
               ),
               // #enddocregion constraints
