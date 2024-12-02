@@ -14,18 +14,18 @@
 #import "FVPFrameUpdater.h"
 #import "FVPVideoPlayerPlugin_Test.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// FVPVideoPlayer is responsible for managing video playback using AVPlayer.
 /// It provides methods to control playback, adjust volume, handle seeking, and
 /// notify the Flutter engine about new video frames.
 @interface FVPVideoPlayer ()
 /// The Flutter event channel used to communicate with the Flutter engine.
-@property(nonatomic, nonnull) FlutterEventChannel *eventChannel;
+@property(nonatomic) FlutterEventChannel *eventChannel;
 /// Indicates whether the video player has been disposed.
 @property(nonatomic, readonly) BOOL disposed;
 /// Indicates whether the video player is set to loop.
 @property(nonatomic) BOOL isLooping;
-
-NS_ASSUME_NONNULL_BEGIN
 
 /// Initializes a new instance of FVPVideoPlayer with the given URL, frame updater, display link,
 /// HTTP headers, AV factory, and registrar.
@@ -51,8 +51,6 @@ NS_ASSUME_NONNULL_BEGIN
                   displayLink:(FVPDisplayLink *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-
-NS_ASSUME_NONNULL_END
 
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
@@ -85,3 +83,5 @@ NS_ASSUME_NONNULL_END
 /// play/pause state.
 - (void)expectFrame;
 @end
+
+NS_ASSUME_NONNULL_END
