@@ -618,8 +618,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   /// Sets the listener for canGoBack changes.
-  Future<void> setOnCanGoBackChange(void Function(bool) callback) async {
-    _onCanGoBackChangeCallback = callback;
+  Future<void> setOnCanGoBackChange(
+      void Function(bool) onCanGoBackChangeCallback) async {
+    _onCanGoBackChangeCallback = onCanGoBackChangeCallback;
   }
 
   /// Sets a callback that notifies the host application of any log messages
