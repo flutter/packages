@@ -15,8 +15,6 @@
 @interface FVPFrameUpdater : NSObject
 /// The texture ID associated with the video output.
 @property(nonatomic) int64_t textureId;
-/// The Flutter texture registry used to notify about new frames.
-@property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
 /// The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 /// The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.

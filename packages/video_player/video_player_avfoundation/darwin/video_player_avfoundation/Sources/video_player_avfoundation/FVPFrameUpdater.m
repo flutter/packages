@@ -4,6 +4,13 @@
 
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
 
+/// FVPFrameUpdater is responsible for notifying the Flutter texture registry
+/// when a new video frame is available.
+@interface FVPFrameUpdater ()
+/// The Flutter texture registry used to notify about new frames.
+@property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
+@end
+
 @implementation FVPFrameUpdater
 - (FVPFrameUpdater *)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry {
   NSAssert(self, @"super init cannot be nil");
