@@ -86,11 +86,13 @@ Note some [policies and restrictions](https://support.google.com/adsense/answer/
 <?code-excerpt "example/lib/main.dart (constraints)"?>
 ```dart
 Container(
-  constraints: const BoxConstraints(maxHeight: 100),
+  constraints:
+      const BoxConstraints(maxHeight: 100, maxWidth: 1200),
   padding: const EdgeInsets.only(bottom: 10),
   child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
     adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
-    // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
+    adFormat: AdFormat
+        .AUTO, // Not using AdFormat to make ad unit respect height constraint
   )),
 ),
 ```
