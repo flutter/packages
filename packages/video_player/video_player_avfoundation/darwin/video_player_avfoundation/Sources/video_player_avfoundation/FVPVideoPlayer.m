@@ -37,6 +37,9 @@ static void *rateContext = &rateContext;
 /// state (e.g., after a seek while paused). If YES, the display link should continue to run until
 /// the next frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
+
+/// Updates the playing state of the video player.
+- (void)updatePlayingState;
 @end
 
 @implementation FVPVideoPlayer

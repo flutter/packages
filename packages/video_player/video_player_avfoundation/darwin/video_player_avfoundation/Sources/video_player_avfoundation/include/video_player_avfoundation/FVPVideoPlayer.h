@@ -52,9 +52,6 @@ NS_ASSUME_NONNULL_BEGIN
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
-/// Updates the playing state of the video player.
-- (void)updatePlayingState;
-
 /// Disposes the video player and releases any resources it holds.
 - (void)dispose;
 
