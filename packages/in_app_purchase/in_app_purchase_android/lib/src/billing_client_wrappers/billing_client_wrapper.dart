@@ -11,6 +11,7 @@ import '../../billing_client_wrappers.dart';
 import '../messages.g.dart';
 import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
+import 'pending_purchases_params_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
 
@@ -81,18 +82,6 @@ class BillingClient {
     return _hostApi.isReady();
   }
 
-  /// Enable the [BillingClientWrapper] to handle pending purchases.
-  ///
-  /// **Deprecation warning:** it is no longer required to call
-  /// [enablePendingPurchases] when initializing your application.
-  @Deprecated(
-      'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
-  void enablePendingPurchases() {
-    // No-op, until it is time to completely remove this method from the API.
-  }
-
   /// Calls
   /// [`BillingClient#startConnection(BillingClientStateListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#startconnection)
   /// to create and connect a `BillingClient` instance.
@@ -103,14 +92,23 @@ class BillingClient {
   ///
   /// This triggers the creation of a new `BillingClient` instance in Java if
   /// one doesn't already exist.
-  Future<BillingResultWrapper> startConnection(
-      {required OnBillingServiceDisconnected onBillingServiceDisconnected,
-      BillingChoiceMode billingChoiceMode =
-          BillingChoiceMode.playBillingOnly}) async {
+  Future<BillingResultWrapper> startConnection({
+    required OnBillingServiceDisconnected onBillingServiceDisconnected,
+    BillingChoiceMode billingChoiceMode = BillingChoiceMode.playBillingOnly,
+    PendingPurchasesParamsWrapper? pendingPurchasesParams,
+  }) async {
     hostCallbackHandler.disconnectCallbacks.add(onBillingServiceDisconnected);
-    return resultWrapperFromPlatform(await _hostApi.startConnection(
+    return resultWrapperFromPlatform(
+      await _hostApi.startConnection(
         hostCallbackHandler.disconnectCallbacks.length - 1,
-        platformBillingChoiceMode(billingChoiceMode)));
+        platformBillingChoiceMode(billingChoiceMode),
+        switch (pendingPurchasesParams) {
+          final PendingPurchasesParamsWrapper params? =>
+            pendingPurchasesParamsFromWrapper(params),
+          null => PendingPurchasesParams(enablePrepaidPlans: false)
+        },
+      ),
+    );
   }
 
   /// Calls

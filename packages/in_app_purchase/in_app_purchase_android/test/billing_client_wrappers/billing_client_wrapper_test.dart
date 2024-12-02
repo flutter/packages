@@ -39,7 +39,7 @@ void main() {
 
   setUp(() {
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any)).thenAnswer(
+    when(mockApi.startConnection(any, any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     billingClient = BillingClient(
         (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {},
@@ -81,7 +81,7 @@ void main() {
     test('returns BillingResultWrapper', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
-      when(mockApi.startConnection(any, any)).thenAnswer(
+      when(mockApi.startConnection(any, any, any)).thenAnswer(
         (_) async => PlatformBillingResult(
           responseCode: const BillingResponseConverter().toJson(responseCode),
           debugMessage: debugMessage,
@@ -100,9 +100,11 @@ void main() {
       await billingClient.startConnection(onBillingServiceDisconnected: () {});
 
       final VerificationResult result =
-          verify(mockApi.startConnection(captureAny, captureAny));
+          verify(mockApi.startConnection(captureAny, captureAny, captureAny));
       expect(result.captured[0], 0);
       expect(result.captured[1], PlatformBillingChoiceMode.playBillingOnly);
+      expect(
+          result.captured[2], PendingPurchasesParams(enablePrepaidPlans: true));
     });
 
     test('passes billingChoiceMode alternativeBillingOnly when set', () async {
@@ -110,7 +112,8 @@ void main() {
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
 
-      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+      expect(
+          verify(mockApi.startConnection(any, captureAny, any)).captured.first,
           PlatformBillingChoiceMode.alternativeBillingOnly);
     });
 
@@ -125,7 +128,8 @@ void main() {
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
 
-      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+      expect(
+          verify(mockApi.startConnection(any, captureAny, any)).captured.first,
           PlatformBillingChoiceMode.alternativeBillingOnly);
 
       const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(

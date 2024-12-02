@@ -30,7 +30,7 @@ void main() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
 
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any)).thenAnswer(
+    when(mockApi.startConnection(any, any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     iapAndroidPlatform = InAppPurchaseAndroidPlatform(
         manager: BillingClientManager(
@@ -45,13 +45,13 @@ void main() {
   group('connection management', () {
     test('connects on initialization', () {
       //await iapAndroidPlatform.isAvailable();
-      verify(mockApi.startConnection(any, any)).called(1);
+      verify(mockApi.startConnection(any, any, any)).called(1);
     });
 
     test('re-connects when client sends onBillingServiceDisconnected', () {
       iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
           .onBillingServiceDisconnected(0);
-      verify(mockApi.startConnection(any, any)).called(2);
+      verify(mockApi.startConnection(any, any, any)).called(2);
     });
 
     test(
@@ -63,7 +63,7 @@ void main() {
                 .toJson(BillingResponse.serviceDisconnected),
             debugMessage: 'disconnected'),
       );
-      when(mockApi.startConnection(any, any)).thenAnswer((_) async {
+      when(mockApi.startConnection(any, any, any)).thenAnswer((_) async {
         // Change the acknowledgePurchase response to success for the next call.
         when(mockApi.acknowledgePurchase(any)).thenAnswer(
           (_) async => PlatformBillingResult(
@@ -79,7 +79,7 @@ void main() {
       final BillingResultWrapper result =
           await iapAndroidPlatform.completePurchase(purchase);
       verify(mockApi.acknowledgePurchase(any)).called(2);
-      verify(mockApi.startConnection(any, any)).called(2);
+      verify(mockApi.startConnection(any, any, any)).called(2);
       expect(result.responseCode, equals(BillingResponse.ok));
     });
   });

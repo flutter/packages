@@ -110,15 +110,16 @@ public class MethodCallHandlerTest {
     openMocks = MockitoAnnotations.openMocks(this);
     // Use the same client no matter if alternative billing is enabled or not.
     when(factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY))
+            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING)))
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
+            eq(null)))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockCallbackApi, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -161,7 +162,7 @@ public class MethodCallHandlerTest {
         mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -180,7 +181,7 @@ public class MethodCallHandlerTest {
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -202,7 +203,8 @@ public class MethodCallHandlerTest {
         .createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING));
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
+            any(Messages.PendingPurchasesParams.class));
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -223,7 +225,7 @@ public class MethodCallHandlerTest {
         mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, Messages.PendingPurchasesParams());
 
     BillingResult billingResult1 =
         BillingResult.newBuilder()

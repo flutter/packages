@@ -4,6 +4,7 @@
 
 import '../billing_client_wrappers.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
+import 'billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'messages.g.dart';
 
 /// Converts a [BillingChoiceMode] to the Pigeon equivalent.
@@ -266,5 +267,13 @@ InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
     commitmentPaymentsCount: details.commitmentPaymentsCount,
     subsequentCommitmentPaymentsCount:
         details.subsequentCommitmentPaymentsCount,
+  );
+}
+
+/// Converts a [PendingPurchasesParamsWrapper] to its Pigeon equivalent.
+PendingPurchasesParams pendingPurchasesParamsFromWrapper(
+    PendingPurchasesParamsWrapper params) {
+  return PendingPurchasesParams(
+    enablePrepaidPlans: params.enablePrepaidPlans,
   );
 }

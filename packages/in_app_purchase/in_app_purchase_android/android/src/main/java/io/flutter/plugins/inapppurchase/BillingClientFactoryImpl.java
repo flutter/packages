@@ -22,11 +22,17 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
   public BillingClient createBillingClient(
       @NonNull Context context,
       @NonNull Messages.InAppPurchaseCallbackApi callbackApi,
-      PlatformBillingChoiceMode billingChoiceMode) {
+      PlatformBillingChoiceMode billingChoiceMode,
+      Messages.PendingPurchasesParams pendingPurchasesParams) {
+      PendingPurchasesParams.Builder pendingPurchasesBuilder = PendingPurchasesParams.newBuilder()
+              .enableOneTimeProducts();
+      if (pendingPurchasesParams != null && pendingPurchasesParams.getEnablePrepaidPlans()) {
+          pendingPurchasesBuilder.enablePrepaidPlans();
+      }
+
     BillingClient.Builder builder =
         BillingClient.newBuilder(context)
-            .enablePendingPurchases(
-                PendingPurchasesParams.newBuilder().enableOneTimeProducts().build());
+            .enablePendingPurchases(pendingPurchasesBuilder.build());
     switch (billingChoiceMode) {
       case ALTERNATIVE_BILLING_ONLY:
         // https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app

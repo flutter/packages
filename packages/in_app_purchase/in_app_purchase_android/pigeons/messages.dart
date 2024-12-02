@@ -296,6 +296,7 @@ class PlatformUserChoiceProduct {
 }
 
 /// Pigeon version of ProductDetails.InstallmentPlanDetails.
+/// https://developer.android.com/reference/com/android/billingclient/api/PendingPurchasesParams.Builder#enableOneTimeProducts()
 class PlatformInstallmentPlanDetails {
   PlatformInstallmentPlanDetails({
     required this.commitmentPaymentsCount,
@@ -304,6 +305,15 @@ class PlatformInstallmentPlanDetails {
 
   final int commitmentPaymentsCount;
   final int subsequentCommitmentPaymentsCount;
+}
+
+/// Pigeon version of PendingPurchaseParamsWrapper.
+class PendingPurchasesParams {
+  PendingPurchasesParams({
+    required this.enablePrepaidPlans,
+  });
+
+  final bool enablePrepaidPlans;
 }
 
 /// Pigeon version of Java BillingClient.ProductType.
@@ -348,7 +358,9 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#startConnection(BillingClientStateListener).
   @async
   PlatformBillingResult startConnection(
-      int callbackHandle, PlatformBillingChoiceMode billingMode);
+      int callbackHandle,
+      PlatformBillingChoiceMode billingMode,
+      PendingPurchasesParams pendingPurchasesParams);
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();
