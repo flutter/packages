@@ -6,6 +6,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+#import "./include/video_player_avfoundation/FVPAVFactory.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
@@ -15,19 +16,6 @@
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
 #endif
-
-@interface FVPDefaultAVFactory : NSObject <FVPAVFactory>
-@end
-
-@implementation FVPDefaultAVFactory
-- (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
-  return [AVPlayer playerWithPlayerItem:playerItem];
-}
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes {
-  return [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
-}
-@end
 
 /// Non-test implementation of the diplay link factory.
 @interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>

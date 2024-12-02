@@ -10,22 +10,32 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+#import "FVPAVFactory.h"
 #import "FVPDisplayLink.h"
 #import "FVPFrameUpdater.h"
-#import "FVPVideoPlayerPlugin_Test.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// FVPVideoPlayer is responsible for managing video playback using AVPlayer.
 /// It provides methods to control playback, adjust volume, handle seeking, and
 /// notify the Flutter engine about new video frames.
-@interface FVPVideoPlayer ()
+@interface FVPVideoPlayer : NSObject <FlutterStreamHandler, FlutterTexture>
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic) FlutterEventChannel *eventChannel;
 /// Indicates whether the video player has been disposed.
 @property(nonatomic, readonly) BOOL disposed;
 /// Indicates whether the video player is set to loop.
 @property(nonatomic) BOOL isLooping;
+/// The AVPlayer instance used for video playback.
+@property(readonly, nonatomic, nonnull) AVPlayer *player;
+// This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
+// (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some video
+// streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116).
+// An invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
+// for issue #1, and restore the correct width and height for issue #2.
+@property(nonatomic, nonnull) AVPlayerLayer *playerLayer;
+/// The current playback position of the video, in milliseconds.
+@property(readonly, nonatomic) int64_t position;
 
 /// Initializes a new instance of FVPVideoPlayer with the given URL, frame updater, display link,
 /// HTTP headers, AV factory, and registrar.
@@ -79,6 +89,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Tells the player to run its frame updater until it receives a frame, regardless of the
 /// play/pause state.
 - (void)expectFrame;
+
+/// Called when the texture is unregistered.
+/// This method is used to clean up resources associated with the texture.
+- (void)onTextureUnregistered:(nullable NSObject<FlutterTexture> *)texture;
 @end
 
 NS_ASSUME_NONNULL_END
