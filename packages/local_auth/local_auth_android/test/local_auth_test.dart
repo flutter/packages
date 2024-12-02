@@ -91,6 +91,16 @@ void main() {
 
   group('authenticate', () {
     group('strings', () {
+      test('With empty reason', () async {
+        when(api.authenticate(any, any))
+            .thenAnswer((_) async => AuthResult.success);
+
+        const String reason = '';
+        final bool result = await plugin.authenticate(
+            localizedReason: reason, authMessages: <AuthMessages>[]);
+
+        expect(result, true);
+      });
       test('passes default values when nothing is provided', () async {
         when(api.authenticate(any, any))
             .thenAnswer((_) async => AuthResult.success);

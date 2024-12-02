@@ -34,7 +34,7 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     required Iterable<AuthMessages> authMessages,
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
-    assert(localizedReason.isNotEmpty);
+    /// no empty check assertion because [localizedReason] can be empty for android
     final AuthResult result = await _api.authenticate(
         AuthOptions(
             biometricOnly: options.biometricOnly,
