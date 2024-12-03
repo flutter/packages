@@ -259,16 +259,35 @@ String _encodeValue(Object? value) {
 }
 
 Object _decodeValue(String encodedValue) {
-  final Object? decodedValue = json.decode(encodedValue);
-
-  if (decodedValue is List) {
-    // JSON does not preserve generics. The encode/decode roundtrip is
-    // `List<String>` => JSON => `List<dynamic>`. We have to explicitly
-    // restore the RTTI.
-    return decodedValue.cast<String>();
+  Object? result = _decodeJson(encodedValue);
+  if (result != null) {
+    return result;
   }
+  // If the value is not a valid JSON, try adding double quotes.
+  result = json.decode('"$encodedValue"');
+  if (result != null) {
+    return result;
+  }
+  // If parsing fails, return the original string.
+  // This indicates the string may not be a valid JSON format.
+  return encodedValue;
+}
 
-  return decodedValue!;
+Object? _decodeJson(String value) {
+  try {
+    final Object? decodedValue = json.decode(value);
+
+    if (decodedValue is List) {
+      // JSON does not preserve generics. The encode/decode roundtrip is
+      // `List<String>` => JSON => `List<dynamic>`. We have to explicitly
+      // restore the RTTI.
+      return decodedValue.cast<String>();
+    }
+
+    return decodedValue;
+  } on FormatException catch (_) {
+    return null;
+  }
 }
 
 /// Web specific SharedPreferences Options.
