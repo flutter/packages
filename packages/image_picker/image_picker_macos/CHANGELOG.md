@@ -1,6 +1,7 @@
-## NEXT
+## 0.3.0
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Adds macOS 13+ PHPicker functionality (optional and disabled by default).
 
 ## 0.2.1+1
 

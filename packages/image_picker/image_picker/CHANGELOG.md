@@ -1,3 +1,7 @@
+## 1.1.3
+
+* Updates README to include a reference to the macOS PHPicker feature.
+
 ## 1.1.2
 
 * Adds comment for the limit parameter.
