@@ -1,3 +1,7 @@
+## 0.2.3+4
+
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.
+
 ## 0.2.3+3
 
 * Adds internal wrapper for Android native `CompanionAdSlot` and `CompanionAdSlot.ClickListener`.
