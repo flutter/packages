@@ -454,22 +454,26 @@ void main() {
       expect(list?.length, testList.length + 1);
     });
 
-    testWidgets('riding invalid JSON value', (WidgetTester _) async {
-      final SharedPreferencesAsyncPlatform preferences = await getPreferences();
+    testWidgets(
+      'returns null when riding invalid JSON value',
+      (WidgetTester _) async {
+        final SharedPreferencesAsyncPlatform preferences =
+            await getPreferences();
 
-      const String value = 'flutter228';
-      html.window.localStorage.setItem('invalidJsonData', value);
-      html.window.localStorage.setItem('validJsonData', '"$value"');
+        const String value = 'flutter228';
+        html.window.localStorage.setItem('invalidJsonData', value);
+        html.window.localStorage.setItem('validJsonData', '"$value"');
 
-      expect(
-        await preferences.getString('invalidJsonData', emptyOptions),
-        equals(value),
-      );
-      expect(
-        await preferences.getString('validJsonData', emptyOptions),
-        equals(value),
-      );
-    });
+        expect(
+          await preferences.getString('invalidJsonData', emptyOptions),
+          isNull,
+        );
+        expect(
+          await preferences.getString('validJsonData', emptyOptions),
+          equals(value),
+        );
+      },
+    );
 
     testWidgets('getPreferences', (WidgetTester _) async {
       final SharedPreferencesAsyncPlatform preferences = await getPreferences();
