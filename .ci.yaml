@@ -888,6 +888,20 @@ targets:
           "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
         }
 
+  # Wasm tests in master. Do these need any sharding?
+  - name: Linux_web web_platform_tests_wasm master
+    bringup: true
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests_wasm.yaml
+      version_file: flutter_master.version
+      channel: master
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+        }
+
   - name: Linux_web web_platform_tests_shard_1 stable
     recipe: packages/packages
     timeout: 60
