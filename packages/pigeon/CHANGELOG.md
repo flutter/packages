@@ -1,3 +1,7 @@
+## 22.6.3
+
+* Replaces deprecated collection method usage.
+
 ## 22.6.2
 
 * Removes the `@protected` annotation from the InstanceManager field of the
