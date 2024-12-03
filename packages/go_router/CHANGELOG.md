@@ -1,6 +1,6 @@
 ## 14.6.2
 
-* Replaces deprecated collection method usage.
+- Replaces deprecated collection method usage.
 
 ## 14.6.1
 
