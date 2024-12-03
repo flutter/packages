@@ -427,7 +427,8 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =
-          billingClientFactory.createBillingClient(applicationContext, callbackApi, billingMode, pendingPurchasesParams);
+          billingClientFactory.createBillingClient(
+              applicationContext, callbackApi, billingMode, pendingPurchasesParams);
     }
 
     try {

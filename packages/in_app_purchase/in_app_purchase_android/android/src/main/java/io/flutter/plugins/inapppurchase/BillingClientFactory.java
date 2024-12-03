@@ -7,8 +7,6 @@ package io.flutter.plugins.inapppurchase;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import com.android.billingclient.api.BillingClient;
-import com.android.billingclient.api.PendingPurchasesParams;
-
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
 
 /** Responsible for creating a {@link BillingClient} object. */

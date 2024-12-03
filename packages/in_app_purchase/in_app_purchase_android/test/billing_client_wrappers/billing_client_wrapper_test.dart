@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -104,7 +105,11 @@ void main() {
       expect(result.captured[0], 0);
       expect(result.captured[1], PlatformBillingChoiceMode.playBillingOnly);
       expect(
-          result.captured[2], PendingPurchasesParams(enablePrepaidPlans: true));
+          result.captured[2],
+          isA<PendingPurchasesParams>().having(
+              (PendingPurchasesParams params) => params.enablePrepaidPlans,
+              'enablePrepaidPlans',
+              false));
     });
 
     test('passes billingChoiceMode alternativeBillingOnly when set', () async {
@@ -149,6 +154,21 @@ void main() {
       billingClient.hostCallbackHandler.alternativeBillingListener!(expected);
       expect(completer.isCompleted, isTrue);
       expect(await completer.future, expected);
+    });
+
+    test('passes pendingPurchasesParams when set', () async {
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.alternativeBillingOnly,
+          pendingPurchasesParams:
+              const PendingPurchasesParamsWrapper(enablePrepaidPlans: true));
+
+      expect(
+          verify(mockApi.startConnection(any, any, captureAny)).captured.first,
+          isA<PendingPurchasesParams>().having(
+              (PendingPurchasesParams params) => params.enablePrepaidPlans,
+              'enablePrepaidPlans',
+              true));
     });
 
     test('UserChoiceDetailsWrapper searilization check', () async {

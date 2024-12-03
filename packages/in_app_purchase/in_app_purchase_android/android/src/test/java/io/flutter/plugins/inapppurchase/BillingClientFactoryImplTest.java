@@ -98,6 +98,17 @@ public class BillingClientFactoryImplTest {
     assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
   }
 
+  @Test
+  public void pendingPurchasesForPrepaidPlans() {
+    // No logic to verify just ensure creation works.
+    Messages.PendingPurchasesParams params =
+        new Messages.PendingPurchasesParams.Builder().setEnablePrepaidPlans(true).build();
+    BillingClient client =
+        factory.createBillingClient(
+            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, params);
+    assertNotNull(client);
+  }
+
   @After
   public void tearDown() throws Exception {
     openMocks.close();
