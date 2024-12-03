@@ -28,7 +28,7 @@ class PlatformWebView {
           observeValue: observeValue,
         );
       case _:
-        throw UnimplementedError('$defaultTargetPlatform is not supported');
+        throw UnimplementedError('$defaultTargetPlatform is not supported.');
     }
   }
 

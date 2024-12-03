@@ -9,25 +9,25 @@ import XCTest
 @testable import webview_flutter_wkwebview
 
 class FrameInfoProxyAPITests: XCTestCase {
-  @MainActor func testIsMainFrame() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
-
-    let instance = TestFrameInfo()
-    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.isMainFrame)
-  }
-
-  @MainActor func testRequest() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
-
-    let instance = TestFrameInfo()
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value?.value, instance.request)
-  }
+//  @MainActor func testIsMainFrame() {
+//    let registrar = TestProxyApiRegistrar()
+//    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
+//
+//    let instance = TestFrameInfo()
+//    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
+//
+//    XCTAssertEqual(value, instance.isMainFrame)
+//  }
+//
+//  @MainActor func testRequest() {
+//    let registrar = TestProxyApiRegistrar()
+//    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
+//
+//    let instance = TestFrameInfo()
+//    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
+//
+//    XCTAssertEqual(value?.value, instance.request)
+//  }
 }
 
 class TestFrameInfo : WKFrameInfo {

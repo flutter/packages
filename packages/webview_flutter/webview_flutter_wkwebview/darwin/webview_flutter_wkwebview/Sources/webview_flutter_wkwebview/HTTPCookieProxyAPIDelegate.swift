@@ -59,6 +59,7 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
       return (newKey, value)
     }
 
+    // TODO: Maybe do a null constructor error here just like URL
     return HTTPCookie(properties: Dictionary(uniqueKeysWithValues: keyValueTuples))!
   }
 
