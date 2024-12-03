@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:collection/collection.dart' as collection;
 import 'package:graphs/graphs.dart';
 import 'package:pub_semver/pub_semver.dart';
 
@@ -158,7 +157,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
     final Iterable<String> proxyApiImports = root.apis
         .whereType<AstProxyApi>()
         .map((AstProxyApi proxyApi) => proxyApi.swiftOptions?.import)
-        .whereNotNull()
+        .nonNulls
         .toSet();
     for (final String import in proxyApiImports) {
       indent.writeln('import $import');
@@ -404,7 +403,7 @@ static func fromList(_ ${varNamePrefix}list: [Any?]) -> Any? {
     type: type,
     wrapped: wrapped
   )
-  
+
   return wrapper.unwrap()
 }
 ''');
