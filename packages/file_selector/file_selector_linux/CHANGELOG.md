@@ -1,3 +1,7 @@
+## 0.9.3+2
+
+* Updates Pigeon to resolve a compilation failure with some versions of glib.
+
 ## 0.9.3+1
 
 * Fixes a regression in 0.9.3 with handling of canceled dialogs.

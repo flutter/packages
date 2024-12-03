@@ -31,7 +31,7 @@ platform_properties:
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8739520057779466577"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
         ]
   linux_android_legacy:
     properties:
@@ -44,7 +44,7 @@ platform_properties:
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
           {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8739520057779466577"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
         ]
   linux_desktop:
     properties:
