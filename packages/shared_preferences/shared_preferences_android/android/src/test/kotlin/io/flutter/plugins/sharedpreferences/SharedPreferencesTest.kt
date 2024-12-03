@@ -337,12 +337,12 @@ internal class SharedPreferencesTest {
     stream.flush()
     val badPref = LIST_PREFIX + Base64.encodeToString(byteStream.toByteArray(), 0)
 
-    val plugin = pluginSetup()
+    val plugin = pluginSetup(dataStoreOptions)
     val badListKey = "badList"
     // Inject the bad pref as a string, as that is how string lists are stored internally.
-    plugin.setString(badListKey, badPref, emptyOptions)
+    plugin.setString(badListKey, badPref, dataStoreOptions)
     assertThrows(ClassNotFoundException::class.java) {
-      plugin.getStringList(badListKey, emptyOptions)
+      plugin.getStringList(badListKey, dataStoreOptions)
     }
   }
 }
