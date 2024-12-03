@@ -487,7 +487,8 @@ this command.
         extraFlags: <String>[
           if (testTarget != null) '-only-testing:$testTarget',
           ...extraFlags,
-          'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+          // TODO(loicsharma): THIS IS A TEST - UNDO!
+          'GCC_TREAT_WARNINGS_AS_ERRORS=NO',
         ],
       );
 

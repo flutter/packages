@@ -1,3 +1,7 @@
+## 5.8.0
+
+* Adds Swift Package Manager compatibility.
+
 ## 5.7.8
 
 * Updates Pigeon for non-nullable collection type support.

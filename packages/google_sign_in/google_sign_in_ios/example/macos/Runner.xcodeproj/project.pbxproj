@@ -28,6 +28,7 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
+		403C71332C66A4F70034A230 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 403C71322C66A4F70034A230 /* OCMock */; };
 		D7B8415A3D20001DE212873D /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A19720E5189178660264EC3F /* Pods_Runner.framework */; };
 		F107B1B7E4ECB85727EC4286 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD1DCE969A7E7C76D9CF93C /* Pods_RunnerTests.framework */; };
 /* End PBXBuildFile section */
@@ -97,6 +98,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				403C71332C66A4F70034A230 /* OCMock in Frameworks */,
 				F107B1B7E4ECB85727EC4286 /* Pods_RunnerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,6 +231,9 @@
 				331C80DA294CF71000263BE5 /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
+			packageProductDependencies = (
+				403C71322C66A4F70034A230 /* OCMock */,
+			);
 			productName = RunnerTests;
 			productReference = 331C80D5294CF71000263BE5 /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -294,6 +299,9 @@
 				Base,
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
+			packageReferences = (
+				403C71312C66A4F70034A230 /* XCRemoteSwiftPackageReference "ocmock" */,
+			);
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -486,6 +494,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/google_sign_in_ios_example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/google_sign_in_ios_example";
+				WARNING_CFLAGS = "-Wno-incomplete-umbrella";
 			};
 			name = Debug;
 		};
@@ -501,6 +510,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/google_sign_in_ios_example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/google_sign_in_ios_example";
+				WARNING_CFLAGS = "-Wno-incomplete-umbrella";
 			};
 			name = Release;
 		};
@@ -516,6 +526,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/google_sign_in_ios_example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/google_sign_in_ios_example";
+				WARNING_CFLAGS = "-Wno-incomplete-umbrella";
 			};
 			name = Profile;
 		};
@@ -790,6 +801,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		403C71312C66A4F70034A230 /* XCRemoteSwiftPackageReference "ocmock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/erikdoe/ocmock";
+			requirement = {
+				kind = revision;
+				revision = fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		403C71322C66A4F70034A230 /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 403C71312C66A4F70034A230 /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 33CC10E52044A3C60003C045 /* Project object */;
 }

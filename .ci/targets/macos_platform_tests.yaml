@@ -11,7 +11,7 @@ tasks:
     args: ["build-examples", "--macos", "--swift-package-manager"]
   - name: xcode analyze
     script: .ci/scripts/tool_runner.sh
-    args: ["xcode-analyze", "--macos"]
+    args: ["xcode-analyze", "--macos", "--exclude=script/configs/exclude_xcode_analysis.yaml"]
   - name: xcode analyze deprecation
     # Ensure we don't accidentally introduce deprecated code.
     script: .ci/scripts/tool_runner.sh

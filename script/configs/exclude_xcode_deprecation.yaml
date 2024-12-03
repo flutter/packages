@@ -1,2 +1,4 @@
 # TODO(louisehsu): Remove deprecation check when StoreKit 2 is adopted. https://github.com/flutter/flutter/issues/116383
 - in_app_purchase_storekit
+# Depends on AppAuth-iOS which uses deprecated APIs.
+- google_sign_in_ios

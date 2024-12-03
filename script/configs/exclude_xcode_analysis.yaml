@@ -1,0 +1,2 @@
+# Depends on AppAuth-iOS which emits analysis warnings.
+- google_sign_in_ios

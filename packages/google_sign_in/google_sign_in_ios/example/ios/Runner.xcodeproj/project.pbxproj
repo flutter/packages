@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		403C71302C66A2E50034A230 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 403C712F2C66A2E50034A230 /* OCMock */; };
 		5C6F5A6E1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6F5A6D1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.m */; };
 		78A36DA12AF5761E00CBFD43 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7A303C2D1E89D76400B1F19E /* GoogleService-Info.plist */; };
 		7ACDFB0E1E8944C400BE2D00 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7ACDFB0D1E8944C400BE2D00 /* AppFrameworkInfo.plist */; };
@@ -94,6 +95,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				403C71302C66A2E50034A230 /* OCMock in Frameworks */,
 				C56D3B06A42F3B35C1F47A43 /* libPods-RunnerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -245,6 +247,9 @@
 				F76AC1A82666D0540040C8BC /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
+			packageProductDependencies = (
+				403C712F2C66A2E50034A230 /* OCMock */,
+			);
 			productName = RunnerTests;
 			productReference = F76AC1A22666D0540040C8BC /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -300,6 +305,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				403C712E2C66A2E50034A230 /* XCRemoteSwiftPackageReference "ocmock" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -639,6 +647,7 @@
 			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = NO;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -673,6 +682,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
+				WARNING_CFLAGS = "-Wno-incomplete-umbrella";
 			};
 			name = Debug;
 		};
@@ -691,6 +701,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
+				WARNING_CFLAGS = "-Wno-incomplete-umbrella";
 			};
 			name = Release;
 		};
@@ -766,6 +777,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		403C712E2C66A2E50034A230 /* XCRemoteSwiftPackageReference "ocmock" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/erikdoe/ocmock";
+			requirement = {
+				kind = revision;
+				revision = fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		403C712F2C66A2E50034A230 /* OCMock */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 403C712E2C66A2E50034A230 /* XCRemoteSwiftPackageReference "ocmock" */;
+			productName = OCMock;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }
