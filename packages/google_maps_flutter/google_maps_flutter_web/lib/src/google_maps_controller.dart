@@ -194,9 +194,10 @@ class GoogleMapController {
   /// own configuration and are rendered on top of a GMap instance later. This
   /// happens in the second half of this method.
   ///
-  /// This method is eagerly called from the [GoogleMapsPlugin.buildView] method
-  /// so the internal [GoogleMapsController] of a Web Map initializes as soon as
-  /// possible. Check [_attachMapEvents] to see how this controller notifies the
+  /// This method is eagerly called from the
+  /// [GoogleMapsPlugin.buildViewWithConfiguration] method so the internal
+  /// [GoogleMapsController] of a Web Map initializes as soon as possible.
+  /// Check [_attachMapEvents] to see how this controller notifies the
   /// plugin of it being fully ready (through the `onTilesloaded.first` event).
   ///
   /// Failure to call this method would result in the GMap not rendering at all,
