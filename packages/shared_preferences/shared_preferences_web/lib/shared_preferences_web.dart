@@ -73,7 +73,11 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     final Map<String, Object> allData = <String, Object>{};
     for (final String key
         in _getPrefixedKeys(filter.prefix, allowList: filter.allowList)) {
-      allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
+      final Object? value =
+          _decodeValue(html.window.localStorage.getItem(key)!);
+      if (value != null) {
+        allData[key] = value;
+      }
     }
     return allData;
   }
@@ -132,7 +136,11 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   ) async {
     final Map<String, Object> allData = <String, Object>{};
     for (final String key in _getAllowedKeys(allowList: allowList)) {
-      allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
+      final Object? value =
+          _decodeValue(html.window.localStorage.getItem(key)!);
+      if (value != null) {
+        allData[key] = value;
+      }
     }
     return allData;
   }
@@ -258,36 +266,22 @@ String _encodeValue(Object? value) {
   return json.encode(value);
 }
 
-Object _decodeValue(String encodedValue) {
-  Object? result = _decodeJson(encodedValue);
-  if (result != null) {
-    return result;
-  }
-  // If the value is not a valid JSON, try adding double quotes.
-  result = json.decode('"$encodedValue"');
-  if (result != null) {
-    return result;
-  }
-  // If parsing fails, return the original string.
-  // This indicates the string may not be a valid JSON format.
-  return encodedValue;
-}
-
-Object? _decodeJson(String value) {
+Object? _decodeValue(String encodedValue) {
+  final Object? decodedValue;
   try {
-    final Object? decodedValue = json.decode(value);
-
-    if (decodedValue is List) {
-      // JSON does not preserve generics. The encode/decode roundtrip is
-      // `List<String>` => JSON => `List<dynamic>`. We have to explicitly
-      // restore the RTTI.
-      return decodedValue.cast<String>();
-    }
-
-    return decodedValue;
+    decodedValue = json.decode(encodedValue);
   } on FormatException catch (_) {
     return null;
   }
+
+  if (decodedValue is List) {
+    // JSON does not preserve generics. The encode/decode roundtrip is
+    // `List<String>` => JSON => `List<dynamic>`. We have to explicitly
+    // restore the RTTI.
+    return decodedValue.cast<String>();
+  }
+
+  return decodedValue;
 }
 
 /// Web specific SharedPreferences Options.
