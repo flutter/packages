@@ -521,13 +521,18 @@ void main() {
     );
   }
 
-  Future<SharedPreferencesAsyncPlatform> getPreferences(
-      bool useDataStore) async {
-    final SharedPreferencesAsyncPlatform preferences =
-        SharedPreferencesAsyncPlatform.instance!;
+  Future<void> clearPreferences(
+    SharedPreferencesAsyncPlatform preferences,
+    SharedPreferencesAsyncAndroidOptions options,
+  ) async {
     await preferences.clear(
         const ClearPreferencesParameters(filter: PreferencesFilters()),
-        getOptions(useDataStore));
+        options);
+  }
+
+  SharedPreferencesAsyncPlatform getPreferences() {
+    final SharedPreferencesAsyncPlatform preferences =
+        SharedPreferencesAsyncPlatform.instance!;
     return preferences;
   }
 
@@ -536,84 +541,86 @@ void main() {
       final String backend = useDataStore ? 'DataStore' : 'SharedPreferences';
 
       testWidgets('set and get String with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
 
-        await preferences.setString(
-            stringKey, testString, getOptions(useDataStore));
-        expect(await preferences.getString(stringKey, getOptions(useDataStore)),
-            testString);
+        await preferences.setString(stringKey, testString, options);
+        expect(await preferences.getString(stringKey, options), testString);
       });
 
       testWidgets('set and get bool with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
 
-        await preferences.setBool(boolKey, testBool, getOptions(useDataStore));
-        expect(await preferences.getBool(boolKey, getOptions(useDataStore)),
-            testBool);
+        await preferences.setBool(boolKey, testBool, options);
+        expect(await preferences.getBool(boolKey, options), testBool);
       });
 
       testWidgets('set and get int with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
 
-        await preferences.setInt(intKey, testInt, getOptions(useDataStore));
-        expect(await preferences.getInt(intKey, getOptions(useDataStore)),
-            testInt);
+        await preferences.setInt(intKey, testInt, options);
+        expect(await preferences.getInt(intKey, options), testInt);
       });
 
       testWidgets('set and get double with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
 
-        await preferences.setDouble(
-            doubleKey, testDouble, getOptions(useDataStore));
-        expect(await preferences.getDouble(doubleKey, getOptions(useDataStore)),
-            testDouble);
+        await preferences.setDouble(doubleKey, testDouble, options);
+        expect(await preferences.getDouble(doubleKey, options), testDouble);
       });
 
       testWidgets('set and get StringList with $backend',
           (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
 
-        await preferences.setStringList(
-            listKey, testList, getOptions(useDataStore));
-        expect(
-            await preferences.getStringList(listKey, getOptions(useDataStore)),
-            testList);
+        await preferences.setStringList(listKey, testList, options);
+        expect(await preferences.getStringList(listKey, options), testList);
       });
 
       testWidgets('getStringList returns mutable list with $backend',
           (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
 
-        await preferences.setStringList(
-            listKey, testList, getOptions(useDataStore));
+        await preferences.setStringList(listKey, testList, options);
         final List<String>? list =
-            await preferences.getStringList(listKey, getOptions(useDataStore));
+            await preferences.getStringList(listKey, options);
         list?.add('value');
         expect(list?.length, testList.length + 1);
       });
 
       testWidgets('getPreferences with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
-          preferences.setString(
-              stringKey, testString, getOptions(useDataStore)),
-          preferences.setBool(boolKey, testBool, getOptions(useDataStore)),
-          preferences.setInt(intKey, testInt, getOptions(useDataStore)),
-          preferences.setDouble(
-              doubleKey, testDouble, getOptions(useDataStore)),
-          preferences.setStringList(listKey, testList, getOptions(useDataStore))
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringList(listKey, testList, options)
         ]);
 
         final Map<String, Object?> gotAll = await preferences.getPreferences(
           const GetPreferencesParameters(filter: PreferencesFilters()),
-          getOptions(useDataStore),
+          options,
         );
 
         expect(gotAll.length, 5);
@@ -626,23 +633,23 @@ void main() {
 
       testWidgets('getPreferences with filter with $backend',
           (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
-          preferences.setString(
-              stringKey, testString, getOptions(useDataStore)),
-          preferences.setBool(boolKey, testBool, getOptions(useDataStore)),
-          preferences.setInt(intKey, testInt, getOptions(useDataStore)),
-          preferences.setDouble(
-              doubleKey, testDouble, getOptions(useDataStore)),
-          preferences.setStringList(listKey, testList, getOptions(useDataStore))
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringList(listKey, testList, options)
         ]);
 
         final Map<String, Object?> gotAll = await preferences.getPreferences(
           const GetPreferencesParameters(
             filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
           ),
-          getOptions(useDataStore),
+          options,
         );
 
         expect(gotAll.length, 2);
@@ -651,21 +658,21 @@ void main() {
       });
 
       testWidgets('getKeys with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
-          preferences.setString(
-              stringKey, testString, getOptions(useDataStore)),
-          preferences.setBool(boolKey, testBool, getOptions(useDataStore)),
-          preferences.setInt(intKey, testInt, getOptions(useDataStore)),
-          preferences.setDouble(
-              doubleKey, testDouble, getOptions(useDataStore)),
-          preferences.setStringList(listKey, testList, getOptions(useDataStore))
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringList(listKey, testList, options)
         ]);
 
         final Set<String> keys = await preferences.getKeys(
           const GetPreferencesParameters(filter: PreferencesFilters()),
-          getOptions(useDataStore),
+          options,
         );
 
         expect(keys.length, 5);
@@ -677,23 +684,23 @@ void main() {
       });
 
       testWidgets('getKeys with filter with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
-          preferences.setString(
-              stringKey, testString, getOptions(useDataStore)),
-          preferences.setBool(boolKey, testBool, getOptions(useDataStore)),
-          preferences.setInt(intKey, testInt, getOptions(useDataStore)),
-          preferences.setDouble(
-              doubleKey, testDouble, getOptions(useDataStore)),
-          preferences.setStringList(listKey, testList, getOptions(useDataStore))
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringList(listKey, testList, options)
         ]);
 
         final Set<String> keys = await preferences.getKeys(
           const GetPreferencesParameters(
             filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
           ),
-          getOptions(useDataStore),
+          options,
         );
 
         expect(keys.length, 2);
@@ -702,65 +709,53 @@ void main() {
       });
 
       testWidgets('clear with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
-          preferences.setString(
-              stringKey, testString, getOptions(useDataStore)),
-          preferences.setBool(boolKey, testBool, getOptions(useDataStore)),
-          preferences.setInt(intKey, testInt, getOptions(useDataStore)),
-          preferences.setDouble(
-              doubleKey, testDouble, getOptions(useDataStore)),
-          preferences.setStringList(listKey, testList, getOptions(useDataStore))
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringList(listKey, testList, options)
         ]);
 
         await preferences.clear(
           const ClearPreferencesParameters(filter: PreferencesFilters()),
-          getOptions(useDataStore),
+          options,
         );
 
-        expect(await preferences.getString(stringKey, getOptions(useDataStore)),
-            null);
-        expect(
-            await preferences.getBool(boolKey, getOptions(useDataStore)), null);
-        expect(
-            await preferences.getInt(intKey, getOptions(useDataStore)), null);
-        expect(await preferences.getDouble(doubleKey, getOptions(useDataStore)),
-            null);
-        expect(
-            await preferences.getStringList(listKey, getOptions(useDataStore)),
-            null);
+        expect(await preferences.getString(stringKey, options), null);
+        expect(await preferences.getBool(boolKey, options), null);
+        expect(await preferences.getInt(intKey, options), null);
+        expect(await preferences.getDouble(doubleKey, options), null);
+        expect(await preferences.getStringList(listKey, options), null);
       });
 
       testWidgets('clear with filter with $backend', (WidgetTester _) async {
-        final SharedPreferencesAsyncPlatform preferences =
-            await getPreferences(useDataStore);
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
-          preferences.setString(
-              stringKey, testString, getOptions(useDataStore)),
-          preferences.setBool(boolKey, testBool, getOptions(useDataStore)),
-          preferences.setInt(intKey, testInt, getOptions(useDataStore)),
-          preferences.setDouble(
-              doubleKey, testDouble, getOptions(useDataStore)),
-          preferences.setStringList(listKey, testList, getOptions(useDataStore))
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringList(listKey, testList, options)
         ]);
         await preferences.clear(
           const ClearPreferencesParameters(
             filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
           ),
-          getOptions(useDataStore),
+          options,
         );
-        expect(await preferences.getString(stringKey, getOptions(useDataStore)),
-            null);
-        expect(
-            await preferences.getBool(boolKey, getOptions(useDataStore)), null);
-        expect(await preferences.getInt(intKey, getOptions(useDataStore)),
-            testInt);
-        expect(await preferences.getDouble(doubleKey, getOptions(useDataStore)),
-            testDouble);
-        expect(
-            await preferences.getStringList(listKey, getOptions(useDataStore)),
-            testList);
+        expect(await preferences.getString(stringKey, options), null);
+        expect(await preferences.getBool(boolKey, options), null);
+        expect(await preferences.getInt(intKey, options), testInt);
+        expect(await preferences.getDouble(doubleKey, options), testDouble);
+        expect(await preferences.getStringList(listKey, options), testList);
       });
     });
   }
@@ -770,27 +765,28 @@ void main() {
 
   testWidgets('Shared Preferences works with multiple files',
       (WidgetTester _) async {
-    final SharedPreferencesAsyncPlatform preferences =
-        await getPreferences(false);
+    final SharedPreferencesAsyncAndroidOptions options1 =
+        getOptions(false, fileName: 'file1');
+    final SharedPreferencesAsyncAndroidOptions options2 =
+        getOptions(false, fileName: 'file2');
+    final SharedPreferencesAsyncPlatform preferences = getPreferences();
+    await clearPreferences(preferences, options1);
+    await clearPreferences(preferences, options2);
 
-    await preferences.setInt(intKey, 1, getOptions(false, fileName: 'file1'));
-    await preferences.setInt(intKey, 2, getOptions(false, fileName: 'file2'));
-    expect(
-        await preferences.getInt(intKey, getOptions(false, fileName: 'file1')),
-        1);
-    expect(
-        await preferences.getInt(intKey, getOptions(false, fileName: 'file2')),
-        2);
+    await preferences.setInt(intKey, 1, options1);
+    await preferences.setInt(intKey, 2, options2);
+    expect(await preferences.getInt(intKey, options1), 1);
+    expect(await preferences.getInt(intKey, options2), 2);
   });
 
   testWidgets('Shared Preferences can read default sharedPreferences',
       (WidgetTester _) async {
-    final SharedPreferencesAsyncPlatform preferences =
-        await getPreferences(false);
+    final SharedPreferencesAsyncAndroidOptions options = getOptions(false);
+    final SharedPreferencesAsyncPlatform preferences = getPreferences();
 
     expect(
         await preferences.getString(
-            'thisStringIsWrittenInTheExampleAppKotlinCode', getOptions(false)),
+            'thisStringIsWrittenInTheExampleAppJavaCode', options),
         'testString');
   });
 }
