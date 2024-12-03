@@ -2,6 +2,10 @@
 
 * Adds `SharedPreferences` support within `SharedPreferencesAsyncAndroid` API.
 
+## 2.3.4
+
+* Restrict types when decoding preferences.
+
 ## 2.3.3
 
 * Updates Java compatibility version to 11.

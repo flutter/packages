@@ -22,7 +22,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -420,7 +419,7 @@ class ListEncoder : SharedPreferencesListEncoder {
   override fun decode(listString: String): List<String> {
     try {
       val byteArray = Base64.decode(listString, 0)
-      val stream = ObjectInputStream(ByteArrayInputStream(byteArray))
+      val stream = StringListObjectInputStream(ByteArrayInputStream(byteArray))
       return (stream.readObject() as List<*>).filterIsInstance<String>()
     } catch (e: RuntimeException) {
       throw RuntimeException(e)

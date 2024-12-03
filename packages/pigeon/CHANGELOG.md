@@ -1,3 +1,12 @@
+## 22.6.3
+
+* Replaces deprecated collection method usage.
+
+## 22.6.2
+
+* Removes the `@protected` annotation from the InstanceManager field of the
+  `PigeonInternalProxyApiBaseClass`.
+
 ## 22.6.1
 
 * [gobject] Moves class declarations to the header to work around a bug in some
