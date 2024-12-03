@@ -103,7 +103,7 @@ class BillingClient {
         hostCallbackHandler.disconnectCallbacks.length - 1,
         platformBillingChoiceMode(billingChoiceMode),
         switch (pendingPurchasesParams) {
-          final PendingPurchasesParamsWrapper params? =>
+          final PendingPurchasesParamsWrapper params =>
             pendingPurchasesParamsFromWrapper(params),
           null => PendingPurchasesParams(enablePrepaidPlans: false)
         },

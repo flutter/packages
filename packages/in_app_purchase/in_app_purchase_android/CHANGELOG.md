@@ -4,6 +4,7 @@
 * **BREAKING CHANGES**:
   * Removes the deprecated `ProrationMode` enum. `ReplacementMode` should be used instead.
   * Removes the deprecated `BillingClientWrapper.enablePendingPurchases` method.
+  * Bumps `minSdk` to 21
 * Adds `installmentPlanDetails` to `SubscriptionOfferDetailsWrapper`
 * Adds APIs to support pending transactions for subscription prepaid plans (`PendingPurchaseParams`).
 
