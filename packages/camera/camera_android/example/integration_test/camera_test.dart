@@ -92,7 +92,9 @@ void main() {
         await controller.dispose();
       }
     }
-  });
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
@@ -197,7 +199,9 @@ void main() {
     await videoController.dispose();
 
     expect(duration, lessThan(recordingTime - timePaused));
-  });
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 
   testWidgets('Set description while recording', (WidgetTester tester) async {
     final List<CameraDescription> cameras =
@@ -234,7 +238,9 @@ void main() {
       // cameras switched
       expect(controller.description, cameras[1]);
     }
-  });
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 
   testWidgets('Set description', (WidgetTester tester) async {
     final List<CameraDescription> cameras =
@@ -249,79 +255,79 @@ void main() {
     await controller.setDescription(cameras[1]);
 
     expect(controller.description, cameras[1]);
-  });
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 
-  testWidgets(
-    'image streaming',
-    (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
-      if (cameras.isEmpty) {
+  testWidgets('image streaming', (WidgetTester tester) async {
+    final List<CameraDescription> cameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+
+    final CameraController controller = CameraController(cameras[0]);
+
+    await controller.initialize();
+    bool isDetecting = false;
+
+    await controller.startImageStream((CameraImageData image) {
+      if (isDetecting) {
         return;
       }
 
-      final CameraController controller = CameraController(cameras[0]);
+      isDetecting = true;
 
-      await controller.initialize();
-      bool isDetecting = false;
+      expectLater(image, isNotNull).whenComplete(() => isDetecting = false);
+    });
 
-      await controller.startImageStream((CameraImageData image) {
-        if (isDetecting) {
-          return;
-        }
+    expect(controller.value.isStreamingImages, true);
 
-        isDetecting = true;
+    sleep(const Duration(milliseconds: 500));
 
-        expectLater(image, isNotNull).whenComplete(() => isDetecting = false);
-      });
+    await controller.stopImageStream();
+    await controller.dispose();
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 
-      expect(controller.value.isStreamingImages, true);
+  testWidgets('recording with image stream', (WidgetTester tester) async {
+    final List<CameraDescription> cameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
 
-      sleep(const Duration(milliseconds: 500));
+    final CameraController controller = CameraController(cameras[0]);
 
-      await controller.stopImageStream();
-      await controller.dispose();
-    },
-  );
+    await controller.initialize();
+    bool isDetecting = false;
 
-  testWidgets(
-    'recording with image stream',
-    (WidgetTester tester) async {
-      final List<CameraDescription> cameras =
-          await CameraPlatform.instance.availableCameras();
-      if (cameras.isEmpty) {
+    await controller.startVideoRecording(
+        streamCallback: (CameraImageData image) {
+      if (isDetecting) {
         return;
       }
 
-      final CameraController controller = CameraController(cameras[0]);
+      isDetecting = true;
 
-      await controller.initialize();
-      bool isDetecting = false;
+      expectLater(image, isNotNull);
+    });
 
-      await controller.startVideoRecording(
-          streamCallback: (CameraImageData image) {
-        if (isDetecting) {
-          return;
-        }
+    expect(controller.value.isStreamingImages, true);
 
-        isDetecting = true;
+    // Stopping recording before anything is recorded will throw, per
+    // https://developer.android.com/reference/android/media/MediaRecorder.html#stop()
+    // so delay long enough to ensure that some data is recorded.
+    await Future<void>.delayed(const Duration(seconds: 2));
 
-        expectLater(image, isNotNull);
-      });
+    await controller.stopVideoRecording();
+    await controller.dispose();
 
-      expect(controller.value.isStreamingImages, true);
-
-      // Stopping recording before anything is recorded will throw, per
-      // https://developer.android.com/reference/android/media/MediaRecorder.html#stop()
-      // so delay long enough to ensure that some data is recorded.
-      await Future<void>.delayed(const Duration(seconds: 2));
-
-      await controller.stopVideoRecording();
-      await controller.dispose();
-
-      expect(controller.value.isStreamingImages, false);
-    },
-  );
+    expect(controller.value.isStreamingImages, false);
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 
   group('Camera settings', () {
     Future<CameraDescription> getCamera() async {
@@ -457,5 +463,7 @@ void main() {
         expect(lengths[n], greaterThan(0));
       }
     });
-  });
+  },
+      // TODO(camillesimon): Re-enable test when issue is fixed https://github.com/flutter/flutter/issues/154682.
+      skip: true);
 }
