@@ -25,6 +25,7 @@
 #include "photo_handler.h"
 #include "preview_handler.h"
 #include "record_handler.h"
+#include "task_runner.h"
 #include "texture_handler.h"
 
 namespace camera_windows {
@@ -68,9 +69,12 @@ class CaptureController {
   // device_id:         A string that holds information of camera device id to
   //                    be captured.
   // media_settings:    Settings controlling capture behavior.
-  virtual bool InitCaptureDevice(
-      TextureRegistrar* texture_registrar, const std::string& device_id,
-      const PlatformMediaSettings& media_settings) = 0;
+  // task_runner:       A task runner for posting image frames via a platform
+  //                    thread.
+  virtual bool InitCaptureDevice(TextureRegistrar* texture_registrar,
+                                 const std::string& device_id,
+                                 const PlatformMediaSettings& media_settings,
+                                 std::shared_ptr<TaskRunner> task_runner) = 0;
 
   // Returns preview frame width
   virtual uint32_t GetPreviewWidth() const = 0;
@@ -125,7 +129,8 @@ class CaptureControllerImpl : public CaptureController,
   // CaptureController
   bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                          const std::string& device_id,
-                         const PlatformMediaSettings& media_settings) override;
+                         const PlatformMediaSettings& media_settings,
+                         std::shared_ptr<TaskRunner> task_runner) override;
   uint32_t GetPreviewWidth() const override { return preview_frame_width_; }
   uint32_t GetPreviewHeight() const override { return preview_frame_height_; }
   void StartPreview() override;
@@ -231,7 +236,8 @@ class CaptureControllerImpl : public CaptureController,
   std::unique_ptr<PreviewHandler> preview_handler_;
   std::unique_ptr<PhotoHandler> photo_handler_;
   std::unique_ptr<TextureHandler> texture_handler_;
-  std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>
+  std::shared_ptr<TaskRunner> task_runner_;
+  std::shared_ptr<flutter::EventSink<flutter::EncodableValue>>
       image_stream_sink_;
   CaptureControllerListener* capture_controller_listener_;
   std::string video_device_id_;

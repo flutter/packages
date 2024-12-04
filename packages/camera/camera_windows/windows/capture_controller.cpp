@@ -303,7 +303,8 @@ void CaptureControllerImpl::ResetCaptureController() {
 
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
-    const PlatformMediaSettings& media_settings) {
+    const PlatformMediaSettings& media_settings,
+    std::shared_ptr<TaskRunner> task_runner) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {
@@ -320,6 +321,7 @@ bool CaptureControllerImpl::InitCaptureDevice(
   media_settings_ = media_settings;
   texture_registrar_ = texture_registrar;
   video_device_id_ = device_id;
+  task_runner_ = task_runner;
 
   // MFStartup must be called before using Media Foundation.
   if (!media_foundation_started_) {
@@ -900,7 +902,12 @@ bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
     flutter::EncodableValue encoded_value(data_map);
 
     // Send the encoded value through the image_stream_sink_.
-    image_stream_sink_->Success(encoded_value);
+    std::weak_ptr weak_sink = image_stream_sink_;
+    task_runner_->EnqueueTask([weak_sink, encoded_value]() {
+      std::shared_ptr<flutter::EventSink<flutter::EncodableValue>> sink =
+          weak_sink.lock();
+      if (sink) sink->Success(encoded_value);
+    });
   }
   return texture_handler_->UpdateBuffer(buffer, data_length);
 }
