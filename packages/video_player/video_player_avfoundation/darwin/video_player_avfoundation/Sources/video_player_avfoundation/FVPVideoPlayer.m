@@ -5,7 +5,7 @@
 #import <GLKit/GLKit.h>
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
 
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
