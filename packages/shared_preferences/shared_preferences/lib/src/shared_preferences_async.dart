@@ -397,6 +397,11 @@ class SharedPreferencesWithCache {
     return _platformMethods.clear(allowList: _cacheOptions.allowList);
   }
 
+  /// Checks if the provided key is valid based on the allowlist configuration.
+  ///
+  /// If an allowlist is specified in `_cacheOptions`, this method verifies
+  /// whether the given `key` is included in the allowlist. If no allowlist is
+  /// configured, all keys are considered valid by default.
   bool _isValidKey(String key) {
     return _cacheOptions.allowList?.contains(key) ?? true;
   }
