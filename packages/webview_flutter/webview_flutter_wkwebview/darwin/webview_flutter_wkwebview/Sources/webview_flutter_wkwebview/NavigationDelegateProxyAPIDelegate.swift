@@ -16,7 +16,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     api.didFinishNavigation(
       pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
-    ) { _ in }
+    ) { _ in}
   }
 
   func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {

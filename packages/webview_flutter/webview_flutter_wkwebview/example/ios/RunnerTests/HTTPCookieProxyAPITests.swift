@@ -23,7 +23,6 @@ class HTTPCookieProxyAPITests: XCTestCase {
     let instance = HTTPCookie(properties: [.name : "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"])!
     let value = try? api.pigeonDelegate.getProperties(pigeonApi: api, pigeonInstance: instance)
 
-    let wrapperProperties: [HttpCookiePropertyKey : String] = [.name : "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"]
     XCTAssertEqual(value?[.name] as? String, "foo")
     XCTAssertEqual(value?[.value] as? String, "bar")
     XCTAssertEqual(value?[.domain] as? String, "http://google.com")
