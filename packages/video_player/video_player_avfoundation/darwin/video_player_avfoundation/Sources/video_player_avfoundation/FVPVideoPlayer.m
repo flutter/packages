@@ -18,13 +18,13 @@ static void *rateContext = &rateContext;
 
 @interface FVPVideoPlayer ()
 /// The AVPlayerItemVideoOutput associated with this video player.
-@property(readonly, nonatomic, nonnull) AVPlayerItemVideoOutput *videoOutput;
+@property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
 /// The plugin registrar, to obtain view information from.
 @property(nonatomic, readonly) NSObject<FlutterPluginRegistrar> *registrar;
 /// The CALayer associated with the Flutter view this plugin is associated with, if any.
-@property(nonatomic, readonly, nullable) CALayer *flutterViewLayer;
+@property(nonatomic, readonly) CALayer *flutterViewLayer;
 /// The Flutter event sink used to send events to the Flutter engine.
-@property(nonatomic, nonnull) FlutterEventSink eventSink;
+@property(nonatomic) FlutterEventSink eventSink;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.
 @property(nonatomic) CGAffineTransform preferredTransform;
 /// Indicates whether the video player is currently playing.
@@ -32,9 +32,9 @@ static void *rateContext = &rateContext;
 /// Indicates whether the video player has been initialized.
 @property(nonatomic, readonly) BOOL isInitialized;
 /// The updater that drives callbacks to the engine to indicate that a new frame is ready.
-@property(nonatomic, nullable) FVPFrameUpdater *frameUpdater;
+@property(nonatomic) FVPFrameUpdater *frameUpdater;
 /// The display link that drives frameUpdater.
-@property(nonatomic, nullable) FVPDisplayLink *displayLink;
+@property(nonatomic) FVPDisplayLink *displayLink;
 /// Whether a new frame needs to be provided to the engine regardless of the current play/pause
 /// state (e.g., after a seek while paused). If YES, the display link should continue to run until
 /// the next frame is successfully provided.
