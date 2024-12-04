@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// FVPVideoPlayer is responsible for managing video playback using AVPlayer.
 /// It provides methods to control playback, adjust volume, handle seeking, and
 /// notify the Flutter engine about new video frames.
-@interface FVPVideoPlayer : NSObject
+@interface FVPVideoPlayer : NSObject <FlutterStreamHandler, FlutterTexture>
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic) FlutterEventChannel *eventChannel;
 /// Indicates whether the video player has been disposed.

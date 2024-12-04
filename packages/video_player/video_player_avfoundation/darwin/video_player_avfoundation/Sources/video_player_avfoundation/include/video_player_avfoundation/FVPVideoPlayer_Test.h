@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FVPVideoPlayer () <FlutterStreamHandler, FlutterTexture>
+@interface FVPVideoPlayer ()
 /// The AVPlayer instance used for video playback.
 @property(readonly, nonatomic) AVPlayer *player;
 /// The AVPlayerLayer used to display the video content.
