@@ -382,6 +382,24 @@ void main() {
       );
       expect(values['Int'], writeCount);
     });
+
+    testWidgets('returns all valid JSON data', (WidgetTester _) async {
+      const String value = 'flutter228';
+      const String invalidJsonDataKey = 'invalidJsonData';
+      const String validJsonDataKey = 'validJsonData';
+      html.window.localStorage.setItem(invalidJsonDataKey, value);
+      html.window.localStorage.setItem(validJsonDataKey, '"$value"');
+
+      final Map<String, Object> values = await preferences.getAllWithParameters(
+        GetAllParameters(
+          filter: PreferencesFilter(prefix: ''),
+        ),
+      );
+
+      expect(values.containsKey(invalidJsonDataKey), isFalse);
+      expect(values.containsKey(validJsonDataKey), isTrue);
+      expect(values[validJsonDataKey], equals(value));
+    });
   });
 
   group('shared_preferences_async', () {
@@ -457,19 +475,21 @@ void main() {
     testWidgets(
       'returns null when riding invalid JSON value',
       (WidgetTester _) async {
+        const String value = 'flutter228';
+        const String invalidJsonDataKey = 'invalidJsonData';
+        const String validJsonDataKey = 'validJsonData';
+
         final SharedPreferencesAsyncPlatform preferences =
             await getPreferences();
-
-        const String value = 'flutter228';
-        html.window.localStorage.setItem('invalidJsonData', value);
-        html.window.localStorage.setItem('validJsonData', '"$value"');
+        html.window.localStorage.setItem(invalidJsonDataKey, value);
+        html.window.localStorage.setItem(validJsonDataKey, '"$value"');
 
         expect(
-          await preferences.getString('invalidJsonData', emptyOptions),
+          await preferences.getString(invalidJsonDataKey, emptyOptions),
           isNull,
         );
         expect(
-          await preferences.getString('validJsonData', emptyOptions),
+          await preferences.getString(validJsonDataKey, emptyOptions),
           equals(value),
         );
       },
