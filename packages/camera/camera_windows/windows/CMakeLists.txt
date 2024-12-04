@@ -33,6 +33,9 @@ list(APPEND PLUGIN_SOURCES
   "texture_handler.h"
   "texture_handler.cpp"
   "com_heap_ptr.h"
+  "task_runner.h"
+  "task_runner_window.h"
+  "task_runner_window.cpp"
 )
 
 add_library(${PLUGIN_NAME} SHARED
@@ -84,6 +87,7 @@ add_executable(${TEST_RUNNER}
   test/camera_plugin_test.cpp
   test/camera_test.cpp
   test/capture_controller_test.cpp
+  test/task_runner_window_test.cpp
   ${PLUGIN_SOURCES}
 )
 apply_standard_settings(${TEST_RUNNER})
