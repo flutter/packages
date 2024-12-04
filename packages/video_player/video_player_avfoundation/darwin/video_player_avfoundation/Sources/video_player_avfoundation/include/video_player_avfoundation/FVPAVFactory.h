@@ -17,5 +17,6 @@
     (NSDictionary<NSString *, id> *)attributes;
 @end
 
+/// A default implementation of the FVPAVFactory protocol.
 @interface FVPDefaultAVFactory : NSObject <FVPAVFactory>
 @end
