@@ -5,7 +5,16 @@
 @import Foundation;
 #import <Flutter/Flutter.h>
 
-typedef void (^FLTCameraPermissionRequestCompletionHandler)(FlutterError *);
+#import "FLTPermissionService.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+typedef void (^FLTCameraPermissionRequestCompletionHandler)(FlutterError *_Nullable);
+
+@interface FLTCameraPermissionManager : NSObject
+@property (nonatomic, strong) id<FLTPermissionService> permissionService;
+
+- (instancetype)initWithPermissionService:(id<FLTPermissionService>)service;
 
 /// Requests camera access permission.
 ///
@@ -16,8 +25,8 @@ typedef void (^FLTCameraPermissionRequestCompletionHandler)(FlutterError *);
 /// @param handler if access permission is (or was previously) granted, completion handler will be
 /// called without error; Otherwise completion handler will be called with error. Handler can be
 /// called on an arbitrary dispatch queue.
-extern void FLTRequestCameraPermissionWithCompletionHandler(
-    FLTCameraPermissionRequestCompletionHandler handler);
+- (void)requestCameraPermissionWithCompletionHandler:(
+    FLTCameraPermissionRequestCompletionHandler)handler;
 
 /// Requests audio access permission.
 ///
@@ -28,5 +37,9 @@ extern void FLTRequestCameraPermissionWithCompletionHandler(
 /// @param handler if access permission is (or was previously) granted, completion handler will be
 /// called without error; Otherwise completion handler will be called with error. Handler can be
 /// called on an arbitrary dispatch queue.
-extern void FLTRequestAudioPermissionWithCompletionHandler(
-    FLTCameraPermissionRequestCompletionHandler handler);
+- (void)requestAudioPermissionWithCompletionHandler:(
+    FLTCameraPermissionRequestCompletionHandler)handler;
+
+@end
+
+NS_ASSUME_NONNULL_END
