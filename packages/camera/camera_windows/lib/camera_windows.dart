@@ -133,6 +133,7 @@ class CameraWindows extends CameraPlatform {
 
   @override
   Future<void> dispose(int cameraId) async {
+    await _stopPlatformStream(cameraId);
     await _hostApi.dispose(cameraId);
 
     // Destroy method channel after camera is disposed to be able to handle last messages.
@@ -266,13 +267,14 @@ class CameraWindows extends CameraPlatform {
   }
 
   Future<void> _startPlatformStream(int cameraId) async {
-    _startStreamListener();
     await _hostApi.startImageStream(cameraId);
+    _startStreamListener(cameraId);
   }
 
-  void _startStreamListener() {
-    const EventChannel cameraEventChannel =
-        EventChannel('plugins.flutter.io/camera_android/imageStream');
+  void _startStreamListener(int cameraId) {
+    final eventChannelName =
+        'plugins.flutter.io/camera_windows/imageStream/$cameraId';
+    final EventChannel cameraEventChannel = EventChannel(eventChannelName);
     _platformImageStreamSubscription =
         cameraEventChannel.receiveBroadcastStream().listen((dynamic imageData) {
       _frameStreamController!
@@ -281,6 +283,10 @@ class CameraWindows extends CameraPlatform {
   }
 
   FutureOr<void> _onFrameStreamCancel(int cameraId) async {
+    await _stopPlatformStream(cameraId);
+  }
+
+  Future<void> _stopPlatformStream(int cameraId) async {
     await _hostApi.stopImageStream(cameraId);
     await _platformImageStreamSubscription?.cancel();
     _platformImageStreamSubscription = null;
