@@ -369,51 +369,35 @@ void CameraPlugin::StopVideoRecording(
   }
 }
 
-void CameraPlugin::StartImageStream(
-    int64_t camera_id,
-    std::function<void(std::optional<FlutterError> reply)> result) {
-  // check if request already exists
+std::optional<FlutterError> CameraPlugin::StartImageStream(int64_t camera_id) {
   Camera* camera = GetCameraByCameraId(camera_id);
   if (!camera) {
-    return result(FlutterError("camera_error", "Camera not created"));
-  }
-  if (camera->HasPendingResultByType(PendingResultType::kStartStream)) {
-    return result(
-        FlutterError("camera_error", "Pending start stream request exists"));
+    return FlutterError("camera_error", "Camera not created");
   }
 
   if (!event_sink) {
-    return result(FlutterError("camera_error",
-                               "Unable to make event channel from windows"));
+    return FlutterError("camera_error",
+                        "Unable to make event channel from windows");
   }
 
-  if (camera->AddPendingVoidResult(PendingResultType::kStartStream,
-                                   std::move(result))) {
-    CaptureController* cc = camera->GetCaptureController();
-    assert(cc);
-    cc->StartImageStream(std::move(event_sink));
-  }
+  CaptureController* cc = camera->GetCaptureController();
+  assert(cc);
+  cc->StartImageStream(std::move(event_sink));
+
+  return std::nullopt;
 }
 
-void CameraPlugin::StopImageStream(
-    int64_t camera_id,
-    std::function<void(std::optional<FlutterError> reply)> result) {
-  // check if request already exists
+std::optional<FlutterError> CameraPlugin::StopImageStream(int64_t camera_id) {
   Camera* camera = GetCameraByCameraId(camera_id);
   if (!camera) {
-    return result(FlutterError("camera_error", "Camera not created"));
-  }
-  if (camera->HasPendingResultByType(PendingResultType::kStopStream)) {
-    return result(
-        FlutterError("camera_error", "Pending stop stream request exists"));
+    return FlutterError("camera_error", "Camera not created");
   }
 
-  if (camera->AddPendingVoidResult(PendingResultType::kStopStream,
-                                   std::move(result))) {
-    CaptureController* cc = camera->GetCaptureController();
-    assert(cc);
-    cc->StopImageStream();
-  }
+  CaptureController* cc = camera->GetCaptureController();
+  assert(cc);
+  cc->StopImageStream();
+
+  return std::nullopt;
 }
 
 void CameraPlugin::TakePicture(
