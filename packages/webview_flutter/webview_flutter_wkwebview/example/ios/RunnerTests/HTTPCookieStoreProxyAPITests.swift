@@ -8,18 +8,23 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
+
 class HTTPCookieStoreProxyAPITests: XCTestCase {
   @MainActor func testSetCookie() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKHTTPCookieStore(registrar)
 
-    let instance = TestCookieStore.customInit()
+    var instance: TestCookieStore? = TestCookieStore.customInit()
     let cookie = HTTPCookie(properties: [.name : "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"])!
-    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance, cookie: cookie) { _ in
+    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance!, cookie: cookie) { _ in
       
     }
 
-    XCTAssertEqual(instance.setCookieArg, cookie)
+    XCTAssertEqual(instance!.setCookieArg, cookie)
+    
+    DispatchQueue.main.async {
+      instance = nil
+    }
   }
 }
 

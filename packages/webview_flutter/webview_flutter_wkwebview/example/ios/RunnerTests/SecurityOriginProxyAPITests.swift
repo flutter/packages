@@ -33,7 +33,6 @@ class SecurityOriginProxyAPITests: XCTestCase {
   }
 
   @MainActor func testSecurityProtocol() {
-    print("hello")
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
 
@@ -41,7 +40,6 @@ class SecurityOriginProxyAPITests: XCTestCase {
     let value = try? api.pigeonDelegate.securityProtocol(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.`protocol`)
-    print("goodbye")
   }
 }
 

@@ -10,44 +10,40 @@ import XCTest
 
 class FrameInfoProxyAPITests: XCTestCase {
   @MainActor func testIsMainFrame() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
-//
-//    let instance = TestFrameInfo()
-//    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
-//
-//    XCTAssertEqual(value, instance.isMainFrame)
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
+
+    var instance: TestFrameInfo? = TestFrameInfo()
+    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance!)
+
+    XCTAssertEqual(value, instance!.isMainFrame)
+    
+    DispatchQueue.main.async {
+      instance = nil
+    }
   }
 
   @MainActor func testRequest() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
-//    let instance = TestFrameInfo()
-//    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
-//
-//    XCTAssertEqual(value?.value, instance.request)
+    var instance: TestFrameInfo?  = TestFrameInfo()
+    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
+
+    XCTAssertEqual(value?.value, instance!.request)
+    
+    DispatchQueue.main.async {
+      instance = nil
+    }
   }
 }
 
 class TestFrameInfo : WKFrameInfo {
-  override init() {
-    
-  }
-  
   override var isMainFrame: Bool {
     return true
   }
   
   override var request: URLRequest {
     return URLRequest(url: URL(string: "https://google.com")!)
-  }
-  
-  override func copy(with zone: NSZone? = nil) -> Any {
-    return TestFrameInfo()
-  }
-  
-  func dealloc() {
-    
   }
 }

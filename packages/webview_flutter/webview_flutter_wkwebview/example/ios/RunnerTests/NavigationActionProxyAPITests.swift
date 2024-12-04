@@ -13,30 +13,42 @@ class NavigationActionProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
-    let instance = TestNavigationAction()
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
+    var instance: TestNavigationAction? = TestNavigationAction()
+    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
 
-    XCTAssertEqual(value?.value, instance.request)
+    XCTAssertEqual(value?.value, instance!.request)
+    
+    DispatchQueue.main.async {
+      instance = nil
+    }
   }
 
   @MainActor func testTargetFrame() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
-    let instance = TestNavigationAction()
-    let value = try? api.pigeonDelegate.targetFrame(pigeonApi: api, pigeonInstance: instance)
+    var instance: TestNavigationAction? = TestNavigationAction()
+    let value = try? api.pigeonDelegate.targetFrame(pigeonApi: api, pigeonInstance: instance!)
 
-    XCTAssertEqual(value, instance.targetFrame)
+    XCTAssertEqual(value, instance!.targetFrame)
+    
+    DispatchQueue.main.async {
+      instance = nil
+    }
   }
 
   @MainActor func testNavigationType() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
 
-    let instance = TestNavigationAction()
-    let value = try? api.pigeonDelegate.navigationType(pigeonApi: api, pigeonInstance: instance)
+    var instance: TestNavigationAction? = TestNavigationAction()
+    let value = try? api.pigeonDelegate.navigationType(pigeonApi: api, pigeonInstance: instance!)
 
     XCTAssertEqual(value, .formSubmitted)
+    
+    DispatchQueue.main.async {
+      instance = nil
+    }
   }
 }
 
