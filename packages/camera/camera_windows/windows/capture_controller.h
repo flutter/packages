@@ -104,6 +104,9 @@ class CaptureController {
   // Stops the current image streaming.
   virtual void StopImageStream() = 0;
 
+  // Returns true if an image stream is currently running.
+  virtual bool IsStreaming() const = 0;
+
   // Captures a still photo.
   virtual void TakePicture(const std::string& file_path) = 0;
 };
@@ -142,6 +145,9 @@ class CaptureControllerImpl : public CaptureController,
       std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink)
       override;
   void StopImageStream() override;
+  bool IsStreaming() const override {
+    return static_cast<bool>(image_stream_sink_);
+  }
   void TakePicture(const std::string& file_path) override;
 
   // CaptureEngineObserver
