@@ -1245,6 +1245,8 @@ void main() {
     final Set<Marker> markers = <Marker>{
       Marker(
           markerId: const MarkerId('1'),
+          // Intentionally testing the deprecated code path.
+          // ignore: deprecated_member_use
           icon: await BitmapDescriptor.fromAssetImage(
             imageConfiguration,
             'assets/red_square.png',
@@ -1268,6 +1270,8 @@ void main() {
   testWidgets('markerWithLegacyBytes', (WidgetTester tester) async {
     tester.view.devicePixelRatio = 2.0;
     final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+    // Intentionally testing the deprecated code path.
+    // ignore: deprecated_member_use
     final BitmapDescriptor icon = BitmapDescriptor.fromBytes(
       bytes,
     );

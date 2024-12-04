@@ -74,6 +74,29 @@ class ProxyApiTestClassApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     return ProxyApiTestClass()
   }
 
+  override fun namedConstructor(
+      aBool: Boolean,
+      anInt: Long,
+      aDouble: Double,
+      aString: String,
+      aUint8List: ByteArray,
+      aList: List<Any?>,
+      aMap: Map<String?, Any?>,
+      anEnum: ProxyApiTestEnum,
+      aProxyApi: ProxyApiSuperClass,
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableDouble: Double?,
+      aNullableString: String?,
+      aNullableUint8List: ByteArray?,
+      aNullableList: List<Any?>?,
+      aNullableMap: Map<String?, Any?>?,
+      aNullableEnum: ProxyApiTestEnum?,
+      aNullableProxyApi: ProxyApiSuperClass?,
+  ): ProxyApiTestClass {
+    return ProxyApiTestClass()
+  }
+
   override fun attachedField(pigeon_instance: ProxyApiTestClass): ProxyApiSuperClass {
     return ProxyApiSuperClass()
   }

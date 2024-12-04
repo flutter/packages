@@ -1,3 +1,7 @@
+## 3.16.3
+
+* Fixes re-registering existing channels while removing Javascript channels.
+
 ## 3.16.2
 
 * Updates README to remove contributor-focused documentation.

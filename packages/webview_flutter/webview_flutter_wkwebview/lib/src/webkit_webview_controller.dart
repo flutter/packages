@@ -742,12 +742,16 @@ window.addEventListener("error", function(e) {
     _javaScriptChannelParams.keys.forEach(
       _webView.configuration.userContentController.removeScriptMessageHandler,
     );
-
-    _javaScriptChannelParams.remove(removedJavaScriptChannel);
+    final Map<String, WebKitJavaScriptChannelParams> remainingChannelParams =
+        Map<String, WebKitJavaScriptChannelParams>.from(
+      _javaScriptChannelParams,
+    );
+    remainingChannelParams.remove(removedJavaScriptChannel);
+    _javaScriptChannelParams.clear();
 
     await Future.wait(<Future<void>>[
       for (final JavaScriptChannelParams params
-          in _javaScriptChannelParams.values)
+          in remainingChannelParams.values)
         addJavaScriptChannel(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.

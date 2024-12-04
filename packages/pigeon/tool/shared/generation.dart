@@ -118,7 +118,7 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'core_tests',
+      swiftIncludeErrorClass: input != 'background_platform_channels',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -150,7 +150,7 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'core_tests',
+      swiftIncludeErrorClass: input != 'background_platform_channels',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
