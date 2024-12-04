@@ -875,38 +875,30 @@ void CaptureControllerImpl::OnRecordStopped(CameraResult result,
 // Implements CaptureEngineObserver::UpdateBuffer.
 bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
                                          uint32_t data_length) {
+  using flutter::EncodableValue, flutter::EncodableMap;
+
   if (!texture_handler_) {
     return false;
   }
   if (image_stream_sink_) {
-    // Convert the buffer data to a std::vector<uint8_t>.
-    std::vector<uint8_t> buffer_data(buffer, buffer + data_length);
+    // Encode the frame into a map that can be sent through the `EventSink`.
+    EncodableMap encoded_frame = {
+        {EncodableValue("data"),
+         EncodableValue(std::vector<uint8_t>(buffer, buffer + data_length))},
+        {EncodableValue("height"),
+         EncodableValue(static_cast<int64_t>(preview_frame_height_))},
+        {EncodableValue("width"),
+         EncodableValue(static_cast<int64_t>(preview_frame_width_))},
+        {EncodableValue("length"),
+         EncodableValue(static_cast<int64_t>(data_length))}};
 
-    // Ensure preview_frame_height_ and preview_frame_width_ are of supported
-    // types.
-    int preview_frame_height = static_cast<int>(preview_frame_height_);
-    int preview_frame_width = static_cast<int>(preview_frame_width_);
-
-    // Create a map to hold the buffer data and data length.
-    flutter::EncodableMap data_map;
-    data_map[flutter::EncodableValue("data")] =
-        flutter::EncodableValue(buffer_data);
-    data_map[flutter::EncodableValue("height")] =
-        flutter::EncodableValue(preview_frame_height);
-    data_map[flutter::EncodableValue("width")] =
-        flutter::EncodableValue(preview_frame_width);
-    data_map[flutter::EncodableValue("length")] =
-        flutter::EncodableValue(static_cast<int>(data_length));
-
-    // Wrap the map in a flutter::EncodableValue.
-    flutter::EncodableValue encoded_value(data_map);
-
-    // Send the encoded value through the image_stream_sink_.
-    std::weak_ptr weak_sink = image_stream_sink_;
-    task_runner_->EnqueueTask([weak_sink, encoded_value]() {
+    task_runner_->EnqueueTask([weak_sink = std::weak_ptr(image_stream_sink_),
+                               encoded_frame = std::move(encoded_frame)]() {
       std::shared_ptr<flutter::EventSink<flutter::EncodableValue>> sink =
           weak_sink.lock();
-      if (sink) sink->Success(encoded_value);
+      if (sink) {
+        sink->Success(encoded_frame);
+      }
     });
   }
   return texture_handler_->UpdateBuffer(buffer, data_length);
