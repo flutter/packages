@@ -1,3 +1,11 @@
+## 14.6.2
+
+- Replaces deprecated collection method usage.
+
+## 14.6.1
+
+- Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
+
 ## 14.6.0
 
 - Allows going to a path relatively by prefixing `./`
@@ -5,6 +13,7 @@
 ## 14.5.0
 
 - Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
 
 ## 14.4.1
 

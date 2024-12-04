@@ -1,3 +1,11 @@
+## 2.0.16
+
+* Adopts code excerpts for README.
+
+## 2.0.15
+
+* Fixes `SvgNetworkLoader` not closing internally created http clients.
+
 ## 2.0.14
 
 * Makes the package WASM compatible.
