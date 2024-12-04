@@ -29,6 +29,8 @@ using ::testing::EndsWith;
 using ::testing::Eq;
 using ::testing::Pointee;
 using ::testing::Return;
+using ::testing::Optional;
+using ::testing::Property;
 
 void MockInitCamera(MockCamera* camera, bool success) {
   EXPECT_CALL(*camera,
@@ -366,34 +368,14 @@ TEST(CameraPlugin, StartImageStreamHandlerCallsStartImageStream) {
         return cam->camera_id_ == camera_id;
       });
 
-  EXPECT_CALL(*camera,
-              HasPendingResultByType(Eq(PendingResultType::kStartStream)))
-      .Times(1)
-      .WillOnce(Return(false));
-
-  EXPECT_CALL(*camera,
-              AddPendingVoidResult(Eq(PendingResultType::kStartStream), _))
-      .Times(1)
-      .WillOnce([cam = camera.get()](
-                    PendingResultType type,
-                    std::function<void(std::optional<FlutterError>)> result) {
-        cam->pending_void_result_ = std::move(result);
-        return true;
-      });
-
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_void_result_);
         return cam->capture_controller_.get();
       });
 
   EXPECT_CALL(*capture_controller, StartImageStream)
-      .Times(1)
-      .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_void_result_);
-        return cam->pending_void_result_(std::nullopt);
-      });
+      .Times(1);
 
   camera->camera_id_ = mock_camera_id;
   camera->capture_controller_ = std::move(capture_controller);
@@ -402,24 +384,14 @@ TEST(CameraPlugin, StartImageStreamHandlerCallsStartImageStream) {
                           std::make_unique<MockBinaryMessenger>().get(),
                           std::make_unique<MockCameraFactory>());
 
-  // Add mocked camera to plugins camera list.
-  plugin.AddCamera(std::move(camera));
-
   // Set the event sink to a mocked event sink.
   auto mock_event_sink = std::make_unique<MockEventSink>();
   plugin.SetEventSink(std::move(mock_event_sink));
 
-  bool result_called = false;
-  std::function<void(std::optional<FlutterError>)> start_image_stream_result =
-      [&result_called](std::optional<FlutterError> reply) {
-        EXPECT_FALSE(result_called);  // Ensure only one reply call.
-        result_called = true;
-        EXPECT_FALSE(reply);
-      };
+  // Add mocked camera to plugins camera list.
+  plugin.AddCamera(std::move(camera));
 
-  plugin.StartImageStream(mock_camera_id, std::move(start_image_stream_result));
-
-  EXPECT_TRUE(result_called);
+  EXPECT_EQ(plugin.StartImageStream(mock_camera_id), std::nullopt);
 }
 
 TEST(CameraPlugin, StartImageStreamHandlerErrorOnInvalidCameraId) {
@@ -452,18 +424,7 @@ TEST(CameraPlugin, StartImageStreamHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  bool result_called = false;
-  std::function<void(std::optional<FlutterError>)> start_image_stream_result =
-      [&result_called](std::optional<FlutterError> reply) {
-        EXPECT_FALSE(result_called);  // Ensure only one reply call.
-        result_called = true;
-        EXPECT_TRUE(reply);
-      };
-
-  plugin.StartImageStream(missing_camera_id,
-                          std::move(start_image_stream_result));
-
-  EXPECT_TRUE(result_called);
+  EXPECT_THAT(plugin.StartImageStream(missing_camera_id), Optional(Property("code", &FlutterError::code, "camera_error")));
 }
 
 TEST(CameraPlugin, StopImageStreamHandlerCallsStopImageStream) {
@@ -481,34 +442,14 @@ TEST(CameraPlugin, StopImageStreamHandlerCallsStopImageStream) {
         return cam->camera_id_ == camera_id;
       });
 
-  EXPECT_CALL(*camera,
-              HasPendingResultByType(Eq(PendingResultType::kStopStream)))
-      .Times(1)
-      .WillOnce(Return(false));
-
-  EXPECT_CALL(*camera,
-              AddPendingVoidResult(Eq(PendingResultType::kStopStream), _))
-      .Times(1)
-      .WillOnce([cam = camera.get()](
-                    PendingResultType type,
-                    std::function<void(std::optional<FlutterError>)> result) {
-        cam->pending_void_result_ = std::move(result);
-        return true;
-      });
-
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_void_result_);
         return cam->capture_controller_.get();
       });
 
   EXPECT_CALL(*capture_controller, StopImageStream)
-      .Times(1)
-      .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_void_result_);
-        return cam->pending_void_result_(std::nullopt);
-      });
+      .Times(1);
 
   camera->camera_id_ = mock_camera_id;
   camera->capture_controller_ = std::move(capture_controller);
@@ -520,17 +461,7 @@ TEST(CameraPlugin, StopImageStreamHandlerCallsStopImageStream) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  bool result_called = false;
-  std::function<void(std::optional<FlutterError>)> stop_image_stream_result =
-      [&result_called](std::optional<FlutterError> reply) {
-        EXPECT_FALSE(result_called);  // Ensure only one reply call.
-        result_called = true;
-        EXPECT_FALSE(reply);
-      };
-
-  plugin.StopImageStream(mock_camera_id, std::move(stop_image_stream_result));
-
-  EXPECT_TRUE(result_called);
+  EXPECT_EQ(plugin.StopImageStream(mock_camera_id), std::nullopt);
 }
 
 TEST(CameraPlugin, StopImageStreamHandlerErrorOnInvalidCameraId) {
@@ -563,18 +494,7 @@ TEST(CameraPlugin, StopImageStreamHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  bool result_called = false;
-  std::function<void(std::optional<FlutterError>)> stop_image_stream_result =
-      [&result_called](std::optional<FlutterError> reply) {
-        EXPECT_FALSE(result_called);  // Ensure only one reply call.
-        result_called = true;
-        EXPECT_TRUE(reply);
-      };
-
-  plugin.StopImageStream(missing_camera_id,
-                         std::move(stop_image_stream_result));
-
-  EXPECT_TRUE(result_called);
+  EXPECT_THAT(plugin.StopImageStream(missing_camera_id), Optional(Property("code", &FlutterError::code, "camera_error")));
 }
 
 TEST(CameraPlugin, InitializeHandlerErrorOnInvalidCameraId) {
