@@ -11,7 +11,7 @@ import 'package:google_adsense/google_adsense.dart';
 
 void main() {
   adSense.initialize(
-      '0556581589806023'); // TODO: Replace with your own AdClient ID
+      '0123456789012345'); // TODO: Replace with your Publisher ID (pub-0123456789012345) - https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU
   runApp(const MyApp());
 }
 
@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child:
                     // #docregion adUnit
                     adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                  adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
+                  adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
                   adFormat: AdFormat
                       .AUTO, // Remove AdFormat to make ads limited by height
                 ))
@@ -81,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     const BoxConstraints(maxHeight: 100, maxWidth: 1200),
                 padding: const EdgeInsets.only(bottom: 10),
                 child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                  adSlot: '4773943862', // TODO: Replace with your own AdSlot ID
+                  adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
                   adFormat: AdFormat
                       .AUTO, // Not using AdFormat to make ad unit respect height constraint
                 )),
@@ -95,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 125,
                 padding: const EdgeInsets.only(bottom: 10),
                 child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                    adSlot: '8937810400',
+                    adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
                     // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
                     isFullWidthResponsive: false)),
               ),
