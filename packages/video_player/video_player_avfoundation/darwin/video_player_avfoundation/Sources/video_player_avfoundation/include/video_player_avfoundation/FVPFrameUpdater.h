@@ -18,7 +18,7 @@
 /// The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 /// The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
-@property(nonatomic, assign) CMTime lastKnownAvailableTime;
+@property(readonly, nonatomic, assign) CMTime lastKnownAvailableTime;
 
 /// Initializes a new instance of FVPFrameUpdater with the given Flutter texture registry.
 - (FVPFrameUpdater *)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry;
