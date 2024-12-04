@@ -2170,6 +2170,22 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       return;
     }
 
+    testWidgets('named constructor', (_) async {
+      final ProxyApiTestClass instance = ProxyApiTestClass.namedConstructor(
+        aBool: true,
+        anInt: 0,
+        aDouble: 0.0,
+        aString: '',
+        aUint8List: Uint8List(0),
+        aList: const <Object?>[],
+        aMap: const <String?, Object?>{},
+        anEnum: ProxyApiTestEnum.one,
+        aProxyApi: ProxyApiSuperClass(),
+      );
+      // Ensure no error calling method on instance.
+      await instance.noop();
+    });
+
     testWidgets('noop', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 

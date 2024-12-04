@@ -578,6 +578,104 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }();
   }
 
+  ProxyApiTestClass.namedConstructor({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.aBool,
+    required this.anInt,
+    required this.aDouble,
+    required this.aString,
+    required this.aUint8List,
+    required this.aList,
+    required this.aMap,
+    required this.anEnum,
+    required this.aProxyApi,
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableDouble,
+    this.aNullableString,
+    this.aNullableUint8List,
+    this.aNullableList,
+    this.aNullableMap,
+    this.aNullableEnum,
+    this.aNullableProxyApi,
+    this.anInterfaceMethod,
+    this.flutterNoop,
+    this.flutterThrowError,
+    this.flutterThrowErrorFromVoid,
+    this.flutterEchoBool,
+    this.flutterEchoInt,
+    this.flutterEchoDouble,
+    this.flutterEchoString,
+    this.flutterEchoUint8List,
+    this.flutterEchoList,
+    this.flutterEchoProxyApiList,
+    this.flutterEchoMap,
+    this.flutterEchoProxyApiMap,
+    this.flutterEchoEnum,
+    this.flutterEchoProxyApi,
+    this.flutterEchoNullableBool,
+    this.flutterEchoNullableInt,
+    this.flutterEchoNullableDouble,
+    this.flutterEchoNullableString,
+    this.flutterEchoNullableUint8List,
+    this.flutterEchoNullableList,
+    this.flutterEchoNullableMap,
+    this.flutterEchoNullableEnum,
+    this.flutterEchoNullableProxyApi,
+    this.flutterNoopAsync,
+    this.flutterEchoAsyncString,
+  }) : super.pigeon_detached() {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecProxyApiTestClass;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.namedConstructor';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList =
+          await pigeonVar_channel.send(<Object?>[
+        pigeonVar_instanceIdentifier,
+        aBool,
+        anInt,
+        aDouble,
+        aString,
+        aUint8List,
+        aList,
+        aMap,
+        anEnum,
+        aProxyApi,
+        aNullableBool,
+        aNullableInt,
+        aNullableDouble,
+        aNullableString,
+        aNullableUint8List,
+        aNullableList,
+        aNullableMap,
+        aNullableEnum,
+        aNullableProxyApi
+      ]) as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
   /// Constructs [ProxyApiTestClass] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to

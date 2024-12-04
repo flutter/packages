@@ -1,3 +1,7 @@
+## 22.6.4
+
+* [swift] Fixes the channel names of the named constructors of ProxyApis.
+
 ## 22.6.3
 
 * Replaces deprecated collection method usage.
