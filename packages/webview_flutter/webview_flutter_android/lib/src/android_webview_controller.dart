@@ -89,6 +89,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setUseWideViewPort(true);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
+    _webView.settings.setAllowFileAccess(false);
 
     _webView.setWebChromeClient(_webChromeClient);
   }
@@ -352,6 +353,12 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   void Function(ScrollPositionChange scrollPositionChange)?
       _onScrollPositionChangedCallback;
+
+  /// Sets the file access permission for the web view.
+  ///
+  /// Defaults to false.
+  Future<void> setAllowFileAccess(bool allow) =>
+      _webView.settings.setAllowFileAccess(allow);
 
   /// Whether to enable the platform's webview content debugging tools.
   ///
