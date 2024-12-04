@@ -36,12 +36,8 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsync(
   }
 
   Set<String> keys = legacySharedPreferencesInstance.getKeys();
-  print('keys');
-  print(keys);
   await legacySharedPreferencesInstance.reload();
   keys = legacySharedPreferencesInstance.getKeys();
-  print('keys');
-  print(keys);
   for (final String key in keys) {
     final Object? value = legacySharedPreferencesInstance.get(key);
     switch (value.runtimeType) {
