@@ -19,4 +19,3 @@ class HTTPURLResponseProxyAPITests: XCTestCase {
     XCTAssertEqual(value, Int64(instance.statusCode))
   }
 }
-

@@ -166,16 +166,6 @@ class TestWebView : WKWebView {
   }
 }
 
-class TestNavigationResponse : WKNavigationResponse {
-  override var isForMainFrame: Bool {
-    return true
-  }
-  
-  override var response: URLResponse {
-    return URLResponse()
-  }
-}
-
 class TestURLAuthenticationChallengeSender : NSObject, URLAuthenticationChallengeSender, @unchecked Sendable {
   func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {
     
