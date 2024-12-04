@@ -66,6 +66,92 @@ static void *rateContext = &rateContext;
                  registrar:registrar];
 }
 
+- (instancetype)initWithURL:(NSURL *)url
+               frameUpdater:(FVPFrameUpdater *)frameUpdater
+                displayLink:(FVPDisplayLink *)displayLink
+                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
+                  avFactory:(id<FVPAVFactory>)avFactory
+                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  NSDictionary<NSString *, id> *options = nil;
+  if ([headers count] != 0) {
+    options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
+  }
+  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
+  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
+  return [self initWithPlayerItem:item
+                     frameUpdater:frameUpdater
+                      displayLink:(FVPDisplayLink *)displayLink
+                        avFactory:avFactory
+                        registrar:registrar];
+}
+
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+                      frameUpdater:(FVPFrameUpdater *)frameUpdater
+                       displayLink:(FVPDisplayLink *)displayLink
+                         avFactory:(id<FVPAVFactory>)avFactory
+                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  self = [super init];
+  NSAssert(self, @"super init cannot be nil");
+
+  _registrar = registrar;
+  _frameUpdater = frameUpdater;
+
+  AVAsset *asset = [item asset];
+  void (^assetCompletionHandler)(void) = ^{
+    if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
+      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+      if ([tracks count] > 0) {
+        AVAssetTrack *videoTrack = tracks[0];
+        void (^trackCompletionHandler)(void) = ^{
+          if (self->_disposed) return;
+          if ([videoTrack statusOfValueForKey:@"preferredTransform"
+                                        error:nil] == AVKeyValueStatusLoaded) {
+            // Rotate the video by using a videoComposition and the preferredTransform
+            self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
+            // Note:
+            // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
+            // Video composition can only be used with file-based media and is not supported for
+            // use with media served using HTTP Live Streaming.
+            AVMutableVideoComposition *videoComposition =
+                [self getVideoCompositionWithTransform:self->_preferredTransform
+                                             withAsset:asset
+                                        withVideoTrack:videoTrack];
+            item.videoComposition = videoComposition;
+          }
+        };
+        [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
+                                  completionHandler:trackCompletionHandler];
+      }
+    }
+  };
+
+  _player = [avFactory playerWithPlayerItem:item];
+  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+
+  // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
+  // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
+  // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
+  // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
+  // for issue #1, and restore the correct width and height for issue #2.
+  _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+  [self.flutterViewLayer addSublayer:_playerLayer];
+
+  // Configure output.
+  _displayLink = displayLink;
+  NSDictionary *pixBuffAttributes = @{
+    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+  };
+  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+  frameUpdater.videoOutput = _videoOutput;
+
+  [self addObserversForItem:item player:_player];
+
+  [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
+
+  return self;
+}
+
 - (void)dealloc {
   if (!_disposed) {
     [self removeKeyValueObservers];
@@ -171,92 +257,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   videoComposition.frameDuration = CMTimeMake(1, 30);
 
   return videoComposition;
-}
-
-- (instancetype)initWithURL:(NSURL *)url
-               frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-                  avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSDictionary<NSString *, id> *options = nil;
-  if ([headers count] != 0) {
-    options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
-  }
-  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
-  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item
-                     frameUpdater:frameUpdater
-                      displayLink:(FVPDisplayLink *)displayLink
-                        avFactory:avFactory
-                        registrar:registrar];
-}
-
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                      frameUpdater:(FVPFrameUpdater *)frameUpdater
-                       displayLink:(FVPDisplayLink *)displayLink
-                         avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [super init];
-  NSAssert(self, @"super init cannot be nil");
-
-  _registrar = registrar;
-  _frameUpdater = frameUpdater;
-
-  AVAsset *asset = [item asset];
-  void (^assetCompletionHandler)(void) = ^{
-    if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([tracks count] > 0) {
-        AVAssetTrack *videoTrack = tracks[0];
-        void (^trackCompletionHandler)(void) = ^{
-          if (self->_disposed) return;
-          if ([videoTrack statusOfValueForKey:@"preferredTransform"
-                                        error:nil] == AVKeyValueStatusLoaded) {
-            // Rotate the video by using a videoComposition and the preferredTransform
-            self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
-            // Note:
-            // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
-            // Video composition can only be used with file-based media and is not supported for
-            // use with media served using HTTP Live Streaming.
-            AVMutableVideoComposition *videoComposition =
-                [self getVideoCompositionWithTransform:self->_preferredTransform
-                                             withAsset:asset
-                                        withVideoTrack:videoTrack];
-            item.videoComposition = videoComposition;
-          }
-        };
-        [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
-                                  completionHandler:trackCompletionHandler];
-      }
-    }
-  };
-
-  _player = [avFactory playerWithPlayerItem:item];
-  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-
-  // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
-  // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
-  // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
-  // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
-  // for issue #1, and restore the correct width and height for issue #2.
-  _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-  [self.flutterViewLayer addSublayer:_playerLayer];
-
-  // Configure output.
-  _displayLink = displayLink;
-  NSDictionary *pixBuffAttributes = @{
-    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
-  };
-  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
-  frameUpdater.videoOutput = _videoOutput;
-
-  [self addObserversForItem:item player:_player];
-
-  [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
-
-  return self;
 }
 
 - (void)observeValueForKeyPath:(NSString *)path
