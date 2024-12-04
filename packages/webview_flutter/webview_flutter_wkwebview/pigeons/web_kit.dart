@@ -747,7 +747,7 @@ abstract class NSObject {
   /// Stops the observer object from receiving change notifications for the
   /// property specified by the key path relative to the object receiving this
   /// message.
-  void removeObserver(NSObject object, String keyPath);
+  void removeObserver(NSObject observer, String keyPath);
 }
 
 /// An object that displays interactive web content, such as for an in-app

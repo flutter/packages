@@ -4771,7 +4771,7 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
   /// property specified by the key path relative to the object receiving this
   /// message.
   Future<void> removeObserver(
-    NSObject object,
+    NSObject observer,
     String keyPath,
   ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -4786,7 +4786,7 @@ class NSObject extends PigeonInternalProxyApiBaseClass {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, object, keyPath]) as List<Object?>?;
+        .send(<Object?>[this, observer, keyPath]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

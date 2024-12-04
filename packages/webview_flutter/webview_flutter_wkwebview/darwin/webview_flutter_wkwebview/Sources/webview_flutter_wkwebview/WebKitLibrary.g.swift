@@ -5517,7 +5517,7 @@ protocol PigeonApiDelegateNSObject {
   /// Stops the observer object from receiving change notifications for the
   /// property specified by the key path relative to the object receiving this
   /// message.
-  func removeObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, object: NSObject, keyPath: String) throws
+  func removeObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String) throws
 }
 
 protocol PigeonApiProtocolNSObject {
@@ -5579,10 +5579,10 @@ withIdentifier: pigeonIdentifierArg)
       removeObserverChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! NSObject
-        let objectArg = args[1] as! NSObject
+        let observerArg = args[1] as! NSObject
         let keyPathArg = args[2] as! String
         do {
-          try api.pigeonDelegate.removeObserver(pigeonApi: api, pigeonInstance: pigeonInstanceArg, object: objectArg, keyPath: keyPathArg)
+          try api.pigeonDelegate.removeObserver(pigeonApi: api, pigeonInstance: pigeonInstanceArg, observer: observerArg, keyPath: keyPathArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -5694,8 +5694,8 @@ class ObjectProxyAPIDelegate : PigeonApiDelegateNSObject {
     pigeonInstance.addObserver(observer: observer, keyPath: keyPath, options: options)
   }
 
-  func removeObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, object: NSObject, keyPath: String) throws {
-    pigeonInstance.removeObserver(object: object, keyPath: keyPath)
+  func removeObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String) throws {
+    pigeonInstance.removeObserver(observer: observer, keyPath: keyPath)
   }
 
 }
@@ -5739,11 +5739,11 @@ class ObjectProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
 
     let instance = TestObject()
-    let object = TestObject
+    let observer = TestObject
     let keyPath = "myString"
-    api.pigeonDelegate.removeObserver(pigeonApi: api, pigeonInstance: instance, object: object, keyPath: keyPath)
+    api.pigeonDelegate.removeObserver(pigeonApi: api, pigeonInstance: instance, observer: observer, keyPath: keyPath)
 
-    XCTAssertEqual(instance.removeObserverArgs, [object, keyPath])
+    XCTAssertEqual(instance.removeObserverArgs, [observer, keyPath])
   }
 
   func testObserveValue() {
@@ -5767,7 +5767,7 @@ class TestObject: NSObject {
     addObserverArgs = [observer, keyPath, options]
   }
   override func removeObserver() {
-    removeObserverArgs = [object, keyPath]
+    removeObserverArgs = [observer, keyPath]
   }
 }
 class TestObjectApi: PigeonApiProtocolNSObject {

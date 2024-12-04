@@ -90,8 +90,8 @@ class NSObjectProxyAPIDelegate: PigeonApiDelegateNSObject {
   }
 
   func removeObserver(
-    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, object: NSObject, keyPath: String
+    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String
   ) throws {
-    pigeonInstance.removeObserver(object, forKeyPath: keyPath)
+    pigeonInstance.removeObserver(observer, forKeyPath: keyPath)
   }
 }
