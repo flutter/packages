@@ -9,6 +9,7 @@
 #import <OCMock/OCMock.h>
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
 #import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
+#import <video_player_avfoundation/FVPVideoPlayerTextureApproach_Test.h>
 
 // TODO(stuartmorgan): Convert to using mock registrars instead.
 NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
@@ -185,7 +186,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  FVPVideoPlayerTextureApproach *player =
+      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersByTextureId[textureId];
   XCTAssertNotNil(player);
 
   XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");

@@ -2,7 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FVPVideoPlayerTextureApproach.h"
+#import "FVPVideoPlayerTextureApproach_Test.h"
+
+@interface FVPVideoPlayerTextureApproach ()
+// The CALayer associated with the Flutter view this plugin is associated with, if any.
+@property(nonatomic, readonly, nullable) CALayer *flutterViewLayer;
+// The updater that drives callbacks to the engine to indicate that a new frame is ready.
+@property(nonatomic, nullable) FVPFrameUpdater *frameUpdater;
+// The display link that drives frameUpdater.
+@property(nonatomic, nullable) FVPDisplayLink *displayLink;
+// Whether a new frame needs to be provided to the engine regardless of the current play/pause state
+// (e.g., after a seek while paused). If YES, the display link should continue to run until the next
+// frame is successfully provided.
+@property(nonatomic, assign) BOOL waitingForFrame;
+@end
 
 @implementation FVPVideoPlayerTextureApproach
 - (instancetype)initWithAsset:(NSString *)asset
@@ -62,7 +75,7 @@
     // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
     // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
     // for issue #1, and restore the correct width and height for issue #2.
-    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+    _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
     [self.flutterViewLayer addSublayer:self.playerLayer];
   }
   return self;
@@ -107,7 +120,7 @@
 - (void)expectFrame {
   self.waitingForFrame = YES;
 
-  self.displayLink.running = YES;
+  _displayLink.running = YES;
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
