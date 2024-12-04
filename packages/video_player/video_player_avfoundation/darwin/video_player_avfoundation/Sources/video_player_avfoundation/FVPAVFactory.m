@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <AVFoundation/AVFoundation.h>
+#import "./include/video_player_avfoundation/FVPAVFactory.h"
 
-#import "FVPAVFactory.h"
+#import <AVFoundation/AVFoundation.h>
 
 @implementation FVPDefaultAVFactory
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {

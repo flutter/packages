@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FVPVideoPlayerPlugin.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayerPlugin.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
 
 #import <AVFoundation/AVFoundation.h>
 
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayer.h"
 #import "./include/video_player_avfoundation/messages.g.h"
 
 #if !__has_feature(objc_arc)
