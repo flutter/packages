@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_adsense/google_adsense.dart';
+import 'package:google_adsense/experimental/google_adsense.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;
 

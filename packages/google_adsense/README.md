@@ -17,7 +17,7 @@ Please express interest joining Early Access program using [this form](https://d
 To start displaying ads, initialize the AdSense with your [client/publisher ID](https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU) (only use numbers).
 <?code-excerpt "example/lib/main.dart (init)"?>
 ```dart
-import 'package:google_adsense/google_adsense.dart';
+import 'package:google_adsense/experimental/google_adsense.dart';
 
 void main() {
   adSense.initialize(
@@ -60,8 +60,10 @@ For example snippet below
 </script>
 ```
 translates into 
+<?code-excerpt "example/lib/main.dart (init-min)"?>
 ```dart
-adSense.initialize('0123456789012345');
+adSense.initialize(
+    '0123456789012345'); // TODO: Replace with your Publisher ID (pub-0123456789012345) - https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU
 ```
 and
 <?code-excerpt "example/lib/main.dart (adUnit)"?>

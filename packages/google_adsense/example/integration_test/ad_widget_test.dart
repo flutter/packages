@@ -9,7 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 // Ensure we don't use the singleton `adSense`, but the local copies to this plugin.
-import 'package:google_adsense/google_adsense.dart' hide adSense;
+import 'package:google_adsense/experimental/google_adsense.dart' hide adSense;
 import 'package:google_adsense/src/ad_unit_widget.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;

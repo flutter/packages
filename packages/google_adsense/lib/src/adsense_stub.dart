@@ -4,7 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../google_adsense.dart';
+import '../experimental/google_adsense.dart';
 
 /// A singleton instance of AdSense library public interface.
 final AdSense adSense = AdSense();

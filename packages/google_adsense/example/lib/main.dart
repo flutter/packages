@@ -7,11 +7,13 @@
 import 'package:flutter/material.dart';
 
 // #docregion init
-import 'package:google_adsense/google_adsense.dart';
+import 'package:google_adsense/experimental/google_adsense.dart';
 
 void main() {
+  // #docregion init-min
   adSense.initialize(
       '0123456789012345'); // TODO: Replace with your Publisher ID (pub-0123456789012345) - https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU
+  // #enddocregion init-min
   runApp(const MyApp());
 }
 

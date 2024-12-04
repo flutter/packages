@@ -8,7 +8,7 @@ import 'dart:js_interop_unsafe';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
-import '../google_adsense.dart';
+import '../experimental/google_adsense.dart';
 import 'js_interop/adsbygoogle.dart';
 import 'logging.dart';
 

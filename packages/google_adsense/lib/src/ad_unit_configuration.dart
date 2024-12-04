@@ -4,7 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../google_adsense.dart';
+import '../experimental/google_adsense.dart';
 
 /// AdUnit configuration object.
 ///
