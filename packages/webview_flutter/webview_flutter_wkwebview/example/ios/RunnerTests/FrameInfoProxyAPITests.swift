@@ -9,7 +9,7 @@ import XCTest
 @testable import webview_flutter_wkwebview
 
 class FrameInfoProxyAPITests: XCTestCase {
-//  @MainActor func testIsMainFrame() {
+  @MainActor func testIsMainFrame() {
 //    let registrar = TestProxyApiRegistrar()
 //    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 //
@@ -17,25 +17,37 @@ class FrameInfoProxyAPITests: XCTestCase {
 //    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
 //
 //    XCTAssertEqual(value, instance.isMainFrame)
-//  }
+  }
 
-//  @MainActor func testRequest() {
+  @MainActor func testRequest() {
 //    let registrar = TestProxyApiRegistrar()
 //    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
-//
+
 //    let instance = TestFrameInfo()
 //    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
 //
 //    XCTAssertEqual(value?.value, instance.request)
-//  }
+  }
 }
 
 class TestFrameInfo : WKFrameInfo {
+  override init() {
+    
+  }
+  
   override var isMainFrame: Bool {
     return true
   }
   
   override var request: URLRequest {
     return URLRequest(url: URL(string: "https://google.com")!)
+  }
+  
+  override func copy(with zone: NSZone? = nil) -> Any {
+    return TestFrameInfo()
+  }
+  
+  func dealloc() {
+    
   }
 }
