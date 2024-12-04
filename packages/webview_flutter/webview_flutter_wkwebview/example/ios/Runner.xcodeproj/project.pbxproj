@@ -25,6 +25,7 @@
 		8F9035402D00F04E004F6450 /* ScriptMessageProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F90353F2D00F04E004F6450 /* ScriptMessageProxyAPITests.swift */; };
 		8F9035422D00F17B004F6450 /* ScrollViewDelegateProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9035412D00F17B004F6450 /* ScrollViewDelegateProxyAPITests.swift */; };
 		8F9035442D00F27A004F6450 /* ScrollViewProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9035432D00F279004F6450 /* ScrollViewProxyAPITests.swift */; };
+		8F9035462D00FE18004F6450 /* SecurityOriginProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F9035452D00FE18004F6450 /* SecurityOriginProxyAPITests.swift */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -95,6 +96,7 @@
 		8F90353F2D00F04E004F6450 /* ScriptMessageProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScriptMessageProxyAPITests.swift; sourceTree = "<group>"; };
 		8F9035412D00F17B004F6450 /* ScrollViewDelegateProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewDelegateProxyAPITests.swift; sourceTree = "<group>"; };
 		8F9035432D00F279004F6450 /* ScrollViewProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewProxyAPITests.swift; sourceTree = "<group>"; };
+		8F9035452D00FE18004F6450 /* SecurityOriginProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityOriginProxyAPITests.swift; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -167,6 +169,7 @@
 				8F90353F2D00F04E004F6450 /* ScriptMessageProxyAPITests.swift */,
 				8F9035412D00F17B004F6450 /* ScrollViewDelegateProxyAPITests.swift */,
 				8F9035432D00F279004F6450 /* ScrollViewProxyAPITests.swift */,
+				8F9035452D00FE18004F6450 /* SecurityOriginProxyAPITests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				8F9035442D00F27A004F6450 /* ScrollViewProxyAPITests.swift in Sources */,
 				8F9035422D00F17B004F6450 /* ScrollViewDelegateProxyAPITests.swift in Sources */,
 				8F9035262CFBC6AC004F6450 /* HTTPCookieProxyAPITests.swift in Sources */,
+				8F9035462D00FE18004F6450 /* SecurityOriginProxyAPITests.swift in Sources */,
 				8F90351B2CFB61CA004F6450 /* AuthenticationChallengeResponseProxyAPITests.swift in Sources */,
 				8F9035382D00E617004F6450 /* NSObjectProxyAPITests.swift in Sources */,
 				8F9035402D00F04E004F6450 /* ScriptMessageProxyAPITests.swift in Sources */,
