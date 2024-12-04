@@ -548,6 +548,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return nil;
 }
 
+/// This method allows you to dispose without touching the event channel. This
+/// is useful for the case where the Engine is in the process of deconstruction
+/// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel {
   // This check prevents the crash caused by removing the KVO observers twice.
   // When performing a Hot Restart, the leftover players are disposed once directly
