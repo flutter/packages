@@ -20,8 +20,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
-        VideoPlayerWebOptionsControls,
-        VideoViewType;
+        VideoPlayerWebOptionsControls;
 
 export 'src/closed_caption_file.dart';
 
@@ -271,19 +270,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  VideoPlayerController.asset(
-    this.dataSource, {
-    this.package,
-    Future<ClosedCaptionFile>? closedCaptionFile,
-    this.videoPlayerOptions,
-    this.viewType = VideoViewType.textureView,
-  })  : _closedCaptionFileFuture = closedCaptionFile,
+  VideoPlayerController.asset(this.dataSource,
+      {this.package,
+      Future<ClosedCaptionFile>? closedCaptionFile,
+      this.videoPlayerOptions})
+      : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.asset,
         formatHint = null,
         httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero)) {
-    _validateConstructorInput();
-  }
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -301,13 +296,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.network,
         package = null,
-        super(const VideoPlayerValue(duration: Duration.zero)) {
-    _validateConstructorInput();
-  }
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a network video.
   ///
@@ -324,44 +316,34 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = url.toString(),
         dataSourceType = DataSourceType.network,
         package = null,
-        super(const VideoPlayerValue(duration: Duration.zero)) {
-    _validateConstructorInput();
-  }
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a file.
   ///
   /// This will load the file from a file:// URI constructed from [file]'s path.
   /// [httpHeaders] option allows to specify HTTP headers, mainly used for hls files like (m3u8).
-  VideoPlayerController.file(
-    File file, {
-    Future<ClosedCaptionFile>? closedCaptionFile,
-    this.videoPlayerOptions,
-    this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
-  })  : _closedCaptionFileFuture = closedCaptionFile,
+  VideoPlayerController.file(File file,
+      {Future<ClosedCaptionFile>? closedCaptionFile,
+      this.videoPlayerOptions,
+      this.httpHeaders = const <String, String>{}})
+      : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         formatHint = null,
-        super(const VideoPlayerValue(duration: Duration.zero)) {
-    _validateConstructorInput();
-  }
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a video from a contentUri.
   ///
   /// This will load the video from the input content-URI.
   /// This is supported on Android only.
-  VideoPlayerController.contentUri(
-    Uri contentUri, {
-    Future<ClosedCaptionFile>? closedCaptionFile,
-    this.videoPlayerOptions,
-    this.viewType = VideoViewType.textureView,
-  })  : assert(defaultTargetPlatform == TargetPlatform.android,
+  VideoPlayerController.contentUri(Uri contentUri,
+      {Future<ClosedCaptionFile>? closedCaptionFile, this.videoPlayerOptions})
+      : assert(defaultTargetPlatform == TargetPlatform.android,
             'VideoPlayerController.contentUri is only supported on Android.'),
         _closedCaptionFileFuture = closedCaptionFile,
         dataSource = contentUri.toString(),
@@ -369,9 +351,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         package = null,
         formatHint = null,
         httpHeaders = const <String, String>{},
-        super(const VideoPlayerValue(duration: Duration.zero)) {
-    _validateConstructorInput();
-  }
+        super(const VideoPlayerValue(duration: Duration.zero));
 
   /// The URI to the video file. This will be in different formats depending on
   /// the [DataSourceType] of the original video.
@@ -396,9 +376,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
 
-  /// The type of view used to display the video.
-  final VideoViewType viewType;
-
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
   Timer? _timer;
@@ -417,15 +394,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   @visibleForTesting
   int get textureId => _textureId;
 
-  /// Validates the values passed in the constructor.
-  void _validateConstructorInput() {
-    assert(
-        viewType != VideoViewType.platformView ||
-            defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS,
-        'VideoViewType.platformView is only supported on Android and iOS.');
-  }
-
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
     final bool allowBackgroundPlayback =
@@ -443,7 +411,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.asset,
           asset: dataSource,
           package: package,
-          viewType: viewType,
         );
       case DataSourceType.network:
         dataSourceDescription = DataSource(
@@ -451,20 +418,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           uri: dataSource,
           formatHint: formatHint,
           httpHeaders: httpHeaders,
-          viewType: viewType,
         );
       case DataSourceType.file:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
           httpHeaders: httpHeaders,
-          viewType: viewType,
         );
       case DataSourceType.contentUri:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.contentUri,
           uri: dataSource,
-          viewType: viewType,
         );
     }
 
@@ -913,12 +877,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
         ? Container()
         : _VideoPlayerWithRotation(
             rotation: widget.controller.value.rotationCorrection,
-            child: _videoPlayerPlatform.buildViewWithOptions(
-              VideoViewOptions(
-                playerId: _textureId,
-                viewType: widget.controller.viewType,
-              ),
-            ),
+            child: _videoPlayerPlatform.buildView(_textureId),
           );
   }
 }

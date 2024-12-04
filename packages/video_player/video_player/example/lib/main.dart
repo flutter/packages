@@ -8,8 +8,6 @@
 /// video.
 library;
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -57,97 +55,18 @@ class _App extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: Platform.isIOS
-              ? <Widget>[
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _BumbleBeeRemoteVideo(viewType),
-                  ),
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _ButterFlyAssetVideo(viewType),
-                  ),
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _ButterFlyAssetVideoInList(viewType),
-                  ),
-                ]
-              // We don't support platform views on other platforms yet.
-              : const <Widget>[
-                  _BumbleBeeRemoteVideo(VideoViewType.textureView),
-                  _ButterFlyAssetVideo(VideoViewType.textureView),
-                  _ButterFlyAssetVideoInList(VideoViewType.textureView),
-                ],
+          children: <Widget>[
+            _BumbleBeeRemoteVideo(),
+            _ButterFlyAssetVideo(),
+            _ButterFlyAssetVideoInList(),
+          ],
         ),
       ),
     );
   }
 }
 
-class _ViewTypeTabBar extends StatefulWidget {
-  const _ViewTypeTabBar({
-    required this.builder,
-  });
-
-  final Widget Function(VideoViewType) builder;
-
-  @override
-  State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
-}
-
-class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
-    with SingleTickerProviderStateMixin {
-  late final TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        TabBar(
-          controller: _tabController,
-          isScrollable: true,
-          tabs: const <Widget>[
-            Tab(
-              icon: Icon(Icons.texture),
-              text: 'Texture view',
-            ),
-            Tab(
-              icon: Icon(Icons.construction),
-              text: 'Platform view',
-            ),
-          ],
-        ),
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: <Widget>[
-              widget.builder(VideoViewType.textureView),
-              widget.builder(VideoViewType.platformView),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
 class _ButterFlyAssetVideoInList extends StatelessWidget {
-  const _ButterFlyAssetVideoInList(this.viewType);
-
-  final VideoViewType viewType;
-
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -171,7 +90,7 @@ class _ButterFlyAssetVideoInList extends StatelessWidget {
                   alignment: FractionalOffset.bottomRight +
                       const FractionalOffset(-0.1, -0.1),
                   children: <Widget>[
-                    _ButterFlyAssetVideo(viewType),
+                    _ButterFlyAssetVideo(),
                     Image.asset('assets/flutter-mark-square-64.png'),
                   ]),
             ],
@@ -231,10 +150,6 @@ class _ExampleCard extends StatelessWidget {
 }
 
 class _ButterFlyAssetVideo extends StatefulWidget {
-  const _ButterFlyAssetVideo(this.viewType);
-
-  final VideoViewType viewType;
-
   @override
   _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
 }
@@ -245,10 +160,7 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(
-      'assets/Butterfly-209.mp4',
-      viewType: widget.viewType,
-    );
+    _controller = VideoPlayerController.asset('assets/Butterfly-209.mp4');
 
     _controller.addListener(() {
       setState(() {});
@@ -294,10 +206,6 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
 }
 
 class _BumbleBeeRemoteVideo extends StatefulWidget {
-  const _BumbleBeeRemoteVideo(this.viewType);
-
-  final VideoViewType viewType;
-
   @override
   _BumbleBeeRemoteVideoState createState() => _BumbleBeeRemoteVideoState();
 }
@@ -320,7 +228,6 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
           'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
       closedCaptionFile: _loadCaptions(),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-      viewType: widget.viewType,
     );
 
     _controller.addListener(() {
