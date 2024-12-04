@@ -255,6 +255,7 @@ class MockCaptureController : public CaptureController {
       (std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink),
       (override));
   MOCK_METHOD(void, StopImageStream, (), (override));
+  MOCK_METHOD(bool, IsStreaming, (), (const override));
   MOCK_METHOD(void, TakePicture, (const std::string& file_path), (override));
 };
 

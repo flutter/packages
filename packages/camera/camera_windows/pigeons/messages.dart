@@ -71,7 +71,8 @@ abstract class CameraApi {
   String stopVideoRecording(int cameraId);
 
   /// Starts the image stream for the given camera.
-  void startImageStream(int cameraId);
+  /// Returns the name of the [EventChannel] used to deliver the images.
+  String startImageStream(int cameraId);
 
   /// Stops the image stream for the given camera.
   void stopImageStream(int cameraId);

@@ -363,6 +363,11 @@ TEST(CameraPlugin, StartImageStreamHandlerCallsStartImageStream) {
   std::unique_ptr<MockCaptureController> capture_controller =
       std::make_unique<MockCaptureController>();
 
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  std::unique_ptr<MockBinaryMessenger> messenger =
+      std::make_unique<MockBinaryMessenger>();
+
   EXPECT_CALL(*camera, HasCameraId(Eq(mock_camera_id)))
       .Times(1)
       .WillOnce([cam = camera.get()](int64_t camera_id) {
@@ -374,19 +379,21 @@ TEST(CameraPlugin, StartImageStreamHandlerCallsStartImageStream) {
       .WillOnce(
           [cam = camera.get()]() { return cam->capture_controller_.get(); });
 
-  EXPECT_CALL(*capture_controller, StartImageStream).Times(1);
+  EXPECT_CALL(*capture_controller, IsStreaming).WillRepeatedly(Return(false));
+
+  EXPECT_CALL(*messenger, SetMessageHandler).Times(1);
 
   camera->camera_id_ = mock_camera_id;
   camera->capture_controller_ = std::move(capture_controller);
 
-  MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
-                          std::make_unique<MockBinaryMessenger>().get(),
+  MockCameraPlugin plugin(texture_registrar.get(), messenger.get(),
                           std::make_unique<MockCameraFactory>());
 
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_EQ(plugin.StartImageStream(mock_camera_id), std::nullopt);
+  auto result = plugin.StartImageStream(mock_camera_id);
+  EXPECT_FALSE(result.has_error());
 }
 
 TEST(CameraPlugin, StartImageStreamHandlerErrorOnInvalidCameraId) {
@@ -419,8 +426,8 @@ TEST(CameraPlugin, StartImageStreamHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_THAT(plugin.StartImageStream(missing_camera_id),
-              Optional(Property("code", &FlutterError::code, "camera_error")));
+  auto result = plugin.StartImageStream(missing_camera_id);
+  EXPECT_TRUE(result.has_error());
 }
 
 TEST(CameraPlugin, StopImageStreamHandlerCallsStopImageStream) {
