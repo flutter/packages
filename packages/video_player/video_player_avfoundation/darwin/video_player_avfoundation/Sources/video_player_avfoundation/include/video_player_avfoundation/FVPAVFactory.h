@@ -4,6 +4,8 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// Protocol for AVFoundation object instance factory. Used for injecting framework objects in
 /// tests.
 @protocol FVPAVFactory
@@ -20,3 +22,5 @@
 /// A default implementation of the FVPAVFactory protocol.
 @interface FVPDefaultAVFactory : NSObject <FVPAVFactory>
 @end
+
+NS_ASSUME_NONNULL_END

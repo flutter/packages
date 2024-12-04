@@ -10,6 +10,8 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// FVPFrameUpdater is responsible for notifying the Flutter texture registry
 /// when a new video frame is available.
 @interface FVPFrameUpdater : NSObject
@@ -27,3 +29,5 @@
 /// and notifies the Flutter texture registry if a new frame is found.
 - (void)displayLinkFired;
 @end
+
+NS_ASSUME_NONNULL_END
