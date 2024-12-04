@@ -346,7 +346,7 @@ void CameraPlugin::StopVideoRecording(
   }
 }
 
-std::optional<FlutterError> CameraPlugin::StartImageStream(int64_t camera_id) {
+ErrorOr<std::string> CameraPlugin::StartImageStream(int64_t camera_id) {
   Camera* camera = GetCameraByCameraId(camera_id);
   if (!camera) {
     return FlutterError("camera_error", "Camera not created");
@@ -354,6 +354,11 @@ std::optional<FlutterError> CameraPlugin::StartImageStream(int64_t camera_id) {
 
   CaptureController* cc = camera->GetCaptureController();
   assert(cc);
+
+  if (cc->IsStreaming()) {
+    return FlutterError("camera_error",
+                        "Images from camera are already streaming");
+  }
 
   std::ostringstream event_channel_name;
   event_channel_name << "plugins.flutter.io/camera_windows/imageStream/"
@@ -376,7 +381,7 @@ std::optional<FlutterError> CameraPlugin::StartImageStream(int64_t camera_id) {
 
   frame_event_channel.SetStreamHandler(std::move(event_channel_handler));
 
-  return std::nullopt;
+  return event_channel_name.str();
 }
 
 std::optional<FlutterError> CameraPlugin::StopImageStream(int64_t camera_id) {

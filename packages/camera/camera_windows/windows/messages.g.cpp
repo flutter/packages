@@ -516,14 +516,14 @@ void CameraApi::SetUp(flutter::BinaryMessenger* binary_messenger,
                 return;
               }
               const int64_t camera_id_arg = encodable_camera_id_arg.LongValue();
-              std::optional<FlutterError> output =
+              ErrorOr<std::string> output =
                   api->StartImageStream(camera_id_arg);
-              if (output.has_value()) {
-                reply(WrapError(output.value()));
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
                 return;
               }
               EncodableList wrapped;
-              wrapped.push_back(EncodableValue());
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
               reply(EncodableValue(std::move(wrapped)));
             } catch (const std::exception& exception) {
               reply(WrapError(exception.what()));
