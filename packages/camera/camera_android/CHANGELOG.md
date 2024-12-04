@@ -1,3 +1,28 @@
+## 0.10.9+17
+
+* Updates annotations lib to 1.9.1.
+
+## 0.10.9+16
+
+* Updates annotations lib to 1.9.0.
+
+## 0.10.9+15
+
+* Converts Dart to native platform calls to Pigeon.
+
+## 0.10.9+14
+
+* Converts native to Dart platform calls to Pigeon.
+
+## 0.10.9+13
+
+* Converts `getAvailableCameras` to Pigeon.
+
+## 0.10.9+12
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.10.9+11
 
 * Updates annotations lib to 1.8.2.

@@ -1,3 +1,41 @@
+## 22.6.4
+
+* [swift] Fixes the channel names of the named constructors of ProxyApis.
+
+## 22.6.3
+
+* Replaces deprecated collection method usage.
+
+## 22.6.2
+
+* Removes the `@protected` annotation from the InstanceManager field of the
+  `PigeonInternalProxyApiBaseClass`.
+
+## 22.6.1
+
+* [gobject] Moves class declarations to the header to work around a bug in some
+  versions of glib.
+
+## 22.6.0
+
+* [swift] Adds `includeErrorClass` to `SwiftOptions`.
+
+## 22.5.0
+
+* [swift] Adds implementation for `@ProxyApi`.
+
+## 22.4.2
+
+* Updates `README.md` to replace the deprecated `flutter pub run pigeon` command with `dart run pigeon`.
+
+## 22.4.1
+
+* [dart] Fixes bug where special handling of ints is ignored if no custom types are used.
+
+## 22.4.0
+
+* Adds support for non-nullable types in collections.
+
 ## 22.3.0
 
 * Adds support for enums and classes in collections.
@@ -201,8 +239,6 @@
     `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
-
-
 
 ## 12.0.1
 

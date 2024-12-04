@@ -19,7 +19,10 @@ let package = Package(
   targets: [
     .target(
       name: "file_selector_macos",
-      dependencies: []
+      dependencies: [],
+      resources: [
+        .process("Resources")
+      ]
     )
   ]
 )

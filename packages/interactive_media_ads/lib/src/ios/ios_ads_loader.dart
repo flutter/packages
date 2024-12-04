@@ -12,6 +12,7 @@ import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_manager.dart';
+import 'ios_content_progress_provider.dart';
 
 /// Implementation of [PlatformAdsLoaderCreationParams] for iOS.
 final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
@@ -72,11 +73,15 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(AdsRequest request) async {
+  Future<void> requestAds(PlatformAdsRequest request) async {
     return _adsLoader.requestAds(_iosParams._proxy.newIMAAdsRequest(
       adTagUrl: request.adTagUrl,
       adDisplayContainer:
           (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!,
+      contentPlayhead: request.contentProgressProvider != null
+          ? (request.contentProgressProvider! as IOSContentProgressProvider)
+              .contentPlayhead
+          : null,
     ));
   }
 

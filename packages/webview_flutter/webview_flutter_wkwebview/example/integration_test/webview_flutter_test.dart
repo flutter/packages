@@ -24,7 +24,8 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
+  final HttpServer server =
+      await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
   unawaited(server.forEach((HttpRequest request) {
     if (request.uri.path == '/hello.txt') {
       request.response.writeln('Hello, world.');
@@ -808,7 +809,8 @@ Future<void> main() async {
     });
   },
       // Scroll position is currently not implemented for macOS.
-      skip: Platform.isMacOS);
+      // Flakes on iOS: https://github.com/flutter/flutter/issues/154826
+      skip: Platform.isMacOS || Platform.isIOS);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';
@@ -828,7 +830,7 @@ Future<void> main() async {
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(
         delegate.setOnNavigationRequest((NavigationRequest navigationRequest) {
-          return (navigationRequest.url.contains('youtube.com'))
+          return navigationRequest.url.contains('youtube.com')
               ? NavigationDecision.prevent
               : NavigationDecision.navigate;
         }),
@@ -1085,7 +1087,7 @@ Future<void> main() async {
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(delegate
           .setOnNavigationRequest((NavigationRequest navigationRequest) {
-        return (navigationRequest.url.contains('youtube.com'))
+        return navigationRequest.url.contains('youtube.com')
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
       }));

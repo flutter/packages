@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'misc/errors.dart';
 import 'route.dart';
 
 final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
@@ -102,20 +103,62 @@ Map<String, String> extractPathParameters(
 
 /// Concatenates two paths.
 ///
-/// e.g: pathA = /a, pathB = c/d,  concatenatePaths(pathA, pathB) = /a/c/d.
+/// e.g: pathA = /a, pathB = /c/d, concatenatePaths(pathA, pathB) = /a/c/d.
+/// or: pathA = a, pathB = c/d, concatenatePaths(pathA, pathB) = /a/c/d.
 String concatenatePaths(String parentPath, String childPath) {
-  // at the root, just return the path
-  if (parentPath.isEmpty) {
-    assert(childPath.startsWith('/'));
-    assert(childPath == '/' || !childPath.endsWith('/'));
-    return childPath;
+  final Iterable<String> segments = <String>[
+    ...parentPath.split('/'),
+    ...childPath.split('/')
+  ].where((String segment) => segment.isNotEmpty);
+  return '/${segments.join('/')}';
+}
+
+/// Concatenates two Uri. It will [concatenatePaths] the parent's and the child's paths, and take only the child's parameters.
+///
+/// e.g: pathA = /a?fid=f1, pathB = c/d?pid=p2,  concatenatePaths(pathA, pathB) = /a/c/d?pid=2.
+Uri concatenateUris(Uri parentUri, Uri childUri) {
+  Uri newUri = childUri.replace(
+    path: concatenatePaths(parentUri.path, childUri.path),
+  );
+
+  // Parse the new normalized uri to remove unnecessary parts, like the trailing '?'.
+  newUri = Uri.parse(canonicalUri(newUri.toString()));
+  return newUri;
+}
+
+/// Normalizes the location string.
+String canonicalUri(String loc) {
+  if (loc.isEmpty) {
+    throw GoException('Location cannot be empty.');
+  }
+  String canon = Uri.parse(loc).toString();
+  canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
+  final Uri uri = Uri.parse(canon);
+
+  // remove trailing slash except for when you shouldn't, e.g.
+  // /profile/ => /profile
+  // / => /
+  // /login?from=/ => /login?from=/
+  canon = uri.path.endsWith('/') &&
+          uri.path != '/' &&
+          !uri.hasQuery &&
+          !uri.hasFragment
+      ? canon.substring(0, canon.length - 1)
+      : canon;
+
+  // replace '/?', except for first occurrence, from path only
+  // /login/?from=/ => /login?from=/
+  // /?from=/ => /?from=/
+  final int pathStartIndex = uri.host.isNotEmpty
+      ? uri.toString().indexOf(uri.host) + uri.host.length
+      : uri.hasScheme
+          ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
+          : 0;
+  if (pathStartIndex < canon.length) {
+    canon = canon.replaceFirst('/?', '?', pathStartIndex + 1);
   }
 
-  // not at the root, so append the parent path
-  assert(childPath.isNotEmpty);
-  assert(!childPath.startsWith('/'));
-  assert(!childPath.endsWith('/'));
-  return '${parentPath == '/' ? '' : parentPath}/$childPath';
+  return canon;
 }
 
 /// Builds an absolute path for the provided route.

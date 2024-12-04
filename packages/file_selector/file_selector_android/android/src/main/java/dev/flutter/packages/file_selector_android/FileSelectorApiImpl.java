@@ -4,6 +4,8 @@
 
 package dev.flutter.packages.file_selector_android;
 
+import static dev.flutter.packages.file_selector_android.FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
@@ -91,7 +93,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   public void openFile(
       @Nullable String initialDirectory,
       @NonNull GeneratedFileSelectorApi.FileTypes allowedTypes,
-      @NonNull GeneratedFileSelectorApi.Result<GeneratedFileSelectorApi.FileResponse> result) {
+      @NonNull
+          GeneratedFileSelectorApi.NullableResult<GeneratedFileSelectorApi.FileResponse> result) {
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT);
     intent.addCategory(Intent.CATEGORY_OPENABLE);
 
@@ -192,7 +195,8 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   @Override
   @TargetApi(21)
   public void getDirectoryPath(
-      @Nullable String initialDirectory, @NonNull GeneratedFileSelectorApi.Result<String> result) {
+      @Nullable String initialDirectory,
+      @NonNull GeneratedFileSelectorApi.NullableResult<String> result) {
     if (!sdkChecker.sdkIsAtLeast(android.os.Build.VERSION_CODES.LOLLIPOP)) {
       result.error(
           new UnsupportedOperationException(
@@ -355,8 +359,32 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
       return null;
     }
 
-    final String uriPath =
-        FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
+    String uriPath;
+    GeneratedFileSelectorApi.FileSelectorNativeException nativeError = null;
+
+    try {
+      uriPath = FileUtils.getPathFromCopyOfFileFromUri(activityPluginBinding.getActivity(), uri);
+    } catch (IOException e) {
+      // If closing the output stream fails, we cannot be sure that the
+      // target file was written in full. Flushing the stream merely moves
+      // the bytes into the OS, not necessarily to the file.
+      uriPath = null;
+    } catch (SecurityException e) {
+      // Calling `ContentResolver#openInputStream()` has been reported to throw a
+      // `SecurityException` on some devices in certain circumstances. Instead of crashing, we
+      // return `null`.
+      //
+      // See https://github.com/flutter/flutter/issues/100025 for more details.
+      uriPath = null;
+    } catch (IllegalArgumentException e) {
+      uriPath = FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
+      nativeError =
+          new GeneratedFileSelectorApi.FileSelectorNativeException.Builder()
+              .setMessage(e.getMessage() == null ? "" : e.getMessage())
+              .setFileSelectorExceptionCode(
+                  GeneratedFileSelectorApi.FileSelectorExceptionCode.ILLEGAL_ARGUMENT_EXCEPTION)
+              .build();
+    }
 
     return new GeneratedFileSelectorApi.FileResponse.Builder()
         .setName(name)
@@ -364,6 +392,7 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
         .setPath(uriPath)
         .setMimeType(contentResolver.getType(uri))
         .setSize(size.longValue())
+        .setFileSelectorNativeException(nativeError)
         .build();
   }
 }

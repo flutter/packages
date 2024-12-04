@@ -1,3 +1,19 @@
+## 0.3.6+12
+
+* Updates README to remove contributor-focused documentation.
+
+## 0.3.6+11
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.
+
+## 0.3.6+10
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 0.3.6+9
+
+* Updates Java compatibility version to 11.
+
 ## 0.3.6+8
 
 * Removes dependency on org.jetbrains.kotlin:kotlin-bom.

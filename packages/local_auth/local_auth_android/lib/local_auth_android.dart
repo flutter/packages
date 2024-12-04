@@ -95,12 +95,9 @@ class LocalAuthAndroid extends LocalAuthPlatform {
 
   @override
   Future<List<BiometricType>> getEnrolledBiometrics() async {
-    final List<AuthClassificationWrapper?> result =
-        await _api.getEnrolledBiometrics();
-    return result
-        .cast<AuthClassificationWrapper>()
-        .map((AuthClassificationWrapper entry) {
-      switch (entry.value) {
+    final List<AuthClassification> result = await _api.getEnrolledBiometrics();
+    return result.map((AuthClassification value) {
+      switch (value) {
         case AuthClassification.weak:
           return BiometricType.weak;
         case AuthClassification.strong:

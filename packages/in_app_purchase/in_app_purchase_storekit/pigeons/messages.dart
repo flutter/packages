@@ -9,6 +9,9 @@ import 'package:pigeon/pigeon.dart';
   dartTestOut: 'test/test_api.g.dart',
   objcHeaderOut: 'darwin/Classes/messages.g.h',
   objcSourceOut: 'darwin/Classes/messages.g.m',
+  objcOptions: ObjcOptions(
+    prefix: 'FIA',
+  ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 class SKPaymentTransactionMessage {
@@ -91,7 +94,7 @@ class SKErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?>? userInfo;
+  final Map<String, Object>? userInfo;
 }
 
 class SKPaymentDiscountMessage {
@@ -123,8 +126,8 @@ class SKStorefrontMessage {
 class SKProductsResponseMessage {
   const SKProductsResponseMessage(
       {required this.products, required this.invalidProductIdentifiers});
-  final List<SKProductMessage?>? products;
-  final List<String?>? invalidProductIdentifiers;
+  final List<SKProductMessage>? products;
+  final List<String>? invalidProductIdentifiers;
 }
 
 class SKProductMessage {
@@ -150,7 +153,7 @@ class SKProductMessage {
   final String price;
   final SKProductSubscriptionPeriodMessage? subscriptionPeriod;
   final SKProductDiscountMessage? introductoryPrice;
-  final List<SKProductDiscountMessage?>? discounts;
+  final List<SKProductDiscountMessage>? discounts;
 }
 
 class SKPriceLocaleMessage {
@@ -261,4 +264,6 @@ abstract class InAppPurchaseAPI {
   void removePaymentQueueDelegate();
 
   void showPriceConsentIfNeeded();
+
+  bool supportsStoreKit2();
 }

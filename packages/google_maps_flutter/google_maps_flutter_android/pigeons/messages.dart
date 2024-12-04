@@ -40,17 +40,67 @@ class PlatformCameraPosition {
 
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
-  PlatformCameraUpdate(this.json);
+  PlatformCameraUpdate({required this.cameraUpdate});
 
-  /// The update data, as JSON. This should only be set from
-  /// CameraUpdate.toJson, and the native code must interpret it according to the
-  /// internal implementation details of the CameraUpdate class.
-  // TODO(stuartmorgan): Update the google_maps_platform_interface CameraUpdate
-  //  class to provide a structured representation of an update. Currently it
-  //  uses JSON as its only state, so there is no way to preserve structure.
-  //  This wrapper class exists as a placeholder for now to at least provide
-  //  type safety in the top-level call's arguments.
-  final Object json;
+  /// This Object shall be any of the below classes prefixed with
+  /// PlatformCameraUpdate. Each such class represents a different type of
+  /// camera update, and each holds a different set of data, preventing the
+  /// use of a single unified class. Pigeon does not support inheritance, which
+  /// prevents a more strict type bound.
+  /// See https://github.com/flutter/flutter/issues/117819.
+  final Object cameraUpdate;
+}
+
+/// Pigeon equivalent of NewCameraPosition
+class PlatformCameraUpdateNewCameraPosition {
+  PlatformCameraUpdateNewCameraPosition(this.cameraPosition);
+  final PlatformCameraPosition cameraPosition;
+}
+
+/// Pigeon equivalent of NewLatLng
+class PlatformCameraUpdateNewLatLng {
+  PlatformCameraUpdateNewLatLng(this.latLng);
+  final PlatformLatLng latLng;
+}
+
+/// Pigeon equivalent of NewLatLngBounds
+class PlatformCameraUpdateNewLatLngBounds {
+  PlatformCameraUpdateNewLatLngBounds(this.bounds, this.padding);
+  final PlatformLatLngBounds bounds;
+  final double padding;
+}
+
+/// Pigeon equivalent of NewLatLngZoom
+class PlatformCameraUpdateNewLatLngZoom {
+  PlatformCameraUpdateNewLatLngZoom(this.latLng, this.zoom);
+  final PlatformLatLng latLng;
+  final double zoom;
+}
+
+/// Pigeon equivalent of ScrollBy
+class PlatformCameraUpdateScrollBy {
+  PlatformCameraUpdateScrollBy(this.dx, this.dy);
+  final double dx;
+  final double dy;
+}
+
+/// Pigeon equivalent of ZoomBy
+class PlatformCameraUpdateZoomBy {
+  PlatformCameraUpdateZoomBy(this.amount, [this.focus]);
+  final double amount;
+  final PlatformDoublePair? focus;
+}
+
+/// Pigeon equivalent of ZoomIn/ZoomOut
+class PlatformCameraUpdateZoom {
+  PlatformCameraUpdateZoom(this.out);
+  final bool out;
+}
+
+/// Pigeon equivalent of ZoomTo
+class PlatformCameraUpdateZoomTo {
+  PlatformCameraUpdateZoomTo(this.zoom);
+  final double zoom;
 }
 
 /// Pigeon equivalent of the Circle class.
@@ -87,7 +137,7 @@ class PlatformHeatmap {
   /// internal implementation details of that method.
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Map<String?, Object?> json;
+  final Map<String, Object?> json;
 }
 
 /// Pigeon equivalent of the ClusterManager class.
@@ -97,12 +147,12 @@ class PlatformClusterManager {
   final String identifier;
 }
 
-/// Pigeon equivalent of the Offset class.
-class PlatformOffset {
-  PlatformOffset(this.dx, this.dy);
+/// Pair of double values, such as for an offset or size.
+class PlatformDoublePair {
+  PlatformDoublePair(this.x, this.y);
 
-  final double dx;
-  final double dy;
+  final double x;
+  final double y;
 }
 
 /// Pigeon equivalent of the InfoWindow class.
@@ -115,19 +165,19 @@ class PlatformInfoWindow {
 
   final String? title;
   final String? snippet;
-  final PlatformOffset anchor;
+  final PlatformDoublePair anchor;
 }
 
 /// Pigeon equivalent of the Marker class.
 class PlatformMarker {
   PlatformMarker({
     required this.markerId,
+    required this.icon,
     this.alpha = 1.0,
     required this.anchor,
     this.consumeTapEvents = false,
     this.draggable = false,
     this.flat = false,
-    this.icon = const <Object>['defaultMarker'],
     required this.infoWindow,
     required this.position,
     this.rotation = 0.0,
@@ -137,14 +187,12 @@ class PlatformMarker {
   });
 
   final double alpha;
-  final PlatformOffset anchor;
+  final PlatformDoublePair anchor;
   final bool consumeTapEvents;
   final bool draggable;
   final bool flat;
 
-  /// The icon as JSON data.
-  // TODO(schectman): replace this with structured data.
-  final Object icon;
+  final PlatformBitmap icon;
   final PlatformInfoWindow infoWindow;
   final PlatformLatLng position;
   final double rotation;
@@ -173,12 +221,19 @@ class PlatformPolygon {
   final bool consumesTapEvents;
   final int fillColor;
   final bool geodesic;
-  final List<PlatformLatLng?> points;
-  final List<List<PlatformLatLng?>?> holes;
+  final List<PlatformLatLng> points;
+  final List<List<PlatformLatLng>> holes;
   final bool visible;
   final int strokeColor;
   final int strokeWidth;
   final int zIndex;
+}
+
+/// Join types for polyline joints.
+enum PlatformJointType {
+  mitered,
+  bevel,
+  round,
 }
 
 /// Pigeon equivalent of the Polyline class.
@@ -203,23 +258,57 @@ class PlatformPolyline {
   final int color;
   final bool geodesic;
 
-  /// The joint type as an integer. This must be a value corresponding to one of the values defined in the platform interface package's JointType enum. The integer values specified in this enum must match those used by the native SDK.
-  // TODO(schectman): Convert field to enum.
-  // https://github.com/flutter/flutter/issues/153718
-  final int jointType;
+  /// The joint type.
+  final PlatformJointType jointType;
 
-  /// The pattern data, as JSON. Each element in this list should be set only from PatternItem.toJson, and the native code must interpret it according to the internal implementation details of that method.
-  // TODO(schectman): Convert field to structured data.
-  final List<Object?> patterns;
-  final List<PlatformLatLng?> points;
+  /// The pattern data, as a list of pattern items.
+  final List<PlatformPatternItem> patterns;
+  final List<PlatformLatLng> points;
 
-  /// The start and end cap data, as JSON. These should be set only from Cap.toJson, and the native code must interpret it according to the internal implementation details of that method.
-  // TODO(schectman): Convert below two fields to structured data.
-  final Object startCap;
-  final Object endCap;
+  /// The cap at the start and end vertex of a polyline.
+  /// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+  final PlatformCap startCap;
+  final PlatformCap endCap;
+
   final bool visible;
   final int width;
   final int zIndex;
+}
+
+/// Enumeration of possible types of PlatformCap, corresponding to the
+/// subclasses of Cap in the Google Maps Android SDK.
+/// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
+enum PlatformCapType {
+  buttCap,
+  roundCap,
+  squareCap,
+  customCap,
+}
+
+/// Pigeon equivalent of Cap from the platform interface.
+/// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
+class PlatformCap {
+  PlatformCap({required this.type, this.bitmapDescriptor, this.refWidth});
+
+  final PlatformCapType type;
+
+  final PlatformBitmap? bitmapDescriptor;
+  final double? refWidth;
+}
+
+/// Enumeration of possible types for PatternItem.
+enum PlatformPatternItemType {
+  dot,
+  dash,
+  gap,
+}
+
+/// Pigeon equivalent of the PatternItem class.
+class PlatformPatternItem {
+  PlatformPatternItem({required this.type, this.length});
+
+  final PlatformPatternItemType type;
+  final double? length;
 }
 
 /// Pigeon equivalent of the Tile class.
@@ -293,10 +382,7 @@ class PlatformCluster {
   final String clusterManagerId;
   final PlatformLatLng position;
   final PlatformLatLngBounds bounds;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  final List<String?> markerIds;
+  final List<String> markerIds;
 }
 
 /// Pigeon equivalent of CameraTargetBounds.
@@ -325,16 +411,13 @@ class PlatformMapViewCreationParams {
 
   final PlatformCameraPosition initialCameraPosition;
   final PlatformMapConfiguration mapConfiguration;
-  // TODO(stuartmorgan): Make the generic types non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  final List<PlatformCircle?> initialCircles;
-  final List<PlatformMarker?> initialMarkers;
-  final List<PlatformPolygon?> initialPolygons;
-  final List<PlatformPolyline?> initialPolylines;
-  final List<PlatformHeatmap?> initialHeatmaps;
-  final List<PlatformTileOverlay?> initialTileOverlays;
-  final List<PlatformClusterManager?> initialClusterManagers;
+  final List<PlatformCircle> initialCircles;
+  final List<PlatformMarker> initialMarkers;
+  final List<PlatformPolygon> initialPolygons;
+  final List<PlatformPolyline> initialPolylines;
+  final List<PlatformHeatmap> initialHeatmaps;
+  final List<PlatformTileOverlay> initialTileOverlays;
+  final List<PlatformClusterManager> initialClusterManagers;
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -415,6 +498,96 @@ class PlatformZoomRange {
   final double? max;
 }
 
+/// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
+/// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
+/// may hold the pigeon equivalent type of any of them.
+class PlatformBitmap {
+  PlatformBitmap({required this.bitmap});
+
+  /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
+  /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
+  /// [PlatformBitmapBytes], or [PlatformBitmapDefaultMarker].
+  /// As Pigeon does not currently support data class inheritance, this
+  /// approach allows for the different bitmap implementations to be valid
+  /// argument and return types of the API methods. See
+  /// https://github.com/flutter/flutter/issues/117819.
+  final Object bitmap;
+}
+
+/// Pigeon equivalent of [DefaultMarker]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#defaultMarker(float)
+class PlatformBitmapDefaultMarker {
+  PlatformBitmapDefaultMarker({this.hue});
+
+  final double? hue;
+}
+
+/// Pigeon equivalent of [BytesBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#fromBitmap(android.graphics.Bitmap)
+class PlatformBitmapBytes {
+  PlatformBitmapBytes({required this.byteData, this.size});
+
+  final Uint8List byteData;
+  final PlatformDoublePair? size;
+}
+
+/// Pigeon equivalent of [AssetBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+class PlatformBitmapAsset {
+  PlatformBitmapAsset({required this.name, this.pkg});
+
+  final String name;
+  final String? pkg;
+}
+
+/// Pigeon equivalent of [AssetImageBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+class PlatformBitmapAssetImage {
+  PlatformBitmapAssetImage(
+      {required this.name, required this.scale, this.size});
+  final String name;
+  final double scale;
+  final PlatformDoublePair? size;
+}
+
+/// Pigeon equivalent of [MapBitmapScaling].
+enum PlatformMapBitmapScaling {
+  auto,
+  none,
+}
+
+/// Pigeon equivalent of [AssetMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
+class PlatformBitmapAssetMap {
+  PlatformBitmapAssetMap(
+      {required this.assetName,
+      required this.bitmapScaling,
+      required this.imagePixelRatio,
+      this.width,
+      this.height});
+  final String assetName;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
+}
+
+/// Pigeon equivalent of [BytesMapBitmap]. See
+/// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-frombitmap-bitmap-image
+class PlatformBitmapBytesMap {
+  PlatformBitmapBytesMap(
+      {required this.byteData,
+      required this.bitmapScaling,
+      required this.imagePixelRatio,
+      this.width,
+      this.height});
+  final Uint8List byteData;
+  final PlatformMapBitmapScaling bitmapScaling;
+  final double imagePixelRatio;
+  final double? width;
+  final double? height;
+}
+
 /// Interface for non-test interactions with the native SDK.
 ///
 /// For test-only state queries, see [MapsInspectorApi].
@@ -431,53 +604,32 @@ abstract class MapsApi {
   void updateMapConfiguration(PlatformMapConfiguration configuration);
 
   /// Updates the set of circles on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  void updateCircles(List<PlatformCircle?> toAdd,
-      List<PlatformCircle?> toChange, List<String?> idsToRemove);
+  void updateCircles(List<PlatformCircle> toAdd, List<PlatformCircle> toChange,
+      List<String> idsToRemove);
 
   /// Updates the set of heatmaps on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  void updateHeatmaps(List<PlatformHeatmap?> toAdd,
-      List<PlatformHeatmap?> toChange, List<String?> idsToRemove);
+  void updateHeatmaps(List<PlatformHeatmap> toAdd,
+      List<PlatformHeatmap> toChange, List<String> idsToRemove);
 
   /// Updates the set of custer managers for clusters on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
   void updateClusterManagers(
-      List<PlatformClusterManager?> toAdd, List<String?> idsToRemove);
+      List<PlatformClusterManager> toAdd, List<String> idsToRemove);
 
   /// Updates the set of markers on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  void updateMarkers(List<PlatformMarker?> toAdd,
-      List<PlatformMarker?> toChange, List<String?> idsToRemove);
+  void updateMarkers(List<PlatformMarker> toAdd, List<PlatformMarker> toChange,
+      List<String> idsToRemove);
 
   /// Updates the set of polygonss on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  void updatePolygons(List<PlatformPolygon?> toAdd,
-      List<PlatformPolygon?> toChange, List<String?> idsToRemove);
+  void updatePolygons(List<PlatformPolygon> toAdd,
+      List<PlatformPolygon> toChange, List<String> idsToRemove);
 
   /// Updates the set of polylines on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  void updatePolylines(List<PlatformPolyline?> toAdd,
-      List<PlatformPolyline?> toChange, List<String?> idsToRemove);
+  void updatePolylines(List<PlatformPolyline> toAdd,
+      List<PlatformPolyline> toChange, List<String> idsToRemove);
 
   /// Updates the set of tile overlays on the map.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  void updateTileOverlays(List<PlatformTileOverlay?> toAdd,
-      List<PlatformTileOverlay?> toChange, List<String?> idsToRemove);
+  void updateTileOverlays(List<PlatformTileOverlay> toAdd,
+      List<PlatformTileOverlay> toChange, List<String> idsToRemove);
 
   /// Gets the screen coordinate for the given map location.
   PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
@@ -619,8 +771,5 @@ abstract class MapsInspectorApi {
   bool isTrafficEnabled();
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
   PlatformZoomRange getZoomRange();
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats the entries as non-nullable.
-  List<PlatformCluster?> getClusters(String clusterManagerId);
+  List<PlatformCluster> getClusters(String clusterManagerId);
 }

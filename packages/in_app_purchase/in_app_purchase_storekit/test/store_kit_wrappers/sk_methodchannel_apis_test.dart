@@ -15,7 +15,7 @@ void main() {
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    TestInAppPurchaseApi.setup(fakeStoreKitPlatform);
+    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
   });
 
   setUp(() {});
@@ -235,7 +235,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  List<SKPaymentTransactionMessage?> transactions() =>
+  List<SKPaymentTransactionMessage> transactions() =>
       <SKPaymentTransactionMessage>[dummyTransactionMessage];
 
   @override
@@ -303,6 +303,11 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   @override
   void showPriceConsentIfNeeded() {
     showPriceConsent = true;
+  }
+
+  @override
+  bool supportsStoreKit2() {
+    return true;
   }
 }
 

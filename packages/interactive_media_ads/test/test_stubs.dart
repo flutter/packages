@@ -11,6 +11,8 @@ final class TestInteractiveMediaAdsPlatform
     required this.onCreatePlatformAdsLoader,
     required this.onCreatePlatformAdsManagerDelegate,
     required this.onCreatePlatformAdDisplayContainer,
+    required this.onCreatePlatformContentProgressProvider,
+    this.onCreatePlatformAdsRenderingSettings,
   });
 
   PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
@@ -23,6 +25,14 @@ final class TestInteractiveMediaAdsPlatform
   PlatformAdDisplayContainer Function(
     PlatformAdDisplayContainerCreationParams params,
   ) onCreatePlatformAdDisplayContainer;
+
+  PlatformContentProgressProvider Function(
+    PlatformContentProgressProviderCreationParams params,
+  ) onCreatePlatformContentProgressProvider;
+
+  PlatformAdsRenderingSettings Function(
+    PlatformAdsRenderingSettingsCreationParams params,
+  )? onCreatePlatformAdsRenderingSettings;
 
   @override
   PlatformAdsLoader createPlatformAdsLoader(
@@ -43,6 +53,21 @@ final class TestInteractiveMediaAdsPlatform
     PlatformAdDisplayContainerCreationParams params,
   ) {
     return onCreatePlatformAdDisplayContainer(params);
+  }
+
+  @override
+  PlatformContentProgressProvider createPlatformContentProgressProvider(
+    PlatformContentProgressProviderCreationParams params,
+  ) {
+    return onCreatePlatformContentProgressProvider(params);
+  }
+
+  @override
+  PlatformAdsRenderingSettings createPlatformAdsRenderingSettings(
+    PlatformAdsRenderingSettingsCreationParams params,
+  ) {
+    return onCreatePlatformAdsRenderingSettings?.call(params) ??
+        TestAdsRenderingSettings(params);
   }
 }
 
@@ -69,7 +94,7 @@ final class TestPlatformAdsLoader extends PlatformAdsLoader {
 
   Future<void> Function() onContentComplete;
 
-  Future<void> Function(AdsRequest request) onRequestAds;
+  Future<void> Function(PlatformAdsRequest request) onRequestAds;
 
   @override
   Future<void> contentComplete() async {
@@ -77,7 +102,7 @@ final class TestPlatformAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(AdsRequest request) async {
+  Future<void> requestAds(PlatformAdsRequest request) async {
     return onRequestAds(request);
   }
 }
@@ -98,7 +123,7 @@ class TestAdsManager extends PlatformAdsManager {
     this.onSkip,
   });
 
-  Future<void> Function(AdsManagerInitParams params)? onInit;
+  Future<void> Function({PlatformAdsRenderingSettings? settings})? onInit;
 
   Future<void> Function(PlatformAdsManagerDelegate delegate)?
       onSetAdsManagerDelegate;
@@ -116,8 +141,8 @@ class TestAdsManager extends PlatformAdsManager {
   Future<void> Function()? onDestroy;
 
   @override
-  Future<void> init(AdsManagerInitParams params) async {
-    return onInit?.call(params);
+  Future<void> init({PlatformAdsRenderingSettings? settings}) async {
+    return onInit?.call(settings: settings);
   }
 
   @override
@@ -156,4 +181,28 @@ class TestAdsManager extends PlatformAdsManager {
   Future<void> skip() async {
     return onSkip?.call();
   }
+}
+
+class TestContentProgressProvider extends PlatformContentProgressProvider {
+  TestContentProgressProvider(
+    super.params, {
+    this.onSetProgress,
+  }) : super.implementation();
+
+  Future<void> Function({
+    required Duration progress,
+    required Duration duration,
+  })? onSetProgress;
+
+  @override
+  Future<void> setProgress({
+    required Duration progress,
+    required Duration duration,
+  }) async {
+    return onSetProgress?.call(progress: progress, duration: duration);
+  }
+}
+
+final class TestAdsRenderingSettings extends PlatformAdsRenderingSettings {
+  TestAdsRenderingSettings(super.params) : super.implementation();
 }
