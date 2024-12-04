@@ -19,6 +19,7 @@
 #include <cassert>
 #include <chrono>
 #include <memory>
+#include <sstream>
 
 #include "capture_device_info.h"
 #include "com_heap_ptr.h"
@@ -35,10 +36,6 @@ namespace {
 
 const std::string kPictureCaptureExtension = "jpeg";
 const std::string kVideoCaptureExtension = "mp4";
-constexpr char kFrameEventChannelName[] =
-    "plugins.flutter.io/camera_android/imageStream";
-
-std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> event_sink;
 
 // Builds CaptureDeviceInfo object from given device holding device name and id.
 std::unique_ptr<CaptureDeviceInfo> GetDeviceInfo(IMFActivate* device) {
@@ -123,33 +120,11 @@ std::optional<std::string> GetFilePathForVideo() {
 }
 }  // namespace
 
-// a setter for the event sink helpful for testing.
-void CameraPlugin::SetEventSink(
-    std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> events) {
-  event_sink = std::move(events);
-}
-
 // static
 void CameraPlugin::RegisterWithRegistrar(
     flutter::PluginRegistrarWindows* registrar) {
   std::unique_ptr<CameraPlugin> plugin = std::make_unique<CameraPlugin>(
       registrar->texture_registrar(), registrar->messenger());
-
-  auto frameEventchannel = std::make_unique<flutter::EventChannel<>>(
-      registrar->messenger(), kFrameEventChannelName,
-      &flutter::StandardMethodCodec::GetInstance());
-
-  auto event_channel_handler =
-      std::make_unique<flutter::StreamHandlerFunctions<>>(
-          [plugin = plugin.get()](auto arguments, auto events) {
-            plugin->SetEventSink(std::move(events));
-            return nullptr;
-          },
-          [](auto arguments) {
-            event_sink.reset();
-            return nullptr;
-          });
-  frameEventchannel->SetStreamHandler(std::move(event_channel_handler));
 
   CameraApi::SetUp(registrar->messenger(), plugin.get());
 
@@ -377,14 +352,29 @@ std::optional<FlutterError> CameraPlugin::StartImageStream(int64_t camera_id) {
     return FlutterError("camera_error", "Camera not created");
   }
 
-  if (!event_sink) {
-    return FlutterError("camera_error",
-                        "Unable to make event channel from windows");
-  }
-
   CaptureController* cc = camera->GetCaptureController();
   assert(cc);
-  cc->StartImageStream(std::move(event_sink));
+
+  std::ostringstream event_channel_name;
+  event_channel_name << "plugins.flutter.io/camera_windows/imageStream/"
+                     << camera_id;
+
+  auto frame_event_channel =
+      flutter::EventChannel(messenger_, event_channel_name.str(),
+                            &flutter::StandardMethodCodec::GetInstance());
+
+  auto event_channel_handler =
+      std::make_unique<flutter::StreamHandlerFunctions<>>(
+          [cc](auto arguments, auto events) {
+            cc->StartImageStream(std::move(events));
+            return nullptr;
+          },
+          [cc](auto arguments) {
+            cc->StopImageStream();
+            return nullptr;
+          });
+
+  frame_event_channel.SetStreamHandler(std::move(event_channel_handler));
 
   return std::nullopt;
 }
