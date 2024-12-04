@@ -1,6 +1,6 @@
 ## 2.6.4
 
-* Extracts `FVPVideoPlayer` and `FVPFrameUpdater` from the `FVPVideoPlayerPlugin.m` file and places them into separate files.
+* Refactors native code structure.
 
 ## 2.6.3
 
