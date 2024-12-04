@@ -4,4 +4,4 @@
 export '../src/ad_unit_configuration.dart';
 export '../src/ad_unit_params.dart';
 export '../src/adsense_stub.dart'
-    if (dart.library.js_interop) 'src/adsense_web.dart';
+    if (dart.library.js_interop) '../src/adsense_web.dart';
