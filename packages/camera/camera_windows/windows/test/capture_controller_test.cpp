@@ -33,6 +33,7 @@ void MockInitCaptureController(
     CaptureControllerImpl* capture_controller,
     MockTextureRegistrar* texture_registrar, MockCaptureEngine* engine,
     MockCamera* camera, int64_t mock_texture_id,
+    std::shared_ptr<TaskRunner> task_runner,
     const PlatformMediaSettings media_settings =
         PlatformMediaSettings(PlatformResolutionPreset::kMax, true)) {
   ComPtr<MockMediaSource> video_source = new MockMediaSource();
@@ -62,7 +63,7 @@ void MockInitCaptureController(
   EXPECT_CALL(*engine, Initialize).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
-      texture_registrar, MOCK_DEVICE_ID, media_settings);
+      texture_registrar, MOCK_DEVICE_ID, media_settings, task_runner);
 
   EXPECT_TRUE(result);
 
@@ -237,12 +238,14 @@ TEST(CaptureController,
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Init capture controller with mocks and tests
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   capture_controller = nullptr;
   camera = nullptr;
@@ -258,19 +261,21 @@ TEST(CaptureController, InitCaptureEngineCanOnlyBeCalledOnce) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Init capture controller once with mocks and tests
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   // Init capture controller a second time.
   EXPECT_CALL(*camera, OnCreateCaptureEngineFailed).Times(1);
 
   bool result = capture_controller->InitCaptureDevice(
       texture_registrar.get(), MOCK_DEVICE_ID,
-      PlatformMediaSettings(PlatformResolutionPreset::kMax, true));
+      PlatformMediaSettings(PlatformResolutionPreset::kMax, true), task_runner);
 
   EXPECT_FALSE(result);
 
@@ -288,6 +293,7 @@ TEST(CaptureController, InitCaptureEngineReportsFailure) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   ComPtr<MockMediaSource> video_source = new MockMediaSource();
   ComPtr<MockMediaSource> audio_source = new MockMediaSource();
@@ -312,7 +318,7 @@ TEST(CaptureController, InitCaptureEngineReportsFailure) {
 
   bool result = capture_controller->InitCaptureDevice(
       texture_registrar.get(), MOCK_DEVICE_ID,
-      PlatformMediaSettings(PlatformResolutionPreset::kMax, true));
+      PlatformMediaSettings(PlatformResolutionPreset::kMax, true), task_runner);
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);
@@ -331,6 +337,7 @@ TEST(CaptureController, InitCaptureEngineReportsAccessDenied) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   ComPtr<MockMediaSource> video_source = new MockMediaSource();
   ComPtr<MockMediaSource> audio_source = new MockMediaSource();
@@ -357,7 +364,7 @@ TEST(CaptureController, InitCaptureEngineReportsAccessDenied) {
 
   bool result = capture_controller->InitCaptureDevice(
       texture_registrar.get(), MOCK_DEVICE_ID,
-      PlatformMediaSettings(PlatformResolutionPreset::kMax, true));
+      PlatformMediaSettings(PlatformResolutionPreset::kMax, true), task_runner);
 
   EXPECT_FALSE(result);
   EXPECT_FALSE(engine->initialized_);
@@ -376,11 +383,13 @@ TEST(CaptureController, ReportsInitializedErrorEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   EXPECT_CALL(*camera, OnCreateCaptureEngineFailed(
                            Eq(CameraResult::kError),
@@ -405,11 +414,13 @@ TEST(CaptureController, ReportsInitializedAccessDeniedEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   EXPECT_CALL(*camera, OnCreateCaptureEngineFailed(
                            Eq(CameraResult::kAccessDenied),
@@ -434,11 +445,12 @@ TEST(CaptureController, ReportsCaptureEngineErrorEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
-
+  auto task_runner = std::make_shared<MockTaskRunner>();
   int64_t mock_texture_id = 1234;
 
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   EXPECT_CALL(*(camera.get()),
               OnCaptureError(Eq(CameraResult::kError), Eq("Unspecified error")))
@@ -461,11 +473,12 @@ TEST(CaptureController, ReportsCaptureEngineAccessDeniedEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
-
+  auto task_runner = std::make_shared<MockTaskRunner>();
   int64_t mock_texture_id = 1234;
 
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   EXPECT_CALL(*(camera.get()), OnCaptureError(Eq(CameraResult::kAccessDenied),
                                               Eq("Access is denied.")))
@@ -488,12 +501,13 @@ TEST(CaptureController, StartPreviewStartsProcessingSamples) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
-
+  auto task_runner = std::make_shared<MockTaskRunner>();
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
 
@@ -575,12 +589,14 @@ TEST(CaptureController, ReportsStartPreviewError) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
   MockAvailableMediaTypes(engine.Get(), capture_source.Get(), 1, 1);
@@ -616,12 +632,14 @@ TEST(CaptureController, IgnoresStartPreviewErrorEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   EXPECT_CALL(*camera, OnStartPreviewFailed).Times(0);
   EXPECT_CALL(*camera, OnCreateCaptureEngineSucceeded).Times(0);
@@ -643,12 +661,14 @@ TEST(CaptureController, ReportsStartPreviewAccessDenied) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
   MockAvailableMediaTypes(engine.Get(), capture_source.Get(), 1, 1);
@@ -682,12 +702,14 @@ TEST(CaptureController, StartRecordSuccess) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -736,6 +758,7 @@ TEST(CaptureController, StartRecordWithSettingsSuccess) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
@@ -751,7 +774,7 @@ TEST(CaptureController, StartRecordWithSettingsSuccess) {
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
                             engine.Get(), camera.get(), mock_texture_id,
-                            media_settings);
+                            task_runner, media_settings);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -823,12 +846,14 @@ TEST(CaptureController, ReportsStartRecordError) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -864,12 +889,14 @@ TEST(CaptureController, ReportsStartRecordAccessDenied) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -905,12 +932,14 @@ TEST(CaptureController, ReportsStartRecordErrorEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -970,12 +999,14 @@ TEST(CaptureController, ReportsStartRecordAccessDeniedEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1035,12 +1066,14 @@ TEST(CaptureController, StopRecordSuccess) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1080,12 +1113,14 @@ TEST(CaptureController, ReportsStopRecordError) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1124,12 +1159,14 @@ TEST(CaptureController, ReportsStopRecordAccessDenied) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1168,12 +1205,14 @@ TEST(CaptureController, ReportsStopRecordErrorEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1209,12 +1248,14 @@ TEST(CaptureController, ReportsStopRecordAccessDeniedEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1250,12 +1291,14 @@ TEST(CaptureController, TakePictureSuccess) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to take picture
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1292,12 +1335,14 @@ TEST(CaptureController, ReportsTakePictureError) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to take picture
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1334,12 +1379,14 @@ TEST(CaptureController, ReportsTakePictureAccessDenied) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to take picture
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1378,12 +1425,14 @@ TEST(CaptureController, ReportsPhotoTakenErrorEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to take picture
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1423,12 +1472,14 @@ TEST(CaptureController, ReportsPhotoTakenAccessDeniedEvent) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to take picture
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCaptureSource> capture_source = new MockCaptureSource();
 
@@ -1468,12 +1519,14 @@ TEST(CaptureController, PauseResumePreviewSuccess) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
 
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   ComPtr<MockCapturePreviewSink> preview_sink = new MockCapturePreviewSink();
 
@@ -1505,11 +1558,14 @@ TEST(CaptureController, PausePreviewFailsIfPreviewNotStarted) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
+
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   // Pause preview fails if not started
   EXPECT_CALL(*camera, OnPausePreviewFailed(Eq(CameraResult::kError),
@@ -1532,11 +1588,14 @@ TEST(CaptureController, ResumePreviewFailsIfPreviewNotStarted) {
       std::make_unique<CaptureControllerImpl>(camera.get());
   std::unique_ptr<MockTextureRegistrar> texture_registrar =
       std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<MockTaskRunner>();
+
   int64_t mock_texture_id = 1234;
 
   // Initialize capture controller to be able to start preview
   MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
-                            engine.Get(), camera.get(), mock_texture_id);
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
 
   // Resume preview fails if not started.
   EXPECT_CALL(*camera, OnResumePreviewFailed(Eq(CameraResult::kError),

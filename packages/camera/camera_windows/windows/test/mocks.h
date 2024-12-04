@@ -203,7 +203,8 @@ class MockCamera : public Camera {
   MOCK_METHOD(bool, InitCamera,
               (flutter::TextureRegistrar * texture_registrar,
                flutter::BinaryMessenger* messenger,
-               const PlatformMediaSettings& media_settings),
+               const PlatformMediaSettings& media_settings,
+               std::shared_ptr<TaskRunner> task_runner),
               (override));
 
   std::unique_ptr<CaptureController> capture_controller_;
@@ -236,7 +237,8 @@ class MockCaptureController : public CaptureController {
   MOCK_METHOD(bool, InitCaptureDevice,
               (flutter::TextureRegistrar * texture_registrar,
                const std::string& device_id,
-               const PlatformMediaSettings& media_settings),
+               const PlatformMediaSettings& media_settings,
+               std::shared_ptr<TaskRunner> task_runner),
               (override));
 
   MOCK_METHOD(uint32_t, GetPreviewWidth, (), (const override));
@@ -1076,6 +1078,12 @@ class MockCaptureEngine : public IMFCaptureEngine {
   volatile ULONG ref_ = 0;
   bool initialized_ = false;
 };
+
+class MockTaskRunner : public TaskRunner {
+ public:
+  MOCK_METHOD(void, EnqueueTask, (TaskClosure), (override));
+};
+
 // Mock class for flutter::EventSink<flutter::EncodableValue>
 class MockEventSink : public flutter::EventSink<flutter::EncodableValue> {
  public:

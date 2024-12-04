@@ -16,6 +16,7 @@
 #include "capture_controller.h"
 #include "capture_controller_listener.h"
 #include "messages.g.h"
+#include "task_runner.h"
 
 namespace camera_windows {
 using flutter::MethodResult;
@@ -97,6 +98,7 @@ class CameraPlugin : public flutter::Plugin,
   flutter::TextureRegistrar* texture_registrar_;
   flutter::BinaryMessenger* messenger_;
   std::vector<std::unique_ptr<Camera>> cameras_;
+  std::shared_ptr<TaskRunner> task_runner_;
 
   friend class camera_windows::test::MockCameraPlugin;
 };

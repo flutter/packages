@@ -24,6 +24,7 @@
 #include "com_heap_ptr.h"
 #include "messages.g.h"
 #include "string_utils.h"
+#include "task_runner_window.h"
 
 namespace camera_windows {
 using flutter::EncodableList;
@@ -159,7 +160,8 @@ CameraPlugin::CameraPlugin(flutter::TextureRegistrar* texture_registrar,
                            flutter::BinaryMessenger* messenger)
     : texture_registrar_(texture_registrar),
       messenger_(messenger),
-      camera_factory_(std::make_unique<CameraFactoryImpl>()) {}
+      camera_factory_(std::make_unique<CameraFactoryImpl>()),
+      task_runner_(std::make_shared<TaskRunnerWindow>()) {}
 
 CameraPlugin::CameraPlugin(flutter::TextureRegistrar* texture_registrar,
                            flutter::BinaryMessenger* messenger,
@@ -251,8 +253,8 @@ void CameraPlugin::Create(const std::string& camera_name,
 
   if (camera->AddPendingIntResult(PendingResultType::kCreateCamera,
                                   std::move(result))) {
-    bool initialized =
-        camera->InitCamera(texture_registrar_, messenger_, settings);
+    bool initialized = camera->InitCamera(texture_registrar_, messenger_,
+                                          settings, task_runner_);
     if (initialized) {
       cameras_.push_back(std::move(camera));
     }
