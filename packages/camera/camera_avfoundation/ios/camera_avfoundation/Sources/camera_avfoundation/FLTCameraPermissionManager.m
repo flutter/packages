@@ -3,9 +3,29 @@
 // found in the LICENSE file.
 
 @import AVFoundation;
-#import "./include/camera_avfoundation/CameraPermissionUtils.h"
+#import "./include/camera_avfoundation/FLTCameraPermissionManager.h"
+#import "./include/camera_avfoundation/FLTPermissionService.h"
 
-void FLTRequestPermission(BOOL forAudio, FLTCameraPermissionRequestCompletionHandler handler) {
+@implementation FLTCameraPermissionManager
+
+- (instancetype)initWithPermissionService:(id<FLTPermissionService>)service {
+  self = [super init];
+  if (self) {
+    _permissionService = service ?: [[FLTDefaultPermissionService alloc] init];
+  }
+  return self;
+}
+
+- (void)requestAudioPermissionWithCompletionHandler:(__strong FLTCameraPermissionRequestCompletionHandler)handler {
+  [self requestPermissionForAudio:YES handler:handler];
+}
+
+- (void)requestCameraPermissionWithCompletionHandler:(__strong FLTCameraPermissionRequestCompletionHandler)handler {
+  [self requestPermissionForAudio:NO handler:handler];
+}
+
+- (void)requestPermissionForAudio:(BOOL)forAudio
+                          handler:(FLTCameraPermissionRequestCompletionHandler)handler {
   AVMediaType mediaType;
   if (forAudio) {
     mediaType = AVMediaTypeAudio;
@@ -13,7 +33,7 @@ void FLTRequestPermission(BOOL forAudio, FLTCameraPermissionRequestCompletionHan
     mediaType = AVMediaTypeVideo;
   }
 
-  switch ([AVCaptureDevice authorizationStatusForMediaType:mediaType]) {
+  switch ([_permissionService authorizationStatusForMediaType:mediaType]) {
     case AVAuthorizationStatusAuthorized:
       handler(nil);
       break;
@@ -50,7 +70,7 @@ void FLTRequestPermission(BOOL forAudio, FLTCameraPermissionRequestCompletionHan
       break;
     }
     case AVAuthorizationStatusNotDetermined: {
-      [AVCaptureDevice requestAccessForMediaType:mediaType
+      [_permissionService requestAccessForMediaType:mediaType
                                completionHandler:^(BOOL granted) {
                                  // handler can be invoked on an arbitrary dispatch queue.
                                  if (granted) {
@@ -76,12 +96,4 @@ void FLTRequestPermission(BOOL forAudio, FLTCameraPermissionRequestCompletionHan
   }
 }
 
-void FLTRequestCameraPermissionWithCompletionHandler(
-    FLTCameraPermissionRequestCompletionHandler handler) {
-  FLTRequestPermission(/*forAudio*/ NO, handler);
-}
-
-void FLTRequestAudioPermissionWithCompletionHandler(
-    FLTCameraPermissionRequestCompletionHandler handler) {
-  FLTRequestPermission(/*forAudio*/ YES, handler);
-}
+@end
