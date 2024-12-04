@@ -118,11 +118,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
               target.offsetHeight.toDouble(),
             ));
           } else {
-            // Prevent scrolling issues over empty ad slot
-            target
-              ..style.pointerEvents = 'none'
-              ..style.height = '0px'
-              ..style.width = '0px';
+            // This removes the platform view.
             _updateWidgetSize(Size.zero);
           }
         }

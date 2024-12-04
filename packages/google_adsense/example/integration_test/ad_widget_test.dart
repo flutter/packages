@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 // Ensure we don't use the singleton `adSense`, but the local copies to this plugin.
 import 'package:google_adsense/google_adsense.dart' hide adSense;
+import 'package:google_adsense/src/ad_unit_widget.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;
 
@@ -23,10 +24,10 @@ const String testScriptUrl =
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  late AdSense adsense;
+  late AdSense adSense;
 
   setUp(() async {
-    adsense = AdSense();
+    adSense = AdSense();
   });
 
   tearDown(() {
@@ -38,7 +39,7 @@ void main() async {
       final web.HTMLElement target = web.HTMLDivElement();
       // Given
 
-      adsense.initialize(testClient, jsLoaderTarget: target);
+      adSense.initialize(testClient, jsLoaderTarget: target);
 
       final web.HTMLScriptElement? injected =
           target.lastElementChild as web.HTMLScriptElement?;
@@ -49,99 +50,175 @@ void main() async {
       expect(injected.async, true);
     });
 
-    testWidgets('Skips initialization if script already present.',
+    testWidgets('Skips initialization if script is already present.',
         (WidgetTester _) async {
       final web.HTMLScriptElement script = web.HTMLScriptElement()
         ..id = 'previously-injected'
         ..src = testScriptUrl;
       final web.HTMLElement target = web.HTMLDivElement()..appendChild(script);
 
-      adsense.initialize(testClient, jsLoaderTarget: target);
+      adSense.initialize(testClient, jsLoaderTarget: target);
 
       expect(target.childElementCount, 1);
       expect(target.firstElementChild?.id, 'previously-injected');
     });
 
-    testWidgets('Skips initialization if adsense object already present.',
+    testWidgets('Skips initialization if adsense object is already present.',
         (WidgetTester _) async {
       final web.HTMLElement target = web.HTMLDivElement();
 
       // Write an empty noop object
       mockAdsByGoogle(() {});
 
-      adsense.initialize(testClient, jsLoaderTarget: target);
+      adSense.initialize(testClient, jsLoaderTarget: target);
 
       expect(target.firstElementChild, isNull);
     });
   });
 
   group('adWidget', () {
-    testWidgets('Filled ad units resize widget height',
+    testWidgets('Responsive (with adFormat) ad units reflow flutter',
         (WidgetTester tester) async {
+      // The size of the ad that we're going to "inject"
+      const double expectedHeight = 137;
+
       // When
-      mockAdsByGoogle(() {
-        // Locate the target element, and push a red div to it...
-        final web.Element? adTarget =
-            web.document.querySelector('div[id^=adUnit] ins');
+      mockAdsByGoogle(
+        mockAd(
+          size: const Size(320, expectedHeight),
+        ),
+      );
 
-        final web.HTMLElement fakeAd = web.HTMLDivElement()
-          ..style.width = '320px'
-          ..style.height = '137px'
-          ..style.background = 'red';
+      adSense.initialize(testClient);
 
-        adTarget!
-          ..appendChild(fakeAd)
-          ..setAttribute('data-ad-status', AdStatus.FILLED);
-      });
-
-      adsense.initialize(testClient);
-
-      final Widget adUnitWidget =
-          adsense.adUnit(AdUnitConfiguration.displayAdUnit(adSlot: testSlot));
+      final Widget adUnitWidget = adSense.adUnit(
+        AdUnitConfiguration.displayAdUnit(
+          adSlot: testSlot,
+          adFormat: AdFormat.AUTO, // Important!
+        ),
+      );
 
       await pumpAdWidget(adUnitWidget, tester);
 
       // Then
       // Widget level
-      expect(find.byWidget(adUnitWidget), findsOneWidget);
+      final Finder adUnit = find.byWidget(adUnitWidget);
+      expect(adUnit, findsOneWidget);
 
-      final Size size = tester.getSize(find.byWidget(adUnitWidget));
+      final Size size = tester.getSize(adUnit);
+      expect(size.height, expectedHeight);
+    });
 
-      expect(size.height, 137);
+    testWidgets(
+        'Fixed size (without adFormat) ad units respect flutter constraints',
+        (WidgetTester tester) async {
+      const double maxHeight = 100;
+      const BoxConstraints constraints = BoxConstraints(maxHeight: maxHeight);
+
+      // When
+      mockAdsByGoogle(
+        mockAd(
+          size: const Size(320, 157),
+        ),
+      );
+
+      adSense.initialize(testClient);
+
+      final Widget adUnitWidget = adSense.adUnit(
+        AdUnitConfiguration.displayAdUnit(
+          adSlot: testSlot,
+        ),
+      );
+
+      final Widget constrainedAd = Container(
+        constraints: constraints,
+        child: adUnitWidget,
+      );
+
+      await pumpAdWidget(constrainedAd, tester);
+
+      // Then
+      // Widget level
+      final Finder adUnit = find.byWidget(adUnitWidget);
+      expect(adUnit, findsOneWidget);
+
+      final Size size = tester.getSize(adUnit);
+      expect(size.height, maxHeight);
     });
 
     testWidgets('Unfilled ad units collapse widget height',
         (WidgetTester tester) async {
       // When
-      mockAdsByGoogle(() {
-        // Locate the target element, and push a red div to it...
-        final web.Element? adTarget =
-            web.document.querySelector('div[id^=adUnit] ins');
+      mockAdsByGoogle(mockAd(adStatus: AdStatus.UNFILLED));
 
-        // The internal styling of the Ad doesn't matter, if AdSense tells us it is UNFILLED.
-        final web.HTMLElement fakeAd = web.HTMLDivElement()
-          ..style.width = '320px'
-          ..style.height = '137px'
-          ..style.background = 'red';
-
-        adTarget!
-          ..appendChild(fakeAd)
-          ..setAttribute('data-ad-status', AdStatus.UNFILLED);
-      });
-
-      adsense.initialize(testClient);
-      final Widget adUnitWidget =
-          adsense.adUnit(AdUnitConfiguration.displayAdUnit(adSlot: testSlot));
+      adSense.initialize(testClient);
+      final Widget adUnitWidget = adSense.adUnit(
+        AdUnitConfiguration.displayAdUnit(
+          adSlot: testSlot,
+        ),
+      );
 
       await pumpAdWidget(adUnitWidget, tester);
 
       // Then
-      // Widget level
-      expect(find.byWidget(adUnitWidget), findsOneWidget);
+      expect(find.byType(HtmlElementView), findsNothing,
+          reason: 'Unfilled ads should remove their platform view');
 
-      final Size size = tester.getSize(find.byWidget(adUnitWidget));
+      final Finder adUnit = find.byWidget(adUnitWidget);
+      expect(adUnit, findsOneWidget);
 
+      final Size size = tester.getSize(adUnit);
       expect(size.height, 0);
+    });
+
+    testWidgets('Can handle multiple ads', (WidgetTester tester) async {
+      // When
+      mockAdsByGoogle(
+        mockAds(<MockAdConfig>[
+          (size: const Size(320, 200), adStatus: AdStatus.FILLED),
+          (size: Size.zero, adStatus: AdStatus.UNFILLED),
+          (size: const Size(640, 90), adStatus: AdStatus.FILLED),
+        ]),
+      );
+
+      adSense.initialize(testClient);
+
+      final Widget bunchOfAds = Column(
+        children: <Widget>[
+          adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+            adSlot: testSlot,
+            adFormat: AdFormat.AUTO,
+          )),
+          adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+            adSlot: testSlot,
+            adFormat: AdFormat.AUTO,
+          )),
+          Container(
+            constraints: const BoxConstraints(maxHeight: 100),
+            child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
+              adSlot: testSlot,
+            )),
+          ),
+        ],
+      );
+
+      await pumpAdWidget(bunchOfAds, tester);
+
+      // Then
+      // Widget level
+      final Finder platformViews = find.byType(HtmlElementView);
+      expect(platformViews, findsExactly(2),
+          reason: 'The platform view of unfilled ads should be removed.');
+
+      final Finder adUnits = find.byType(AdUnitWidget);
+      expect(adUnits, findsExactly(3));
+
+      expect(tester.getSize(adUnits.at(0)).height, 200,
+          reason: 'Responsive ad widget should resize to match its `ins`');
+      expect(tester.getSize(adUnits.at(1)).height, 0,
+          reason: 'Unfulfilled ad should be 0x0');
+      expect(tester.getSize(adUnits.at(2)).height, 100,
+          reason: 'The constrained ad should use the height of container');
     });
   });
 }
