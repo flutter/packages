@@ -1,3 +1,7 @@
+## 4.1.1
+
+* Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.
+
 ## 4.1.0
 
 * Updates internal API wrapper to use `ProxyApi`s.
