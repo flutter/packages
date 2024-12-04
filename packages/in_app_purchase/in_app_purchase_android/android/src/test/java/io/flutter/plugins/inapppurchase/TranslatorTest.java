@@ -242,7 +242,13 @@ public class TranslatorTest {
     assertEquals(expected.getOfferTags(), serialized.getOfferTags());
     assertEquals(expected.getOfferToken(), serialized.getOfferToken());
     assertSerialized(expected.getPricingPhases(), serialized.getPricingPhases());
-    assertSerialized(expected.getInstallmentPlanDetails(), serialized.getInstallmentPlanDetails());
+
+    ProductDetails.InstallmentPlanDetails expectedInstallmentPlanDetails = expected.getInstallmentPlanDetails();
+    Messages.PlatformInstallmentPlanDetails serializedInstallmentPlanDetails = serialized.getInstallmentPlanDetails();
+    assertEquals(expectedInstallmentPlanDetails == null, serializedInstallmentPlanDetails == null);
+    if (expectedInstallmentPlanDetails != null && serializedInstallmentPlanDetails != null) {
+      assertSerialized(expectedInstallmentPlanDetails, serializedInstallmentPlanDetails);
+    }
   }
 
   private void assertSerialized(
