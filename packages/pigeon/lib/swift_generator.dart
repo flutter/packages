@@ -460,7 +460,7 @@ if (wrapped == nil) {
     ];
     if (classDefinition.isSealed) {
       generatedComments.add(
-          ' This class should not be extended by any user class outside of the generated file.');
+          ' This protocol should not be extended by any user class outside of the generated file.');
     }
     indent.newln();
     addDocumentationComments(

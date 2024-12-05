@@ -261,7 +261,7 @@ class EventAllNullableTypes {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-/// This class should not be extended by any user class outside of the generated file.
+/// This protocol should not be extended by any user class outside of the generated file.
 protocol PlatformEvent {
 
 }

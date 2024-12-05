@@ -79,8 +79,6 @@ Future<int> generateTestPigeons(
     {required String baseDir, bool includeOverflow = false}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
-
-  /// A list of all pigeons to be generated along with a list of skipped languages.
   const Set<String> inputs = <String>{
     'background_platform_channels',
     'core_tests',
