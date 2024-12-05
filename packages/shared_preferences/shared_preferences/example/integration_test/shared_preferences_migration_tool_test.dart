@@ -34,7 +34,8 @@ void main() {
     late SharedPreferencesOptions sharedPreferencesAsyncOptions;
     const String migrationCompletedKey = 'migrationCompleted';
 
-    void runTests({String? stringValue = testString}) {
+    void runTests(
+        {String? stringValue = testString, bool defaultSettings = false}) {
       testWidgets('data is successfully transferred to new system', (_) async {
         final SharedPreferencesAsync asyncPreferences =
             SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
@@ -68,7 +69,9 @@ void main() {
         },
         // Since the desktop versions would be moving to the same file, this test will always fail.
         // They are the same files with the same keys.
-        skip: Platform.isWindows || Platform.isLinux || Platform.isMacOS,
+        skip: defaultSettings && Platform.isWindows ||
+            Platform.isLinux ||
+            Platform.isMacOS,
       );
     }
 
@@ -96,7 +99,7 @@ void main() {
               .clear();
         });
         group('', () {
-          runTests(stringValue: stringValue);
+          runTests(stringValue: stringValue, defaultSettings: true);
         });
       });
 
