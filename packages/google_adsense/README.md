@@ -24,7 +24,7 @@ import 'package:google_adsense/google_adsense.dart';
 void main() {
   // Call `initialize` with your Publisher ID (pub-0123456789012345)
   // (See: https://support.google.com/adsense/answer/105516)
-  adSense.initialize('0556581589806023');
+  adSense.initialize('0123456789012345');
 
   runApp(const MyApp());
 }
@@ -73,7 +73,7 @@ translates into:
 ```dart
 // Call `initialize` with your Publisher ID (pub-0123456789012345)
 // (See: https://support.google.com/adsense/answer/105516)
-adSense.initialize('0556581589806023');
+adSense.initialize('0123456789012345');
 
 ```
 
@@ -82,7 +82,7 @@ and:
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
     adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-  adSlot: '4773943862', // TODO: Replace with your Ad Unit ID
+  adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
   adFormat: AdFormat
       .AUTO, // Remove AdFormat to make ads limited by height
 ))
@@ -103,7 +103,7 @@ Container(
       const BoxConstraints(maxHeight: 100, maxWidth: 1200),
   padding: const EdgeInsets.only(bottom: 10),
   child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-    adSlot: '4773943862', // TODO: Replace with your Ad Unit ID
+    adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
     // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
   )),
 ),
