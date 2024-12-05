@@ -8,7 +8,7 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class DelegateProxyAPITests: XCTestCase {
+class UIDelegateProxyAPITests: XCTestCase {
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUIDelegate(registrar)
