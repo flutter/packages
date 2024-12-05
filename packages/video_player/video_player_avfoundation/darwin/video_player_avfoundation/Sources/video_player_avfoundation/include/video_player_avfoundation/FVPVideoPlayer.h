@@ -44,12 +44,6 @@ NS_ASSUME_NONNULL_BEGIN
                   avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
-/// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
-/// link, AV factory, and registrar.
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                         avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-
 /// Disposes the video player and releases any resources it holds.
 - (void)dispose;
 
@@ -90,6 +84,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) BOOL isPlaying;
 /// Indicates whether the video player has been initialized.
 @property(nonatomic, readonly) BOOL isInitialized;
+
+/// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
+/// link, AV factory, and registrar.
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+                         avFactory:(id<FVPAVFactory>)avFactory
+                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
