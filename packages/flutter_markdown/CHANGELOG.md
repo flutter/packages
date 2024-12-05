@@ -1,6 +1,6 @@
-## 0.7.4+4
+## 0.8.0
 
-* Adds `height` & `width` to `imageBuilder`.
+* Introduce `MarkdownImageConfig` for image builder.
 
 ## 0.7.4+3
 
