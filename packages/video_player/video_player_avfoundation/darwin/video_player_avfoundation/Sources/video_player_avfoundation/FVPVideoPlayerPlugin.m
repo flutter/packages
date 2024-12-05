@@ -11,9 +11,8 @@
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayerTextureApproach.h"
-// Relative path is needed for messages.g.h. See:
+// Relative path is needed for messages.g.h. See
 // https://github.com/flutter/packages/pull/6675/#discussion_r1591210702
 #import "./include/video_player_avfoundation/messages.g.h"
 
@@ -60,7 +59,7 @@ static int64_t nextNonTexturePlayerId = 1000000;
   // We only support platform views on iOS as of now.
   FVPNativeVideoViewFactory *factory =
       [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
-                                        playersByTextureId:instance.playersByTextureId];
+                                               playersById:instance.playersById];
   [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
 #endif
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
@@ -82,13 +81,13 @@ static int64_t nextNonTexturePlayerId = 1000000;
   _registrar = registrar;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
   _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
-  _playersByTextureId = [NSMutableDictionary dictionaryWithCapacity:1];
+  _playersById = [NSMutableDictionary dictionaryWithCapacity:1];
   return self;
 }
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self.playersByTextureId.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
-  [self.playersByTextureId removeAllObjects];
+  [self.playersById.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
+  [self.playersById removeAllObjects];
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
 }
 
@@ -111,7 +110,7 @@ static int64_t nextNonTexturePlayerId = 1000000;
            binaryMessenger:_messenger];
   [eventChannel setStreamHandler:player];
   player.eventChannel = eventChannel;
-  self.playersByTextureId[@(playerId)] = player;
+  self.playersById[@(playerId)] = player;
 
   if (usesTextureApproach) {
     // Ensure that the first frame is drawn once available, even if the video isn't played, since
@@ -128,12 +127,12 @@ static int64_t nextNonTexturePlayerId = 1000000;
   [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 #endif
 
-  [self.playersByTextureId
+  [self.playersById
       enumerateKeysAndObjectsUsingBlock:^(NSNumber *textureId, FVPVideoPlayer *player, BOOL *stop) {
         [self.registry unregisterTexture:textureId.unsignedIntegerValue];
         [player dispose];
       }];
-  [self.playersByTextureId removeAllObjects];
+  [self.playersById removeAllObjects];
 }
 
 - (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
@@ -195,47 +194,47 @@ static int64_t nextNonTexturePlayerId = 1000000;
   }
 }
 
-- (void)disposePlayer:(NSInteger)textureId error:(FlutterError **)error {
-  NSNumber *playerKey = @(textureId);
-  FVPVideoPlayer *player = self.playersByTextureId[playerKey];
+- (void)disposePlayer:(NSInteger)playerId error:(FlutterError **)error {
+  NSNumber *playerKey = @(playerId);
+  FVPVideoPlayer *player = self.playersById[playerKey];
   if ([player isKindOfClass:[FVPVideoPlayerTextureApproach class]]) {
-    [self.registry unregisterTexture:textureId];
+    [self.registry unregisterTexture:playerId];
   }
-  [self.playersByTextureId removeObjectForKey:playerKey];
+  [self.playersById removeObjectForKey:playerKey];
   if (!player.disposed) {
     [player dispose];
   }
 }
 
-- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   player.isLooping = isLooping;
 }
 
-- (void)setVolume:(double)volume forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)setVolume:(double)volume forPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player setVolume:volume];
 }
 
-- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player setPlaybackSpeed:speed];
 }
 
-- (void)playPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)playPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player play];
 }
 
-- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (nullable NSNumber *)positionForPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   return @([player position]);
 }
 
 - (void)seekTo:(NSInteger)position
-     forPlayer:(NSInteger)textureId
+     forPlayer:(NSInteger)playerId
     completion:(nonnull void (^)(FlutterError *_Nullable))completion {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player seekTo:position
       completionHandler:^(BOOL finished) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -244,8 +243,8 @@ static int64_t nextNonTexturePlayerId = 1000000;
       }];
 }
 
-- (void)pausePlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)pausePlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player pause];
 }
 
