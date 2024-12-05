@@ -668,14 +668,11 @@
                                  details:nil];
     return;
   }
-  if (durationMilliseconds) {
-    [self.transactionWrapper begin];
-    [self.transactionWrapper setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
-    [self.controller.mapView animateWithCameraUpdate:update];
-    [self.transactionWrapper commit];
-  } else {
-    [self.controller.mapView animateWithCameraUpdate:update];
-  }
+  FGMCATransactionWrapper *transaction = durationMilliseconds ? self.transactionWrapper : nil;
+  [transaction begin];
+  [transaction setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
+  [self.controller.mapView animateWithCameraUpdate:update];
+  [transaction commit];
 }
 
 - (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
