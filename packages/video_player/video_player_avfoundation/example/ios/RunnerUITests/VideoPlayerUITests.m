@@ -27,7 +27,7 @@
   XCTAssertTrue([remoteTab waitForExistenceWithTimeout:30.0]);
   XCTAssertTrue([remoteTab.label containsString:@"Remote"]);
 
-  // FIXME Is this a good way to check platform view?
+  // Go through both platform view and texture view.
   for (NSString *tabName in @[ @"Platform view", @"Texture view" ]) {
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"label BEGINSWITH %@", tabName];
     XCUIElement *viewTypeTab = [app.staticTexts elementMatchingPredicate:predicate];
