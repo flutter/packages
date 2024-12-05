@@ -72,10 +72,8 @@ abstract class CameraApi {
 
   /// Starts the image stream for the given camera.
   /// Returns the name of the [EventChannel] used to deliver the images.
+  /// Cancelling the subscription to the channel stops the capture.
   String startImageStream(int cameraId);
-
-  /// Stops the image stream for the given camera.
-  void stopImageStream(int cameraId);
 
   /// Starts the preview stream for the given camera.
   @async

@@ -384,19 +384,6 @@ ErrorOr<std::string> CameraPlugin::StartImageStream(int64_t camera_id) {
   return event_channel_name.str();
 }
 
-std::optional<FlutterError> CameraPlugin::StopImageStream(int64_t camera_id) {
-  Camera* camera = GetCameraByCameraId(camera_id);
-  if (!camera) {
-    return FlutterError("camera_error", "Camera not created");
-  }
-
-  CaptureController* cc = camera->GetCaptureController();
-  assert(cc);
-  cc->StopImageStream();
-
-  return std::nullopt;
-}
-
 void CameraPlugin::TakePicture(
     int64_t camera_id, std::function<void(ErrorOr<std::string> reply)> result) {
   auto camera = GetCameraByCameraId(camera_id);
