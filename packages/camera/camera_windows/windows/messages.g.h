@@ -191,9 +191,8 @@ class CameraApi {
       std::function<void(ErrorOr<std::string> reply)> result) = 0;
   // Starts the image stream for the given camera.
   // Returns the name of the [EventChannel] used to deliver the images.
+  // Cancelling the subscription to the channel stops the capture.
   virtual ErrorOr<std::string> StartImageStream(int64_t camera_id) = 0;
-  // Stops the image stream for the given camera.
-  virtual std::optional<FlutterError> StopImageStream(int64_t camera_id) = 0;
   // Starts the preview stream for the given camera.
   virtual void PausePreview(
       int64_t camera_id,
