@@ -35,7 +35,7 @@ void main() {
     const String migrationCompletedKey = 'migrationCompleted';
 
     void runTests(
-        {String? stringValue = testString, bool defaultSettings = false}) {
+        {String? stringValue = testString, bool keysAndNamesCollide = false}) {
       testWidgets('data is successfully transferred to new system', (_) async {
         final SharedPreferencesAsync asyncPreferences =
             SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
@@ -69,13 +69,16 @@ void main() {
         },
         // Since the desktop versions would be moving to the same file, this test will always fail.
         // They are the same files with the same keys.
-        skip: defaultSettings && Platform.isWindows ||
-            Platform.isLinux ||
-            Platform.isMacOS,
+        skip: keysAndNamesCollide &&
+            (Platform.isWindows ||
+                Platform.isLinux ||
+                Platform.isMacOS ||
+                Platform.isIOS),
       );
     }
 
-    void runAllGroups({String? stringValue = testString}) {
+    void runAllGroups(
+        {String? stringValue = testString, bool keysCollide = false}) {
       setUp(() async {
         await preferences.setBool(boolKey, testBool);
         await preferences.setInt(intKey, testInt);
@@ -99,7 +102,7 @@ void main() {
               .clear();
         });
         group('', () {
-          runTests(stringValue: stringValue, defaultSettings: true);
+          runTests(stringValue: stringValue, keysAndNamesCollide: keysCollide);
         });
       });
 
@@ -222,7 +225,7 @@ void main() {
         await preferences.clear();
       });
       group('', () {
-        runAllGroups();
+        runAllGroups(keysCollide: true);
       });
     });
   });
