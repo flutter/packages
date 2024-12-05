@@ -121,45 +121,50 @@ void main() {
   });
 
   test('gen one host api', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.host,
-          parameters: <Parameter>[
-            Parameter(
-                type: TypeDeclaration(
-                  baseName: 'Input',
-                  associatedClass: emptyClass,
-                  isNullable: false,
-                ),
-                name: '')
-          ],
-          returnType: TypeDeclaration(
-            baseName: 'Output',
-            associatedClass: emptyClass,
-            isNullable: false,
-          ),
-        )
-      ])
-    ], classes: <Class>[
-      Class(name: 'Input', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+            name: 'doSomething',
+            location: ApiLocation.host,
+            parameters: <Parameter>[
+              Parameter(
+                  type: TypeDeclaration(
+                    baseName: 'Input',
+                    associatedClass: emptyClass,
+                    isNullable: false,
+                  ),
+                  name: '')
+            ],
+            returnType: TypeDeclaration(
+              baseName: 'Output',
+              associatedClass: emptyClass,
+              isNullable: false,
             ),
-            name: 'input')
-      ]),
-      Class(name: 'Output', fields: <NamedType>[
-        NamedType(
-            type: const TypeDeclaration(
-              baseName: 'String',
-              isNullable: true,
-            ),
-            name: 'output')
-      ])
-    ], enums: <Enum>[]);
+          )
+        ])
+      ],
+      classes: <Class>[
+        Class(name: 'Input', fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              ),
+              name: 'input')
+        ]),
+        Class(name: 'Output', fields: <NamedType>[
+          NamedType(
+              type: const TypeDeclaration(
+                baseName: 'String',
+                isNullable: true,
+              ),
+              name: 'output')
+        ])
+      ],
+      enums: <Enum>[],
+      containsHostApi: true,
+    );
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
     const JavaGenerator generator = JavaGenerator();
@@ -1565,6 +1570,7 @@ void main() {
       apis: <Api>[api],
       classes: <Class>[],
       enums: <Enum>[],
+      containsHostApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const JavaOptions javaOptions = JavaOptions(className: 'Messages');
@@ -1604,6 +1610,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const JavaGenerator generator = JavaGenerator();
