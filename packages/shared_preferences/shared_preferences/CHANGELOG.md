@@ -1,7 +1,10 @@
+## 2.3.4
+
+* Adds description for isValidKey method in shared_preferences_async
+
 ## 2.3.3
 
 * Clarifies scope of prefix handling in README.
-* Adds description for isValidKey method in shared_preferences_async
 
 ## 2.3.2
 
