@@ -6,11 +6,11 @@
 
 @interface FVPVideoPlayerTextureApproach ()
 // The CALayer associated with the Flutter view this plugin is associated with, if any.
-@property(nonatomic, readonly, nullable) CALayer *flutterViewLayer;
+@property(nonatomic, readonly) CALayer *flutterViewLayer;
 // The updater that drives callbacks to the engine to indicate that a new frame is ready.
-@property(nonatomic, nullable) FVPFrameUpdater *frameUpdater;
+@property(nonatomic) FVPFrameUpdater *frameUpdater;
 // The display link that drives frameUpdater.
-@property(nonatomic, nullable) FVPDisplayLink *displayLink;
+@property(nonatomic) FVPDisplayLink *displayLink;
 // Whether a new frame needs to be provided to the engine regardless of the current play/pause state
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
@@ -89,7 +89,6 @@
 }
 
 - (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler {
-  // FIXME Rethink if it's possible to reuse it (same logic in super class)
   CMTime previousCMTime = self.player.currentTime;
   CMTime targetCMTime = CMTimeMake(location, 1000);
   CMTimeValue duration = self.player.currentItem.asset.duration.value;
