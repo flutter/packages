@@ -8,9 +8,11 @@ import 'dart:js_interop_unsafe';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
-import '../experimental/google_adsense.dart';
-import 'js_interop/adsbygoogle.dart';
-import 'logging.dart';
+import '../js_interop/adsbygoogle.dart';
+import '../logging.dart';
+import 'ad_unit_configuration.dart';
+import 'ad_unit_params.dart';
+import 'adsense_js_interop.dart';
 
 /// Widget displaying an ad unit
 class AdUnitWidget extends StatefulWidget {

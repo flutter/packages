@@ -7,7 +7,7 @@ class AdUnitParams {
   /// Identifies AdSense publisher account. Should be passed on initialization
   static const String AD_CLIENT = 'adClient';
 
-  /// Identified specific ad unit from AdSense console. Can be taken from the ad unit HTML snippet under `data-ad-slot` parameter
+  /// Identifies specific ad unit from AdSense console. Can be taken from the ad unit HTML snippet under `data-ad-slot` parameter
   static const String AD_SLOT = 'adSlot';
 
   /// (Optional) Specify a general shape (desktop only) (horizontal, vertical, and/or rectangle) that your ad unit should conform to

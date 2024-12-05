@@ -4,14 +4,14 @@
 
 import 'package:flutter/widgets.dart';
 
-import '../experimental/google_adsense.dart';
-
-/// A singleton instance of AdSense library public interface.
-final AdSense adSense = AdSense();
-
-/// AdSense package interface.
+/// The AdSense SDK.
 class AdSense {
-  /// Initialization API. Should be called ASAP, ideally in the main method of your app.
+
+  /// Initializes the AdSense SDK with your [adClient].
+  ///
+  /// The [adClient] parameter is your AdSense [Publisher ID](https://support.google.com/adsense/answer/2923881).
+  ///
+  /// Should be called ASAP, ideally in the `main` method.
   void initialize(
     String adClient, {
     @visibleForTesting bool skipJsLoader = false,
@@ -20,9 +20,8 @@ class AdSense {
     throw UnsupportedError('Only supported on web');
   }
 
-  /// Returns a configurable [AdUnitWidget]<br>
-  /// `configuration`: see [AdUnitConfiguration]
-  Widget adUnit(AdUnitConfiguration configuration) {
+  /// The [Publisher ID](https://support.google.com/adsense/answer/2923881).
+  String get adClient {
     throw UnsupportedError('Only supported on web');
   }
 }

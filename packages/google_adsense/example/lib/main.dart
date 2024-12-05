@@ -7,17 +7,20 @@
 import 'package:flutter/material.dart';
 
 // #docregion init
-import 'package:google_adsense/experimental/google_adsense.dart';
+import 'package:google_adsense/experimental/adsense.dart';
+import 'package:google_adsense/google_adsense.dart';
 
 void main() {
-  // #docregion init-min
-  adSense.initialize(
-      '0123456789012345'); // TODO: Replace with your Publisher ID (pub-0123456789012345) - https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU
+// #docregion init-min
+  // Call `initialize` with your Publisher ID (pub-0123456789012345)
+  // (See: https://support.google.com/adsense/answer/105516)
+  adSense.initialize('0556581589806023');
+
   // #enddocregion init-min
   runApp(const MyApp());
 }
-
 // #enddocregion init
+
 /// The main app.
 class MyApp extends StatelessWidget {
   /// Constructs a [MyApp]
@@ -67,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child:
                     // #docregion adUnit
                     adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                  adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
+                  adSlot: '4773943862', // TODO: Replace with your Ad Unit ID
                   adFormat: AdFormat
                       .AUTO, // Remove AdFormat to make ads limited by height
                 ))
@@ -83,9 +86,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     const BoxConstraints(maxHeight: 100, maxWidth: 1200),
                 padding: const EdgeInsets.only(bottom: 10),
                 child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                  adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
-                  adFormat: AdFormat
-                      .AUTO, // Not using AdFormat to make ad unit respect height constraint
+                  adSlot: '4773943862', // TODO: Replace with your Ad Unit ID
+                  // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
                 )),
               ),
               // #enddocregion constraints
@@ -97,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 125,
                 padding: const EdgeInsets.only(bottom: 10),
                 child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-                    adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
+                    adSlot: '8937810400', // TODO: Replace with your Ad Unit ID
                     // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
                     isFullWidthResponsive: false)),
               ),
