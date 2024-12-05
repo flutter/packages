@@ -70,7 +70,6 @@ class CameraPlugin : public flutter::Plugin,
       int64_t camera_id,
       std::function<void(ErrorOr<std::string> reply)> result) override;
   ErrorOr<std::string> StartImageStream(int64_t camera_id) override;
-  std::optional<FlutterError> StopImageStream(int64_t camera_id) override;
   void TakePicture(
       int64_t camera_id,
       std::function<void(ErrorOr<std::string> reply)> result) override;

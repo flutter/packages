@@ -239,6 +239,7 @@ class CameraWindows extends CameraPlatform {
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
     late StreamController<CameraImageData> controller;
+    StreamSubscription<dynamic>? subscription;
 
     controller = StreamController<CameraImageData>(
         onListen: () async {
@@ -246,14 +247,15 @@ class CameraWindows extends CameraPlatform {
               await _hostApi.startImageStream(cameraId);
           final EventChannel imageStreamChannel =
               EventChannel(eventChannelName);
-          imageStreamChannel.receiveBroadcastStream().listen((dynamic image) =>
-              controller.add(
+          subscription = imageStreamChannel.receiveBroadcastStream().listen(
+              (dynamic image) => controller.add(
                   cameraImageFromPlatformData(image as Map<dynamic, dynamic>)));
         },
         onPause: _onFrameStreamPauseResume,
         onResume: _onFrameStreamPauseResume,
         onCancel: () async {
-          await _hostApi.stopImageStream(cameraId);
+          // Cancelling the subscription stops the image capture on the native side.
+          await subscription?.cancel();
         });
 
     return controller.stream;
