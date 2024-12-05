@@ -959,15 +959,24 @@ abstract class WKUIDelegate extends NSObject {
 
   /// Displays a JavaScript alert panel.
   @async
-  void Function(String message, WKFrameInfo frame)? runJavaScriptAlertPanel;
+  void Function(
+    WKWebView webView,
+    String message,
+    WKFrameInfo frame,
+  )? runJavaScriptAlertPanel;
 
   /// Displays a JavaScript confirm panel.
   @async
-  bool Function(String message, WKFrameInfo frame)? runJavaScriptConfirmPanel;
+  bool Function(
+    WKWebView webView,
+    String message,
+    WKFrameInfo frame,
+  )? runJavaScriptConfirmPanel;
 
   /// Displays a JavaScript text input panel.
   @async
   String? Function(
+    WKWebView webView,
     String prompt,
     String? defaultText,
     WKFrameInfo frame,

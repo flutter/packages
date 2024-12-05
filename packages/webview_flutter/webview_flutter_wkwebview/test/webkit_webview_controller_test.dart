@@ -101,16 +101,19 @@ void main() {
             )? requestMediaCapturePermission,
             Future<void> Function(
               WKUIDelegate,
+              WKWebView,
               String,
               WKFrameInfo,
             )? runJavaScriptAlertPanel,
             Future<bool> Function(
               WKUIDelegate,
+              WKWebView,
               String,
               WKFrameInfo,
             )? runJavaScriptConfirmPanel,
             Future<String?> Function(
               WKUIDelegate,
+              WKWebView,
               String,
               String?,
               WKFrameInfo,
@@ -1421,6 +1424,7 @@ void main() {
         const String callbackMessage = 'Message';
         final Future<void> Function(
           WKUIDelegate,
+          WKWebView,
           String message,
           WKFrameInfo frame,
         ) onJavaScriptAlertPanel =
@@ -1433,6 +1437,7 @@ void main() {
 
         await onJavaScriptAlertPanel(
           CapturingUIDelegate.lastCreatedDelegate,
+          MockWKWebView(),
           callbackMessage,
           WKFrameInfo.pigeon_detached(
             isMainFrame: false,
@@ -1457,6 +1462,7 @@ void main() {
         const String callbackMessage = 'Message';
         final Future<bool> Function(
           WKUIDelegate,
+          WKWebView,
           String message,
           WKFrameInfo frame,
         ) onJavaScriptConfirmPanel =
@@ -1469,6 +1475,7 @@ void main() {
 
         final bool returnValue = await onJavaScriptConfirmPanel(
           CapturingUIDelegate.lastCreatedDelegate,
+          MockWKWebView(),
           callbackMessage,
           WKFrameInfo.pigeon_detached(
             isMainFrame: false,
@@ -1497,6 +1504,7 @@ void main() {
         const String callbackDefaultText = 'Default Text';
         final Future<String?> Function(
           WKUIDelegate,
+          WKWebView,
           String prompt,
           String? defaultText,
           WKFrameInfo frame,
@@ -1510,6 +1518,7 @@ void main() {
 
         final String? returnValue = await onJavaScriptTextInputPanel(
           CapturingUIDelegate.lastCreatedDelegate,
+          MockWKWebView(),
           callbackMessage,
           callbackDefaultText,
           WKFrameInfo.pigeon_detached(

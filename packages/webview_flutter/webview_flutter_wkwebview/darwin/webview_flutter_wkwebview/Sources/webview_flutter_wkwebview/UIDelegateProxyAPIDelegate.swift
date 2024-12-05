@@ -8,6 +8,12 @@ import WebKit
 /// Implementation of `WKUIDelegate` that calls to Dart in callback methods.
 class UIDelegateImpl: NSObject, WKUIDelegate {
   let api: PigeonApiProtocolWKUIDelegate
+  
+  var proxyAPIDelegate: ProxyAPIDelegate {
+    get {
+      return (self.api as! PigeonApiWKUIDelegate).pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
+    }
+  }
 
   init(api: PigeonApiProtocolWKUIDelegate) {
     self.api = api
@@ -44,14 +50,28 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
 
     api.requestMediaCapturePermission(
       pigeonInstance: self, webView: webView, origin: origin, frame: frame, type: wrapperCaptureType
-    ) { _ in }
+    ) { result in
+      switch result {
+      case .success(let decision):
+        switch decision {
+        case .deny:
+          decisionHandler(.deny)
+        case .grant:
+          decisionHandler(.grant)
+        case .prompt:
+          decisionHandler(.prompt)
+        }
+      case .failure(let error):
+        self.proxyAPIDelegate.assertFlutterMethodFailure(error, methodName: "PigeonApiProtocolWKUIDelegate.requestMediaCapturePermission")
+      }
+    }
   }
 
   func webView(
     _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor () -> Void
   ) {
-    api.runJavaScriptAlertPanel(pigeonInstance: self, message: message, frame: frame) { result in
+    api.runJavaScriptAlertPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
       if case .failure(let error) = result {
         assertionFailure("\(error)")
       }
@@ -63,7 +83,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor (Bool) -> Void
   ) {
-    api.runJavaScriptConfirmPanel(pigeonInstance: self, message: message, frame: frame) { result in
+    api.runJavaScriptConfirmPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
       switch result {
       case .success(let confirmed):
         completionHandler(confirmed)
@@ -80,7 +100,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     completionHandler: @escaping @MainActor (String?) -> Void
   ) {
     api.runJavaScriptTextInputPanel(
-      pigeonInstance: self, prompt: prompt, defaultText: defaultText, frame: frame
+      pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText, frame: frame
     ) { result in
       switch result {
       case .success(let response):

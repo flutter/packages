@@ -148,14 +148,14 @@ class MockWKWebsiteDataStore extends _i1.Mock
 
   @override
   _i3.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -227,14 +227,14 @@ class MockWKHTTPCookieStore extends _i1.Mock implements _i2.WKHTTPCookieStore {
 
   @override
   _i3.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),

@@ -308,14 +308,14 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -445,14 +445,14 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -515,14 +515,14 @@ class MockWKNavigationDelegate extends _i1.Mock
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -594,14 +594,14 @@ class MockWKPreferences extends _i1.Mock implements _i2.WKPreferences {
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -682,14 +682,14 @@ class MockWKScriptMessageHandler extends _i1.Mock
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -751,14 +751,14 @@ class MockWKWebView extends _i1.Mock implements _i2.WKWebView {
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -1089,14 +1089,14 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -1276,14 +1276,14 @@ class MockWKWebViewConfiguration extends _i1.Mock
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -1386,14 +1386,14 @@ class MockWKWebsiteDataStore extends _i1.Mock
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -1455,14 +1455,14 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -1584,14 +1584,14 @@ class MockWKUserContentController extends _i1.Mock
 
   @override
   _i4.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),

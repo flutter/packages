@@ -7840,11 +7840,11 @@ protocol PigeonApiProtocolWKUIDelegate {
   /// describes, can access to the device’s microphone audio and camera video.
   func requestMediaCapturePermission(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType, completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void)
   /// Displays a JavaScript alert panel.
-  func runJavaScriptAlertPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func runJavaScriptAlertPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Displays a JavaScript confirm panel.
-  func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void)
+  func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void)
   /// Displays a JavaScript text input panel.
-  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)
+  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)
 }
 
 final class PigeonApiWKUIDelegate: PigeonApiProtocolWKUIDelegate  {
@@ -7983,7 +7983,7 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Displays a JavaScript alert panel.
-  func runJavaScriptAlertPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func runJavaScriptAlertPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -7996,7 +7996,7 @@ withIdentifier: pigeonIdentifierArg)
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptAlertPanel"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, messageArg, frameArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, webViewArg, messageArg, frameArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8013,7 +8013,7 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Displays a JavaScript confirm panel.
-  func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void)   {
+  func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void)   {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8026,7 +8026,7 @@ withIdentifier: pigeonIdentifierArg)
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, messageArg, frameArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, webViewArg, messageArg, frameArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8046,7 +8046,7 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Displays a JavaScript text input panel.
-  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)   {
+  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)   {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8059,7 +8059,7 @@ withIdentifier: pigeonIdentifierArg)
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, promptArg, defaultTextArg, frameArg] as [Any?]) { response in
+    channel.sendMessage([pigeonInstanceArg, webViewArg, promptArg, defaultTextArg, frameArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8103,15 +8103,15 @@ class DelegateImpl: WKUIDelegate {
   }
 
   func fixMe() {
-    api.runJavaScriptAlertPanel(pigeonInstance: self, message: message, frame: frame) {  _ in }
+    api.runJavaScriptAlertPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) {  _ in }
   }
 
   func fixMe() {
-    api.runJavaScriptConfirmPanel(pigeonInstance: self, message: message, frame: frame) {  _ in }
+    api.runJavaScriptConfirmPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) {  _ in }
   }
 
   func fixMe() {
-    api.runJavaScriptTextInputPanel(pigeonInstance: self, prompt: prompt, defaultText: defaultText, frame: frame) {  _ in }
+    api.runJavaScriptTextInputPanel(pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText, frame: frame) {  _ in }
   }
 }
 
@@ -8173,32 +8173,35 @@ class DelegateProxyAPITests: XCTestCase {
   func testRunJavaScriptAlertPanel() {
     let api = TestDelegateApi()
     let instance = DelegateImpl(api: api)
+    let webView = TestWebView
     let message = "myString"
     let frame = TestFrameInfo
-    instance.runJavaScriptAlertPanel(message: message, frame: frame)
+    instance.runJavaScriptAlertPanel(webView: webView, message: message, frame: frame)
 
-    XCTAssertEqual(api.runJavaScriptAlertPanelArgs, [message, frame])
+    XCTAssertEqual(api.runJavaScriptAlertPanelArgs, [webView, message, frame])
   }
 
   func testRunJavaScriptConfirmPanel() {
     let api = TestDelegateApi()
     let instance = DelegateImpl(api: api)
+    let webView = TestWebView
     let message = "myString"
     let frame = TestFrameInfo
-    instance.runJavaScriptConfirmPanel(message: message, frame: frame)
+    instance.runJavaScriptConfirmPanel(webView: webView, message: message, frame: frame)
 
-    XCTAssertEqual(api.runJavaScriptConfirmPanelArgs, [message, frame])
+    XCTAssertEqual(api.runJavaScriptConfirmPanelArgs, [webView, message, frame])
   }
 
   func testRunJavaScriptTextInputPanel() {
     let api = TestDelegateApi()
     let instance = DelegateImpl(api: api)
+    let webView = TestWebView
     let prompt = "myString"
     let defaultText = "myString"
     let frame = TestFrameInfo
-    instance.runJavaScriptTextInputPanel(prompt: prompt, defaultText: defaultText, frame: frame)
+    instance.runJavaScriptTextInputPanel(webView: webView, prompt: prompt, defaultText: defaultText, frame: frame)
 
-    XCTAssertEqual(api.runJavaScriptTextInputPanelArgs, [prompt, defaultText, frame])
+    XCTAssertEqual(api.runJavaScriptTextInputPanelArgs, [webView, prompt, defaultText, frame])
   }
 
 }
@@ -8215,14 +8218,14 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   func requestMediaCapturePermission(webView: WKWebView, origin: WKSecurityOrigin, frame: WKFrameInfo, type: MediaCaptureType) throws -> PermissionDecision {
     requestMediaCapturePermissionArgs = [webViewArg, originArg, frameArg, typeArg]
   }
-  func runJavaScriptAlertPanel(message: String, frame: WKFrameInfo) throws {
-    runJavaScriptAlertPanelArgs = [messageArg, frameArg]
+  func runJavaScriptAlertPanel(webView: WKWebView, message: String, frame: WKFrameInfo) throws {
+    runJavaScriptAlertPanelArgs = [webViewArg, messageArg, frameArg]
   }
-  func runJavaScriptConfirmPanel(message: String, frame: WKFrameInfo) throws -> Bool {
-    runJavaScriptConfirmPanelArgs = [messageArg, frameArg]
+  func runJavaScriptConfirmPanel(webView: WKWebView, message: String, frame: WKFrameInfo) throws -> Bool {
+    runJavaScriptConfirmPanelArgs = [webViewArg, messageArg, frameArg]
   }
-  func runJavaScriptTextInputPanel(prompt: String, defaultText: String?, frame: WKFrameInfo) throws -> String? {
-    runJavaScriptTextInputPanelArgs = [promptArg, defaultTextArg, frameArg]
+  func runJavaScriptTextInputPanel(webView: WKWebView, prompt: String, defaultText: String?, frame: WKFrameInfo) throws -> String? {
+    runJavaScriptTextInputPanelArgs = [webViewArg, promptArg, defaultTextArg, frameArg]
   }
 }
 */

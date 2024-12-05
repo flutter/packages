@@ -147,14 +147,14 @@ class MockURLAuthenticationChallenge extends _i1.Mock
 
   @override
   _i3.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -284,14 +284,14 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
 
   @override
   _i3.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),
@@ -368,14 +368,14 @@ class MockURL extends _i1.Mock implements _i2.URL {
 
   @override
   _i3.Future<void> removeObserver(
-    _i2.NSObject? object,
+    _i2.NSObject? observer,
     String? keyPath,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #removeObserver,
           [
-            object,
+            observer,
             keyPath,
           ],
         ),

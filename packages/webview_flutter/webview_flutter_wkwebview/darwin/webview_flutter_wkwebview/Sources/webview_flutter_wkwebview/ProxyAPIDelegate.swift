@@ -33,6 +33,10 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
       details: "Initializing URL with the supplied '\(url)' path resulted in a nil value.")
   }
 
+  func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
+    assertionFailure("\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))")
+  }
+
   func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest
   {
     return PigeonApiURLRequest(pigeonRegistrar: registrar, delegate: URLRequestProxyAPIDelegate())

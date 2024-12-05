@@ -291,16 +291,19 @@ class WebKitProxy {
     )? requestMediaCapturePermission,
     Future<void> Function(
       WKUIDelegate,
+      WKWebView,
       String,
       WKFrameInfo,
     )? runJavaScriptAlertPanel,
     Future<bool> Function(
       WKUIDelegate,
+      WKWebView,
       String,
       WKFrameInfo,
     )? runJavaScriptConfirmPanel,
     Future<String?> Function(
       WKUIDelegate,
+      WKWebView,
       String,
       String?,
       WKFrameInfo,

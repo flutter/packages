@@ -217,7 +217,12 @@ class WebKitWebViewController extends PlatformWebViewController {
           return decisionCompleter.future;
         }
       },
-      runJavaScriptAlertPanel: (_, String message, WKFrameInfo frame) async {
+      runJavaScriptAlertPanel: (
+        _,
+        __,
+        String message,
+        WKFrameInfo frame,
+      ) async {
         final Future<void> Function(JavaScriptAlertDialogRequest request)?
             callback = weakThis.target?._onJavaScriptAlertDialog;
         if (callback != null) {
@@ -230,7 +235,12 @@ class WebKitWebViewController extends PlatformWebViewController {
           return;
         }
       },
-      runJavaScriptConfirmPanel: (_, String message, WKFrameInfo frame) async {
+      runJavaScriptConfirmPanel: (
+        _,
+        __,
+        String message,
+        WKFrameInfo frame,
+      ) async {
         final Future<bool> Function(JavaScriptConfirmDialogRequest request)?
             callback = weakThis.target?._onJavaScriptConfirmDialog;
         if (callback != null) {
@@ -247,6 +257,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
       runJavaScriptTextInputPanel: (
         _,
+        __,
         String prompt,
         String? defaultText,
         WKFrameInfo frame,

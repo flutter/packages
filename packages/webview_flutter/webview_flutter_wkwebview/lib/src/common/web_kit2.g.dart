@@ -554,16 +554,19 @@ class InteractiveMediaAdsProxy {
     )? requestMediaCapturePermission,
     Future<void> Function(
       WKUIDelegate,
+      WKWebView,
       String,
       WKFrameInfo,
     )? runJavaScriptAlertPanel,
     Future<bool> Function(
       WKUIDelegate,
+      WKWebView,
       String,
       WKFrameInfo,
     )? runJavaScriptConfirmPanel,
     Future<String?> Function(
       WKUIDelegate,
+      WKWebView,
       String,
       String?,
       WKFrameInfo,
@@ -6494,6 +6497,7 @@ class WKUIDelegate extends NSObject {
   /// release the associated Native object manually.
   final Future<void> Function(
     WKUIDelegate pigeon_instance,
+    WKWebView webView,
     String message,
     WKFrameInfo frame,
   )? runJavaScriptAlertPanel;
@@ -6519,6 +6523,7 @@ class WKUIDelegate extends NSObject {
   /// release the associated Native object manually.
   final Future<bool> Function(
     WKUIDelegate pigeon_instance,
+    WKWebView webView,
     String message,
     WKFrameInfo frame,
   )? runJavaScriptConfirmPanel;
@@ -6544,6 +6549,7 @@ class WKUIDelegate extends NSObject {
   /// release the associated Native object manually.
   final Future<String?> Function(
     WKUIDelegate pigeon_instance,
+    WKWebView webView,
     String prompt,
     String? defaultText,
     WKFrameInfo frame,
@@ -6569,16 +6575,19 @@ class WKUIDelegate extends NSObject {
     )? requestMediaCapturePermission,
     Future<void> Function(
       WKUIDelegate pigeon_instance,
+      WKWebView webView,
       String message,
       WKFrameInfo frame,
     )? runJavaScriptAlertPanel,
     Future<bool> Function(
       WKUIDelegate pigeon_instance,
+      WKWebView webView,
       String message,
       WKFrameInfo frame,
     )? runJavaScriptConfirmPanel,
     Future<String?> Function(
       WKUIDelegate pigeon_instance,
+      WKWebView webView,
       String prompt,
       String? defaultText,
       WKFrameInfo frame,
@@ -6734,16 +6743,20 @@ class WKUIDelegate extends NSObject {
           final WKUIDelegate? arg_pigeon_instance = (args[0] as WKUIDelegate?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptAlertPanel was null, expected non-null WKUIDelegate.');
-          final String? arg_message = (args[1] as String?);
+          final WKWebView? arg_webView = (args[1] as WKWebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptAlertPanel was null, expected non-null WKWebView.');
+          final String? arg_message = (args[2] as String?);
           assert(arg_message != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptAlertPanel was null, expected non-null String.');
-          final WKFrameInfo? arg_frame = (args[2] as WKFrameInfo?);
+          final WKFrameInfo? arg_frame = (args[3] as WKFrameInfo?);
           assert(arg_frame != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptAlertPanel was null, expected non-null WKFrameInfo.');
           try {
             await (runJavaScriptAlertPanel ??
                     arg_pigeon_instance!.runJavaScriptAlertPanel)
-                ?.call(arg_pigeon_instance!, arg_message!, arg_frame!);
+                ?.call(arg_pigeon_instance!, arg_webView!, arg_message!,
+                    arg_frame!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6772,16 +6785,20 @@ class WKUIDelegate extends NSObject {
           final WKUIDelegate? arg_pigeon_instance = (args[0] as WKUIDelegate?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel was null, expected non-null WKUIDelegate.');
-          final String? arg_message = (args[1] as String?);
+          final WKWebView? arg_webView = (args[1] as WKWebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel was null, expected non-null WKWebView.');
+          final String? arg_message = (args[2] as String?);
           assert(arg_message != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel was null, expected non-null String.');
-          final WKFrameInfo? arg_frame = (args[2] as WKFrameInfo?);
+          final WKFrameInfo? arg_frame = (args[3] as WKFrameInfo?);
           assert(arg_frame != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel was null, expected non-null WKFrameInfo.');
           try {
             final bool? output = await (runJavaScriptConfirmPanel ??
                     arg_pigeon_instance!.runJavaScriptConfirmPanel)
-                ?.call(arg_pigeon_instance!, arg_message!, arg_frame!);
+                ?.call(arg_pigeon_instance!, arg_webView!, arg_message!,
+                    arg_frame!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6810,18 +6827,21 @@ class WKUIDelegate extends NSObject {
           final WKUIDelegate? arg_pigeon_instance = (args[0] as WKUIDelegate?);
           assert(arg_pigeon_instance != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel was null, expected non-null WKUIDelegate.');
-          final String? arg_prompt = (args[1] as String?);
+          final WKWebView? arg_webView = (args[1] as WKWebView?);
+          assert(arg_webView != null,
+              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel was null, expected non-null WKWebView.');
+          final String? arg_prompt = (args[2] as String?);
           assert(arg_prompt != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel was null, expected non-null String.');
-          final String? arg_defaultText = (args[2] as String?);
-          final WKFrameInfo? arg_frame = (args[3] as WKFrameInfo?);
+          final String? arg_defaultText = (args[3] as String?);
+          final WKFrameInfo? arg_frame = (args[4] as WKFrameInfo?);
           assert(arg_frame != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel was null, expected non-null WKFrameInfo.');
           try {
             final String? output = await (runJavaScriptTextInputPanel ??
                     arg_pigeon_instance!.runJavaScriptTextInputPanel)
-                ?.call(arg_pigeon_instance!, arg_prompt!, arg_defaultText,
-                    arg_frame!);
+                ?.call(arg_pigeon_instance!, arg_webView!, arg_prompt!,
+                    arg_defaultText, arg_frame!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
