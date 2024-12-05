@@ -355,6 +355,43 @@ void main() {
         );
       });
 
+      test('named constructor', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(name: 'Api', constructors: <Constructor>[
+              Constructor(
+                name: 'myConstructorName',
+                parameters: <Parameter>[],
+              )
+            ], fields: <ApiField>[], methods: <Method>[]),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+        expect(
+          collapsedCode,
+          contains(
+            'func myConstructorName(pigeonApi: PigeonApiApi) throws -> Api',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'let myConstructorNameChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.test_package.Api.myConstructorName", binaryMessenger: binaryMessenger, codec: codec)',
+          ),
+        );
+      });
+
       test('multiple params constructor', () {
         final Enum anEnum = Enum(
           name: 'AnEnum',

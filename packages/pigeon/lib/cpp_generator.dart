@@ -213,24 +213,14 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostApi = root.apis
-        .whereType<AstHostApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-    final bool hasFlutterApi = root.apis
-        .whereType<AstFlutterApi>()
-        .any((Api api) => api.methods.isNotEmpty);
-
     _writeFlutterError(indent);
-    if (hasHostApi) {
+    if (root.containsHostApi) {
       _writeErrorOr(
         indent,
         friends: root.apis
             .where((Api api) => api is AstFlutterApi || api is AstHostApi)
             .map((Api api) => api.name),
       );
-    }
-    if (hasFlutterApi) {
-      // Nothing yet.
     }
   }
 
@@ -1002,7 +992,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
     required String dartPackageName,
   }) {
     final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root).toList();
+        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
     indent.newln();
     if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(

@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "./include/video_player_avfoundation/FVPVideoPlayer.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
+
 #import <GLKit/GLKit.h>
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
 
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
@@ -30,6 +32,73 @@ static void *rateContext = &rateContext;
                httpHeaders:@{}
                  avFactory:avFactory
                  registrar:registrar];
+}
+
+- (instancetype)initWithURL:(NSURL *)url
+                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
+                  avFactory:(id<FVPAVFactory>)avFactory
+                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  NSDictionary<NSString *, id> *options = nil;
+  if ([headers count] != 0) {
+    options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
+  }
+  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
+  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
+  return [self initWithPlayerItem:item avFactory:avFactory registrar:registrar];
+}
+
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+                         avFactory:(id<FVPAVFactory>)avFactory
+                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  self = [super init];
+  NSAssert(self, @"super init cannot be nil");
+
+  _registrar = registrar;
+
+  AVAsset *asset = [item asset];
+  void (^assetCompletionHandler)(void) = ^{
+    if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
+      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+      if ([tracks count] > 0) {
+        AVAssetTrack *videoTrack = tracks[0];
+        void (^trackCompletionHandler)(void) = ^{
+          if (self->_disposed) return;
+          if ([videoTrack statusOfValueForKey:@"preferredTransform"
+                                        error:nil] == AVKeyValueStatusLoaded) {
+            // Rotate the video by using a videoComposition and the preferredTransform
+            self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
+            // Note:
+            // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
+            // Video composition can only be used with file-based media and is not supported for
+            // use with media served using HTTP Live Streaming.
+            AVMutableVideoComposition *videoComposition =
+                [self getVideoCompositionWithTransform:self->_preferredTransform
+                                             withAsset:asset
+                                        withVideoTrack:videoTrack];
+            item.videoComposition = videoComposition;
+          }
+        };
+        [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
+                                  completionHandler:trackCompletionHandler];
+      }
+    }
+  };
+
+  _player = [avFactory playerWithPlayerItem:item];
+  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+
+  // Configure output.
+  NSDictionary *pixBuffAttributes = @{
+    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+  };
+  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+
+  [self addObserversForItem:item player:_player];
+
+  [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
+
+  return self;
 }
 
 - (void)dealloc {
@@ -137,73 +206,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   videoComposition.frameDuration = CMTimeMake(1, 30);
 
   return videoComposition;
-}
-
-- (instancetype)initWithURL:(NSURL *)url
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-                  avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSDictionary<NSString *, id> *options = nil;
-  if ([headers count] != 0) {
-    options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
-  }
-  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
-  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item avFactory:avFactory registrar:registrar];
-}
-
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                         avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [super init];
-  NSAssert(self, @"super init cannot be nil");
-
-  _registrar = registrar;
-
-  AVAsset *asset = [item asset];
-  void (^assetCompletionHandler)(void) = ^{
-    if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([tracks count] > 0) {
-        AVAssetTrack *videoTrack = tracks[0];
-        void (^trackCompletionHandler)(void) = ^{
-          if (self->_disposed) return;
-          if ([videoTrack statusOfValueForKey:@"preferredTransform"
-                                        error:nil] == AVKeyValueStatusLoaded) {
-            // Rotate the video by using a videoComposition and the preferredTransform
-            self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
-            // Note:
-            // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
-            // Video composition can only be used with file-based media and is not supported for
-            // use with media served using HTTP Live Streaming.
-            AVMutableVideoComposition *videoComposition =
-                [self getVideoCompositionWithTransform:self->_preferredTransform
-                                             withAsset:asset
-                                        withVideoTrack:videoTrack];
-            item.videoComposition = videoComposition;
-          }
-        };
-        [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
-                                  completionHandler:trackCompletionHandler];
-      }
-    }
-  };
-
-  _player = [avFactory playerWithPlayerItem:item];
-  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-
-  // Configure output.
-  NSDictionary *pixBuffAttributes = @{
-    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
-  };
-  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
-
-  [self addObserversForItem:item player:_player];
-
-  [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
-
-  return self;
 }
 
 - (void)observeValueForKeyPath:(NSString *)path
@@ -446,7 +448,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return nil;
 }
 
-/// This method allows you to dispose without touching the event channel.  This
+/// This method allows you to dispose without touching the event channel. This
 /// is useful for the case where the Engine is in the process of deconstruction
 /// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel {
