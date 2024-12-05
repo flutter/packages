@@ -52,7 +52,10 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsync(
         await sharedPreferencesAsyncInstance.setDouble(key, value! as double);
       case const (String):
         await sharedPreferencesAsyncInstance.setString(key, value! as String);
+      case const (List<String>):
+      case const (List<String?>):
       case const (List<Object?>):
+      case const (List<dynamic>):
         try {
           await sharedPreferencesAsyncInstance.setStringList(
               key, (value! as List<Object?>).cast<String>());
