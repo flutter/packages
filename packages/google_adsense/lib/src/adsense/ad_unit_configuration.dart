@@ -38,7 +38,7 @@ import 'ad_unit_params.dart';
 /// {@template pkg_google_adsense_parameter_matchedContentUiType}
 /// * [matchedContentUiType]: Controls the arrangement of the text and images in
 ///   this Multiplex ad unit. For example, you can choose to have the image and
-///   text side by side, the image above the text, etc. More information: 
+///   text side by side, the image above the text, etc. More information:
 ///   [How to customize your responsive Multiplex ad unit](https://support.google.com/adsense/answer/7533385)
 /// {@endtemplate}
 /// {@template pkg_google_adsense_parameter_rowsNum}
@@ -93,7 +93,7 @@ class AdUnitConfiguration {
   /// Creates a configuration object for a Multiplex ad.
   ///
   /// Arguments:
-  /// 
+  ///
   /// {@macro pkg_google_adsense_parameter_adSlot}
   /// {@macro pkg_google_adsense_parameter_adFormat}
   /// {@macro pkg_google_adsense_parameter_matchedContentUiType}
@@ -121,7 +121,7 @@ class AdUnitConfiguration {
   /// Creates a configuration object for an In-feed ad.
   ///
   /// Arguments:
-  /// 
+  ///
   /// {@macro pkg_google_adsense_parameter_adSlot}
   /// {@macro pkg_google_adsense_parameter_adLayoutKey}
   /// {@macro pkg_google_adsense_parameter_adFormat}
@@ -143,7 +143,7 @@ class AdUnitConfiguration {
   /// Creates a configuration object for an In-article ad.
   ///
   /// Arguments:
-  /// 
+  ///
   /// {@macro pkg_google_adsense_parameter_adSlot}
   /// {@macro pkg_google_adsense_parameter_adFormat}
   /// {@macro pkg_google_adsense_parameter_adLayout}
@@ -165,7 +165,7 @@ class AdUnitConfiguration {
   /// Creates a configuration object for a Display ad.
   ///
   /// Arguments:
-  /// 
+  ///
   /// {@macro pkg_google_adsense_parameter_adSlot}
   /// {@macro pkg_google_adsense_parameter_adFormat}
   /// {@macro pkg_google_adsense_parameter_isFullWidthResponsive}

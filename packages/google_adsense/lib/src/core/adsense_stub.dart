@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 
 /// The AdSense SDK.
 class AdSense {
-
   /// Initializes the AdSense SDK with your [adClient].
   ///
   /// The [adClient] parameter is your AdSense [Publisher ID](https://support.google.com/adsense/answer/2923881).
