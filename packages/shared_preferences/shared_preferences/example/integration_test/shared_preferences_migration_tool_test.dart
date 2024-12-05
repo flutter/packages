@@ -53,21 +53,23 @@ void main() {
         expect(await asyncPreferences.getBool(migrationCompletedKey), true);
       });
 
-      testWidgets('re-running migration tool does not overwrite data',
-          (_) async {
-        final SharedPreferencesAsync asyncPreferences =
-            SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
-
-        await preferences.setInt(intKey, -0);
-
-        await migrateLegacySharedPreferencesToSharedPreferencesAsync(
-          preferences,
-          sharedPreferencesAsyncOptions,
-          migrationCompletedKey,
-        );
-
-        expect(await asyncPreferences.getInt(intKey), testInt);
-      });
+      testWidgets(
+        're-running migration tool does not overwrite data',
+        (_) async {
+          final SharedPreferencesAsync asyncPreferences =
+              SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
+          await preferences.setInt(intKey, -0);
+          await migrateLegacySharedPreferencesToSharedPreferencesAsync(
+            preferences,
+            sharedPreferencesAsyncOptions,
+            migrationCompletedKey,
+          );
+          expect(await asyncPreferences.getInt(intKey), testInt);
+        },
+        // Since the desktop versions would be moving to the same file, this test will always fail.
+        // They are the same files with the same keys.
+        skip: Platform.isWindows || Platform.isLinux || Platform.isMacOS,
+      );
     }
 
     void runAllGroups({String? stringValue = testString}) {
