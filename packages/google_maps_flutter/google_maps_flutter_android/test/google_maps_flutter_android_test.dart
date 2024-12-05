@@ -131,7 +131,7 @@ void main() {
     await maps.animateCamera(update, mapId: mapId);
 
     final VerificationResult verification =
-        verify(api.animateCamera(captureAny));
+        verify(api.animateCamera(captureAny, captureAny));
     final PlatformCameraUpdate passedUpdate =
         verification.captured[0] as PlatformCameraUpdate;
     final PlatformCameraUpdateScrollBy scroll =
@@ -139,6 +139,34 @@ void main() {
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
+    final int? passedDuration = verification.captured[1] as int?;
+    expect(passedDuration, isNull);
+  });
+
+  test('animateCameraWithConfiguration calls through', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final CameraUpdate update = CameraUpdate.scrollBy(10, 20);
+    const CameraUpdateAnimationConfiguration configuration =
+        CameraUpdateAnimationConfiguration(duration: Duration(seconds: 1));
+    expect(configuration.duration?.inSeconds, 1);
+    await maps.animateCameraWithConfiguration(update, configuration,
+        mapId: mapId);
+
+    final VerificationResult verification =
+        verify(api.animateCamera(captureAny, captureAny));
+    final PlatformCameraUpdate passedUpdate =
+        verification.captured[0] as PlatformCameraUpdate;
+    final PlatformCameraUpdateScrollBy scroll =
+        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    update as CameraUpdateScrollBy;
+    expect(scroll.dx, update.dx);
+    expect(scroll.dy, update.dy);
+
+    final int? passedDuration = verification.captured[1] as int?;
+    expect(passedDuration, configuration.duration?.inMilliseconds);
   });
 
   test('getZoomLevel passes values correctly', () async {
