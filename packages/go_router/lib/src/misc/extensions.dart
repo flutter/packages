@@ -30,13 +30,13 @@ extension GoRouterHelper on BuildContext {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    String? fragment,
   }) =>
-      GoRouter.of(this).goNamed(
-        name,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        extra: extra,
-      );
+      GoRouter.of(this).goNamed(name,
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          extra: extra,
+          fragment: fragment); 
 
   /// Push a location onto the page stack.
   ///

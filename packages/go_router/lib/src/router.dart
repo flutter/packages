@@ -366,10 +366,15 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    String? fragment,
   }) =>
+
+      /// Construct location with optional fragment, using null-safe navigation
       go(
         namedLocation(name,
-            pathParameters: pathParameters, queryParameters: queryParameters),
+                pathParameters: pathParameters,
+                queryParameters: queryParameters) +
+            ((fragment?.isNotEmpty ?? false) ? '#$fragment' : ''),
         extra: extra,
       );
 
