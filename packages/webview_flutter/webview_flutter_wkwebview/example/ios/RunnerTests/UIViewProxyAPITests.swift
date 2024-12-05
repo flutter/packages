@@ -8,7 +8,7 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class ViewProxyAPITests: XCTestCase {
+class UIViewProxyAPITests: XCTestCase {
   @MainActor func testSetBackgroundColor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIView(registrar)
