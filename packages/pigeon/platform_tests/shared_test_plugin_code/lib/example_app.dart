@@ -26,6 +26,7 @@ class ExampleApp extends StatefulWidget {
 class _ExampleAppState extends State<ExampleApp> {
   late final HostIntegrationCoreApi api;
   String status = 'Calling...';
+  String allData = '';
 
   @override
   void initState() {
