@@ -49,7 +49,7 @@ void main() {
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
   // whether the image is exactly the desired resolution.
-  Future<void> testCaptureImageResolution(
+  Future<bool> testCaptureImageResolution(
       CameraController controller, ResolutionPreset preset) async {
     final Size expectedSize = presetExpectedSizes[preset]!;
 
@@ -62,8 +62,9 @@ void main() {
 
     // Verify image dimensions are as expected
     expect(image, isNotNull);
-    // return assertExpectedDimensions(
-    //     expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
+    print(Size(image.height.toDouble(), image.width.toDouble()));
+    return assertExpectedDimensions(
+        expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
   }
 
   testWidgets('availableCameras only supports valid back or front cameras',
@@ -89,21 +90,24 @@ void main() {
       bool previousPresetExactlySupported = true;
       for (final MapEntry<ResolutionPreset, Size> preset
           in presetExpectedSizes.entries) {
+        print(cameraDescription.lensDirection);
         final CameraController controller = CameraController(
           cameraDescription,
           mediaSettings: MediaSettings(resolutionPreset: preset.key),
         );
         await controller.initialize();
-        // final bool presetExactlySupported =
-            await testCaptureImageResolution(controller, preset.key);
+        final bool presetExactlySupported =
+        await testCaptureImageResolution(controller, preset.key);
         // Ensures that if a lower resolution was used for previous (lower)
         // resolution preset, then the current (higher) preset also is adjusted,
         // as it demands a higher resolution.
-        // expect(
-        //     previousPresetExactlySupported || !presetExactlySupported, isTrue,
-        //     reason:
-        //         'The camera took higher resolution pictures at a lower resolution.');
-        // previousPresetExactlySupported = presetExactlySupported;
+
+        print(preset.key);
+        expect(
+            previousPresetExactlySupported || !presetExactlySupported, isTrue,
+            reason:
+                'The camera took higher resolution pictures at a lower resolution.');
+        previousPresetExactlySupported = presetExactlySupported;
         await controller.dispose();
       }
     }

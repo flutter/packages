@@ -42,10 +42,48 @@ public class ResolutionFilterHostApiImpl implements ResolutionFilterHostApi {
         @NonNull
         public List<Size> filter(@NonNull List<Size> supportedSizes, int rotationDegrees) {
           int preferredSizeIndex = supportedSizes.indexOf(preferredSize);
+          Size target = new Size(720, 480);
+
+          if(preferredSize.equals(target)){
+            System.out.println("preferredSize: " + preferredSize.toString());
+            System.out.println("target: " + target.toString());
+
+            System.out.println("START OF before filtering--");
+
+            System.out.println(supportedSizes);
+
+//            for (int i = 0; i < supportedSizes.size(); i++){
+//              System.out.println("width: " + supportedSizes.get(i).getWidth());
+//              System.out.println("height: " + supportedSizes.get(i).getHeight() + "\n");
+//
+//              // Easier to find the logs from `adb logcat`. cmd + f the below
+//              System.out.println("---------");
+//            }
+
+            System.out.println("END OF before filtering--");
+          }
 
           if (preferredSizeIndex > -1) {
             supportedSizes.remove(preferredSizeIndex);
             supportedSizes.add(0, preferredSize);
+          }
+
+          if(preferredSize.equals(target)) {
+            System.out.println("preferredSize: " + preferredSize.toString());
+            System.out.println("target: " + target.toString());
+
+            System.out.println("START OF after filtering--");
+            System.out.println(supportedSizes);
+
+//            for (int i = 0; i < supportedSizes.size(); i++) {
+//              System.out.println("width: " + supportedSizes.get(i).getWidth());
+//              System.out.println("height: " + supportedSizes.get(i).getHeight() + "\n");
+//
+//
+//              // Easier to find the logs from `adb logcat`. cmd + f the below
+//              System.out.println("---------");
+//            }
+            System.out.println("END OF after filtering--");
           }
 
           return supportedSizes;
