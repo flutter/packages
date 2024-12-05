@@ -895,7 +895,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                              formatHint:nil
                             httpHeaders:@{}
                                viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                                            initWithValue:FVPPlatformVideoViewTypePlatformView]];
+                                            initWithValue:FVPPlatformVideoViewTypeTextureView]];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   FVPVideoPlayer *player = videoPlayerPlugin.playersById[textureId];
   XCTAssertNotNil(player);
