@@ -181,6 +181,11 @@ void main() {
             verify(mockApi.dispose(captureAny));
         expect(verification.captured[0], cameraId);
       });
+
+      test('Should report support for image streaming', () async {
+        final CameraWindows plugin = CameraWindows(api: MockCameraApi());
+        expect(plugin.supportsImageStreaming(), true);
+      });
     });
 
     group('Event Tests', () {
