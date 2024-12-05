@@ -200,14 +200,14 @@ void main() {
     });
 
     test('create with platform view', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.file,
         uri: 'someUri',
         viewType: VideoViewType.platformView,
       ));
       expect(log.log.last, 'create');
       expect(log.creationOptions?.viewType, PlatformVideoViewType.platformView);
-      expect(textureId, 3);
+      expect(playerId, 3);
     });
 
     test('setLooping', () async {

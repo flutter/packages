@@ -48,7 +48,8 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
-  /// Creates an instance of a video player and returns its textureId.
+  /// Creates an instance of a video player and returns its playerId.
+  /// If view type is [VideoViewType.textureView], the playerId is also the texture id.
   Future<int?> create(DataSource dataSource) {
     throw UnimplementedError('create() has not been implemented.');
   }
@@ -93,6 +94,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
+  // TODO(FirentisTFW): Rename textureId to playerId everywhere.
   /// Returns a widget displaying the video with a given textureID.
   @Deprecated('Use buildViewWithOptions() instead.')
   Widget buildView(int textureId) {
@@ -211,10 +213,10 @@ enum VideoFormat {
 
 /// The type of video view to be used.
 enum VideoViewType {
-  /// Uses a texture view for rendering video.
+  /// Texture will be used to render video.
   textureView,
 
-  ///  Uses a platform view for rendering video.
+  /// Platform view will be used to render video.
   platformView,
 }
 
