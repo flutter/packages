@@ -9,10 +9,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FGMMapCallHandler : NSObject <FGMMapsApi>
-- (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
-                    andDuration:(nullable NSNumber *)durationMilliseconds
-                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error;
 
+/// Transaction wrapper for CATransaction to allow mocking in tests.
 @property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
 
 @end
@@ -30,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
+// The main Pigeon API implementation.
 @property(nonatomic, strong, readonly) FGMMapCallHandler *callHandler;
 
 @end

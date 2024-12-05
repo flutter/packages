@@ -615,7 +615,7 @@ abstract class MapsApi {
 
   /// Moves the camera according to [cameraUpdate], animating the update using a
   /// duration in milliseconds if provided.
-  @ObjCSelector('animateCameraWithUpdate:andDuration:')
+  @ObjCSelector('animateCameraWithUpdate:duration:')
   void animateCamera(
       PlatformCameraUpdate cameraUpdate, int? durationMilliseconds);
 
