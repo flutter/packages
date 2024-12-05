@@ -413,7 +413,7 @@ void defineTests() {
       'custom image builder',
       (WidgetTester tester) async {
         const String data = '![alt](https://img.png)';
-        Widget builder(MarkdownImageConfig config) =>
+        Widget builder(Uri uri, String? title, String? alt) =>
             Image.asset('assets/logo.png');
 
         await tester.pumpWidget(
@@ -479,7 +479,7 @@ void defineTests() {
                     width: 500,
                     child: Markdown(
                       data: data,
-                      imageBuilder: builder,
+                      sizedImageBuilder: builder,
                     ),
                   ),
                 ),

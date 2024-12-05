@@ -34,8 +34,14 @@ typedef MarkdownTapLinkCallback = void Function(
 
 /// Signature for custom image widget.
 ///
+/// Used by [MarkdownWidget.sizedImageBuilder]
+typedef MarkdownSizedImageBuilder = Widget Function(MarkdownImageConfig config);
+
+/// Signature for custom image widget.
+///
 /// Used by [MarkdownWidget.imageBuilder]
-typedef MarkdownImageBuilder = Widget Function(MarkdownImageConfig config);
+typedef MarkdownImageBuilder = Widget Function(
+    Uri uri, String? title, String? alt);
 
 /// Signature for custom checkbox widget.
 ///
@@ -219,7 +225,8 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.blockSyntaxes,
     this.inlineSyntaxes,
     this.extensionSet,
-    this.imageBuilder,
+    @Deprecated('Use sizedImageBuilder instead') this.imageBuilder,
+    this.sizedImageBuilder,
     this.checkboxBuilder,
     this.bulletBuilder,
     this.builders = const <String, MarkdownElementBuilder>{},
@@ -277,7 +284,11 @@ abstract class MarkdownWidget extends StatefulWidget {
   final md.ExtensionSet? extensionSet;
 
   /// Call when build an image widget.
+  @Deprecated('Use sizedImageBuilder instead')
   final MarkdownImageBuilder? imageBuilder;
+
+  /// Call when build an image widget.
+  final MarkdownSizedImageBuilder? sizedImageBuilder;
 
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder? checkboxBuilder;
@@ -390,6 +401,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       styleSheet: styleSheet,
       imageDirectory: widget.imageDirectory,
       imageBuilder: widget.imageBuilder,
+      sizedImageBuilder: widget.sizedImageBuilder,
       checkboxBuilder: widget.checkboxBuilder,
       bulletBuilder: widget.bulletBuilder,
       builders: widget.builders,
@@ -521,7 +533,8 @@ class Markdown extends MarkdownWidget {
     super.blockSyntaxes,
     super.inlineSyntaxes,
     super.extensionSet,
-    super.imageBuilder,
+    @Deprecated('Use sizedImageBuilder instead.') super.imageBuilder,
+    super.sizedImageBuilder,
     super.checkboxBuilder,
     super.bulletBuilder,
     super.builders,

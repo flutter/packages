@@ -1,6 +1,6 @@
 ## 0.8.0
 
-* Introduce `MarkdownImageConfig` for image builder.
+* Introduce `MarkdownImageConfig` for `sizedImageBuilder` builder.
 
 ## 0.7.4+3
 

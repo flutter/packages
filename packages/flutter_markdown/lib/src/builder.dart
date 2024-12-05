@@ -133,6 +133,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.styleSheet,
     required this.imageDirectory,
     required this.imageBuilder,
+    required this.sizedImageBuilder,
     required this.checkboxBuilder,
     required this.bulletBuilder,
     required this.builders,
@@ -160,6 +161,9 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// Call when build an image widget.
   final MarkdownImageBuilder? imageBuilder;
+
+  /// Call when build an image widget.
+  final MarkdownSizedImageBuilder? sizedImageBuilder;
 
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder? checkboxBuilder;
@@ -635,9 +639,9 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     Widget child;
-    if (imageBuilder != null) {
+    if (imageBuilder != null || sizedImageBuilder != null) {
       final MarkdownImageConfig config = MarkdownImageConfig(uri: uri, alt: alt, title: title, height: height, width: width);
-      child = imageBuilder!(config);
+      child = sizedImageBuilder != null ? sizedImageBuilder!(config) : imageBuilder!(uri, alt, title);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }
