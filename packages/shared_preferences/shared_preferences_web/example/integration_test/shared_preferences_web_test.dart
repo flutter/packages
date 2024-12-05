@@ -384,7 +384,7 @@ void main() {
     });
 
     testWidgets('returns all valid JSON data', (WidgetTester _) async {
-      const String value = 'flutter228';
+      const String value = 'value';
       const String invalidJsonDataKey = 'invalidJsonData';
       const String validJsonDataKey = 'validJsonData';
       html.window.localStorage.setItem(invalidJsonDataKey, value);
@@ -473,14 +473,14 @@ void main() {
     });
 
     testWidgets(
-      'returns null when riding invalid JSON value',
+      'returns null when reading invalid JSON value',
       (WidgetTester _) async {
-        const String value = 'flutter228';
+        const String value = 'value';
         const String invalidJsonDataKey = 'invalidJsonData';
         const String validJsonDataKey = 'validJsonData';
-
         final SharedPreferencesAsyncPlatform preferences =
             await getPreferences();
+
         html.window.localStorage.setItem(invalidJsonDataKey, value);
         html.window.localStorage.setItem(validJsonDataKey, '"$value"');
 
