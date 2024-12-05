@@ -26,7 +26,7 @@ const CameraPosition _kInitialCameraPosition = CameraPosition(
 const String _kCloudMapId = '000000000000000'; // Dummy map ID.
 
 const double _kTestCameraZoomLevel = 10;
-const double _kTestZoombByAmount = 2;
+const double _kTestZoomByAmount = 2;
 const LatLng _kTestMapCenter = LatLng(65, 25.5);
 const CameraPosition _kTestCameraPosition = CameraPosition(
   target: _kTestMapCenter,
@@ -1758,7 +1758,7 @@ CameraUpdate _getCameraUpdateForType(CameraUpdateType type) {
       CameraUpdate.newLatLngZoom(_kTestMapCenter, _kTestCameraZoomLevel),
     CameraUpdateType.scrollBy => CameraUpdate.scrollBy(10, 10),
     CameraUpdateType.zoomBy =>
-      CameraUpdate.zoomBy(_kTestZoombByAmount, const Offset(1, 1)),
+      CameraUpdate.zoomBy(_kTestZoomByAmount, const Offset(1, 1)),
     CameraUpdateType.zoomTo => CameraUpdate.zoomTo(_kTestCameraZoomLevel),
     CameraUpdateType.zoomIn => CameraUpdate.zoomIn(),
     CameraUpdateType.zoomOut => CameraUpdate.zoomOut(),
@@ -1823,7 +1823,7 @@ Future<void> _checkCameraUpdateByType(
       }
     case CameraUpdateType.zoomBy:
       expect(currentPosition.zoom,
-          wrapMatcher(equals(_kInitialZoomLevel + _kTestZoombByAmount)));
+          wrapMatcher(equals(_kInitialZoomLevel + _kTestZoomByAmount)));
     case CameraUpdateType.zoomTo:
       expect(currentPosition.zoom, wrapMatcher(equals(_kTestCameraZoomLevel)));
     case CameraUpdateType.zoomIn:
