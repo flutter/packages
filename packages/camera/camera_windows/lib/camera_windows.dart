@@ -242,8 +242,10 @@ class CameraWindows extends CameraPlatform {
 
     controller = StreamController<CameraImageData>(
         onListen: () async {
-          final eventChannelName = await _hostApi.startImageStream(cameraId);
-          final imageStreamChannel = EventChannel(eventChannelName);
+          final String eventChannelName =
+              await _hostApi.startImageStream(cameraId);
+          final EventChannel imageStreamChannel =
+              EventChannel(eventChannelName);
           imageStreamChannel.receiveBroadcastStream().listen((dynamic image) =>
               controller.add(
                   cameraImageFromPlatformData(image as Map<dynamic, dynamic>)));
