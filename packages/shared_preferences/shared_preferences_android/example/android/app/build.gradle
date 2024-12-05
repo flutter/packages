@@ -30,6 +30,11 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    kotlinOptions {
+        jvmTarget = '11'
+        allWarningsAsErrors = true
+    }
+
     defaultConfig {
         applicationId "io.flutter.plugins.sharedpreferencesexample"
         minSdkVersion flutter.minSdkVersion
@@ -54,4 +59,5 @@ flutter {
 
 dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation 'androidx.preference:preference:1.2.1'
 }
