@@ -6,12 +6,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Protocol for CATransaction to allow mocking in tests.
 @protocol FGMCATransactionProtocol <NSObject>
 - (void)begin;
 - (void)commit;
 - (void)setAnimationDuration:(CFTimeInterval)duration;
 @end
 
+/// Wrapper for CATransaction to allow mocking in tests.
 @interface FGMCATransactionWrapper : NSObject <FGMCATransactionProtocol>
 @end
 
