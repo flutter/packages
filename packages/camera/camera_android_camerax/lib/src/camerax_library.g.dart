@@ -293,6 +293,32 @@ class MeteringPointInfo {
   }
 }
 
+class DeviceOrientationInfo {
+  DeviceOrientationInfo({
+    required this.uiOrientation,
+    required this.defaultDisplayRotation,
+  });
+
+  String uiOrientation;
+
+  int defaultDisplayRotation;
+
+  Object encode() {
+    return <Object?>[
+      uiOrientation,
+      defaultDisplayRotation,
+    ];
+  }
+
+  static DeviceOrientationInfo decode(Object result) {
+    result as List<Object?>;
+    return DeviceOrientationInfo(
+      uiOrientation: result[0]! as String,
+      defaultDisplayRotation: result[1]! as int,
+    );
+  }
+}
+
 class InstanceManagerHostApi {
   /// Constructor for [InstanceManagerHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -1171,12 +1197,63 @@ class DeviceOrientationManagerHostApi {
       return (replyList[0] as String?)!;
     }
   }
+
+  Future<int> getDeviceOrientation() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDeviceOrientation',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as int?)!;
+    }
+  }
+}
+
+class _DeviceOrientationManagerFlutterApiCodec extends StandardMessageCodec {
+  const _DeviceOrientationManagerFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is DeviceOrientationInfo) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128:
+        return DeviceOrientationInfo.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
 }
 
 abstract class DeviceOrientationManagerFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec =
+      _DeviceOrientationManagerFlutterApiCodec();
 
-  void onDeviceOrientationChanged(String orientation);
+  void onDeviceOrientationChanged(DeviceOrientationInfo deviceOrientationInfo);
 
   static void setup(DeviceOrientationManagerFlutterApi? api,
       {BinaryMessenger? binaryMessenger}) {
@@ -1192,10 +1269,11 @@ abstract class DeviceOrientationManagerFlutterApi {
           assert(message != null,
               'Argument for dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_orientation = (args[0] as String?);
-          assert(arg_orientation != null,
-              'Argument for dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged was null, expected non-null String.');
-          api.onDeviceOrientationChanged(arg_orientation!);
+          final DeviceOrientationInfo? arg_deviceOrientationInfo =
+              (args[0] as DeviceOrientationInfo?);
+          assert(arg_deviceOrientationInfo != null,
+              'Argument for dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged was null, expected non-null DeviceOrientationInfo.');
+          api.onDeviceOrientationChanged(arg_deviceOrientationInfo!);
           return;
         });
       }
@@ -3336,23 +3414,26 @@ class _CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
     } else if (value is CameraStateTypeData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is ExposureCompensationRange) {
+    } else if (value is DeviceOrientationInfo) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is LiveDataSupportedTypeData) {
+    } else if (value is ExposureCompensationRange) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is MeteringPointInfo) {
+    } else if (value is LiveDataSupportedTypeData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is ResolutionInfo) {
+    } else if (value is MeteringPointInfo) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is VideoQualityData) {
+    } else if (value is ResolutionInfo) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is VideoRecordEventData) {
+    } else if (value is VideoQualityData) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is VideoRecordEventData) {
+      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -3367,16 +3448,18 @@ class _CaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
       case 129:
         return CameraStateTypeData.decode(readValue(buffer)!);
       case 130:
-        return ExposureCompensationRange.decode(readValue(buffer)!);
+        return DeviceOrientationInfo.decode(readValue(buffer)!);
       case 131:
-        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+        return ExposureCompensationRange.decode(readValue(buffer)!);
       case 132:
-        return MeteringPointInfo.decode(readValue(buffer)!);
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
       case 133:
-        return ResolutionInfo.decode(readValue(buffer)!);
+        return MeteringPointInfo.decode(readValue(buffer)!);
       case 134:
-        return VideoQualityData.decode(readValue(buffer)!);
+        return ResolutionInfo.decode(readValue(buffer)!);
       case 135:
+        return VideoQualityData.decode(readValue(buffer)!);
+      case 136:
         return VideoRecordEventData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
