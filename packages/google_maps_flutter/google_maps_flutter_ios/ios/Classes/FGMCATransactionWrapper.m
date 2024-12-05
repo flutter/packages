@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FGMCATransactionWrapper.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation FGMCATransactionWrapper
 

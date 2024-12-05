@@ -155,7 +155,7 @@
   OCMExpect([mockTransactionWrapper commit]);
   OCMExpect([mapViewMock animateWithCameraUpdate:[OCMArg any]]);
   [controller.callHandler animateCameraWithUpdate:cameraUpdate
-                                      andDuration:durationMilliseconds
+                                         duration:durationMilliseconds
                                             error:&error];
   OCMVerifyAll(mapViewMock);
   OCMVerifyAll(mockTransactionWrapper);
