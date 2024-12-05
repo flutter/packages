@@ -36,7 +36,7 @@ extension GoRouterHelper on BuildContext {
           pathParameters: pathParameters,
           queryParameters: queryParameters,
           extra: extra,
-          fragment: fragment); 
+          fragment: fragment);
 
   /// Push a location onto the page stack.
   ///
