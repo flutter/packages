@@ -23,13 +23,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic) FlutterEventChannel *eventChannel;
 /// The AVPlayer instance used for video playback.
-@property(readonly, nonatomic) AVPlayer *player;
+@property(nonatomic, readonly) AVPlayer *player;
 /// Indicates whether the video player has been disposed.
 @property(nonatomic, readonly) BOOL disposed;
 /// Indicates whether the video player is set to loop.
 @property(nonatomic) BOOL isLooping;
 /// The current playback position of the video, in milliseconds.
-@property(readonly, nonatomic) int64_t position;
+@property(nonatomic, readonly) int64_t position;
 
 /// Initializes a new instance of FVPVideoPlayer with the given asset, frame updater, display link,
 /// AV factory, and registrar.
@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FVPVideoPlayer ()
 /// The AVPlayerItemVideoOutput associated with this video player.
-@property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
+@property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
 /// The plugin registrar, to obtain view information from.
 @property(nonatomic, readonly) NSObject<FlutterPluginRegistrar> *registrar;
 /// The CALayer associated with the Flutter view this plugin is associated with, if any.

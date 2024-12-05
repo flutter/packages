@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import <AVFoundation/AVFoundation.h>
 #import <Flutter/Flutter.h>
 
 /// A class used to create a native video view that can be embedded in a Flutter app.

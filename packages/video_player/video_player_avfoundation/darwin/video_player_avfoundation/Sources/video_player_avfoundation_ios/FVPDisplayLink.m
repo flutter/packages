@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "../video_player_avfoundation/include/video_player_avfoundation/FVPDisplayLink.h"
+
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
-
-#import "FVPDisplayLink.h"
 
 /// A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPDisplayLink
 /// owns its CADisplayLink, but CADisplayLink retains its target.
