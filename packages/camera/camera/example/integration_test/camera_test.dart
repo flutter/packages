@@ -88,7 +88,6 @@ void main() {
         await controller.initialize();
         final bool presetExactlySupported =
             await testCaptureImageResolution(controller, preset.key);
-        await testCaptureImageResolution(controller, preset.key);
         assert(!(!previousPresetExactlySupported && presetExactlySupported),
             'The camera took higher resolution pictures at a lower resolution.');
         previousPresetExactlySupported = presetExactlySupported;
