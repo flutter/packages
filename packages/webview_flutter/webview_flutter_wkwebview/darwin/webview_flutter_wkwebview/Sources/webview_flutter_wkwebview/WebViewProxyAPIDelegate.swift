@@ -37,6 +37,7 @@ class WebViewImpl: WKWebView {
       return super.frame
     }
     set {
+      super.frame = newValue
 #if os(iOS)
       // Prevents the contentInsets from being adjusted by iOS and gives control to Flutter.
       scrollView.contentInset = .zero
