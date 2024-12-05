@@ -50,6 +50,33 @@ class _TableElement {
   final List<TableRow> rows = <TableRow>[];
 }
 
+/// Holds configuration data for an image in a Markdown document.
+class MarkdownImageConfig {
+
+  /// Creates a new [MarkdownImageConfig] instance.
+  MarkdownImageConfig({
+    required this.uri,
+    this.title,
+    this.alt,
+    this.width,
+    this.height,
+  });
+  /// The URI of the image.
+  final Uri uri;
+
+  /// The title of the image, displayed on hover.
+  final String? title;
+
+  /// The alternative text for the image, displayed if the image cannot be loaded.
+  final String? alt;
+
+  /// The desired width of the image.
+  final double? width;
+
+  /// The desired height of the image.
+  final double? height;
+}
+
 /// A collection of widgets that should be placed adjacent to (inline with)
 /// other inline elements in the same parent block.
 ///
@@ -609,7 +636,8 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     Widget child;
     if (imageBuilder != null) {
-      child = imageBuilder!(uri, title, alt, width, height);
+      final MarkdownImageConfig config = MarkdownImageConfig(uri: uri, alt: alt, title: title, height: height, width: width);
+      child = imageBuilder!(config);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }
