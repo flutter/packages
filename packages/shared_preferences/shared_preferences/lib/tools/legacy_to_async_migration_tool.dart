@@ -41,8 +41,6 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsync(
 
   for (final String key in keys) {
     final Object? value = legacySharedPreferencesInstance.get(key);
-    print(value);
-    print(value.runtimeType);
     switch (value.runtimeType) {
       case const (bool):
         await sharedPreferencesAsyncInstance.setBool(key, value! as bool);
