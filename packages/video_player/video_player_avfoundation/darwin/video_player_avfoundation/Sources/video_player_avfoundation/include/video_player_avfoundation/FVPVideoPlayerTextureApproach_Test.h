@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FVPVideoPlayerTextureApproach () <FlutterTexture>
+@interface FVPVideoPlayerTextureApproach ()
 /// The AVPlayerLayer used to display the video content.
 /// This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
 /// (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some

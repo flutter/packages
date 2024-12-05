@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FVPVideoPlayer : NSObject <FlutterStreamHandler>
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic) FlutterEventChannel *eventChannel;
+/// The AVPlayer instance used for video playback.
+@property(readonly, nonatomic) AVPlayer *player;
 /// Indicates whether the video player has been disposed.
 @property(nonatomic, readonly) BOOL disposed;
 /// Indicates whether the video player is set to loop.
@@ -71,10 +73,26 @@ NS_ASSUME_NONNULL_BEGIN
 /// Seeks to the specified location in the video and calls the completion handler when done, if one
 /// is supplied.
 - (void)seekTo:(int64_t)location completionHandler:(void (^_Nullable)(BOOL))completionHandler;
+@end
 
-/// Tells the player to run its frame updater until it receives a frame, regardless of the
-/// play/pause state.
-- (void)expectFrame;
+@interface FVPVideoPlayer ()
+/// The AVPlayerItemVideoOutput associated with this video player.
+@property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
+/// The plugin registrar, to obtain view information from.
+@property(nonatomic, readonly) NSObject<FlutterPluginRegistrar> *registrar;
+/// The CALayer associated with the Flutter view this plugin is associated with, if any.
+@property(nonatomic, readonly, nullable) CALayer *flutterViewLayer;
+/// The Flutter event sink used to send events to the Flutter engine.
+@property(nonatomic) FlutterEventSink eventSink;
+/// The preferred transform for the video. It can be used to handle the rotation of the video.
+@property(nonatomic) CGAffineTransform preferredTransform;
+/// Indicates whether the video player is currently playing.
+@property(nonatomic, readonly) BOOL isPlaying;
+/// Indicates whether the video player has been initialized.
+@property(nonatomic, readonly) BOOL isInitialized;
+
+/// Updates the playing state of the video player.
+- (void)updatePlayingState;
 @end
 
 NS_ASSUME_NONNULL_END
