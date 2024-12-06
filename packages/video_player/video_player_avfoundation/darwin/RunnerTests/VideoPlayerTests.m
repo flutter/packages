@@ -10,6 +10,11 @@
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
 #import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
 #import <video_player_avfoundation/FVPVideoPlayerTextureApproach_Test.h>
+#import <video_player_avfoundation/FVPVideoPlayer_Test.h>
+
+#if TARGET_OS_IOS
+#import <video_player_avfoundation/FVPNativeVideoViewFactory.h>
+#endif
 
 // TODO(stuartmorgan): Convert to using mock registrars instead.
 NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
