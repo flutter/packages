@@ -171,7 +171,7 @@
   });
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
-//
+
 - (void)testCaptureToFile_handlesTorchMode {
   XCTestExpectation *pathExpectation =
       [self expectationWithDescription:
