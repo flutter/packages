@@ -270,14 +270,35 @@ class FormatCommand extends PackageLoopingCommand {
     throw ToolExit(_exitDependencyMissing);
   }
 
+
+
+
   Future<String> _findValidSwiftFormat() async {
-    final String swiftFormat = getStringArg(_swiftFormatPathArg);
-    if (await _hasDependency(swiftFormat)) {
-      return swiftFormat;
+    // Check if --swift-format-path is provided
+    final String swiftFormatPathArg = getStringArg(_swiftFormatPathArg);
+    if (swiftFormatPathArg.isNotEmpty && await _hasDependency(swiftFormatPathArg)) {
+      return swiftFormatPathArg;
     }
 
-    printError('Unable to run "swift-format". Make sure that it is in your '
-        'path, or provide a full path with --$_swiftFormatPathArg.');
+    // Check if swift-format exists on the PATH
+    if (await _hasDependency('swift-format')) {
+      return 'swift-format';
+    }
+
+    // Fallback to xcrun --find swift-format
+    final io.ProcessResult result = await io.Process.run('xcrun', ['--find', 'swift-format']);
+    if (result.exitCode == 0 && result.stdout.toString().isNotEmpty) {
+      final String swiftFormatFromXcrun = result.stdout.toString().trim();
+      if (await _hasDependency(swiftFormatFromXcrun)) {
+        return swiftFormatFromXcrun;
+      }
+    }
+
+    // If all checks fail, show an error and exit
+    printError(
+      'Unable to locate "swift-format". Ensure it is available in your PATH, '
+      'or provide a valid path using --$_swiftFormatPathArg.'
+    );
     throw ToolExit(_exitDependencyMissing);
   }
 

@@ -13,6 +13,8 @@ import 'package:test/test.dart';
 
 import 'mocks.dart';
 import 'util.dart';
+import 'dart:io';
+import 'dart:convert';
 
 void main() {
   late FileSystem fileSystem;
@@ -614,8 +616,12 @@ void main() {
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
 
-    test('fails with a clear message if swift-format is not in the path',
-        () async {
+    test('uses --swift-format-path if provided and valid', () async {
+      final String validSwiftFormatPath = '/valid/path/to/swift-format';
+      processRunner.mockProcessesForExecutable[validSwiftFormatPath] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 0), <String>['--version']),
+      ];
+
       const List<String> files = <String>[
         'macos/foo.swift',
       ];
@@ -623,25 +629,76 @@ void main() {
           createFakePlugin('a_plugin', packagesDir, extraFiles: files);
       fakePubGet(plugin);
 
-      processRunner.mockProcessesForExecutable['swift-format'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['--version']),
-      ];
       Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['format', '--swift'], errorHandler: (Error e) {
-        commandError = e;
-      });
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-                'Unable to run "swift-format". Make sure that it is in your path, or '
-                'provide a full path with --swift-format-path.'),
-          ]));
+      await runCapturingPrint(
+        runner,
+        <String>['format', '--swift-format-path', validSwiftFormatPath],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+      
+      expect(commandError, isNull, reason: 'No error should occur if --swift-format-path is valid.');
     });
+
+    test('uses swift-format from system PATH if available', () async {
+      processRunner.mockProcessesForExecutable['swift-format'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 0), <String>['--version']),
+      ];
+
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+      fakePubGet(plugin);
+
+      Error? commandError;
+      await runCapturingPrint(
+        runner,
+        <String>['format'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isNull, reason: 'No error should occur if swift-format is in PATH.');
+    });
+
+    test('uses xcrun to find swift-format if not in PATH', () async {
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+          MockProcess(
+            exitCode: 0,
+            stdout: '/found/path/to/swift-format',
+          ),
+          <String>['--find', 'swift-format'],
+        ),
+      ];
+
+      processRunner.mockProcessesForExecutable['/found/path/to/swift-format'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 0), <String>['--version']),
+      ];
+
+      const List<String> files = <String>[
+        'macos/foo.swift',
+      ];
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+      fakePubGet(plugin);
+
+      Error? commandError;
+      await runCapturingPrint(
+        runner,
+        <String>['format'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isNull, reason: 'No error should occur if xcrun successfully finds swift-format.');
+    });
+
 
     test('fails if swift-format lint finds issues', () async {
       const List<String> files = <String>[
