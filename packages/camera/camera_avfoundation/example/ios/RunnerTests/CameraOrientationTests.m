@@ -9,8 +9,6 @@
 @import XCTest;
 @import Flutter;
 
-#import <OCMock/OCMock.h>
-
 #import "MockCaptureDeviceController.h"
 #import "MockDeviceOrientationProvider.h"
 
