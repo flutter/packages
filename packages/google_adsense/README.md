@@ -18,7 +18,7 @@ To start displaying ads, initialize AdSense with your [Publisher ID](https://sup
 
 <?code-excerpt "example/lib/main.dart (init)"?>
 ```dart
-import 'package:google_adsense/experimental/adsense.dart';
+import 'package:google_adsense/experimental/ad_unit_widget.dart';
 import 'package:google_adsense/google_adsense.dart';
 
 void main() {
@@ -30,13 +30,22 @@ void main() {
 }
 ```
 
-### Enable Auto Ads
-In order to start displaying [Auto ads](https://support.google.com/adsense/answer/9261805) make sure to configure this feature in your AdSense Console. If you want to display ad units within your app content, continue to the next step
+### Displaying Auto Ads
+In order to start displaying [Auto ads](https://support.google.com/adsense/answer/9261805):
 
-### Display ad unit Widget
+1. Configure this feature in your AdSense Console.
 
-1. Create [ad units](https://support.google.com/adsense/answer/9183549) in your AdSense account
-2. Use relevant `AdUnitConfiguration` constructor as per table below
+Auto ads should start showing just with the call to `initialize`, when available.
+
+If you want to display ad units within your app content, continue to the next step
+
+### Display ad units (`AdUnitWidget`)
+
+To display an Ad unit in your Flutter application:
+
+1. Create [ad units](https://support.google.com/adsense/answer/9183549) in your AdSense account.
+   This will provide an HTML snippet, which you need to translate to Dart.
+2. Pick the `AdUnitConfiguration` for your ad type:
 
 | Ad Unit Type   | `AdUnitConfiguration` constructor method   |
 |----------------|--------------------------------------------|
@@ -81,14 +90,18 @@ and:
 
 <?code-excerpt "example/lib/main.dart (adUnit)"?>
 ```dart
-    adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-  adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
-  adFormat: AdFormat
-      .AUTO, // Remove AdFormat to make ads limited by height
-))
+    AdUnitWidget(
+  configuration: AdUnitConfiguration.displayAdUnit(
+    // TODO: Replace with your Ad Unit ID
+    adSlot: '1234567890',
+    // Remove AdFormat to make ads limited by height
+    adFormat: AdFormat.AUTO,
+  ),
+),
 ```
 
-#### Customize ad unit Widget
+#### `AdUnitWidget` customizations
+
 To [modify your responsive ad code](https://support.google.com/adsense/answer/9183363?hl=en&ref_topic=9183242&sjid=11551379421978541034-EU):
 1. Make sure to follow [AdSense policies](https://support.google.com/adsense/answer/1346295?hl=en&sjid=18331098933308334645-EU&visit_id=638689380593964621-4184295127&ref_topic=1271508&rd=1)
 2. Use Flutter instruments for [adaptive and responsive design](https://docs.flutter.dev/ui/adaptive-responsive)
@@ -102,10 +115,14 @@ Container(
   constraints:
       const BoxConstraints(maxHeight: 100, maxWidth: 1200),
   padding: const EdgeInsets.only(bottom: 10),
-  child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-    adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
-    // adFormat: AdFormat.AUTO, // Not using AdFormat to make ad unit respect height constraint
-  )),
+  child: AdUnitWidget(
+    configuration: AdUnitConfiguration.displayAdUnit(
+      // TODO: Replace with your Ad Unit ID
+      adSlot: '1234567890',
+      // Do not use adFormat to make ad unit respect height constraint
+      // adFormat: AdFormat.AUTO,
+    ),
+  ),
 ),
 ```
 ## Testing and common errors
@@ -126,6 +143,7 @@ Make sure to set correct values to adSlot and adClient arguments
 ### Ad unfilled  
 
 There is no deterministic way to make sure your ads are 100% filled even when testing. Some of the way to increase the fill rate:
+- Ensure your ad units are correctly configured in AdSense
 - Try setting `adTest` parameter to `true`  
 - Try setting AD_FORMAT to `auto` (default setting)
 - Try setting FULL_WIDTH_RESPONSIVE to `true` (default setting)

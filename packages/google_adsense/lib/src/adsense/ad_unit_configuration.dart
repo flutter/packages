@@ -6,10 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import 'ad_unit_params.dart';
 
-/// Ad request configuration object.
-///
-/// Used to configure the ad widget request through the `adSense.adUnit` method
-/// (see: [AdUnitExtension]).
+/// Configuration to customize the [AdUnitWidget].
 ///
 /// Contains named constructors for the following supported ad unit types:
 ///

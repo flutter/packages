@@ -4,5 +4,4 @@
 
 export 'ad_unit_configuration.dart';
 export 'ad_unit_params.dart' hide AdStatus, AdUnitParams;
-export 'adsense_extension_stub.dart'
-    if (dart.library.js_interop) 'adsense_extension.dart';
+export 'ad_unit_widget.dart';

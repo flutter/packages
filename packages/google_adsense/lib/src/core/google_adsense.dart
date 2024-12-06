@@ -10,7 +10,7 @@ import 'package:web/web.dart' as web;
 import '../js_interop/adsbygoogle.dart' show adsbygooglePresent;
 import '../js_interop/package_web_tweaks.dart';
 
-import '../logging.dart';
+import '../utils/logging.dart';
 
 /// The web implementation of the AdSense API.
 class AdSense {
@@ -81,3 +81,6 @@ class AdSense {
     (testingTarget ?? web.document.head)!.appendChild(script);
   }
 }
+
+/// The singleton instance of the AdSense SDK.
+final AdSense adSense = AdSense();

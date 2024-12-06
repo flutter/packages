@@ -8,11 +8,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:google_adsense/experimental/adsense.dart';
+import 'package:google_adsense/experimental/ad_unit_widget.dart';
 // Ensure we don't use the `adSense` singleton for tests.
 import 'package:google_adsense/google_adsense.dart' hide adSense;
 import 'package:google_adsense/src/adsense/ad_unit_params.dart';
-import 'package:google_adsense/src/adsense/ad_unit_widget.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'adsense_test_js_interop.dart';
@@ -48,11 +47,12 @@ void main() async {
 
       adSense.initialize(testClient);
 
-      final Widget adUnitWidget = adSense.adUnit(
-        AdUnitConfiguration.displayAdUnit(
+      final Widget adUnitWidget = AdUnitWidget(
+        configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
           adFormat: AdFormat.AUTO, // Important!
         ),
+        adClient: adSense.adClient,
       );
 
       await pumpAdWidget(adUnitWidget, tester);
@@ -81,10 +81,11 @@ void main() async {
 
       adSense.initialize(testClient);
 
-      final Widget adUnitWidget = adSense.adUnit(
-        AdUnitConfiguration.displayAdUnit(
+      final Widget adUnitWidget = AdUnitWidget(
+        configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
         ),
+        adClient: adSense.adClient,
       );
 
       final Widget constrainedAd = Container(
@@ -109,10 +110,11 @@ void main() async {
       mockAdsByGoogle(mockAd(adStatus: AdStatus.UNFILLED));
 
       adSense.initialize(testClient);
-      final Widget adUnitWidget = adSense.adUnit(
-        AdUnitConfiguration.displayAdUnit(
+      final Widget adUnitWidget = AdUnitWidget(
+        configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
         ),
+        adClient: adSense.adClient,
       );
 
       await pumpAdWidget(adUnitWidget, tester);
@@ -142,19 +144,28 @@ void main() async {
 
       final Widget bunchOfAds = Column(
         children: <Widget>[
-          adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-            adSlot: testSlot,
-            adFormat: AdFormat.AUTO,
-          )),
-          adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-            adSlot: testSlot,
-            adFormat: AdFormat.AUTO,
-          )),
+          AdUnitWidget(
+            configuration: AdUnitConfiguration.displayAdUnit(
+              adSlot: testSlot,
+              adFormat: AdFormat.AUTO,
+            ),
+            adClient: adSense.adClient,
+          ),
+          AdUnitWidget(
+            configuration: AdUnitConfiguration.displayAdUnit(
+              adSlot: testSlot,
+              adFormat: AdFormat.AUTO,
+            ),
+            adClient: adSense.adClient,
+          ),
           Container(
             constraints: const BoxConstraints(maxHeight: 100),
-            child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-              adSlot: testSlot,
-            )),
+            child: AdUnitWidget(
+              configuration: AdUnitConfiguration.displayAdUnit(
+                adSlot: testSlot,
+              ),
+              adClient: adSense.adClient,
+            ),
           ),
         ],
       );
