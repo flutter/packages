@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/camera_avfoundation/FLTPermissionService.h"
+#import "../include/camera_avfoundation/Protocols/FLTPermissionService.h"
 
 @implementation FLTDefaultPermissionService
 - (AVAuthorizationStatus)authorizationStatusForMediaType:(AVMediaType)mediaType {

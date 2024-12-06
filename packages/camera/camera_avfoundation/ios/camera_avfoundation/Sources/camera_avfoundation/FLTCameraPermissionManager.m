@@ -4,7 +4,7 @@
 
 @import AVFoundation;
 #import "./include/camera_avfoundation/FLTCameraPermissionManager.h"
-#import "./include/camera_avfoundation/FLTPermissionService.h"
+#import "./include/camera_avfoundation/Protocols/FLTPermissionService.h"
 
 @implementation FLTCameraPermissionManager
 
