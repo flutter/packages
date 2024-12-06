@@ -37,3 +37,13 @@ dev_dependencies:
 topics:
   - video
   - video-player
+
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  {
+    video_player_avfoundation:
+      { path: ../../../packages/video_player/video_player_avfoundation },
+    video_player_platform_interface:
+      { path: ../../../packages/video_player/video_player_platform_interface },
+  }
