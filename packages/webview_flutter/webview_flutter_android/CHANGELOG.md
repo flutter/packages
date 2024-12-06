@@ -1,4 +1,4 @@
-## 4.1.1
+## 4.2.0
 
 * Explicitly set WebView Settings `setAllowFileAccess` to `false` by default for Android SDK versions less than 29 to enhance security.
 * Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.
