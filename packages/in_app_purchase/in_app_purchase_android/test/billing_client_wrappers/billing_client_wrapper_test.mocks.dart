@@ -120,6 +120,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
   _i4.Future<_i2.PlatformBillingResult> startConnection(
     int? callbackHandle,
     _i2.PlatformBillingChoiceMode? billingMode,
+    _i2.PendingPurchasesParams? pendingPurchasesParams,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -127,6 +128,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           [
             callbackHandle,
             billingMode,
+            pendingPurchasesParams,
           ],
         ),
         returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
@@ -137,6 +139,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [
               callbackHandle,
               billingMode,
+              pendingPurchasesParams,
             ],
           ),
         )),
@@ -148,6 +151,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [
               callbackHandle,
               billingMode,
+              pendingPurchasesParams,
             ],
           ),
         )),
