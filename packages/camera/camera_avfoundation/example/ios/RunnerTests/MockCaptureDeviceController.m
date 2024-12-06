@@ -68,6 +68,8 @@
 - (void)setExposureTargetBias:(float)bias completionHandler:(void (^)(CMTime))handler {
     if (self.setExposureTargetBiasStub) {
         self.setExposureTargetBiasStub(bias, handler);
+    } else if (handler) {
+        handler(kCMTimeZero);
     }
 }
 
@@ -122,6 +124,5 @@
     }
     return self.inputToReturn;
 }
-
 
 @end
