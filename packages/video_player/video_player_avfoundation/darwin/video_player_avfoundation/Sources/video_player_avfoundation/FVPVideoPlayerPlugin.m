@@ -11,7 +11,15 @@
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayerTextureApproach.h"
+// Relative path is needed for messages.g.h. See
+// https://github.com/flutter/packages/pull/6675/#discussion_r1591210702
 #import "./include/video_player_avfoundation/messages.g.h"
+
+#if TARGET_OS_IOS
+// We only support platform views on iOS as of now.
+#import "../video_player_avfoundation_ios/include/FVPNativeVideoViewFactory.h"
+#endif
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -31,6 +39,10 @@
 
 #pragma mark -
 
+/// The next non-texture player ID, initialized to a high number to avoid collisions with
+/// texture IDs (which are generated separately).
+static int64_t nextNonTexturePlayerId = 1000000;
+
 @interface FVPVideoPlayerPlugin ()
 @property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry> *registry;
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
@@ -43,6 +55,13 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FVPVideoPlayerPlugin *instance = [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   [registrar publish:instance];
+#if TARGET_OS_IOS
+  // We only support platform views on iOS as of now.
+  FVPNativeVideoViewFactory *factory =
+      [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
+                                               playersById:instance.playersById];
+  [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
+#endif
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
 }
 
@@ -62,32 +81,44 @@
   _registrar = registrar;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
   _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
-  _playersByTextureId = [NSMutableDictionary dictionaryWithCapacity:1];
+  _playersById = [NSMutableDictionary dictionaryWithCapacity:1];
   return self;
 }
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self.playersByTextureId.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
-  [self.playersByTextureId removeAllObjects];
+  [self.playersById.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
+  [self.playersById removeAllObjects];
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
-  int64_t textureId = [self.registry registerTexture:player];
-  frameUpdater.textureId = textureId;
+  BOOL usesTextureApproach =
+      frameUpdater != nil && [player isKindOfClass:[FVPVideoPlayerTextureApproach class]];
+  int64_t playerId;
+  if (usesTextureApproach) {
+    playerId = [self.registry registerTexture:(FVPVideoPlayerTextureApproach *)player];
+    frameUpdater.textureId = playerId;
+  } else {
+    @synchronized(self) {
+      playerId = nextNonTexturePlayerId++;
+    }
+  }
+
   FlutterEventChannel *eventChannel = [FlutterEventChannel
-      eventChannelWithName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld",
-                                                      textureId]
+      eventChannelWithName:[NSString
+                               stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld", playerId]
            binaryMessenger:_messenger];
   [eventChannel setStreamHandler:player];
   player.eventChannel = eventChannel;
-  self.playersByTextureId[@(textureId)] = player;
+  self.playersById[@(playerId)] = player;
 
-  // Ensure that the first frame is drawn once available, even if the video isn't played, since
-  // the engine is now expecting the texture to be populated.
-  [player expectFrame];
+  if (usesTextureApproach) {
+    // Ensure that the first frame is drawn once available, even if the video isn't played, since
+    // the engine is now expecting the texture to be populated.
+    [(FVPVideoPlayerTextureApproach *)player expectFrame];
+  }
 
-  return textureId;
+  return playerId;
 }
 
 - (void)initialize:(FlutterError *__autoreleasing *)error {
@@ -96,22 +127,26 @@
   [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
 #endif
 
-  [self.playersByTextureId
+  [self.playersById
       enumerateKeysAndObjectsUsingBlock:^(NSNumber *textureId, FVPVideoPlayer *player, BOOL *stop) {
         [self.registry unregisterTexture:textureId.unsignedIntegerValue];
         [player dispose];
       }];
-  [self.playersByTextureId removeAllObjects];
+  [self.playersById removeAllObjects];
 }
 
 - (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
                                    error:(FlutterError **)error {
-  FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
-  FVPDisplayLink *displayLink =
-      [self.displayLinkFactory displayLinkWithRegistrar:_registrar
-                                               callback:^() {
-                                                 [frameUpdater displayLinkFired];
-                                               }];
+  BOOL usesTextureApproach = options.viewType.value == FVPPlatformVideoViewTypeTextureView;
+  FVPFrameUpdater *frameUpdater;
+  FVPDisplayLink *displayLink;
+  if (usesTextureApproach) {
+    frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
+    displayLink = [self.displayLinkFactory displayLinkWithRegistrar:_registrar
+                                                           callback:^() {
+                                                             [frameUpdater displayLinkFired];
+                                                           }];
+  }
 
   FVPVideoPlayer *player;
   if (options.asset) {
@@ -122,23 +157,36 @@
       assetPath = [_registrar lookupKeyForAsset:options.asset];
     }
     @try {
-      player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
-                                        frameUpdater:frameUpdater
-                                         displayLink:displayLink
-                                           avFactory:_avFactory
-                                           registrar:self.registrar];
+      if (usesTextureApproach) {
+        player = [[FVPVideoPlayerTextureApproach alloc] initWithAsset:assetPath
+                                                         frameUpdater:frameUpdater
+                                                          displayLink:displayLink
+                                                            avFactory:_avFactory
+                                                            registrar:self.registrar];
+      } else {
+        player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
+                                             avFactory:_avFactory
+                                             registrar:self.registrar];
+      }
       return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
     } @catch (NSException *exception) {
       *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
       return nil;
     }
   } else if (options.uri) {
-    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                    frameUpdater:frameUpdater
-                                     displayLink:displayLink
-                                     httpHeaders:options.httpHeaders
-                                       avFactory:_avFactory
-                                       registrar:self.registrar];
+    if (usesTextureApproach) {
+      player = [[FVPVideoPlayerTextureApproach alloc] initWithURL:[NSURL URLWithString:options.uri]
+                                                     frameUpdater:frameUpdater
+                                                      displayLink:displayLink
+                                                      httpHeaders:options.httpHeaders
+                                                        avFactory:_avFactory
+                                                        registrar:self.registrar];
+    } else {
+      player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
+                                       httpHeaders:options.httpHeaders
+                                         avFactory:_avFactory
+                                         registrar:self.registrar];
+    }
     return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
   } else {
     *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
@@ -146,45 +194,47 @@
   }
 }
 
-- (void)disposePlayer:(NSInteger)textureId error:(FlutterError **)error {
-  NSNumber *playerKey = @(textureId);
-  FVPVideoPlayer *player = self.playersByTextureId[playerKey];
-  [self.registry unregisterTexture:textureId];
-  [self.playersByTextureId removeObjectForKey:playerKey];
+- (void)disposePlayer:(NSInteger)playerId error:(FlutterError **)error {
+  NSNumber *playerKey = @(playerId);
+  FVPVideoPlayer *player = self.playersById[playerKey];
+  if ([player isKindOfClass:[FVPVideoPlayerTextureApproach class]]) {
+    [self.registry unregisterTexture:playerId];
+  }
+  [self.playersById removeObjectForKey:playerKey];
   if (!player.disposed) {
     [player dispose];
   }
 }
 
-- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   player.isLooping = isLooping;
 }
 
-- (void)setVolume:(double)volume forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)setVolume:(double)volume forPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player setVolume:volume];
 }
 
-- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player setPlaybackSpeed:speed];
 }
 
-- (void)playPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)playPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player play];
 }
 
-- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (nullable NSNumber *)positionForPlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   return @([player position]);
 }
 
 - (void)seekTo:(NSInteger)position
-     forPlayer:(NSInteger)textureId
+     forPlayer:(NSInteger)playerId
     completion:(nonnull void (^)(FlutterError *_Nullable))completion {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player seekTo:position
       completionHandler:^(BOOL finished) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -193,8 +243,8 @@
       }];
 }
 
-- (void)pausePlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
+- (void)pausePlayer:(NSInteger)playerId error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersById[@(playerId)];
   [player pause];
 }
 
