@@ -271,6 +271,16 @@ public class WebViewProxyApi extends PigeonApiWebView {
     pigeon_instance.setBackgroundColor((int) color);
   }
 
+  @Override
+  public void verticalScrollBarEnabled(@NonNull WebView pigeon_instance, boolean enabled) {
+    pigeon_instance.setVerticalScrollBarEnabled(enabled);
+  }
+
+  @Override
+  public void horizontalScrollBarEnabled(@NonNull WebView pigeon_instance, boolean enabled) {
+    pigeon_instance.setHorizontalScrollBarEnabled(enabled);
+  }
+
   @NonNull
   @Override
   public ProxyApiRegistrar getPigeonRegistrar() {

@@ -1128,6 +1128,54 @@ class UIScrollViewHostApi {
     }
   }
 
+  Future<void> verticalScrollBarEnabled(int identifier, bool enabled) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.verticalScrollBarEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[identifier, enabled]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> horizontalScrollBarEnabled(int identifier, bool enabled) async {
+    final String __pigeon_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.horizontalScrollBarEnabled$__pigeon_messageChannelSuffix';
+    final BasicMessageChannel<Object?> __pigeon_channel =
+        BasicMessageChannel<Object?>(
+      __pigeon_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: __pigeon_binaryMessenger,
+    );
+    final List<Object?>? __pigeon_replyList = await __pigeon_channel
+        .send(<Object?>[identifier, enabled]) as List<Object?>?;
+    if (__pigeon_replyList == null) {
+      throw _createConnectionError(__pigeon_channelName);
+    } else if (__pigeon_replyList.length > 1) {
+      throw PlatformException(
+        code: __pigeon_replyList[0]! as String,
+        message: __pigeon_replyList[1] as String?,
+        details: __pigeon_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   Future<void> setContentOffset(int identifier, double x, double y) async {
     final String __pigeon_channelName =
         'dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewHostApi.setContentOffset$__pigeon_messageChannelSuffix';

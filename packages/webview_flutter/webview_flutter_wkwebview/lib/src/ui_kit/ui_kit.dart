@@ -68,6 +68,16 @@ class UIScrollView extends UIViewBase {
     return _scrollViewApi.scrollByForInstances(this, offset);
   }
 
+  /// Define whether the vertical scrollbar should be drawn or not. The default value is true.
+  Future<void> verticalScrollBarEnabled(bool enabled) {
+    return _scrollViewApi.verticalScrollBarEnabledForInstances(this, enabled);
+  }
+
+  /// Define whether the horizontal scrollbar should be drawn or not. The default value is true.
+  Future<void> horizontalScrollBarEnabled(bool enabled) {
+    return _scrollViewApi.horizontalScrollBarEnabledForInstances(this, enabled);
+  }
+
   /// Set point at which the origin of the content view is offset from the origin of the scroll view.
   ///
   /// The default value is `Point<double>(0.0, 0.0)`.
