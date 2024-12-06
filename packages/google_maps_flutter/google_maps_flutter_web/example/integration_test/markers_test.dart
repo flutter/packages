@@ -493,5 +493,45 @@ void main() {
       expect(event, isA<InfoWindowTapEvent>());
       expect((event as InfoWindowTapEvent).value, equals(const MarkerId('1')));
     });
+
+    // https://github.com/flutter/flutter/issues/80578
+    testWidgets('markers with anchor work', (WidgetTester tester) async {
+      final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+      final Marker marker1 = Marker(
+        markerId: const MarkerId('1'),
+        icon: BytesMapBitmap(
+          bytes,
+          width: 20,
+          height: 30,
+        ),
+      );
+      final Marker marker2 = Marker(
+        markerId: const MarkerId('2'),
+        icon: BytesMapBitmap(
+          bytes,
+          width: 20,
+          height: 30,
+        ),
+        anchor: const Offset(1.5, 2),
+      );
+      final Set<Marker> markers = <Marker>{marker1, marker2};
+
+      await controller.addMarkers(markers);
+      expect(controller.markers.length, 2);
+
+      final gmaps.Icon? icon1 =
+          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      expect(icon1, isNotNull);
+      final gmaps.Icon? icon2 =
+          controller.markers[const MarkerId('2')]?.marker?.icon as gmaps.Icon?;
+      expect(icon2, isNotNull);
+
+      expect(icon1!.anchor, isNotNull);
+      expect(icon2!.anchor, isNotNull);
+      expect(icon1.anchor!.x, 20 * 0.5);
+      expect(icon1.anchor!.y, 30 * 1);
+      expect(icon2.anchor!.x, 20 * 1.5);
+      expect(icon2.anchor!.y, 30 * 2);
+    });
   });
 }
