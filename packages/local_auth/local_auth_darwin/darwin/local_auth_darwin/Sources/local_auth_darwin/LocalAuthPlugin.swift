@@ -11,6 +11,34 @@ import LocalAuthentication
   import Flutter
 #endif
 
+/// Protocol for a provider of the view containing the Flutter content, abstracted to allow using
+/// mock/fake instances in unit tests.
+
+protocol ViewProvider {
+  #if os(macOS)
+    var view: NSView { get }
+  #elseif os(iOS)
+    // TODO(stuartmorgan): Add a view accessor once https://github.com/flutter/flutter/issues/104117
+    // is resolved, and use that in 'showAlert:...'.
+  #endif
+}
+
+class DefaultViewProvider: ViewProvider {
+    private var registrar: FlutterPluginRegistrar
+
+    init(registrar: FlutterPluginRegistrar) {
+        self.registrar = registrar
+    }
+
+    #if os(macOS)
+    var view: NSView {
+         return NSView()
+    }
+    #elseif os(iOS)
+
+    #endif
+}
+
 class StickyAuthState {
   let options: AuthOptions
   let strings: AuthStrings
@@ -27,54 +55,60 @@ class StickyAuthState {
 }
 
 public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
-  private let authContextProvider: () -> AuthContext
-  private let alertController: AlertController
+  private let authContextFactory: AuthContextFactory
+  private let alertFactory: AlertFactory
+  private let viewProvider: ViewProvider
   private var lastCallState: StickyAuthState?
 
   init(
-    authContextProvider: @escaping () -> AuthContext = { LAContext() },
-    alertController: AlertController = DefaultAlertController()
+    authContextFactory: AuthContextFactory,
+    alertFactory: AlertFactory,
+    viewProvider: ViewProvider
   ) {
-    self.authContextProvider = authContextProvider
-    self.alertController = alertController
+    self.authContextFactory = authContextFactory
+    self.alertFactory = alertFactory
+    self.viewProvider = viewProvider
 
     super.init()
-    #if os(iOS)
-      NotificationCenter.default.addObserver(
-        self, selector: #selector(applicationDidBecomeActive),
-        name: UIApplication.didBecomeActiveNotification, object: nil)
-    #endif
+    // #if os(iOS)
+    //   NotificationCenter.default.addObserver(
+    //     self, selector: #selector(applicationDidBecomeActive),
+    //     name: UIApplication.didBecomeActiveNotification, object: nil)
+    // #endif
   }
 
-  deinit {
-    #if os(iOS)
-      NotificationCenter.default.removeObserver(
-        self, name: UIApplication.didBecomeActiveNotification, object: nil)
-    #endif
-  }
-
-  private func makeAuthContext() -> AuthContext {
-    return authContextProvider()
-  }
+  // deinit {
+  //   #if os(iOS)
+  //     NotificationCenter.default.removeObserver(
+  //       self, name: UIApplication.didBecomeActiveNotification, object: nil)
+  //   #endif
+  // }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let instance = LocalAuthPlugin()
+    let alertFactory = DefaultAlertFactory()
+    let authContextFactory = DefaultAuthContextFactory()
+      let viewProvider = DefaultViewProvider(registrar: registrar)
+    let instance = LocalAuthPlugin(
+      authContextFactory: authContextFactory,
+      alertFactory: alertFactory,
+      viewProvider: viewProvider
+    )
     #if os(iOS)
       let messenger = registrar.messenger()
     #elseif os(macOS)
       let messenger = registrar.messenger
     #endif
-
+    registrar.addApplicationDelegate(instance)
     LocalAuthApiSetup.setUp(binaryMessenger: messenger, api: instance)
   }
 
   func isDeviceSupported() throws -> Bool {
-    let context = makeAuthContext()
-    return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+    let context = authContextFactory.createAuthContext()
+      return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
   }
 
   func deviceCanSupportBiometrics() throws -> Bool {
-    let context = makeAuthContext()
+    let context = authContextFactory.createAuthContext()
     var authError: NSError?
 
     if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
@@ -89,7 +123,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   }
 
   func getEnrolledBiometrics() throws -> [AuthBiometric] {
-    let context = makeAuthContext()
+    let context = authContextFactory.createAuthContext()
     var biometrics: [AuthBiometric] = []
 
     var authError: NSError?
@@ -116,7 +150,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
-    var context = makeAuthContext()
+    var context = authContextFactory.createAuthContext()
     context.localizedFallbackTitle = strings.localizedFallbackTitle
     self.lastCallState = nil
 
@@ -209,63 +243,107 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
-    var result: AuthResult = .errorNotAvailable
+    var result = AuthResult.errorNotAvailable
 
     switch authError.code {
-    case LAError.passcodeNotSet.rawValue, LAError.biometryNotEnrolled.rawValue:
+    case LAError.passcodeNotSet.rawValue,
+      LAError.biometryNotEnrolled.rawValue:
       if options.useErrorDialogs {
-        alertController.showAlert(
+        showAlert(
           message: strings.goToSettingsDescription ?? "",
-          dismissTitle: strings.cancelButton,
-          openSettingsTitle: strings.goToSettingsButton
-        ) { success in
-          let result: Result<AuthResultDetails, Error> =
-            success
-            ? .success(AuthResultDetails(result: .success, errorMessage: nil, errorDetails: nil))
-            : .failure(
-              NSError(domain: authError.domain, code: authError.code, userInfo: authError.userInfo))
-          completion(result)
-        }
+          dismissButtonTitle: strings.cancelButton,
+          openSettingsButtonTitle: strings.goToSettingsButton,
+          completion: completion
+        )
         return
       }
+
       result =
-        authError.code == LAError.passcodeNotSet.rawValue ? .errorPasscodeNotSet : .errorNotEnrolled
+        authError.code == LAError.passcodeNotSet.rawValue
+        ? .errorPasscodeNotSet
+        : .errorNotEnrolled
 
     case LAError.biometryLockout.rawValue:
-      alertController.showAlert(
+      showAlert(
         message: strings.lockOut,
-        dismissTitle: strings.cancelButton,
-        openSettingsTitle: nil
-      ) { success in
-        let result: Result<AuthResultDetails, Error> =
-          success
-          ? .success(AuthResultDetails(result: .success, errorMessage: nil, errorDetails: nil))
-          : .failure(
-            NSError(domain: authError.domain, code: authError.code, userInfo: authError.userInfo))
-        completion(result)
-      }
+        dismissButtonTitle: strings.cancelButton,
+        openSettingsButtonTitle: nil,
+        completion: completion
+      )
       return
-
     default:
       break
     }
 
-    let resultDetails = AuthResultDetails(
+    let details = AuthResultDetails(
       result: result,
       errorMessage: authError.localizedDescription,
       errorDetails: authError.domain
     )
-
-    completion(.success(resultDetails))
+    completion(.success(details))
   }
 
-  public func applicationDidBecomeActive(_ application: UIApplication) {
-    if let lastCallState = lastCallState {
-      authenticate(
-        options: lastCallState.options,
-        strings: lastCallState.strings,
-        completion: lastCallState.resultHandler
+  func showAlert(
+    message: String,
+    dismissButtonTitle: String,
+    openSettingsButtonTitle: String?,
+    completion: @escaping (Result<AuthResultDetails, Error>) -> Void
+  ) {
+    #if os(macOS)
+      let alert = alertFactory.createAlert()
+      alert.messageText = message
+      alert.addButton(withTitle: dismissButtonTitle)
+
+      guard let window = viewProvider.view.window else { return }
+
+      alert.beginSheetModal(for: window) { _ in
+        self.handleSucceeded(succeeded: false, completion: completion)
+      }
+
+    #elseif os(iOS)
+      let alert = alertFactory.createAlertController(
+        title: "",
+        message: message,
+        preferredStyle: .alert
       )
-    }
+
+      let defaultAction = UIAlertAction(
+        title: dismissButtonTitle,
+        style: .default
+      ) { _ in
+        self.handleSucceeded(succeeded: false, completion: completion)
+      }
+
+      alert.addAction(defaultAction)
+
+      if let openSettingsButtonTitle = openSettingsButtonTitle {
+        let additionalAction = UIAlertAction(
+          title: openSettingsButtonTitle,
+          style: .default
+        ) { _ in
+          if let url = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+          }
+          self.handleSucceeded(succeeded: false, completion: completion)
+        }
+        alert.addAction(additionalAction)
+      }
+      
+      if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController {
+          alert.present(rootViewController, animated: true, completion: nil)
+      }
+    #endif
   }
+
+  #if os(iOS)
+    public func applicationDidBecomeActive(_ application: UIApplication) {
+      if let lastCallState = lastCallState {
+        authenticate(
+          options: lastCallState.options,
+          strings: lastCallState.strings,
+          completion: lastCallState.resultHandler
+        )
+      }
+    }
+  #endif
 }

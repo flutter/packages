@@ -76,27 +76,100 @@ class MockAuthContext: AuthContext {
   }
 }
 
-class MockAlertController: AlertController {
-  var showAlertCalled = false
-  var showAlertCompletionResult: Bool = false
+class MockAuthContextFactory: AuthContextFactory {
+  let authContext: AuthContext
 
-  func showAlert(
-    message: String,
-    dismissTitle dismissButtonTitle: String,
-    openSettingsTitle openSettingsButtonTitle: String?,
-    completion: @escaping (Bool) -> Void
-  ) {
-    showAlertCalled = true
-    completion(showAlertCompletionResult)
+  init(authContext: AuthContext) {
+    self.authContext = authContext
   }
+
+  func createAuthContext() -> AuthContext {
+    return authContext
+  }
+}
+
+#if os(macOS)
+  final class MockAlert: NSObject, Alert {
+    var buttons: [String] = []
+    var presentingWindow: NSWindow?
+
+    func addButton(withTitle title: String) -> NSButton {
+      buttons.append(title)
+      return NSButton()
+    }
+
+    func beginSheetModal(for sheetWindow: NSWindow) async -> NSApplication.ModalResponse {
+      presentingWindow = sheetWindow
+      return .OK
+    }
+  }
+
+#elseif os(iOS)
+  final class MockAlertController:  UIAlertController {
+    var mockActions: [UIAlertAction] = []
+    var presented = false
+    var presentingVC: UIViewController?
+
+      override func addAction(_ action: UIAlertAction) {
+          mockActions.append(action)
+    }
+
+      override func present(
+      _ viewControllerToPresent: UIViewController,
+      animated flag: Bool,
+      completion: (() -> Void)? = nil
+    ) {
+      presented = true
+      presentingVC = viewControllerToPresent
+      completion?()
+    }
+  }
+#endif
+
+class MockAlertFactory: AlertFactory {
+  #if os(macOS)
+    var alert: MockAlert = MockAlert()
+  #else
+    var alertController: MockAlertController = MockAlertController()
+  #endif
+
+  #if os(macOS)
+    var createdAlert: MockAlert?
+
+    func createAlert() -> Alert {
+      self.createdAlert = alert
+      return alert
+    }
+  #elseif os(iOS)
+    func createAlertController(
+      title: String?, message: String?, preferredStyle: UIAlertController.Style
+    ) -> AlertController {
+      return alertController
+    }
+  #endif
+}
+
+class MockViewProvider: ViewProvider {
+  #if os(macOS)
+    var view: NSView
+    var window: NSWindow
+    override init() {
+      self.window = NSWindow()
+      self.view = NSView()
+      self.window.contentView = self.view
+    }
+  #endif
 }
 
 class FLALocalAuthPluginTests: XCTestCase {
   func testSuccessfullAuthWithBiometrics() throws {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     let strings = createAuthStrings()
     mockAuthContext.expectBiometrics = true
@@ -130,9 +203,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testSuccessfullAuthWithoutBiometrics() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     let strings = createAuthStrings()
     mockAuthContext.evaluatePolicyResult = (true, nil)
@@ -162,9 +238,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedAuthWithBiometrics() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     let strings = createAuthStrings()
     mockAuthContext.expectBiometrics = true
@@ -195,9 +274,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedWithUnknownErrorCode() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     let strings = createAuthStrings()
     mockAuthContext.evaluatePolicyResult = (false, NSError(domain: "error", code: 99))
@@ -221,9 +303,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testSystemCancelledWithoutStickyAuth() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     let strings = createAuthStrings()
     mockAuthContext.evaluatePolicyResult = (
@@ -249,9 +334,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedAuthWithoutBiometrics() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     let strings = createAuthStrings()
     mockAuthContext.evaluatePolicyResult = (
@@ -281,9 +369,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedAuthShowsAlert() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     let strings = createAuthStrings()
     mockAuthContext.evaluatePolicyResult = (
@@ -296,17 +387,31 @@ class FLALocalAuthPluginTests: XCTestCase {
       strings: strings
     ) { resultDetails in
       XCTAssertTrue(Thread.isMainThread)
-      XCTAssertTrue(mockAlertController.showAlertCalled)
-      expectation.fulfill()
+      // TODO(stuartmorgan): Add a wrapper around UIAction to allow accessing the handler, so
+      // that the test can trigger the callback on iOS as well, and then unfork this.
+      #if os(macOS)
+        expectation.fulfill()
+      #endif
+
     }
+    #if os(macOS)
+      self.waitForExpectations(timeout: timeout)
+      XCTAssertEqual(mockAlertFactory.alert.presentingWindow, viewProvider.view.window)
+    #else
+      XCTAssertTrue(mockAlertFactory.alertController.presented)
+      XCTAssertEqual(mockAlertFactory.alertController.actions.count, 2)
+    #endif
     self.waitForExpectations(timeout: timeout)
   }
 
   func testLocalizedFallbackTitle() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     var strings = createAuthStrings()
     strings.localizedFallbackTitle = "a title"
@@ -325,9 +430,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testSkippedLocalizedFallbackTitle() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     var strings = createAuthStrings()
     strings.localizedFallbackTitle = nil
@@ -346,9 +454,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testDeviceSupportsBiometrics_withEnrolledHardware() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     mockAuthContext.expectBiometrics = true
 
@@ -367,9 +478,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testDeviceSupportsBiometrics_withNonEnrolledHardware() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     mockAuthContext.expectBiometrics = true
     mockAuthContext.canEvaluateError = NSError(
@@ -391,9 +505,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testDeviceSupportsBiometrics_withNoBiometricHardware() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     mockAuthContext.expectBiometrics = true
     mockAuthContext.canEvaluateError = NSError(domain: "error", code: 0)
@@ -413,9 +530,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testGetEnrolledBiometricsWithFaceID() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     mockAuthContext.expectBiometrics = true
     if #available(iOS 11, macOS 10.15, *) {
@@ -439,9 +559,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testGetEnrolledBiometricsWithTouchID() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     mockAuthContext.expectBiometrics = true
     mockAuthContext.biometryType = .touchID
@@ -462,9 +585,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testGetEnrolledBiometricsWithoutEnrolledHardware() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     mockAuthContext.expectBiometrics = true
     mockAuthContext.canEvaluateError = NSError(
@@ -486,9 +612,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testIsDeviceSupportedHandlesSupported() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     var error: FlutterError?
     do {
@@ -505,9 +634,12 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testIsDeviceSupportedHandlesUnsupported() {
     let mockAuthContext = MockAuthContext()
-    let mockAlertController = MockAlertController()
+    let mockAuthContextFactory = MockAuthContextFactory(authContext: mockAuthContext)
+    let mockAlertFactory = MockAlertFactory()
+    let mockViewProvider = MockViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextProvider: { mockAuthContext }, alertController: mockAlertController)
+      authContextFactory: mockAuthContextFactory, alertFactory: mockAlertFactory,
+      viewProvider: mockViewProvider)
 
     // An arbitrary error to cause canEvaluatePolicy to return false.
     mockAuthContext.canEvaluateError = NSError(domain: "error", code: 1)
