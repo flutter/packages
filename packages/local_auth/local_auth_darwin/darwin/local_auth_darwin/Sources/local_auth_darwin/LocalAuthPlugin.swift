@@ -24,19 +24,19 @@ protocol ViewProvider {
 }
 
 class DefaultViewProvider: ViewProvider {
-    private var registrar: FlutterPluginRegistrar
+  private var registrar: FlutterPluginRegistrar
 
-    init(registrar: FlutterPluginRegistrar) {
-        self.registrar = registrar
-    }
+  init(registrar: FlutterPluginRegistrar) {
+    self.registrar = registrar
+  }
 
-    #if os(macOS)
+  #if os(macOS)
     var view: NSView {
-         return NSView()
+      return NSView()
     }
-    #elseif os(iOS)
+  #elseif os(iOS)
 
-    #endif
+  #endif
 }
 
 class StickyAuthState {
@@ -73,7 +73,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let alertFactory = DefaultAlertFactory()
     let authContextFactory = DefaultAuthContextFactory()
-      let viewProvider = DefaultViewProvider(registrar: registrar)
+    let viewProvider = DefaultViewProvider(registrar: registrar)
     let instance = LocalAuthPlugin(
       authContextFactory: authContextFactory,
       alertFactory: alertFactory,
@@ -90,7 +90,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
   func isDeviceSupported() throws -> Bool {
     let context = authContextFactory.createAuthContext()
-      return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
+    return context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
   }
 
   func deviceCanSupportBiometrics() throws -> Bool {
@@ -314,12 +314,10 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         }
         alert.addAction(additionalAction)
       }
-      
-      //TODO(Mairramer):  Investigate window hierarchy issue
-      if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController {
-          alert.present(rootViewController, animated: true, completion: nil)
-         }
 
+      if let viewController = UIApplication.shared.windows.first?.rootViewController {
+        alert.present(viewController, animated: true, completion: nil)
+      }
     #endif
   }
 
@@ -334,13 +332,4 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       }
     }
   #endif
-}
-
-extension UIViewController {
-    func topMostViewController() -> UIViewController {
-        if let presented = presentedViewController {
-            return presented.topMostViewController()
-        }
-        return self
-    }
 }

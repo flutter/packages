@@ -20,7 +20,17 @@
 #if os(macOS)
     extension NSAlert: Alert {}
 #elseif os(iOS)
-    extension UIAlertController: AlertController {}
+extension UIAlertController: AlertController {
+    open override func present(_ presentingViewController: UIViewController, animated: Bool, completion: (() -> Void)?) {
+        DispatchQueue.main.async {
+            if presentingViewController.isViewLoaded && presentingViewController.view.window != nil {
+                presentingViewController.present(self, animated: animated, completion: completion)
+            }
+        }
+    }
+
+               
+    }
 #endif
 
 protocol AlertFactory {
