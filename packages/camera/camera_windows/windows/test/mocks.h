@@ -203,7 +203,8 @@ class MockCamera : public Camera {
   MOCK_METHOD(bool, InitCamera,
               (flutter::TextureRegistrar * texture_registrar,
                flutter::BinaryMessenger* messenger,
-               const PlatformMediaSettings& media_settings),
+               const PlatformMediaSettings& media_settings,
+               std::shared_ptr<TaskRunner> task_runner),
               (override));
 
   std::unique_ptr<CaptureController> capture_controller_;
@@ -236,7 +237,8 @@ class MockCaptureController : public CaptureController {
   MOCK_METHOD(bool, InitCaptureDevice,
               (flutter::TextureRegistrar * texture_registrar,
                const std::string& device_id,
-               const PlatformMediaSettings& media_settings),
+               const PlatformMediaSettings& media_settings,
+               std::shared_ptr<TaskRunner> task_runner),
               (override));
 
   MOCK_METHOD(uint32_t, GetPreviewWidth, (), (const override));
@@ -248,6 +250,12 @@ class MockCaptureController : public CaptureController {
   MOCK_METHOD(void, PausePreview, (), (override));
   MOCK_METHOD(void, StartRecord, (const std::string& file_path), (override));
   MOCK_METHOD(void, StopRecord, (), (override));
+  MOCK_METHOD(
+      void, StartImageStream,
+      (std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink),
+      (override));
+  MOCK_METHOD(void, StopImageStream, (), (override));
+  MOCK_METHOD(bool, IsStreaming, (), (const override));
   MOCK_METHOD(void, TakePicture, (const std::string& file_path), (override));
 };
 
@@ -1021,6 +1029,9 @@ class MockCaptureEngine : public IMFCaptureEngine {
   MOCK_METHOD(HRESULT, StartPreview, ());
   MOCK_METHOD(HRESULT, StopPreview, ());
   MOCK_METHOD(HRESULT, StartRecord, ());
+  MOCK_METHOD(HRESULT, StartImageStream, ());
+  MOCK_METHOD(HRESULT, StopImageStream, ());
+
   MOCK_METHOD(HRESULT, StopRecord,
               (BOOL finalize, BOOL flushUnprocessedSamples));
   MOCK_METHOD(HRESULT, TakePhoto, ());
@@ -1067,6 +1078,23 @@ class MockCaptureEngine : public IMFCaptureEngine {
   ComPtr<IMFMediaSource> audioSource_;
   volatile ULONG ref_ = 0;
   bool initialized_ = false;
+};
+
+class MockTaskRunner : public TaskRunner {
+ public:
+  MOCK_METHOD(void, EnqueueTask, (TaskClosure), (override));
+};
+
+// Mock class for flutter::EventSink<flutter::EncodableValue>
+class MockEventSink : public flutter::EventSink<flutter::EncodableValue> {
+ public:
+  MOCK_METHOD(void, SuccessInternal, (const flutter::EncodableValue* event),
+              (override));
+  MOCK_METHOD(void, ErrorInternal,
+              (const std::string& error_code, const std::string& error_message,
+               const flutter::EncodableValue* error_details),
+              (override));
+  MOCK_METHOD(void, EndOfStreamInternal, (), (override));
 };
 
 #define MOCK_DEVICE_ID "mock_device_id"
