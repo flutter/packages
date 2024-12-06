@@ -17,6 +17,6 @@ class FrameInfoProxyAPIDelegate: PigeonApiDelegateWKFrameInfo {
   func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws
     -> URLRequestWrapper
   {
-    return URLRequestWrapper(value: pigeonInstance.request)
+    return URLRequestWrapper(pigeonInstance.request)
   }
 }

@@ -12,7 +12,7 @@ class URLRequestProxyAPIDelegate: PigeonApiDelegateURLRequest {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws
     -> URLRequestWrapper
   {
-    return URLRequestWrapper(value: URLRequest(url: URL(string: url)!))
+    return URLRequestWrapper(URLRequest(url: URL(string: url)!))
   }
 
   func setHttpMethod(

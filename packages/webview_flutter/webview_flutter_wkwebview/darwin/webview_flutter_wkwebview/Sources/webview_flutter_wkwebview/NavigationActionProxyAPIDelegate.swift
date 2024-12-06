@@ -13,7 +13,7 @@ class NavigationActionProxyAPIDelegate: PigeonApiDelegateWKNavigationAction {
   func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws
     -> URLRequestWrapper
   {
-    return URLRequestWrapper(value: pigeonInstance.request)
+    return URLRequestWrapper(pigeonInstance.request)
   }
 
   func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction)

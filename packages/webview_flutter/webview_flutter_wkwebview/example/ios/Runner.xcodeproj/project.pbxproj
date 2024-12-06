@@ -13,6 +13,7 @@
 		8F15ACD92D014BCF00DF9CFC /* URLAuthenticationChallengeProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15ACD82D014BCF00DF9CFC /* URLAuthenticationChallengeProxyAPITests.swift */; };
 		8F15ACDB2D014DDE00DF9CFC /* URLCredentialProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15ACDA2D014DDE00DF9CFC /* URLCredentialProxyAPITests.swift */; };
 		8F15ACDD2D014EC200DF9CFC /* URLProtectionSpaceProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15ACDC2D014EC200DF9CFC /* URLProtectionSpaceProxyAPITests.swift */; };
+		8F15ACE52D03808E00DF9CFC /* URLRequestProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15ACE42D03808E00DF9CFC /* URLRequestProxyAPITests.swift */; };
 		8F7834FA2D013DF800B6DD45 /* NavigationResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7834EE2D013DF800B6DD45 /* NavigationResponseProxyAPITests.swift */; };
 		8F7834FB2D013DF800B6DD45 /* ScrollViewDelegateProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7834F42D013DF800B6DD45 /* ScrollViewDelegateProxyAPITests.swift */; };
 		8F7834FC2D013DF800B6DD45 /* ScrollViewProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7834F52D013DF800B6DD45 /* ScrollViewProxyAPITests.swift */; };
@@ -88,6 +89,7 @@
 		8F15ACD82D014BCF00DF9CFC /* URLAuthenticationChallengeProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLAuthenticationChallengeProxyAPITests.swift; sourceTree = "<group>"; };
 		8F15ACDA2D014DDE00DF9CFC /* URLCredentialProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLCredentialProxyAPITests.swift; sourceTree = "<group>"; };
 		8F15ACDC2D014EC200DF9CFC /* URLProtectionSpaceProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLProtectionSpaceProxyAPITests.swift; sourceTree = "<group>"; };
+		8F15ACE42D03808E00DF9CFC /* URLRequestProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLRequestProxyAPITests.swift; sourceTree = "<group>"; };
 		8F7834E62D013DF800B6DD45 /* AuthenticationChallengeResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationChallengeResponseProxyAPITests.swift; sourceTree = "<group>"; };
 		8F7834E72D013DF800B6DD45 /* ErrorProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorProxyAPITests.swift; sourceTree = "<group>"; };
 		8F7834E82D013DF800B6DD45 /* FrameInfoProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameInfoProxyAPITests.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				8F15ACD82D014BCF00DF9CFC /* URLAuthenticationChallengeProxyAPITests.swift */,
 				8F15ACDA2D014DDE00DF9CFC /* URLCredentialProxyAPITests.swift */,
 				8F15ACDC2D014EC200DF9CFC /* URLProtectionSpaceProxyAPITests.swift */,
+				8F15ACE42D03808E00DF9CFC /* URLRequestProxyAPITests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 				8F7834FE2D013DF800B6DD45 /* NSObjectProxyAPITests.swift in Sources */,
 				8F15ACD92D014BCF00DF9CFC /* URLAuthenticationChallengeProxyAPITests.swift in Sources */,
 				8F7834FF2D013DF800B6DD45 /* HTTPCookieStoreProxyAPITests.swift in Sources */,
+				8F15ACE52D03808E00DF9CFC /* URLRequestProxyAPITests.swift in Sources */,
 				8F7835002D013DF800B6DD45 /* AuthenticationChallengeResponseProxyAPITests.swift in Sources */,
 				8F7835012D013DF800B6DD45 /* ScriptMessageProxyAPITests.swift in Sources */,
 				8F7835022D013DF800B6DD45 /* UIViewProxyAPITests.swift in Sources */,
