@@ -11,6 +11,8 @@
 
 #import <OCMock/OCMock.h>
 
+#import "MockCaptureDeviceController.h"
+
 @interface StubGlobalEventApi : FCPCameraGlobalEventApi
 @property(nonatomic) BOOL called;
 @property(nonatomic) FCPPlatformDeviceOrientation lastOrientation;
@@ -35,9 +37,20 @@
 #pragma mark -
 
 @interface CameraOrientationTests : XCTestCase
+@property(readonly, nonatomic) FLTCam *camera;
+@property(readonly, nonatomic) MockCaptureDeviceController *mockDevice;
+@property(readonly, nonatomic) StubGlobalEventApi *eventAPI;
 @end
 
 @implementation CameraOrientationTests
+
+- (void)setUp {
+  [super setUp];
+  _mockDevice = [[MockCaptureDeviceController alloc] init];
+  _camera = [[FLTCam alloc] init];
+
+  [_camera setValue:_mockDevice forKey:@"captureDevice"];
+}
 
 // Ensure that the given queue and then the main queue have both cycled, to wait for any pending
 // async events that may have been bounced between them.
@@ -98,20 +111,22 @@
   XCTestExpectation *queueExpectation = [self
       expectationWithDescription:@"Orientation update must happen on the capture session queue"];
 
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
   const char *captureSessionQueueSpecific = "capture_session_queue";
   dispatch_queue_set_specific(camera.captureSessionQueue, captureSessionQueueSpecific,
                               (void *)captureSessionQueueSpecific, NULL);
-  FLTCam *mockCam = OCMClassMock([FLTCam class]);
-  camera.camera = mockCam;
-  OCMStub([mockCam setDeviceOrientation:UIDeviceOrientationLandscapeLeft])
+  plugin.camera = _camera;
+  
+  //_camera setDeviceOrientation:<#(UIDeviceOrientation)#>
+  
+  OCMStub([_camera setDeviceOrientation:UIDeviceOrientationLandscapeLeft])
       .andDo(^(NSInvocation *invocation) {
         if (dispatch_get_specific(captureSessionQueueSpecific)) {
           [queueExpectation fulfill];
         }
       });
 
-  [camera orientationChanged:
+  [plugin orientationChanged:
               [self createMockNotificationForOrientation:UIDeviceOrientationLandscapeLeft]];
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }

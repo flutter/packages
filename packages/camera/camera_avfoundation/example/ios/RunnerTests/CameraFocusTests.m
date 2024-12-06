@@ -24,6 +24,9 @@
   _camera = [[FLTCam alloc] init];
   _mockDevice = [[MockCaptureDeviceController alloc] init];
   _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
+  
+  [_camera setValue:_mockDevice forKey:@"captureDevice"];
+  [_camera setValue:_mockDeviceOrientationProvider forKey:@"deviceOrientationProvider"];
 }
 
 - (void)testAutoFocusWithContinuousModeSupported_ShouldSetContinuousAutoFocus {
@@ -127,15 +130,11 @@
   [_camera applyFocusMode:FCPPlatformFocusModeLocked onDevice:_mockDevice];
 }
 
-// TODO(mchudy): replace setValue with proper DI
 - (void)testSetFocusPointWithResult_SetsFocusPointOfInterest {
   // UI is currently in landscape left orientation
-  [_camera setValue:_mockDeviceOrientationProvider forKey:@"deviceOrientationProvider"];
   _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
   // Focus point of interest is supported
   _mockDevice.isFocusPointOfInterestSupported = YES;
-  // Set mock device as the current capture device
-  [_camera setValue:_mockDevice forKey:@"captureDevice"];
 
   __block BOOL setFocusPointOfInterestCalled = NO;
   _mockDevice.setFocusPointOfInterestStub = ^(CGPoint point) {
@@ -151,6 +150,27 @@
 
   // Verify the focus point of interest has been set
   XCTAssertTrue(setFocusPointOfInterestCalled);
+}
+
+- (void)testSetFocusPoint_WhenNotSupported_ReturnsError {
+  // UI is currently in landscape left orientation
+  _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
+  // Exposure point of interest is not supported
+  _mockDevice.isFocusPointOfInterestSupported = NO;
+    
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Completion with error"];
+    
+  // Run
+  [_camera setFocusPoint:[FCPPlatformPoint makeWithX:1 y:1]
+            withCompletion:^(FlutterError *_Nullable error) {
+                XCTAssertNotNil(error);
+                XCTAssertEqualObjects(error.code, @"setFocusPointFailed");
+                XCTAssertEqualObjects(error.message, @"Device does not have focus point capabilities");
+                [expectation fulfill];
+            }];
+  
+  // Verify
+  [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 @end

@@ -63,7 +63,7 @@
 
 // Focus
 - (BOOL)isFocusPointOfInterestSupported {
-    return self.device.isFocusPointOfInterestSupported;
+  return self.device.isFocusPointOfInterestSupported;
 }
 
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode {
