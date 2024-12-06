@@ -105,23 +105,22 @@ class MockAuthContextFactory: AuthContextFactory {
   }
 
 #elseif os(iOS)
-  final class MockAlertController:  UIAlertController {
-    var mockActions: [UIAlertAction] = []
+final class MockAlertController: NSObject, AlertController {
+    var actions: [UIAlertAction] = []
     var presented = false
-    var presentingVC: UIViewController?
+    var presentingViewController: UIViewController?
 
-      override func addAction(_ action: UIAlertAction) {
-          mockActions.append(action)
+    func addAction(_ action: UIAlertAction) {
+      actions.append(action)
     }
 
-      override func present(
+    func present(
       _ viewControllerToPresent: UIViewController,
       animated flag: Bool,
       completion: (() -> Void)? = nil
     ) {
       presented = true
-      presentingVC = viewControllerToPresent
-      completion?()
+      self.presentingViewController = viewControllerToPresent
     }
   }
 #endif
@@ -389,10 +388,7 @@ class FLALocalAuthPluginTests: XCTestCase {
       XCTAssertTrue(Thread.isMainThread)
       // TODO(stuartmorgan): Add a wrapper around UIAction to allow accessing the handler, so
       // that the test can trigger the callback on iOS as well, and then unfork this.
-      #if os(macOS)
-        expectation.fulfill()
-      #endif
-
+      expectation.fulfill()
     }
     #if os(macOS)
       self.waitForExpectations(timeout: timeout)

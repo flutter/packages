@@ -68,21 +68,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     self.authContextFactory = authContextFactory
     self.alertFactory = alertFactory
     self.viewProvider = viewProvider
-
-    super.init()
-    // #if os(iOS)
-    //   NotificationCenter.default.addObserver(
-    //     self, selector: #selector(applicationDidBecomeActive),
-    //     name: UIApplication.didBecomeActiveNotification, object: nil)
-    // #endif
   }
-
-  // deinit {
-  //   #if os(iOS)
-  //     NotificationCenter.default.removeObserver(
-  //       self, name: UIApplication.didBecomeActiveNotification, object: nil)
-  //   #endif
-  // }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let alertFactory = DefaultAlertFactory()
@@ -329,9 +315,11 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         alert.addAction(additionalAction)
       }
       
+      //TODO(Mairramer):  Investigate window hierarchy issue
       if let rootViewController = UIApplication.shared.delegate?.window??.rootViewController {
           alert.present(rootViewController, animated: true, completion: nil)
-      }
+         }
+
     #endif
   }
 
@@ -346,4 +334,13 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       }
     }
   #endif
+}
+
+extension UIViewController {
+    func topMostViewController() -> UIViewController {
+        if let presented = presentedViewController {
+            return presented.topMostViewController()
+        }
+        return self
+    }
 }

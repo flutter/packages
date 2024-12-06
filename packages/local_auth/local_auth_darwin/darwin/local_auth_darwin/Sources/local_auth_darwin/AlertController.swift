@@ -3,24 +3,25 @@
 // found in the LICENSE file.
 
 #if os(macOS)
-protocol Alert {
-    func addButton(withTitle title: String) -> NSButton
-    func beginSheetModal(for sheetWindow: NSWindow, completionHandler: @escaping (NSApplication.ModalResponse) -> Void)
-}
+    protocol Alert {
+        func addButton(withTitle title: String) -> NSButton
+        func beginSheetModal(
+            for sheetWindow: NSWindow,
+            completionHandler: @escaping (NSApplication.ModalResponse) -> Void)
+    }
 #elseif os(iOS)
-protocol AlertController {
-    func addAction(_ action: UIAlertAction)
-    func present(_ presentingViewController: UIViewController, animated: Bool, completion: (() -> Void)?)
-}
+    protocol AlertController {
+        func addAction(_ action: UIAlertAction)
+        func present(
+            _ presentingViewController: UIViewController, animated: Bool, completion: (() -> Void)?)
+    }
 #endif
-
 
 #if os(macOS)
-extension NSAlert: Alert {}
+    extension NSAlert: Alert {}
 #elseif os(iOS)
-extension UIAlertController: AlertController {}
+    extension UIAlertController: AlertController {}
 #endif
-
 
 protocol AlertFactory {
     #if os(macOS)
@@ -34,17 +35,17 @@ protocol AlertFactory {
 }
 
 #if os(macOS)
-class DefaultAlertFactory: NSObject, AlertFactory {
-    func createAlert() -> Alert {
-        return NSAlert()
+    class DefaultAlertFactory: NSObject, AlertFactory {
+        func createAlert() -> Alert {
+            return NSAlert()
+        }
     }
-}
 #elseif os(iOS)
-class DefaultAlertFactory: NSObject, AlertFactory {
-    func createAlertController(
-        title: String?, message: String?, preferredStyle: UIAlertController.Style
-    ) -> AlertController {
-        return UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
+    class DefaultAlertFactory: NSObject, AlertFactory {
+        func createAlertController(
+            title: String?, message: String?, preferredStyle: UIAlertController.Style
+        ) -> AlertController {
+            return UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
+        }
     }
-}
 #endif
