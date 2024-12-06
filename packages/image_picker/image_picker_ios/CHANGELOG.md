@@ -1,3 +1,7 @@
+## 0.8.12+2
+
+* Removes the need for user permissions to pick an image on iOS 14+.
+
 ## 0.8.12+1
 
 * Updates Pigeon for non-nullable collection type support.
