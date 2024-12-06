@@ -31,7 +31,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.googlesignin.Messages.FlutterError;
 import io.flutter.plugins.googlesignin.Messages.GoogleSignInApi;
@@ -114,7 +113,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
    * class for use in other plugins that wrap basic sign-in functionality.
    *
    * <p>All methods in this class assume that they are run to completion before any other method is
-   * invoked. In this context, "run to completion" means that their {@link MethodChannel.Result}
+   * invoked. In this context, "run to completion" means that their {@link Messages.Result}
    * argument has been completed (either successfully or in error). This class provides no
    * synchronization constructs to guarantee such behavior; callers are responsible for providing
    * such guarantees.
