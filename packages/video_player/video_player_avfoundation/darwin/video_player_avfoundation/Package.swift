@@ -33,7 +33,8 @@ let package = Package(
     .target(
       name: "video_player_avfoundation_ios",
       cSettings: [
-        .headerSearchPath("../video_player_avfoundation/include/video_player_avfoundation")
+        .headerSearchPath("../video_player_avfoundation/include/video_player_avfoundation"),
+        .headerSearchPath("include"),
       ]
     ),
     .target(
