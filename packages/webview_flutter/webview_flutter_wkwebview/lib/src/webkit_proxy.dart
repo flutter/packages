@@ -186,7 +186,7 @@ class WebKitProxy {
   final WKUserScript Function({
     required String source,
     required UserScriptInjectionTime injectionTime,
-    required bool isMainFrameOnly,
+    required bool isForMainFrameOnly,
   }) newWKUserScript;
 
   /// Constructs [HTTPCookie].

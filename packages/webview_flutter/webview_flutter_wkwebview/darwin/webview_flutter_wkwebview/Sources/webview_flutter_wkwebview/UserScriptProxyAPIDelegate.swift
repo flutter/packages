@@ -12,7 +12,7 @@ import WebKit
 class UserScriptProxyAPIDelegate: PigeonApiDelegateWKUserScript {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime,
-    isMainFrameOnly: Bool
+    isForMainFrameOnly: Bool
   ) throws -> WKUserScript {
     var nativeInjectionTime: WKUserScriptInjectionTime
     switch injectionTime {
@@ -25,7 +25,7 @@ class UserScriptProxyAPIDelegate: PigeonApiDelegateWKUserScript {
         withEnum: injectionTime)
     }
     return WKUserScript(
-      source: source, injectionTime: nativeInjectionTime, forMainFrameOnly: isMainFrameOnly)
+      source: source, injectionTime: nativeInjectionTime, forMainFrameOnly: isForMainFrameOnly)
   }
 
   func source(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> String {
@@ -45,7 +45,7 @@ class UserScriptProxyAPIDelegate: PigeonApiDelegateWKUserScript {
     }
   }
 
-  func isMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws
+  func isForMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws
     -> Bool
   {
     return pigeonInstance.isForMainFrameOnly

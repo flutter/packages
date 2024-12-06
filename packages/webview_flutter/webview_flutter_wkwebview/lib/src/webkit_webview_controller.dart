@@ -417,7 +417,7 @@ class WebKitWebViewController extends PlatformWebViewController {
         _webKitParams.webKitProxy.newWKUserScript(
       source: wrapperSource,
       injectionTime: UserScriptInjectionTime.atDocumentStart,
-      isMainFrameOnly: false,
+      isForMainFrameOnly: false,
     );
 
     final WKUserContentController contentController =
@@ -596,7 +596,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           "user-scalable=no';\n"
           "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
       injectionTime: UserScriptInjectionTime.atDocumentEnd,
-      isMainFrameOnly: true,
+      isForMainFrameOnly: true,
     );
     final WKUserContentController controller =
         await _webView.configuration.getUserContentController();
@@ -722,7 +722,7 @@ window.addEventListener("error", function(e) {
 });
       ''',
       injectionTime: UserScriptInjectionTime.atDocumentStart,
-      isMainFrameOnly: true,
+      isForMainFrameOnly: true,
     );
 
     final WKUserContentController controller =

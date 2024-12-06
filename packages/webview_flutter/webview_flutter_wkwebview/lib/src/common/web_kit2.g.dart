@@ -451,7 +451,7 @@ class InteractiveMediaAdsProxy {
   final WKUserScript Function({
     required String source,
     required UserScriptInjectionTime injectionTime,
-    required bool isMainFrameOnly,
+    required bool isForMainFrameOnly,
   }) newWKUserScript;
 
   /// Constructs [HTTPCookie].
@@ -1447,7 +1447,7 @@ class WKUserScript extends NSObject {
     super.pigeon_instanceManager,
     required this.source,
     required this.injectionTime,
-    required this.isMainFrameOnly,
+    required this.isForMainFrameOnly,
     super.observeValue,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
@@ -1469,7 +1469,7 @@ class WKUserScript extends NSObject {
         pigeonVar_instanceIdentifier,
         source,
         injectionTime,
-        isMainFrameOnly
+        isForMainFrameOnly
       ]) as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -1495,7 +1495,7 @@ class WKUserScript extends NSObject {
     super.pigeon_instanceManager,
     required this.source,
     required this.injectionTime,
-    required this.isMainFrameOnly,
+    required this.isForMainFrameOnly,
     super.observeValue,
   }) : super.pigeon_detached();
 
@@ -1510,7 +1510,7 @@ class WKUserScript extends NSObject {
 
   /// A Boolean value that indicates whether to inject the script into the main
   /// frame or all frames.
-  final bool isMainFrameOnly;
+  final bool isForMainFrameOnly;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -1519,7 +1519,7 @@ class WKUserScript extends NSObject {
     WKUserScript Function(
       String source,
       UserScriptInjectionTime injectionTime,
-      bool isMainFrameOnly,
+      bool isForMainFrameOnly,
     )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -1550,20 +1550,20 @@ class WKUserScript extends NSObject {
               (args[2] as UserScriptInjectionTime?);
           assert(arg_injectionTime != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUserScript.pigeon_newInstance was null, expected non-null UserScriptInjectionTime.');
-          final bool? arg_isMainFrameOnly = (args[3] as bool?);
-          assert(arg_isMainFrameOnly != null,
+          final bool? arg_isForMainFrameOnly = (args[3] as bool?);
+          assert(arg_isForMainFrameOnly != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUserScript.pigeon_newInstance was null, expected non-null bool.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(
-                      arg_source!, arg_injectionTime!, arg_isMainFrameOnly!) ??
+              pigeon_newInstance?.call(arg_source!, arg_injectionTime!,
+                      arg_isForMainFrameOnly!) ??
                   WKUserScript.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     source: arg_source!,
                     injectionTime: arg_injectionTime!,
-                    isMainFrameOnly: arg_isMainFrameOnly!,
+                    isForMainFrameOnly: arg_isForMainFrameOnly!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -1586,7 +1586,7 @@ class WKUserScript extends NSObject {
       pigeon_instanceManager: pigeon_instanceManager,
       source: source,
       injectionTime: injectionTime,
-      isMainFrameOnly: isMainFrameOnly,
+      isForMainFrameOnly: isForMainFrameOnly,
       observeValue: observeValue,
     );
   }

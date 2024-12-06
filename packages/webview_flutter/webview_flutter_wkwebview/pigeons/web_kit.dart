@@ -403,7 +403,7 @@ abstract class WKUserScript extends NSObject {
 
   /// A Boolean value that indicates whether to inject the script into the main
   /// frame or all frames.
-  late bool isMainFrameOnly;
+  late bool isForMainFrameOnly;
 }
 
 /// An object that contains information about an action that causes navigation

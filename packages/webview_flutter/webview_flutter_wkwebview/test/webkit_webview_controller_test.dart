@@ -158,12 +158,12 @@ void main() {
           newWKUserScript: ({
             required String source,
             required UserScriptInjectionTime injectionTime,
-            required bool isMainFrameOnly,
+            required bool isForMainFrameOnly,
           }) {
             return WKUserScript.pigeon_detached(
               source: source,
               injectionTime: injectionTime,
-              isMainFrameOnly: isMainFrameOnly,
+              isForMainFrameOnly: isForMainFrameOnly,
               pigeon_instanceManager: TestInstanceManager(),
             );
           },
@@ -687,7 +687,7 @@ void main() {
           verify(mockUserContentController.addUserScript(captureAny))
               .captured
               .first as WKUserScript;
-      expect(zoomScript.isMainFrameOnly, isTrue);
+      expect(zoomScript.isForMainFrameOnly, isTrue);
       expect(zoomScript.injectionTime, UserScriptInjectionTime.atDocumentEnd);
       expect(
         zoomScript.source,
@@ -1034,7 +1034,7 @@ void main() {
           verify(mockUserContentController.addUserScript(captureAny))
               .captured
               .first as WKUserScript;
-      expect(zoomScript.isMainFrameOnly, isTrue);
+      expect(zoomScript.isForMainFrameOnly, isTrue);
       expect(zoomScript.injectionTime, UserScriptInjectionTime.atDocumentEnd);
       expect(
         zoomScript.source,
@@ -1566,13 +1566,13 @@ void main() {
         final WKUserScript overrideConsoleScript =
             capturedScripts[1] as WKUserScript;
 
-        expect(messageHandlerScript.isMainFrameOnly, isFalse);
+        expect(messageHandlerScript.isForMainFrameOnly, isFalse);
         expect(messageHandlerScript.injectionTime,
             UserScriptInjectionTime.atDocumentStart);
         expect(messageHandlerScript.source,
             'window.fltConsoleMessage = webkit.messageHandlers.fltConsoleMessage;');
 
-        expect(overrideConsoleScript.isMainFrameOnly, isTrue);
+        expect(overrideConsoleScript.isForMainFrameOnly, isTrue);
         expect(overrideConsoleScript.injectionTime,
             UserScriptInjectionTime.atDocumentStart);
         expect(overrideConsoleScript.source, '''

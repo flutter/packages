@@ -1950,14 +1950,14 @@ class ResponseProxyAPITests: XCTestCase {
 protocol PigeonApiDelegateWKUserScript {
   /// Creates a user script object that contains the specified source code and
   /// attributes.
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isMainFrameOnly: Bool) throws -> WKUserScript
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isForMainFrameOnly: Bool) throws -> WKUserScript
   /// The script’s source code.
   func source(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> String
   /// The time at which to inject the script into the webpage.
   func injectionTime(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> UserScriptInjectionTime
   /// A Boolean value that indicates whether to inject the script into the main
   /// frame or all frames.
-  func isMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> Bool
+  func isForMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> Bool
 }
 
 protocol PigeonApiProtocolWKUserScript {
@@ -1988,10 +1988,10 @@ final class PigeonApiWKUserScript: PigeonApiProtocolWKUserScript  {
         let pigeonIdentifierArg = args[0] as! Int64
         let sourceArg = args[1] as! String
         let injectionTimeArg = args[2] as! UserScriptInjectionTime
-        let isMainFrameOnlyArg = args[3] as! Bool
+        let isForMainFrameOnlyArg = args[3] as! Bool
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, source: sourceArg, injectionTime: injectionTimeArg, isMainFrameOnly: isMainFrameOnlyArg),
+try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, source: sourceArg, injectionTime: injectionTimeArg, isForMainFrameOnly: isForMainFrameOnlyArg),
 withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
@@ -2020,12 +2020,12 @@ withIdentifier: pigeonIdentifierArg)
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
     let sourceArg = try! pigeonDelegate.source(pigeonApi: self, pigeonInstance: pigeonInstance)
     let injectionTimeArg = try! pigeonDelegate.injectionTime(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let isMainFrameOnlyArg = try! pigeonDelegate.isMainFrameOnly(pigeonApi: self, pigeonInstance: pigeonInstance)
+    let isForMainFrameOnlyArg = try! pigeonDelegate.isForMainFrameOnly(pigeonApi: self, pigeonInstance: pigeonInstance)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserScript.pigeon_newInstance"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg, sourceArg, injectionTimeArg, isMainFrameOnlyArg] as [Any?]) { response in
+    channel.sendMessage([pigeonIdentifierArg, sourceArg, injectionTimeArg, isForMainFrameOnlyArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -2056,7 +2056,7 @@ import WebKit
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isMainFrameOnly: Bool) throws -> WKUserScript {
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isForMainFrameOnly: Bool) throws -> WKUserScript {
     return WKUserScript()
   }
 
@@ -2076,8 +2076,8 @@ class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
     }
   }
 
-  func isMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> Bool {
-    return pigeonInstance.isMainFrameOnly
+  func isForMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> Bool {
+    return pigeonInstance.isForMainFrameOnly
   }
 
 }
@@ -2099,7 +2099,7 @@ class UserScriptProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api source: "myString", injectionTime: .atDocumentStart, isMainFrameOnly: true)
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api source: "myString", injectionTime: .atDocumentStart, isForMainFrameOnly: true)
     XCTAssertNotNil(instance)
   }
 
@@ -2123,14 +2123,14 @@ class UserScriptProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.injectionTime)
   }
 
-  func testIsMainFrameOnly() {
+  func testIsForMainFrameOnly() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
     let instance = TestUserScript()
-    let value = try? api.pigeonDelegate.isMainFrameOnly(pigeonApi: api, pigeonInstance: instance)
+    let value = try? api.pigeonDelegate.isForMainFrameOnly(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.isMainFrameOnly)
+    XCTAssertEqual(value, instance.isForMainFrameOnly)
   }
 
 }

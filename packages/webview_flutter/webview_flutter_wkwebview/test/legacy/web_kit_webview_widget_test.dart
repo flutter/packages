@@ -447,7 +447,7 @@ void main() {
               verify(mocks.userContentController.addUserScript(captureAny))
                   .captured
                   .first as WKUserScript;
-          expect(zoomScript.isMainFrameOnly, isTrue);
+          expect(zoomScript.isForMainFrameOnly, isTrue);
           expect(
               zoomScript.injectionTime, UserScriptInjectionTime.atDocumentEnd);
           expect(
@@ -1032,13 +1032,13 @@ void main() {
           userScripts[0].injectionTime,
           UserScriptInjectionTime.atDocumentStart,
         );
-        expect(userScripts[0].isMainFrameOnly, false);
+        expect(userScripts[0].isForMainFrameOnly, false);
         expect(userScripts[1].source, 'window.d = webkit.messageHandlers.d;');
         expect(
           userScripts[1].injectionTime,
           UserScriptInjectionTime.atDocumentStart,
         );
-        expect(userScripts[0].isMainFrameOnly, false);
+        expect(userScripts[0].isForMainFrameOnly, false);
       });
 
       testWidgets('removeJavascriptChannels', (WidgetTester tester) async {
@@ -1084,7 +1084,7 @@ void main() {
           userScripts[0].injectionTime,
           UserScriptInjectionTime.atDocumentStart,
         );
-        expect(userScripts[0].isMainFrameOnly, false);
+        expect(userScripts[0].isForMainFrameOnly, false);
       });
 
       testWidgets('removeJavascriptChannels with zoom disabled',
@@ -1119,7 +1119,7 @@ void main() {
             verify(mocks.userContentController.addUserScript(captureAny))
                 .captured
                 .first as WKUserScript;
-        expect(zoomScript.isMainFrameOnly, isTrue);
+        expect(zoomScript.isForMainFrameOnly, isTrue);
         expect(zoomScript.injectionTime, UserScriptInjectionTime.atDocumentEnd);
         expect(
           zoomScript.source,

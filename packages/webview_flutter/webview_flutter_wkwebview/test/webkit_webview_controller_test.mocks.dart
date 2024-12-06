@@ -993,8 +993,8 @@ class MockWKUserScript extends _i1.Mock implements _i2.WKUserScript {
       ) as _i2.UserScriptInjectionTime);
 
   @override
-  bool get isMainFrameOnly => (super.noSuchMethod(
-        Invocation.getter(#isMainFrameOnly),
+  bool get isForMainFrameOnly => (super.noSuchMethod(
+        Invocation.getter(#isForMainFrameOnly),
         returnValue: false,
         returnValueForMissingStub: false,
       ) as bool);
