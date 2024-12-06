@@ -27,7 +27,6 @@ class ScriptMessageHandlerProxyAPITests: XCTestCase {
 
     XCTAssertEqual(api.didReceiveScriptMessageArgs, [controller, message])
   }
-
 }
 
 class TestScriptMessageHandlerApi: PigeonApiProtocolWKScriptMessageHandler {
