@@ -618,7 +618,8 @@ void main() {
 
     test('uses --swift-format-path if provided and valid', () async {
       final String validSwiftFormatPath = '/valid/path/to/swift-format';
-      processRunner.mockProcessesForExecutable[validSwiftFormatPath] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[validSwiftFormatPath] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 0), <String>['--version']),
       ];
 
@@ -637,12 +638,14 @@ void main() {
           commandError = e;
         },
       );
-      
-      expect(commandError, isNull, reason: 'No error should occur if --swift-format-path is valid.');
+
+      expect(commandError, isNull,
+          reason: 'No error should occur if --swift-format-path is valid.');
     });
 
     test('uses swift-format from system PATH if available', () async {
-      processRunner.mockProcessesForExecutable['swift-format'] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['swift-format'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 0), <String>['--version']),
       ];
 
@@ -662,7 +665,8 @@ void main() {
         },
       );
 
-      expect(commandError, isNull, reason: 'No error should occur if swift-format is in PATH.');
+      expect(commandError, isNull,
+          reason: 'No error should occur if swift-format is in PATH.');
     });
 
     test('uses xcrun to find swift-format if not in PATH', () async {
@@ -676,7 +680,8 @@ void main() {
         ),
       ];
 
-      processRunner.mockProcessesForExecutable['/found/path/to/swift-format'] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable['/found/path/to/swift-format'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 0), <String>['--version']),
       ];
 
@@ -696,9 +701,10 @@ void main() {
         },
       );
 
-      expect(commandError, isNull, reason: 'No error should occur if xcrun successfully finds swift-format.');
+      expect(commandError, isNull,
+          reason:
+              'No error should occur if xcrun successfully finds swift-format.');
     });
-
 
     test('fails if swift-format lint finds issues', () async {
       const List<String> files = <String>[
