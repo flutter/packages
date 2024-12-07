@@ -10,30 +10,42 @@ Please express interest joining Early Access program using [this form](https://d
 ## Usage
 
 ### Setup your AdSense account
-1. [Make sure your site's pages are ready for AdSense](https://support.google.com/adsense/answer/7299563?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1319756&rd=1)
-2. [Create your AdSense account](https://support.google.com/adsense/answer/10162?hl=en&sjid=5790642343077592212-EU&visit_id=638657100661171978-1373860041&ref_topic=1250103&rd=1)
+1. [Make sure your site's pages are ready for AdSense](https://support.google.com/adsense/answer/7299563)
+2. [Create your AdSense account](https://support.google.com/adsense/answer/10162)
 
 ### Initialize AdSense
-To start displaying ads, initialize the AdSense with your [client/publisher ID](https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU) (only use numbers).
+To start displaying ads, initialize AdSense with your [Publisher ID](https://support.google.com/adsense/answer/105516) (only use numbers).
+
 <?code-excerpt "example/lib/main.dart (init)"?>
 ```dart
-import 'package:google_adsense/experimental/google_adsense.dart';
+import 'package:google_adsense/experimental/ad_unit_widget.dart';
+import 'package:google_adsense/google_adsense.dart';
 
-void main() {
-  adSense.initialize(
-      '0123456789012345'); // TODO: Replace with your Publisher ID (pub-0123456789012345) - https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU
+void main() async {
+  // Call `initialize` with your Publisher ID (pub-0123456789012345)
+  // (See: https://support.google.com/adsense/answer/105516)
+  await adSense.initialize('0123456789012345');
+
   runApp(const MyApp());
 }
-
 ```
 
-### Enable Auto Ads
-In order to start displaying [Auto ads](https://support.google.com/adsense/answer/9261805?hl=en) make sure to configure this feature in your AdSense Console. If you want to display ad units within your app content, continue to the next step
+### Displaying Auto Ads
+In order to start displaying [Auto ads](https://support.google.com/adsense/answer/9261805):
 
-### Display ad unit Widget
+1. Configure this feature in your AdSense Console.
 
-1. Create [ad units](https://support.google.com/adsense/answer/9183549?hl=en&ref_topic=9183242&sjid=5790642343077592212-EU) in your AdSense account
-2. Use relevant `AdUnitConfiguration` constructor as per table below
+Auto ads should start showing just with the call to `initialize`, when available.
+
+If you want to display ad units within your app content, continue to the next step
+
+### Display ad units (`AdUnitWidget`)
+
+To display an Ad unit in your Flutter application:
+
+1. Create [ad units](https://support.google.com/adsense/answer/9183549) in your AdSense account.
+   This will provide an HTML snippet, which you need to translate to Dart.
+2. Pick the `AdUnitConfiguration` for your ad type:
 
 | Ad Unit Type   | `AdUnitConfiguration` constructor method   |
 |----------------|--------------------------------------------|
@@ -42,12 +54,17 @@ In order to start displaying [Auto ads](https://support.google.com/adsense/answe
 | In-article Ads | `AdUnitConfiguration.inArticleAdUnit(...)` |
 | Multiplex Ads  | `AdUnitConfiguration.multiplexAdUnit(...)` |
 
-3. Translate data-attributes from snippet generated in AdSense Console into constructor arguments as described below:
-- drop `data-` prefix
-- translate kebab-case to camelCase
-- no need to translate `data-ad-client` as it the value was already passed at initialization 
+3. The data-attributes from the generated snippet are available through the `AdUnitConfiguration` object.
+Their Dart name is created as follows:
 
-For example snippet below
+- The `data-` prefix is **removed**.
+- `kebab-case` becomes `camelCase`
+
+The only exception to this is `data-ad-client`, that is passed to `adSense.initialize`,
+instead of through an `AdUnitConfiguration` object.
+
+For example snippet below:
+
 ```html
 <ins class="adsbygoogle"
      style="display:block"
@@ -59,23 +76,32 @@ For example snippet below
      (adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 ```
-translates into 
+translates into:
+
 <?code-excerpt "example/lib/main.dart (init-min)"?>
 ```dart
-adSense.initialize(
-    '0123456789012345'); // TODO: Replace with your Publisher ID (pub-0123456789012345) - https://support.google.com/adsense/answer/105516?hl=en&sjid=5790642343077592212-EU
-```
-and
-<?code-excerpt "example/lib/main.dart (adUnit)"?>
-```dart
-    adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-  adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
-  adFormat: AdFormat
-      .AUTO, // Remove AdFormat to make ads limited by height
-))
+// Call `initialize` with your Publisher ID (pub-0123456789012345)
+// (See: https://support.google.com/adsense/answer/105516)
+await adSense.initialize('0123456789012345');
+
 ```
 
-#### Customize ad unit Widget
+and:
+
+<?code-excerpt "example/lib/main.dart (adUnit)"?>
+```dart
+    AdUnitWidget(
+  configuration: AdUnitConfiguration.displayAdUnit(
+    // TODO: Replace with your Ad Unit ID
+    adSlot: '1234567890',
+    // Remove AdFormat to make ads limited by height
+    adFormat: AdFormat.AUTO,
+  ),
+),
+```
+
+#### `AdUnitWidget` customizations
+
 To [modify your responsive ad code](https://support.google.com/adsense/answer/9183363?hl=en&ref_topic=9183242&sjid=11551379421978541034-EU):
 1. Make sure to follow [AdSense policies](https://support.google.com/adsense/answer/1346295?hl=en&sjid=18331098933308334645-EU&visit_id=638689380593964621-4184295127&ref_topic=1271508&rd=1)
 2. Use Flutter instruments for [adaptive and responsive design](https://docs.flutter.dev/ui/adaptive-responsive)
@@ -89,11 +115,14 @@ Container(
   constraints:
       const BoxConstraints(maxHeight: 100, maxWidth: 1200),
   padding: const EdgeInsets.only(bottom: 10),
-  child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-    adSlot: '1234567890', // TODO: Replace with your Ad Unit ID
-    adFormat: AdFormat
-        .AUTO, // Not using AdFormat to make ad unit respect height constraint
-  )),
+  child: AdUnitWidget(
+    configuration: AdUnitConfiguration.displayAdUnit(
+      // TODO: Replace with your Ad Unit ID
+      adSlot: '1234567890',
+      // Do not use adFormat to make ad unit respect height constraint
+      // adFormat: AdFormat.AUTO,
+    ),
+  ),
 ),
 ```
 ## Testing and common errors
@@ -114,6 +143,7 @@ Make sure to set correct values to adSlot and adClient arguments
 ### Ad unfilled  
 
 There is no deterministic way to make sure your ads are 100% filled even when testing. Some of the way to increase the fill rate:
+- Ensure your ad units are correctly configured in AdSense
 - Try setting `adTest` parameter to `true`  
 - Try setting AD_FORMAT to `auto` (default setting)
 - Try setting FULL_WIDTH_RESPONSIVE to `true` (default setting)

@@ -9,16 +9,8 @@ import 'dart:js_interop';
 
 /// JS-interop mappings to the window.adsbygoogle object.
 extension type AdsByGoogle._(JSObject _) implements JSObject {
-  @JS('push')
-  external void _push(JSObject params);
-}
-
-/// Convenience methods for Dart users.
-extension AdsByGoogleExtension on AdsByGoogle {
-  /// Convenience method for invoking push() with an empty object
-  void requestAd() {
-    _push(JSObject());
-  }
+  /// Pushes some `params` to the `window.adsbygoogle` object.
+  external void push(JSObject params);
 }
 
 // window.adsbygoogle may be null if this package runs before the JS SDK loads.

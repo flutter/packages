@@ -9,7 +9,7 @@ import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui';
 
-import 'package:google_adsense/experimental/google_adsense.dart';
+import 'package:google_adsense/src/adsense/ad_unit_params.dart';
 import 'package:web/web.dart' as web;
 
 typedef VoidFn = void Function();
