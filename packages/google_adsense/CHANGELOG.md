@@ -1,6 +1,7 @@
 ## 0.0.2
 
 * **Breaking changes**: Reshuffles API exports:
+  * Makes `adSense.initialize` async.
   * Removes the `adUnit` method, and instead exports the `AdUnitWidget` directly.
   * Renames `experimental/google_adsense` to `experimental/ad_unit_widget.dart`.
   * Removes the `AdStatus` and `AdUnitParams` exports.

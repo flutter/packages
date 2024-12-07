@@ -21,10 +21,10 @@ To start displaying ads, initialize AdSense with your [Publisher ID](https://sup
 import 'package:google_adsense/experimental/ad_unit_widget.dart';
 import 'package:google_adsense/google_adsense.dart';
 
-void main() {
+void main() async {
   // Call `initialize` with your Publisher ID (pub-0123456789012345)
   // (See: https://support.google.com/adsense/answer/105516)
-  adSense.initialize('0123456789012345');
+  await adSense.initialize('0123456789012345');
 
   runApp(const MyApp());
 }
@@ -82,7 +82,7 @@ translates into:
 ```dart
 // Call `initialize` with your Publisher ID (pub-0123456789012345)
 // (See: https://support.google.com/adsense/answer/105516)
-adSense.initialize('0123456789012345');
+await adSense.initialize('0123456789012345');
 
 ```
 

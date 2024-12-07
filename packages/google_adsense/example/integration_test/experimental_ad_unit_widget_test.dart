@@ -45,7 +45,7 @@ void main() async {
         ),
       );
 
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
 
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(
@@ -79,7 +79,7 @@ void main() async {
         ),
       );
 
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
 
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(
@@ -109,7 +109,7 @@ void main() async {
       // When
       mockAdsByGoogle(mockAd(adStatus: AdStatus.UNFILLED));
 
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
@@ -140,7 +140,7 @@ void main() async {
         ]),
       );
 
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
 
       final Widget bunchOfAds = Column(
         children: <Widget>[

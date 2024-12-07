@@ -26,11 +26,11 @@ class AdSense {
   /// The [adClient] parameter is your AdSense [Publisher ID](https://support.google.com/adsense/answer/2923881).
   ///
   /// Should be called ASAP, ideally in the `main` method.
-  void initialize(
+  Future<void> initialize(
     String adClient, {
     @visibleForTesting bool skipJsLoader = false,
     @visibleForTesting web.HTMLElement? jsLoaderTarget,
-  }) {
+  }) async {
     if (_isInitialized) {
       debugLog('adSense.initialize called multiple times. Skipping init.');
       return;

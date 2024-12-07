@@ -22,7 +22,7 @@ void main() async {
           'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
 
       // When (using the singleton adSense from the plugin)
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
 
       // Then
       final web.HTMLScriptElement? injected =

@@ -35,7 +35,7 @@ void main() async {
       final web.HTMLElement target = web.HTMLDivElement();
       // Given
 
-      adSense.initialize(testClient, jsLoaderTarget: target);
+      await adSense.initialize(testClient, jsLoaderTarget: target);
 
       final web.HTMLScriptElement? injected =
           target.lastElementChild as web.HTMLScriptElement?;
@@ -53,7 +53,7 @@ void main() async {
         ..src = testScriptUrl;
       final web.HTMLElement target = web.HTMLDivElement()..appendChild(script);
 
-      adSense.initialize(testClient, jsLoaderTarget: target);
+      await adSense.initialize(testClient, jsLoaderTarget: target);
 
       expect(target.childElementCount, 1);
       expect(target.firstElementChild?.id, 'previously-injected');
@@ -66,7 +66,7 @@ void main() async {
       // Write an empty noop object
       mockAdsByGoogle(() {});
 
-      adSense.initialize(testClient, jsLoaderTarget: target);
+      await adSense.initialize(testClient, jsLoaderTarget: target);
 
       expect(target.firstElementChild, isNull);
     });
