@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		0CCCD07A2CE24E13C9C1EEA4 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D274A3F79473B1549B2BBD5 /* libPods-Runner.a */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		338A5F9D2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */; };
+		31932E412BE5594300847E24 /* FLALocalAuthPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31932E402BE5594300847E24 /* FLALocalAuthPluginTests.swift */; };
+		3398D2E426164AD8005A052F /* (null) in Sources */ = {isa = PBXBuildFile; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		691CB38B382734AF80FBCA4C /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBFA21B380E07A3A585383D /* libPods-RunnerTests.a */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
@@ -46,7 +47,7 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
-		338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FLALocalAuthPluginTests.swift; path = ../../../darwin/Tests/FLALocalAuthPluginTests.swift; sourceTree = "<group>"; };
+		31932E402BE5594300847E24 /* FLALocalAuthPluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FLALocalAuthPluginTests.swift; path = ../../../darwin/Tests/FLALocalAuthPluginTests.swift; sourceTree = "<group>"; };
 		3398D2CD26163948005A052F /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3398D2D126163948005A052F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3398D2DC261649CD005A052F /* liblocal_auth.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = liblocal_auth.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,8 +96,8 @@
 		33BF11D226680B2E002967F3 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */,
 				3398D2D126163948005A052F /* Info.plist */,
+				31932E402BE5594300847E24 /* FLALocalAuthPluginTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -236,7 +237,7 @@
 				TargetAttributes = {
 					3398D2CC26163948005A052F = {
 						CreatedOnToolsVersion = 12.4;
-						LastSwiftMigration = 1510;
+						LastSwiftMigration = 1520;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
@@ -367,7 +368,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				338A5F9D2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift in Sources */,
+				31932E412BE5594300847E24 /* FLALocalAuthPluginTests.swift in Sources */,
+				3398D2E426164AD8005A052F /* (null) in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
