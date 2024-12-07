@@ -184,33 +184,32 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
     if success {
       handleSucceeded(succeeded: true, completion: completion)
-    } else {
-      if let error = error {
-        switch error.code {
-        case LAError.biometryNotAvailable.rawValue,
-          LAError.biometryNotEnrolled.rawValue,
-          LAError.biometryLockout.rawValue,
-          LAError.userFallback.rawValue,
-          LAError.passcodeNotSet.rawValue,
-          LAError.authenticationFailed.rawValue:
-          handleError(authError: error, options: options, strings: strings, completion: completion)
-          return
+    } else if let error = error {
+      switch error.code {
+      case LAError.biometryNotAvailable.rawValue,
+        LAError.biometryNotEnrolled.rawValue,
+        LAError.biometryLockout.rawValue,
+        LAError.userFallback.rawValue,
+        LAError.passcodeNotSet.rawValue,
+        LAError.authenticationFailed.rawValue:
+        handleError(authError: error, options: options, strings: strings, completion: completion)
+        return
 
-        case LAError.systemCancel.rawValue:
-          if options.sticky {
-            lastCallState = StickyAuthState(
-              options: options, strings: strings, resultHandler: completion)
-          } else {
-            handleSucceeded(succeeded: false, completion: completion)
-          }
-          return
-
-        default:
-          handleError(authError: error, options: options, strings: strings, completion: completion)
+      case LAError.systemCancel.rawValue:
+        if options.sticky {
+          lastCallState = StickyAuthState(
+            options: options, strings: strings, resultHandler: completion
+          )
+        } else {
+          handleSucceeded(succeeded: false, completion: completion)
         }
-      } else {
-        handleSucceeded(succeeded: false, completion: completion)
+        return
+
+      default:
+        handleError(authError: error, options: options, strings: strings, completion: completion)
       }
+    } else {
+      handleSucceeded(succeeded: false, completion: completion)
     }
   }
 
@@ -258,7 +257,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       )
       return
     default:
-      break
+      result = .failure
     }
 
     let details = AuthResultDetails(
