@@ -34,10 +34,20 @@ final class StubViewProvider: NSObject, ViewProvider {
   #if os(macOS)
     var view: NSView
     var window: NSWindow
+
     override init() {
-      self.window = NSWindow()
-      self.view = NSView()
-      self.window.contentView = self.view
+      // Ensures that NSWindow and NSView creation happens on the main thread
+      var windowInstance: NSWindow?
+      var viewInstance: NSView?
+
+      DispatchQueue.main.sync {
+        windowInstance = NSWindow()
+        viewInstance = NSView()
+        windowInstance?.contentView = viewInstance
+      }
+
+      self.window = windowInstance!
+      self.view = viewInstance!
     }
   #endif
 }
@@ -49,13 +59,19 @@ final class StubViewProvider: NSObject, ViewProvider {
     var presentingWindow: NSWindow?
 
     func addButton(withTitle title: String) -> NSButton {
-      buttons.append(title)
-      return NSButton()  // The return value is not used by the plugin.
+      var button: NSButton?
+      DispatchQueue.main.sync {
+        button = NSButton(title: title, target: nil, action: nil)
+      }
+
+      return button!  // The return value is not used by the plugin.
     }
 
-    func beginSheetModal(for sheetWindow: NSWindow) async -> NSApplication.ModalResponse {
-      presentingWindow = sheetWindow
-      return NSApplication.ModalResponse.OK
+    func beginSheetModal(
+      for window: NSWindow, completionHandler: ((NSApplication.ModalResponse) -> Void)?
+    ) {
+      self.presentingWindow = window
+      completionHandler?(.OK)
     }
   }
 #else
