@@ -197,7 +197,7 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
     public @NonNull List<String> decode(@NonNull String listString) throws RuntimeException {
       try {
         ObjectInputStream stream =
-            new ObjectInputStream(new ByteArrayInputStream(Base64.decode(listString, 0)));
+            new StringListObjectInputStream(new ByteArrayInputStream(Base64.decode(listString, 0)));
         return (List<String>) stream.readObject();
       } catch (IOException | ClassNotFoundException e) {
         throw new RuntimeException(e);

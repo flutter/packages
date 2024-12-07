@@ -628,6 +628,15 @@ protocol PigeonApiDelegateProxyApiTestClass {
     nullableListParam: [Any?]?, nullableMapParam: [String?: Any?]?,
     nullableEnumParam: ProxyApiTestEnum?, nullableProxyApiParam: ProxyApiSuperClass?
   ) throws -> ProxyApiTestClass
+  func namedConstructor(
+    pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
+    aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
+    anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
+    aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
+    aNullableUint8List: FlutterStandardTypedData?, aNullableList: [Any?]?,
+    aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
+    aNullableProxyApi: ProxyApiSuperClass?
+  ) throws -> ProxyApiTestClass
   func attachedField(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
     throws -> ProxyApiSuperClass
   func staticAttachedField(pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiSuperClass
@@ -1167,6 +1176,50 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       }
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
+    }
+    let namedConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.namedConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      namedConstructorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonIdentifierArg = args[0] as! Int64
+        let aBoolArg = args[1] as! Bool
+        let anIntArg = args[2] as! Int64
+        let aDoubleArg = args[3] as! Double
+        let aStringArg = args[4] as! String
+        let aUint8ListArg = args[5] as! FlutterStandardTypedData
+        let aListArg = args[6] as! [Any?]
+        let aMapArg = args[7] as! [String?: Any?]
+        let anEnumArg = args[8] as! ProxyApiTestEnum
+        let aProxyApiArg = args[9] as! ProxyApiSuperClass
+        let aNullableBoolArg: Bool? = nilOrValue(args[10])
+        let aNullableIntArg: Int64? = nilOrValue(args[11])
+        let aNullableDoubleArg: Double? = nilOrValue(args[12])
+        let aNullableStringArg: String? = nilOrValue(args[13])
+        let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[14])
+        let aNullableListArg: [Any?]? = nilOrValue(args[15])
+        let aNullableMapArg: [String?: Any?]? = nilOrValue(args[16])
+        let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[17])
+        let aNullableProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[18])
+        do {
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.namedConstructor(
+              pigeonApi: api, aBool: aBoolArg, anInt: anIntArg, aDouble: aDoubleArg,
+              aString: aStringArg, aUint8List: aUint8ListArg, aList: aListArg, aMap: aMapArg,
+              anEnum: anEnumArg, aProxyApi: aProxyApiArg, aNullableBool: aNullableBoolArg,
+              aNullableInt: aNullableIntArg, aNullableDouble: aNullableDoubleArg,
+              aNullableString: aNullableStringArg, aNullableUint8List: aNullableUint8ListArg,
+              aNullableList: aNullableListArg, aNullableMap: aNullableMapArg,
+              aNullableEnum: aNullableEnumArg, aNullableProxyApi: aNullableProxyApiArg),
+            withIdentifier: pigeonIdentifierArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      namedConstructorChannel.setMessageHandler(nil)
     }
     let attachedFieldChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.attachedField",
