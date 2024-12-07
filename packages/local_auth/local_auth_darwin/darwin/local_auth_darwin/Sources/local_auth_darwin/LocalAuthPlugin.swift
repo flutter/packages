@@ -32,7 +32,12 @@ class DefaultViewProvider: ViewProvider {
 
   #if os(macOS)
     var view: NSView {
-      return NSView()
+      // TODO(Mairramer): Migrate check if is possible to remove the dispatch queue, and use the @MainActor annotation instead.
+      var viewInstance: NSView!
+      DispatchQueue.main.sync {
+        viewInstance = NSView()
+      }
+      return viewInstance
     }
   #elseif os(iOS)
 
@@ -275,7 +280,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     #if os(macOS)
-      let alert = alertFactory.createAlert()
+      var alert = alertFactory.createAlert()
       alert.messageText = message
       alert.addButton(withTitle: dismissButtonTitle)
 

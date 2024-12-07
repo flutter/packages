@@ -4,10 +4,9 @@
 
 #if os(macOS)
   protocol Alert {
+    var messageText: String { get set }
     func addButton(withTitle title: String) -> NSButton
-    func beginSheetModal(
-      for sheetWindow: NSWindow,
-      completionHandler: @escaping (NSApplication.ModalResponse) -> Void)
+    func beginSheetModal(for: NSWindow, completionHandler: ((NSApplication.ModalResponse) -> Void)?)
   }
 #elseif os(iOS)
   protocol AlertController {
@@ -42,6 +41,7 @@
 
 protocol AlertFactory {
   #if os(macOS)
+    @MainActor
     func createAlert() -> Alert
   #elseif os(iOS)
     func createAlertController(
@@ -53,8 +53,13 @@ protocol AlertFactory {
 
 #if os(macOS)
   class DefaultAlertFactory: NSObject, AlertFactory {
+    // TODO(Mairramer): Migrate check if is possible to remove the dispatch queue, and use the @MainActor annotation instead.
     func createAlert() -> Alert {
-      return NSAlert()
+      var alert: Alert!
+      DispatchQueue.main.sync {
+        alert = NSAlert()
+      }
+      return alert
     }
   }
 #elseif os(iOS)
