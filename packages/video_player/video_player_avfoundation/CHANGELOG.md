@@ -1,3 +1,7 @@
+## 2.6.4
+
+* Refactors native code structure.
+
 ## 2.6.3
 
 * Fixes VideoPlayerController.initialize() future never resolving with invalid video file.
