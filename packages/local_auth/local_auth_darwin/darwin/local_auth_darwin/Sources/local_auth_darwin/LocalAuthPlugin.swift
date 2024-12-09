@@ -283,7 +283,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       DispatchQueue.main.async {
         var alert = self.alertFactory.createAlert()
         alert.messageText = message
-        alert.addButton(withTitle: dismissButtonTitle)
+        _ = alert.addButton(withTitle: dismissButtonTitle)
 
         guard let window = self.viewProvider.view.window else { return }
 
