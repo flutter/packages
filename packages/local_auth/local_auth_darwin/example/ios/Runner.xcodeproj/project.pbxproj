@@ -96,6 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */,
+				3398D2D126163948005A052F /* Info.plist */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
