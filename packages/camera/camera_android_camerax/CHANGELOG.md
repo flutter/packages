@@ -1,3 +1,7 @@
+## 0.6.11
+
+* Adds API support query for image streaming.
+
 ## 0.6.10+1
 
 * Removes nonnull annotation from MeteringPointHostApiImpl#getDefaultPointSize.

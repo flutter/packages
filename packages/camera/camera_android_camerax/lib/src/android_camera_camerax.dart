@@ -1152,6 +1152,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
   }
 
+  @override
+  bool supportsImageStreaming() => true;
+
   /// A new streamed frame is available.
   ///
   /// Listening to this stream will start streaming, and canceling will stop.
