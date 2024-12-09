@@ -53,7 +53,7 @@ protocol AlertFactory {
 
 #if os(macOS)
   class DefaultAlertFactory: NSObject, AlertFactory {
-    // TODO(Mairramer): Migrate check if is possible to remove the dispatch queue, and use the @MainActor annotation instead.
+    // TODO(Mairramer): Check if is possible to remove the dispatch queue, and use the @MainActor annotation instead.
     func createAlert() -> Alert {
       var alert: Alert!
       DispatchQueue.main.sync {
