@@ -95,8 +95,7 @@
 		33BF11D226680B2E002967F3 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				31932E402BE5594300847E24 /* FLALocalAuthPluginTests.swift */,
-				3398D2D126163948005A052F /* Info.plist */,
+				338A5F9C2BFBA45B00DF0C4E /* FLALocalAuthPluginTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
