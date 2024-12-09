@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 
 /// Signature for `action` callback function provided to [OpenContainer.openBuilder].
 ///
@@ -720,31 +721,15 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     Navigator.of(subtreeContext!).pop(returnValue);
   }
 
-  @override
-  Widget buildPage(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
+  Widget _defaultTransition(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return Align(
       alignment: Alignment.topLeft,
       child: AnimatedBuilder(
         animation: animation,
+        child: child,
         builder: (BuildContext context, Widget? child) {
           if (animation.isCompleted) {
-            return SizedBox.expand(
-              child: Material(
-                color: openColor,
-                elevation: openElevation,
-                shape: openShape,
-                child: Builder(
-                  key: _openBuilderKey,
-                  builder: (BuildContext context) {
-                    return openBuilder(context, closeContainer);
-                  },
-                ),
-              ),
-            );
+            return child!;
           }
 
           final Animation<double> curvedAnimation = CurvedAnimation(
@@ -837,12 +822,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                               height: _rectTween.end!.height,
                               child: FadeTransition(
                                 opacity: openOpacityTween!.animate(animation),
-                                child: Builder(
-                                  key: _openBuilderKey,
-                                  builder: (BuildContext context) {
-                                    return openBuilder(context, closeContainer);
-                                  },
-                                ),
+                                child: child,
                               ),
                             ),
                           ),
@@ -855,6 +835,53 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  // TODO(justinmc): Make it transition from the pback transition into the opencontainer transition.
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
+    // TODO(justinmc): This does the normal open container transition.
+    return _PredictiveBackGestureDetector(
+      route: this,
+      builder: (BuildContext context) {
+        if (popGestureInProgress && animation.status == AnimationStatus.forward) {
+          return _PredictiveBackOpenContainerPageTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            getIsCurrent: () => isCurrent,
+            child: child,
+          );
+        }
+
+        return _defaultTransition(
+          context,
+          animation,
+          secondaryAnimation,
+          child,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    return SizedBox.expand(
+      child: Material(
+        color: openColor,
+        elevation: openElevation,
+        shape: openShape,
+        child: Builder(
+          key: _openBuilderKey,
+          builder: (BuildContext context) {
+            return openBuilder(context, closeContainer);
+          },
+        ),
       ),
     );
   }
@@ -873,6 +900,163 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
 
   @override
   String? get barrierLabel => null;
+}
+
+// TODO(justinmc): This is copied from the framework, but should be made public.
+// Definitely think through the API before making it public, though.
+class _PredictiveBackGestureDetector extends StatefulWidget {
+  const _PredictiveBackGestureDetector({
+    required this.route,
+    required this.builder,
+  });
+
+  final WidgetBuilder builder;
+  final PredictiveBackRoute route;
+
+  @override
+  State<_PredictiveBackGestureDetector> createState() =>
+      _PredictiveBackGestureDetectorState();
+}
+
+class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDetector>
+    with WidgetsBindingObserver {
+  bool _gestureInProgress = false;
+
+  /// True when the predictive back gesture is enabled.
+  bool get _isEnabled {
+    return widget.route.isCurrent
+        && widget.route.popGestureEnabled;
+  }
+
+  /// The back event when the gesture first started.
+  PredictiveBackEvent? get startBackEvent => _startBackEvent;
+  PredictiveBackEvent? _startBackEvent;
+  set startBackEvent(PredictiveBackEvent? startBackEvent) {
+    if (_startBackEvent != startBackEvent && mounted) {
+      setState(() {
+        _startBackEvent = startBackEvent;
+      });
+    }
+  }
+
+  /// The most recent back event during the gesture.
+  PredictiveBackEvent? get currentBackEvent => _currentBackEvent;
+  PredictiveBackEvent? _currentBackEvent;
+  set currentBackEvent(PredictiveBackEvent? currentBackEvent) {
+    if (_currentBackEvent != currentBackEvent && mounted) {
+      setState(() {
+        _currentBackEvent = currentBackEvent;
+      });
+    }
+  }
+
+  // Begin WidgetsBindingObserver.
+
+  @override
+  bool handleStartBackGesture(PredictiveBackEvent backEvent) {
+    _gestureInProgress = !backEvent.isButtonEvent && _isEnabled;
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleStartBackGesture(progress: 1 - backEvent.progress);
+    startBackEvent = currentBackEvent = backEvent;
+    return true;
+  }
+
+  @override
+  bool handleUpdateBackGestureProgress(PredictiveBackEvent backEvent) {
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
+    currentBackEvent = backEvent;
+    return true;
+  }
+
+  @override
+  bool handleCancelBackGesture() {
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleCancelBackGesture();
+    _gestureInProgress = false;
+    startBackEvent = currentBackEvent = null;
+    return true;
+  }
+
+  @override
+  bool handleCommitBackGesture() {
+    if (!_gestureInProgress) {
+      return false;
+    }
+
+    widget.route.handleCommitBackGesture();
+    _gestureInProgress = false;
+    startBackEvent = currentBackEvent = null;
+    return true;
+  }
+
+  // End WidgetsBindingObserver.
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context);
+  }
+}
+
+class _PredictiveBackOpenContainerPageTransition extends StatelessWidget {
+  const _PredictiveBackOpenContainerPageTransition({
+    required this.animation,
+    required this.secondaryAnimation,
+    required this.getIsCurrent,
+    required this.child,
+  });
+
+  final Animation<double> animation;
+  final Animation<double> secondaryAnimation;
+  final ValueGetter<bool> getIsCurrent;
+  final Widget child;
+
+  Widget _primaryAnimatedBuilder(BuildContext context, Widget? child) {
+    final Size size = MediaQuery.sizeOf(context);
+    final double screenWidth = size.width;
+    final double xShift = (screenWidth / 20) - 8;
+
+    final Animatable<double> xShiftTween = Tween<double>(begin: xShift, end: 0.0);
+    final Animatable<double> scaleTween = Tween<double>(begin: 0.95, end: 1.0);
+
+    return Transform.translate(
+      offset: Offset(xShiftTween.animate(animation).value, 0),
+      child: Transform.scale(
+        scale: scaleTween.animate(animation).value,
+        child: child,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: _primaryAnimatedBuilder,
+      child: child,
+    );
+  }
 }
 
 class _FlippableTweenSequence<T> extends TweenSequence<T> {
