@@ -11,6 +11,7 @@
 
 #import "MockCaptureDeviceController.h"
 #import "MockDeviceOrientationProvider.h"
+#import "MockCameraDeviceDiscovery.h"
 
 @interface StubGlobalEventApi : FCPCameraGlobalEventApi
 @property(nonatomic) BOOL called;
@@ -64,6 +65,7 @@
 @property(readonly, nonatomic) MockCaptureDeviceController *mockDevice;
 @property(readonly, nonatomic) StubGlobalEventApi *eventAPI;
 @property(readonly, nonatomic) CameraPlugin *cameraPlugin;
+@property(readonly, nonatomic) MockCameraDeviceDiscovery *deviceDiscovery;
 @end
 
 @implementation CameraOrientationTests
@@ -73,12 +75,14 @@
   _mockDevice = [[MockCaptureDeviceController alloc] init];
   _camera = [[MockCamera alloc] init];
   _eventAPI = [[StubGlobalEventApi alloc] init];
+  _deviceDiscovery = [[MockCameraDeviceDiscovery alloc] init];
 
   [_camera setValue:_mockDevice forKey:@"captureDevice"];
   
   _cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
                                               messenger:nil
-                                              globalAPI:_eventAPI];
+                                              globalAPI:_eventAPI
+                                         deviceDiscovery:_deviceDiscovery];
   _cameraPlugin.camera = _camera;
 }
 
@@ -120,7 +124,8 @@
   StubGlobalEventApi *eventAPI = [[StubGlobalEventApi alloc] init];
   CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                             messenger:nil
-                                                            globalAPI:eventAPI];
+                                                            globalAPI:eventAPI
+                                                      deviceDiscovery:_deviceDiscovery];
 
   [self sendOrientation:UIDeviceOrientationFaceDown toCamera:cameraPlugin];
 
@@ -156,7 +161,8 @@
   @autoreleasepool {
     CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                         messenger:nil
-                                                        globalAPI:_eventAPI];
+                                                        globalAPI:_eventAPI
+                                                  deviceDiscovery:_deviceDiscovery];
     weakPlugin = plugin;
     plugin.captureSessionQueue = captureSessionQueue;
     plugin.camera = _camera;

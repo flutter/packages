@@ -5,7 +5,6 @@
 @import camera_avfoundation;
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
 
 @interface FLTCam : NSObject <FlutterTexture,
                               AVCaptureVideoDataOutputSampleBufferDelegate,

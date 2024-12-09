@@ -166,5 +166,8 @@
   return [AVCaptureDeviceInput deviceInputWithDevice:_device error:error];
 }
 
+- (nonnull NSString *)uniqueID { 
+  return self.device.uniqueID;
+}
 
 @end

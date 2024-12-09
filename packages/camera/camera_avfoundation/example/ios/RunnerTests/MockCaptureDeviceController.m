@@ -8,7 +8,6 @@
 #import "MockCaptureDeviceController.h"
 
 @implementation MockCaptureDeviceController
-
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
     _activeFormat = format;
     if (self.setActiveFormatStub) {

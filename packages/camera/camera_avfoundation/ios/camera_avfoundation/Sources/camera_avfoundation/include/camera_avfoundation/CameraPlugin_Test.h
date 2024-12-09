@@ -7,6 +7,7 @@
 #import "CameraPlugin.h"
 #import "FLTCam.h"
 #import "messages.g.h"
+#import "FLTCameraDeviceDiscovery.h"
 
 /// APIs exposed for unit testing.
 @interface CameraPlugin ()
@@ -25,7 +26,8 @@
 /// unit testing.
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI NS_DESIGNATED_INITIALIZER;
+                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI
+                 deviceDiscovery:(id<FLTCameraDeviceDiscovery>)deviceDiscovery NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.
 - (instancetype)init NS_UNAVAILABLE;
