@@ -173,6 +173,11 @@ abstract class CameraPlatform extends PlatformInterface {
     throw UnimplementedError('resumeVideoRecording() is not implemented.');
   }
 
+  /// Check whether this platform supports image streaming via [onStreamedFrameAvailable].
+  bool supportsImageStreaming() {
+    throw UnimplementedError('supportsImageStreaming() is not implemented.');
+  }
+
   /// A new streamed frame is available.
   ///
   /// Listening to this stream will start streaming, and canceling will stop.
