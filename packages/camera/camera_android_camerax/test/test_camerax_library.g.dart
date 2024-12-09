@@ -598,6 +598,8 @@ abstract class TestDeviceOrientationManagerHostApi {
 
   String getUiOrientation();
 
+  int getDeviceOrientation();
+
   static void setup(TestDeviceOrientationManagerHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -677,6 +679,24 @@ abstract class TestDeviceOrientationManagerHostApi {
                 (Object? message) async {
           // ignore message
           final String output = api.getUiOrientation();
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDeviceOrientation',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          // ignore message
+          final int output = api.getDeviceOrientation();
           return <Object?>[output];
         });
       }
@@ -2255,23 +2275,26 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
     } else if (value is CameraStateTypeData) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is ExposureCompensationRange) {
+    } else if (value is DeviceOrientationInfo) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is LiveDataSupportedTypeData) {
+    } else if (value is ExposureCompensationRange) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is MeteringPointInfo) {
+    } else if (value is LiveDataSupportedTypeData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is ResolutionInfo) {
+    } else if (value is MeteringPointInfo) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is VideoQualityData) {
+    } else if (value is ResolutionInfo) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is VideoRecordEventData) {
+    } else if (value is VideoQualityData) {
       buffer.putUint8(135);
+      writeValue(buffer, value.encode());
+    } else if (value is VideoRecordEventData) {
+      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2286,16 +2309,18 @@ class _TestCaptureRequestOptionsHostApiCodec extends StandardMessageCodec {
       case 129:
         return CameraStateTypeData.decode(readValue(buffer)!);
       case 130:
-        return ExposureCompensationRange.decode(readValue(buffer)!);
+        return DeviceOrientationInfo.decode(readValue(buffer)!);
       case 131:
-        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
+        return ExposureCompensationRange.decode(readValue(buffer)!);
       case 132:
-        return MeteringPointInfo.decode(readValue(buffer)!);
+        return LiveDataSupportedTypeData.decode(readValue(buffer)!);
       case 133:
-        return ResolutionInfo.decode(readValue(buffer)!);
+        return MeteringPointInfo.decode(readValue(buffer)!);
       case 134:
-        return VideoQualityData.decode(readValue(buffer)!);
+        return ResolutionInfo.decode(readValue(buffer)!);
       case 135:
+        return VideoQualityData.decode(readValue(buffer)!);
+      case 136:
         return VideoRecordEventData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

@@ -11,6 +11,7 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationInfo;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerHostApi;
 
 public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationManagerHostApi {
@@ -58,9 +59,14 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
             activity,
             isFrontFacing,
             sensorOrientation.intValue(),
-            (DeviceOrientation newOrientation) -> {
+            (DeviceOrientation newOrientation, int newRotation) -> {
+              DeviceOrientationInfo deviceOrientationInfo =
+                  new DeviceOrientationInfo.Builder()
+                      .setUiOrientation(serializeDeviceOrientation(newOrientation))
+                      .setDefaultDisplayRotation(Long.valueOf(newRotation))
+                      .build();
               deviceOrientationManagerFlutterApiImpl.sendDeviceOrientationChangedEvent(
-                  serializeDeviceOrientation(newOrientation), reply -> {});
+                  deviceOrientationInfo, reply -> {});
             });
     deviceOrientationManager.start();
   }
@@ -113,5 +119,12 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
   @NonNull
   public String getUiOrientation() {
     return serializeDeviceOrientation(deviceOrientationManager.getUIOrientation());
+  }
+
+  /** Gets the current device orientation. */
+  @Override
+  @NonNull
+  public Long getDeviceOrientation() {
+    return Long.valueOf(deviceOrientationManager.getDeviceOrientation());
   }
 }
