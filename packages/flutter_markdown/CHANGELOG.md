@@ -1,3 +1,7 @@
+## 0.8.0
+
+* Introduce `MarkdownImageConfig` for `sizedImageBuilder` builder.
+
 ## 0.7.4+3
 
 * Passes a default error builder to image widgets.
