@@ -662,6 +662,9 @@ class CameraPlugin extends CameraPlatform {
   }
 
   @override
+  bool supportsImageStreaming() => false;
+
+  @override
   Future<void> dispose(int cameraId) async {
     try {
       await getCamera(cameraId).dispose();
