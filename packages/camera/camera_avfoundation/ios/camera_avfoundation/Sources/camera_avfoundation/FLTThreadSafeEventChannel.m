@@ -4,14 +4,15 @@
 
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
+#import "./include/camera_avfoundation/Protocols/FLTEventChannelProtocol.h"
 
 @interface FLTThreadSafeEventChannel ()
-@property(nonatomic, strong) FlutterEventChannel *channel;
+@property(nonatomic, strong) id<FLTEventChannelProtocol> channel;
 @end
 
 @implementation FLTThreadSafeEventChannel
 
-- (instancetype)initWithEventChannel:(FlutterEventChannel *)channel {
+- (instancetype)initWithEventChannel:(id<FLTEventChannelProtocol>)channel {
   self = [super init];
   if (self) {
     _channel = channel;

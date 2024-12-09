@@ -3,9 +3,6 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
-#if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
-@import camera_avfoundation.Test;
-#endif
 @import AVFoundation;
 
 NS_ASSUME_NONNULL_BEGIN

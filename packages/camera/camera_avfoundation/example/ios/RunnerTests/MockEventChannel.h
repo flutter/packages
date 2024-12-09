@@ -3,12 +3,12 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
-@import AVFoundation;
+@import Flutter;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MockDeviceOrientationProvider : NSObject <FLTDeviceOrientationProviding>
-@property(nonatomic, assign) UIDeviceOrientation orientation;
+@interface MockEventChannel : NSObject <FLTEventChannelProtocol>
+@property(nonatomic, copy) void (^setStreamHandlerStub)(NSObject<FlutterStreamHandler> *);
 @end
 
 NS_ASSUME_NONNULL_END
