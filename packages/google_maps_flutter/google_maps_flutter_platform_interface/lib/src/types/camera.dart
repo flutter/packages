@@ -331,3 +331,13 @@ class CameraUpdateZoomTo extends CameraUpdate {
   @override
   Object toJson() => <Object>['zoomTo', zoom];
 }
+
+/// Defines a animation configuration for camera updates.
+@immutable
+class CameraUpdateAnimationConfiguration {
+  /// Creates a immutable animation configuration for camera updates.
+  const CameraUpdateAnimationConfiguration({this.duration});
+
+  /// The duration of the animation.
+  final Duration? duration;
+}
