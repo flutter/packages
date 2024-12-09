@@ -14,12 +14,15 @@ public class PathProviderPluginTest {
     assertNull(plugin.getStorageDirectoryString(Messages.StorageDirectory.ROOT));
     assertEquals("music", plugin.getStorageDirectoryString(Messages.StorageDirectory.MUSIC));
     assertEquals("podcasts", plugin.getStorageDirectoryString(Messages.StorageDirectory.PODCASTS));
-    assertEquals("ringtones", plugin.getStorageDirectoryString(Messages.StorageDirectory.RINGTONES));
+    assertEquals(
+        "ringtones", plugin.getStorageDirectoryString(Messages.StorageDirectory.RINGTONES));
     assertEquals("alarms", plugin.getStorageDirectoryString(Messages.StorageDirectory.ALARMS));
-    assertEquals("notifications", plugin.getStorageDirectoryString(Messages.StorageDirectory.NOTIFICATIONS));
+    assertEquals(
+        "notifications", plugin.getStorageDirectoryString(Messages.StorageDirectory.NOTIFICATIONS));
     assertEquals("pictures", plugin.getStorageDirectoryString(Messages.StorageDirectory.PICTURES));
     assertEquals("movies", plugin.getStorageDirectoryString(Messages.StorageDirectory.MOVIES));
-    assertEquals("downloads", plugin.getStorageDirectoryString(Messages.StorageDirectory.DOWNLOADS));
+    assertEquals(
+        "downloads", plugin.getStorageDirectoryString(Messages.StorageDirectory.DOWNLOADS));
     assertEquals("dcim", plugin.getStorageDirectoryString(Messages.StorageDirectory.DCIM));
   }
 }
