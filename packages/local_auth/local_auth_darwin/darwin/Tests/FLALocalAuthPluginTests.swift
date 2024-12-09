@@ -390,7 +390,7 @@ class FLALocalAuthPluginTests: XCTestCase {
 
     #if os(macOS)
       self.waitForExpectations(timeout: timeout)
-      XCTAssertEqual(stubAlertFactory.alert.presentingWindow, viewProvider.view.window)
+      XCTAssertEqual(stubAlertFactory.alert.presentingWindow, stubViewProvider.view.window)
     #else
       XCTAssertTrue(stubAlertFactory.alertController.presented)
       XCTAssertEqual(stubAlertFactory.alertController.actions.count, 2)
