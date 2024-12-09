@@ -1,3 +1,7 @@
+## 1.4.3
+
+* Converts implementation to Swift.
+
 ## 1.4.2
 
 * Adds compatibility with `intl` 0.20.0.
