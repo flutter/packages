@@ -1,3 +1,7 @@
+## 0.2.7
+
+* Adds API support query for image streaming.
+
 ## 0.2.6+1
 
 * Fixes black bars on camera preview [#122966](https://github.com/flutter/flutter/issues/122966).

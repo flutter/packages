@@ -235,6 +235,9 @@ class CameraWindows extends CameraPlatform {
   }
 
   @override
+  bool supportsImageStreaming() => false;
+
+  @override
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
     // TODO(jokerttu): Implement flash mode support, https://github.com/flutter/flutter/issues/97537.
     throw UnimplementedError('setFlashMode() is not implemented.');
