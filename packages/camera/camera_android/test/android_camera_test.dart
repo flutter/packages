@@ -726,6 +726,10 @@ void main() {
       verify(mockCameraApi.resumePreview()).called(1);
     });
 
+    test('Should report support for image streaming', () async {
+      expect(camera.supportsImageStreaming(), true);
+    });
+
     test('Should start streaming', () async {
       // Arrange
       // Act
