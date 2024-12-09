@@ -3,6 +3,12 @@
 // found in the LICENSE file.
 
 #if os(macOS)
+  import AppKit
+#elseif os(iOS)
+  import UIKit
+#endif
+
+#if os(macOS)
   protocol Alert {
     var messageText: String { get set }
     func addButton(withTitle title: String) -> NSButton
