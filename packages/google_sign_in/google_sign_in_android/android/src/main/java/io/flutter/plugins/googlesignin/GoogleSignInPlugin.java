@@ -113,13 +113,11 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
    * class for use in other plugins that wrap basic sign-in functionality.
    *
    * <p>All methods in this class assume that they are run to completion before any other method is
-   * invoked. In this context, "run to completion" means that their {@link Messages.Result}
-   * argument has been completed (either successfully or in error). This class provides no
-   * synchronization constructs to guarantee such behavior; callers are responsible for providing
-   * such guarantees.
+   * invoked. In this context, "run to completion" means that their {@link Messages.Result} argument
+   * has been completed (either successfully or in error). This class provides no synchronization
+   * constructs to guarantee such behavior; callers are responsible for providing such guarantees.
    */
-  public static class Delegate
-      implements PluginRegistry.ActivityResultListener, GoogleSignInApi {
+  public static class Delegate implements PluginRegistry.ActivityResultListener, GoogleSignInApi {
     private static final int REQUEST_CODE_SIGNIN = 53293;
     private static final int REQUEST_CODE_RECOVER_AUTH = 53294;
     @VisibleForTesting static final int REQUEST_CODE_REQUEST_SCOPE = 53295;
