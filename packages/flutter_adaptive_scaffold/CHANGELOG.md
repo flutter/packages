@@ -1,3 +1,7 @@
+## 0.3.2
+
+* Add IconThemeData and TextStyle to `standardBottomNavigationBar`.
+
 ## 0.3.1
 
 * Use improved MediaQuery methods.
