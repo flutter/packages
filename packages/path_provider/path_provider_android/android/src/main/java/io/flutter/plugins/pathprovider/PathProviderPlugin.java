@@ -8,6 +8,8 @@ import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.pathprovider.Messages.PathProviderApi;
@@ -94,7 +96,8 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
     return paths;
   }
 
-  private String getStorageDirectoryString(@NonNull Messages.StorageDirectory directory) {
+  @VisibleForTesting
+  String getStorageDirectoryString(@NonNull Messages.StorageDirectory directory) {
     switch (directory) {
       case ROOT:
         return null;
