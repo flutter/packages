@@ -280,16 +280,17 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
     #if os(macOS)
-      var alert = alertFactory.createAlert()
-      alert.messageText = message
-      alert.addButton(withTitle: dismissButtonTitle)
+      DispatchQueue.main.async {
+        var alert = self.alertFactory.createAlert()
+        alert.messageText = message
+        alert.addButton(withTitle: dismissButtonTitle)
 
-      guard let window = viewProvider.view.window else { return }
+        guard let window = self.viewProvider.view.window else { return }
 
-      alert.beginSheetModal(for: window) { _ in
-        self.handleSucceeded(succeeded: false, completion: completion)
+        alert.beginSheetModal(for: window) { _ in
+          self.handleSucceeded(succeeded: false, completion: completion)
+        }
       }
-
     #elseif os(iOS)
       let alert = alertFactory.createAlertController(
         title: "",
