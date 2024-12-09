@@ -66,7 +66,6 @@ void main() {
 
     // Verify image dimensions are as expected
     expect(image, isNotNull);
-    print(Size(image.height.toDouble(), image.width.toDouble()));
     return assertExpectedDimensions(
         expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
   }
@@ -82,13 +81,11 @@ void main() {
       bool previousPresetExactlySupported = true;
       for (final MapEntry<ResolutionPreset, Size> preset
           in presetExpectedSizes.entries) {
-        print(cameraDescription.lensDirection);
         final CameraController controller = CameraController(cameraDescription,
             mediaSettings: MediaSettings(resolutionPreset: preset.key));
         await controller.initialize();
         final bool presetExactlySupported =
-        await testCaptureImageResolution(controller, preset.key);
-        print(preset.key);
+            await testCaptureImageResolution(controller, preset.key);
         assert(!(!previousPresetExactlySupported && presetExactlySupported),
             'The camera took higher resolution pictures at a lower resolution.');
         previousPresetExactlySupported = presetExactlySupported;
