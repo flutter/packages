@@ -25,6 +25,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     return _api.initialize();
   }
 
+  // TODO(FirentisTFW): Rename textureId to playerId everywhere.
   @override
   Future<void> dispose(int textureId) {
     return _api.dispose(textureId);
@@ -56,6 +57,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
+      viewType: _platformVideoViewTypeFromVideoViewType(dataSource.viewType),
     );
 
     return _api.create(options);
@@ -140,13 +142,44 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId) {
-    return Texture(textureId: textureId);
+  Future<void> setMixWithOthers(bool mixWithOthers) {
+    return _api.setMixWithOthers(mixWithOthers);
   }
 
   @override
-  Future<void> setMixWithOthers(bool mixWithOthers) {
-    return _api.setMixWithOthers(mixWithOthers);
+  Widget buildView(int textureId) {
+    return buildViewWithOptions(
+      VideoViewOptions(
+        playerId: textureId,
+        // Texture view was the only supported view type before
+        // buildViewWithOptions was introduced. We pass it here to maintain
+        // backwards compatibility.
+        viewType: VideoViewType.textureView,
+      ),
+    );
+  }
+
+  @override
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    final int playerId = options.playerId;
+
+    return switch (options.viewType) {
+      VideoViewType.textureView => Texture(textureId: playerId),
+      VideoViewType.platformView => _buildPlatformView(playerId),
+    };
+  }
+
+  Widget _buildPlatformView(int playerId) {
+    final PlatformVideoViewCreationParams creationParams =
+        PlatformVideoViewCreationParams(playerId: playerId);
+    return IgnorePointer(
+      // IgnorePointer so that GestureDetector can be used above the platform view.
+      child: UiKitView(
+        viewType: 'plugins.flutter.dev/video_player_ios',
+        creationParams: creationParams,
+        creationParamsCodec: AVFoundationVideoPlayerApi.pigeonChannelCodec,
+      ),
+    );
   }
 
   EventChannel _eventChannelFor(int textureId) {
@@ -168,4 +201,13 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       Duration(milliseconds: pair[1] as int),
     );
   }
+}
+
+PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
+  VideoViewType viewType,
+) {
+  return switch (viewType) {
+    VideoViewType.textureView => PlatformVideoViewType.textureView,
+    VideoViewType.platformView => PlatformVideoViewType.platformView,
+  };
 }
