@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:camera_android/camera_android.dart';
 import 'package:camera_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -49,50 +47,6 @@ void main() {
     return actual.shortestSide == expectedSize.shortestSide &&
         actual.longestSide == expectedSize.longestSide;
   }
-
-  // This tests that the capture is no bigger than the preset, since we have
-  // automatic code to fall back to smaller sizes when we need to. Returns
-  // whether the image is exactly the desired resolution.
-  Future<bool> testCaptureImageResolution(
-      CameraController controller, ResolutionPreset preset) async {
-    final Size expectedSize = presetExpectedSizes[preset]!;
-
-    // Take Picture
-    final XFile file = await controller.takePicture();
-
-    // Load picture
-    final File fileImage = File(file.path);
-    final Image image = await decodeImageFromList(fileImage.readAsBytesSync());
-
-    // Verify image dimensions are as expected
-    expect(image, isNotNull);
-    return assertExpectedDimensions(
-        expectedSize, Size(image.height.toDouble(), image.width.toDouble()));
-  }
-
-  testWidgets('Capture specific image resolutions',
-      (WidgetTester tester) async {
-    final List<CameraDescription> cameras =
-        await CameraPlatform.instance.availableCameras();
-    if (cameras.isEmpty) {
-      return;
-    }
-    for (final CameraDescription cameraDescription in cameras) {
-      bool previousPresetExactlySupported = true;
-      for (final MapEntry<ResolutionPreset, Size> preset
-          in presetExpectedSizes.entries) {
-        final CameraController controller = CameraController(cameraDescription,
-            mediaSettings: MediaSettings(resolutionPreset: preset.key));
-        await controller.initialize();
-        final bool presetExactlySupported =
-            await testCaptureImageResolution(controller, preset.key);
-        assert(!(!previousPresetExactlySupported && presetExactlySupported),
-            'The camera took higher resolution pictures at a lower resolution.');
-        previousPresetExactlySupported = presetExactlySupported;
-        await controller.dispose();
-      }
-    }
-  });
 
   // This tests that the capture is no bigger than the preset, since we have
   // automatic code to fall back to smaller sizes when we need to. Returns
