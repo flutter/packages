@@ -170,12 +170,13 @@ final class StubAuthContext: NSObject, AuthContext {
 class FLALocalAuthPluginTests: XCTestCase {
   func testSuccessfullAuthWithBiometrics() throws {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     let strings = createAuthStrings()
     stubAuthContext.expectBiometrics = true
@@ -208,12 +209,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testSuccessfullAuthWithoutBiometrics() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     let strings = createAuthStrings()
     stubAuthContext.evaluateResponse = true
@@ -243,12 +245,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedAuthWithBiometrics() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     let strings = createAuthStrings()
     stubAuthContext.expectBiometrics = true
@@ -274,12 +277,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedWithUnknownErrorCode() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     let strings = createAuthStrings()
     stubAuthContext.evaluateError = NSError(domain: "error", code: 99)
@@ -303,12 +307,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testSystemCancelledWithoutStickyAuth() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     let strings = createAuthStrings()
     stubAuthContext.evaluateError = NSError(domain: "error", code: LAError.systemCancel.rawValue)
@@ -332,12 +337,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedAuthWithoutBiometrics() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     let strings = createAuthStrings()
     stubAuthContext.evaluateError = NSError(
@@ -362,12 +368,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testFailedAuthShowsAlert() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     let strings = createAuthStrings()
     stubAuthContext.canEvaluateError = NSError(
@@ -390,21 +397,22 @@ class FLALocalAuthPluginTests: XCTestCase {
 
     #if os(macOS)
       self.waitForExpectations(timeout: timeout)
-      XCTAssertEqual(stubAlertFactory.alert.presentingWindow, stubViewProvider.view.window)
+      XCTAssertEqual(alertFactory.alert.presentingWindow, viewProvider.view.window)
     #else
-      XCTAssertTrue(stubAlertFactory.alertController.presented)
-      XCTAssertEqual(stubAlertFactory.alertController.actions.count, 2)
+      XCTAssertTrue(alertFactory.alertController.presented)
+      XCTAssertEqual(alertFactory.alertController.actions.count, 2)
     #endif
   }
 
   func testLocalizedFallbackTitle() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     var strings = createAuthStrings()
     strings.localizedFallbackTitle = "a title"
@@ -423,12 +431,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testSkippedLocalizedFallbackTitle() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     var strings = createAuthStrings()
     strings.localizedFallbackTitle = nil
@@ -447,12 +456,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testDeviceSupportsBiometrics_withEnrolledHardware() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.evaluateResponse = true
@@ -472,12 +482,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testDeviceSupportsBiometrics_withNonEnrolledHardware() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.canEvaluateError = NSError(
@@ -499,12 +510,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testDeviceSupportsBiometrics_withNoBiometricHardware() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.canEvaluateError = NSError(domain: "error", code: 0)
@@ -524,12 +536,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testGetEnrolledBiometricsWithFaceID() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.evaluateResponse = true
@@ -554,12 +567,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testGetEnrolledBiometricsWithTouchID() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.evaluateResponse = true
@@ -581,12 +595,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testGetEnrolledBiometricsWithoutEnrolledHardware() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
     stubAuthContext.canEvaluateError = NSError(
@@ -608,12 +623,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testIsDeviceSupportedHandlesSupported() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     stubAuthContext.evaluateResponse = true
 
@@ -632,12 +648,13 @@ class FLALocalAuthPluginTests: XCTestCase {
 
   func testIsDeviceSupportedHandlesUnsupported() {
     let stubAuthContext = StubAuthContext()
-    let stubAuthContextFactory = StubAuthContextFactory(contexts: [stubAuthContext])
-    let stubAlertFactory = StubAlertFactory()
-    let stubViewProvider = StubViewProvider()
+    let alertFactory = StubAlertFactory()
+
+    let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
-      authContextFactory: stubAuthContextFactory, alertFactory: stubAlertFactory,
-      viewProvider: stubViewProvider)
+      authContextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     // An arbitrary error to cause canEvaluatePolicy to return false.
     stubAuthContext.canEvaluateError = NSError(domain: "error", code: 1)
