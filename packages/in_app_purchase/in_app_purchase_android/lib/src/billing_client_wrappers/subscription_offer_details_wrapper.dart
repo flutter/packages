@@ -26,6 +26,7 @@ class SubscriptionOfferDetailsWrapper {
     required this.offerTags,
     required this.offerIdToken,
     required this.pricingPhases,
+    this.installmentPlanDetails,
   });
 
   /// Factory for creating a [SubscriptionOfferDetailsWrapper] from a [Map]
@@ -59,6 +60,10 @@ class SubscriptionOfferDetailsWrapper {
   @JsonKey(defaultValue: <PricingPhaseWrapper>[])
   final List<PricingPhaseWrapper> pricingPhases;
 
+  /// Represents additional details of an installment subscription plan.
+  @JsonKey(defaultValue: null)
+  final InstallmentPlanDetailsWrapper? installmentPlanDetails;
+
   @override
   bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
@@ -70,7 +75,8 @@ class SubscriptionOfferDetailsWrapper {
         other.offerId == offerId &&
         listEquals(other.offerTags, offerTags) &&
         other.offerIdToken == offerIdToken &&
-        listEquals(other.pricingPhases, pricingPhases);
+        listEquals(other.pricingPhases, pricingPhases) &&
+        installmentPlanDetails == other.installmentPlanDetails;
   }
 
   @override
@@ -81,6 +87,7 @@ class SubscriptionOfferDetailsWrapper {
       offerTags.hashCode,
       offerIdToken.hashCode,
       pricingPhases.hashCode,
+      installmentPlanDetails.hashCode,
     );
   }
 }
@@ -157,4 +164,62 @@ class PricingPhaseWrapper {
         priceCurrencyCode,
         recurrenceMode,
       );
+}
+
+/// Represents additional details of an installment subscription plan.
+@JsonSerializable()
+@immutable
+class InstallmentPlanDetailsWrapper {
+  /// Creates a [InstallmentPlanDetailsWrapper].
+  const InstallmentPlanDetailsWrapper({
+    required this.commitmentPaymentsCount,
+    required this.subsequentCommitmentPaymentsCount,
+  });
+
+  /// Factory for creating a [InstallmentPlanDetailsWrapper] from a [Map]
+  /// with the plan details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
+  factory InstallmentPlanDetailsWrapper.fromJson(Map<String, dynamic> map) =>
+      _$InstallmentPlanDetailsWrapperFromJson(map);
+
+  /// Committed payments count after a user signs up for this subscription plan.
+  ///
+  /// For example, for a monthly subscription plan with commitmentPaymentsCount
+  /// as 12, users will be charged monthly for 12 month after initial signup.
+  /// User cancellation won't take effect until all 12 committed payments are finished.
+  @JsonKey(defaultValue: 0)
+  final int commitmentPaymentsCount;
+
+  /// Subsequent committed payments count after this subscription plan renews.
+  ///
+  /// For example, for a monthly subscription plan with subsequentCommitmentPaymentsCount
+  /// as 12, when the subscription plan renews, users will be committed to another fresh
+  /// 12 monthly payments.
+  ///
+  /// Note: Returns 0 if the installment plan doesn't have any subsequent committment,
+  /// which means this subscription plan will fall back to a normal non-installment
+  /// monthly plan when the plan renews.
+  @JsonKey(defaultValue: 0)
+  final int subsequentCommitmentPaymentsCount;
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+
+    return other is InstallmentPlanDetailsWrapper &&
+        other.commitmentPaymentsCount == commitmentPaymentsCount &&
+        other.subsequentCommitmentPaymentsCount ==
+            subsequentCommitmentPaymentsCount;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      commitmentPaymentsCount.hashCode,
+      subsequentCommitmentPaymentsCount.hashCode,
+    );
+  }
 }

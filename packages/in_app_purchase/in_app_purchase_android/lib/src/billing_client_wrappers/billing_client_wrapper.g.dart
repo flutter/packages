@@ -33,15 +33,6 @@ const _$ProductTypeEnumMap = {
   ProductType.subs: 'subs',
 };
 
-const _$ProrationModeEnumMap = {
-  ProrationMode.unknownSubscriptionUpgradeDowngradePolicy: 0,
-  ProrationMode.immediateWithTimeProration: 1,
-  ProrationMode.immediateAndChargeProratedPrice: 2,
-  ProrationMode.immediateWithoutProration: 3,
-  ProrationMode.deferred: 4,
-  ProrationMode.immediateAndChargeFullPrice: 5,
-};
-
 const _$ReplacementModeEnumMap = {
   ReplacementMode.unknownReplacementMode: 0,
   ReplacementMode.withTimeProration: 1,

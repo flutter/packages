@@ -11,6 +11,7 @@ import '../../billing_client_wrappers.dart';
 import '../messages.g.dart';
 import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
+import 'pending_purchases_params_wrapper.dart';
 
 part 'billing_client_wrapper.g.dart';
 
@@ -81,18 +82,6 @@ class BillingClient {
     return _hostApi.isReady();
   }
 
-  /// Enable the [BillingClientWrapper] to handle pending purchases.
-  ///
-  /// **Deprecation warning:** it is no longer required to call
-  /// [enablePendingPurchases] when initializing your application.
-  @Deprecated(
-      'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
-  void enablePendingPurchases() {
-    // No-op, until it is time to completely remove this method from the API.
-  }
-
   /// Calls
   /// [`BillingClient#startConnection(BillingClientStateListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.html#startconnection)
   /// to create and connect a `BillingClient` instance.
@@ -103,14 +92,23 @@ class BillingClient {
   ///
   /// This triggers the creation of a new `BillingClient` instance in Java if
   /// one doesn't already exist.
-  Future<BillingResultWrapper> startConnection(
-      {required OnBillingServiceDisconnected onBillingServiceDisconnected,
-      BillingChoiceMode billingChoiceMode =
-          BillingChoiceMode.playBillingOnly}) async {
+  Future<BillingResultWrapper> startConnection({
+    required OnBillingServiceDisconnected onBillingServiceDisconnected,
+    BillingChoiceMode billingChoiceMode = BillingChoiceMode.playBillingOnly,
+    PendingPurchasesParamsWrapper? pendingPurchasesParams,
+  }) async {
     hostCallbackHandler.disconnectCallbacks.add(onBillingServiceDisconnected);
-    return resultWrapperFromPlatform(await _hostApi.startConnection(
+    return resultWrapperFromPlatform(
+      await _hostApi.startConnection(
         hostCallbackHandler.disconnectCallbacks.length - 1,
-        platformBillingChoiceMode(billingChoiceMode)));
+        platformBillingChoiceMode(billingChoiceMode),
+        switch (pendingPurchasesParams) {
+          final PendingPurchasesParamsWrapper params =>
+            pendingPurchasesParamsFromWrapper(params),
+          null => PendingPurchasesParams(enablePrepaidPlans: false)
+        },
+      ),
+    );
   }
 
   /// Calls
@@ -181,7 +179,7 @@ class BillingClient {
   /// existing subscription.
   /// The [oldProduct](https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.SubscriptionUpdateParams.Builder#setOldPurchaseToken(java.lang.String)) and [purchaseToken] are the product id and purchase token that the user is upgrading or downgrading from.
   /// [purchaseToken] must not be `null` if [oldProduct] is not `null`.
-  /// The [prorationMode](https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.SubscriptionUpdateParams.Builder#setReplaceProrationMode(int)) is the mode of proration during subscription upgrade/downgrade.
+  /// The [replacementMode](https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.SubscriptionUpdateParams.Builder#setSubscriptionReplacementMode(int)) is the mode of replacement during subscription upgrade/downgrade.
   /// This value will only be effective if the `oldProduct` is also set.
   Future<BillingResultWrapper> launchBillingFlow(
       {required String product,
@@ -190,15 +188,12 @@ class BillingClient {
       String? obfuscatedProfileId,
       String? oldProduct,
       String? purchaseToken,
-      ProrationMode? prorationMode,
       ReplacementMode? replacementMode}) async {
     assert((oldProduct == null) == (purchaseToken == null),
         'oldProduct and purchaseToken must both be set, or both be null.');
     return resultWrapperFromPlatform(
         await _hostApi.launchBillingFlow(PlatformBillingFlowParams(
       product: product,
-      prorationMode: const ProrationModeConverter().toJson(prorationMode ??
-          ProrationMode.unknownSubscriptionUpgradeDowngradePolicy),
       replacementMode: const ReplacementModeConverter()
           .toJson(replacementMode ?? ReplacementMode.unknownReplacementMode),
       offerToken: offerToken,
@@ -253,6 +248,7 @@ class BillingClient {
   ///
   /// This wraps
   /// [`BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener)`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient#queryPurchaseHistoryAsync(com.android.billingclient.api.QueryPurchaseHistoryParams,%20com.android.billingclient.api.PurchaseHistoryResponseListener)).
+  @Deprecated('Use queryPurchases')
   Future<PurchasesHistoryResult> queryPurchaseHistory(
       ProductType productType) async {
     return purchaseHistoryResultFromPlatform(
@@ -551,78 +547,6 @@ class ProductTypeConverter implements JsonConverter<ProductType, String?> {
 
   @override
   String toJson(ProductType object) => _$ProductTypeEnumMap[object]!;
-}
-
-/// Enum representing the proration mode.
-///
-/// When upgrading or downgrading a subscription, set this mode to provide details
-/// about the proration that will be applied when the subscription changes.
-///
-/// Wraps [`BillingFlowParams.ProrationMode`](https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode)
-/// See the linked documentation for an explanation of the different constants.
-@JsonEnum(alwaysCreate: true)
-enum ProrationMode {
-// WARNING: Changes to this class need to be reflected in our generated code.
-// Run `flutter packages pub run build_runner watch` to rebuild and watch for
-// further changes.
-
-  /// Unknown upgrade or downgrade policy.
-  @JsonValue(0)
-  unknownSubscriptionUpgradeDowngradePolicy,
-
-  /// Replacement takes effect immediately, and the remaining time will be prorated
-  /// and credited to the user.
-  ///
-  /// This is the current default behavior.
-  @JsonValue(1)
-  immediateWithTimeProration,
-
-  /// Replacement takes effect immediately, and the billing cycle remains the same.
-  ///
-  /// The price for the remaining period will be charged.
-  /// This option is only available for subscription upgrade.
-  @JsonValue(2)
-  immediateAndChargeProratedPrice,
-
-  /// Replacement takes effect immediately, and the new price will be charged on next
-  /// recurrence time.
-  ///
-  /// The billing cycle stays the same.
-  @JsonValue(3)
-  immediateWithoutProration,
-
-  /// Replacement takes effect when the old plan expires, and the new price will
-  /// be charged at the same time.
-  @JsonValue(4)
-  deferred,
-
-  /// Replacement takes effect immediately, and the user is charged full price
-  /// of new plan and is given a full billing cycle of subscription, plus
-  /// remaining prorated time from the old plan.
-  @JsonValue(5)
-  immediateAndChargeFullPrice,
-}
-
-/// Serializer for [ProrationMode].
-///
-/// Use these in `@JsonSerializable()` classes by annotating them with
-/// `@ProrationModeConverter()`.
-class ProrationModeConverter implements JsonConverter<ProrationMode, int?> {
-  /// Default const constructor.
-  const ProrationModeConverter();
-
-  @override
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  ProrationMode fromJson(int? json) {
-    if (json == null) {
-      return ProrationMode.unknownSubscriptionUpgradeDowngradePolicy;
-    }
-    return $enumDecode(_$ProrationModeEnumMap, json);
-  }
-
-  @override
-  int toJson(ProrationMode object) => _$ProrationModeEnumMap[object]!;
 }
 
 /// Enum representing the replacement mode.

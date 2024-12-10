@@ -1,3 +1,13 @@
+## 0.4.0
+
+* Updates Google Play Billing Library to 7.1.1.
+* **BREAKING CHANGES**:
+  * Removes the deprecated `ProrationMode` enum. `ReplacementMode` should be used instead.
+  * Removes the deprecated `BillingClientWrapper.enablePendingPurchases` method.
+  * Bumps `minSdk` to 21
+* Adds `installmentPlanDetails` to `SubscriptionOfferDetailsWrapper`
+* Adds APIs to support pending transactions for subscription prepaid plans (`PendingPurchaseParams`).
+
 ## 0.3.6+12
 
 * Updates README to remove contributor-focused documentation.
