@@ -31,14 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// The current playback position of the video, in milliseconds.
 @property(nonatomic, readonly) int64_t position;
 
-/// Initializes a new instance of FVPVideoPlayer with the given asset, frame updater, display link,
-/// AV factory, and registrar.
+/// Initializes a new instance of FVPVideoPlayer with the given asset, AV factory, and registrar.
 - (instancetype)initWithAsset:(NSString *)asset
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
-/// Initializes a new instance of FVPVideoPlayer with the given URL, frame updater, display link,
-/// HTTP headers, AV factory, and registrar.
+/// Initializes a new instance of FVPVideoPlayer with the given URL, HTTP headers, AV factory, and
+/// registrar.
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
