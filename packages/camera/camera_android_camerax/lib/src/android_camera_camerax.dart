@@ -865,68 +865,68 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final Widget cameraPreview = Texture(textureId: cameraId);
-    final Map<DeviceOrientation, int> degreesForDeviceOrientation =
-        <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 90,
-      DeviceOrientation.portraitDown: 180,
-      DeviceOrientation.landscapeLeft: 270,
-    };
-    int naturalDeviceOrientationDegrees =
-        degreesForDeviceOrientation[naturalOrientation]!;
+    return Texture(textureId: cameraId);
+    // final Map<DeviceOrientation, int> degreesForDeviceOrientation =
+    //     <DeviceOrientation, int>{
+    //   DeviceOrientation.portraitUp: 0,
+    //   DeviceOrientation.landscapeRight: 90,
+    //   DeviceOrientation.portraitDown: 180,
+    //   DeviceOrientation.landscapeLeft: 270,
+    // };
+    // int naturalDeviceOrientationDegrees =
+    //     degreesForDeviceOrientation[naturalOrientation]!;
 
-    if (isPreviewPreTransformed) {
-      // If the camera preview is backed by a SurfaceTexture, the transformation
-      // needed to correctly rotate the preview has already been applied.
-      // However, we may need to correct the camera preview rotation if the
-      // device is naturally landscape-oriented.
-      if (naturalOrientation == DeviceOrientation.landscapeLeft ||
-          naturalOrientation == DeviceOrientation.landscapeRight) {
-        final int quarterTurnsToCorrectForLandscape =
-            (-naturalDeviceOrientationDegrees + 360) ~/ 4;
-        return RotatedBox(
-            quarterTurns: quarterTurnsToCorrectForLandscape,
-            child: cameraPreview);
-      }
-      return cameraPreview;
-    }
+    // if (isPreviewPreTransformed) {
+    //   // If the camera preview is backed by a SurfaceTexture, the transformation
+    //   // needed to correctly rotate the preview has already been applied.
+    //   // However, we may need to correct the camera preview rotation if the
+    //   // device is naturally landscape-oriented.
+    //   if (naturalOrientation == DeviceOrientation.landscapeLeft ||
+    //       naturalOrientation == DeviceOrientation.landscapeRight) {
+    //     final int quarterTurnsToCorrectForLandscape =
+    //         (-naturalDeviceOrientationDegrees + 360) ~/ 4;
+    //     return RotatedBox(
+    //         quarterTurns: quarterTurnsToCorrectForLandscape,
+    //         child: cameraPreview);
+    //   }
+    //   return cameraPreview;
+    // }
 
-    // Fix for the rotation of the camera preview not backed by a SurfaceTexture
-    // with respect to the naturalOrientation of the device:
+    // // Fix for the rotation of the camera preview not backed by a SurfaceTexture
+    // // with respect to the naturalOrientation of the device:
 
-    final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
+    // final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
 
-    if (signForCameraDirection == 1 &&
-        (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
-            currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
-      // For front-facing cameras, the image buffer is rotated counterclockwise,
-      // so we determine the rotation needed to correct the camera preview with
-      // respect to the naturalOrientation of the device based on the inverse of
-      // naturalOrientation.
-      naturalDeviceOrientationDegrees += 180;
-    }
+    // if (signForCameraDirection == 1 &&
+    //     (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
+    //         currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
+    //   // For front-facing cameras, the image buffer is rotated counterclockwise,
+    //   // so we determine the rotation needed to correct the camera preview with
+    //   // respect to the naturalOrientation of the device based on the inverse of
+    //   // naturalOrientation.
+    //   naturalDeviceOrientationDegrees += 180;
+    // }
 
-    // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
-    // for more context on this formula.
-    final double rotation = (sensorOrientation +
-            naturalDeviceOrientationDegrees * signForCameraDirection +
-            360) %
-        360;
-    int quarterTurnsToCorrectPreview = rotation ~/ 90;
+    // // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
+    // // for more context on this formula.
+    // final double rotation = (sensorOrientation +
+    //         naturalDeviceOrientationDegrees * signForCameraDirection +
+    //         360) %
+    //     360;
+    // int quarterTurnsToCorrectPreview = rotation ~/ 90;
 
-    if (naturalOrientation == DeviceOrientation.landscapeLeft ||
-        naturalOrientation == DeviceOrientation.landscapeRight) {
-      // We may need to correct the camera preview rotation if the device is
-      // naturally landscape-oriented.
-      quarterTurnsToCorrectPreview +=
-          (-naturalDeviceOrientationDegrees + 360) ~/ 4;
-      return RotatedBox(
-          quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
-    }
+    // if (naturalOrientation == DeviceOrientation.landscapeLeft ||
+    //     naturalOrientation == DeviceOrientation.landscapeRight) {
+    //   // We may need to correct the camera preview rotation if the device is
+    //   // naturally landscape-oriented.
+    //   quarterTurnsToCorrectPreview +=
+    //       (-naturalDeviceOrientationDegrees + 360) ~/ 4;
+    //   return RotatedBox(
+    //       quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
+    // }
 
-    return RotatedBox(
-        quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
+    // return RotatedBox(
+    //     quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
   }
 
   /// Captures an image and returns the file where it was saved.
