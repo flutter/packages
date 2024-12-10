@@ -1,3 +1,7 @@
+## 0.1.0
+
+* Adds H5 Games Ads API as `h5` library.
+
 ## 0.0.2
 
 * **Breaking changes**: Reshuffles API exports:
