@@ -39,6 +39,7 @@ private val Context.sharedPreferencesDataStore: DataStore<Preferences> by
 /// SharedPreferencesPlugin
 class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   private lateinit var context: Context
+  private lateinit var backend: SharedPreferencesBackend
 
   private var listEncoder = ListEncoder() as SharedPreferencesListEncoder
 
@@ -51,7 +52,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
     this.context = context
     try {
       SharedPreferencesAsyncApi.setUp(messenger, this, "data_store")
-      SharedPreferencesBackend(messenger, context, listEncoder)
+      backend = SharedPreferencesBackend(messenger, context, listEncoder)
     } catch (ex: Exception) {
       Log.e(TAG, "Received exception while setting up SharedPreferencesPlugin", ex)
     }
@@ -63,7 +64,9 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-    SharedPreferencesAsyncApi.setUp(binding.binaryMessenger, null)
+    SharedPreferencesAsyncApi.setUp(binding.binaryMessenger, null, "data_store")
+    backend.tearDown()
+    backend = null
   }
 
   /** Adds property to data store of type bool. */
@@ -242,6 +245,10 @@ class SharedPreferencesBackend(
     }
   }
 
+  fun tearDown() {
+    SharedPreferencesAsyncApi.setUp(messenger, null, "shared_preferences")
+  }
+
   private fun createSharedPreferences(options: SharedPreferencesPigeonOptions): SharedPreferences {
     return if (options.fileName == null) {
       PreferenceManager.getDefaultSharedPreferences(context)
@@ -405,24 +412,16 @@ internal fun transformPref(value: Any?, listEncoder: SharedPreferencesListEncode
 /** Class that provides tools for encoding and decoding List<String> to String and back. */
 class ListEncoder : SharedPreferencesListEncoder {
   override fun encode(list: List<String>): String {
-    try {
-      val byteStream = ByteArrayOutputStream()
-      val stream = ObjectOutputStream(byteStream)
-      stream.writeObject(list)
-      stream.flush()
-      return Base64.encodeToString(byteStream.toByteArray(), 0)
-    } catch (e: RuntimeException) {
-      throw RuntimeException(e)
-    }
+    val byteStream = ByteArrayOutputStream()
+    val stream = ObjectOutputStream(byteStream)
+    stream.writeObject(list)
+    stream.flush()
+    return Base64.encodeToString(byteStream.toByteArray(), 0)
   }
 
   override fun decode(listString: String): List<String> {
-    try {
-      val byteArray = Base64.decode(listString, 0)
-      val stream = StringListObjectInputStream(ByteArrayInputStream(byteArray))
-      return (stream.readObject() as List<*>).filterIsInstance<String>()
-    } catch (e: RuntimeException) {
-      throw RuntimeException(e)
-    }
+    val byteArray = Base64.decode(listString, 0)
+    val stream = StringListObjectInputStream(ByteArrayInputStream(byteArray))
+    return (stream.readObject() as List<*>).filterIsInstance<String>()
   }
 }

@@ -17,6 +17,8 @@ public class MainActivity extends FlutterActivity {
     super.configureFlutterEngine(flutterEngine);
     SharedPreferences preferences =
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+    // This call adds a preference for later testing in the Dart integration tests.
     preferences
         .edit()
         .putString("thisStringIsWrittenInTheExampleAppJavaCode", "testString")

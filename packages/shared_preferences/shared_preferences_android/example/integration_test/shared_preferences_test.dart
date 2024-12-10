@@ -507,8 +507,8 @@ void main() {
   const double testDouble = 3.14159;
   const List<String> testList = <String>['foo', 'bar'];
 
-  SharedPreferencesAsyncAndroidOptions getOptions(
-    bool useDataStore, {
+  SharedPreferencesAsyncAndroidOptions getOptions({
+    required bool useDataStore,
     String? fileName,
   }) {
     return SharedPreferencesAsyncAndroidOptions(
@@ -542,7 +542,7 @@ void main() {
 
       testWidgets('set and get String with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
 
@@ -552,7 +552,7 @@ void main() {
 
       testWidgets('set and get bool with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
 
@@ -562,7 +562,7 @@ void main() {
 
       testWidgets('set and get int with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
 
@@ -572,7 +572,7 @@ void main() {
 
       testWidgets('set and get double with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
 
@@ -583,7 +583,7 @@ void main() {
       testWidgets('set and get StringList with $backend',
           (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
 
@@ -594,7 +594,7 @@ void main() {
       testWidgets('getStringList returns mutable list with $backend',
           (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
 
@@ -607,7 +607,7 @@ void main() {
 
       testWidgets('getPreferences with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
@@ -634,7 +634,7 @@ void main() {
       testWidgets('getPreferences with filter with $backend',
           (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
@@ -659,7 +659,7 @@ void main() {
 
       testWidgets('getKeys with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
@@ -685,7 +685,7 @@ void main() {
 
       testWidgets('getKeys with filter with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
@@ -710,7 +710,7 @@ void main() {
 
       testWidgets('clear with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
@@ -735,7 +735,7 @@ void main() {
 
       testWidgets('clear with filter with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
-            getOptions(useDataStore, fileName: 'notDefault');
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
         final SharedPreferencesAsyncPlatform preferences = getPreferences();
         await clearPreferences(preferences, options);
         await Future.wait(<Future<void>>[
@@ -766,9 +766,9 @@ void main() {
   testWidgets('Shared Preferences works with multiple files',
       (WidgetTester _) async {
     final SharedPreferencesAsyncAndroidOptions options1 =
-        getOptions(false, fileName: 'file1');
+        getOptions(useDataStore: false, fileName: 'file1');
     final SharedPreferencesAsyncAndroidOptions options2 =
-        getOptions(false, fileName: 'file2');
+        getOptions(useDataStore: false, fileName: 'file2');
     final SharedPreferencesAsyncPlatform preferences = getPreferences();
     await clearPreferences(preferences, options1);
     await clearPreferences(preferences, options2);
@@ -781,7 +781,8 @@ void main() {
 
   testWidgets('Shared Preferences can read default sharedPreferences',
       (WidgetTester _) async {
-    final SharedPreferencesAsyncAndroidOptions options = getOptions(false);
+    final SharedPreferencesAsyncAndroidOptions options =
+        getOptions(useDataStore: false);
     final SharedPreferencesAsyncPlatform preferences = getPreferences();
 
     expect(
