@@ -46,6 +46,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    kotlinOptions {
+        jvmTarget = '11'
+        allWarningsAsErrors = true
+    }
 }
 
 flutter {

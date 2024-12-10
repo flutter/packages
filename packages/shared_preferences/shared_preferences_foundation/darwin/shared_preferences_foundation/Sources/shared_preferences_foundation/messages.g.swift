@@ -86,7 +86,7 @@ struct SharedPreferencesPigeonOptions {
   }
 }
 
-private class messagesPigeonCodecReader: FlutterStandardReader {
+private class MessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
     case 129:
@@ -97,7 +97,7 @@ private class messagesPigeonCodecReader: FlutterStandardReader {
   }
 }
 
-private class messagesPigeonCodecWriter: FlutterStandardWriter {
+private class MessagesPigeonCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
     if let value = value as? SharedPreferencesPigeonOptions {
       super.writeByte(129)
@@ -108,18 +108,18 @@ private class messagesPigeonCodecWriter: FlutterStandardWriter {
   }
 }
 
-private class messagesPigeonCodecReaderWriter: FlutterStandardReaderWriter {
+private class MessagesPigeonCodecReaderWriter: FlutterStandardReaderWriter {
   override func reader(with data: Data) -> FlutterStandardReader {
-    return messagesPigeonCodecReader(data: data)
+    return MessagesPigeonCodecReader(data: data)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return messagesPigeonCodecWriter(data: data)
+    return MessagesPigeonCodecWriter(data: data)
   }
 }
 
-class messagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = messagesPigeonCodec(readerWriter: messagesPigeonCodecReaderWriter())
+class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
+  static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
@@ -134,7 +134,7 @@ protocol LegacyUserDefaultsApi {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class LegacyUserDefaultsApiSetup {
-  static var codec: FlutterStandardMessageCodec { messagesPigeonCodec.shared }
+  static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `LegacyUserDefaultsApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: LegacyUserDefaultsApi?,
@@ -272,7 +272,7 @@ protocol UserDefaultsApi {
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class UserDefaultsApiSetup {
-  static var codec: FlutterStandardMessageCodec { messagesPigeonCodec.shared }
+  static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `UserDefaultsApi` to handle messages through the `binaryMessenger`.
   static func setUp(
     binaryMessenger: FlutterBinaryMessenger, api: UserDefaultsApi?,
