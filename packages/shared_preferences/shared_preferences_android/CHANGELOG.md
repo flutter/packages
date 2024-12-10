@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Adds `SharedPreferences` support within `SharedPreferencesAsyncAndroid` API.
+
 ## 2.3.4
 
 * Restrict types when decoding preferences.
