@@ -11,8 +11,6 @@ import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
-import android.util.Size;
-import android.hardware.camera2.params.StreamConfigurationMap;
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugins.camera.features.autofocus.FocusMode;
@@ -87,23 +85,6 @@ public final class CameraUtils {
 
       int lensFacing = characteristics.get(CameraCharacteristics.LENS_FACING);
       Messages.PlatformCameraLensDirection lensDirection = lensDirectionFromInteger(lensFacing);
-
-      StreamConfigurationMap configs = characteristics.get(
-              CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-
-//      Size[] outputSizeList = configs.getOutputSizes(256);
-//
-//      System.out.println("----z" + outputSizeList);
-//      System.out.println("camera direction: " + lensDirection);
-//
-//      for (int i = 0; i < outputSizeList.length; i++){
-//        System.out.println("width: " + blah[i].getWidth());
-//        System.out.println("height: " + blah[i].getHeight() + "\n");
-//
-//        // Easier to find the logs from `adb logcat`. cmd + f the below
-//        System.out.println("---------c");
-//      }
-
       Messages.PlatformCameraDescription details =
           new Messages.PlatformCameraDescription.Builder()
               .setName(cameraName)
