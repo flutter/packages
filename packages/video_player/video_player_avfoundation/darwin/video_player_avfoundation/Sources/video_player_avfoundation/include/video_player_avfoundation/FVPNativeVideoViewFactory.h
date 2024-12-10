@@ -4,6 +4,8 @@
 
 // We only support platform views on iOS as of now. Ifdef is used to avoid compilation errors.
 
+#import <TargetConditionals.h>
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
