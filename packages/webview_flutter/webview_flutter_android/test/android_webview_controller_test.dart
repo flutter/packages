@@ -1495,6 +1495,22 @@ void main() {
 
       expect(await controller.getUserAgent(), userAgent);
     });
+
+    test('setAllowFileAccess', () async {
+      final MockWebView mockWebView = MockWebView();
+      final MockWebSettings mockSettings = MockWebSettings();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+        mockSettings: mockSettings,
+      );
+
+      clearInteractions(mockWebView);
+
+      await controller.setAllowFileAccess(true);
+
+      verify(mockWebView.settings).called(1);
+      verify(mockSettings.setAllowFileAccess(true)).called(1);
+    });
   });
 
   test('setMediaPlaybackRequiresUserGesture', () async {
