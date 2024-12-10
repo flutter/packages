@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Adds shared preferences devtools extension
+
 ## 2.3.3
 
 * Clarifies scope of prefix handling in README.
