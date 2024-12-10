@@ -1,3 +1,7 @@
+## 0.6.11
+
+* Adds API support query for image streaming.
+
 ## 0.6.10
 
 * Removes logic that explicitly removes `READ_EXTERNAL_STORAGE` permission that may be implied

@@ -29,6 +29,14 @@ dev_dependencies:
     sdk: flutter
 
 dependency_overrides:
+  # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+  # See: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+  camera_android:
+    path: ../../camera_android
+  camera_android_camerax:
+    path: ../../camera_android_camerax
+  camera_platform_interface:
+    path: ../../camera_platform_interface
   camera_web:
     path: ../../camera_web
 

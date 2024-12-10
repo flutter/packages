@@ -1,3 +1,7 @@
+## 0.9.18
+
+* Adds API support query for image streaming.
+
 ## 0.9.17+5
 
 * Adds ability to use any supported FPS and fixes crash when using unsupported FPS.
