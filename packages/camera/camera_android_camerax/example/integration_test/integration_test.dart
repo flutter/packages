@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax_example/camera_controller.dart';
