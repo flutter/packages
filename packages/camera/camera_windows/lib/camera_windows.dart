@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import 'src/messages.g.dart';
+import 'type_conversion.dart';
 
 /// An implementation of [CameraPlatform] for Windows.
 class CameraWindows extends CameraPlatform {
@@ -232,6 +233,37 @@ class CameraWindows extends CameraPlatform {
   Future<void> resumeVideoRecording(int cameraId) async {
     throw UnsupportedError(
         'resumeVideoRecording() is not supported due to Win32 API limitations.');
+  }
+
+  @override
+  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
+      {CameraImageStreamOptions? options}) {
+    late StreamController<CameraImageData> controller;
+    StreamSubscription<dynamic>? subscription;
+
+    controller = StreamController<CameraImageData>(
+        onListen: () async {
+          final String eventChannelName =
+              await _hostApi.startImageStream(cameraId);
+          final EventChannel imageStreamChannel =
+              EventChannel(eventChannelName);
+          subscription = imageStreamChannel.receiveBroadcastStream().listen(
+              (dynamic image) => controller.add(
+                  cameraImageFromPlatformData(image as Map<dynamic, dynamic>)));
+        },
+        onPause: _onFrameStreamPauseResume,
+        onResume: _onFrameStreamPauseResume,
+        onCancel: () async {
+          // Cancelling the subscription stops the image capture on the native side.
+          await subscription?.cancel();
+        });
+
+    return controller.stream;
+  }
+
+  void _onFrameStreamPauseResume() {
+    throw CameraException('InvalidCall',
+        'Pause and resume are not supported for onStreamedFrameAvailable');
   }
 
   @override
