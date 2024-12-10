@@ -147,7 +147,7 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
     H5BeforeAdCallback? beforeAd,
     H5AfterAdCallback? afterAd,
     required H5BeforeRewardCallback? beforeReward,
-    H5AdDismissedCallback? adDismissed,
+    required H5AdDismissedCallback? adDismissed,
     required H5AdViewedCallback? adViewed,
     H5AdBreakDoneCallback? adBreakDone,
   }) {
@@ -207,7 +207,7 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
     );
   }
 
-  external factory AdBreakPlacement._toJS({
+  factory AdBreakPlacement._toJS({
     JSString? type,
     JSString? name,
     JSFunction? beforeAd,
@@ -216,7 +216,18 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
     JSFunction? adDismissed,
     JSFunction? adViewed,
     JSFunction? adBreakDone,
-  });
+  }) {
+    return <String, Object>{
+      if (type != null) 'type': type,
+      if (name != null) 'name': name,
+      if (beforeAd != null) 'beforeAd': beforeAd,
+      if (afterAd != null) 'afterAd': afterAd,
+      if (beforeReward != null) 'beforeReward': beforeReward,
+      if (adDismissed != null) 'adDismissed': adDismissed,
+      if (adViewed != null) 'adViewed': adViewed,
+      if (adBreakDone != null) 'adBreakDone': adBreakDone,
+    }.jsify()! as AdBreakPlacement;
+  }
 }
 
 /// Parameters for the `adConfig` method call.
@@ -233,7 +244,7 @@ extension type AdConfigParameters._(JSObject _) implements JSObject {
   ///
   /// For more information, see: https://developers.google.com/ad-placement/apis/adconfig#adconfig_parameters
   factory AdConfigParameters({
-    SoundEnabled? sound,
+    required SoundEnabled? sound,
     PreloadAdBreaks? preloadAdBreaks,
     H5OnReadyCallback? onReady,
   }) {
@@ -244,11 +255,17 @@ extension type AdConfigParameters._(JSObject _) implements JSObject {
     );
   }
 
-  external factory AdConfigParameters._toJS({
+  factory AdConfigParameters._toJS({
     JSString? sound,
     JSString? preloadAdBreaks,
     JSFunction? onReady,
-  });
+  }) {
+    return <String, Object>{
+      if (sound != null) 'sound': sound,
+      if (preloadAdBreaks != null) 'preloadAdBreaks': preloadAdBreaks,
+      if (onReady != null) 'onReady': onReady,
+    }.jsify()! as AdConfigParameters;
+  }
 }
 
 /// The parameter passed from the Ad Placement API to the `adBreakDone` callback.
