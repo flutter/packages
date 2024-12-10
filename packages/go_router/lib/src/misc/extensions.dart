@@ -16,9 +16,12 @@ extension GoRouterHelper on BuildContext {
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    String? fragment,
   }) =>
       GoRouter.of(this).namedLocation(name,
-          pathParameters: pathParameters, queryParameters: queryParameters);
+          pathParameters: pathParameters,
+          queryParameters: queryParameters,
+          fragment: fragment);
 
   /// Navigate to a location.
   void go(String location, {Object? extra}) =>

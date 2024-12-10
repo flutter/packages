@@ -274,8 +274,12 @@ void main() {
       );
       expect(find.text('home'), findsOneWidget);
 
-      router.goNamed('route',
-          fragment: '2'); // Use the name instead of the path
+      // Test namedLocation with fragment
+      final String locationWithFragment =
+          router.namedLocation('route', fragment: '2');
+      expect(locationWithFragment, '/route#2');
+      // Navigate using goNamed with fragment
+      router.goNamed('route', fragment: '2');
       await tester.pumpAndSettle();
       // Should redirect to /route/1 without error.
       expect(tester.takeException(), isAssertionError);
