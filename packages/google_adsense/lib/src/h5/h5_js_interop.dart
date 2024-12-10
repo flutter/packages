@@ -4,6 +4,8 @@
 
 import 'dart:js_interop';
 
+import 'package:flutter/widgets.dart' show visibleForTesting;
+
 import '../js_interop/adsbygoogle.dart';
 import 'enums.dart';
 
@@ -251,6 +253,15 @@ extension type AdConfigParameters._(JSObject _) implements JSObject {
 
 /// The parameter passed from the Ad Placement API to the `adBreakDone` callback.
 extension type AdBreakDonePlacementInfo._(JSObject _) implements JSObject {
+  /// Builds an AdBreakDonePlacementInfo object (for tests).
+  @visibleForTesting
+  external factory AdBreakDonePlacementInfo({
+    JSString? breakType,
+    JSString? breakName,
+    JSString? breakFormat,
+    JSString? breakStatus,
+  });
+
   /// The `type` argument passed to `adBreak`.
   BreakType? get breakType => BreakType.values.maybe(_breakType?.toDart);
   @JS('breakType')
