@@ -18,7 +18,7 @@
 
 #if TARGET_OS_IOS
 // We only support platform views on iOS as of now.
-#import "../video_player_avfoundation_ios/include/FVPNativeVideoViewFactory.h"
+#import "./include/video_player_avfoundation/FVPNativeVideoViewFactory.h"
 #endif
 
 #if !__has_feature(objc_arc)
