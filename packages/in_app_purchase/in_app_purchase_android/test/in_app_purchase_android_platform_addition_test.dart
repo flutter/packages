@@ -27,7 +27,7 @@ void main() {
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any)).thenAnswer(
+    when(mockApi.startConnection(any, any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     manager = BillingClientManager(
         billingClientFactory: (PurchasesUpdatedListener listener,
@@ -80,7 +80,7 @@ void main() {
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
-          verify(mockApi.startConnection(any, captureAny));
+          verify(mockApi.startConnection(any, captureAny, any));
       expect(result.callCount, equals(2));
       expect(result.captured.last,
           PlatformBillingChoiceMode.alternativeBillingOnly);
@@ -95,7 +95,7 @@ void main() {
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
-          verify(mockApi.startConnection(any, captureAny));
+          verify(mockApi.startConnection(any, captureAny, any));
       expect(result.callCount, equals(2));
       expect(result.captured.last, PlatformBillingChoiceMode.playBillingOnly);
     });

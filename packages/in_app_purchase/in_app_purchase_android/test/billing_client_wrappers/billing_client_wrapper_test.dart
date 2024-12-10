@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -39,7 +40,7 @@ void main() {
 
   setUp(() {
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any)).thenAnswer(
+    when(mockApi.startConnection(any, any, any)).thenAnswer(
         (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
     billingClient = BillingClient(
         (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {},
@@ -81,7 +82,7 @@ void main() {
     test('returns BillingResultWrapper', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
-      when(mockApi.startConnection(any, any)).thenAnswer(
+      when(mockApi.startConnection(any, any, any)).thenAnswer(
         (_) async => PlatformBillingResult(
           responseCode: const BillingResponseConverter().toJson(responseCode),
           debugMessage: debugMessage,
@@ -100,9 +101,15 @@ void main() {
       await billingClient.startConnection(onBillingServiceDisconnected: () {});
 
       final VerificationResult result =
-          verify(mockApi.startConnection(captureAny, captureAny));
+          verify(mockApi.startConnection(captureAny, captureAny, captureAny));
       expect(result.captured[0], 0);
       expect(result.captured[1], PlatformBillingChoiceMode.playBillingOnly);
+      expect(
+          result.captured[2],
+          isA<PendingPurchasesParams>().having(
+              (PendingPurchasesParams params) => params.enablePrepaidPlans,
+              'enablePrepaidPlans',
+              false));
     });
 
     test('passes billingChoiceMode alternativeBillingOnly when set', () async {
@@ -110,7 +117,8 @@ void main() {
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
 
-      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+      expect(
+          verify(mockApi.startConnection(any, captureAny, any)).captured.first,
           PlatformBillingChoiceMode.alternativeBillingOnly);
     });
 
@@ -125,7 +133,8 @@ void main() {
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
 
-      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+      expect(
+          verify(mockApi.startConnection(any, captureAny, any)).captured.first,
           PlatformBillingChoiceMode.alternativeBillingOnly);
 
       const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
@@ -145,6 +154,21 @@ void main() {
       billingClient.hostCallbackHandler.alternativeBillingListener!(expected);
       expect(completer.isCompleted, isTrue);
       expect(await completer.future, expected);
+    });
+
+    test('passes pendingPurchasesParams when set', () async {
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.alternativeBillingOnly,
+          pendingPurchasesParams:
+              const PendingPurchasesParamsWrapper(enablePrepaidPlans: true));
+
+      expect(
+          verify(mockApi.startConnection(any, any, captureAny)).captured.first,
+          isA<PendingPurchasesParams>().having(
+              (PendingPurchasesParams params) => params.enablePrepaidPlans,
+              'enablePrepaidPlans',
+              true));
     });
 
     test('UserChoiceDetailsWrapper searilization check', () async {
@@ -343,8 +367,8 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeProratedPrice;
+      const ReplacementMode replacementMode =
+          ReplacementMode.chargeProratedPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -352,7 +376,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: replacementMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final VerificationResult result =
@@ -364,8 +388,8 @@ void main() {
       expect(params.oldProduct, equals(dummyOldPurchase.products.first));
       expect(params.obfuscatedProfileId, equals(profileId));
       expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
-      expect(params.prorationMode,
-          const ProrationModeConverter().toJson(prorationMode));
+      expect(params.replacementMode,
+          const ReplacementModeConverter().toJson(replacementMode));
     });
 
     test(
@@ -380,8 +404,7 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeFullPrice;
+      const ReplacementMode replacementMode = ReplacementMode.chargeFullPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -389,7 +412,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: replacementMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final VerificationResult result =
@@ -401,8 +424,8 @@ void main() {
       expect(params.oldProduct, equals(dummyOldPurchase.products.first));
       expect(params.obfuscatedProfileId, equals(profileId));
       expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
-      expect(params.prorationMode,
-          const ProrationModeConverter().toJson(prorationMode));
+      expect(params.replacementMode,
+          const ReplacementModeConverter().toJson(replacementMode));
     });
 
     test('handles null accountId', () async {

@@ -10,6 +10,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.android.billingclient.api.BillingClient;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.UserChoiceBillingListener;
 import io.flutter.Log;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
@@ -21,8 +22,16 @@ final class BillingClientFactoryImpl implements BillingClientFactory {
   public BillingClient createBillingClient(
       @NonNull Context context,
       @NonNull Messages.InAppPurchaseCallbackApi callbackApi,
-      PlatformBillingChoiceMode billingChoiceMode) {
-    BillingClient.Builder builder = BillingClient.newBuilder(context).enablePendingPurchases();
+      PlatformBillingChoiceMode billingChoiceMode,
+      Messages.PendingPurchasesParams pendingPurchasesParams) {
+    PendingPurchasesParams.Builder pendingPurchasesBuilder =
+        PendingPurchasesParams.newBuilder().enableOneTimeProducts();
+    if (pendingPurchasesParams != null && pendingPurchasesParams.getEnablePrepaidPlans()) {
+      pendingPurchasesBuilder.enablePrepaidPlans();
+    }
+
+    BillingClient.Builder builder =
+        BillingClient.newBuilder(context).enablePendingPurchases(pendingPurchasesBuilder.build());
     switch (billingChoiceMode) {
       case ALTERNATIVE_BILLING_ONLY:
         // https://developer.android.com/google/play/billing/alternative/alternative-billing-without-user-choice-in-app
