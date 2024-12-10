@@ -1310,7 +1310,7 @@ void main() {
     await controllerCompleter.future;
   });
 
-  testWidgets('testAnimateCamera', (WidgetTester tester) async {
+  testWidgets('testAnimateCameraWithoutDuration', (WidgetTester tester) async {
     final Key key = GlobalKey();
     final Completer<ExampleGoogleMapController> controllerCompleter =
         Completer<ExampleGoogleMapController>();
@@ -1368,7 +1368,7 @@ void main() {
         controller,
         (Matcher matcher) => isNot(matcher));
 
-    // Check that position is animated after the animation is done.
+    // Check that position is updated after the animation is done.
     expect(cameraIdleFired, isFalse);
     await cameraFiredQueue.next;
     expect(cameraIdleFired, isTrue);
@@ -1385,7 +1385,7 @@ void main() {
   }, variant: _cameraUpdateTypeVariants);
 
   testWidgets(
-    'testAnimateCameraWithConfiguration',
+    'testAnimateCameraWithDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
       final Completer<ExampleGoogleMapController> controllerCompleter =
@@ -1505,12 +1505,12 @@ void main() {
       await cameraFiredQueue.next;
       expect(cameraIdleFired, isTrue);
 
-      // For short animation duration, check that the animation is completed
-      // shower than the middle point of the animation test durations.
+      // For longer animation duration, check that the animation is completed
+      // slower than the middle point of the animation test durations.
       expect(stopwatch.elapsedMilliseconds,
           greaterThan(animationDurationMiddlePoint));
 
-      // Check that position is animated after the animation is done.
+      // Check that position is updated after the animation is done.
       final CameraPosition afterFinishedPosition =
           await inspector.getCameraPosition(mapId: controller.mapId);
       await _checkCameraUpdateByType(
