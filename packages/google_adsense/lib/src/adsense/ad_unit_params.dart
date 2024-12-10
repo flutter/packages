@@ -7,7 +7,7 @@ class AdUnitParams {
   /// Identifies AdSense publisher account. Should be passed on initialization
   static const String AD_CLIENT = 'adClient';
 
-  /// Identified specific ad unit from AdSense console. Can be taken from the ad unit HTML snippet under `data-ad-slot` parameter
+  /// Identifies a specific ad unit from AdSense console. Can be taken from the ad unit HTML snippet under `data-ad-slot` parameter
   static const String AD_SLOT = 'adSlot';
 
   /// (Optional) Specify a general shape (desktop only) (horizontal, vertical, and/or rectangle) that your ad unit should conform to
@@ -43,9 +43,9 @@ class AdUnitParams {
   static const String AD_TEST = 'adtest';
 }
 
-/// Possible values for [AdUnitParams.AD_FORMAT].
+/// Specifies the general shape that the ad unit should conform to.
 ///
-/// See [docs](https://support.google.com/adsense/answer/9183460?hl=en&ref_topic=9183242&sjid=2004567335727763076-EU#:~:text=Specify%20a%20general%20shape%20(desktop%20only)) for details
+/// See [docs](https://support.google.com/adsense/answer/9183460?hl=en&ref_topic=9183242&sjid=2004567335727763076-EU#:~:text=Specify%20a%20general%20shape%20(desktop%20only)) for details.
 enum AdFormat {
   /// Default which enables the auto-sizing behavior for the responsive ad unit
   AUTO('auto'),
@@ -81,8 +81,7 @@ enum AdFormat {
   String toString() => _adFormat;
 }
 
-/// Possible values for [AdUnitParams.AD_LAYOUT].
-///
+/// Controls the general layout of an in-feed/in-article ad unit.
 // TODO(sokoloff06): find docs link!
 enum AdLayout {
   ///
@@ -107,9 +106,9 @@ enum AdLayout {
   String toString() => _adLayout;
 }
 
-/// Possible values for [AdUnitParams.MATCHED_CONTENT_UI_TYPE].
+/// Controls the arrangement of the text and images in a Multiplex ad unit.
 ///
-/// See [docs](https://support.google.com/adsense/answer/7533385?hl=en#:~:text=Change%20the%20layout%20of%20your%20Multiplex%20ad%20unit)
+/// See [docs](https://support.google.com/adsense/answer/7533385?hl=en#:~:text=Change%20the%20layout%20of%20your%20Multiplex%20ad%20unit).
 enum MatchedContentUiType {
   /// In this layout, the image and text appear alongside each other.
   IMAGE_CARD_SIDEBYSIDE('image_card_sidebyside'),
