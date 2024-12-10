@@ -81,6 +81,8 @@ struct ShortcutItemMessage {
   var type: String
   /// Localized title of the item.
   var localizedTitle: String
+  /// Localized subtitle of the item.
+  var localizedSubtitle: String? = nil
   /// Name of native resource to be displayed as the icon for this item.
   var icon: String? = nil
 
@@ -88,11 +90,13 @@ struct ShortcutItemMessage {
   static func fromList(_ __pigeon_list: [Any?]) -> ShortcutItemMessage? {
     let type = __pigeon_list[0] as! String
     let localizedTitle = __pigeon_list[1] as! String
-    let icon: String? = nilOrValue(__pigeon_list[2])
+    let localizedSubtitle: String? = nilOrValue(__pigeon_list[2])
+    let icon: String? = nilOrValue(__pigeon_list[3])
 
     return ShortcutItemMessage(
       type: type,
       localizedTitle: localizedTitle,
+      localizedSubtitle: localizedSubtitle,
       icon: icon
     )
   }
@@ -100,10 +104,12 @@ struct ShortcutItemMessage {
     return [
       type,
       localizedTitle,
+      localizedSubtitle,
       icon,
     ]
   }
 }
+
 private class messagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -195,12 +201,14 @@ class IOSQuickActionsApiSetup {
     }
   }
 }
+
 /// Generated protocol from Pigeon that represents Flutter messages that can be called from Swift.
 protocol IOSQuickActionsFlutterApiProtocol {
   /// Sends a string representing a shortcut from the native platform to the app.
   func launchAction(
     action actionArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
+
 class IOSQuickActionsFlutterApi: IOSQuickActionsFlutterApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
   private let messageChannelSuffix: String
