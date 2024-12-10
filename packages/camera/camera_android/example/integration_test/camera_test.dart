@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:camera_android/camera_android.dart';
 import 'package:camera_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
