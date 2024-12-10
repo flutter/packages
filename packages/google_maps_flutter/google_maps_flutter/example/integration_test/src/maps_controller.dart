@@ -162,6 +162,8 @@ void runTests() {
 
     const String mapStyle =
         '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
+    // Intentionally testing the deprecated code path.
+    // ignore: deprecated_member_use
     await controller.setMapStyle(mapStyle);
   });
 
@@ -184,6 +186,8 @@ void runTests() {
     final GoogleMapController controller = await controllerCompleter.future;
 
     try {
+      // Intentionally testing the deprecated code path.
+      // ignore: deprecated_member_use
       await controller.setMapStyle('invalid_value');
       fail('expected MapStyleException');
     } on MapStyleException catch (e) {
@@ -208,6 +212,8 @@ void runTests() {
     );
     final GoogleMapController controller = await controllerCompleter.future;
 
+    // Intentionally testing the deprecated code path.
+    // ignore: deprecated_member_use
     await controller.setMapStyle(null);
   });
 
@@ -471,6 +477,8 @@ void runTests() {
     final Set<Marker> markers = <Marker>{
       Marker(
           markerId: const MarkerId('1'),
+          // Intentionally testing the deprecated code path.
+          // ignore: deprecated_member_use
           icon: await BitmapDescriptor.fromAssetImage(
             imageConfiguration,
             'assets/red_square.png',
@@ -493,6 +501,8 @@ void runTests() {
     final Set<Marker> markers = <Marker>{
       Marker(
           markerId: const MarkerId('1'),
+          // Intentionally testing the deprecated code path.
+          // ignore: deprecated_member_use
           icon: BitmapDescriptor.fromBytes(
             bytes,
             size: const Size(100, 100),

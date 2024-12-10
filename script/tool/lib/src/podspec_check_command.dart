@@ -85,7 +85,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 ''';
           final String path =
               getRelativePosixPath(podspec, from: package.directory);
-          printError('$path is missing seach path configuration. Any iOS '
+          printError('$path is missing search path configuration. Any iOS '
               'plugin implementation that contains Swift implementation code '
               'needs to contain the following:\n\n'
               '$workaroundBlock\n'
@@ -110,12 +110,18 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
+    // Since the pigeon platform tests podspecs require generated files that are not included in git,
+    // the podspec lint fails.
+    if (package.path.contains('packages/pigeon/platform_tests/')) {
+      return <File>[];
+    }
     final List<File> podspecs =
         await getFilesForPackage(package).where((File entity) {
       final String filename = entity.basename;
       return path.extension(filename) == '.podspec' &&
           filename != 'Flutter.podspec' &&
-          filename != 'FlutterMacOS.podspec';
+          filename != 'FlutterMacOS.podspec' &&
+          !entity.path.contains('packages/pigeon/platform_tests/');
     }).toList();
 
     podspecs.sort((File a, File b) => a.basename.compareTo(b.basename));
@@ -161,7 +167,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   /// Returns true if there is any iOS plugin implementation code written in
-  /// Swift. Skips files named "Package.swift", which is a Swift Pacakge Manager
+  /// Swift. Skips files named "Package.swift", which is a Swift Package Manager
   /// manifest file and does not mean the plugin is written in Swift.
   Future<bool> _hasIOSSwiftCode(RepositoryPackage package) async {
     final String iosSwiftPackageManifestPath = package
