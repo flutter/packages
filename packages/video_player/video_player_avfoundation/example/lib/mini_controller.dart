@@ -167,20 +167,27 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  MiniController.asset(this.dataSource, {this.package})
-      : dataSourceType = DataSourceType.asset,
+  MiniController.asset(
+    this.dataSource, {
+    this.package,
+    this.viewType = VideoViewType.textureView,
+  })  : dataSourceType = DataSourceType.asset,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
-      : dataSourceType = DataSourceType.network,
+  MiniController.network(
+    this.dataSource, {
+    this.viewType = VideoViewType.textureView,
+  })  : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
-  MiniController.file(File file)
-      : dataSource = Uri.file(file.absolute.path).toString(),
+  MiniController.file(
+    File file, {
+    this.viewType = VideoViewType.textureView,
+  })  : dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -195,6 +202,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// The type of view used to display the video.
+  final VideoViewType viewType;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -221,21 +231,25 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.asset,
           asset: dataSource,
           package: package,
+          viewType: viewType,
         );
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
           uri: dataSource,
+          viewType: viewType,
         );
       case DataSourceType.file:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
+          viewType: viewType,
         );
       case DataSourceType.contentUri:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.contentUri,
           uri: dataSource,
+          viewType: viewType,
         );
     }
 
@@ -422,7 +436,12 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Widget build(BuildContext context) {
     return _textureId == MiniController.kUninitializedTextureId
         ? Container()
-        : _platform.buildView(_textureId);
+        : _platform.buildViewWithOptions(
+            VideoViewOptions(
+              playerId: _textureId,
+              viewType: widget.controller.viewType,
+            ),
+          );
   }
 }
 
