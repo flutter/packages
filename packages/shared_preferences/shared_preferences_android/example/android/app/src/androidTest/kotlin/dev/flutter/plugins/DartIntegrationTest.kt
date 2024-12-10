@@ -12,4 +12,4 @@ package dev.flutter.plugins
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-annotation class DartIntegrationTest 
+annotation class DartIntegrationTest
