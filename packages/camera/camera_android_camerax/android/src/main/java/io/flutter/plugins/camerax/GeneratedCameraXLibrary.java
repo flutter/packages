@@ -711,6 +711,84 @@ public class GeneratedCameraXLibrary {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class DeviceOrientationInfo {
+    private @NonNull String uiOrientation;
+
+    public @NonNull String getUiOrientation() {
+      return uiOrientation;
+    }
+
+    public void setUiOrientation(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"uiOrientation\" is null.");
+      }
+      this.uiOrientation = setterArg;
+    }
+
+    private @NonNull Long defaultDisplayRotation;
+
+    public @NonNull Long getDefaultDisplayRotation() {
+      return defaultDisplayRotation;
+    }
+
+    public void setDefaultDisplayRotation(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"defaultDisplayRotation\" is null.");
+      }
+      this.defaultDisplayRotation = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    DeviceOrientationInfo() {}
+
+    public static final class Builder {
+
+      private @Nullable String uiOrientation;
+
+      public @NonNull Builder setUiOrientation(@NonNull String setterArg) {
+        this.uiOrientation = setterArg;
+        return this;
+      }
+
+      private @Nullable Long defaultDisplayRotation;
+
+      public @NonNull Builder setDefaultDisplayRotation(@NonNull Long setterArg) {
+        this.defaultDisplayRotation = setterArg;
+        return this;
+      }
+
+      public @NonNull DeviceOrientationInfo build() {
+        DeviceOrientationInfo pigeonReturn = new DeviceOrientationInfo();
+        pigeonReturn.setUiOrientation(uiOrientation);
+        pigeonReturn.setDefaultDisplayRotation(defaultDisplayRotation);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<Object>(2);
+      toListResult.add(uiOrientation);
+      toListResult.add(defaultDisplayRotation);
+      return toListResult;
+    }
+
+    static @NonNull DeviceOrientationInfo fromList(@NonNull ArrayList<Object> list) {
+      DeviceOrientationInfo pigeonResult = new DeviceOrientationInfo();
+      Object uiOrientation = list.get(0);
+      pigeonResult.setUiOrientation((String) uiOrientation);
+      Object defaultDisplayRotation = list.get(1);
+      pigeonResult.setDefaultDisplayRotation(
+          (defaultDisplayRotation == null)
+              ? null
+              : ((defaultDisplayRotation instanceof Integer)
+                  ? (Integer) defaultDisplayRotation
+                  : (Long) defaultDisplayRotation));
+      return pigeonResult;
+    }
+  }
+
   public interface Result<T> {
     @SuppressWarnings("UnknownNullness")
     void success(T result);
@@ -1579,6 +1657,9 @@ public class GeneratedCameraXLibrary {
     @NonNull
     String getUiOrientation();
 
+    @NonNull
+    Long getDeviceOrientation();
+
     /** The codec used by DeviceOrientationManagerHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -1686,8 +1767,59 @@ public class GeneratedCameraXLibrary {
           channel.setMessageHandler(null);
         }
       }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.DeviceOrientationManagerHostApi.getDeviceOrientation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Long output = api.getDeviceOrientation();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
     }
   }
+
+  private static class DeviceOrientationManagerFlutterApiCodec extends StandardMessageCodec {
+    public static final DeviceOrientationManagerFlutterApiCodec INSTANCE =
+        new DeviceOrientationManagerFlutterApiCodec();
+
+    private DeviceOrientationManagerFlutterApiCodec() {}
+
+    @Override
+    protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
+      switch (type) {
+        case (byte) 128:
+          return DeviceOrientationInfo.fromList((ArrayList<Object>) readValue(buffer));
+        default:
+          return super.readValueOfType(type, buffer);
+      }
+    }
+
+    @Override
+    protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
+      if (value instanceof DeviceOrientationInfo) {
+        stream.write(128);
+        writeValue(stream, ((DeviceOrientationInfo) value).toList());
+      } else {
+        super.writeValue(stream, value);
+      }
+    }
+  }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class DeviceOrientationManagerFlutterApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -1703,18 +1835,18 @@ public class GeneratedCameraXLibrary {
     }
     /** The codec used by DeviceOrientationManagerFlutterApi. */
     static @NonNull MessageCodec<Object> getCodec() {
-      return new StandardMessageCodec();
+      return DeviceOrientationManagerFlutterApiCodec.INSTANCE;
     }
 
     public void onDeviceOrientationChanged(
-        @NonNull String orientationArg, @NonNull Reply<Void> callback) {
+        @NonNull DeviceOrientationInfo deviceOrientationInfoArg, @NonNull Reply<Void> callback) {
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger,
               "dev.flutter.pigeon.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged",
               getCodec());
       channel.send(
-          new ArrayList<Object>(Collections.singletonList(orientationArg)),
+          new ArrayList<Object>(Collections.singletonList(deviceOrientationInfoArg)),
           channelReply -> callback.reply(null));
     }
   }
@@ -4175,16 +4307,18 @@ public class GeneratedCameraXLibrary {
         case (byte) 129:
           return CameraStateTypeData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 130:
-          return ExposureCompensationRange.fromList((ArrayList<Object>) readValue(buffer));
+          return DeviceOrientationInfo.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
-          return LiveDataSupportedTypeData.fromList((ArrayList<Object>) readValue(buffer));
+          return ExposureCompensationRange.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
-          return MeteringPointInfo.fromList((ArrayList<Object>) readValue(buffer));
+          return LiveDataSupportedTypeData.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 133:
-          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
+          return MeteringPointInfo.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 134:
-          return VideoQualityData.fromList((ArrayList<Object>) readValue(buffer));
+          return ResolutionInfo.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 135:
+          return VideoQualityData.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 136:
           return VideoRecordEventData.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -4199,23 +4333,26 @@ public class GeneratedCameraXLibrary {
       } else if (value instanceof CameraStateTypeData) {
         stream.write(129);
         writeValue(stream, ((CameraStateTypeData) value).toList());
-      } else if (value instanceof ExposureCompensationRange) {
+      } else if (value instanceof DeviceOrientationInfo) {
         stream.write(130);
+        writeValue(stream, ((DeviceOrientationInfo) value).toList());
+      } else if (value instanceof ExposureCompensationRange) {
+        stream.write(131);
         writeValue(stream, ((ExposureCompensationRange) value).toList());
       } else if (value instanceof LiveDataSupportedTypeData) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((LiveDataSupportedTypeData) value).toList());
       } else if (value instanceof MeteringPointInfo) {
-        stream.write(132);
+        stream.write(133);
         writeValue(stream, ((MeteringPointInfo) value).toList());
       } else if (value instanceof ResolutionInfo) {
-        stream.write(133);
+        stream.write(134);
         writeValue(stream, ((ResolutionInfo) value).toList());
       } else if (value instanceof VideoQualityData) {
-        stream.write(134);
+        stream.write(135);
         writeValue(stream, ((VideoQualityData) value).toList());
       } else if (value instanceof VideoRecordEventData) {
-        stream.write(135);
+        stream.write(136);
         writeValue(stream, ((VideoRecordEventData) value).toList());
       } else {
         super.writeValue(stream, value);

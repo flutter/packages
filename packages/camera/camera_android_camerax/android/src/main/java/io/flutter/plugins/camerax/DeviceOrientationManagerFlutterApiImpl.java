@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationInfo;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerFlutterApi;
 
 public class DeviceOrientationManagerFlutterApiImpl extends DeviceOrientationManagerFlutterApi {
@@ -14,7 +15,7 @@ public class DeviceOrientationManagerFlutterApiImpl extends DeviceOrientationMan
   }
 
   public void sendDeviceOrientationChangedEvent(
-      @NonNull String orientation, @NonNull Reply<Void> reply) {
-    super.onDeviceOrientationChanged(orientation, reply);
+      @NonNull DeviceOrientationInfo deviceOrientationInfo, @NonNull Reply<Void> reply) {
+    super.onDeviceOrientationChanged(deviceOrientationInfo, reply);
   }
 }
