@@ -1,5 +1,5 @@
 # See Dependabot documentation for all configuration options:
-# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 
 version: 2
 updates:
@@ -66,7 +66,7 @@ updates:
       - /packages/webview_flutter/webview_flutter_android/example/android/app
       - /third_party/packages/flutter_svg/example/android/app
     commit-message:
-      prefix: "[gradle]"
+      prefix: "[dependabot]"
     schedule:
       interval: "weekly"
     labels:
@@ -99,7 +99,7 @@ updates:
       - /packages/video_player/video_player_android/android
       - /packages/webview_flutter/webview_flutter_android/android
     commit-message:
-      prefix: "[gradle]"
+      prefix: "[dependabot]"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10

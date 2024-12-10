@@ -29,6 +29,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.Log;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,6 +43,12 @@ class FileUtils {
   /**
    * Copies the file from the given content URI to a temporary directory, retaining the original
    * file name if possible.
+   *
+   * <p>If the filename contains path indirection or separators (.. or /), the end file name will be
+   * the segment after the final separator, with indirection replaced by underscores. E.g.
+   * "example/../..file.png" -> "_file.png". See: <a
+   * href="https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename">Improperly
+   * trusting ContentProvider-provided filename</a>.
    *
    * <p>Each file is placed in its own directory to avoid conflicts according to the following
    * scheme: {cacheDir}/{randomUuid}/{fileName}
@@ -69,10 +77,11 @@ class FileUtils {
       } else if (extension != null) {
         fileName = getBaseName(fileName) + extension;
       }
-      File file = new File(targetDirectory, fileName);
-      try (OutputStream outputStream = new FileOutputStream(file)) {
+      String filePath = new File(targetDirectory, fileName).getPath();
+      File outputFile = saferOpenFile(filePath, targetDirectory.getCanonicalPath());
+      try (OutputStream outputStream = new FileOutputStream(outputFile)) {
         copy(inputStream, outputStream);
-        return file.getPath();
+        return outputFile.getPath();
       }
     } catch (IOException e) {
       // If closing the output stream fails, we cannot be sure that the
@@ -85,6 +94,10 @@ class FileUtils {
       // return `null`.
       //
       // See https://github.com/flutter/flutter/issues/100025 for more details.
+      return null;
+    } catch (IllegalArgumentException e) {
+      // This is likely a result of an IllegalArgumentException that we have thrown in
+      // saferOpenFile(). TODO(gmackall): surface this error in dart.
       return null;
     }
   }
@@ -110,14 +123,49 @@ class FileUtils {
       return null;
     }
 
-    return "." + extension;
+    return "." + sanitizeFilename(extension);
+  }
+
+  // From https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#sanitize-provided-filenames.
+  protected static @Nullable String sanitizeFilename(@Nullable String displayName) {
+    if (displayName == null) {
+      return null;
+    }
+
+    String[] badCharacters = new String[] {"..", "/"};
+    String[] segments = displayName.split("/");
+    String fileName = segments[segments.length - 1];
+    for (String suspString : badCharacters) {
+      fileName = fileName.replace(suspString, "_");
+    }
+    return fileName;
+  }
+
+  /**
+   * Use with file name sanitization and an non-guessable directory. From <a
+   * href="https://developer.android.com/privacy-and-security/risks/path-traversal#path-traversal-mitigations">...</a>.
+   */
+  protected static @NonNull File saferOpenFile(@NonNull String path, @NonNull String expectedDir)
+      throws IllegalArgumentException, IOException {
+    File f = new File(path);
+    String canonicalPath = f.getCanonicalPath();
+    if (!canonicalPath.startsWith(expectedDir)) {
+      throw new IllegalArgumentException(
+          "Trying to open path outside of the expected directory. File: "
+              + f.getCanonicalPath()
+              + " was expected to be within directory: "
+              + expectedDir
+              + ".");
+    }
+    return f;
   }
 
   /** @return name of the image provided by ContentResolver; this may be null. */
   private static String getImageName(Context context, Uri uriImage) {
     try (Cursor cursor = queryImageName(context, uriImage)) {
       if (cursor == null || !cursor.moveToFirst() || cursor.getColumnCount() < 1) return null;
-      return cursor.getString(0);
+      String unsanitizedImageName = cursor.getString(0);
+      return sanitizeFilename(unsanitizedImageName);
     }
   }
 

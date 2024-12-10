@@ -30,7 +30,10 @@ const DocumentCommentSpecification _docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
 /// The custom codec used for all pigeon APIs.
-const String _pigeonCodec = '_PigeonCodec';
+const String _pigeonMessageCodec = '_PigeonCodec';
+
+/// Name of field used for host API codec.
+const String _pigeonMethodChannelCodec = 'pigeonMethodCodec';
 
 const String _overflowClassName = '_PigeonCodecOverflow';
 
@@ -118,11 +121,10 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     );
     indent.newln();
 
-    final bool hasProxyApi = root.apis.any((Api api) => api is AstProxyApi);
     indent.writeln(
-        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${hasProxyApi ? ', immutable, protected' : ''};");
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected' : ''};");
     indent.writeln("import 'package:flutter/services.dart';");
-    if (hasProxyApi) {
+    if (root.containsProxyApi) {
       indent.writeln(
         "import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;",
       );
@@ -161,9 +163,16 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.newln();
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec);
+    final String sealed = classDefinition.isSealed ? 'sealed ' : '';
+    final String implements = classDefinition.superClassName != null
+        ? 'extends ${classDefinition.superClassName} '
+        : '';
 
-    indent.write('class ${classDefinition.name} ');
+    indent.write('${sealed}class ${classDefinition.name} $implements');
     indent.addScoped('{', '}', () {
+      if (classDefinition.fields.isEmpty) {
+        return;
+      }
       _writeConstructor(indent, classDefinition);
       indent.newln();
       for (final NamedType field
@@ -285,10 +294,12 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    void writeEncodeLogic(EnumeratedType customType) {
+    void writeEncodeLogic(
+        EnumeratedType customType, int nonSerializedClassCount) {
       indent.writeScoped('else if (value is ${customType.name}) {', '}', () {
-        if (customType.enumeration < maximumCodecFieldKey) {
-          indent.writeln('buffer.putUint8(${customType.enumeration});');
+        if (customType.offset(nonSerializedClassCount) < maximumCodecFieldKey) {
+          indent.writeln(
+              'buffer.putUint8(${customType.offset(nonSerializedClassCount)});');
           if (customType.type == CustomTypes.customClass) {
             indent.writeln('writeValue(buffer, value.encode());');
           } else if (customType.type == CustomTypes.customEnum) {
@@ -299,18 +310,20 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
               ? '.encode()'
               : '.index';
           indent.writeln(
-              'final $_overflowClassName wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value$encodeString);');
+              'final $_overflowClassName wrap = $_overflowClassName(type: ${customType.offset(nonSerializedClassCount) - maximumCodecFieldKey}, wrapped: value$encodeString);');
           indent.writeln('buffer.putUint8($maximumCodecFieldKey);');
           indent.writeln('writeValue(buffer, wrap.encode());');
         }
       }, addTrailingNewline: false);
     }
 
-    void writeDecodeLogic(EnumeratedType customType) {
-      indent.writeln('case ${customType.enumeration}: ');
+    void writeDecodeLogic(
+        EnumeratedType customType, int nonSerializedClassCount) {
+      indent.writeln('case ${customType.offset(nonSerializedClassCount)}: ');
       indent.nest(1, () {
         if (customType.type == CustomTypes.customClass) {
-          if (customType.enumeration == maximumCodecFieldKey) {
+          if (customType.offset(nonSerializedClassCount) ==
+              maximumCodecFieldKey) {
             indent.writeln(
                 'final ${customType.name} wrapper = ${customType.name}.decode(readValue(buffer)!);');
             indent.writeln('return wrapper.unwrap();');
@@ -331,14 +344,14 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
     indent.newln();
     final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root).toList();
+        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
     if (root.requiresOverflowClass) {
       _writeCodecOverflowUtilities(indent, enumeratedTypes);
     }
     indent.newln();
-    indent.write('class $_pigeonCodec extends StandardMessageCodec');
+    indent.write('class $_pigeonMessageCodec extends StandardMessageCodec');
     indent.addScoped(' {', '}', () {
-      indent.writeln('const $_pigeonCodec();');
+      indent.writeln('const $_pigeonMessageCodec();');
       indent.writeln('@override');
       indent.write('void writeValue(WriteBuffer buffer, Object? value) ');
       indent.addScoped('{', '}', () {
@@ -346,10 +359,14 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
           indent.writeln('buffer.putUint8(4);');
           indent.writeln('buffer.putInt64(value);');
         }, addTrailingNewline: false);
-
+        int nonSerializedClassCount = 0;
         enumerate(enumeratedTypes,
             (int index, final EnumeratedType customType) {
-          writeEncodeLogic(customType);
+          if (customType.associatedClass?.isSealed ?? false) {
+            nonSerializedClassCount += 1;
+            return;
+          }
+          writeEncodeLogic(customType, nonSerializedClassCount);
         });
         indent.addScoped(' else {', '}', () {
           indent.writeln('super.writeValue(buffer, value);');
@@ -361,13 +378,17 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       indent.addScoped('{', '}', () {
         indent.write('switch (type) ');
         indent.addScoped('{', '}', () {
+          int nonSerializedClassCount = 0;
           for (final EnumeratedType customType in enumeratedTypes) {
-            if (customType.enumeration < maximumCodecFieldKey) {
-              writeDecodeLogic(customType);
+            if (customType.associatedClass?.isSealed ?? false) {
+              nonSerializedClassCount++;
+            } else if (customType.offset(nonSerializedClassCount) <
+                maximumCodecFieldKey) {
+              writeDecodeLogic(customType, nonSerializedClassCount);
             }
           }
           if (root.requiresOverflowClass) {
-            writeDecodeLogic(overflowClass);
+            writeDecodeLogic(overflowClass, 0);
           }
           indent.writeln('default:');
           indent.nest(1, () {
@@ -376,6 +397,11 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         });
       });
     });
+    if (root.containsEventChannel) {
+      indent.newln();
+      indent.writeln(
+          'const StandardMethodCodec $_pigeonMethodChannelCodec = StandardMethodCodec($_pigeonMessageCodec());');
+    }
   }
 
   /// Writes the code for host [Api], [api].
@@ -408,7 +434,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
             'static TestDefaultBinaryMessengerBinding? get _testBinaryMessengerBinding => TestDefaultBinaryMessengerBinding.instance;');
       }
       indent.writeln(
-          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonCodec();');
+          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonMessageCodec();');
       indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
@@ -489,7 +515,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 ''');
 
       indent.writeln(
-          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonCodec();');
+          'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonMessageCodec();');
       indent.newln();
       indent.writeln('final String $_suffixVarName;');
       indent.newln();
@@ -510,6 +536,33 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         );
       }
     });
+  }
+
+  @override
+  void writeEventChannelApi(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstEventChannelApi api, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    addDocumentationComments(
+        indent, api.documentationComments, _docCommentSpec);
+    for (final Method func in api.methods) {
+      indent.format('''
+      Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
+        if (instanceName.isNotEmpty) {
+          instanceName = '.\$instanceName';
+        }
+        const EventChannel ${func.name}Channel =
+            EventChannel('${makeChannelName(api, func, dartPackageName)}', $_pigeonMethodChannelCodec);
+        return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
+          return event as ${func.returnType.baseName};
+        });
+      }
+    ''');
+    }
   }
 
   @override
@@ -582,7 +635,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                   ..type = cb.refer('MessageCodec<Object?>')
                   ..static = true
                   ..modifier = cb.FieldModifier.constant
-                  ..assignment = const cb.Code('$_pigeonCodec()');
+                  ..assignment = const cb.Code('$_pigeonMessageCodec()');
               },
             )
           ],
@@ -851,7 +904,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
   /// Generates Dart source code for test support libraries based on the given AST
   /// represented by [root], outputting the code to [sink]. [sourceOutPath] is the
-  /// path of the generated dart code to be tested. [testOutPath] is where the
+  /// path of the generated Dart code to be tested. [testOutPath] is where the
   /// test code will be generated.
   void generateTest(
     DartOptions generatorOptions,
@@ -938,22 +991,12 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    final bool hasHostMethod = root.apis
-            .whereType<AstHostApi>()
-            .any((AstHostApi api) => api.methods.isNotEmpty) ||
-        root.apis.whereType<AstProxyApi>().any((AstProxyApi api) =>
-            api.constructors.isNotEmpty ||
-            api.attachedFields.isNotEmpty ||
-            api.hostMethods.isNotEmpty);
-    final bool hasFlutterMethod = root.apis
-            .whereType<AstFlutterApi>()
-            .any((AstFlutterApi api) => api.methods.isNotEmpty) ||
-        root.apis.any((Api api) => api is AstProxyApi);
-
-    if (hasHostMethod) {
+    if (root.containsHostApi || root.containsProxyApi) {
       _writeCreateConnectionError(indent);
     }
-    if (hasFlutterMethod || generatorOptions.testOutPath != null) {
+    if (root.containsFlutterApi ||
+        root.containsProxyApi ||
+        generatorOptions.testOutPath != null) {
       _writeWrapResponse(generatorOptions, root, indent);
     }
   }
@@ -1015,16 +1058,22 @@ if (wrapped == null) {
 }
 ''');
         indent.writeScoped('switch (type) {', '}', () {
+          int nonSerializedClassCount = 0;
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
-            indent.writeScoped('case ${i - totalCustomCodecKeysAllowed}:', '',
-                () {
-              if (types[i].type == CustomTypes.customClass) {
-                indent.writeln('return ${types[i].name}.decode(wrapped!);');
-              } else if (types[i].type == CustomTypes.customEnum) {
-                indent.writeln(
-                    'return ${types[i].name}.values[wrapped! as int];');
-              }
-            });
+            if (types[i].associatedClass?.isSealed ?? false) {
+              nonSerializedClassCount++;
+            } else {
+              indent.writeScoped(
+                  'case ${i - nonSerializedClassCount - totalCustomCodecKeysAllowed}:',
+                  '', () {
+                if (types[i].type == CustomTypes.customClass) {
+                  indent.writeln('return ${types[i].name}.decode(wrapped!);');
+                } else if (types[i].type == CustomTypes.customEnum) {
+                  indent.writeln(
+                      'return ${types[i].name}.values[wrapped! as int];');
+                }
+              });
+            }
           }
         });
         indent.writeln('return null;');
@@ -2095,7 +2144,10 @@ String _getParameterName(int count, NamedType field) =>
 
 /// Generates the parameters code for [func]
 /// Example: (func, _getParameterName) -> 'String? foo, int bar'
-String _getMethodParameterSignature(Iterable<Parameter> parameters) {
+String _getMethodParameterSignature(
+  Iterable<Parameter> parameters, {
+  bool addTrailingComma = false,
+}) {
   String signature = '';
   if (parameters.isEmpty) {
     return signature;
@@ -2145,8 +2197,10 @@ String _getMethodParameterSignature(Iterable<Parameter> parameters) {
     return '$baseParams[$optionalParameterString$trailingComma]';
   }
   if (namedParams.isNotEmpty) {
-    final String trailingComma =
-        requiredPositionalParams.length + namedParams.length > 2 ? ',' : '';
+    final String trailingComma = addTrailingComma ||
+            requiredPositionalParams.length + namedParams.length > 2
+        ? ', '
+        : '';
     return '$baseParams{$namedParameterString$trailingComma}';
   }
   return signature;

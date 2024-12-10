@@ -1,3 +1,17 @@
+## 22.7.0
+
+* [swift, kotlin] Adds event channel support.
+* [swift, kotlin] Adds `sealed` class inheritance support.
+* [swift] Updates codec class names to be upper camel case.
+
+## 22.6.4
+
+* [swift] Fixes the channel names of the named constructors of ProxyApis.
+
+## 22.6.3
+
+* Replaces deprecated collection method usage.
+
 ## 22.6.2
 
 * Removes the `@protected` annotation from the InstanceManager field of the

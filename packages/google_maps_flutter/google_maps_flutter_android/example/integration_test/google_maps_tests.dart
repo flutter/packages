@@ -1405,6 +1405,8 @@ void googleMapsTests() {
     final Set<Marker> markers = <Marker>{
       Marker(
           markerId: const MarkerId('1'),
+          // Intentionally testing the deprecated code path.
+          // ignore: deprecated_member_use
           icon: await BitmapDescriptor.fromAssetImage(
             imageConfiguration,
             'assets/red_square.png',
@@ -1427,6 +1429,8 @@ void googleMapsTests() {
     final Set<Marker> markers = <Marker>{
       Marker(
           markerId: const MarkerId('1'),
+          // Intentionally testing the deprecated code path.
+          // ignore: deprecated_member_use
           icon: BitmapDescriptor.fromBytes(
             bytes,
             size: const Size(100, 100),
