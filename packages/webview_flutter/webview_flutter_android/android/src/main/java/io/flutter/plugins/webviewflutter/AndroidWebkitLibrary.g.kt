@@ -1387,6 +1387,12 @@ abstract class PigeonApiWebView(
   /** Sets the background color for this view. */
   abstract fun setBackgroundColor(pigeon_instance: android.webkit.WebView, color: Long)
 
+  /** Define whether the vertical scrollbar should be drawn or not. The default value is true. */
+  abstract fun verticalScrollBarEnabled(pigeon_instance: android.webkit.WebView, enabled: Boolean)
+
+  /** Define whether the horizontal scrollbar should be drawn or not. The default value is true. */
+  abstract fun horizontalScrollBarEnabled(pigeon_instance: android.webkit.WebView, enabled: Boolean)
+
   /** Destroys the internal state of this WebView. */
   abstract fun destroy(pigeon_instance: android.webkit.WebView)
 
@@ -1918,6 +1924,54 @@ abstract class PigeonApiWebView(
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.verticalScrollBarEnabled",
+            codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebView
+            val enabledArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+              try {
+                api.verticalScrollBarEnabled(pigeon_instanceArg, enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.horizontalScrollBarEnabled",
+            codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebView
+            val enabledArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+              try {
+                api.horizontalScrollBarEnabled(pigeon_instanceArg, enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {

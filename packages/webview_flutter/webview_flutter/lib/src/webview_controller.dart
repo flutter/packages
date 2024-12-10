@@ -405,6 +405,16 @@ class WebViewController {
   ) {
     return platform.setOnScrollPositionChange(onScrollPositionChange);
   }
+
+  /// Define whether the vertical scrollbar should be drawn or not. The default value is true.
+  Future<void> verticalScrollBarEnabled(bool enabled) {
+    return platform.verticalScrollBarEnabled(enabled);
+  }
+
+  /// Define whether the horizontal scrollbar should be drawn or not. The default value is true.
+  Future<void> horizontalScrollBarEnabled(bool enabled) {
+    return platform.horizontalScrollBarEnabled(enabled);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.
