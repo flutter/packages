@@ -331,16 +331,16 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  String namedLocation(
-    String name, {
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, dynamic> queryParameters = const <String, dynamic>{},
-  }) =>
+  String namedLocation(String name,
+          {Map<String, String> pathParameters = const <String, String>{},
+          Map<String, dynamic> queryParameters = const <String, dynamic>{},
+          String? fragment}) =>
       configuration.namedLocation(
         name,
         pathParameters: pathParameters,
         queryParameters: queryParameters,
-      );
+      ) +
+      ((fragment?.isNotEmpty ?? false) ? '#$fragment' : '');
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
@@ -366,10 +366,15 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    String? fragment,
   }) =>
+
+      /// Construct location with optional fragment, using null-safe navigation
       go(
         namedLocation(name,
-            pathParameters: pathParameters, queryParameters: queryParameters),
+                pathParameters: pathParameters,
+                queryParameters: queryParameters) +
+            ((fragment?.isNotEmpty ?? false) ? '#$fragment' : ''),
         extra: extra,
       );
 

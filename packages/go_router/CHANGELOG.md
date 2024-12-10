@@ -1,3 +1,7 @@
+## 14.7.0
+
+- Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.
+
 ## 14.6.2
 
 - Replaces deprecated collection method usage.
