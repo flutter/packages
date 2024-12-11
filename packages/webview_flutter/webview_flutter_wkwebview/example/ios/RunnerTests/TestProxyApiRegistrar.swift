@@ -30,7 +30,7 @@ class TestProxyApiRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
     }
   }
 
-  init(apiDelegate: ProxyAPIDelegate = ProxyAPIDelegate()) {
-    super.init(binaryMessenger: TestBinaryMessenger(), apiDelegate: apiDelegate)
+  init() {
+    super.init(binaryMessenger: TestBinaryMessenger(), apiDelegate: ProxyAPIDelegate())
   }
 }

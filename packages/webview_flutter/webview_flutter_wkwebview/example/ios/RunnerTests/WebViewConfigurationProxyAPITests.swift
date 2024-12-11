@@ -114,5 +114,4 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     XCTAssertEqual(instance.mediaTypesRequiringUserActionForPlayback, [])
   }
-
 }

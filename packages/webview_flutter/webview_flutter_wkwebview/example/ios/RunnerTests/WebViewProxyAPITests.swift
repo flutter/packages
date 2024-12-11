@@ -116,7 +116,6 @@ class WebViewProxyAPITests: XCTestCase {
   }
 
   @MainActor func testLoadFlutterAsset() {
-    
 //    let apiDelegate = pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
 //    let assetFilePath = apiDelegate.assetManager.lookupKeyForAsset(key)
 //
@@ -129,14 +128,19 @@ class WebViewProxyAPITests: XCTestCase {
 //    } else {
 //      throw apiDelegate.createNullURLError(url: assetFilePath)
 //    }
-//    let registrar = TestProxyApiRegistrar(apiDelegate: TestProxyAPIDelegate())
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let key = "myFile.txt"
-//    try? api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
-//
-//    XCTAssertEqual(instance.loadFileUrlArgs, [key])
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let key = "assets/www/index.html"
+    try? api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
+
+    XCTAssertEqual(instance.loadFileUrlArgs?.count, 2)
+    let URL = try! XCTUnwrap(instance.loadFileUrlArgs![0])
+    let readAccessURL = try! XCTUnwrap(instance.loadFileUrlArgs![1])
+    
+    XCTAssertTrue(URL.absoluteString.contains("index.html"))
+    XCTAssertTrue(readAccessURL.absoluteString.contains("assets/www/"))
   }
 //
 //  @MainActor func testCanGoBack() {
@@ -257,7 +261,6 @@ class WebViewProxyAPITests: XCTestCase {
 //    XCTAssertTrue(instance.getCustomUserAgentCalled)
 //    XCTAssertEqual(value, instance.getCustomUserAgent())
 //  }
-
 }
 
 @MainActor
@@ -268,7 +271,7 @@ class TestViewWKWebView: WKWebView {
   var getEstimatedProgressCalled = false
   var loadArgs: [AnyHashable?]? = nil
   var loadHtmlStringArgs: [AnyHashable?]? = nil
-  var loadFileUrlArgs: [AnyHashable?]? = nil
+  var loadFileUrlArgs: [URL]? = nil
   var canGoBackCalled = false
   var canGoForwardCalled = false
   var goBackCalled = false
@@ -345,16 +348,4 @@ class TestViewWKWebView: WKWebView {
 //  override func getCustomUserAgent() {
 //    getCustomUserAgentCalled = true
 //  }
-}
-
-class TestProxyAPIDelegate: ProxyAPIDelegate {
-  convenience init() {
-    self.init(assetManager: TestFlutterAssetManager())
-  }
-}
-
-class TestFlutterAssetManager: FlutterAssetManager {
-  override func lookupKeyForAsset(_ asset: String) -> String {
-    return "myDirectory/myFile.txt"
-  }
 }
