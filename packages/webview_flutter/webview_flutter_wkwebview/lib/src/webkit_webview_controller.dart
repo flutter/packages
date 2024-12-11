@@ -308,10 +308,10 @@ class WebKitWebViewController extends PlatformWebViewController {
               urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
           case 'canGoBack':
-            if (_onCanGoBackChangeCallback != null) {
+            if (controller._onCanGoBackChangeCallback != null) {
               final bool canGoBack =
                   change[NSKeyValueChangeKey.newValue]! as bool;
-              _onCanGoBackChangeCallback!(canGoBack);
+              controller._onCanGoBackChangeCallback!(canGoBack);
             }
         }
       };
