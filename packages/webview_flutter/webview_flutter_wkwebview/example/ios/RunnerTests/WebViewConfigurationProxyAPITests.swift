@@ -89,7 +89,10 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     let allow = true
     try? api.pigeonDelegate.setAllowsInlineMediaPlayback(pigeonApi: api, pigeonInstance: instance, allow: allow)
 
+    // setAllowsInlineMediaPlayback does not existing on macOS; the call above should no-op for macOS.
+#if !os(macOS)
     XCTAssertEqual(instance.allowsInlineMediaPlayback, allow)
+#endif
   }
 
   @available(iOS 14.0, *)

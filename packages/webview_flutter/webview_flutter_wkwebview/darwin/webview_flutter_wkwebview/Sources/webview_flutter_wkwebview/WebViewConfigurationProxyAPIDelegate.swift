@@ -58,7 +58,11 @@ class WebViewConfigurationProxyAPIDelegate: PigeonApiDelegateWKWebViewConfigurat
   func setAllowsInlineMediaPlayback(
     pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool
   ) throws {
+#if !os(macOS)
     pigeonInstance.allowsInlineMediaPlayback = allow
+#endif
+    // No-op, rather than error out, on macOS, since it's not a meaningful option on macOS and it's
+      // easier for clients if it's just ignored.
   }
 
   func setLimitsNavigationsToAppBoundDomains(
