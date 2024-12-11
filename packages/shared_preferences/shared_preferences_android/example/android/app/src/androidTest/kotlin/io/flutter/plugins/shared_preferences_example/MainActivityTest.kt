@@ -4,9 +4,8 @@
 package io.flutter.plugins
 
 import androidx.test.rule.ActivityTestRule
-import io.flutter.plugins.DartIntegrationTest
-import io.flutter.plugins.integration_test.FlutterTestRunner
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.plugins.integration_test.FlutterTestRunner
 import org.junit.Rule
 import org.junit.runner.RunWith
 
