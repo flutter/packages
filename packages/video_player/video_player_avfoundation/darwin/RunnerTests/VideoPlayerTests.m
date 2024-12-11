@@ -889,6 +889,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
     // After seek, verify playback speed remains unchanged
     XCTAssertEqual(avPlayer.rate, 2.0, @"Playback speed should remain 2.0 after seeking");
+    XCTAssertEqual(avPlayer.defaultRate, 2.0, @"Default playback speed should be 2.0 after seeking");
 }
 
 
