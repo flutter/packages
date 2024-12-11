@@ -41,7 +41,7 @@ tasks.register("clean", Delete) {
 // warnings (e.g., deprecation warnings from a newer SDK than this project
 // builds with).
 gradle.projectsEvaluated {
-    project(":camera_android") {
+    project(":shared_preferences_android") {
         tasks.withType(JavaCompile) {
             options.compilerArgs << "-Xlint:all" << "-Werror"
         }
