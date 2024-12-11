@@ -2861,6 +2861,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
