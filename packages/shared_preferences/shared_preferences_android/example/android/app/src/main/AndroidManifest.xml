@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="dev.flutter.plugins.shared_preferences_example">
+    package="io.flutter.plugins.shared_preferences_example">
     <application
         android:label="shared_preferences_example"
         android:name="${applicationName}"
