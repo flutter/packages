@@ -150,103 +150,111 @@ class WebViewProxyAPITests: XCTestCase {
 
     XCTAssertTrue(instance.canGoForward)
   }
-//
-//  @MainActor func testGoBack() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    try? api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance )
-//
-//    XCTAssertTrue(instance.goBackCalled)
-//  }
-//
-//  @MainActor func testGoForward() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    try? api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance )
-//
-//    XCTAssertTrue(instance.goForwardCalled)
-//  }
-//
-//  @MainActor func testReload() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    try? api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance )
-//
-//    XCTAssertTrue(instance.reloadCalled)
-//  }
-//
-//  @MainActor func testGetTitle() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let value = try? api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance )
-//
-//    XCTAssertTrue(instance.getTitleCalled)
-//    XCTAssertEqual(value, instance.getTitle())
-//  }
-//
-//  @MainActor func testSetAllowsBackForwardNavigationGestures() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let allow = true
-//    try? api.pigeonDelegate.setAllowsBackForwardNavigationGestures(pigeonApi: api, pigeonInstance: instance, allow: allow)
-//
-//    XCTAssertEqual(instance.setAllowsBackForwardNavigationGesturesArgs, [allow])
-//  }
-//
-//  @MainActor func testSetCustomUserAgent() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let userAgent = "myString"
-//    try? api.pigeonDelegate.setCustomUserAgent(pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
-//
-//    XCTAssertEqual(instance.setCustomUserAgentArgs, [userAgent])
-//  }
-//
-//  @MainActor func testEvaluateJavaScript() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let javaScriptString = "myString"
-//    let value = try? api.pigeonDelegate.evaluateJavaScript(pigeonApi: api, pigeonInstance: instance, javaScriptString: javaScriptString)
-//
-//    XCTAssertEqual(instance.evaluateJavaScriptArgs, [javaScriptString])
-//    XCTAssertEqual(value, instance.evaluateJavaScript(javaScriptString: javaScriptString))
-//  }
-//
-//  @MainActor func testSetInspectable() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let inspectable = true
-//    try? api.pigeonDelegate.setInspectable(pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
-//
-//    XCTAssertEqual(instance.setInspectableArgs, [inspectable])
-//  }
-//
-//  @MainActor func testGetCustomUserAgent() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let value = try? api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance )
-//
-//    XCTAssertTrue(instance.getCustomUserAgentCalled)
-//    XCTAssertEqual(value, instance.getCustomUserAgent())
-//  }
+
+  @MainActor func testGoBack() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    try? api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.goBackCalled)
+  }
+
+  @MainActor func testGoForward() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    try? api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.goForwardCalled)
+  }
+
+  @MainActor func testReload() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    try? api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.reloadCalled)
+  }
+
+  @MainActor func testGetTitle() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let value = try? api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertEqual(value, instance.title)
+  }
+
+  @MainActor func testSetAllowsBackForwardNavigationGestures() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let allow = true
+    try? api.pigeonDelegate.setAllowsBackForwardNavigationGestures(pigeonApi: api, pigeonInstance: instance, allow: allow)
+
+    XCTAssertEqual(instance.setAllowsBackForwardNavigationGesturesArgs, [allow])
+  }
+
+  @MainActor func testSetCustomUserAgent() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let userAgent = "myString"
+    try? api.pigeonDelegate.setCustomUserAgent(pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
+
+    XCTAssertEqual(instance.setCustomUserAgentArgs, [userAgent])
+  }
+
+  @MainActor func testEvaluateJavaScript() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let javaScriptString = "myString"
+    
+    var resultValue: Any?
+    api.pigeonDelegate.evaluateJavaScript(pigeonApi: api, pigeonInstance: instance, javaScriptString: javaScriptString, completion: { result in
+      switch result {
+      case .success(let value):
+        resultValue = value
+      case .failure(_):
+        break
+      }
+    })
+
+    XCTAssertEqual(instance.evaluateJavaScriptArgs, [javaScriptString])
+    XCTAssertEqual(resultValue as! String, "returnValue")
+  }
+
+  @MainActor func testSetInspectable() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let inspectable = true
+    try? api.pigeonDelegate.setInspectable(pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
+
+    XCTAssertEqual(instance.setInspectableArgs, [inspectable])
+    XCTAssertFalse(instance.isInspectable)
+  }
+
+  @MainActor func testGetCustomUserAgent() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let value = try? api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertEqual(value, instance.customUserAgent)
+  }
 }
 
 @MainActor
@@ -308,36 +316,57 @@ class TestViewWKWebView: WKWebView {
   override var canGoForward: Bool {
     return true
   }
-
-//  override func canGoForward() {
-//    canGoForwardCalled = true
-//  }
-//  override func goBack() {
-//    goBackCalled = true
-//  }
-//  override func goForward() {
-//    goForwardCalled = true
-//  }
-//  override func reload() {
-//    reloadCalled = true
-//  }
-//  override func getTitle() {
-//    getTitleCalled = true
-//  }
-//  override func setAllowsBackForwardNavigationGestures() {
-//    setAllowsBackForwardNavigationGesturesArgs = [allow]
-//  }
-//  override func setCustomUserAgent() {
-//    setCustomUserAgentArgs = [userAgent]
-//  }
-//  override func evaluateJavaScript() {
-//    evaluateJavaScriptArgs = [javaScriptString]
-//    return -1
-//  }
-//  override func setInspectable() {
-//    setInspectableArgs = [inspectable]
-//  }
-//  override func getCustomUserAgent() {
-//    getCustomUserAgentCalled = true
-//  }
+  
+  override func goBack() -> WKNavigation? {
+    goBackCalled = true
+    return nil
+  }
+  
+  override func goForward() -> WKNavigation? {
+    goForwardCalled = true
+    return nil
+  }
+  
+  override func reload() -> WKNavigation? {
+    reloadCalled = true
+    return nil
+  }
+  
+  override var title: String? {
+    return "title"
+  }
+  
+  override var allowsBackForwardNavigationGestures: Bool {
+    set {
+      setAllowsBackForwardNavigationGesturesArgs = [newValue]
+    }
+    get {
+      return true
+    }
+  }
+  
+  override var customUserAgent: String? {
+    set {
+      setCustomUserAgentArgs = [newValue]
+    }
+    get {
+      return "myUserAgent"
+    }
+  }
+  
+  override func evaluateJavaScript(_ javaScriptString: String, completionHandler: (@MainActor (Any?, (any Error)?) -> Void)? = nil) {
+    evaluateJavaScriptArgs = [javaScriptString]
+    completionHandler?("returnValue", nil)
+  }
+  
+  override var isInspectable: Bool {
+    set {
+      print("setting value")
+      print(newValue)
+      setInspectableArgs = [newValue]
+    }
+    get {
+      return false
+    }
+  }
 }
