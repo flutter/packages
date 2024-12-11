@@ -18,6 +18,7 @@
 		8F15ACE92D038E2600DF9CFC /* UserScriptProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15ACE82D038E2600DF9CFC /* UserScriptProxyAPITests.swift */; };
 		8F15ACEB2D0391C800DF9CFC /* WebsiteDataStoreProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F15ACEA2D0391C800DF9CFC /* WebsiteDataStoreProxyAPITests.swift */; };
 		8F66D8792D0A0F40000835F9 /* WebViewConfigurationProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F66D8782D0A0F40000835F9 /* WebViewConfigurationProxyAPITests.swift */; };
+		8F66D87B2D0A11C6000835F9 /* WebViewProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F66D87A2D0A11C6000835F9 /* WebViewProxyAPITests.swift */; };
 		8F7834FA2D013DF800B6DD45 /* NavigationResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7834EE2D013DF800B6DD45 /* NavigationResponseProxyAPITests.swift */; };
 		8F7834FB2D013DF800B6DD45 /* ScrollViewDelegateProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7834F42D013DF800B6DD45 /* ScrollViewDelegateProxyAPITests.swift */; };
 		8F7834FC2D013DF800B6DD45 /* ScrollViewProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7834F52D013DF800B6DD45 /* ScrollViewProxyAPITests.swift */; };
@@ -98,6 +99,7 @@
 		8F15ACE82D038E2600DF9CFC /* UserScriptProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserScriptProxyAPITests.swift; sourceTree = "<group>"; };
 		8F15ACEA2D0391C800DF9CFC /* WebsiteDataStoreProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebsiteDataStoreProxyAPITests.swift; sourceTree = "<group>"; };
 		8F66D8782D0A0F40000835F9 /* WebViewConfigurationProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewConfigurationProxyAPITests.swift; sourceTree = "<group>"; };
+		8F66D87A2D0A11C6000835F9 /* WebViewProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewProxyAPITests.swift; sourceTree = "<group>"; };
 		8F7834E62D013DF800B6DD45 /* AuthenticationChallengeResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationChallengeResponseProxyAPITests.swift; sourceTree = "<group>"; };
 		8F7834E72D013DF800B6DD45 /* ErrorProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorProxyAPITests.swift; sourceTree = "<group>"; };
 		8F7834E82D013DF800B6DD45 /* FrameInfoProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameInfoProxyAPITests.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				8F15ACE82D038E2600DF9CFC /* UserScriptProxyAPITests.swift */,
 				8F15ACEA2D0391C800DF9CFC /* WebsiteDataStoreProxyAPITests.swift */,
 				8F66D8782D0A0F40000835F9 /* WebViewConfigurationProxyAPITests.swift */,
+				8F66D87A2D0A11C6000835F9 /* WebViewProxyAPITests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -546,6 +549,7 @@
 				8F7835042D013DF800B6DD45 /* NavigationDelegateProxyAPITests.swift in Sources */,
 				8F7835052D013DF800B6DD45 /* ScriptMessageHandlerProxyAPITests.swift in Sources */,
 				8F15ACDB2D014DDE00DF9CFC /* URLCredentialProxyAPITests.swift in Sources */,
+				8F66D87B2D0A11C6000835F9 /* WebViewProxyAPITests.swift in Sources */,
 				8F7835062D013DF800B6DD45 /* UIDelegateProxyAPITests.swift in Sources */,
 				8F7835072D013DF800B6DD45 /* PreferencesProxyAPITests.swift in Sources */,
 				8F15ACEB2D0391C800DF9CFC /* WebsiteDataStoreProxyAPITests.swift in Sources */,

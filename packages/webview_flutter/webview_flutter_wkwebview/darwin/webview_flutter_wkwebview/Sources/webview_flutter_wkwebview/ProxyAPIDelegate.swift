@@ -7,8 +7,12 @@ import Foundation
 /// Implementation of `WebKitLibraryPigeonProxyApiDelegate` that provides each ProxyApi delegate implementation
 /// and any additional resources needed by an implementation.
 open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
-  let assetManager: FlutterAssetManager = FlutterAssetManager()
+  let assetManager: FlutterAssetManager
   let bundle: Bundle = Bundle.main
+  
+  init(assetManager: FlutterAssetManager = FlutterAssetManager()) {
+    self.assetManager = assetManager
+  }
 
   func createUnknownEnumError(withEnum enumValue: Any) -> PigeonError {
     return PigeonError(
