@@ -8,18 +8,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-// Ensure we don't use the singleton `adSense`, but the local copies to this plugin.
-import 'package:google_adsense/experimental/google_adsense.dart' hide adSense;
-import 'package:google_adsense/src/ad_unit_widget.dart';
+import 'package:google_adsense/experimental/ad_unit_widget.dart';
+// Ensure we don't use the `adSense` singleton for tests.
+import 'package:google_adsense/google_adsense.dart' hide adSense;
+import 'package:google_adsense/src/adsense/ad_unit_params.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/web.dart' as web;
 
-import 'test_js_interop.dart';
+import 'adsense_test_js_interop.dart';
 
 const String testClient = 'test_client';
 const String testSlot = 'test_slot';
-const String testScriptUrl =
-    'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -34,49 +32,7 @@ void main() async {
     clearAdsByGoogleMock();
   });
 
-  group('initialization', () {
-    testWidgets('Initialization adds AdSense snippet.', (WidgetTester _) async {
-      final web.HTMLElement target = web.HTMLDivElement();
-      // Given
-
-      adSense.initialize(testClient, jsLoaderTarget: target);
-
-      final web.HTMLScriptElement? injected =
-          target.lastElementChild as web.HTMLScriptElement?;
-
-      expect(injected, isNotNull);
-      expect(injected!.src, testScriptUrl);
-      expect(injected.crossOrigin, 'anonymous');
-      expect(injected.async, true);
-    });
-
-    testWidgets('Skips initialization if script is already present.',
-        (WidgetTester _) async {
-      final web.HTMLScriptElement script = web.HTMLScriptElement()
-        ..id = 'previously-injected'
-        ..src = testScriptUrl;
-      final web.HTMLElement target = web.HTMLDivElement()..appendChild(script);
-
-      adSense.initialize(testClient, jsLoaderTarget: target);
-
-      expect(target.childElementCount, 1);
-      expect(target.firstElementChild?.id, 'previously-injected');
-    });
-
-    testWidgets('Skips initialization if adsense object is already present.',
-        (WidgetTester _) async {
-      final web.HTMLElement target = web.HTMLDivElement();
-
-      // Write an empty noop object
-      mockAdsByGoogle(() {});
-
-      adSense.initialize(testClient, jsLoaderTarget: target);
-
-      expect(target.firstElementChild, isNull);
-    });
-  });
-
-  group('adWidget', () {
+  group('adSense.adUnit', () {
     testWidgets('Responsive (with adFormat) ad units reflow flutter',
         (WidgetTester tester) async {
       // The size of the ad that we're going to "inject"
@@ -89,13 +45,14 @@ void main() async {
         ),
       );
 
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
 
-      final Widget adUnitWidget = adSense.adUnit(
-        AdUnitConfiguration.displayAdUnit(
+      final Widget adUnitWidget = AdUnitWidget(
+        configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
           adFormat: AdFormat.AUTO, // Important!
         ),
+        adClient: adSense.adClient,
       );
 
       await pumpAdWidget(adUnitWidget, tester);
@@ -122,12 +79,13 @@ void main() async {
         ),
       );
 
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
 
-      final Widget adUnitWidget = adSense.adUnit(
-        AdUnitConfiguration.displayAdUnit(
+      final Widget adUnitWidget = AdUnitWidget(
+        configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
         ),
+        adClient: adSense.adClient,
       );
 
       final Widget constrainedAd = Container(
@@ -151,11 +109,12 @@ void main() async {
       // When
       mockAdsByGoogle(mockAd(adStatus: AdStatus.UNFILLED));
 
-      adSense.initialize(testClient);
-      final Widget adUnitWidget = adSense.adUnit(
-        AdUnitConfiguration.displayAdUnit(
+      await adSense.initialize(testClient);
+      final Widget adUnitWidget = AdUnitWidget(
+        configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
         ),
+        adClient: adSense.adClient,
       );
 
       await pumpAdWidget(adUnitWidget, tester);
@@ -181,23 +140,32 @@ void main() async {
         ]),
       );
 
-      adSense.initialize(testClient);
+      await adSense.initialize(testClient);
 
       final Widget bunchOfAds = Column(
         children: <Widget>[
-          adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-            adSlot: testSlot,
-            adFormat: AdFormat.AUTO,
-          )),
-          adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-            adSlot: testSlot,
-            adFormat: AdFormat.AUTO,
-          )),
+          AdUnitWidget(
+            configuration: AdUnitConfiguration.displayAdUnit(
+              adSlot: testSlot,
+              adFormat: AdFormat.AUTO,
+            ),
+            adClient: adSense.adClient,
+          ),
+          AdUnitWidget(
+            configuration: AdUnitConfiguration.displayAdUnit(
+              adSlot: testSlot,
+              adFormat: AdFormat.AUTO,
+            ),
+            adClient: adSense.adClient,
+          ),
           Container(
             constraints: const BoxConstraints(maxHeight: 100),
-            child: adSense.adUnit(AdUnitConfiguration.displayAdUnit(
-              adSlot: testSlot,
-            )),
+            child: AdUnitWidget(
+              configuration: AdUnitConfiguration.displayAdUnit(
+                adSlot: testSlot,
+              ),
+              adClient: adSense.adClient,
+            ),
           ),
         ],
       );
