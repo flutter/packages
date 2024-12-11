@@ -839,6 +839,59 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   [self waitForExpectationsWithTimeout:10.0 handler:nil];
 }
 
+- (void)testPlaybackSpeedRemainsAfterSeek {
+    NSObject<FlutterTextureRegistry> *mockTextureRegistry =
+            OCMProtocolMock(@protocol(FlutterTextureRegistry));
+    NSObject<FlutterPluginRegistrar> *registrar =
+            [GetPluginRegistry() registrarForPlugin:@"PlaybackSpeedRemainsAfterSeek"];
+    NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
+    OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+
+    // Create mock video output and AVPlayer
+    AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+    StubAVPlayer *mockAVPlayer = [[StubAVPlayer alloc] init];
+
+    // Set up the player factory
+    FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+            initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:mockAVPlayer output:mockVideoOutput]
+           displayLinkFactory:nil
+                    registrar:partialRegistrar];
+
+    // Initialize the video player plugin
+    FlutterError *initError;
+    [videoPlayerPlugin initialize:&initError];
+    XCTAssertNil(initError);
+
+    FVPCreationOptions *create = [FVPCreationOptions makeWithAsset:nil
+                                                               uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+                                                       packageName:nil
+                                                        formatHint:nil
+                                                       httpHeaders:@{}];
+    FlutterError *createError;
+    NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
+    XCTAssertNil(createError);
+
+    // Ensure player was created
+    FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+    XCTAssertNotNil(player);
+    AVPlayer *avPlayer = player.player;
+
+    // Set playback speed to 2.0
+    [player setPlaybackSpeed:2.0];
+    XCTAssertEqual(avPlayer.rate, 2.0, @"Playback speed should be set to 2.0");
+
+    // Perform a seek operation
+    [videoPlayerPlugin seekTo:1234
+                    forPlayer:textureId.integerValue
+                   completion:^(FlutterError *_Nullable error) {
+                       XCTAssertNil(error);
+                   }];
+
+    // After seek, verify playback speed remains unchanged
+    XCTAssertEqual(avPlayer.rate, 2.0, @"Playback speed should remain 2.0 after seeking");
+}
+
+
 #if TARGET_OS_IOS
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
   AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
