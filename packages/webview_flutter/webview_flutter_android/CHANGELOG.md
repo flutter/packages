@@ -1,3 +1,7 @@
+## 4.2.0
+
+* Adds WebSettings methods: `AndroidWebViewController.setAllowFileAccess`, `AndroidWebViewController.setAllowContentAccess`, `AndroidWebViewController.setGeolocationEnabled` and `AndroidWebViewController.setCacheMode`.
+
 ## 4.1.0
 
 * Updates internal API wrapper to use `ProxyApi`s.

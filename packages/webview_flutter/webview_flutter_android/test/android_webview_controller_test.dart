@@ -1510,6 +1510,56 @@ void main() {
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
   });
 
+  test('setAllowContentAccess', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setAllowContentAccess(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setAllowContentAccess(false)).called(1);
+  });
+
+  test('setGeolocationEnabled', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setGeolocationEnabled(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setGeolocationEnabled(false)).called(1);
+  });
+
+  test('setCacheMode', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    const android_webview.CacheMode value =
+        android_webview.CacheMode.loadCacheElseNetwork;
+    await controller.setCacheMode(value);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setCacheMode(value)).called(1);
+  });
+
   test('setTextZoom', () async {
     final MockWebView mockWebView = MockWebView();
     final MockWebSettings mockSettings = MockWebSettings();

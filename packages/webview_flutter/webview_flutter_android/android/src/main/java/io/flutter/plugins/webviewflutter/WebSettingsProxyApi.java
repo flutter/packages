@@ -18,6 +18,21 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
     super(pigeonRegistrar);
   }
 
+  private static int mapCacheMode(CacheMode pigeonMode) {
+    switch (pigeonMode) {
+      case LOAD_DEFAULT:
+        return WebSettings.LOAD_DEFAULT;
+      case LOAD_CACHE_ELSE_NETWORK:
+        return WebSettings.LOAD_CACHE_ELSE_NETWORK;
+      case LOAD_NO_CACHE:
+        return WebSettings.LOAD_NO_CACHE;
+      case LOAD_CACHE_ONLY:
+        return WebSettings.LOAD_CACHE_ONLY;
+    }
+
+    return WebSettings.LOAD_DEFAULT;
+  }
+
   @Override
   public void setDomStorageEnabled(@NonNull WebSettings pigeon_instance, boolean flag) {
     pigeon_instance.setDomStorageEnabled(flag);
@@ -79,6 +94,21 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
   @Override
   public void setAllowFileAccess(@NonNull WebSettings pigeon_instance, boolean enabled) {
     pigeon_instance.setAllowFileAccess(enabled);
+  }
+
+  @Override
+  public void setAllowContentAccess(@NonNull WebSettings pigeon_instance, boolean enabled) {
+    pigeon_instance.setAllowContentAccess(enabled);
+  }
+
+  @Override
+  public void setGeolocationEnabled(@NonNull WebSettings pigeon_instance, boolean enabled) {
+    pigeon_instance.setGeolocationEnabled(enabled);
+  }
+
+  @Override
+  public void setCacheMode(@NonNull WebSettings pigeon_instance, @NonNull CacheMode mode) {
+    pigeon_instance.setCacheMode(mapCacheMode(mode));
   }
 
   @Override
