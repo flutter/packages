@@ -53,6 +53,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           }
         }
       case .failure(let error):
+        decisionHandler(.cancel)
         assertionFailure("\(error)")
       }
     }
@@ -85,6 +86,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           }
         }
       case .failure(let error):
+        decisionHandler(.cancel)
         assertionFailure("\(String(describing: error)): \(String(describing: error.message))")
       }
     }
@@ -120,6 +122,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       case .success(let response):
         completionHandler(response.disposition, response.credential)
       case .failure(let error):
+        completionHandler(.cancelAuthenticationChallenge, nil)
         assertionFailure("\(error)")
       }
     }

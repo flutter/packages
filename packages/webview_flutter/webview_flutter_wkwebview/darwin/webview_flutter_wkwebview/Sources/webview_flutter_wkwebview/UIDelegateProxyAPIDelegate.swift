@@ -62,6 +62,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
           decisionHandler(.prompt)
         }
       case .failure(let error):
+        decisionHandler(.deny)
         self.proxyAPIDelegate.assertFlutterMethodFailure(error, methodName: "PigeonApiProtocolWKUIDelegate.requestMediaCapturePermission")
       }
     }
@@ -88,8 +89,8 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       case .success(let confirmed):
         completionHandler(confirmed)
       case .failure(let error):
-        assertionFailure("\(error)")
         completionHandler(false)
+        assertionFailure("\(error)")
       }
     }
   }
@@ -106,8 +107,8 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       case .success(let response):
         completionHandler(response)
       case .failure(let error):
-        assertionFailure("\(error)")
         completionHandler(nil)
+        assertionFailure("\(error)")
       }
     }
   }
