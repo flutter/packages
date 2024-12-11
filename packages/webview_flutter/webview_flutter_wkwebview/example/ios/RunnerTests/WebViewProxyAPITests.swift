@@ -116,18 +116,6 @@ class WebViewProxyAPITests: XCTestCase {
   }
 
   @MainActor func testLoadFlutterAsset() {
-//    let apiDelegate = pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
-//    let assetFilePath = apiDelegate.assetManager.lookupKeyForAsset(key)
-//
-//    let url = apiDelegate.bundle.url(
-//      forResource: (assetFilePath as NSString).deletingPathExtension,
-//      withExtension: (assetFilePath as NSString).pathExtension)
-//
-//    if let url {
-//      pigeonInstance.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
-//    } else {
-//      throw apiDelegate.createNullURLError(url: assetFilePath)
-//    }
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
@@ -142,28 +130,26 @@ class WebViewProxyAPITests: XCTestCase {
     XCTAssertTrue(URL.absoluteString.contains("index.html"))
     XCTAssertTrue(readAccessURL.absoluteString.contains("assets/www/"))
   }
-//
-//  @MainActor func testCanGoBack() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance )
-//
-//    XCTAssertTrue(instance.canGoBackCalled)
-//    XCTAssertEqual(value, instance.canGoBack())
-//  }
-//
-//  @MainActor func testCanGoForward() {
-//    let registrar = TestProxyApiRegistrar()
-//    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-//
-//    let instance = TestViewWKWebView()
-//    let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance )
-//
-//    XCTAssertTrue(instance.canGoForwardCalled)
-//    XCTAssertEqual(value, instance.canGoForward())
-//  }
+
+  @MainActor func testCanGoBack() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertFalse(instance.canGoBack)
+  }
+
+  @MainActor func testCanGoForward() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+
+    let instance = TestViewWKWebView()
+    let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance )
+
+    XCTAssertTrue(instance.canGoForward)
+  }
 //
 //  @MainActor func testGoBack() {
 //    let registrar = TestProxyApiRegistrar()
@@ -314,9 +300,15 @@ class TestViewWKWebView: WKWebView {
     loadFileUrlArgs = [URL, readAccessURL]
     return nil
   }
-//  override func canGoBack() {
-//    canGoBackCalled = true
-//  }
+  
+  override var canGoBack: Bool {
+    return false
+  }
+  
+  override var canGoForward: Bool {
+    return true
+  }
+
 //  override func canGoForward() {
 //    canGoForwardCalled = true
 //  }
