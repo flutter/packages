@@ -461,7 +461,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
           final WKUserScript wrapperScript = WKUserScript(
             source: wrapperSource,
             injectionTime: UserScriptInjectionTime.atDocumentStart,
-            isMainFrameOnly: false,
+            isForMainFrameOnly: false,
           );
           final WKUserContentController controller =
               await webView.configuration.getUserContentController();
@@ -539,7 +539,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
           "user-scalable=no';\n"
           "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
       injectionTime: UserScriptInjectionTime.atDocumentEnd,
-      isMainFrameOnly: true,
+      isForMainFrameOnly: true,
     );
     final WKUserContentController controller =
         await webView.configuration.getUserContentController();
