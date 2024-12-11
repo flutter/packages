@@ -211,11 +211,13 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool
   ) throws {
     if #available(iOS 16.4, macOS 13.3, *) {
-      pigeonInstance.isInspectable = inspectable
+      if pigeonInstance.responds(to: Selector(("setInspectable:"))) {
+        pigeonInstance.perform(Selector(("setInspectable:")), with: inspectable)
+      }
     } else {
       throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
         .createUnsupportedVersionError(
-          method: "HTTPCookiePropertyKey.sameSitePolicy",
+          method: "WKWebView.inspectable",
           versionRequirements: "iOS 16.4, macOS 13.3")
     }
   }
