@@ -16,10 +16,18 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
 
     var instance: TestCookieStore? = TestCookieStore.customInit()
     let cookie = HTTPCookie(properties: [.name : "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"])!
-    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance!, cookie: cookie) { _ in
-      
+    
+    let expect = expectation(description: "Wait for setCookie.")
+    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance!, cookie: cookie) { result in
+      switch result {
+      case .success(_):
+        expect.fulfill()
+      case .failure(_):
+        break
+      }
     }
 
+    waitForExpectations(timeout: 1.0)
     XCTAssertEqual(instance!.setCookieArg, cookie)
     
     DispatchQueue.main.async {
@@ -40,5 +48,6 @@ class TestCookieStore: WKHTTPCookieStore {
   
   override func setCookie(_ cookie: HTTPCookie, completionHandler: (@MainActor () -> Void)? = nil) {
     setCookieArg = cookie
+    completionHandler?()
   }
 }

@@ -14,6 +14,8 @@ class HTTPCookieStoreProxyAPIDelegate: PigeonApiDelegateWKHTTPCookieStore {
     pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie,
     completion: @escaping (Result<Void, Error>) -> Void
   ) {
-    pigeonInstance.setCookie(cookie)
+    pigeonInstance.setCookie(cookie) {
+      completion(.success(Void()))
+    }
   }
 }
