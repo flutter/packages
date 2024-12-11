@@ -361,8 +361,6 @@ class TestViewWKWebView: WKWebView {
   
   override var isInspectable: Bool {
     set {
-      print("setting value")
-      print(newValue)
       setInspectableArgs = [newValue]
     }
     get {
