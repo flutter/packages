@@ -493,6 +493,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     return;
   }
   if (@available(iOS 16, *)) {
+      // this will avoid resetting playback speed to 1.0x on seeking
       _player.defaultRate = speed;
   }
   _player.rate = speed;
