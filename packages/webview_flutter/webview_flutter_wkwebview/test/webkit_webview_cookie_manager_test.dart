@@ -33,7 +33,7 @@ void main() {
       when(
         mockWKWebsiteDataStore.removeDataOfTypes(
           <WebsiteDataType>[WebsiteDataType.cookies],
-          any,
+          0.0,
         ),
       ).thenAnswer((_) => Future<bool>.value(true));
       expect(manager.clearCookies(), completion(true));
@@ -41,7 +41,7 @@ void main() {
       when(
         mockWKWebsiteDataStore.removeDataOfTypes(
           <WebsiteDataType>[WebsiteDataType.cookies],
-          any,
+          0.0,
         ),
       ).thenAnswer((_) => Future<bool>.value(false));
       expect(manager.clearCookies(), completion(false));
