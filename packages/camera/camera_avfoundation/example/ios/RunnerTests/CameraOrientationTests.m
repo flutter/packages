@@ -12,6 +12,7 @@
 #import "MockCaptureDeviceController.h"
 #import "MockDeviceOrientationProvider.h"
 #import "MockCameraDeviceDiscovery.h"
+#import "MockCaptureSession.h"
 
 @interface StubGlobalEventApi : FCPCameraGlobalEventApi
 @property(nonatomic) BOOL called;
@@ -66,6 +67,7 @@
 @property(readonly, nonatomic) StubGlobalEventApi *eventAPI;
 @property(readonly, nonatomic) CameraPlugin *cameraPlugin;
 @property(readonly, nonatomic) MockCameraDeviceDiscovery *deviceDiscovery;
+@property(readonly, nonatomic) MockCaptureSession *captureSession;
 @end
 
 @implementation CameraOrientationTests
@@ -76,13 +78,21 @@
   _camera = [[MockCamera alloc] init];
   _eventAPI = [[StubGlobalEventApi alloc] init];
   _deviceDiscovery = [[MockCameraDeviceDiscovery alloc] init];
+  _captureSession = [[MockCaptureSession alloc] init];
 
   [_camera setValue:_mockDevice forKey:@"captureDevice"];
   
+  __weak typeof(self) weakSelf = self;
+
   _cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
                                               messenger:nil
                                               globalAPI:_eventAPI
-                                         deviceDiscovery:_deviceDiscovery];
+                                         deviceDiscovery:_deviceDiscovery
+                                          sessionFactory:^id<FLTCaptureSessionProtocol>{
+    return weakSelf.captureSession;
+  } deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+    return nil;
+  }];
   _cameraPlugin.camera = _camera;
 }
 
@@ -122,10 +132,17 @@
 
 - (void)testOrientationNotificationsNotCalledForFaceDown {
   StubGlobalEventApi *eventAPI = [[StubGlobalEventApi alloc] init];
+  
+  __weak typeof(self) weakSelf = self;
   CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                             messenger:nil
                                                             globalAPI:eventAPI
-                                                      deviceDiscovery:_deviceDiscovery];
+                                                      deviceDiscovery:_deviceDiscovery
+                                                       sessionFactory:^id<FLTCaptureSessionProtocol>{
+    return weakSelf.captureSession;
+  } deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+    return nil;
+  }];
 
   [self sendOrientation:UIDeviceOrientationFaceDown toCamera:cameraPlugin];
 
@@ -157,12 +174,18 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
 
   __weak CameraPlugin *weakPlugin;
+  __weak typeof(self) weakSelf = self;
 
   @autoreleasepool {
     CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                         messenger:nil
                                                         globalAPI:_eventAPI
-                                                  deviceDiscovery:_deviceDiscovery];
+                                                  deviceDiscovery:_deviceDiscovery
+                                                   sessionFactory:^id<FLTCaptureSessionProtocol>{
+      return weakSelf.captureSession;
+    } deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+      return nil;
+    }];
     weakPlugin = plugin;
     plugin.captureSessionQueue = captureSessionQueue;
     plugin.camera = _camera;

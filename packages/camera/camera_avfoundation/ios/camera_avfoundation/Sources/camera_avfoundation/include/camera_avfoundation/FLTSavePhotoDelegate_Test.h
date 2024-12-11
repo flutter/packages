@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTSavePhotoDelegate.h"
+#import "FLTPhotoData.h"
 
 /// API exposed for unit tests.
 @interface FLTSavePhotoDelegate ()
@@ -20,5 +21,5 @@
 /// @param error the capture error.
 /// @param photoDataProvider a closure that provides photo data.
 - (void)handlePhotoCaptureResultWithError:(NSError *)error
-                        photoDataProvider:(NSData * (^)(void))photoDataProvider;
+                        photoDataProvider:(id<FLTPhotoData> (^)(void))photoDataProvider;
 @end

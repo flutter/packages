@@ -28,7 +28,7 @@ extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessi
 /// @param captureSession AVCaptureSession for video
 /// @param resolutionPreset preset for camera's captureSession resolution
 /// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
+extern FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSessionProtocol> captureSession,
                                                    FCPPlatformResolutionPreset resolutionPreset);
 
 /// Creates an `FLTCam` with a given captureSession and resolutionPreset.
@@ -39,8 +39,8 @@ extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSess
 /// @param videoDimensionsForFormat custom code to determine video dimensions
 /// @return an FLTCam object.
 extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    AVCaptureSession *captureSession, FCPPlatformResolutionPreset resolutionPreset,
-    AVCaptureDevice *captureDevice, VideoDimensionsForFormat videoDimensionsForFormat);
+                                                        id<FLTCaptureSessionProtocol> captureSession, FCPPlatformResolutionPreset resolutionPreset,
+                                                        id<FLTCaptureDeviceControlling> captureDevice, VideoDimensionsForFormat videoDimensionsForFormat);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.

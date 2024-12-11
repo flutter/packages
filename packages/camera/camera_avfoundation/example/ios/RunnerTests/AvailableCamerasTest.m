@@ -23,7 +23,12 @@
   [super setUp];
     
   self.mockDeviceDiscovery = [[MockCameraDeviceDiscovery alloc] init];
-  self.cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil globalAPI:nil deviceDiscovery:_mockDeviceDiscovery];
+  self.cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil globalAPI:nil deviceDiscovery:_mockDeviceDiscovery
+                                              sessionFactory:^id<FLTCaptureSessionProtocol>{
+    return nil;
+  } deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+    return nil;
+  }];
 }
 
 

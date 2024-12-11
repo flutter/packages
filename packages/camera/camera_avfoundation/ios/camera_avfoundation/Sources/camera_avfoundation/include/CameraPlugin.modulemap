@@ -17,6 +17,8 @@ framework module camera_avfoundation {
     header "FLTDeviceOrientationProviding.h"
     header "FLTEventChannelProtocol.h"
     header "FLTCameraDeviceDiscovery.h"
+    header "FLTCaptureSessionProtocol.h"
+    header "FLTPhotoData.h"
     header "QueueUtils.h"
   }
 }

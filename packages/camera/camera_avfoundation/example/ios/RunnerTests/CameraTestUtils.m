@@ -8,6 +8,9 @@
 @import AVFoundation;
 @import camera_avfoundation;
 
+#import "MockCaptureDeviceController.h"
+#import "MockCaptureSession.h"
+
 static FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
     FCPPlatformResolutionPreset resolutionPreset) {
   return [FCPPlatformMediaSettings makeWithResolutionPreset:resolutionPreset
@@ -32,26 +35,14 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
   if (!mediaSettingsAVWrapper) {
     mediaSettingsAVWrapper = [[FLTCamMediaSettingsAVWrapper alloc] init];
   }
+  
+  MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
+  videoSessionMock.mockCanSetSessionPreset = YES;
+  
+  MockCaptureSession *audioSessionMock = [[MockCaptureSession alloc] init];
+  audioSessionMock.mockCanSetSessionPreset = YES;
 
-  id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
-  OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
-      .andReturn(inputMock);
-
-  id videoSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([videoSessionMock beginConfiguration])
-      .andDo(^(NSInvocation *invocation){
-      });
-  OCMStub([videoSessionMock commitConfiguration])
-      .andDo(^(NSInvocation *invocation){
-      });
-
-  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
-  OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
-
-  id audioSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
-  OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
-
+  __block MockCaptureDeviceController *mockDevice = [[MockCaptureDeviceController alloc] init];
   id frameRateRangeMock1 = OCMClassMock([AVFrameRateRange class]);
   OCMStub([frameRateRangeMock1 minFrameRate]).andReturn(3);
   OCMStub([frameRateRangeMock1 maxFrameRate]).andReturn(30);
@@ -67,21 +58,17 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
   OCMStub([captureDeviceFormatMock2 videoSupportedFrameRateRanges]).andReturn(@[
     frameRateRangeMock2
   ]);
+  
+//  id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
+//  OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
+//      .andReturn(inputMock);
+  
+  mockDevice.formats = @[captureDeviceFormatMock1, captureDeviceFormatMock2];
+  mockDevice.activeFormat = captureDeviceFormatMock1;
+ // mockDevice.inputToReturn = inputMock;
 
-  id captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([captureDeviceMock lockForConfiguration:[OCMArg setTo:nil]]).andReturn(YES);
-  OCMStub([captureDeviceMock formats]).andReturn((@[
-    captureDeviceFormatMock1, captureDeviceFormatMock2
-  ]));
-  __block AVCaptureDeviceFormat *format = captureDeviceFormatMock1;
-  OCMStub([captureDeviceMock setActiveFormat:[OCMArg any]]).andDo(^(NSInvocation *invocation) {
-    [invocation retainArguments];
-    [invocation getArgument:&format atIndex:2];
-  });
-  OCMStub([captureDeviceMock activeFormat]).andDo(^(NSInvocation *invocation) {
-    [invocation setReturnValue:&format];
-  });
-
+  //
+  
   id fltCam = [[FLTCam alloc] initWithMediaSettings:mediaSettings
                              mediaSettingsAVWrapper:mediaSettingsAVWrapper
                              orientation:UIDeviceOrientationPortrait
@@ -89,7 +76,7 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
                              audioCaptureSession:audioSessionMock
                              captureSessionQueue:captureSessionQueue
                                captureDeviceFactory:captureDeviceFactory ?: ^id<FLTCaptureDeviceControlling>(void) {
-    return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDeviceMock];
+                              return mockDevice;
                              }
                              videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
                                return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
@@ -124,7 +111,7 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
   return fltCam;
 }
 
-FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
+FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSessionProtocol> captureSession,
                                             FCPPlatformResolutionPreset resolutionPreset) {
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
@@ -145,8 +132,8 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
 }
 
 FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    AVCaptureSession *captureSession, FCPPlatformResolutionPreset resolutionPreset,
-    AVCaptureDevice *captureDevice, VideoDimensionsForFormat videoDimensionsForFormat) {
+                                                 id<FLTCaptureSessionProtocol> captureSession, FCPPlatformResolutionPreset resolutionPreset,
+                                                 id<FLTCaptureDeviceControlling> captureDevice, VideoDimensionsForFormat videoDimensionsForFormat) {
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
       .andReturn(inputMock);
@@ -162,7 +149,7 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
                            audioCaptureSession:audioSessionMock
                            captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
                           captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
-    return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDevice];                          }
+    return captureDevice;             }
                       videoDimensionsForFormat:videoDimensionsForFormat
                                          error:nil];
 }

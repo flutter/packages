@@ -11,11 +11,15 @@
 @implementation FLTDefaultCaptureDeviceController
 
 - (instancetype)initWithDevice:(AVCaptureDevice *)device {
-    self = [super init];
-    if (self) {
-        _device = device;
-    }
-    return self;
+  self = [super init];
+  if (self) {
+      _device = device;
+  }
+  return self;
+}
+
+- (nonnull NSString *)uniqueID {
+  return self.device.uniqueID;
 }
 
 // Position/Orientation
@@ -164,10 +168,6 @@
 
 - (AVCaptureInput *)createInput:(NSError * _Nullable * _Nullable)error {
   return [AVCaptureDeviceInput deviceInputWithDevice:_device error:error];
-}
-
-- (nonnull NSString *)uniqueID { 
-  return self.device.uniqueID;
 }
 
 @end

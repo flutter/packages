@@ -13,6 +13,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Factory block returning an AVCaptureDevice.
+/// Used in tests to inject a device into FLTCam.
+typedef id<FLTCaptureDeviceControlling> _Nonnull (^CaptureDeviceFactory)(void);
+
+/// Determines the video dimensions (width and height) for a given capture device format.
+/// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
+typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
+
 /// A class that manages camera's state and performs camera operations.
 @interface FLTCam : NSObject <FlutterTexture>
 
@@ -46,6 +54,30 @@ NS_ASSUME_NONNULL_BEGIN
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error;
+
+/// Initializes a camera instance.
+/// Allows for injecting dependencies that are usually internal.
+- (instancetype)initWithCameraName:(NSString *)cameraName
+                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
+            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
+                       orientation:(UIDeviceOrientation)orientation
+               videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
+               audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
+               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+                             error:(NSError **)error;
+
+///  Initializes a camera instance.
+///  Allows for testing with specified resolution, audio preference, orientation,
+///  and direct access to capture sessions and blocks.
+- (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
+               mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
+                          orientation:(UIDeviceOrientation)orientation
+                  videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
+                  audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
+                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+                 captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+             videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+                                error:(NSError **)error;
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.
 - (void)reportInitializationState;

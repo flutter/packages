@@ -16,6 +16,7 @@
 #import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
 #import "./include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
 #import "./include/camera_avfoundation/Protocols/FLTEventChannelProtocol.h"
+#import "./include/camera_avfoundation/Protocols/FLTCaptureSessionProtocol.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -57,8 +58,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
-@property(readonly, nonatomic) AVCaptureSession *videoCaptureSession;
-@property(readonly, nonatomic) AVCaptureSession *audioCaptureSession;
+@property(readonly, nonatomic) id<FLTCaptureSessionProtocol> videoCaptureSession;
+@property(readonly, nonatomic) id<FLTCaptureSessionProtocol> audioCaptureSession;
 
 @property(readonly, nonatomic) AVCaptureInput *captureVideoInput;
 /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
@@ -123,12 +124,15 @@ NSString *const errorMethod = @"error";
                        orientation:(UIDeviceOrientation)orientation
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
+  AVCaptureSession *videoSession = [[AVCaptureSession alloc] init];
+  AVCaptureSession *audioSession = [[AVCaptureSession alloc] init];
+
   return [self initWithCameraName:cameraName
                     mediaSettings:mediaSettings
            mediaSettingsAVWrapper:mediaSettingsAVWrapper
                       orientation:orientation
-              videoCaptureSession:[[AVCaptureSession alloc] init]
-              audioCaptureSession:[[AVCaptureSession alloc] init]
+              videoCaptureSession:[[FLTDefaultCaptureSession alloc] initWithCaptureSession:videoSession]
+              audioCaptureSession:[[FLTDefaultCaptureSession alloc] initWithCaptureSession:audioSession]
               captureSessionQueue:captureSessionQueue
                             error:error];
 }
@@ -137,8 +141,8 @@ NSString *const errorMethod = @"error";
                      mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
             mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                        orientation:(UIDeviceOrientation)orientation
-               videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-               audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+               videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
+               audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
                captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                              error:(NSError **)error {
   return [self initWithMediaSettings:mediaSettings
@@ -213,8 +217,8 @@ static void selectBestFormatForRequestedFrameRate(
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                           orientation:(UIDeviceOrientation)orientation
-                  videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-                  audioCaptureSession:(AVCaptureSession *)audioCaptureSession
+                  videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
+                  audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
              videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat

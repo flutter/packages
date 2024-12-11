@@ -4,6 +4,8 @@
 
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate_Test.h"
+#import "./include/camera_avfoundation/Protocols/FLTPhotoData.h"
+
 
 @interface FLTSavePhotoDelegate ()
 /// The file path for the captured photo.
@@ -26,7 +28,7 @@
 }
 
 - (void)handlePhotoCaptureResultWithError:(NSError *)error
-                        photoDataProvider:(NSData * (^)(void))photoDataProvider {
+                        photoDataProvider:(id<FLTPhotoData> (^)(void))photoDataProvider {
   if (error) {
     self.completionHandler(nil, error);
     return;
@@ -36,7 +38,7 @@
     typeof(self) strongSelf = weakSelf;
     if (!strongSelf) return;
 
-    NSData *data = photoDataProvider();
+    id<FLTPhotoData> data = photoDataProvider();
     NSError *ioError;
     if ([data writeToFile:strongSelf.path options:NSDataWritingAtomic error:&ioError]) {
       strongSelf.completionHandler(self.path, nil);
@@ -50,8 +52,9 @@
     didFinishProcessingPhoto:(AVCapturePhoto *)photo
                        error:(NSError *)error {
   [self handlePhotoCaptureResultWithError:error
-                        photoDataProvider:^NSData * {
-                          return [photo fileDataRepresentation];
+                        photoDataProvider:^id<FLTPhotoData> {
+                          NSData *data = [photo fileDataRepresentation];
+                          return [[FLTDefaultPhotoData alloc] init];
                         }];
 }
 

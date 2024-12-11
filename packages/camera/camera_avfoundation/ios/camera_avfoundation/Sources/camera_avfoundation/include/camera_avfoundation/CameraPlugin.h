@@ -5,6 +5,11 @@
 #import <Flutter/Flutter.h>
 
 #import "messages.g.h"
+#import "FLTCaptureSessionProtocol.h"
+#import "FLTCaptureDeviceControlling.h"
+
+typedef id<FLTCaptureSessionProtocol> (^CaptureSessionFactory)(void);
+typedef id<FLTCaptureDeviceControlling> (^CaptureNamedDeviceFactory)(NSString* name);
 
 @interface CameraPlugin : NSObject <FlutterPlugin, FCPCameraApi>
 @end

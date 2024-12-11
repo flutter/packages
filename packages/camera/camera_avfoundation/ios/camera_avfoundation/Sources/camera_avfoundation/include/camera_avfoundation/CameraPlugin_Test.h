@@ -27,7 +27,10 @@
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI
-                 deviceDiscovery:(id<FLTCameraDeviceDiscovery>)deviceDiscovery NS_DESIGNATED_INITIALIZER;
+                 deviceDiscovery:(id<FLTCameraDeviceDiscovery>)deviceDiscovery
+                  sessionFactory:(CaptureSessionFactory)sessionFactory
+                   deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
+NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.
 - (instancetype)init NS_UNAVAILABLE;
