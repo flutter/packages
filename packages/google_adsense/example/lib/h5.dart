@@ -138,8 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextButton.icon(
-              onPressed:
-                  _h5Ready ? _requestInterstitialAd : null,
+              onPressed: _h5Ready ? _requestInterstitialAd : null,
               label: const Text('Show Interstitial Ad'),
               icon: const Icon(Icons.play_circle_outline_rounded),
             ),
@@ -155,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 TextButton.icon(
                   onPressed:
-                      _h5Ready &&  !adBreakAvailable ? _requestRewardedAd : null,
+                      _h5Ready && !adBreakAvailable ? _requestRewardedAd : null,
                   label: const Text('Prepare Reward'),
                   icon: const Icon(Icons.download_rounded),
                 ),
@@ -169,8 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'Rewarded Ad Status:',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+                    fontWeight: FontWeight.bold,
+                  ),
             ),
             Text('Requested? $_adBreakRequested'),
             Text('Available? $adBreakAvailable'),
