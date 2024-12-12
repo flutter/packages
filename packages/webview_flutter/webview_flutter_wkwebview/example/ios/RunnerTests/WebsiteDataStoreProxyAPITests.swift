@@ -28,20 +28,20 @@ class WebsiteDataStoreProxyAPITests: XCTestCase {
     let dataTypes: [WebsiteDataType] = [.localStorage]
     let modificationTimeInSecondsSinceEpoch = 0.0
     
-    let expect = expectation(description: "Wait for result to reutrn.")
+    let removeDataOfTypesExpectation = expectation(description: "Wait for result of removeDataOfTypes.")
     
-    var hasCookiesResult: Bool?
+    var removeDataOfTypesResult: Bool?
     api.pigeonDelegate.removeDataOfTypes(pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes, modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch, completion: { result in
       switch result {
-      case .success(let hasCookies):
-        hasCookiesResult = hasCookies
+      case .success(let hasRecords):
+        removeDataOfTypesResult = hasRecords
       case .failure(_): break
       }
       
-      expect.fulfill()
+      removeDataOfTypesExpectation.fulfill()
     })
 
-    waitForExpectations(timeout: 20.0)
-    XCTAssertNotNil(hasCookiesResult)
+    wait(for: [removeDataOfTypesExpectation])
+    XCTAssertNotNil(removeDataOfTypesResult)
   }
 }
