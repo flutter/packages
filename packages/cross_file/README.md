@@ -4,15 +4,38 @@ An abstraction to allow working with files across multiple platforms.
 
 ## Usage
 
-Import `package:cross_file/cross_file.dart`, instantiate a `XFile`
-using a path or byte array and use its methods and properties to
-access the file and its metadata.
+Many packages use `XFile` as their return type. In order for your
+application to consume those files, import 
+`package:cross_file/cross_file.dart`, and use its methods and properties
+to access the file data and metadata.
 
-Example:
+In order to instantiate a new `XFile`, import the correct factory class,
+either from `package:cross_file/native/factory.dart` (for native development) or
+`package:cross_file/web/factory.dart` (for web development), and use the factory
+constructor more appropriate for the data that you need to handle.
+
+The library currently supports factories for the
+following source types:
+
+|| **native** | **web** |
+|-|------------|---------|
+| `UInt8List`| `fromBytes` | `fromBytes` |
+| `dart:io` [`File`][dart_file] | `fromFile` | ❌ |
+| Filesystem path | `fromPath` | ❌ |
+| Web [`File`][mdn_file] | ❌ | `fromFile` |
+| Web [`Blob`][mdn_blob] | ❌ | `fromBlob` |
+| `objectURL` | ❌ | `fromObjectUrl` |
+
+[dart_file]: https://api.dart.dev/stable/3.5.2/dart-io/File-class.html
+[mdn_file]: https://developer.mozilla.org/en-US/docs/Web/API/File
+[mdn_blob]: https://developer.mozilla.org/en-US/docs/Web/API/Blob
+
+
+### Example
 
 <?code-excerpt "example/lib/readme_excerpts.dart (Instantiate)"?>
 ```dart
-final XFile file = XFile('assets/hello.txt');
+final XFile file = XFileFactory.fromPath('assets/hello.txt');
 
 print('File information:');
 print('- Path: ${file.path}');
@@ -27,15 +50,11 @@ You will find links to the API docs on the [pub page](https://pub.dev/packages/c
 
 ## Web Limitations
 
-`XFile` on the web platform is backed by [Blob](https://api.dart.dev/be/180361/dart-html/Blob-class.html)
+`XFile` on the web platform is backed by `Blob`
 objects and their URLs.
 
 It seems that Safari hangs when reading Blobs larger than 4GB (your app will stop
 without returning any data, or throwing an exception).
-
-This package will attempt to throw an `Exception` before a large file is accessed
-from Safari (if its size is known beforehand), so that case can be handled
-programmatically.
 
 ### Browser compatibility
 

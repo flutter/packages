@@ -10,7 +10,6 @@ import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:cross_file/web/factory.dart';
 import 'package:test/test.dart';
 import 'package:web/web.dart' as html;
 
@@ -22,11 +21,7 @@ final String textFileUrl = html.URL.createObjectURL(textFile);
 
 void main() {
   group('Create with an objectUrl', () {
-    late XFile file;
-
-    setUp(() async {
-      file = XFileFactory.fromObjectUrl(textFileUrl);
-    });
+    final XFile file = XFile(textFileUrl);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -46,7 +41,7 @@ void main() {
   });
 
   group('Create from data', () {
-    final XFile file = XFileFactory.fromBytes(bytes);
+    final XFile file = XFile.fromData(bytes);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -66,16 +61,12 @@ void main() {
   });
 
   group('Blob backend', () {
-    late String objectUrl;
-
-    setUp(() async {
-      objectUrl = html.URL.createObjectURL(textFile);
-    });
+    final XFile file = XFile(textFileUrl);
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
       final html.Response response =
-          await html.window.fetch(objectUrl.toJS).toDart;
+          await html.window.fetch(file.path.toJS).toDart;
 
       final JSAny arrayBuffer = await response.arrayBuffer().toDart;
       final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
@@ -83,16 +74,10 @@ void main() {
     });
 
     test('Data may be purged from the blob!', () async {
-      expect(() async {
-        final XFile fileBeforeRevoke = XFileFactory.fromObjectUrl(objectUrl);
-        await fileBeforeRevoke.readAsBytes();
-      }, returnsNormally);
-
-      html.URL.revokeObjectURL(objectUrl);
+      html.URL.revokeObjectURL(file.path);
 
       expect(() async {
-        final XFile fileAfterRevoke = XFileFactory.fromObjectUrl(objectUrl);
-        await fileAfterRevoke.readAsBytes();
+        await file.readAsBytes();
       }, throwsException);
     });
   });
@@ -102,7 +87,7 @@ void main() {
 
     group('CrossFile saveTo(..)', () {
       test('creates a DOM container', () async {
-        final XFile file = XFileFactory.fromBytes(bytes);
+        final XFile file = XFile.fromData(bytes);
 
         await file.saveTo('');
 
@@ -113,7 +98,7 @@ void main() {
       });
 
       test('create anchor element', () async {
-        final XFile file = XFileFactory.fromFile(textFile);
+        final XFile file = XFile.fromData(bytes, name: textFile.name);
 
         await file.saveTo('path');
 
@@ -130,7 +115,7 @@ void main() {
         }
 
         // if element is not found, the `firstWhere` call will throw StateError.
-        expect(element.href, isNotEmpty);
+        expect(element.href, isNotNull);
         expect(element.download, file.name);
       });
     });

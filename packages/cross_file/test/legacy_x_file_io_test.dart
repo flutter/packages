@@ -10,7 +10,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
-import 'package:cross_file/native/factory.dart';
 import 'package:cross_file/src/implementations/io_x_file.dart';
 import 'package:test/test.dart';
 
@@ -25,26 +24,26 @@ final String textFilePath = textFile.path;
 void main() {
   group('Create with a path', () {
     test('Can be read as a string', () async {
-      final XFile file = XFileFactory.fromPath(textFilePath);
+      final XFile file = XFile(textFilePath);
       expect(await file.readAsString(), equals(expectedStringContents));
     });
     test('Can be read as bytes', () async {
-      final XFile file = XFileFactory.fromPath(textFilePath);
+      final XFile file = XFile(textFilePath);
       expect(await file.readAsBytes(), equals(bytes));
     });
 
     test('Can be read as a stream', () async {
-      final XFile file = XFileFactory.fromPath(textFilePath);
+      final XFile file = XFile(textFilePath);
       expect(await file.openRead().first, equals(bytes));
     });
 
     test('Stream can be sliced', () async {
-      final XFile file = XFileFactory.fromPath(textFilePath);
+      final XFile file = XFile(textFilePath);
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
 
     test('saveTo(..) creates file', () async {
-      final XFile file = XFileFactory.fromPath(textFilePath);
+      final XFile file = XFile(textFilePath);
       final Directory tempDir = Directory.systemTemp.createTempSync();
       final File targetFile = File('${tempDir.path}/newFilePath.txt');
       if (targetFile.existsSync()) {
@@ -60,7 +59,7 @@ void main() {
     });
 
     test('saveTo(..) does not load the file into memory', () async {
-      final TestXFile file = TestXFile(File(textFilePath));
+      final TestXFile file = TestXFile(textFilePath);
       final Directory tempDir = Directory.systemTemp.createTempSync();
       final File targetFile = File('${tempDir.path}/newFilePath.txt');
       if (targetFile.existsSync()) {
@@ -73,10 +72,14 @@ void main() {
 
       await tempDir.delete(recursive: true);
     });
+
+    test('nullability is correct', () async {
+      expect(_ensureNonnullPathArgument('a/path'), isNotNull);
+    });
   });
 
   group('Create with data', () {
-    final XFile file = XFileFactory.fromBytes(bytes);
+    final XFile file = XFile.fromData(bytes);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -110,9 +113,16 @@ void main() {
   });
 }
 
+// This is to create an analysis error if the version of XFile in
+// interface.dart, which should never actually be used but is what the analyzer
+// runs against, has the nullability of `path` changed.
+XFile _ensureNonnullPathArgument(String? path) {
+  return XFile(path!);
+}
+
 /// An XFile subclass that tracks reads, for testing purposes.
 class TestXFile extends IOXFile {
-  TestXFile(super.file);
+  TestXFile(String path) : super(File(path));
 
   bool hasBeenRead = false;
 
