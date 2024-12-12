@@ -1,3 +1,7 @@
+## 2.6.5
+
+* Bugfix to allow the audio-only HLS (.m3u8) on iOS.
+
 ## 2.6.4
 
 * Refactors native code structure.
