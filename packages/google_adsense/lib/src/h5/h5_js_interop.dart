@@ -244,7 +244,7 @@ extension type AdConfigParameters._(JSObject _) implements JSObject {
   ///
   /// For more information, see: https://developers.google.com/ad-placement/apis/adconfig#adconfig_parameters
   factory AdConfigParameters({
-    required SoundEnabled? sound,
+    required SoundEnabled? sound, // required because: cl/704928576
     PreloadAdBreaks? preloadAdBreaks,
     H5OnReadyCallback? onReady,
   }) {

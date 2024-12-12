@@ -53,7 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
     h5GamesAds.adConfig(
       AdConfigParameters(
         sound: SoundEnabled.off,
-        preloadAdBreaks: PreloadAdBreaks.on,
         onReady: _onH5Ready,
       ),
     );
@@ -108,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool adBreakAvailable = _showAdFn != null;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -116,24 +116,27 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const Text(
+          Text(
             'H5 Games Ads status:',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text('Ad Break requested? $_adBreakRequested'),
-          Text('Ad Break available? ${_showAdFn != null}'),
+          Text('Ad Break available? $adBreakAvailable'),
           Text('Rewards obtained: $_adsViewed'),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               TextButton.icon(
                 onPressed:
-                    _h5Ready && !_adBreakRequested ? _requestRewardedAd : null,
-                label: const Text('Request Rewarded ad'),
+                    _h5Ready &&  !adBreakAvailable ? _requestRewardedAd : null,
+                label: const Text('Prepare Rewarded ad'),
                 icon: const Icon(Icons.download_rounded),
               ),
               TextButton.icon(
                 onPressed: _showAdFn,
-                label: const Text('Show Ad'),
+                label: const Text('Watch Ad For 1 Coin!'),
                 icon: const Icon(Icons.play_circle_outline_rounded),
               ),
             ],
