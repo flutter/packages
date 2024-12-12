@@ -840,6 +840,40 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 #if TARGET_OS_IOS
+- (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
+  NSObject<FlutterPluginRegistrar> *registrar = [GetPluginRegistry()
+      registrarForPlugin:@"testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker"];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FlutterError *error;
+
+  [AVAudioSession.sharedInstance setCategory:AVAudioSessionCategoryPlayAndRecord
+                                 withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
+                                       error:nil];
+
+  [videoPlayerPlugin initialize:&error];
+  [videoPlayerPlugin setMixWithOthers:true error:&error];
+  XCTAssert(AVAudioSession.sharedInstance.category == AVAudioSessionCategoryPlayAndRecord,
+            @"Category should be PlayAndRecord.");
+  XCTAssert(
+      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionDefaultToSpeaker,
+      @"Flag DefaultToSpeaker was removed.");
+  XCTAssert(
+      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionMixWithOthers,
+      @"Flag MixWithOthers should be set.");
+
+  id sessionMock = OCMClassMock([AVAudioSession class]);
+  OCMStub([sessionMock sharedInstance]).andReturn(sessionMock);
+  OCMStub([sessionMock category]).andReturn(AVAudioSessionCategoryPlayAndRecord);
+  OCMStub([sessionMock categoryOptions])
+      .andReturn(AVAudioSessionCategoryOptionMixWithOthers |
+                 AVAudioSessionCategoryOptionDefaultToSpeaker);
+  OCMReject([sessionMock setCategory:OCMOCK_ANY withOptions:0 error:[OCMArg setTo:nil]])
+      .ignoringNonObjectArgs();
+
+  [videoPlayerPlugin setMixWithOthers:true error:&error];
+}
+
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
   AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
   CGAffineTransform t = FVPGetStandardizedTransformForTrack(track);
