@@ -1,3 +1,7 @@
+## NEXT
+
+* Fix for `blockquote` property not being applied in `MarkdownBody` widget.
+
 ## 0.7.4+3
 
 * Passes a default error builder to image widgets.
