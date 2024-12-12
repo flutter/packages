@@ -2,7 +2,7 @@ name: local_auth_darwin
 description: iOS implementation of the local_auth plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/local_auth/local_auth_darwin
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+local_auth%22
-version: 1.4.1
+version: 1.4.2
 
 environment:
   sdk: ^3.3.0
@@ -24,7 +24,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  intl: ">=0.17.0 <0.20.0"
+  intl: ">=0.17.0 <0.21.0"
   local_auth_platform_interface: ^1.0.1
 
 dev_dependencies:
