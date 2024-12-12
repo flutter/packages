@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 
-import Flutter
 import XCTest
 
 @testable import webview_flutter_wkwebview

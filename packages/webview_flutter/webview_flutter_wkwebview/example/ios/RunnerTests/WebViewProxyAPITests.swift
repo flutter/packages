@@ -4,7 +4,6 @@
 
 import UIKit
 import WebKit
-import Flutter
 import XCTest
 
 @testable import webview_flutter_wkwebview
@@ -138,7 +137,7 @@ class WebViewProxyAPITests: XCTestCase {
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance )
 
-    XCTAssertFalse(instance.canGoBack)
+    XCTAssertEqual(value, instance.canGoBack)
   }
 
   @MainActor func testCanGoForward() {
@@ -148,7 +147,7 @@ class WebViewProxyAPITests: XCTestCase {
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance )
 
-    XCTAssertTrue(instance.canGoForward)
+    XCTAssertEqual(value, instance.canGoForward)
   }
 
   @MainActor func testGoBack() {

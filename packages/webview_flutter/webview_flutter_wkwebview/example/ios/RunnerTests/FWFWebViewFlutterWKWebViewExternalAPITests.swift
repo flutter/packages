@@ -3,8 +3,15 @@
 // found in the LICENSE file.
 
 import WebKit
-import Flutter
 import XCTest
+
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
 
 @testable import webview_flutter_wkwebview
 
