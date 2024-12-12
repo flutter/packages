@@ -355,7 +355,8 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// Sets the file access permission for the web view.
   ///
-  /// Defaults to false.
+  /// The default value is true for apps targeting API 29 and below, and false
+  /// when targeting API 30 and above.
   Future<void> setAllowFileAccess(bool allow) =>
       _webView.settings.setAllowFileAccess(allow);
 
