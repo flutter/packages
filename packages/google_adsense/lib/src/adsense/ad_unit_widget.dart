@@ -8,21 +8,38 @@ import 'dart:js_interop_unsafe';
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
-import '../experimental/google_adsense.dart';
-import 'js_interop/adsbygoogle.dart';
-import 'logging.dart';
+import '../core/google_adsense.dart';
+import '../js_interop/adsbygoogle.dart';
+import '../utils/logging.dart';
+import 'ad_unit_configuration.dart';
+import 'ad_unit_params.dart';
+import 'adsense_js_interop.dart';
 
-/// Widget displaying an ad unit
+/// Widget displaying an ad unit.
+///
+/// See the [AdUnitConfiguration] object for a complete reference of the available
+/// parameters.
+///
+/// When specifying an [AdFormat], the widget will behave like a "responsive"
+/// ad unit. Responsive ad units might attempt to overflow the container in which
+/// they're rendered.
+///
+/// To create a fully constrained widget (specific width/height), do *not* pass
+/// an `AdFormat` value, and wrap the `AdUnitWidget` in a constrained box from
+/// Flutter, like a [Container] or [SizedBox].
 class AdUnitWidget extends StatefulWidget {
   /// Constructs [AdUnitWidget]
-  const AdUnitWidget({
+  AdUnitWidget({
     super.key,
-    required String adClient,
     required AdUnitConfiguration configuration,
-  })  : _adClient = adClient,
-        _adUnitConfiguration = configuration;
+    @visibleForTesting String? adClient,
+  })  : _adClient = adClient ?? adSense.adClient,
+        _adUnitConfiguration = configuration {
+    assert(_adClient != null,
+        'Attempted to render an AdUnitWidget before calling adSense.initialize');
+  }
 
-  final String _adClient;
+  final String? _adClient;
 
   final AdUnitConfiguration _adUnitConfiguration;
 

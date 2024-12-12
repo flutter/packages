@@ -30,6 +30,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
+
+    StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
+    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -1211,6 +1214,60 @@ public class TestPluginWithSuffix: HostSmallApi {
     completion(.success(Void()))
   }
 
+}
+class SendInts: StreamIntsStreamHandler {
+  var timerActive = false
+  var timer: Timer?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    var count: Int64 = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          sink.success(count)
+          count += 1
+          if count >= 5 {
+            sink.endOfStream()
+            self.timer?.invalidate()
+          }
+        }
+      }
+    }
+  }
+}
+
+class SendEvents: StreamEventsStreamHandler {
+  var timerActive = false
+  var timer: Timer?
+  var eventList: [PlatformEvent] =
+    [
+      IntEvent(value: 1),
+      StringEvent(value: "string"),
+      BoolEvent(value: false),
+      DoubleEvent(value: 3.14),
+      ObjectsEvent(value: true),
+      EnumEvent(value: EventEnum.fortyTwo),
+      ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
+    ]
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    var count = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          if count >= self.eventList.count {
+            sink.endOfStream()
+            self.timer?.invalidate()
+          } else {
+            sink.success(self.eventList[count])
+            count += 1
+          }
+        }
+      }
+    }
+  }
 }
 
 class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {

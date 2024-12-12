@@ -2,7 +2,7 @@ name: ios_platform_images
 description: A plugin to share images between Flutter and iOS in add-to-app setups.
 repository: https://github.com/flutter/packages/tree/main/packages/ios_platform_images
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+ios_platform_images%22
-version: 0.2.4
+version: 0.2.4+1
 
 environment:
   sdk: ^3.3.0
@@ -21,7 +21,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^11.0.0
+  pigeon: ^22.6.4
 
 topics:
   - image

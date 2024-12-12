@@ -14,7 +14,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '22.6.4';
+const String pigeonVersion = '22.7.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -432,6 +432,9 @@ class EnumeratedType {
 
   /// The associated Enum that is represented by the [EnumeratedType].
   final Enum? associatedEnum;
+
+  /// Returns the offset of the enumeration.
+  int offset(int offset) => enumeration - offset;
 }
 
 /// Supported basic datatypes.
@@ -605,7 +608,10 @@ enum CustomTypes {
 
 /// Return the enumerated types that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
-Iterable<EnumeratedType> getEnumeratedTypes(Root root) sync* {
+Iterable<EnumeratedType> getEnumeratedTypes(
+  Root root, {
+  bool excludeSealedClasses = false,
+}) sync* {
   int index = 0;
 
   for (final Enum customEnum in root.enums) {
@@ -619,13 +625,15 @@ Iterable<EnumeratedType> getEnumeratedTypes(Root root) sync* {
   }
 
   for (final Class customClass in root.classes) {
-    yield EnumeratedType(
-      customClass.name,
-      index + minimumCodecFieldKey,
-      CustomTypes.customClass,
-      associatedClass: customClass,
-    );
-    index += 1;
+    if (!excludeSealedClasses || !customClass.isSealed) {
+      yield EnumeratedType(
+        customClass.name,
+        index + minimumCodecFieldKey,
+        CustomTypes.customClass,
+        associatedClass: customClass,
+      );
+      index += 1;
+    }
   }
 }
 
@@ -656,7 +664,7 @@ class DocumentCommentSpecification {
 
 /// Formats documentation comments and adds them to current Indent.
 ///
-/// The [comments] list is meant for comments written in the input dart file.
+/// The [comments] list is meant for comments written in the input Dart file.
 /// The [generatorComments] list is meant for comments added by the generators.
 /// Include white space for all tokens when called, no assumptions are made.
 void addDocumentationComments(
@@ -674,7 +682,7 @@ void addDocumentationComments(
 
 /// Formats documentation comments and adds them to current Indent.
 ///
-/// The [comments] list is meant for comments written in the input dart file.
+/// The [comments] list is meant for comments written in the input Dart file.
 /// The [generatorComments] list is meant for comments added by the generators.
 /// Include white space for all tokens when called, no assumptions are made.
 Iterable<String> asDocumentationComments(
@@ -798,6 +806,22 @@ String toUpperCamelCase(String text) {
     return word.isEmpty
         ? ''
         : word.substring(0, 1).toUpperCase() + word.substring(1);
+  }).join();
+}
+
+/// Converts strings to Lower Camel Case.
+String toLowerCamelCase(String text) {
+  final RegExp separatorPattern = RegExp(r'[ _-]');
+  bool firstWord = true;
+  return text.split(separatorPattern).map((String word) {
+    if (word.isEmpty) {
+      return '';
+    }
+    if (firstWord) {
+      firstWord = false;
+      return word.substring(0, 1).toLowerCase() + word.substring(1);
+    }
+    return word.substring(0, 1).toUpperCase() + word.substring(1);
   }).join();
 }
 
