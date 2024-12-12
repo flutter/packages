@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package dev.flutter.packages.shared_preferences_example;
+package dev.flutter.plugins.shared_preferences_example;
 
 import androidx.test.rule.ActivityTestRule;
 import dev.flutter.plugins.integration_test.FlutterTestRunner;
-import dev.flutter.plugins.shared_preferences_example.MainActivity;
 import io.flutter.plugins.DartIntegrationTest;
 import org.junit.Rule;
 import org.junit.runner.RunWith;
