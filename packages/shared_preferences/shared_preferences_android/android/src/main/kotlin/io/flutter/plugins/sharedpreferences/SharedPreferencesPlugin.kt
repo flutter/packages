@@ -39,7 +39,7 @@ private val Context.sharedPreferencesDataStore: DataStore<Preferences> by
 /// SharedPreferencesPlugin
 class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   private lateinit var context: Context
-  private lateinit var backend?: SharedPreferencesBackend = null
+  private var backend: SharedPreferencesBackend? = null
 
   private var listEncoder = ListEncoder() as SharedPreferencesListEncoder
 
