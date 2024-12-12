@@ -21,60 +21,65 @@ void main() {
 }
 
 void runTests() {
-  testWidgets('testInitialCenterLocationAtCenter', (WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(const Size(800, 600));
+  testWidgets(
+    'testInitialCenterLocationAtCenter',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 600));
 
-    final Completer<GoogleMapController> mapControllerCompleter =
-        Completer<GoogleMapController>();
-    final Key key = GlobalKey();
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          key: key,
-          initialCameraPosition: kInitialCameraPosition,
-          onMapCreated: (GoogleMapController controller) {
-            mapControllerCompleter.complete(controller);
-          },
+      final Completer<GoogleMapController> mapControllerCompleter =
+          Completer<GoogleMapController>();
+      final Key key = GlobalKey();
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            onMapCreated: (GoogleMapController controller) {
+              mapControllerCompleter.complete(controller);
+            },
+          ),
         ),
-      ),
-    );
-    final GoogleMapController mapController =
-        await mapControllerCompleter.future;
+      );
+      final GoogleMapController mapController =
+          await mapControllerCompleter.future;
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
-    // in `mapRendered`.
-    // https://github.com/flutter/flutter/issues/54758
-    await Future<void>.delayed(const Duration(seconds: 1));
+      // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+      // in `mapRendered`.
+      // https://github.com/flutter/flutter/issues/54758
+      await Future<void>.delayed(const Duration(seconds: 1));
 
-    final ScreenCoordinate coordinate =
-        await mapController.getScreenCoordinate(kInitialCameraPosition.target);
-    final Rect rect = tester.getRect(find.byKey(key));
-    if (isIOS || isWeb) {
-      // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
-      // So we don't need to do the conversion like we did below for other platforms.
-      expect(coordinate.x, (rect.center.dx - rect.topLeft.dx).round());
-      expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
-    } else {
-      expect(
-          coordinate.x,
-          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
-              .round());
-      expect(
-          coordinate.y,
-          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
-              .round());
-    }
-    await tester.binding.setSurfaceSize(null);
-  },
-      // Android doesn't like the layout required for the web, so we skip web in this test.
-      // The equivalent web test already exists here:
-      // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
-      skip: isWeb ||
-          // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-          isIOS);
+      final ScreenCoordinate coordinate = await mapController
+          .getScreenCoordinate(kInitialCameraPosition.target);
+      final Rect rect = tester.getRect(find.byKey(key));
+      if (isIOS || isWeb) {
+        // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
+        // So we don't need to do the conversion like we did below for other platforms.
+        expect(coordinate.x, (rect.center.dx - rect.topLeft.dx).round());
+        expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
+      } else {
+        expect(
+            coordinate.x,
+            ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
+                .round());
+        expect(
+            coordinate.y,
+            ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
+                .round());
+      }
+      await tester.binding.setSurfaceSize(null);
+    },
+    // Android doesn't like the layout required for the web, so we skip web in this test.
+    // The equivalent web test already exists here:
+    // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
+    skip: isWeb ||
+        // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+        isIOS ||
+        // TODO(tarrinneal): Re-enable; see https://github.com/flutter/flutter/issues/160115
+        isAndroid,
+  );
 
   testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
     final Key key = GlobalKey();

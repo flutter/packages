@@ -87,7 +87,14 @@ Future<void> _validateGeneratedFiles(
   print('Validating generated files:');
   print('  $generationMessage...');
 
-  final int generateExitCode = await generateExamplePigeons();
+  int generateExitCode = await generateExamplePigeons();
+
+  if (generateExitCode != 0) {
+    print('Generation failed; see above for errors.');
+    exit(generateExitCode);
+  }
+
+  generateExitCode = await generateTestPigeons(baseDir: baseDir);
 
   if (generateExitCode != 0) {
     print('Generation failed; see above for errors.');
