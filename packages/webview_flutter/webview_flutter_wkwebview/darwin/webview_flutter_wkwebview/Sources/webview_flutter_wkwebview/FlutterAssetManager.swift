@@ -4,6 +4,14 @@
 
 import Foundation
 
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
+
 open class FlutterAssetManager {
   func lookupKeyForAsset(_ asset: String) -> String {
     return FlutterDartProject.lookupKey(forAsset: asset)

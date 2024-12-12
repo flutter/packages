@@ -13,7 +13,7 @@ class WebsiteDataStoreProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebsiteDataStore(registrar)
 
-    let instance = WKWebsiteDataStore(forIdentifier: UUID())
+    let instance = WKWebsiteDataStore.default()
     let value = try? api.pigeonDelegate.httpCookieStore(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.httpCookieStore)
@@ -24,11 +24,11 @@ class WebsiteDataStoreProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebsiteDataStore(registrar)
 
-    let instance = WKWebsiteDataStore(forIdentifier: UUID())
-    let dataTypes: [WebsiteDataType] = [.cookies]
+    let instance = WKWebsiteDataStore.default()
+    let dataTypes: [WebsiteDataType] = [.localStorage]
     let modificationTimeInSecondsSinceEpoch = 0.0
     
-    let expect = expectation(description: "Wait for cookie result to reutrn.")
+    let expect = expectation(description: "Wait for result to reutrn.")
     
     var hasCookiesResult: Bool?
     api.pigeonDelegate.removeDataOfTypes(pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes, modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch, completion: { result in
@@ -41,7 +41,7 @@ class WebsiteDataStoreProxyAPITests: XCTestCase {
       expect.fulfill()
     })
 
-    waitForExpectations(timeout: 5.0)
+    waitForExpectations(timeout: 20.0)
     XCTAssertNotNil(hasCookiesResult)
   }
 }

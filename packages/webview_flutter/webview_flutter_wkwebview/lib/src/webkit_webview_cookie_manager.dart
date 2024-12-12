@@ -53,7 +53,7 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
   Future<bool> clearCookies() {
     return _webkitParams._websiteDataStore.removeDataOfTypes(
       <WebsiteDataType>[WebsiteDataType.cookies],
-      DateTime.fromMillisecondsSinceEpoch(0).millisecondsSinceEpoch / 1000,
+      0.0,
     );
   }
 

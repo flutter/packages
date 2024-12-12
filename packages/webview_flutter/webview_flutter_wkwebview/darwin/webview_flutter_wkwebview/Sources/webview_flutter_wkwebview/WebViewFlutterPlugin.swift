@@ -2,8 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Flutter
 import UIKit
+
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
 
 public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
   var proxyApiRegistrar: WebKitLibraryPigeonProxyApiRegistrar?

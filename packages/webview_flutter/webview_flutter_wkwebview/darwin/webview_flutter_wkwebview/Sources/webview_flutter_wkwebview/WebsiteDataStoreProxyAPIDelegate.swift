@@ -48,11 +48,15 @@ class WebsiteDataStoreProxyAPIDelegate: PigeonApiDelegateWKWebsiteDataStore {
       })
 
     pigeonInstance.fetchDataRecords(ofTypes: nativeDataTypes) { records in
-      pigeonInstance.removeData(
-        ofTypes: nativeDataTypes,
-        modifiedSince: Date(timeIntervalSince1970: modificationTimeInSecondsSinceEpoch)
-      ) {
-        completion(.success(!records.isEmpty))
+      if (records.isEmpty) {
+        completion(.success(false))
+      } else {
+        pigeonInstance.removeData(
+          ofTypes: nativeDataTypes,
+          modifiedSince: Date(timeIntervalSince1970: modificationTimeInSecondsSinceEpoch)
+        ) {
+          completion(.success(true))
+        }
       }
     }
   }

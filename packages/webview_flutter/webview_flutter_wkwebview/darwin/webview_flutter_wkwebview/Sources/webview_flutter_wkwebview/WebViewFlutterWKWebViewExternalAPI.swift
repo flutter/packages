@@ -4,7 +4,14 @@
 
 import Foundation
 import WebKit
-import Flutter
+
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
 
 @objc(WebViewFlutterWKWebViewExternalAPI)
 public class WebViewFlutterWKWebViewExternalAPI: NSObject {
