@@ -43,9 +43,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _h5Ready = false;
-  H5ShowAdFn? _showAdFn;
   bool _adBreakRequested = false;
-  int _adsViewed = 0;
+  int _coins = 0; // The counter of rewards
+  H5ShowAdFn? _showAdFn;
+  AdBreakDonePlacementInfo? _lastPlacementInfo;
 
   @override
   void initState() {
@@ -53,6 +54,8 @@ class _MyHomePageState extends State<MyHomePage> {
     h5GamesAds.adConfig(
       AdConfigParameters(
         sound: SoundEnabled.off,
+        // Force `on` so there's an Ad immediately preloaded.
+        preloadAdBreaks: PreloadAdBreaks.on,
         onReady: _onH5Ready,
       ),
     );
@@ -64,6 +67,15 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _requestInterstitialAd() {
+    h5GamesAds.adBreak(
+      AdBreakPlacement.interstitial(
+        type: BreakType.browse,
+        name: 'test-interstitial-ad',
+      ),
+    );
+  }
+
   void _requestRewardedAd() {
     h5GamesAds.adBreak(
       AdBreakPlacement.rewarded(
@@ -72,6 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         adViewed: _adViewed,
         adDismissed: _adDismissed,
         afterAd: _afterAd,
+        adBreakDone: _adBreakDone,
       ),
     );
     setState(() {
@@ -88,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _adViewed() {
     setState(() {
       _showAdFn = null;
-      _adsViewed++;
+      _coins++;
     });
   }
 
@@ -105,6 +118,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _adBreakDone(AdBreakDonePlacementInfo info) {
+    setState(() {
+      _lastPlacementInfo = info;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool adBreakAvailable = _showAdFn != null;
@@ -113,35 +132,70 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('H5 Games for Flutter demo app'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            'H5 Games Ads status:',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            TextButton.icon(
+              onPressed:
+                  _h5Ready ? _requestInterstitialAd : null,
+              label: const Text('Show Interstitial Ad'),
+              icon: const Icon(Icons.play_circle_outline_rounded),
             ),
-          ),
-          Text('Ad Break requested? $_adBreakRequested'),
-          Text('Ad Break available? $adBreakAvailable'),
-          Text('Rewards obtained: $_adsViewed'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              TextButton.icon(
-                onPressed:
-                    _h5Ready &&  !adBreakAvailable ? _requestRewardedAd : null,
-                label: const Text('Prepare Rewarded ad'),
-                icon: const Icon(Icons.download_rounded),
+            const Divider(),
+            PaddedCard(
+              children: <Widget>[
+                const Text(
+                  '🪙 Available coins:',
+                ),
+                Text(
+                  '$_coins',
+                  style: Theme.of(context).textTheme.displayLarge,
+                ),
+                TextButton.icon(
+                  onPressed:
+                      _h5Ready &&  !adBreakAvailable ? _requestRewardedAd : null,
+                  label: const Text('Prepare Reward'),
+                  icon: const Icon(Icons.download_rounded),
+                ),
+                TextButton.icon(
+                  onPressed: _showAdFn,
+                  label: const Text('Watch Ad For 1 Coin'),
+                  icon: const Text('🪙'),
+                ),
+              ],
+            ),
+            Text(
+              'Rewarded Ad Status:',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-              TextButton.icon(
-                onPressed: _showAdFn,
-                label: const Text('Watch Ad For 1 Coin!'),
-                icon: const Icon(Icons.play_circle_outline_rounded),
-              ),
-            ],
-          ),
-        ],
+            ),
+            Text('Requested? $_adBreakRequested'),
+            Text('Available? $adBreakAvailable'),
+            Text('Last Status: ${_lastPlacementInfo?.breakStatus}'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class PaddedCard extends StatelessWidget {
+  final List<Widget> children;
+
+  PaddedCard({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 16),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+        child: Column(
+          children: children,
+        ),
       ),
     );
   }
