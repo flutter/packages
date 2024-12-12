@@ -4,6 +4,8 @@
 
 package com.example.test_plugin
 
+import android.os.Handler
+import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 
@@ -26,6 +28,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
     proxyApiRegistrar = ProxyApiRegistrar(binding.binaryMessenger)
     proxyApiRegistrar!!.setUp()
+
+    StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
+    StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -865,5 +870,60 @@ class TestPluginWithSuffix : HostSmallApi {
 
   override fun voidVoid(callback: (Result<Unit>) -> Unit) {
     callback(Result.success(Unit))
+  }
+}
+
+object SendInts : StreamIntsStreamHandler() {
+  val handler = Handler(Looper.getMainLooper())
+
+  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
+    var count: Long = 0
+    val r: Runnable =
+        object : Runnable {
+          override fun run() {
+            handler.post {
+              if (count >= 5) {
+                sink.endOfStream()
+              } else {
+                sink.success(count)
+                count++
+                handler.postDelayed(this, 10)
+              }
+            }
+          }
+        }
+    handler.postDelayed(r, 10)
+  }
+}
+
+object SendClass : StreamEventsStreamHandler() {
+  val handler = Handler(Looper.getMainLooper())
+  val eventList =
+      listOf(
+          IntEvent(1),
+          StringEvent("string"),
+          BoolEvent(false),
+          DoubleEvent(3.14),
+          ObjectsEvent(true),
+          EnumEvent(EventEnum.FORTY_TWO),
+          ClassEvent(EventAllNullableTypes(aNullableInt = 0)))
+
+  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    var count: Int = 0
+    val r: Runnable =
+        object : Runnable {
+          override fun run() {
+            if (count >= eventList.size) {
+              sink.endOfStream()
+            } else {
+              handler.post {
+                sink.success(eventList[count])
+                count++
+              }
+              handler.postDelayed(this, 10)
+            }
+          }
+        }
+    handler.postDelayed(r, 10)
   }
 }

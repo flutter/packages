@@ -773,6 +773,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       case final DefaultMarker marker:
         return PlatformBitmap(
             bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
+      // Clients may still use this deprecated format, so it must be supported.
+      // ignore: deprecated_member_use
       case final BytesBitmap bytes:
         final Size? size = bytes.size;
         return PlatformBitmap(
@@ -782,6 +784,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       case final AssetBitmap asset:
         return PlatformBitmap(
             bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package));
+      // Clients may still use this deprecated format, so it must be supported.
+      // ignore: deprecated_member_use
       case final AssetImageBitmap asset:
         final Size? size = asset.size;
         return PlatformBitmap(
