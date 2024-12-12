@@ -116,13 +116,11 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
       name: '$_namePrefix${name ?? ''}'.toJS,
       beforeAd: beforeAd?.toJS,
       afterAd: afterAd?.toJS,
-      beforeReward: (JSFunction fn) {
-        if (beforeReward != null) {
-          beforeReward(() {
-            fn.callAsFunction();
-          });
-        }
-      }.toJS,
+      beforeReward: beforeReward != null ? (JSFunction fn) {
+        beforeReward(() {
+          fn.callAsFunction();
+        });
+      }.toJS : null,
       adDismissed: adDismissed?.toJS,
       adViewed: adViewed?.toJS,
       adBreakDone: adBreakDone?.toJS,
@@ -199,7 +197,7 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
     assert(interstitialBreakType.contains(type),
         '$type is not a valid interstitial placement type.');
     return AdBreakPlacement(
-      type: BreakType.start,
+      type: type,
       name: name,
       beforeAd: beforeAd,
       afterAd: afterAd,
