@@ -39,7 +39,7 @@ private val Context.sharedPreferencesDataStore: DataStore<Preferences> by
 /// SharedPreferencesPlugin
 class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   private lateinit var context: Context
-  private lateinit var backend: SharedPreferencesBackend
+  private lateinit var backend?: SharedPreferencesBackend = null
 
   private var listEncoder = ListEncoder() as SharedPreferencesListEncoder
 
@@ -65,7 +65,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     SharedPreferencesAsyncApi.setUp(binding.binaryMessenger, null, "data_store")
-    backend.tearDown()
+    backend?.tearDown()
     backend = null
   }
 
@@ -232,7 +232,7 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
 }
 
 class SharedPreferencesBackend(
-    messenger: BinaryMessenger,
+    private var messenger: BinaryMessenger,
     private var context: Context,
     private var listEncoder: SharedPreferencesListEncoder = ListEncoder()
 ) : SharedPreferencesAsyncApi {
