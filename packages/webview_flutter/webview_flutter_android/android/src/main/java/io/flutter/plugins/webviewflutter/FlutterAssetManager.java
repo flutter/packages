@@ -6,13 +6,13 @@ package io.flutter.plugins.webviewflutter;
 
 import android.content.res.AssetManager;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import java.io.IOException;
 
 /** Provides access to the assets registered as part of the App bundle. */
-@SuppressWarnings({"deprecation", "DeprecatedIsStillUsed"})
-abstract class FlutterAssetManager {
-  final AssetManager assetManager;
+public abstract class FlutterAssetManager {
+  @NonNull final AssetManager assetManager;
 
   /**
    * Constructs a new instance of the {@link FlutterAssetManager}.
@@ -20,7 +20,7 @@ abstract class FlutterAssetManager {
    * @param assetManager Instance of Android's {@link AssetManager} used to access assets within the
    *     App bundle.
    */
-  public FlutterAssetManager(AssetManager assetManager) {
+  public FlutterAssetManager(@NonNull AssetManager assetManager) {
     this.assetManager = assetManager;
   }
 
@@ -32,7 +32,8 @@ abstract class FlutterAssetManager {
    * Therefore, the returned path is appropriate to pass to Android's AssetManager, but the path is
    * not appropriate to load as an absolute path.
    */
-  abstract String getAssetFilePathByName(String name);
+  @Nullable
+  abstract String getAssetFilePathByName(@NonNull String name);
 
   /**
    * Returns a String array of all the assets at the given path.
@@ -43,6 +44,7 @@ abstract class FlutterAssetManager {
    *     This value may be null.
    * @throws IOException Throws an IOException in case I/O operations were interrupted.
    */
+  @NonNull
   public String[] list(@NonNull String path) throws IOException {
     return assetManager.list(path);
   }
@@ -64,13 +66,13 @@ abstract class FlutterAssetManager {
      *     paths to assets registered by Flutter.
      */
     PluginBindingFlutterAssetManager(
-        AssetManager assetManager, FlutterPlugin.FlutterAssets flutterAssets) {
+        @NonNull AssetManager assetManager, @NonNull FlutterPlugin.FlutterAssets flutterAssets) {
       super(assetManager);
       this.flutterAssets = flutterAssets;
     }
 
     @Override
-    public String getAssetFilePathByName(String name) {
+    public String getAssetFilePathByName(@NonNull String name) {
       return flutterAssets.getAssetFilePathByName(name);
     }
   }

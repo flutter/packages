@@ -5,15 +5,6 @@
 #include "camera.h"
 
 namespace camera_windows {
-using flutter::EncodableList;
-using flutter::EncodableMap;
-using flutter::EncodableValue;
-
-// Camera channel events.
-constexpr char kCameraMethodChannelBaseName[] =
-    "plugins.flutter.io/camera_windows/camera";
-constexpr char kCameraClosingEvent[] = "camera_closing";
-constexpr char kErrorEvent[] = "error";
 
 // Camera error codes
 constexpr char kCameraAccessDenied[] = "CameraAccessDenied";
@@ -177,22 +168,16 @@ void CameraImpl::SendErrorForPendingResults(const std::string& error_code,
   pending_results_.clear();
 }
 
-MethodChannel<>* CameraImpl::GetMethodChannel() {
+CameraEventApi* CameraImpl::GetEventApi() {
   assert(messenger_);
   assert(camera_id_);
 
-  // Use existing channel if initialized
-  if (camera_channel_) {
-    return camera_channel_.get();
+  if (!event_api_) {
+    std::string suffix = std::to_string(camera_id_);
+    event_api_ = std::make_unique<CameraEventApi>(messenger_, suffix);
   }
 
-  auto channel_name =
-      std::string(kCameraMethodChannelBaseName) + std::to_string(camera_id_);
-
-  camera_channel_ = std::make_unique<flutter::MethodChannel<>>(
-      messenger_, channel_name, &flutter::StandardMethodCodec::GetInstance());
-
-  return camera_channel_.get();
+  return event_api_.get();
 }
 
 void CameraImpl::OnCreateCaptureEngineSucceeded(int64_t texture_id) {
@@ -326,12 +311,11 @@ void CameraImpl::OnTakePictureFailed(CameraResult result,
 
 void CameraImpl::OnCaptureError(CameraResult result, const std::string& error) {
   if (messenger_ && camera_id_ >= 0) {
-    auto channel = GetMethodChannel();
-
-    std::unique_ptr<EncodableValue> message_data =
-        std::make_unique<EncodableValue>(EncodableMap(
-            {{EncodableValue("description"), EncodableValue(error)}}));
-    channel->InvokeMethod(kErrorEvent, std::move(message_data));
+    GetEventApi()->Error(
+        error,
+        // TODO(stuartmorgan): Replace with an event channel, since that's how
+        // these calls are used. Given that use case, ignore responses.
+        []() {}, [](const FlutterError& error) {});
   }
 
   std::string error_code = GetErrorCode(result);
@@ -340,9 +324,9 @@ void CameraImpl::OnCaptureError(CameraResult result, const std::string& error) {
 
 void CameraImpl::OnCameraClosing() {
   if (messenger_ && camera_id_ >= 0) {
-    auto channel = GetMethodChannel();
-    channel->InvokeMethod(kCameraClosingEvent,
-                          std::move(std::make_unique<EncodableValue>()));
+    // TODO(stuartmorgan): Replace with an event channel, since that's how
+    // these calls are used. Given that use case, ignore responses.
+    GetEventApi()->CameraClosing([]() {}, [](const FlutterError& error) {});
   }
 }
 

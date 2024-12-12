@@ -1,7 +1,7 @@
 plugins {
     id "com.android.application"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.cloud.artifactregistry.gradle-plugin"
 }
 
 def localProperties = new Properties()

@@ -1,3 +1,7 @@
+## 0.12.4+3
+
+* Fixes callback types for `TokenClientConfig`.
+
 ## 0.12.4+2
 
 * Adds support for `web: ^1.0.0`.

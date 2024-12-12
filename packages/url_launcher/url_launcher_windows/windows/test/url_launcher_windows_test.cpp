@@ -22,10 +22,12 @@ namespace {
 
 using flutter::EncodableMap;
 using flutter::EncodableValue;
+using ::testing::_;
 using ::testing::DoAll;
 using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::SetArgPointee;
+using ::testing::StrEq;
 
 class MockSystemApis : public SystemApis {
  public:
@@ -133,6 +135,29 @@ TEST(UrlLauncherPlugin, LaunchReportsError) {
   ErrorOr<bool> result = plugin.LaunchUrl("https://some.url.com");
 
   EXPECT_TRUE(result.has_error());
+}
+
+TEST(UrlLauncherPlugin, LaunchUTF8EncodedFileURLSuccess) {
+  std::unique_ptr<MockSystemApis> system = std::make_unique<MockSystemApis>();
+
+  // Return a success value (>32) from launching.
+  EXPECT_CALL(
+      *system,
+      ShellExecuteW(
+          _, StrEq(L"open"),
+          // 家の管理/スキャナ"),
+          StrEq(
+              L"file:///G:/\x5bb6\x306e\x7ba1\x7406/\x30b9\x30ad\x30e3\x30ca"),
+          _, _, _))
+      .WillOnce(Return(reinterpret_cast<HINSTANCE>(33)));
+
+  UrlLauncherPlugin plugin(std::move(system));
+  ErrorOr<bool> result = plugin.LaunchUrl(
+      "file:///G:/%E5%AE%B6%E3%81%AE%E7%AE%A1%E7%90%86/"
+      "%E3%82%B9%E3%82%AD%E3%83%A3%E3%83%8A");
+
+  ASSERT_FALSE(result.has_error());
+  EXPECT_TRUE(result.value());
 }
 
 }  // namespace test

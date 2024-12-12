@@ -7,13 +7,11 @@ import 'dart:async' as _i5;
 import 'dart:ui' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_android/src/android_webview.dart' as _i2;
+import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 import 'package:webview_flutter_android/src/android_webview_controller.dart'
     as _i6;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     as _i3;
-
-import 'test_android_webview.g.dart' as _i7;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -28,8 +26,9 @@ import 'test_android_webview.g.dart' as _i7;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeCookieManager_0 extends _i1.SmartFake implements _i2.CookieManager {
-  _FakeCookieManager_0(
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
+  _FakePigeonInstanceManager_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -38,9 +37,19 @@ class _FakeCookieManager_0 extends _i1.SmartFake implements _i2.CookieManager {
         );
 }
 
-class _FakePlatformWebViewControllerCreationParams_1 extends _i1.SmartFake
+class _FakeCookieManager_1 extends _i1.SmartFake implements _i2.CookieManager {
+  _FakeCookieManager_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakePlatformWebViewControllerCreationParams_2 extends _i1.SmartFake
     implements _i3.PlatformWebViewControllerCreationParams {
-  _FakePlatformWebViewControllerCreationParams_1(
+  _FakePlatformWebViewControllerCreationParams_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -49,8 +58,8 @@ class _FakePlatformWebViewControllerCreationParams_1 extends _i1.SmartFake
         );
 }
 
-class _FakeObject_2 extends _i1.SmartFake implements Object {
-  _FakeObject_2(
+class _FakeObject_3 extends _i1.SmartFake implements Object {
+  _FakeObject_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -59,8 +68,8 @@ class _FakeObject_2 extends _i1.SmartFake implements Object {
         );
 }
 
-class _FakeOffset_3 extends _i1.SmartFake implements _i4.Offset {
-  _FakeOffset_3(
+class _FakeOffset_4 extends _i1.SmartFake implements _i4.Offset {
+  _FakeOffset_4(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -76,6 +85,15 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
   MockCookieManager() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
   _i5.Future<void> setCookie(
@@ -121,15 +139,15 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
       ) as _i5.Future<void>);
 
   @override
-  _i2.CookieManager copy() => (super.noSuchMethod(
+  _i2.CookieManager pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeCookieManager_0(
+        returnValue: _FakeCookieManager_1(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
@@ -154,7 +172,7 @@ class MockAndroidWebViewController extends _i1.Mock
   @override
   _i3.PlatformWebViewControllerCreationParams get params => (super.noSuchMethod(
         Invocation.getter(#params),
-        returnValue: _FakePlatformWebViewControllerCreationParams_1(
+        returnValue: _FakePlatformWebViewControllerCreationParams_2(
           this,
           Invocation.getter(#params),
         ),
@@ -312,7 +330,7 @@ class MockAndroidWebViewController extends _i1.Mock
           #runJavaScriptReturningResult,
           [javaScript],
         ),
-        returnValue: _i5.Future<Object>.value(_FakeObject_2(
+        returnValue: _i5.Future<Object>.value(_FakeObject_3(
           this,
           Invocation.method(
             #runJavaScriptReturningResult,
@@ -393,7 +411,7 @@ class MockAndroidWebViewController extends _i1.Mock
           #getScrollPosition,
           [],
         ),
-        returnValue: _i5.Future<_i4.Offset>.value(_FakeOffset_3(
+        returnValue: _i5.Future<_i4.Offset>.value(_FakeOffset_4(
           this,
           Invocation.method(
             #getScrollPosition,
@@ -597,23 +615,4 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
-}
-
-/// A class which mocks [TestInstanceManagerHostApi].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i7.TestInstanceManagerHostApi {
-  MockTestInstanceManagerHostApi() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  void clear() => super.noSuchMethod(
-        Invocation.method(
-          #clear,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
 }

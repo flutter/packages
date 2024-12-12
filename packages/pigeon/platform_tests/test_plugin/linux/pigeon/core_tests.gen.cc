@@ -2397,11 +2397,6 @@ core_tests_pigeon_test_test_message_new_from_list(FlValue* values) {
   return core_tests_pigeon_test_test_message_new(test_list);
 }
 
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
-                     core_tests_pigeon_test_message_codec,
-                     CORE_TESTS_PIGEON_TEST, MESSAGE_CODEC,
-                     FlStandardMessageCodec)
-
 struct _CoreTestsPigeonTestMessageCodec {
   FlStandardMessageCodec parent_instance;
 };
@@ -13563,10 +13558,6 @@ core_tests_pigeon_test_host_integration_core_api_call_flutter_small_api_echo_str
                                                        : fl_value_new_null());
   return self;
 }
-
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApi,
-                     core_tests_pigeon_test_host_integration_core_api,
-                     CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API, GObject)
 
 struct _CoreTestsPigeonTestHostIntegrationCoreApi {
   GObject parent_instance;
@@ -32742,10 +32733,6 @@ core_tests_pigeon_test_host_trivial_api_noop_response_new_error(
   return self;
 }
 
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostTrivialApi,
-                     core_tests_pigeon_test_host_trivial_api,
-                     CORE_TESTS_PIGEON_TEST, HOST_TRIVIAL_API, GObject)
-
 struct _CoreTestsPigeonTestHostTrivialApi {
   GObject parent_instance;
 
@@ -33020,10 +33007,6 @@ core_tests_pigeon_test_host_small_api_void_void_response_new_error(
                                                        : fl_value_new_null());
   return self;
 }
-
-G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApi,
-                     core_tests_pigeon_test_host_small_api,
-                     CORE_TESTS_PIGEON_TEST, HOST_SMALL_API, GObject)
 
 struct _CoreTestsPigeonTestHostSmallApi {
   GObject parent_instance;

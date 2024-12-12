@@ -1533,6 +1533,7 @@ void main() {
       apis: <Api>[api],
       classes: <Class>[],
       enums: <Enum>[],
+      containsHostApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions =
@@ -1577,6 +1578,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();

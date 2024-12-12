@@ -1,6 +1,7 @@
-## NEXT
+## 2.1.5
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Updates minimum required `path_provider_android` to [2.2.5](https://pub.dev/packages/path_provider_android/changelog#225) as the v1 Android embedder is no longer available.
 
 ## 2.1.4
 

@@ -153,6 +153,59 @@ NSString *const errorMethod = @"error";
       error:error];
 }
 
+// Returns frame rate supported by format closest to targetFrameRate.
+static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targetFrameRate) {
+  double bestFrameRate = 0;
+  double minDistance = DBL_MAX;
+  for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+    double frameRate = MIN(MAX(targetFrameRate, range.minFrameRate), range.maxFrameRate);
+    double distance = fabs(frameRate - targetFrameRate);
+    if (distance < minDistance) {
+      bestFrameRate = frameRate;
+      minDistance = distance;
+    }
+  }
+  return bestFrameRate;
+}
+
+// Finds format with same resolution as current activeFormat in captureDevice for which
+// bestFrameRateForFormat returned frame rate closest to mediaSettings.framesPerSecond.
+// Preferred are formats with the same subtype as current activeFormat. Sets this format
+// as activeFormat and also updates mediaSettings.framesPerSecond to value which
+// bestFrameRateForFormat returned for that format.
+static void selectBestFormatForRequestedFrameRate(
+    AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
+    VideoDimensionsForFormat videoDimensionsForFormat) {
+  CMVideoDimensions targetResolution = videoDimensionsForFormat(captureDevice.activeFormat);
+  double targetFrameRate = mediaSettings.framesPerSecond.doubleValue;
+  FourCharCode preferredSubType =
+      CMFormatDescriptionGetMediaSubType(captureDevice.activeFormat.formatDescription);
+  AVCaptureDeviceFormat *bestFormat = captureDevice.activeFormat;
+  double bestFrameRate = bestFrameRateForFormat(bestFormat, targetFrameRate);
+  double minDistance = fabs(bestFrameRate - targetFrameRate);
+  BOOL isBestSubTypePreferred = YES;
+  for (AVCaptureDeviceFormat *format in captureDevice.formats) {
+    CMVideoDimensions resolution = videoDimensionsForFormat(format);
+    if (resolution.width != targetResolution.width ||
+        resolution.height != targetResolution.height) {
+      continue;
+    }
+    double frameRate = bestFrameRateForFormat(format, targetFrameRate);
+    double distance = fabs(frameRate - targetFrameRate);
+    FourCharCode subType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
+    BOOL isSubTypePreferred = subType == preferredSubType;
+    if (distance < minDistance ||
+        (distance == minDistance && isSubTypePreferred && !isBestSubTypePreferred)) {
+      bestFormat = format;
+      bestFrameRate = frameRate;
+      minDistance = distance;
+      isBestSubTypePreferred = isSubTypePreferred;
+    }
+  }
+  captureDevice.activeFormat = bestFormat;
+  mediaSettings.framesPerSecond = @(bestFrameRate);
+}
+
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                           orientation:(UIDeviceOrientation)orientation
@@ -225,6 +278,9 @@ NSString *const errorMethod = @"error";
         [_captureDevice unlockForConfiguration];
         return nil;
       }
+
+      selectBestFormatForRequestedFrameRate(_captureDevice, _mediaSettings,
+                                            _videoDimensionsForFormat);
 
       // Set frame rate with 1/10 precision allowing not integral values.
       int fpsNominator = floor([_mediaSettings.framesPerSecond doubleValue] * 10.0);
@@ -474,11 +530,6 @@ NSString *const errorMethod = @"error";
           // Set the best device format found and finish the device configuration.
           _captureDevice.activeFormat = bestFormat;
           [_captureDevice unlockForConfiguration];
-
-          // Set the preview size based on values from the current capture device.
-          _previewSize =
-              CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
-                         _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
           break;
         }
       }
@@ -486,44 +537,35 @@ NSString *const errorMethod = @"error";
     case FCPPlatformResolutionPresetUltraHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset3840x2160]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset3840x2160;
-        _previewSize = CGSizeMake(3840, 2160);
         break;
       }
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetHigh]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetHigh;
-        _previewSize =
-            CGSizeMake(_captureDevice.activeFormat.highResolutionStillImageDimensions.width,
-                       _captureDevice.activeFormat.highResolutionStillImageDimensions.height);
         break;
       }
     case FCPPlatformResolutionPresetVeryHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset1920x1080]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset1920x1080;
-        _previewSize = CGSizeMake(1920, 1080);
         break;
       }
     case FCPPlatformResolutionPresetHigh:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset1280x720]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset1280x720;
-        _previewSize = CGSizeMake(1280, 720);
         break;
       }
     case FCPPlatformResolutionPresetMedium:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset640x480]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset640x480;
-        _previewSize = CGSizeMake(640, 480);
         break;
       }
     case FCPPlatformResolutionPresetLow:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPreset352x288]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPreset352x288;
-        _previewSize = CGSizeMake(352, 288);
         break;
       }
     default:
       if ([_videoCaptureSession canSetSessionPreset:AVCaptureSessionPresetLow]) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetLow;
-        _previewSize = CGSizeMake(352, 288);
       } else {
         if (error != nil) {
           *error =
@@ -537,23 +579,33 @@ NSString *const errorMethod = @"error";
         return NO;
       }
   }
+  CMVideoDimensions size = self.videoDimensionsForFormat(_captureDevice.activeFormat);
+  _previewSize = CGSizeMake(size.width, size.height);
   _audioCaptureSession.sessionPreset = _videoCaptureSession.sessionPreset;
   return YES;
 }
 
 /// Finds the highest available resolution in terms of pixel count for the given device.
+/// Preferred are formats with the same subtype as current activeFormat.
 - (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
     (AVCaptureDevice *)captureDevice {
+  FourCharCode preferredSubType =
+      CMFormatDescriptionGetMediaSubType(_captureDevice.activeFormat.formatDescription);
   AVCaptureDeviceFormat *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
+  BOOL isBestSubTypePreferred = NO;
   for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
     CMVideoDimensions res = self.videoDimensionsForFormat(format);
     NSUInteger height = res.height;
     NSUInteger width = res.width;
     NSUInteger pixelCount = height * width;
-    if (pixelCount > maxPixelCount) {
-      maxPixelCount = pixelCount;
+    FourCharCode subType = CMFormatDescriptionGetMediaSubType(format.formatDescription);
+    BOOL isSubTypePreferred = subType == preferredSubType;
+    if (pixelCount > maxPixelCount ||
+        (pixelCount == maxPixelCount && isSubTypePreferred && !isBestSubTypePreferred)) {
       bestFormat = format;
+      maxPixelCount = pixelCount;
+      isBestSubTypePreferred = isSubTypePreferred;
     }
   }
   return bestFormat;

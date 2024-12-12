@@ -1,0 +1,37 @@
+name: example
+description: An example of the vector_graphics package
+publish_to: 'none'
+
+environment:
+  sdk: ^3.4.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ">=0.13.0 <2.0.0"
+  vector_graphics: any
+  vector_graphics_compiler: any
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
+dependency_overrides:
+  vector_graphics:
+    path: ../
+  vector_graphics_codec:
+    path: ../../vector_graphics_codec
+  vector_graphics_compiler:
+    path: ../../vector_graphics_compiler
+
+platforms:
+  android:
+  ios:
+  linux:
+  macos:
+  web:
+  windows:

@@ -43,7 +43,8 @@ public class WebViewFlutterAndroidExternalApiTest {
 
     webViewFlutterPlugin.onAttachedToEngine(mockPluginBinding);
 
-    final InstanceManager instanceManager = webViewFlutterPlugin.getInstanceManager();
+    final AndroidWebkitLibraryPigeonInstanceManager instanceManager =
+        webViewFlutterPlugin.getInstanceManager();
     assertNotNull(instanceManager);
 
     final WebView mockWebView = mock(WebView.class);

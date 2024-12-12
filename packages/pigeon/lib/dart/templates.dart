@@ -255,7 +255,6 @@ abstract class $proxyApiBaseClassName {
   final BinaryMessenger? $_proxyApiBaseClassMessengerVarName;
 
   /// Maintains instances stored to communicate with native language objects.
-  @protected
   final $dartInstanceManagerClassName $_proxyApiBaseClassInstanceManagerVarName;
 
   /// Instantiates and returns a functionally identical object to oneself.

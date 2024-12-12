@@ -1,3 +1,7 @@
+## 3.2.2
+
+* Updates to Pigeon v22.
+
 ## 3.2.1
 
 * Adds privacy manifest.

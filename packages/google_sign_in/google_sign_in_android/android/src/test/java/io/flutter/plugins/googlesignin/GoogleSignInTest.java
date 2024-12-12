@@ -22,7 +22,6 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.Task;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlesignin.Messages.FlutterError;
 import io.flutter.plugins.googlesignin.Messages.InitParams;
 import java.util.Collections;
@@ -40,7 +39,6 @@ public class GoogleSignInTest {
   @Mock Context mockContext;
   @Mock Resources mockResources;
   @Mock Activity mockActivity;
-  @Mock BinaryMessenger mockMessenger;
   @Spy Messages.VoidResult voidResult;
   @Spy Messages.Result<Boolean> boolResult;
   @Spy Messages.Result<Messages.UserData> userDataResult;

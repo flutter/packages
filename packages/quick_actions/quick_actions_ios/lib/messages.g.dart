@@ -34,6 +34,7 @@ class ShortcutItemMessage {
   ShortcutItemMessage({
     required this.type,
     required this.localizedTitle,
+    this.localizedSubtitle,
     this.icon,
   });
 
@@ -43,6 +44,9 @@ class ShortcutItemMessage {
   /// Localized title of the item.
   String localizedTitle;
 
+  /// Localized subtitle of the item.
+  String? localizedSubtitle;
+
   /// Name of native resource to be displayed as the icon for this item.
   String? icon;
 
@@ -50,6 +54,7 @@ class ShortcutItemMessage {
     return <Object?>[
       type,
       localizedTitle,
+      localizedSubtitle,
       icon,
     ];
   }
@@ -59,7 +64,8 @@ class ShortcutItemMessage {
     return ShortcutItemMessage(
       type: result[0]! as String,
       localizedTitle: result[1]! as String,
-      icon: result[2] as String?,
+      localizedSubtitle: result[2] as String?,
+      icon: result[3] as String?,
     );
   }
 }

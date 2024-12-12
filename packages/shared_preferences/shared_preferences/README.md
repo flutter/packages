@@ -160,7 +160,7 @@ A tool to make this process easier can be tracked here: https://github.com/flutt
 
 #### Adding, Removing, or changing prefixes on SharedPreferences
 
-By default, the `SharedPreferences` plugin will only read (and write) preferences
+By default, the `SharedPreferences` class will only read (and write) preferences
 that begin with the prefix `flutter.`. This is all handled internally by the plugin
 and does not require manually adding this prefix.
 

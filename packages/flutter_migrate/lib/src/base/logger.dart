@@ -1125,7 +1125,7 @@ class SpinnerStatus extends AnonymousSpinnerStatus {
 /// ```
 ///
 /// yields:
-/// ```
+/// ```none
 ///   Usage: app main_command <subcommand>
 ///          [arguments]
 /// ```

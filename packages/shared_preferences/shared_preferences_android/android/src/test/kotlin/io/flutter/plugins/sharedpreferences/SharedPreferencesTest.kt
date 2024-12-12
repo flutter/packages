@@ -5,13 +5,17 @@
 package io.flutter.plugins.sharedpreferences
 
 import android.content.Context
+import android.util.Base64
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.BinaryMessenger
 import io.mockk.every
 import io.mockk.mockk
+import java.io.ByteArrayOutputStream
+import java.io.ObjectOutputStream
 import org.junit.Assert
+import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -48,6 +52,7 @@ internal class SharedPreferencesTest {
     every { flutterPluginBinding.binaryMessenger } returns binaryMessenger
     every { flutterPluginBinding.applicationContext } returns testContext
     plugin.onAttachedToEngine(flutterPluginBinding)
+    plugin.clear(null, emptyOptions)
     return plugin
   }
 
@@ -170,5 +175,25 @@ internal class SharedPreferencesTest {
     Assert.assertNull(all[intKey])
     Assert.assertNull(all[doubleKey])
     Assert.assertNull(all[listKey])
+  }
+
+  @Test
+  fun testUnexpectedClassDecodeThrows() {
+    // Only String should be allowed in an encoded list.
+    val badList = listOf(1, 2, 3)
+    // Replicate the behavior of ListEncoder.encode, but with a non-List<String> list.
+    val byteStream = ByteArrayOutputStream()
+    val stream = ObjectOutputStream(byteStream)
+    stream.writeObject(badList)
+    stream.flush()
+    val badPref = LIST_PREFIX + Base64.encodeToString(byteStream.toByteArray(), 0)
+
+    val plugin = pluginSetup()
+    val badListKey = "badList"
+    // Inject the bad pref as a string, as that is how string lists are stored internally.
+    plugin.setString(badListKey, badPref, emptyOptions)
+    assertThrows(ClassNotFoundException::class.java) {
+      plugin.getStringList(badListKey, emptyOptions)
+    }
   }
 }

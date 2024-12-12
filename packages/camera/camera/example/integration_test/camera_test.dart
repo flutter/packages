@@ -13,6 +13,10 @@ import 'package:integration_test/integration_test.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
+// Skip due to video_player error.
+// See https://github.com/flutter/flutter/issues/157181
+bool skipFor157181 = Platform.isAndroid;
+
 void main() {
   late Directory testDir;
 
@@ -177,7 +181,7 @@ void main() {
     await videoController.dispose();
 
     expect(duration, lessThan(recordingTime));
-  });
+  }, skip: skipFor157181);
 
   testWidgets('Pause and resume video recording', (WidgetTester tester) async {
     final List<CameraDescription> cameras = await availableCameras();
@@ -225,7 +229,7 @@ void main() {
     await videoController.dispose();
 
     expect(duration, lessThan(recordingTime - timePaused));
-  }, skip: !Platform.isAndroid);
+  }, skip: !Platform.isAndroid || skipFor157181);
 
   testWidgets(
     'Android image streaming',

@@ -63,50 +63,17 @@
   self.polyline.spans = GMSStyleSpans(self.polyline.path, styles, lengths, kGMSLengthRhumb);
 }
 
-- (void)interpretPolylineOptions:(NSDictionary *)data
-                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
-  if (consumeTapEvents) {
-    [self setConsumeTapEvents:[consumeTapEvents boolValue]];
-  }
-
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
-    [self setZIndex:[zIndex intValue]];
-  }
-
-  NSArray *points = FGMGetValueOrNilFromDict(data, @"points");
-  if (points) {
-    [self setPoints:[FLTGoogleMapJSONConversions pointsFromLatLongs:points]];
-  }
-
-  NSNumber *strokeColor = FGMGetValueOrNilFromDict(data, @"color");
-  if (strokeColor) {
-    [self setColor:[FLTGoogleMapJSONConversions colorFromRGBA:strokeColor]];
-  }
-
-  NSNumber *strokeWidth = FGMGetValueOrNilFromDict(data, @"width");
-  if (strokeWidth) {
-    [self setStrokeWidth:[strokeWidth intValue]];
-  }
-
-  NSNumber *geodesic = FGMGetValueOrNilFromDict(data, @"geodesic");
-  if (geodesic) {
-    [self setGeodesic:geodesic.boolValue];
-  }
-
-  NSArray *patterns = FGMGetValueOrNilFromDict(data, @"pattern");
-  if (patterns) {
-    [self
-        setPattern:[FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns
-                                                             strokeColor:self.polyline.strokeColor]
-           lengths:[FLTGoogleMapJSONConversions spanLengthsFromPatterns:patterns]];
-  }
+- (void)updateFromPlatformPolyline:(FGMPlatformPolyline *)polyline
+                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  [self setConsumeTapEvents:polyline.consumesTapEvents];
+  [self setVisible:polyline.visible];
+  [self setZIndex:(int)polyline.zIndex];
+  [self setPoints:FGMGetPointsForPigeonLatLngs(polyline.points)];
+  [self setColor:FGMGetColorForRGBA(polyline.color)];
+  [self setStrokeWidth:polyline.width];
+  [self setGeodesic:polyline.geodesic];
+  [self setPattern:FGMGetStrokeStylesFromPatterns(polyline.patterns, self.polyline.strokeColor)
+           lengths:FGMGetSpanLengthsFromPatterns(polyline.patterns)];
 }
 
 @end
@@ -138,22 +105,22 @@
 
 - (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd {
   for (FGMPlatformPolyline *polyline in polylinesToAdd) {
-    GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline.json];
-    NSString *identifier = polyline.json[@"polylineId"];
+    GMSMutablePath *path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polyline.points));
+    NSString *identifier = polyline.polylineId;
     FLTGoogleMapPolylineController *controller =
         [[FLTGoogleMapPolylineController alloc] initWithPath:path
                                                   identifier:identifier
                                                      mapView:self.mapView];
-    [controller interpretPolylineOptions:polyline.json registrar:self.registrar];
+    [controller updateFromPlatformPolyline:polyline registrar:self.registrar];
     self.polylineIdentifierToController[identifier] = controller;
   }
 }
 
 - (void)changePolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToChange {
   for (FGMPlatformPolyline *polyline in polylinesToChange) {
-    NSString *identifier = polyline.json[@"polylineId"];
+    NSString *identifier = polyline.polylineId;
     FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
-    [controller interpretPolylineOptions:polyline.json registrar:self.registrar];
+    [controller updateFromPlatformPolyline:polyline registrar:self.registrar];
   }
 }
 
@@ -186,16 +153,6 @@
     return false;
   }
   return self.polylineIdentifierToController[identifier] != nil;
-}
-
-+ (GMSMutablePath *)pathForPolyline:(NSDictionary *)polyline {
-  NSArray *pointArray = polyline[@"points"];
-  NSArray<CLLocation *> *points = [FLTGoogleMapJSONConversions pointsFromLatLongs:pointArray];
-  GMSMutablePath *path = [GMSMutablePath path];
-  for (CLLocation *location in points) {
-    [path addCoordinate:location.coordinate];
-  }
-  return path;
 }
 
 @end

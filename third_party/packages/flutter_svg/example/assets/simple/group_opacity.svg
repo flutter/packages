@@ -1,0 +1,46 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 1200 350"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Example opacity01 - opacity property</desc>
+
+  <rect x="1" y="1" width="1198" height="348"
+        fill="none" stroke="blue" />
+
+  <!-- Background blue rectangle -->
+  <rect x="100" y="100" width="1000" height="150" fill="#0000ff"  />
+
+  <!-- Red circles going from opaque to nearly transparent -->
+  <circle cx="200" cy="100" r="50" fill="red" opacity="1"  />
+  <circle cx="400" cy="100" r="50" fill="red" opacity=".8"  />
+  <circle cx="600" cy="100" r="50" fill="red" opacity=".6"  />
+  <circle cx="800" cy="100" r="50" fill="red" opacity=".4"  />
+  <circle cx="1000" cy="100" r="50" fill="red" opacity=".2"  />
+
+  <!-- Opaque group, opaque circles -->
+  <g opacity="1" >
+    <circle cx="182.5" cy="250" r="50" fill="red" opacity="1"  />
+    <circle cx="217.5" cy="250" r="50" fill="green" opacity="1"  />
+  </g>
+  <!-- Group opacity: .5, opacity circles -->
+  <g opacity=".5" >
+    <circle cx="382.5" cy="250" r="50" fill="red" opacity="1"  />
+    <circle cx="417.5" cy="250" r="50" fill="green" opacity="1"  />
+  </g>
+  <!-- Opaque group, semi-transparent green over red -->
+  <g opacity="1" >
+    <circle cx="582.5" cy="250" r="50" fill="red" opacity=".5"  />
+    <circle cx="617.5" cy="250" r="50" fill="green" opacity=".5"  />
+  </g>
+  <!-- Opaque group, semi-transparent red over green -->
+  <g opacity="1" >
+    <circle cx="817.5" cy="250" r="50" fill="green" opacity=".5"  />
+    <circle cx="782.5" cy="250" r="50" fill="red" opacity=".5"  />
+  </g>
+  <!-- Group opacity .5, semi-transparent green over red -->
+  <g opacity=".5" >
+    <circle cx="982.5" cy="250" r="50" fill="red" opacity=".5"  />
+    <circle cx="1017.5" cy="250" r="50" fill="green" opacity=".5"  />
+  </g>
+</svg>

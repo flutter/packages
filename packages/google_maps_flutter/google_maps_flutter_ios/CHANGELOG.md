@@ -1,3 +1,7 @@
+## 2.13.2
+
+* Updates most objects passed from Dart to native to use typed data.
+
 ## 2.13.1
 
 * Updates Pigeon for non-nullable collection type support.

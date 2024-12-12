@@ -1,3 +1,16 @@
+## 2.6.5
+
+* Bugfix to allow the audio-only HLS (.m3u8) on iOS.
+
+## 2.6.4
+
+* Refactors native code structure.
+
+## 2.6.3
+
+* Fixes VideoPlayerController.initialize() future never resolving with invalid video file.
+* Adds more details to the error message returned by VideoPlayerController.initialize().
+
 ## 2.6.2
 
 * Updates Pigeon for non-nullable collection type support.

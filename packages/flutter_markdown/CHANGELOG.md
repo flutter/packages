@@ -1,3 +1,16 @@
+## 0.7.4+3
+
+* Passes a default error builder to image widgets.
+
+## 0.7.4+2
+
+* Fixes pub.dev detection of WebAssembly support.
+
+## 0.7.4+1
+
+* Makes it so that custom blocks are not limited to being a Column or
+  SizedBox.
+
 ## 0.7.4
 
 * Makes paragraphs in blockquotes soft-wrap like a normal `<blockquote>` instead of hard-wrapping like a `<pre>` block.

@@ -1,3 +1,7 @@
+## 3.2.1
+
+* Updates Pigeon to resolve a compilation failure with some versions of glib.
+
 ## 3.2.0
 
 * Updates platform channels to use Pigeon.
