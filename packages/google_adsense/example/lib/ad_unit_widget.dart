@@ -6,7 +6,9 @@
 
 import 'package:flutter/material.dart';
 
+// #docregion import-widget
 import 'package:google_adsense/experimental/ad_unit_widget.dart';
+// #enddocregion import-widget
 import 'package:google_adsense/google_adsense.dart';
 
 void main() async {

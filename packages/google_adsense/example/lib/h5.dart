@@ -7,7 +7,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:google_adsense/google_adsense.dart';
+// #docregion import-h5
 import 'package:google_adsense/h5.dart';
+// #enddocregion import-h5
 
 void main() async {
   await adSense.initialize('0123456789012345');
@@ -51,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+    // #docregion adConfig
     h5GamesAds.adConfig(
       AdConfigParameters(
         sound: SoundEnabled.off,
@@ -59,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onReady: _onH5Ready,
       ),
     );
+    // #enddocregion adConfig
   }
 
   void _onH5Ready() {
@@ -68,15 +72,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _requestInterstitialAd() {
+    // #docregion interstitial
     h5GamesAds.adBreak(
       AdBreakPlacement.interstitial(
         type: BreakType.browse,
         name: 'test-interstitial-ad',
       ),
     );
+    // #enddocregion interstitial
   }
 
   void _requestRewardedAd() {
+    // #docregion rewarded
     h5GamesAds.adBreak(
       AdBreakPlacement.rewarded(
         name: 'test-rewarded-ad',
@@ -87,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
         adBreakDone: _adBreakDone,
       ),
     );
+    // #enddocregion rewarded
     setState(() {
       _adBreakRequested = true;
     });
@@ -181,10 +189,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
+/// A Card with some margin and padding pre-set.
 class PaddedCard extends StatelessWidget {
-  final List<Widget> children;
+  /// Builds a `PaddedCard` with [children].
+  const PaddedCard({super.key, required this.children});
 
-  PaddedCard({required this.children});
+  /// The children for this card. They'll be rendered inside a [Column].
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
