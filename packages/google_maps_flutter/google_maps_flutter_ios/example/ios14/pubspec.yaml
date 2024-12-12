@@ -23,7 +23,6 @@ dependencies:
     path: ../shared/maps_example_dart/
 
 dev_dependencies:
-  async: ^2.11.0
   flutter_test:
     sdk: flutter
   integration_test:
