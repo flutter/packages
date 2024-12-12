@@ -21,6 +21,10 @@ SubscriptionOfferDetailsWrapper _$SubscriptionOfferDetailsWrapperFromJson(
                   Map<String, dynamic>.from(e as Map)))
               .toList() ??
           [],
+      installmentPlanDetails: json['installmentPlanDetails'] == null
+          ? null
+          : InstallmentPlanDetailsWrapper.fromJson(
+              Map<String, dynamic>.from(json['installmentPlanDetails'] as Map)),
     );
 
 PricingPhaseWrapper _$PricingPhaseWrapperFromJson(Map json) =>
@@ -34,4 +38,13 @@ PricingPhaseWrapper _$PricingPhaseWrapperFromJson(Map json) =>
           ? RecurrenceMode.nonRecurring
           : const RecurrenceModeConverter()
               .fromJson((json['recurrenceMode'] as num?)?.toInt()),
+    );
+
+InstallmentPlanDetailsWrapper _$InstallmentPlanDetailsWrapperFromJson(
+        Map json) =>
+    InstallmentPlanDetailsWrapper(
+      commitmentPaymentsCount:
+          (json['commitmentPaymentsCount'] as num?)?.toInt() ?? 0,
+      subsequentCommitmentPaymentsCount:
+          (json['subsequentCommitmentPaymentsCount'] as num?)?.toInt() ?? 0,
     );

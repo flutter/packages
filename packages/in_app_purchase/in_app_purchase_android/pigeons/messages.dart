@@ -110,7 +110,6 @@ class PlatformBillingConfigResponse {
 class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
     required this.product,
-    required this.prorationMode,
     required this.replacementMode,
     required this.offerToken,
     required this.accountId,
@@ -123,7 +122,6 @@ class PlatformBillingFlowParams {
   // Ideally this would be replaced with an enum on the dart side that maps
   // to constants on the Java side, but it's deprecated anyway so that will be
   // resolved during the update to the new API.
-  final int prorationMode;
   final int replacementMode;
   final String? offerToken;
   final String? accountId;
@@ -169,6 +167,7 @@ class PlatformPurchase {
     required this.quantity,
     required this.purchaseState,
     required this.accountIdentifiers,
+    required this.pendingPurchaseUpdate,
   });
 
   final String? orderId;
@@ -184,6 +183,20 @@ class PlatformPurchase {
   final int quantity;
   final PlatformPurchaseState purchaseState;
   final PlatformAccountIdentifiers? accountIdentifiers;
+  final PlatformPendingPurchaseUpdate? pendingPurchaseUpdate;
+}
+
+/// Pigeon version of Java Purchase.
+///
+/// See also PendingPurchaseUpdateWrapper on the Dart side.
+class PlatformPendingPurchaseUpdate {
+  PlatformPendingPurchaseUpdate({
+    required this.products,
+    required this.purchaseToken,
+  });
+
+  final List<String> products;
+  final String purchaseToken;
 }
 
 /// Pigeon version of PurchaseHistoryRecord.
@@ -241,6 +254,7 @@ class PlatformSubscriptionOfferDetails {
     required this.offerToken,
     required this.offerTags,
     required this.pricingPhases,
+    required this.installmentPlanDetails,
   });
 
   final String basePlanId;
@@ -252,6 +266,7 @@ class PlatformSubscriptionOfferDetails {
   // internal API, we can always add that indirection later if we need it,
   // so for now this bypasses that unnecessary wrapper.
   final List<PlatformPricingPhase> pricingPhases;
+  final PlatformInstallmentPlanDetails? installmentPlanDetails;
 }
 
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
@@ -278,6 +293,27 @@ class PlatformUserChoiceProduct {
   final String id;
   final String? offerToken;
   final PlatformProductType type;
+}
+
+/// Pigeon version of ProductDetails.InstallmentPlanDetails.
+/// https://developer.android.com/reference/com/android/billingclient/api/PendingPurchasesParams.Builder#enableOneTimeProducts()
+class PlatformInstallmentPlanDetails {
+  PlatformInstallmentPlanDetails({
+    required this.commitmentPaymentsCount,
+    required this.subsequentCommitmentPaymentsCount,
+  });
+
+  final int commitmentPaymentsCount;
+  final int subsequentCommitmentPaymentsCount;
+}
+
+/// Pigeon version of PendingPurchaseParamsWrapper.
+class PendingPurchasesParams {
+  PendingPurchasesParams({
+    required this.enablePrepaidPlans,
+  });
+
+  final bool enablePrepaidPlans;
 }
 
 /// Pigeon version of Java BillingClient.ProductType.
@@ -322,7 +358,9 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#startConnection(BillingClientStateListener).
   @async
   PlatformBillingResult startConnection(
-      int callbackHandle, PlatformBillingChoiceMode billingMode);
+      int callbackHandle,
+      PlatformBillingChoiceMode billingMode,
+      PendingPurchasesParams pendingPurchasesParams);
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();

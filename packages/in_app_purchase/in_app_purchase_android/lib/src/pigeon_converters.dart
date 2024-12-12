@@ -4,6 +4,7 @@
 
 import '../billing_client_wrappers.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
+import 'billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'messages.g.dart';
 
 /// Converts a [BillingChoiceMode] to the Pigeon equivalent.
@@ -182,7 +183,21 @@ PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
     developerPayload: purchase.developerPayload,
     obfuscatedAccountId: purchase.accountIdentifiers?.obfuscatedAccountId,
     obfuscatedProfileId: purchase.accountIdentifiers?.obfuscatedProfileId,
+    pendingPurchaseUpdate:
+        pendingPurchaseUpdateFromPlatform(purchase.pendingPurchaseUpdate),
   );
+}
+
+/// Creates a [PendingPurchaseUpdateWrapper] from the Pigeon equivalent.
+PendingPurchaseUpdateWrapper? pendingPurchaseUpdateFromPlatform(
+    PlatformPendingPurchaseUpdate? pendingPurchaseUpdate) {
+  if (pendingPurchaseUpdate == null) {
+    return null;
+  }
+
+  return PendingPurchaseUpdateWrapper(
+      purchaseToken: pendingPurchaseUpdate.purchaseToken,
+      products: pendingPurchaseUpdate.products);
 }
 
 /// Creates a [PurchaseStateWrapper] from the Pigeon equivalent.
@@ -215,6 +230,8 @@ SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
     offerIdToken: offer.offerToken,
     pricingPhases:
         offer.pricingPhases.map(pricingPhaseWrapperFromPlatform).toList(),
+    installmentPlanDetails:
+        installmentPlanDetailsFromPlatform(offer.installmentPlanDetails),
   );
 }
 
@@ -236,5 +253,27 @@ UserChoiceDetailsProductWrapper userChoiceDetailsProductFromPlatform(
     id: product.id,
     offerToken: product.offerToken ?? '',
     productType: productTypeFromPlatform(product.type),
+  );
+}
+
+/// Creates a [InstallmentPlanDetailsWrapper] from the Pigeon equivalent.
+InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
+    PlatformInstallmentPlanDetails? details) {
+  if (details == null) {
+    return null;
+  }
+
+  return InstallmentPlanDetailsWrapper(
+    commitmentPaymentsCount: details.commitmentPaymentsCount,
+    subsequentCommitmentPaymentsCount:
+        details.subsequentCommitmentPaymentsCount,
+  );
+}
+
+/// Converts a [PendingPurchasesParamsWrapper] to its Pigeon equivalent.
+PendingPurchasesParams pendingPurchasesParamsFromWrapper(
+    PendingPurchasesParamsWrapper params) {
+  return PendingPurchasesParams(
+    enablePrepaidPlans: params.enablePrepaidPlans,
   );
 }

@@ -39,6 +39,7 @@ class PurchaseWrapper {
     required this.purchaseState,
     this.obfuscatedAccountId,
     this.obfuscatedProfileId,
+    this.pendingPurchaseUpdate,
   });
 
   /// Factory for creating a [PurchaseWrapper] from a [Map] with the purchase details.
@@ -65,7 +66,8 @@ class PurchaseWrapper {
         other.isAutoRenewing == isAutoRenewing &&
         other.originalJson == originalJson &&
         other.isAcknowledged == isAcknowledged &&
-        other.purchaseState == purchaseState;
+        other.purchaseState == purchaseState &&
+        other.pendingPurchaseUpdate == pendingPurchaseUpdate;
   }
 
   @override
@@ -79,7 +81,8 @@ class PurchaseWrapper {
       isAutoRenewing,
       originalJson,
       isAcknowledged,
-      purchaseState);
+      purchaseState,
+      pendingPurchaseUpdate);
 
   /// The unique ID for this purchase. Corresponds to the Google Payments order
   /// ID.
@@ -158,6 +161,58 @@ class PurchaseWrapper {
   /// directly calling [BillingClient.launchBillingFlow] and is not available
   /// on the generic [InAppPurchasePlatform].
   final String? obfuscatedProfileId;
+
+  /// The [PendingPurchaseUpdateWrapper] for an uncommitted transaction.
+  ///
+  /// A PendingPurchaseUpdate is normally generated from a pending transaction
+  /// upgrading/downgrading an existing subscription.
+  /// Returns null if this purchase does not have a pending transaction.
+  final PendingPurchaseUpdateWrapper? pendingPurchaseUpdate;
+}
+
+@JsonSerializable()
+@immutable
+
+/// Represents a pending change/update to the existing purchase.
+class PendingPurchaseUpdateWrapper {
+  /// Creates a pending purchase wrapper update wrapper with the given purchase details.
+  const PendingPurchaseUpdateWrapper({
+    required this.purchaseToken,
+    required this.products,
+  });
+
+  /// Factory for creating a [PendingPurchaseUpdateWrapper] from a [Map] with the purchase details.
+  @Deprecated('JSON serialization is not intended for public use, and will '
+      'be removed in a future version.')
+  factory PendingPurchaseUpdateWrapper.fromJson(Map<String, dynamic> map) =>
+      _$PendingPurchaseUpdateWrapperFromJson(map);
+
+  /// A token that uniquely identifies this pending transaction.
+  @JsonKey(defaultValue: '')
+  final String purchaseToken;
+
+  /// The product IDs of this pending purchase update.
+  @JsonKey(defaultValue: <String>[])
+  final List<String> products;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is PendingPurchaseUpdateWrapper &&
+        other.purchaseToken == purchaseToken &&
+        listEquals(other.products, products);
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        purchaseToken,
+        products.hashCode,
+      );
 }
 
 /// Data structure representing a purchase history record.

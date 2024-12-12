@@ -50,6 +50,25 @@ const PurchaseWrapper dummyUnacknowledgedPurchase = PurchaseWrapper(
   purchaseState: PurchaseStateWrapper.purchased,
 );
 
+const PurchaseWrapper dummyPendingUpdatePurchase = PurchaseWrapper(
+  orderId: 'orderId',
+  packageName: 'packageName',
+  purchaseTime: 0,
+  signature: 'signature',
+  products: <String>['product'],
+  purchaseToken: 'purchaseToken',
+  isAutoRenewing: false,
+  originalJson: '',
+  developerPayload: 'dummy payload',
+  isAcknowledged: true,
+  purchaseState: PurchaseStateWrapper.purchased,
+  obfuscatedAccountId: 'Account101',
+  obfuscatedProfileId: 'Profile103',
+  pendingPurchaseUpdate: PendingPurchaseUpdateWrapper(
+      purchaseToken: 'pendingPurchaseToken',
+      products: <String>['pendingProduct']),
+);
+
 const PurchaseHistoryRecordWrapper dummyPurchaseHistoryRecord =
     PurchaseHistoryRecordWrapper(
   purchaseTime: 0,
@@ -60,10 +79,24 @@ const PurchaseHistoryRecordWrapper dummyPurchaseHistoryRecord =
   developerPayload: 'dummy payload',
 );
 
+const PendingPurchaseUpdateWrapper dummyPendingPurchaseUpdate =
+    PendingPurchaseUpdateWrapper(
+  products: <String>['product'],
+  purchaseToken: 'purchaseToken',
+);
+
 void main() {
   group('PurchaseWrapper', () {
     test('converts from map', () {
       const PurchaseWrapper expected = dummyPurchase;
+      final PurchaseWrapper parsed =
+          PurchaseWrapper.fromJson(buildPurchaseMap(expected));
+
+      expect(parsed, equals(expected));
+    });
+
+    test('converts from map with pending purchase', () {
+      const PurchaseWrapper expected = dummyPendingUpdatePurchase;
       final PurchaseWrapper parsed =
           PurchaseWrapper.fromJson(buildPurchaseMap(expected));
 
@@ -212,6 +245,17 @@ void main() {
       expect(parsed.purchaseHistoryRecordList, isEmpty);
     });
   });
+
+  group('PendingPurchaseUpdateWrapper', () {
+    test('converts from map', () {
+      const PendingPurchaseUpdateWrapper expected = dummyPendingPurchaseUpdate;
+      final PendingPurchaseUpdateWrapper parsed =
+          PendingPurchaseUpdateWrapper.fromJson(
+              buildPendingPurchaseUpdateMap(expected)!);
+
+      expect(parsed, equals(expected));
+    });
+  });
 }
 
 Map<String, dynamic> buildPurchaseMap(PurchaseWrapper original) {
@@ -230,6 +274,8 @@ Map<String, dynamic> buildPurchaseMap(PurchaseWrapper original) {
     'isAcknowledged': original.isAcknowledged,
     'obfuscatedAccountId': original.obfuscatedAccountId,
     'obfuscatedProfileId': original.obfuscatedProfileId,
+    'pendingPurchaseUpdate':
+        buildPendingPurchaseUpdateMap(original.pendingPurchaseUpdate),
   };
 }
 
@@ -250,5 +296,17 @@ Map<String, dynamic> buildBillingResultMap(BillingResultWrapper original) {
     'responseCode':
         const BillingResponseConverter().toJson(original.responseCode),
     'debugMessage': original.debugMessage,
+  };
+}
+
+Map<String, dynamic>? buildPendingPurchaseUpdateMap(
+    PendingPurchaseUpdateWrapper? original) {
+  if (original == null) {
+    return null;
+  }
+
+  return <String, dynamic>{
+    'products': original.products,
+    'purchaseToken': original.purchaseToken,
   };
 }

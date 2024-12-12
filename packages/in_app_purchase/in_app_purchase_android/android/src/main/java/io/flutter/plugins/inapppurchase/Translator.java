@@ -22,6 +22,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyR
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformOneTimePurchaseOfferDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPendingPurchaseUpdate;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPricingPhase;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetails;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
@@ -146,6 +147,8 @@ import java.util.Locale;
         .setOfferTags(subscriptionOfferDetails.getOfferTags())
         .setOfferToken(subscriptionOfferDetails.getOfferToken())
         .setPricingPhases(fromPricingPhases(subscriptionOfferDetails.getPricingPhases()))
+        .setInstallmentPlanDetails(
+            fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
         .build();
   }
 
@@ -167,6 +170,20 @@ import java.util.Locale;
         .setBillingCycleCount((long) pricingPhase.getBillingCycleCount())
         .setBillingPeriod(pricingPhase.getBillingPeriod())
         .setRecurrenceMode(toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()))
+        .build();
+  }
+
+  static @Nullable Messages.PlatformInstallmentPlanDetails fromInstallmentPlanDetails(
+      @Nullable ProductDetails.InstallmentPlanDetails installmentPlanDetails) {
+    if (installmentPlanDetails == null) {
+      return null;
+    }
+
+    return new Messages.PlatformInstallmentPlanDetails.Builder()
+        .setCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount())
+        .setSubsequentCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount())
         .build();
   }
 
@@ -217,7 +234,25 @@ import java.util.Locale;
               .setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId())
               .build());
     }
+
+    Purchase.PendingPurchaseUpdate pendingPurchaseUpdate = purchase.getPendingPurchaseUpdate();
+    if (pendingPurchaseUpdate != null) {
+      builder.setPendingPurchaseUpdate(fromPendingPurchaseUpdate(pendingPurchaseUpdate));
+    }
+
     return builder.build();
+  }
+
+  static @Nullable PlatformPendingPurchaseUpdate fromPendingPurchaseUpdate(
+      @Nullable Purchase.PendingPurchaseUpdate pendingPurchaseUpdate) {
+    if (pendingPurchaseUpdate == null) {
+      return null;
+    }
+
+    return new Messages.PlatformPendingPurchaseUpdate.Builder()
+        .setPurchaseToken(pendingPurchaseUpdate.getPurchaseToken())
+        .setProducts(pendingPurchaseUpdate.getProducts())
+        .build();
   }
 
   static @NonNull PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
