@@ -1,3 +1,7 @@
+## 2.5.4
+
+* Updates Pigeon to fix lint error.
+
 ## 2.5.3
 
 * Updates Pigeon for non-nullable collection type support.
