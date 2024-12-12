@@ -698,10 +698,12 @@ void runTests() {
           beforeFinishedPosition,
           controller,
           (Matcher matcher) => matcher);
-
-    await tester.pumpAndSettle();
-  }, variant: _cameraUpdateTypeVariants);
-
+    },
+    variant: _cameraUpdateTypeVariants,
+    // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
+    // available for LUCI, https://github.com/flutter/flutter/issues/131071
+    skip: isAndroid,
+  );
 
   /// Tests animating the camera with specified durations to verify timing
   /// behavior.
@@ -842,9 +844,11 @@ void runTests() {
           (Matcher matcher) => matcher);
     },
     variant: _cameraUpdateTypeVariants,
-    // TODO(jokerttu): Remove skip once the web implementation is available.
+    // TODO(jokerttu): Remove skip once the web implementation is available,
     // https://github.com/flutter/flutter/issues/159265
-    skip: kIsWeb,
+    // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
+    // available for LUCI, https://github.com/flutter/flutter/issues/131071
+    skip: kIsWeb || isAndroid,
   );
 }
 
