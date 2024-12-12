@@ -827,6 +827,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
         throw ArgumentError(
             'Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
     }
+  }
+
   static PlatformMarkerType _platformMarkerTypeFromMarkerType(
       MarkerType markerType) {
     return switch (markerType) {

@@ -122,63 +122,14 @@
   [self setRotation:platformMarker.rotation];
   [self setVisible:platformMarker.visible];
   [self setZIndex:platformMarker.zIndex];
-}
-- (void)setCollisionBehavior:(int)collisionBehavior {
-  if ([self.marker isKindOfClass:[GMSAdvancedMarker class]]) {
-    GMSCollisionBehavior collitionBehaviorValue = (GMSCollisionBehavior)collisionBehavior;
-    [(GMSAdvancedMarker *)self.marker setCollisionBehavior:(collitionBehaviorValue)];
-  }
-}
+  [self setCollisionBehavior:platformMarker.collisionBehavior];
 
-- (void)interpretMarkerOptions:(NSDictionary *)data
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                   screenScale:(CGFloat)screenScale {
-  NSNumber *alpha = FGMGetValueOrNilFromDict(data, @"alpha");
-  if (alpha) {
-    [self setAlpha:[alpha floatValue]];
-  }
-  NSArray *anchor = FGMGetValueOrNilFromDict(data, @"anchor");
-  if (anchor) {
-    [self setAnchor:[FLTGoogleMapJSONConversions pointFromArray:anchor]];
-  }
-  NSNumber *draggable = FGMGetValueOrNilFromDict(data, @"draggable");
-  if (draggable) {
-    [self setDraggable:[draggable boolValue]];
-  }
-  NSArray *icon = FGMGetValueOrNilFromDict(data, @"icon");
-  if (icon) {
-    UIImage *image = [self extractIconFromData:icon registrar:registrar screenScale:screenScale];
-    [self setIcon:image];
-  }
-  NSNumber *flat = FGMGetValueOrNilFromDict(data, @"flat");
-  if (flat) {
-    [self setFlat:[flat boolValue]];
-  }
-  NSNumber *consumeTapEvents = FGMGetValueOrNilFromDict(data, @"consumeTapEvents");
-  if (consumeTapEvents) {
-    [self setConsumeTapEvents:[consumeTapEvents boolValue]];
-  }
-  [self interpretInfoWindow:data];
-  NSArray *position = FGMGetValueOrNilFromDict(data, @"position");
-  if (position) {
-    [self setPosition:[FLTGoogleMapJSONConversions locationFromLatLong:position]];
-  }
-  NSNumber *rotation = FGMGetValueOrNilFromDict(data, @"rotation");
-  if (rotation) {
-    [self setRotation:[rotation doubleValue]];
-  }
-  NSNumber *visible = FGMGetValueOrNilFromDict(data, @"visible");
-  if (visible) {
-    [self setVisible:[visible boolValue]];
-  }
-  NSNumber *zIndex = FGMGetValueOrNilFromDict(data, @"zIndex");
-  if (zIndex) {
-    [self setZIndex:[zIndex intValue]];
-  }
-  NSNumber *collisionBehavior = FGMGetValueOrNilFromDict(data, @"collisionBehavior");
-  if (collisionBehavior) {
-    [self setCollisionBehavior:[collisionBehavior intValue]];
-  }
+}
+- (void)setCollisionBehavior:(FGMMarkerCollisionBehaviorBox*)collisionBehavior {
+    if ([self.marker isKindOfClass:[GMSAdvancedMarker class]]) {
+        GMSCollisionBehavior collitionBehaviorValue = (GMSCollisionBehavior)collisionBehavior.value;
+        [(GMSAdvancedMarker *)self.marker setCollisionBehavior:(collitionBehaviorValue)];
+    }
 }
 
 - (void)interpretInfoWindow:(NSDictionary *)data {
@@ -259,83 +210,74 @@
       }
     }
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
-    FGMPlatformBitmapBytesMap *bitmapBytesMap = bitmap;
-    FlutterStandardTypedData *bytes = bitmapBytesMap.byteData;
-
-    @try {
-      image = [UIImage imageWithData:bytes.data scale:screenScale];
-      if (bitmapBytesMap.bitmapScaling == FGMPlatformMapBitmapScalingAuto) {
-        NSNumber *width = bitmapBytesMap.width;
-        NSNumber *height = bitmapBytesMap.height;
-
-        if (width || height) {
-          // Before scaling the image, image must be in screenScale.
-          image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
-          image = [FLTGoogleMapMarkerController scaledImage:image
-                                                  withWidth:width
-                                                     height:height
-                                                screenScale:screenScale];
-        } else {
-          image = [FLTGoogleMapMarkerController scaledImage:image
-                                                  withScale:bitmapBytesMap.imagePixelRatio];
-        }
-      } else {
-        // No scaling, load image from bytes without scale parameter.
-        image = [UIImage imageWithData:bytes.data];
+      FGMPlatformBitmapBytesMap *bitmapBytesMap = bitmap;
+      FlutterStandardTypedData *bytes = bitmapBytesMap.byteData;
+      
+      @try {
+          image = [UIImage imageWithData:bytes.data scale:screenScale];
+          if (bitmapBytesMap.bitmapScaling == FGMPlatformMapBitmapScalingAuto) {
+              NSNumber *width = bitmapBytesMap.width;
+              NSNumber *height = bitmapBytesMap.height;
+              
+              if (width || height) {
+                  // Before scaling the image, image must be in screenScale.
+                  image = [FLTGoogleMapMarkerController scaledImage:image withScale:screenScale];
+                  image = [FLTGoogleMapMarkerController scaledImage:image
+                                                          withWidth:width
+                                                             height:height
+                                                        screenScale:screenScale];
+              } else {
+                  image = [FLTGoogleMapMarkerController scaledImage:image
+                                                          withScale:bitmapBytesMap.imagePixelRatio];
+              }
+          } else {
+              // No scaling, load image from bytes without scale parameter.
+              image = [UIImage imageWithData:bytes.data];
+          }
+      } @catch (NSException *exception) {
+          @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
+                                         reason:@"Unable to interpret bytes as a valid image."
+                                       userInfo:nil];
       }
-    } @catch (NSException *exception) {
-      @throw [NSException exceptionWithName:@"InvalidByteDescriptor"
-                                     reason:@"Unable to interpret bytes as a valid image."
-                                   userInfo:nil];
-    }
-  } else if ([iconData.firstObject isEqualToString:@"pinConfig"]) {
-    NSDictionary *byteData = iconData[1];
-    if (![byteData isKindOfClass:[NSDictionary class]]) {
-      NSException *exception = [NSException
-          exceptionWithName:@"InvalidByteDescriptor"
-                     reason:@"Unable to interpret pin config, expected a dictionary as the "
-                            @"second parameter."
-                   userInfo:nil];
-      @throw exception;
-    }
-
-    GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
-    NSNumber *backgroundColor = FGMGetValueOrNilFromDict(byteData, @"backgroundColor");
-    if (backgroundColor) {
-      options.backgroundColor = [self UIColorFromRGB:[backgroundColor intValue]];
-    }
-
-    NSNumber *borderColor = FGMGetValueOrNilFromDict(byteData, @"borderColor");
-    if (borderColor) {
-      options.borderColor = [self UIColorFromRGB:[borderColor intValue]];
-    }
-
-    GMSPinImageGlyph *glyph;
-    NSString *glyphText = FGMGetValueOrNilFromDict(byteData, @"glyphText");
-    NSNumber *glyphColor = FGMGetValueOrNilFromDict(byteData, @"glyphColor");
-    NSObject *glyphBitmap = FGMGetValueOrNilFromDict(byteData, @"glyphBitmapDescriptor");
-    if (glyphText) {
-      NSNumber *glyphTextColorInt = FGMGetValueOrNilFromDict(byteData, @"glyphTextColor");
-      UIColor *glyphTextColor = glyphTextColorInt
-                                    ? [self UIColorFromRGB:[glyphTextColorInt intValue]]
-                                    : [UIColor blackColor];
-      glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
-    } else if (glyphColor) {
-      UIColor *color = [self UIColorFromRGB:[glyphColor intValue]];
-      glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
-    } else if (glyphBitmap) {
-      NSArray *glyphBitmapArray = (NSArray *)glyphBitmap;
-      UIImage *glyphImage = [self extractIconFromData:glyphBitmapArray
-                                            registrar:registrar
-                                          screenScale:screenScale];
-      glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
-    }
-
-    if (glyph) {
-      options.glyph = glyph;
-    }
-
-    image = [GMSPinImage pinImageWithOptions:options];
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapPinConfig class]]) {
+      FGMPlatformBitmapPinConfig *pinConfig = bitmap;
+      
+      GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
+      NSNumber *backgroundColor = pinConfig.backgroundColor;
+      if (backgroundColor) {
+          options.backgroundColor = [self UIColorFromRGB:[backgroundColor intValue]];
+      }
+      
+      NSNumber *borderColor = pinConfig.borderColor;
+      if (borderColor) {
+          options.borderColor = [self UIColorFromRGB:[borderColor intValue]];
+      }
+      
+      GMSPinImageGlyph *glyph;
+      NSString *glyphText = pinConfig.glyphText;
+      NSNumber *glyphColor = pinConfig.glyphColor;
+      FGMPlatformBitmap *glyphBitmap = pinConfig.glyphBitmap;
+      if (glyphText) {
+          NSNumber *glyphTextColorInt = pinConfig.glyphTextColor;
+          UIColor *glyphTextColor = glyphTextColorInt
+          ? [self UIColorFromRGB:[glyphTextColorInt intValue]]
+          : [UIColor blackColor];
+          glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
+      } else if (glyphColor) {
+          UIColor *color = [self UIColorFromRGB:[glyphColor intValue]];
+          glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
+      } else if (glyphBitmap) {
+          UIImage *glyphImage = [self iconFromBitmap:glyphBitmap
+                                           registrar:registrar
+                                         screenScale:screenScale];
+          glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
+      }
+      
+      if (glyph) {
+          options.glyph = glyph;
+      }
+      
+      image = [GMSPinImage pinImageWithOptions:options];
   }
 
   return image;

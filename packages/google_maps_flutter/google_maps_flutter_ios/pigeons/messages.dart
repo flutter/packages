@@ -189,6 +189,7 @@ class PlatformMarker {
     this.visible = true,
     this.zIndex = 0.0,
     this.clusterManagerId,
+    this.collisionBehavior,
   });
 
   final double alpha;
@@ -205,6 +206,13 @@ class PlatformMarker {
   final double zIndex;
   final String markerId;
   final String? clusterManagerId;
+  final MarkerCollisionBehavior? collisionBehavior;
+}
+
+enum MarkerCollisionBehavior {
+  required,
+  optionalAndHidesLowerPriority,
+  requiredAndHidesOptional,
 }
 
 /// Pigeon equivalent of the Polygon class.
@@ -551,6 +559,25 @@ class PlatformBitmapBytesMap {
 enum PlatformMapBitmapScaling {
   auto,
   none,
+}
+
+class PlatformBitmapPinConfig {
+  PlatformBitmapPinConfig({
+    required this.backgroundColor,
+    required this.borderColor,
+    required this.glyphColor,
+    required this.glyphTextColor,
+    required this.glyphText,
+    required this.glyphBitmap,
+  });
+
+  final int? backgroundColor;
+  final int? borderColor;
+
+  final int? glyphColor;
+  final int? glyphTextColor;
+  final String? glyphText;
+  final PlatformBitmap? glyphBitmap;
 }
 
 /// Interface for non-test interactions with the native SDK.
