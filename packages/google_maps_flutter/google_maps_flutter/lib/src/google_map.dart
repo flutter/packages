@@ -130,7 +130,7 @@ class GoogleMap extends StatefulWidget {
     this.onLongPress,
     this.mapId,
     this.markerType = MarkerType.marker,
-    @Deprecated('cloudMapId is deprecated. Use mapId instead') this.cloudMapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.') this.cloudMapId,
   });
 
   /// Callback method for when the map is ready to be used.
@@ -327,7 +327,7 @@ class GoogleMap extends StatefulWidget {
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  @Deprecated('cloudMapId is deprecated. Use mapId instead')
+  @Deprecated('cloudMapId is deprecated. Use mapId instead.')
   final String? cloudMapId;
 
   /// Indicates whether map should use [AdvancedMarker]s or [Marker]s.

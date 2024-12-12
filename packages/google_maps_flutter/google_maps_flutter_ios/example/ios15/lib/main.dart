@@ -26,7 +26,7 @@ import 'package:maps_example_dart/scrolling_map.dart';
 import 'package:maps_example_dart/snapshot.dart';
 import 'package:maps_example_dart/tile_overlay.dart';
 
-/// Map Id is required for some examples to use advanced markers
+/// Map ID is required for some examples to use advanced markers.
 // ignore: unnecessary_nullable_for_final_variable_declarations, unreachable_from_main
 const String? mapId = null;
 

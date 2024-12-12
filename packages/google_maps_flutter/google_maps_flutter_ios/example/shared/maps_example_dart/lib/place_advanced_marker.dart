@@ -8,16 +8,16 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'page.dart';
 import 'place_marker.dart';
 
-/// Page demonstrating how to use Advanced [Marker] class
+/// Page demonstrating how to use Advanced [Marker] class.
 class PlaceAdvancedMarkerPage extends GoogleMapExampleAppPage {
-  /// Default constructor
+  /// Default constructor.
   const PlaceAdvancedMarkerPage({
     Key? key,
     required this.mapId,
   }) : super(const Icon(Icons.place_outlined), 'Place advanced marker',
             key: key);
 
-  /// Map Id to use for the GoogleMap
+  /// Map ID to use for the GoogleMap
   final String? mapId;
 
   @override
@@ -72,7 +72,7 @@ class _PlaceAdvancedMarkerBodyState extends PlaceMarkerBodyState {
   }
 
   /// Whether map supports advanced markers. Null indicates capability check
-  /// is in progress
+  /// is in progress.
   bool? _isAdvancedMarkersAvailable;
 
   @override
@@ -85,7 +85,7 @@ class _PlaceAdvancedMarkerBodyState extends PlaceMarkerBodyState {
           true =>
             'Map capabilities check result:\nthis map supports advanced markers',
           false =>
-            "Map capabilities check result:\nthis map doesn't support advanced markers. Please check that map Id is provided and correct map renderer is used",
+            "Map capabilities check result:\nthis map doesn't support advanced markers. Please check that map ID is provided and correct map renderer is used",
         },
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -101,7 +101,7 @@ class _PlaceAdvancedMarkerBodyState extends PlaceMarkerBodyState {
 
   @override
   Widget build(BuildContext context) {
-    // Check if map is capable of showing advanced markers
+    // Check if map is capable of showing advanced markers.
     if (controller != null) {
       GoogleMapsFlutterPlatform.instance
           .isAdvancedMarkersAvailable(mapId: controller!.mapId)

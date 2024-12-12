@@ -270,10 +270,10 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     return BytesMapBitmap(bytes.buffer.asUint8List());
   }
 
-  /// Return the mapId to use for the GoogleMap
+  /// Returns the mapId to use for the GoogleMap
   String? get mapId => null;
 
-  /// Create a marker with given parameters
+  /// Creates a marker with given parameters
   Marker createMarker({
     required MarkerId markerId,
     required LatLng position,
@@ -292,7 +292,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     );
   }
 
-  /// Perform customizations of the [marker] to mark it as selected or not
+  /// Performs customizations of the [marker] to mark it as selected or not.
   Marker getSelectedMarker(Marker marker, bool isSelected) {
     return marker.copyWith(
       iconParam: isSelected
@@ -301,7 +301,7 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     );
   }
 
-  /// Optional header to be displayed above the map
+  /// Returns a header to be displayed above the map.
   Widget getHeader() => const SizedBox.shrink();
 
   @override

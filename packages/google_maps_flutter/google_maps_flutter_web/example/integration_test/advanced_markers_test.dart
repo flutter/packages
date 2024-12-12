@@ -75,13 +75,13 @@ void main() {
       expect(marker, isNotNull);
       expect(marker!.gmpDraggable, isFalse);
 
-      // By default, markers fall in LatLng(0, 0)
+      // By default, markers fall in LatLng(0, 0).
       position = marker.position! as gmaps.LatLngLiteral;
       expect(position, isNotNull);
       expect(position.lat, equals(0));
       expect(position.lng, equals(0));
 
-      // Update the marker with draggable and position
+      // Update the marker with draggable and position.
       final Set<AdvancedMarker> updatedMarkers = <AdvancedMarker>{
         const AdvancedMarker(
           markerId: MarkerId('1'),
@@ -125,7 +125,7 @@ void main() {
       expect(position.lat, equals(42));
       expect(position.lng, equals(54));
 
-      // Update the marker without position
+      // Update the marker without position.
       final Set<AdvancedMarker> updatedMarkers = <AdvancedMarker>{
         const AdvancedMarker(
           markerId: MarkerId('1'),
@@ -156,7 +156,7 @@ void main() {
 
       expect(controller.markers.length, 3);
 
-      // Remove some markers...
+      // Remove some markers.
       final Set<MarkerId> markerIdsToRemove = <MarkerId>{
         const MarkerId('1'),
         const MarkerId('3'),
@@ -241,7 +241,7 @@ void main() {
       final String assetUrl = icon!.src;
       expect(assetUrl, endsWith('assets/red_square.png'));
 
-      // asset size is 48x48 physical pixels
+      // Asset size is 48x48 physical pixels.
       expect(icon.style.width, '48px');
       expect(icon.style.height, '48px');
     });
@@ -440,7 +440,7 @@ void main() {
 
       // Query nodes and check colors. This is a bit fragile as it depends on
       // the implementation details of the icon which is not part of the public
-      // API
+      // API.
       final NodeList backgroundNodes =
           icon!.querySelectorAll("[class*='maps-pin-view-background']");
       final NodeList borderNodes =
@@ -496,7 +496,7 @@ void main() {
 
       // Query pin nodes and find text element. This is a bit fragile as it
       // depends on the implementation details of the icon which is not part of
-      // the public API
+      // the public API.
       dom.Element? paragraphElement;
       final NodeList paragraphs = icon!.querySelectorAll('p');
       for (int i = 0; i < paragraphs.length; i++) {
@@ -544,7 +544,7 @@ void main() {
 
       // Query pin nodes and find text element. This is a bit fragile as it
       // depends on the implementation details of the icon which is not part of
-      // the public API
+      // the public API.
       HTMLImageElement? imgElement;
       final NodeList imgElements = icon!.querySelectorAll('img');
       for (int i = 0; i < imgElements.length; i++) {

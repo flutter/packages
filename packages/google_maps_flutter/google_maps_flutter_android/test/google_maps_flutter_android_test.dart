@@ -1186,7 +1186,7 @@ void main() {
           markerType: MarkerType.marker,
         ),
         // Here deprecated cloudMapId is used to test that creation params have
-        // the correct mapId
+        // the correct mapId.
         mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId)));
 
     expect(

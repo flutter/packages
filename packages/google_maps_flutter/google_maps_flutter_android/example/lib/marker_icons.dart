@@ -31,10 +31,10 @@ class MarkerIconsBody extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => MarkerIconsBodyState();
 
-  /// Return the mapId to use for the GoogleMap
+  /// Returns the mapId to use for the GoogleMap
   String? get mapId => null;
 
-  /// Create a marker to be displayed on the map
+  /// Creates a marker to be displayed on the map
   Marker createMarker(
     MarkerId markerId,
     LatLng position,

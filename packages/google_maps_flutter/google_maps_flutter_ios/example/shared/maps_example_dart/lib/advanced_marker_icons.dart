@@ -8,9 +8,9 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 import 'marker_icons.dart';
 import 'page.dart';
 
-/// Page that demonstrates how to use custom [AdvanceMarker] icons
+/// Page that demonstrates how to use custom [AdvanceMarker] icons.
 class AdvancedMarkerIconsPage extends GoogleMapExampleAppPage {
-  /// Default constructor
+  /// Default constructor.
   const AdvancedMarkerIconsPage({Key? key, required this.mapId})
       : super(
           key: key,
@@ -18,7 +18,7 @@ class AdvancedMarkerIconsPage extends GoogleMapExampleAppPage {
           'Advanced marker icons',
         );
 
-  /// Map Id to use for the GoogleMap
+  /// Map ID to use for the GoogleMap
   final String? mapId;
 
   @override

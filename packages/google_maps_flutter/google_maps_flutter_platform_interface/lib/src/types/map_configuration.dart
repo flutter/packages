@@ -36,7 +36,7 @@ class MapConfiguration {
     this.trafficEnabled,
     this.buildingsEnabled,
     this.mapId,
-    @Deprecated('cloudMapId is deprecated. Use mapId instead') this.cloudMapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.') this.cloudMapId,
     this.style,
   });
 
@@ -119,7 +119,7 @@ class MapConfiguration {
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  @Deprecated('cloudMapId is deprecated. Use mapId instead')
+  @Deprecated('cloudMapId is deprecated. Use mapId instead.')
   final String? cloudMapId;
 
   /// Locally configured JSON style.

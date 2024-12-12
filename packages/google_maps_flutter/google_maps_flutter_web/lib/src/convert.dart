@@ -292,7 +292,7 @@ Size? _sizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
   return size;
 }
 
-/// Sets the size and style of the [icon] element
+/// Sets the size and style of the [icon] element.
 void _setIconStyle({
   required web.Element icon,
   required Size? size,
@@ -395,8 +395,8 @@ void _cleanUpBitmapConversionCaches() {
   _bitmapBlobUrlCache.clear();
 }
 
-/// Converts a [BitmapDescriptor] into a [Node] that can be used as Advanced
-/// Marker icon
+/// Converts a [BitmapDescriptor] into a [Node] that can be used as
+/// [AdvancedMarker]'s icon.
 Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
   BitmapDescriptor bitmapDescriptor, {
   required double? opacity,
@@ -417,7 +417,7 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
     final Glyph? glyph = bitmapDescriptor.glyph;
     if (glyph != null) {
       if (glyph.text != null) {
-        // Set glyph text and text color
+        // Set glyph text and text color.
         final web.Element element = document.createElement('p');
         element.innerHTML = glyph.text!.toJS;
         if (glyph.textColor != null) {
@@ -429,12 +429,12 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
 
         options.glyph = element;
       } else if (glyph.bitmapDescriptor != null) {
-        // Create glyph from bitmap
+        // Create glyph from bitmap.
         final Node? glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
           glyph.bitmapDescriptor!,
-          // Always opaque, opacity is handled by the parent marker
+          // Always opaque, opacity is handled by the parent marker.
           opacity: 1.0,
-          // Always visible, as the visibility is handled by the parent marker
+          // Always visible, as the visibility is handled by the parent marker.
           isVisible: true,
         );
         options.glyph = glyphBitmap;
@@ -493,9 +493,9 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
         icon: icon, size: size, opacity: opacity, isVisible: isVisible);
     return icon;
   } else if (iconConfig[0] == 'fromBytes') {
-    // Grab the bytes, and put them into a blob
+    // Grab the bytes, and put them into a blob.
     final List<int> bytes = iconConfig[1]! as List<int>;
-    // Create a Blob from bytes, but let the browser figure out the encoding
+    // Create a Blob from bytes, but let the browser figure out the encoding.
     final Blob blob;
 
     assert(

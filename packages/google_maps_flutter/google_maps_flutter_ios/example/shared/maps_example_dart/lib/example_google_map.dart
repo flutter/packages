@@ -204,7 +204,7 @@ class ExampleGoogleMapController {
     return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
   }
 
-  /// Returns true if [AdvancedMarker]s can be used with this map
+  /// Returns true if [AdvancedMarker]s can be used with this map.
   Future<bool> isAdvancedMarkersAvailable() {
     return GoogleMapsFlutterPlatform.instance
         .isAdvancedMarkersAvailable(mapId: mapId);
@@ -369,7 +369,7 @@ class ExampleGoogleMap extends StatefulWidget {
   /// The locally configured style for the map.
   final String? style;
 
-  /// The type of marker to use (legacy or advanced)
+  /// The type of marker to use (legacy or advanced).
   final MarkerType markerType;
 
   /// Creates a [State] for this [ExampleGoogleMap].

@@ -35,10 +35,10 @@ class AdvancedMarkersSample extends StatelessWidget {
     return const Scaffold(
 // #docregion AdvancedMarkersSample
       body: GoogleMap(
-        // Set your Map Id
+        // Set your Map ID.
         mapId: 'my-map-id',
 
-        // Let map know that you're using Advanced Markers
+        // Enable support for Advanced Markers.
         markerType: MarkerType.advancedMarker,
 // #enddocregion AdvancedMarkersSample
         initialCameraPosition: _kGooglePlex,

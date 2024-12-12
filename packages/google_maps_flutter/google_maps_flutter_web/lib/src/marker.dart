@@ -220,7 +220,7 @@ class MarkerController<T, O> {
   }
 }
 
-/// Check marker type and call [legacy] or [advanced]
+/// Check marker type and call [legacy] or [advanced].
 void _doOnMarkerType({
   required dynamic marker,
   required void Function(gmaps.Marker marker) legacy,
@@ -238,7 +238,7 @@ void _doOnMarkerType({
   }
 }
 
-/// Check [marker] type and return result of [legacy] or [advanced] function
+/// Check [marker] type and return result of [legacy] or [advanced].
 R getOnMarkerType<R>({
   required dynamic marker,
   required R Function(gmaps.Marker marker) legacy,

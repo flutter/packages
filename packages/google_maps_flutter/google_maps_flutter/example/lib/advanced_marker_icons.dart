@@ -9,9 +9,9 @@ import 'main.dart' as main;
 import 'marker_icons.dart';
 import 'page.dart';
 
-/// Page that demonstrates how to use custom [AdvanceMarker] icons
+/// Page that demonstrates how to use custom [AdvanceMarker] icons.
 class AdvancedMarkerIconsPage extends GoogleMapExampleAppPage {
-  /// Default constructor
+  /// Default constructor.
   const AdvancedMarkerIconsPage({Key? key})
       : super(
           key: key,

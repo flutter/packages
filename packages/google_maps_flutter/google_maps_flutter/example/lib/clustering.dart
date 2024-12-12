@@ -30,7 +30,7 @@ class ClusteringBody extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => ClusteringBodyState();
 
-  /// Create a marker that is later added to a cluster
+  /// Creates a marker that is later added to a cluster
   Marker createMarker({
     required MarkerId markerId,
     required ClusterManagerId clusterManagerId,
@@ -47,7 +47,7 @@ class ClusteringBody extends StatefulWidget {
     );
   }
 
-  /// Return selected or unselected state of the given [marker]
+  /// Returns selected or unselected state of the given [marker].
   Marker getSelectedMarker(Marker marker, bool isSelected) {
     return marker.copyWith(
       iconParam: isSelected
@@ -56,7 +56,7 @@ class ClusteringBody extends StatefulWidget {
     );
   }
 
-  /// Return the mapId to use for the GoogleMap
+  /// Returns the mapId to use for the GoogleMap
   String? get mapId => null;
 }
 

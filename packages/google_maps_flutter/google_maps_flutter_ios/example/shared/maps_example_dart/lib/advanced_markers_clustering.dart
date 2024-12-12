@@ -19,7 +19,7 @@ class AdvancedMarkersClusteringPage extends GoogleMapExampleAppPage {
           'Manage clusters of advanced markers',
         );
 
-  /// Map Id to use for the GoogleMap
+  /// Map ID to use for the GoogleMap
   final String? mapId;
 
   @override
@@ -34,7 +34,7 @@ class _AdvancedMarkerClusteringBody extends ClusteringBody {
 
   final String? providedMapId;
 
-  /// Return the mapId to use for the GoogleMap
+  /// Returns the mapId to use for the GoogleMap
   @override
   String? get mapId => providedMapId;
 

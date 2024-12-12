@@ -107,8 +107,8 @@ class ClusterManagersController
   }
 
   /**
-   * Initialize cluster renderer if it hasn't been initialized before. ClusterManager uses default
-   * renderer which should be changed to (legacy) renderer or advanced renderer
+   * Initializes cluster renderer if it hasn't been initialized before. ClusterManager uses default
+   * renderer which should be changed to (legacy) renderer or advanced renderer.
    */
   private void initializeRenderer(ClusterManager<MarkerBuilder> clusterManager) {
     final ClusterRenderer<MarkerBuilder> renderer = clusterManager.getRenderer();
@@ -256,7 +256,7 @@ class ClusterManagersController
     }
   }
 
-  /** AdvancedMarkerClusterRenderer is a ClusterRenderer that supports AdvancedMarkers */
+  /** AdvancedMarkerClusterRenderer is a ClusterRenderer that supports AdvancedMarkers. */
   @VisibleForTesting
   static class AdvancedMarkerClusterRenderer<T extends MarkerBuilder>
       extends DefaultAdvancedMarkersClusterRenderer<T> {

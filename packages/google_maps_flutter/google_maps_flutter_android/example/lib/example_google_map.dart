@@ -371,7 +371,7 @@ class ExampleGoogleMap extends StatefulWidget {
   /// The locally configured style for the map.
   final String? style;
 
-  /// The type of marker to use (legacy or advanced)
+  /// The type of marker to use (legacy or advanced).
   final MarkerType markerType;
 
   /// Creates a [State] for this [ExampleGoogleMap].

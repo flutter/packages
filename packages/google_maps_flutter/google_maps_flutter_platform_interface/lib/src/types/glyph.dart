@@ -12,17 +12,17 @@ import '../../google_maps_flutter_platform_interface.dart';
 /// some text or bitmap
 @immutable
 class Glyph {
-  /// Create a glyph with a circle of the specified [color]
+  /// Creates a glyph with a circle of the specified [color]
   factory Glyph.color(Color color) {
     return Glyph._(color: color);
   }
 
-  /// Create a glyph with a bitmap image
+  /// Creates a glyph with a bitmap image
   factory Glyph.bitmap(BitmapDescriptor bitmapDescriptor) {
     return Glyph._(bitmapDescriptor: bitmapDescriptor);
   }
 
-  /// Create a glyph with a [text] of the specified [textColor]
+  /// Creates a glyph with a [text] of the specified [textColor]
   factory Glyph.text(String text, {Color? textColor}) {
     return Glyph._(
       text: text,
