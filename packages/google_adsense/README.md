@@ -82,6 +82,7 @@ h5GamesAds.adBreak(
   AdBreakPlacement.interstitial(
     type: BreakType.browse,
     name: 'test-interstitial-ad',
+    adBreakDone: _interstitialBreakDone,
   ),
 );
 ```
@@ -116,7 +117,7 @@ h5GamesAds.adBreak(
     adViewed: _adViewed,
     adDismissed: _adDismissed,
     afterAd: _afterAd,
-    adBreakDone: _adBreakDone,
+    adBreakDone: _rewardedBreakDone,
   ),
 );
 ```

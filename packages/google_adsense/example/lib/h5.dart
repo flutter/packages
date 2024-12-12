@@ -48,7 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _adBreakRequested = false;
   int _coins = 0; // The counter of rewards
   H5ShowAdFn? _showAdFn;
-  AdBreakDonePlacementInfo? _lastPlacementInfo;
+  AdBreakDonePlacementInfo? _lastInterstitialInfo;
+  AdBreakDonePlacementInfo? _lastRewardedInfo;
 
   @override
   void initState() {
@@ -77,9 +78,16 @@ class _MyHomePageState extends State<MyHomePage> {
       AdBreakPlacement.interstitial(
         type: BreakType.browse,
         name: 'test-interstitial-ad',
+        adBreakDone: _interstitialBreakDone,
       ),
     );
     // #enddocregion interstitial
+  }
+
+  void _interstitialBreakDone(AdBreakDonePlacementInfo info) {
+    setState(() {
+      _lastInterstitialInfo = info;
+    });
   }
 
   void _requestRewardedAd() {
@@ -91,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
         adViewed: _adViewed,
         adDismissed: _adDismissed,
         afterAd: _afterAd,
-        adBreakDone: _adBreakDone,
+        adBreakDone: _rewardedBreakDone,
       ),
     );
     // #enddocregion rewarded
@@ -126,9 +134,9 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _adBreakDone(AdBreakDonePlacementInfo info) {
+  void _rewardedBreakDone(AdBreakDonePlacementInfo info) {
     setState(() {
-      _lastPlacementInfo = info;
+      _lastRewardedInfo = info;
     });
   }
 
@@ -150,6 +158,13 @@ class _MyHomePageState extends State<MyHomePage> {
               label: const Text('Show Interstitial Ad'),
               icon: const Icon(Icons.play_circle_outline_rounded),
             ),
+            Text(
+              'Interstitial Ad Status:',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            Text('Last Status: ${_lastInterstitialInfo?.breakStatus}'),
             const Divider(),
             PaddedCard(
               children: <Widget>[
@@ -181,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text('Requested? $_adBreakRequested'),
             Text('Available? $adBreakAvailable'),
-            Text('Last Status: ${_lastPlacementInfo?.breakStatus}'),
+            Text('Last Status: ${_lastRewardedInfo?.breakStatus}'),
           ],
         ),
       ),
