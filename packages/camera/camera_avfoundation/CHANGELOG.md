@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.9.17+5
 
 * Adds ability to use any supported FPS and fixes crash when using unsupported FPS.
