@@ -3,19 +3,11 @@
 // found in the LICENSE file.
 
 #import "./include/webview_flutter_wkwebview/FWFWebViewFlutterWKWebViewExternalAPI.h"
-#import "./include/webview_flutter_wkwebview/FWFInstanceManager.h"
+#import "webview_flutter_wkwebview-Swift.h"
 
 @implementation FWFWebViewFlutterWKWebViewExternalAPI
 + (nullable WKWebView *)webViewForIdentifier:(long)identifier
                           withPluginRegistry:(id<FlutterPluginRegistry>)registry {
-  FWFInstanceManager *instanceManager =
-      (FWFInstanceManager *)[registry valuePublishedByPlugin:@"FLTWebViewFlutterPlugin"];
-
-  id instance = [instanceManager instanceForIdentifier:identifier];
-  if ([instance isKindOfClass:[WKWebView class]]) {
-    return instance;
-  }
-
-  return nil;
+  return [WebViewFlutterWKWebViewExternalAPI webViewForIdentifier:@(identifier) withPluginRegistry:registry];
 }
 @end

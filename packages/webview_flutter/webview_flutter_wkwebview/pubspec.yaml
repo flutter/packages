@@ -17,7 +17,7 @@ flutter:
         dartPluginClass: WebKitWebViewPlatform
         sharedDarwinSource: true
       macos:
-        pluginClass: FLTWebViewFlutterPlugin
+        pluginClass: WebViewFlutterPlugin
         dartPluginClass: WebKitWebViewPlatform
         sharedDarwinSource: true
 
