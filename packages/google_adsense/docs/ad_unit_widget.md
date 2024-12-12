@@ -1,15 +1,15 @@
 # `AdUnitWidget`
 
 The `experimental/ad_unit_widget.dart` library provides an ad unit `Widget` that
-can be configured and placed in the desired location in your Flutter web app UI,
-without having to directly modify the HTML markup of the app directly.
+can be configured and placed in the widget tree of your Flutter web app.
 
 ## Disclaimer: Early Access ⚠️
 This package is currently in early access and is provided as-is. While it's open
 source and publicly available, it's likely that you'll need to make additional
 customizations and configurations to fully integrate it with your Flutter Web App.
 
-Please express interest joining Early Access program using [this form](https://docs.google.com/forms/d/e/1FAIpQLSdN6aOwVkaxGdxbVQFVZ_N4_UCBkuWYa-cS4_rbU_f1jK10Tw/viewform)
+The early access list is a closed one for now, stay tuned for expanded availability
+of the Ad Unit Widget for Flutter web.
 
 ## Usage
 

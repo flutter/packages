@@ -4,10 +4,10 @@ dartdoc:
       markdown: docs/initialization.md
     "H5 Games Ads":
       markdown: docs/h5.md
-    "Display Ads":
+    "Ad Units":
       markdown: docs/ad_unit_widget.md
   categoryOrder:
     - "Initialization"
     - "H5 Games Ads"
-    - "Display Ads"
+    - "Ad Units"
   showUndocumentedCategories: true

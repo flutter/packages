@@ -15,7 +15,7 @@ to learn how to:
 
 * [Initialize AdSense](https://pub.dev/documentation/google_adsense/latest/topics/Initialization-topic.html)
 * [Use H5 Games Ads](https://pub.dev/documentation/google_adsense/latest/topics/H5%20Games%20Ads-topic.html)
-* [Display Ad Units](https://pub.dev/documentation/google_adsense/latest/topics/Display%20Ads-topic.html)
+* [Display Ad Units](https://pub.dev/documentation/google_adsense/latest/topics/Ad%20Units-topic.html)
 
 ## Support
 
