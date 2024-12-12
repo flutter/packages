@@ -1537,8 +1537,12 @@ void googleMapsTests() {
           (Matcher matcher) => matcher);
 
       await tester.pumpAndSettle();
-  }, variant: _cameraUpdateTypeVariants);
-
+    },
+    variant: _cameraUpdateTypeVariants,
+    // TODO(stuartmorgan): Remove skip once Maps API key is available for LUCI,
+    // https://github.com/flutter/flutter/issues/131071
+    skip: true,
+  );
 
   /// Tests animating the camera with specified durations to verify timing
   /// behavior.
@@ -1682,6 +1686,9 @@ void googleMapsTests() {
       await tester.pumpAndSettle();
     },
     variant: _cameraUpdateTypeVariants,
+    // TODO(stuartmorgan): Remove skip once Maps API key is available for LUCI,
+    // https://github.com/flutter/flutter/issues/131071
+    skip: true,
   );
 }
 
