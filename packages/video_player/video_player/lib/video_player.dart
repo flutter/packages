@@ -278,6 +278,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         dataSourceType = DataSourceType.asset,
         formatHint = null,
         httpHeaders = const <String, String>{},
+        drmConfiguration = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [VideoPlayerController] playing a network video.
@@ -296,6 +297,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSourceType = DataSourceType.network,
         package = null,
@@ -316,6 +318,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
   })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = url.toString(),
         dataSourceType = DataSourceType.network,
@@ -326,11 +329,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// This will load the file from a file:// URI constructed from [file]'s path.
   /// [httpHeaders] option allows to specify HTTP headers, mainly used for hls files like (m3u8).
-  VideoPlayerController.file(File file,
-      {Future<ClosedCaptionFile>? closedCaptionFile,
-      this.videoPlayerOptions,
-      this.httpHeaders = const <String, String>{}})
-      : _closedCaptionFileFuture = closedCaptionFile,
+  VideoPlayerController.file(
+    File file, {
+    Future<ClosedCaptionFile>? closedCaptionFile,
+    this.videoPlayerOptions,
+    this.httpHeaders = const <String, String>{},
+    this.drmConfiguration,
+  })  : _closedCaptionFileFuture = closedCaptionFile,
         dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
@@ -351,6 +356,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         package = null,
         formatHint = null,
         httpHeaders = const <String, String>{},
+        drmConfiguration = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// The URI to the video file. This will be in different formats depending on
@@ -394,6 +400,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   @visibleForTesting
   int get textureId => _textureId;
 
+  /// DRM configuration to use for playing DRM protected content.
+  /// Only supported on Android and iOS.
+  /// The configuration should match the DRM protected content being played.
+  final PlayerDrmConfiguration? drmConfiguration;
+
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
     final bool allowBackgroundPlayback =
@@ -418,12 +429,24 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           uri: dataSource,
           formatHint: formatHint,
           httpHeaders: httpHeaders,
+          drmHeaders: drmConfiguration?.drmHeaders,
+          clearKey: drmConfiguration?.clearKey,
+          licenseUrl: drmConfiguration?.licenseUrl,
+          token: drmConfiguration?.token,
+          certificateUrl: drmConfiguration?.certificateUrl,
+          drmType: drmConfiguration?.type,
         );
       case DataSourceType.file:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
           httpHeaders: httpHeaders,
+          drmHeaders: drmConfiguration?.drmHeaders,
+          clearKey: drmConfiguration?.clearKey,
+          licenseUrl: drmConfiguration?.licenseUrl,
+          token: drmConfiguration?.token,
+          certificateUrl: drmConfiguration?.certificateUrl,
+          drmType: drmConfiguration?.type,
         );
       case DataSourceType.contentUri:
         dataSourceDescription = DataSource(
