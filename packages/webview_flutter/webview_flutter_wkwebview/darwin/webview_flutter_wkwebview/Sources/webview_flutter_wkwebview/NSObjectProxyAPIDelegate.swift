@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
-
 /// Implementation of `NSObject` that calls to Dart in callback methods.
 class NSObjectImpl: NSObject {
   let api: PigeonApiProtocolNSObject
@@ -42,10 +40,22 @@ class NSObjectImpl: NSObject {
     } else {
       wrapperKeys = nil
     }
+    
+    let apiDelegate = ((api as! PigeonApiNSObject).pigeonRegistrar.apiDelegate
+                                     as! ProxyAPIDelegate)
 
-    api.observeValue(
-      pigeonInstance: instance, keyPath: keyPath, object: object as? NSObject, change: wrapperKeys
-    ) { _ in }
+    apiDelegate.dispatchOnMainThread { onFailure in
+      api.observeValue(
+        pigeonInstance: instance, keyPath: keyPath, object: object as? NSObject, change: wrapperKeys
+      ) { result in
+        switch result {
+        case .success():
+          break
+        case .failure(let error):
+          onFailure("NSObject.observeValue", error)
+        }
+      }
+    }
   }
 
   override func observeValue(

@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
 import WebKit
 
 /// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
