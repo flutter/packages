@@ -17,9 +17,11 @@ import 'package:pigeon/pigeon.dart';
 ))
 class SharedPreferencesPigeonOptions {
   SharedPreferencesPigeonOptions({
-    this.fileKey,
+    this.fileName,
+    this.useDataStore = true,
   });
-  String? fileKey;
+  String? fileName;
+  bool useDataStore;
 }
 
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')

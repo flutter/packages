@@ -1,5 +1,6 @@
-## NEXT
+## 2.5.4
 
+* Updates Pigeon to fix lint error.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.5.3

@@ -1,3 +1,16 @@
+buildscript {
+    ext.kotlin_version = '1.7.10'
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 plugins {
     id "com.android.application"
     id "org.jetbrains.kotlin.android"
@@ -23,15 +36,25 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace 'io.flutter.plugins.sharedpreferencesexample'
+    namespace "dev.flutter.plugins.shared_preferences_example"
     compileSdk flutter.compileSdkVersion
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+        
+    kotlinOptions {
+        jvmTarget = '11'
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
     defaultConfig {
-        applicationId "io.flutter.plugins.sharedpreferencesexample"
+        applicationId "dev.flutter.plugins.shared_preferences_example"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()
@@ -54,4 +77,11 @@ flutter {
 
 dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation 'androidx.preference:preference:1.2.1'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.2.0'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    api 'androidx.test:core:1.4.0'
 }
