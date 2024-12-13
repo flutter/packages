@@ -1,3 +1,7 @@
+## 6.1.34
+
+* Removes unnecessary native code.
+
 ## 6.1.33
 
 * Updates Pigeon for non-nullable collection type support.

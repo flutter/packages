@@ -7,8 +7,8 @@ repository: https://github.com/flutter/packages/tree/main/packages/go_router_bui
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+go_router_builder%22
 
 environment:
-  sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 dependencies:
   analyzer: ">=5.2.0 <7.0.0"

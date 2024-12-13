@@ -549,6 +549,27 @@ abstract class PigeonApiProxyApiTestClass(
       nullableProxyApiParam: com.example.test_plugin.ProxyApiSuperClass?
   ): ProxyApiTestClass
 
+  abstract fun namedConstructor(
+      aBool: Boolean,
+      anInt: Long,
+      aDouble: Double,
+      aString: String,
+      aUint8List: ByteArray,
+      aList: List<Any?>,
+      aMap: Map<String?, Any?>,
+      anEnum: ProxyApiTestEnum,
+      aProxyApi: com.example.test_plugin.ProxyApiSuperClass,
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableDouble: Double?,
+      aNullableString: String?,
+      aNullableUint8List: ByteArray?,
+      aNullableList: List<Any?>?,
+      aNullableMap: Map<String?, Any?>?,
+      aNullableEnum: ProxyApiTestEnum?,
+      aNullableProxyApi: com.example.test_plugin.ProxyApiSuperClass?
+  ): ProxyApiTestClass
+
   abstract fun attachedField(
       pigeon_instance: ProxyApiTestClass
   ): com.example.test_plugin.ProxyApiSuperClass
@@ -1097,6 +1118,67 @@ abstract class PigeonApiProxyApiTestClass(
                           nullableMapParamArg,
                           nullableEnumParamArg,
                           nullableProxyApiParamArg),
+                      pigeon_identifierArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.namedConstructor",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val aBoolArg = args[1] as Boolean
+            val anIntArg = args[2] as Long
+            val aDoubleArg = args[3] as Double
+            val aStringArg = args[4] as String
+            val aUint8ListArg = args[5] as ByteArray
+            val aListArg = args[6] as List<Any?>
+            val aMapArg = args[7] as Map<String?, Any?>
+            val anEnumArg = args[8] as ProxyApiTestEnum
+            val aProxyApiArg = args[9] as com.example.test_plugin.ProxyApiSuperClass
+            val aNullableBoolArg = args[10] as Boolean?
+            val aNullableIntArg = args[11] as Long?
+            val aNullableDoubleArg = args[12] as Double?
+            val aNullableStringArg = args[13] as String?
+            val aNullableUint8ListArg = args[14] as ByteArray?
+            val aNullableListArg = args[15] as List<Any?>?
+            val aNullableMapArg = args[16] as Map<String?, Any?>?
+            val aNullableEnumArg = args[17] as ProxyApiTestEnum?
+            val aNullableProxyApiArg = args[18] as com.example.test_plugin.ProxyApiSuperClass?
+            val wrapped: List<Any?> =
+                try {
+                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                      api.namedConstructor(
+                          aBoolArg,
+                          anIntArg,
+                          aDoubleArg,
+                          aStringArg,
+                          aUint8ListArg,
+                          aListArg,
+                          aMapArg,
+                          anEnumArg,
+                          aProxyApiArg,
+                          aNullableBoolArg,
+                          aNullableIntArg,
+                          aNullableDoubleArg,
+                          aNullableStringArg,
+                          aNullableUint8ListArg,
+                          aNullableListArg,
+                          aNullableMapArg,
+                          aNullableEnumArg,
+                          aNullableProxyApiArg),
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
