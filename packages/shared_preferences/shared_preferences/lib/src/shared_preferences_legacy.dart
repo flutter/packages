@@ -44,6 +44,9 @@ class SharedPreferences {
   /// [allowList] will cause the plugin to only return preferences that
   /// are both contained in the list AND match the provided prefix.
   ///
+  /// If [prefix] is changed, and an [allowList] is used, the prefix must be included
+  /// on the keys added to the [allowList].
+  ///
   /// No migration of existing preferences is performed by this method.
   /// If you set a different prefix, and have previously stored preferences,
   /// you will need to handle any migration yourself.
