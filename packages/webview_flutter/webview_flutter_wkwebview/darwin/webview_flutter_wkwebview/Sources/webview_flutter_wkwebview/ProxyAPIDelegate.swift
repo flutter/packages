@@ -2,20 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
-
 /// Implementation of `WebKitLibraryPigeonProxyApiDelegate` that provides each ProxyApi delegate implementation
 /// and any additional resources needed by an implementation.
 open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   let assetManager = FlutterAssetManager()
   let bundle = Bundle.main
 
+  /// Creates an error when the `unknown` enum value is passed to a host method.
   func createUnknownEnumError(withEnum enumValue: Any) -> PigeonError {
     return PigeonError(
       code: "UnknownEnumError", message: "\(enumValue) doesn't represent a native value.",
       details: nil)
   }
 
+  /// Creates an error when a method is called on an unsupported version.
   func createUnsupportedVersionError(method: String, versionRequirements: String) -> PigeonError {
     return PigeonError(
       code: "FWFUnsupportedVersionError",
@@ -23,28 +23,38 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
       details: nil)
   }
 
+  /// Creates the error message when a method is called on an unsupported version.
   func createUnsupportedVersionMessage(_ method: String, versionRequirements: String) -> String {
     return "`\(method)` requires \(versionRequirements)."
   }
 
-  // This is to prevent consistent errors. please use method below.
-  func createNullURLError(url: String) -> PigeonError {
+  // Creates an error when the constructor of a URL returns null.
+  //
+  // New methods should use `createConstructorNullError`, but this stays
+  // to keep error code consistent with previous plugin versions.
+  fileprivate func createNullURLError(url: String) -> PigeonError {
     return PigeonError(
       code: "FWFURLParsingError", message: "Failed parsing file path.",
       details: "Initializing URL with the supplied '\(url)' path resulted in a nil value.")
   }
   
-  
+  /// Creates an error when the constructor of a class returns null.
   func createConstructorNullError(type: Any.Type, parameters: [String: Any?]) -> PigeonError {
+    if (type == URL.self && parameters["string"] != nil) {
+      return createNullURLError(url: parameters["string"] as! String)
+    }
+    
     return PigeonError(
       code: "ConstructorReturnedNullError", message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
       details: nil)
   }
 
-  func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
+  // Creates an assertion failure when a Flutter method receives an error from Dart.
+  fileprivate func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
     assertionFailure("\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))")
   }
   
+  /// Handles calling a Flutter method on the main thread.
   func dispatchOnMainThread(execute work: @escaping (_ onFailure: @escaping (_ methodName: String, _ error: PigeonError) -> Void) -> Void) {
     DispatchQueue.main.async {
       work { methodName, error in
