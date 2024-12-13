@@ -61,7 +61,7 @@ class _AdvancedMarkerClusteringBody extends ClusteringBody {
   }
 
   @override
-  Marker getSelectedMarker(Marker marker, bool isSelected) {
+  Marker copyWithSelectedStated(Marker marker, bool isSelected) {
     assert(marker is AdvancedMarker);
     return (marker as AdvancedMarker).copyWith(
       iconParam: isSelected

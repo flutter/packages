@@ -48,7 +48,7 @@ class ClusteringBody extends StatefulWidget {
   }
 
   /// Returns selected or unselected state of the given [marker].
-  Marker getSelectedMarker(Marker marker, bool isSelected) {
+  Marker copyWithSelectedStated(Marker marker, bool isSelected) {
     return marker.copyWith(
       iconParam: isSelected
           ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
@@ -131,11 +131,12 @@ class ClusteringBodyState extends State<ClusteringBody> {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
           final Marker resetOld =
-              widget.getSelectedMarker(markers[previousMarkerId]!, false);
+              widget.copyWithSelectedStated(markers[previousMarkerId]!, false);
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
-        final Marker newMarker = widget.getSelectedMarker(tappedMarker, true);
+        final Marker newMarker =
+            widget.copyWithSelectedStated(tappedMarker, true);
         markers[markerId] = newMarker;
       });
     }
