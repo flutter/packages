@@ -35,7 +35,7 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   }
   
   
-  func createConstructorNullError(type: AnyObject.Type, parameters: [String: Any]) -> PigeonError {
+  func createConstructorNullError(type: Any.Type, parameters: [String: Any?]) -> PigeonError {
     return PigeonError(
       code: "ConstructorReturnedNullError", message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
       details: nil)

@@ -10,7 +10,13 @@ class URLRequestProxyAPIDelegate: PigeonApiDelegateURLRequest {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws
     -> URLRequestWrapper
   {
-    return URLRequestWrapper(URLRequest(url: URL(string: url)!))
+    let urlObject = URL(string: url)
+    if let urlObject = urlObject {
+      return URLRequestWrapper(URLRequest(url: urlObject))
+    } else {
+      let apiDelegate = pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
+      throw apiDelegate.createConstructorNullError(type: NSURL.self, parameters: ["string" : url])
+    }
   }
 
   func setHttpMethod(
