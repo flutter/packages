@@ -2,14 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
+#if os(iOS)
 import UIKit
+#endif
 
 /// ProxyApi implementation for `UIScrollView`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class ScrollViewProxyAPIDelegate: PigeonApiDelegateUIScrollView {
+  #if os(iOS)
   func getContentOffset(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView) throws
     -> [Double]
   {
@@ -35,4 +37,5 @@ class ScrollViewProxyAPIDelegate: PigeonApiDelegateUIScrollView {
   ) throws {
     pigeonInstance.delegate = delegate
   }
+  #endif
 }

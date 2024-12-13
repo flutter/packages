@@ -2,23 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
 import WebKit
 
 /// Implementation of `WKScriptMessageHandler` that calls to Dart in callback methods.
 class ScriptMessageHandlerImpl: NSObject, WKScriptMessageHandler {
   let api: PigeonApiProtocolWKScriptMessageHandler
+  let apiDelegate: ProxyAPIDelegate
 
   init(api: PigeonApiProtocolWKScriptMessageHandler) {
     self.api = api
+    self.apiDelegate = ((api as! PigeonApiWKScriptMessageHandler).pigeonRegistrar.apiDelegate
+                                           as! ProxyAPIDelegate)
   }
 
   func userContentController(
     _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
   ) {
-    api.didReceiveScriptMessage(
-      pigeonInstance: self, controller: userContentController, message: message
-    ) { _ in }
+    apiDelegate.dispatchOnMainThread { onFailure in
+      self.api.didReceiveScriptMessage(
+        pigeonInstance: self, controller: userContentController, message: message
+      ) { result in
+        switch result {
+        case .success():
+          break
+        case .failure(let error):
+          onFailure("WKScriptMessageHandler.didReceiveScriptMessage", error)
+        }
+      }
+    }
   }
 }
 
