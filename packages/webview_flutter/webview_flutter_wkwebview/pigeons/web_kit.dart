@@ -507,7 +507,11 @@ abstract class HTTPCookie extends NSObject {
 }
 
 /// Response object used to return multiple values to an auth challenge received
-/// by a `WKNavigationDelegate`.
+/// by a `WKNavigationDelegate` auth challenge.
+///
+/// The `webView(_:didReceive:completionHandler:)` method in
+/// `WKNavigationDelegate` responds with a completion handler that takes two
+/// values. The wrapper returns this class instead to handle this scenario.
 @ProxyApi()
 abstract class AuthenticationChallengeResponse {
   AuthenticationChallengeResponse();

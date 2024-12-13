@@ -8,15 +8,27 @@ import WebKit
 /// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
 class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   let api: PigeonApiProtocolWKNavigationDelegate
+  let apiDelegate: ProxyAPIDelegate
 
   init(api: PigeonApiProtocolWKNavigationDelegate) {
     self.api = api
+    self.apiDelegate = ((api as! PigeonApiWKNavigationDelegate).pigeonRegistrar.apiDelegate
+                        as! ProxyAPIDelegate)
   }
 
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    api.didFinishNavigation(
-      pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
-    ) { _ in}
+    apiDelegate.dispatchOnMainThread { onFailure in
+      self.api.didFinishNavigation(
+        pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
+      ) { result in
+        switch result {
+        case .success():
+          break
+        case .failure(let error):
+          onFailure("WKNavigationDelegate.didFinishNavigation", error)
+        }
+      }
+    }
   }
 
   func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {

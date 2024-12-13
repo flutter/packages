@@ -1,12 +1,12 @@
-//
-//  AuthenticationChallengeResponse.swift
-//  webview_flutter_wkwebview
-//
-//  Created by Maurice Parrish on 11/16/24.
-//
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-import Foundation
-
+/// Data class used to respond to auth challenges from `WKNavigationDelegate`.
+///
+/// The `webView(_:didReceive:completionHandler:)` method in `WKNavigationDelegate`
+/// responds with a completion handler that takes two values. The wrapper returns this class instead to handle
+/// this scenario.
 class AuthenticationChallengeResponse {
   let disposition: URLSession.AuthChallengeDisposition
   let credential: URLCredential?

@@ -36,6 +36,14 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
     assertionFailure("\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))")
   }
+  
+  func dispatchOnMainThread(execute work: @escaping (_ onFailure: @escaping (_ methodName: String, _ error: PigeonError) -> Void) -> Void) {
+    DispatchQueue.main.async {
+      work { methodName, error in
+        self.assertFlutterMethodFailure(error, methodName: methodName)
+      }
+    }
+  }
 
   func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest
   {
