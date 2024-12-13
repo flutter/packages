@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
 import WebKit
 
 class WebViewImpl: WKWebView {
@@ -60,11 +59,13 @@ class WebViewImpl: WKWebView {
 class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIViewWKWebView,
   PigeonApiDelegateNSViewWKWebView
 {
+  #if os(iOS)
   func scrollView(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
     -> UIScrollView
   {
     return pigeonInstance.scrollView
   }
+  #endif
 
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiUIViewWKWebView, initialConfiguration: WKWebViewConfiguration
