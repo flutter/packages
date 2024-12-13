@@ -10,7 +10,7 @@ import 'package:flutter/foundation.dart'
 import 'types.dart';
 
 /// Convert [Offset] to JSON object.
-Object offsetToJson(Offset offset) {
+Object _offsetToJson(Offset offset) {
   return <Object>[offset.dx, offset.dy];
 }
 
@@ -77,7 +77,7 @@ class InfoWindow {
 
     addIfPresent('title', title);
     addIfPresent('snippet', snippet);
-    addIfPresent('anchor', offsetToJson(anchor));
+    addIfPresent('anchor', _offsetToJson(anchor));
 
     return json;
   }
@@ -295,7 +295,7 @@ class Marker implements MapsObject<Marker> {
 
     addIfPresent('markerId', markerId.value);
     addIfPresent('alpha', alpha);
-    addIfPresent('anchor', offsetToJson(anchor));
+    addIfPresent('anchor', _offsetToJson(anchor));
     addIfPresent('consumeTapEvents', consumeTapEvents);
     addIfPresent('draggable', draggable);
     addIfPresent('flat', flat);

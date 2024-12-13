@@ -98,7 +98,7 @@ class AdvancedMarker extends Marker {
 
     addIfPresent('markerId', markerId.value);
     addIfPresent('alpha', alpha);
-    addIfPresent('anchor', offsetToJson(anchor));
+    addIfPresent('anchor', _offsetToJson(anchor));
     addIfPresent('consumeTapEvents', consumeTapEvents);
     addIfPresent('draggable', draggable);
     addIfPresent('flat', flat);
@@ -167,4 +167,9 @@ enum MarkerCollisionBehavior {
   /// [optionalAndHidesLowerPriority] markers or labels that would overlap with
   /// the marker.
   requiredAndHidesOptional,
+}
+
+/// Convert [Offset] to JSON object.
+Object _offsetToJson(Offset offset) {
+  return <Object>[offset.dx, offset.dy];
 }
