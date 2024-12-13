@@ -22,10 +22,7 @@ class ScriptMessageHandlerImpl: NSObject, WKScriptMessageHandler {
       self.api.didReceiveScriptMessage(
         pigeonInstance: self, controller: userContentController, message: message
       ) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("WKScriptMessageHandler.didReceiveScriptMessage", error)
         }
       }

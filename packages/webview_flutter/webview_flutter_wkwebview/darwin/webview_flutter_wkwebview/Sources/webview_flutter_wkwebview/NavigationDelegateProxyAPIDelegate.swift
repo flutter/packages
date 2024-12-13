@@ -20,10 +20,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       self.api.didFinishNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
       ) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.didFinishNavigation", error)
         }
       }
@@ -35,10 +32,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       self.api.didStartProvisionalNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
       ) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.didStartProvisionalNavigation", error)
         }
       }
@@ -116,10 +110,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   {
     apiDelegate.dispatchOnMainThread { onFailure in
       self.api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.didFailNavigation", error)
         }
       }
@@ -134,10 +125,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       self.api.didFailProvisionalNavigation(
         pigeonInstance: self, webView: webView, error: error as NSError
       ) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.didFailProvisionalNavigation", error)
         }
       }
@@ -147,10 +135,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
     apiDelegate.dispatchOnMainThread { onFailure in
       self.api.webViewWebContentProcessDidTerminate(pigeonInstance: self, webView: webView) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.webViewWebContentProcessDidTerminate", error)
         }
       }

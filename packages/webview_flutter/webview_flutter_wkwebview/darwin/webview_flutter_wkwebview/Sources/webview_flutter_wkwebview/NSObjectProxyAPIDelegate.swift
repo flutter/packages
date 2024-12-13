@@ -48,10 +48,7 @@ class NSObjectImpl: NSObject {
       api.observeValue(
         pigeonInstance: instance, keyPath: keyPath, object: object as? NSObject, change: wrapperKeys
       ) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("NSObject.observeValue", error)
         }
       }

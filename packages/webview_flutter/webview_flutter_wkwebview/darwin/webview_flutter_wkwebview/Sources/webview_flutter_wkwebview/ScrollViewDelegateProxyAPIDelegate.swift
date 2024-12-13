@@ -24,10 +24,7 @@ class ScrollViewDelegateImpl: NSObject, UIScrollViewDelegate {
         pigeonInstance: self, scrollView: scrollView, x: scrollView.contentOffset.x,
         y: scrollView.contentOffset.y
       ) { result in
-        switch result {
-        case .success():
-          break
-        case .failure(let error):
+        if case .failure(let error) = result {
           onFailure("UIScrollViewDelegate.scrollViewDidScroll", error)
         }
       }

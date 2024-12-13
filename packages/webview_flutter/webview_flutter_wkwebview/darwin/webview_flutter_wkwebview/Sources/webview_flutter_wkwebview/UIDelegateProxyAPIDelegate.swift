@@ -2,31 +2,33 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
 import WebKit
 
 /// Implementation of `WKUIDelegate` that calls to Dart in callback methods.
 class UIDelegateImpl: NSObject, WKUIDelegate {
   let api: PigeonApiProtocolWKUIDelegate
-  
-  var proxyAPIDelegate: ProxyAPIDelegate {
-    get {
-      return (self.api as! PigeonApiWKUIDelegate).pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
-    }
-  }
+  let apiDelegate: ProxyAPIDelegate
 
   init(api: PigeonApiProtocolWKUIDelegate) {
     self.api = api
+    self.apiDelegate = ((api as! PigeonApiWKUIDelegate).pigeonRegistrar.apiDelegate
+                        as! ProxyAPIDelegate)
   }
 
   func webView(
     _ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
     for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures
   ) -> WKWebView? {
-    api.onCreateWebView(
-      pigeonInstance: self, webView: webView, configuration: configuration,
-      navigationAction: navigationAction
-    ) { _ in }
+    apiDelegate.dispatchOnMainThread { onFailure in
+      self.api.onCreateWebView(
+        pigeonInstance: self, webView: webView, configuration: configuration,
+        navigationAction: navigationAction
+      ) { result in
+        if case .failure(let error) = result {
+          onFailure("WKUIDelegate.onCreateWebView", error)
+        }
+      }
+    }
     return nil
   }
 
@@ -47,23 +49,25 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     @unknown default:
       wrapperCaptureType = .unknown
     }
-
-    api.requestMediaCapturePermission(
-      pigeonInstance: self, webView: webView, origin: origin, frame: frame, type: wrapperCaptureType
-    ) { result in
-      switch result {
-      case .success(let decision):
-        switch decision {
-        case .deny:
+    
+    apiDelegate.dispatchOnMainThread { onFailure in
+      self.api.requestMediaCapturePermission(
+        pigeonInstance: self, webView: webView, origin: origin, frame: frame, type: wrapperCaptureType
+      ) { result in
+        switch result {
+        case .success(let decision):
+          switch decision {
+          case .deny:
+            decisionHandler(.deny)
+          case .grant:
+            decisionHandler(.grant)
+          case .prompt:
+            decisionHandler(.prompt)
+          }
+        case .failure(let error):
           decisionHandler(.deny)
-        case .grant:
-          decisionHandler(.grant)
-        case .prompt:
-          decisionHandler(.prompt)
+          onFailure("WKUIDelegate.requestMediaCapturePermission", error)
         }
-      case .failure(let error):
-        decisionHandler(.deny)
-        self.proxyAPIDelegate.assertFlutterMethodFailure(error, methodName: "PigeonApiProtocolWKUIDelegate.requestMediaCapturePermission")
       }
     }
   }
@@ -72,11 +76,13 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor () -> Void
   ) {
-    api.runJavaScriptAlertPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
-      if case .failure(let error) = result {
-        assertionFailure("\(error)")
+    apiDelegate.dispatchOnMainThread { onFailure in
+      self.api.runJavaScriptAlertPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
+        if case .failure(let error) = result {
+          onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
+        }
+        completionHandler()
       }
-      completionHandler()
     }
   }
 
@@ -84,13 +90,15 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor (Bool) -> Void
   ) {
-    api.runJavaScriptConfirmPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
-      switch result {
-      case .success(let confirmed):
-        completionHandler(confirmed)
-      case .failure(let error):
-        completionHandler(false)
-        assertionFailure("\(error)")
+    apiDelegate.dispatchOnMainThread { onFailure in
+      self.api.runJavaScriptConfirmPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
+        switch result {
+        case .success(let confirmed):
+          completionHandler(confirmed)
+        case .failure(let error):
+          completionHandler(false)
+          onFailure("WKUIDelegate.runJavaScriptConfirmPanel", error)
+        }
       }
     }
   }
@@ -100,15 +108,17 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     defaultText: String?, initiatedByFrame frame: WKFrameInfo,
     completionHandler: @escaping @MainActor (String?) -> Void
   ) {
-    api.runJavaScriptTextInputPanel(
-      pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText, frame: frame
-    ) { result in
-      switch result {
-      case .success(let response):
-        completionHandler(response)
-      case .failure(let error):
-        completionHandler(nil)
-        assertionFailure("\(error)")
+    apiDelegate.dispatchOnMainThread { onFailure in
+      self.api.runJavaScriptTextInputPanel(
+        pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText, frame: frame
+      ) { result in
+        switch result {
+        case .success(let response):
+          completionHandler(response)
+        case .failure(let error):
+          completionHandler(nil)
+          onFailure("WKUIDelegate.runJavaScriptTextInputPanel", error)
+        }
       }
     }
   }
