@@ -32,8 +32,7 @@ import 'snapshot.dart';
 import 'tile_overlay.dart';
 
 /// Map ID is required for some examples to use advanced markers.
-// ignore: unnecessary_nullable_for_final_variable_declarations, unreachable_from_main
-const String? mapId = null;
+const String? _mapId = null;
 
 final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const MapUiPage(),
@@ -42,9 +41,9 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const AnimateCameraPage(),
   const MoveCameraPage(),
   const PlaceMarkerPage(),
-  const PlaceAdvancedMarkerPage(),
+  const PlaceAdvancedMarkerPage(mapId: _mapId),
   const MarkerIconsPage(),
-  const AdvancedMarkerIconsPage(),
+  const AdvancedMarkerIconsPage(mapId: _mapId),
   const ScrollingMapPage(),
   const PlacePolylinePage(),
   const PlacePolygonPage(),
@@ -54,7 +53,7 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const LiteModePage(),
   const TileOverlayPage(),
   const ClusteringPage(),
-  const AdvancedMarkersClustering(),
+  const AdvancedMarkersClustering(mapId: _mapId),
   const MapIdPage(),
   const HeatmapPage(),
 ];

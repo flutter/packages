@@ -18,7 +18,7 @@ class AdvancedMarkerIconsPage extends GoogleMapExampleAppPage {
           'Advanced marker icons',
         );
 
-  /// Map ID to use for the GoogleMap
+  /// Map ID to use for the GoogleMap.
   final String? mapId;
 
   @override

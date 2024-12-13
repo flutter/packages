@@ -6,32 +6,37 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import 'clustering.dart';
-import 'main.dart' as main;
 import 'page.dart';
 
 /// Page for demonstrating advanced marker clustering support.
 /// Same as [ClusteringPage] but works with [AdvancedMarker].
 class AdvancedMarkersClustering extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const AdvancedMarkersClustering({Key? key})
-      : super(
+  const AdvancedMarkersClustering({
+    Key? key,
+    required this.mapId,
+  }) : super(
           key: key,
           const Icon(Icons.place_outlined),
           'Manage clusters of advanced markers',
         );
 
+  /// Map ID to use for the GoogleMap.
+  final String? mapId;
+
   @override
   Widget build(BuildContext context) {
-    return const _AdvancedMarkerClusteringBody();
+    return _AdvancedMarkerClusteringBody(mapId);
   }
 }
 
 /// Same as [ClusteringBody] but works with [AdvancedMarker].
 class _AdvancedMarkerClusteringBody extends ClusteringBody {
-  const _AdvancedMarkerClusteringBody();
+  const _AdvancedMarkerClusteringBody(this.mapId);
 
+  /// Map ID to use for the GoogleMap.
   @override
-  String? get mapId => main.mapId;
+  final String? mapId;
 
   @override
   Marker createMarker({

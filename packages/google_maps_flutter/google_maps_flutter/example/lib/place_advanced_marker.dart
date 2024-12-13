@@ -5,34 +5,38 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'main.dart' as main;
 import 'page.dart';
 import 'place_marker.dart';
 
 /// Page demonstrating how to use Advanced [Marker] class.
 class PlaceAdvancedMarkerPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const PlaceAdvancedMarkerPage({Key? key})
-      : super(const Icon(Icons.place_outlined), 'Place advanced marker',
-            key: key);
+  const PlaceAdvancedMarkerPage({
+    Key? key,
+    required this.mapId,
+  }) : super(
+          const Icon(Icons.place_outlined),
+          'Place advanced marker',
+          key: key,
+        );
+
+  /// Map ID to use for the GoogleMap.
+  final String? mapId;
 
   @override
   Widget build(BuildContext context) {
-    return const _PlaceAdvancedMarkerBody();
+    return _PlaceAdvancedMarkerBody(mapId: mapId);
   }
 }
 
 class _PlaceAdvancedMarkerBody extends PlaceMarkerBody {
-  const _PlaceAdvancedMarkerBody();
+  const _PlaceAdvancedMarkerBody({required super.mapId});
 
   @override
   State<StatefulWidget> createState() => _PlaceAdvancedMarkerBodyState();
 }
 
 class _PlaceAdvancedMarkerBodyState extends PlaceMarkerBodyState {
-  @override
-  String? get mapId => main.mapId;
-
   @override
   Marker createMarker({
     required MarkerId markerId,

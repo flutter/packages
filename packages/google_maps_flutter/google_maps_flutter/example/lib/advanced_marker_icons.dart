@@ -5,31 +5,36 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-import 'main.dart' as main;
 import 'marker_icons.dart';
 import 'page.dart';
 
 /// Page that demonstrates how to use custom [AdvanceMarker] icons.
 class AdvancedMarkerIconsPage extends GoogleMapExampleAppPage {
   /// Default constructor.
-  const AdvancedMarkerIconsPage({Key? key})
-      : super(
+  const AdvancedMarkerIconsPage({
+    Key? key,
+    required this.mapId,
+  }) : super(
           key: key,
           const Icon(Icons.image_outlined),
           'Advanced marker icons',
         );
 
+  /// Map ID to use for the GoogleMap.
+  final String? mapId;
+
   @override
   Widget build(BuildContext context) {
-    return const _AdvancedMarkerIconsBody();
+    return _AdvancedMarkerIconsBody(mapId);
   }
 }
 
 class _AdvancedMarkerIconsBody extends MarkerIconsBody {
-  const _AdvancedMarkerIconsBody();
+  const _AdvancedMarkerIconsBody(this.mapId);
 
+  /// Map ID to use for the GoogleMap.
   @override
-  String? get mapId => main.mapId;
+  final String? mapId;
 
   @override
   Marker createMarker(

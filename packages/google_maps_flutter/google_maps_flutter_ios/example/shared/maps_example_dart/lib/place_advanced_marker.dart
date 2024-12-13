@@ -17,7 +17,7 @@ class PlaceAdvancedMarkerPage extends GoogleMapExampleAppPage {
   }) : super(const Icon(Icons.place_outlined), 'Place advanced marker',
             key: key);
 
-  /// Map ID to use for the GoogleMap
+  /// Map ID to use for the GoogleMap.
   final String? mapId;
 
   @override

@@ -26,7 +26,13 @@ class PlaceMarkerPage extends GoogleMapExampleAppPage {
 }
 
 class PlaceMarkerBody extends StatefulWidget {
-  const PlaceMarkerBody({super.key});
+  const PlaceMarkerBody({
+    super.key,
+    this.mapId,
+  });
+
+  /// Map ID to use for the GoogleMap.
+  final String? mapId;
 
   @override
   State<StatefulWidget> createState() => PlaceMarkerBodyState();
@@ -270,9 +276,6 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     return BytesMapBitmap(bytes.buffer.asUint8List());
   }
 
-  /// Returns the mapId to use for the GoogleMap
-  String? get mapId => null;
-
   /// Creates a marker with given parameters
   Marker createMarker({
     required MarkerId markerId,
@@ -315,9 +318,10 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
           getHeader(),
           Expanded(
             child: GoogleMap(
-              mapId: mapId,
-              markerType:
-                  mapId != null ? MarkerType.advancedMarker : MarkerType.marker,
+              mapId: widget.mapId,
+              markerType: widget.mapId != null
+                  ? MarkerType.advancedMarker
+                  : MarkerType.marker,
               onMapCreated: _onMapCreated,
               initialCameraPosition: const CameraPosition(
                 target: LatLng(-33.852, 151.211),
