@@ -60,11 +60,12 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
       return (newKey, value)
     }
     
-    let cookie = HTTPCookie(properties: Dictionary(uniqueKeysWithValues: keyValueTuples))
+    let nativeProperties = Dictionary(uniqueKeysWithValues: keyValueTuples)
+    let cookie = HTTPCookie(properties: nativeProperties)
     if let cookie = cookie {
       return cookie
     } else {
-      throw apiDelegate.createConstructorNullError(type: HTTPCookie.self, parameters: ["properties": Dictionary(uniqueKeysWithValues: keyValueTuples)])
+      throw apiDelegate.createConstructorNullError(type: HTTPCookie.self, parameters: ["properties": nativeProperties])
     }
   }
 
