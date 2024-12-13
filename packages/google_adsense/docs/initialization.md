@@ -19,7 +19,7 @@ To initialize AdSense:
 To start displaying ads, initialize AdSense with your
 [Publisher ID](https://support.google.com/adsense/answer/105516) (only use numbers).
 
-<?code-excerpt "example/lib/main.dart (init)"?>
+<?code-excerpt "../example/lib/main.dart (init)"?>
 ```dart
 import 'package:google_adsense/google_adsense.dart';
 

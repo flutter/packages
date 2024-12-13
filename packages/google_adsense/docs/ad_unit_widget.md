@@ -1,11 +1,12 @@
 # Before you start
 
-The early access list is a closed one for now, stay tuned for expanded availability
-of the Ad Unit Widget for Flutter web.
+This library is in a closed early access, and the list is closed for now.
+
+Stay tuned for expanded availability of the Ad Unit Widget for Flutter web.
 
 # `AdUnitWidget`
 
-The `experimental/ad_unit_widget.dart` library provides an ad unit `Widget` that
+The `experimental/ad_unit_widget.dart` library provides an `AdUnitWidget` that
 can be configured and placed in the widget tree of your Flutter web app.
 
 ## Usage
@@ -28,23 +29,22 @@ If you want to display ad units within your app content, continue to the next st
 
 Import the **experimental** `AdUnitWidget` from the package:
 
-<?code-excerpt "example/lib/ad_unit_widget.dart (import-widget)"?>
+<?code-excerpt "../example/lib/ad_unit_widget.dart (import-widget)"?>
 ```dart
 import 'package:google_adsense/experimental/ad_unit_widget.dart';
 ```
 
-### Display ad units (`AdUnitWidget`)
+### Displaying Ad Units
 
-To display an Ad unit in your Flutter application:
+To display AdSense Ad Units in your Flutter application layout:
 
 1. Create [ad units](https://support.google.com/adsense/answer/9183549)
    in your AdSense account. This will provide an HTML snippet, which you need to
    _translate_ to Dart.
 2. The data-attributes from the generated snippet can be translated to Dart with the `AdUnitConfiguration` object.
 Their Dart name is created as follows:
-
-- The `data-` prefix is removed.
-- `kebab-case` becomes `camelCase`
+    - The `data-` prefix is removed.
+    - `kebab-case` becomes `camelCase`
 
 The only exception to this is `data-ad-client`, that is passed to `adSense.initialize`,
 instead of through an `AdUnitConfiguration` object.
@@ -65,7 +65,7 @@ For example, the snippet below:
 
 translates into:
 
-<?code-excerpt "example/lib/ad_unit_widget.dart (adUnit)"?>
+<?code-excerpt "../example/lib/ad_unit_widget.dart (adUnit)"?>
 ```dart
     AdUnitWidget(
   configuration: AdUnitConfiguration.displayAdUnit(
@@ -99,7 +99,7 @@ To [modify your responsive ad code](https://support.google.com/adsense/answer/91
 For example, when not using responsive `AdFormat` it is recommended to wrap adUnit widget in the `Container` with width and/or height constraints.
 Note some [policies and restrictions](https://support.google.com/adsense/answer/9185043?hl=en#:~:text=Policies%20and%20restrictions) related to ad unit sizing:
 
-<?code-excerpt "example/lib/ad_unit_widget.dart (constraints)"?>
+<?code-excerpt "../example/lib/ad_unit_widget.dart (constraints)"?>
 ```dart
 Container(
   constraints:
