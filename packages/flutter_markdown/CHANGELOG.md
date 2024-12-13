@@ -1,6 +1,7 @@
 ## NEXT
 
 * Fix for `blockquote` property not being applied in `MarkdownBody` widget.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.7.4+3
 
