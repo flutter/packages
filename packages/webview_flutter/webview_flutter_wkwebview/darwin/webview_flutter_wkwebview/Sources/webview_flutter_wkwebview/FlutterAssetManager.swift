@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
-
 #if os(iOS)
   import Flutter
 #elseif os(macOS)

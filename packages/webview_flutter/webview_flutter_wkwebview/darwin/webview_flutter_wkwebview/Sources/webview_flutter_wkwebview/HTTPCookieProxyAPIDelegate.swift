@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
-
 /// ProxyApi implementation for `HTTPCookie`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
@@ -12,8 +10,11 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]
   ) throws -> HTTPCookie {
+    let apiDelegate = pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
+    
     let keyValueTuples = try! properties.map<[(HTTPCookiePropertyKey, Any)], PigeonError> {
       key, value in
+      
       let newKey: HTTPCookiePropertyKey
       switch key {
       case .comment:
@@ -46,21 +47,25 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
         if #available(iOS 13.0, macOS 10.15, *) {
           newKey = .sameSitePolicy
         } else {
-          throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+          throw apiDelegate
             .createUnsupportedVersionError(
               method: "HTTPCookiePropertyKey.sameSitePolicy",
               versionRequirements: "iOS 13.0, macOS 10.15")
         }
       case .unknown:
-        throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnknownEnumError(
+        throw apiDelegate.createUnknownEnumError(
           withEnum: key)
       }
 
       return (newKey, value)
     }
-
-    // TODO: Maybe do a null constructor error here just like URL
-    return HTTPCookie(properties: Dictionary(uniqueKeysWithValues: keyValueTuples))!
+    
+    let cookie = HTTPCookie(properties: Dictionary(uniqueKeysWithValues: keyValueTuples))
+    if let cookie = cookie {
+      return cookie
+    } else {
+      throw apiDelegate.createConstructorNullError(type: HTTPCookie.self, parameters: ["properties": Dictionary(uniqueKeysWithValues: keyValueTuples)])
+    }
   }
 
   func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws

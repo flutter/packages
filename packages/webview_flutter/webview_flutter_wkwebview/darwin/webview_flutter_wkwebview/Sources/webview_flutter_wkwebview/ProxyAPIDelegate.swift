@@ -27,10 +27,18 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
     return "`\(method)` requires \(versionRequirements)."
   }
 
+  // This is to prevent consistent errors. please use method below.
   func createNullURLError(url: String) -> PigeonError {
     return PigeonError(
       code: "FWFURLParsingError", message: "Failed parsing file path.",
       details: "Initializing URL with the supplied '\(url)' path resulted in a nil value.")
+  }
+  
+  
+  func createConstructorNullError(type: AnyObject.Type, parameters: [String: Any]) -> PigeonError {
+    return PigeonError(
+      code: "ConstructorReturnedNullError", message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
+      details: nil)
   }
 
   func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
