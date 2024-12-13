@@ -6,7 +6,7 @@ import 'dart:js_interop';
 
 import 'package:flutter/widgets.dart' show visibleForTesting;
 
-import '../js_interop/adsbygoogle.dart';
+import '../core/js_interop/adsbygoogle.dart';
 import 'enums.dart';
 
 // Used to prefix all the "name"s of the ad placements.

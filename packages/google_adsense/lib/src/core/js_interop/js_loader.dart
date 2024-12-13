@@ -5,7 +5,7 @@
 import 'dart:js_interop';
 import 'package:web/web.dart' as web;
 
-import '../utils/logging.dart';
+import '../../utils/logging.dart';
 import 'adsbygoogle.dart' show adsbygooglePresent;
 import 'package_web_tweaks.dart';
 

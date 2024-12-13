@@ -5,8 +5,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
-import '../js_interop/js_loader.dart';
 import '../utils/logging.dart';
+import 'js_interop/js_loader.dart';
 
 /// The web implementation of the AdSense API.
 class AdSense {

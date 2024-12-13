@@ -4,7 +4,7 @@
 
 import 'dart:js_interop';
 
-import '../js_interop/adsbygoogle.dart';
+import '../core/js_interop/adsbygoogle.dart';
 
 /// Adds a `requestAd` method to request an AdSense ad.
 extension AdsByGoogleExtension on AdsByGoogle {

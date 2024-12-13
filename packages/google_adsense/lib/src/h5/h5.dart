@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../js_interop/adsbygoogle.dart';
+import '../core/js_interop/adsbygoogle.dart';
 import 'h5_js_interop.dart';
 
 export 'enums.dart' hide MaybeEnum, interstitialBreakType;
