@@ -1,11 +1,11 @@
 dartdoc:
   categories:
     "Initialization":
-      markdown: docs/initialization.md
+      markdown: doc/initialization.md
     "H5 Games Ads":
-      markdown: docs/h5.md
+      markdown: doc/h5.md
     "Ad Units":
-      markdown: docs/ad_unit_widget.md
+      markdown: doc/ad_unit_widget.md
   categoryOrder:
     - "Initialization"
     - "H5 Games Ads"
