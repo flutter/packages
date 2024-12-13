@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// {@category Initialization}
+/// {@category H5 Games Ads}
 library;
 
-export 'src/core/google_adsense.dart';
+export 'src/h5/h5.dart';
