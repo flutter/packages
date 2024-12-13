@@ -1,7 +1,3 @@
-## 2.3.4
-
-* Adds information about Android SharedPreferences support.
-
 ## 2.3.3
 
 * Clarifies scope of prefix handling in README.
