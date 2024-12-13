@@ -1,15 +1,12 @@
+# Before you start
+
+The early access list is a closed one for now, stay tuned for expanded availability
+of the Ad Unit Widget for Flutter web.
+
 # `AdUnitWidget`
 
 The `experimental/ad_unit_widget.dart` library provides an ad unit `Widget` that
 can be configured and placed in the widget tree of your Flutter web app.
-
-## Disclaimer: Early Access ⚠️
-This package is currently in early access and is provided as-is. While it's open
-source and publicly available, it's likely that you'll need to make additional
-customizations and configurations to fully integrate it with your Flutter Web App.
-
-The early access list is a closed one for now, stay tuned for expanded availability
-of the Ad Unit Widget for Flutter web.
 
 ## Usage
 
@@ -80,7 +77,7 @@ translates into:
 ),
 ```
 
-#### `AdUnitConfiguration` constructors
+#### **`AdUnitConfiguration` constructors**
 
 In addition to `displayAdUnit`, there's specific constructors for each supported
 Ad Unit type. See the table below:
@@ -93,7 +90,7 @@ Ad Unit type. See the table below:
 | Multiplex Ads  | `AdUnitConfiguration.multiplexAdUnit(...)` |
 
 
-#### `AdUnitWidget` customizations
+#### **`AdUnitWidget` customizations**
 
 To [modify your responsive ad code](https://support.google.com/adsense/answer/9183363?hl=en&ref_topic=9183242&sjid=11551379421978541034-EU):
 1. Make sure to follow [AdSense policies](https://support.google.com/adsense/answer/1346295?hl=en&sjid=18331098933308334645-EU&visit_id=638689380593964621-4184295127&ref_topic=1271508&rd=1)

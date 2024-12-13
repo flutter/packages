@@ -57,8 +57,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // #docregion adConfig
     h5GamesAds.adConfig(
       AdConfigParameters(
-        sound: SoundEnabled.off,
-        // Force `on` so there's an Ad immediately preloaded.
+        // Configure whether or not your game is playing sounds or muted.
+        sound: SoundEnabled.on,
+        // Set to `on` so there's an Ad immediately preloaded.
         preloadAdBreaks: PreloadAdBreaks.on,
         onReady: _onH5Ready,
       ),
