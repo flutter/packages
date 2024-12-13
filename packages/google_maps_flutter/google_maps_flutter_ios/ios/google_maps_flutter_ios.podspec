@@ -36,6 +36,7 @@ Downloaded by pub (not CocoaPods).
   s.xcconfig = {
     'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
+    'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) FGM_USING_COCOAPODS=1'
   }
   s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['google_maps_flutter_ios/Sources/google_maps_flutter_ios/Resources/PrivacyInfo.xcprivacy']}
 end
