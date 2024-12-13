@@ -137,7 +137,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     if let url {
       pigeonInstance.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
     } else {
-      throw apiDelegate.createNullURLError(url: assetFilePath)
+      throw PigeonError(code: "FWFURLParsingError", message: "Failed to find asset with filepath: `\(assetFilePath)`.", details: nil)
     }
   }
 
