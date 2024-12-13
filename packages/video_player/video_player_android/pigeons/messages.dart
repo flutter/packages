@@ -20,6 +20,12 @@ class CreateMessage {
   String? packageName;
   String? formatHint;
   Map<String, String> httpHeaders;
+  String? clearKey;
+  String? token;
+  String? licenseUrl;
+  String? certificateUrl;
+  String? drmType;
+  Map<String, String>? drmHeaders;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')

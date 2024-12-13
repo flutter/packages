@@ -37,6 +37,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     String? uri;
     String? formatHint;
     Map<String, String> httpHeaders = <String, String>{};
+    String? clearKey;
+    String? token;
+    String? licenseUrl;
+    String? certificateUrl;
+    String? drmType;
+    Map<String, String>? drmHeaders;
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         asset = dataSource.asset;
@@ -45,9 +51,21 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         uri = dataSource.uri;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
         httpHeaders = dataSource.httpHeaders;
+        drmHeaders = dataSource.drmHeaders;
+        drmType = _drmTypeStringMap[dataSource.drmType];
+        clearKey = dataSource.clearKey;
+        token = dataSource.token;
+        licenseUrl = dataSource.licenseUrl;
+        certificateUrl = dataSource.certificateUrl;
       case DataSourceType.file:
         uri = dataSource.uri;
         httpHeaders = dataSource.httpHeaders;
+        drmType = _drmTypeStringMap[dataSource.drmType];
+        clearKey = dataSource.clearKey;
+        token = dataSource.token;
+        licenseUrl = dataSource.licenseUrl;
+        certificateUrl = dataSource.certificateUrl;
+        drmHeaders = dataSource.drmHeaders;
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
@@ -57,6 +75,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
+      clearKey: clearKey,
+      token: token,
+      licenseUrl: licenseUrl,
+      certificateUrl: certificateUrl,
+      drmType: drmType,
+      drmHeaders: drmHeaders,
     );
 
     return _api.create(message);
@@ -161,6 +185,13 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     VideoFormat.hls: 'hls',
     VideoFormat.dash: 'dash',
     VideoFormat.other: 'other',
+  };
+
+  static const Map<DrmType, String> _drmTypeStringMap = <DrmType, String>{
+    DrmType.clearkey: 'clearkey',
+    DrmType.widevine: 'widevine',
+    DrmType.playready: 'playready',
+    DrmType.fairplay: 'fairplay',
   };
 
   DurationRange _toDurationRange(dynamic value) {

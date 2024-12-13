@@ -134,6 +134,12 @@ class DataSource {
     this.asset,
     this.package,
     this.httpHeaders = const <String, String>{},
+    this.drmType,
+    this.token,
+    this.licenseUrl,
+    this.certificateUrl,
+    this.clearKey,
+    this.drmHeaders,
   });
 
   /// The way in which the video was originally loaded.
@@ -163,6 +169,42 @@ class DataSource {
   /// The package that the asset was loaded from. Only set for
   /// [DataSourceType.asset] videos.
   final String? package;
+
+  ///Type of DRM
+  final DrmType? drmType;
+
+  ///Parameter used only for token encrypted DRMs
+  final String? token;
+
+  ///Url of license server
+  final String? licenseUrl;
+
+  ///Url of fairplay certificate
+  final String? certificateUrl;
+
+  ///ClearKey json object, used only for ClearKey protection. Only support for Android.
+  final String? clearKey;
+
+  ///Additional headers send with auth request, used only for WIDEVINE DRM
+  final Map<String, String>? drmHeaders;
+}
+
+/// The type of DRM used for the video.
+enum DrmType {
+  /// Widevine DRM. Supported for Android only
+  widevine,
+
+  /// PlayReady DRM.
+  playready,
+
+  /// FairPlay DRM. Supported for iOS only
+  fairplay,
+
+  /// ClearKey DRM. Supported for Android only
+  clearkey,
+
+  /// Token DRM. Supported for Android/iOS
+  token
 }
 
 /// The way in which the video was originally loaded.
@@ -302,6 +344,47 @@ enum VideoEventType {
 
   /// An unknown event has been received.
   unknown,
+}
+
+/// Configuration for DRM protected content.
+///
+/// This class holds the necessary parameters for playing DRM protected video content.
+class PlayerDrmConfiguration {
+  /// Creates a new [PlayerDrmConfiguration] instance.
+  ///
+  /// All parameters are optional:
+  /// - [type] specifies the DRM scheme to use (e.g. Widevine, PlayReady, etc.)
+  /// - [licenseUrl] is the URL of the license server
+  /// - [certificateUrl] is the URL to fetch the DRM certificate (used for FairPlay)
+  /// - [token] is used for token-based DRM authentication
+  /// - [clearKey] is a JSON string containing key pairs for ClearKey DRM (Android only)
+  /// - [drmHeaders] are additional headers sent with license requests (used for Widevine)
+  PlayerDrmConfiguration({
+    this.type,
+    this.licenseUrl,
+    this.certificateUrl,
+    this.token,
+    this.clearKey,
+    this.drmHeaders,
+  });
+
+  /// The type of DRM protection to use.
+  final DrmType? type;
+
+  /// URL of the license server for acquiring DRM licenses.
+  final String? licenseUrl;
+
+  /// URL to fetch the DRM certificate (primarily used for FairPlay DRM).
+  final String? certificateUrl;
+
+  /// Authentication token for token-based DRM systems.
+  final String? token;
+
+  /// JSON string containing key pairs for ClearKey DRM (Android only).
+  final String? clearKey;
+
+  /// Additional headers to include in license requests (primarily for Widevine).
+  final Map<String, String>? drmHeaders;
 }
 
 /// Describes a discrete segment of time within a video using a [start] and
