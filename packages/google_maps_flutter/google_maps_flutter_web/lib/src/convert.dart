@@ -101,7 +101,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   // See updateMapConfiguration for why this is not using configuration.style.
   options.styles = styles;
 
-  options.mapId = configuration.mapId ?? configuration.cloudMapId;
+  options.mapId = configuration.mapId;
 
   return options;
 }

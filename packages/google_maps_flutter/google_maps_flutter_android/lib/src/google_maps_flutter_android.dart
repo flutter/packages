@@ -1230,7 +1230,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
-    mapId: config.mapId ?? config.cloudMapId,
+    mapId: config.mapId,
     style: config.style,
   );
 }

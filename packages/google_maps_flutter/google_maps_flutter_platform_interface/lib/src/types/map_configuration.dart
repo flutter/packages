@@ -35,10 +35,11 @@ class MapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
-    this.mapId,
-    @Deprecated('cloudMapId is deprecated. Use mapId instead.') this.cloudMapId,
+    String? mapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+    String? cloudMapId,
     this.style,
-  });
+  }) : mapId = mapId ?? cloudMapId;
 
   /// This setting controls how the API handles gestures on the map. Web only.
   ///
@@ -115,13 +116,6 @@ class MapConfiguration {
   /// for more details.
   final String? mapId;
 
-  /// Identifier that's associated with a specific cloud-based map style.
-  ///
-  /// See https://developers.google.com/maps/documentation/get-map-id
-  /// for more details.
-  @Deprecated('cloudMapId is deprecated. Use mapId instead.')
-  final String? cloudMapId;
-
   /// Locally configured JSON style.
   ///
   /// To clear a previously set style, set this to an empty string.
@@ -188,7 +182,6 @@ class MapConfiguration {
       buildingsEnabled:
           buildingsEnabled != other.buildingsEnabled ? buildingsEnabled : null,
       mapId: mapId != other.mapId ? mapId : null,
-      cloudMapId: cloudMapId != other.cloudMapId ? cloudMapId : null,
       style: style != other.style ? style : null,
     );
   }
@@ -222,7 +215,6 @@ class MapConfiguration {
       trafficEnabled: diff.trafficEnabled ?? trafficEnabled,
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
       mapId: diff.mapId ?? mapId,
-      cloudMapId: diff.cloudMapId ?? cloudMapId,
       style: diff.style ?? style,
     );
   }
@@ -250,7 +242,6 @@ class MapConfiguration {
       trafficEnabled == null &&
       buildingsEnabled == null &&
       mapId == null &&
-      cloudMapId == null &&
       style == null;
 
   @override
@@ -283,7 +274,6 @@ class MapConfiguration {
         trafficEnabled == other.trafficEnabled &&
         buildingsEnabled == other.buildingsEnabled &&
         mapId == other.mapId &&
-        cloudMapId == other.cloudMapId &&
         style == other.style;
   }
 
@@ -310,7 +300,6 @@ class MapConfiguration {
         trafficEnabled,
         buildingsEnabled,
         mapId,
-        cloudMapId,
         style,
       ]);
 }

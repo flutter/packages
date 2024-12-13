@@ -405,7 +405,7 @@ void main() {
       // The diff from empty options should be the diff itself.
       expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
-      expect(updated.cloudMapId, _kMapId);
+      expect(updated.mapId, _kMapId);
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
