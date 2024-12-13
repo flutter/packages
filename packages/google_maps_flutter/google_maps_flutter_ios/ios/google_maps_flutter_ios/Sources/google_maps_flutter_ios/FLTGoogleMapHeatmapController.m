@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTGoogleMapHeatmapController.h"
+#import "FLTGoogleMapJSONConversions.h"
 
 /// If Swift Package Manager is in use, Objective-C headers are available under the
 /// GoogleMapsUtilsObjC package. When using CocoaPods, the headers are provided by the
@@ -12,7 +13,6 @@
 #else
 @import GoogleMapsUtilsObjC;
 #endif
-#import "FLTGoogleMapJSONConversions.h"
 
 @interface FLTGoogleMapHeatmapController ()
 
