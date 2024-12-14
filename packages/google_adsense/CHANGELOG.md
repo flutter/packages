@@ -1,6 +1,8 @@
 ## 0.1.1
 
 * Adds `AdSenseCodeParameters` configuration object for `adSense.initialize`.
+* Adds small delay to the JS `showAdFn`, so Flutter events have time to settle
+  before the H5 Ad takes over the screen.
 
 ## 0.1.0
 

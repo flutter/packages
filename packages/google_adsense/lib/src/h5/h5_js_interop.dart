@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:js_interop';
 
 import 'package:flutter/widgets.dart' show visibleForTesting;
@@ -119,7 +120,11 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
       beforeReward: beforeReward != null
           ? (JSFunction fn) {
               beforeReward(() {
-                fn.callAsFunction();
+                // Delay the call to `fn` so tap users don't trigger a click on
+                // the ad onTapUp.
+                Timer(const Duration(milliseconds: 100), () {
+                  fn.callAsFunction();
+                });
               });
             }.toJS
           : null,
