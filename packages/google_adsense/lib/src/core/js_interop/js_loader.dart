@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe' show JSObjectUnsafeUtilExtension;
 import 'package:web/web.dart' as web;
 
 import '../../utils/logging.dart';
@@ -64,7 +65,7 @@ void _applyDataAttributes(
   Map<String, String>? attributes,
 ) {
   attributes?.forEach((String key, String value) {
-    element.dataset[key] = value;
+    element.dataset.setProperty(key.toJS, value.toJS);
   });
 }
 
