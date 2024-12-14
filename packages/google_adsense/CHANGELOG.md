@@ -1,3 +1,7 @@
+## 0.1.1
+
+* Adds `AdSenseCodeParameters` configuration object for `adSense.initialize`.
+
 ## 0.1.0
 
 * Adds H5 Games Ads API as `h5` library.
