@@ -9,7 +9,7 @@ import '../utils/logging.dart';
 import 'adsense_code_parameters.dart';
 import 'js_interop/js_loader.dart';
 
-export 'adsense_code_parameters.dart';
+export 'adsense_code_parameters.dart' show AdSenseCodeParameters;
 
 /// The web implementation of the AdSense API.
 class AdSense {

@@ -5,8 +5,21 @@
 import '../core/js_interop/adsbygoogle.dart';
 import 'h5_js_interop.dart';
 
-export 'enums.dart' hide MaybeEnum, interstitialBreakType;
-export 'h5_js_interop.dart' hide H5JsInteropExtension;
+export 'enums.dart'
+    show BreakFormat, BreakStatus, BreakType, PreloadAdBreaks, SoundEnabled;
+export 'h5_js_interop.dart'
+    show
+        AdBreakDonePlacementInfo,
+        AdBreakPlacement,
+        AdConfigParameters,
+        H5AdBreakDoneCallback,
+        H5AdDismissedCallback,
+        H5AdViewedCallback,
+        H5AfterAdCallback,
+        H5BeforeAdCallback,
+        H5BeforeRewardCallback,
+        H5OnReadyCallback,
+        H5ShowAdFn;
 
 /// A client to request H5 Games Ads (Ad Placement API).
 class H5GamesAdsClient {
