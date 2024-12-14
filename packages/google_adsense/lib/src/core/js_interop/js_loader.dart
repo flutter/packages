@@ -60,7 +60,9 @@ Future<void> loadJsSdk(
 
 // Applies a map of [attributes] to the `dataset` of [element].
 void _applyDataAttributes(
-    web.HTMLElement element, Map<String, String>? attributes) {
+  web.HTMLElement element,
+  Map<String, String>? attributes,
+) {
   attributes?.forEach((String key, String value) {
     element.dataset[key] = value;
   });
