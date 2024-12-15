@@ -2,7 +2,7 @@ name: google_adsense
 description: A wrapper plugin with convenience APIs allowing easier inserting Google Adsense HTML snippets withing a Flutter UI Web application
 repository: https://github.com/flutter/packages/tree/main/packages/google_adsense
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_adsense%22
-version: 0.0.2
+version: 0.1.0
 
 environment:
   sdk: ^3.4.0

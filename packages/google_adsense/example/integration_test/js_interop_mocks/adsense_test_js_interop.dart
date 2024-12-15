@@ -5,39 +5,19 @@
 @JS()
 library;
 
-import 'dart:async';
 import 'dart:js_interop';
 import 'dart:ui';
 
 import 'package:google_adsense/src/adsense/ad_unit_params.dart';
 import 'package:web/web.dart' as web;
+import 'adsbygoogle_js_interop.dart';
 
-typedef VoidFn = void Function();
-
-// window.adsbygoogle uses "duck typing", so let us set anything to it.
-@JS('adsbygoogle')
-external set _adsbygoogle(JSAny? value);
-
-/// Mocks `adsbygoogle` [push] function.
-///
-/// `push` will run in the next tick (`Timer.run`) to ensure async behavior.
-void mockAdsByGoogle(VoidFn push) {
-  _adsbygoogle = <String, Object>{
-    'push': () {
-      Timer.run(push);
-    }.toJS,
-  }.jsify();
-}
-
-/// Sets `adsbygoogle` to null.
-void clearAdsByGoogleMock() {
-  _adsbygoogle = null;
-}
+export 'adsbygoogle_js_interop.dart';
 
 typedef MockAdConfig = ({Size size, String adStatus});
 
 /// Returns a function that generates a "push" function for [mockAdsByGoogle].
-VoidFn mockAd({
+PushFn mockAd({
   Size size = Size.zero,
   String adStatus = AdStatus.FILLED,
 }) {
@@ -47,8 +27,8 @@ VoidFn mockAd({
 }
 
 /// Returns a function that handles a bunch of ad units at once. Can be used with [mockAdsByGoogle].
-VoidFn mockAds(List<MockAdConfig> adConfigs) {
-  return () {
+PushFn mockAds(List<MockAdConfig> adConfigs) {
+  return (JSAny? _) {
     final List<web.HTMLElement> foundTargets =
         web.document.querySelectorAll('div[id^=adUnit] ins').toList;
 
