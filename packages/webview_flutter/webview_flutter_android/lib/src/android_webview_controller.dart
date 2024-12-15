@@ -601,12 +601,6 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
-  /// Enables or disables file access.
-  ///
-  /// The default is false.
-  Future<void> setAllowFileAccess(bool enabled) =>
-      _webView.settings.setAllowFileAccess(enabled);
-
   /// Enables or disables content URL access.
   ///
   /// The default is true.

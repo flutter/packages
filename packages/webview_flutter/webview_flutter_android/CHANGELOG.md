@@ -1,6 +1,9 @@
+## 4.3.0
+
+* Adds WebSettings methods: `AndroidWebViewController.setAllowContentAccess`, `AndroidWebViewController.setGeolocationEnabled` and `AndroidWebViewController.setCacheMode`.
+
 ## 4.2.0
 
-* Adds WebSettings methods: `AndroidWebViewController.setAllowFileAccess`, `AndroidWebViewController.setAllowContentAccess`, `AndroidWebViewController.setGeolocationEnabled` and `AndroidWebViewController.setCacheMode`.
 * Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.
 
 ## 4.1.0
