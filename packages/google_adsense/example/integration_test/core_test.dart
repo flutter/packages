@@ -11,7 +11,7 @@ import 'package:google_adsense/google_adsense.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;
 
-import 'adsense_test_js_interop.dart';
+import 'js_interop_mocks/adsense_test_js_interop.dart';
 
 const String testClient = 'test_client';
 const String testScriptUrl =
@@ -64,7 +64,7 @@ void main() async {
       final web.HTMLElement target = web.HTMLDivElement();
 
       // Write an empty noop object
-      mockAdsByGoogle(() {});
+      mockAdsByGoogle((_) {});
 
       await adSense.initialize(testClient, jsLoaderTarget: target);
 
