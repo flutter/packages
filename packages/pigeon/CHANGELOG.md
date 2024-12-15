@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* [swift] Make `PigeonError` Class Conform to `Sendable`
 
 ## 22.7.0
 
