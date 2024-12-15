@@ -50,10 +50,11 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testSetNavigationDelegate() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let registrarApiDelegate: ProxyAPIDelegate = registrar.apiDelegate as! ProxyAPIDelegate
+    let api = registrarApiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let delegate = NavigationDelegateImpl(api: registrar.apiDelegate.pigeonApiWKNavigationDelegate(registrar))
+    let delegate = NavigationDelegateImpl(api: registrar.apiDelegate.pigeonApiWKNavigationDelegate(registrar), registrarApiDelegate: registrarApiDelegate)
     try? api.pigeonDelegate.setNavigationDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     XCTAssertEqual(instance.navigationDelegate as! NavigationDelegateImpl, delegate)

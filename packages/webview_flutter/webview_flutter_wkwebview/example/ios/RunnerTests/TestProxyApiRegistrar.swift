@@ -8,6 +8,12 @@ import XCTest
 
 class TestProxyApiRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
   init() {
-    super.init(binaryMessenger: TestBinaryMessenger(), apiDelegate: ProxyAPIDelegate())
+    super.init(binaryMessenger: TestBinaryMessenger(), apiDelegate: TestProxyAPIDelegate())
+  }
+}
+
+class TestProxyAPIDelegate: ProxyAPIDelegate {
+  override func dispatchOnMainThread(execute work: @escaping (@escaping (String, PigeonError) -> Void) -> Void) {
+    work { _, _ in }
   }
 }

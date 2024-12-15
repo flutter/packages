@@ -7,16 +7,15 @@ import WebKit
 /// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
 class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   let api: PigeonApiProtocolWKNavigationDelegate
-  let apiDelegate: ProxyAPIDelegate
+  let registrarApiDelegate: ProxyAPIDelegate
 
-  init(api: PigeonApiProtocolWKNavigationDelegate) {
+  init(api: PigeonApiProtocolWKNavigationDelegate, registrarApiDelegate: ProxyAPIDelegate) {
     self.api = api
-    self.apiDelegate = ((api as! PigeonApiWKNavigationDelegate).pigeonRegistrar.apiDelegate
-                        as! ProxyAPIDelegate)
+    self.registrarApiDelegate = registrarApiDelegate
   }
 
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.didFinishNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
       ) { result in
@@ -28,7 +27,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   }
 
   func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.didStartProvisionalNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
       ) { result in
@@ -44,7 +43,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     decidePolicyFor navigationAction: WKNavigationAction,
     decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
   ) {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationAction(
         pigeonInstance: self, webView: webView, navigationAction: navigationAction
       ) { result in
@@ -61,7 +60,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
             } else {
               decisionHandler(.cancel)
               assertionFailure(
-                self.apiDelegate.createUnsupportedVersionMessage(
+                self.registrarApiDelegate.createUnsupportedVersionMessage(
                   "WKNavigationActionPolicy.download", versionRequirements: "iOS 14.5"))
             }
           }
@@ -77,7 +76,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
     decisionHandler: @escaping @MainActor (WKNavigationResponsePolicy) -> Void
   ) {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationResponse(
         pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
       ) { result in
@@ -94,7 +93,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
             } else {
               decisionHandler(.cancel)
               assertionFailure(
-                self.apiDelegate.createUnsupportedVersionMessage(
+                self.registrarApiDelegate.createUnsupportedVersionMessage(
                   "WKNavigationResponsePolicy.download", versionRequirements: "iOS 14.5"))
             }
           }
@@ -108,7 +107,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
 
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error)
   {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) { result in
         if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.didFailNavigation", error)
@@ -121,7 +120,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
     withError error: any Error
   ) {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.didFailProvisionalNavigation(
         pigeonInstance: self, webView: webView, error: error as NSError
       ) { result in
@@ -133,7 +132,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   }
 
   func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.webViewWebContentProcessDidTerminate(pigeonInstance: self, webView: webView) { result in
         if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.webViewWebContentProcessDidTerminate", error)
@@ -147,7 +146,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) ->
       Void
   ) {
-    apiDelegate.dispatchOnMainThread { onFailure in
+    registrarApiDelegate.dispatchOnMainThread { onFailure in
       self.api.didReceiveAuthenticationChallenge(
         pigeonInstance: self, webView: webView, challenge: challenge
       ) { result in
@@ -171,6 +170,6 @@ class NavigationDelegateProxyAPIDelegate: PigeonApiDelegateWKNavigationDelegate 
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKNavigationDelegate) throws
     -> WKNavigationDelegate
   {
-    return NavigationDelegateImpl(api: pigeonApi)
+    return NavigationDelegateImpl(api: pigeonApi, registrarApiDelegate: pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
   }
 }
