@@ -70,7 +70,7 @@ class WebViewConfigurationProxyAPIDelegate: PigeonApiDelegateWKWebViewConfigurat
     if #available(iOS 14.0, macOS 11.0, *) {
       pigeonInstance.limitsNavigationsToAppBoundDomains = limit
     } else {
-      throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+      throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
         .createUnsupportedVersionError(
           method: "WKWebViewConfiguration.limitsNavigationsToAppBoundDomains",
           versionRequirements: "iOS 14.0, macOS 11.0")

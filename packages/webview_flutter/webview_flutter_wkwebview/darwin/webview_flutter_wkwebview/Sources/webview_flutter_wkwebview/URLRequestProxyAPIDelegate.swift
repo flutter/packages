@@ -14,8 +14,8 @@ class URLRequestProxyAPIDelegate: PigeonApiDelegateURLRequest {
     if let urlObject = urlObject {
       return URLRequestWrapper(URLRequest(url: urlObject))
     } else {
-      let apiDelegate = pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
-      throw apiDelegate.createConstructorNullError(type: NSURL.self, parameters: ["string" : url])
+      let registrar = pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar
+      throw registrar.createConstructorNullError(type: NSURL.self, parameters: ["string" : url])
     }
   }
 

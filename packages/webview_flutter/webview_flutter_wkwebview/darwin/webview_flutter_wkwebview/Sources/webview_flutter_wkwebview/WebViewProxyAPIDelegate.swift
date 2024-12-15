@@ -6,9 +6,11 @@ import WebKit
 
 class WebViewImpl: WKWebView {
   let api: PigeonApiProtocolWKWebView
+  unowned let registrarApiDelegate: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolWKWebView, frame: CGRect, configuration: WKWebViewConfiguration) {
+  init(api: PigeonApiProtocolWKWebView, registrarApiDelegate: ProxyAPIRegistrar, frame: CGRect, configuration: WKWebViewConfiguration) {
     self.api = api
+    self.registrarApiDelegate = registrarApiDelegate
     super.init(frame: frame, configuration: configuration)
 #if os(iOS)
       scrollView.contentInsetAdjustmentBehavior = .never
@@ -27,7 +29,7 @@ class WebViewImpl: WKWebView {
     context: UnsafeMutableRawPointer?
   ) {
     NSObjectImpl.handleObserveValue(
-      withApi: (api as! PigeonApiWKWebView).pigeonApiNSObject, instance: self as NSObject,
+      withApi: (api as! PigeonApiWKWebView).pigeonApiNSObject, registrarApiDelegate: registrarApiDelegate, instance: self as NSObject,
       forKeyPath: keyPath, of: object, change: change, context: context)
   }
   
@@ -71,7 +73,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     pigeonApi: PigeonApiUIViewWKWebView, initialConfiguration: WKWebViewConfiguration
   ) throws -> WKWebView {
     return WebViewImpl(
-      api: pigeonApi.pigeonApiWKWebView, frame: CGRect(), configuration: initialConfiguration)
+      api: pigeonApi.pigeonApiWKWebView, registrarApiDelegate: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar, frame: CGRect(), configuration: initialConfiguration)
   }
 
   func configuration(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView)
@@ -127,10 +129,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   func loadFlutterAsset(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, key: String)
     throws
   {
-    let apiDelegate = pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
-    let assetFilePath = apiDelegate.assetManager.lookupKeyForAsset(key)
+    let registrar = pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar
+    let assetFilePath = registrar.assetManager.lookupKeyForAsset(key)
 
-    let url = apiDelegate.bundle.url(
+    let url = registrar.bundle.url(
       forResource: (assetFilePath as NSString).deletingPathExtension,
       withExtension: (assetFilePath as NSString).pathExtension)
 
@@ -217,7 +219,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
         pigeonInstance.perform(Selector(("isInspectable:")), with: inspectable)
       }
     } else {
-      throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+      throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
         .createUnsupportedVersionError(
           method: "WKWebView.inspectable",
           versionRequirements: "iOS 16.4, macOS 13.3")

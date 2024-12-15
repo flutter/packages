@@ -25,7 +25,7 @@ class AuthenticationChallengeResponseProxyAPIDelegate:
     case .rejectProtectionSpace:
       nativeDisposition = .rejectProtectionSpace
     case .unknown:
-      throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate).createUnknownEnumError(
+      throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar).createUnknownEnumError(
         withEnum: disposition)
     }
 

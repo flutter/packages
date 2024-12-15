@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import UIKit
-
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -13,11 +11,11 @@ import UIKit
 #endif
 
 public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
-  var proxyApiRegistrar: WebKitLibraryPigeonProxyApiRegistrar?
+  var proxyApiRegistrar: ProxyAPIRegistrar?
 
   init(binaryMessenger: FlutterBinaryMessenger) {
-    proxyApiRegistrar = WebKitLibraryPigeonProxyApiRegistrar(
-      binaryMessenger: binaryMessenger, apiDelegate: ProxyAPIDelegate())
+    proxyApiRegistrar = ProxyAPIRegistrar(
+      binaryMessenger: binaryMessenger)
     proxyApiRegistrar?.setUp()
   }
 

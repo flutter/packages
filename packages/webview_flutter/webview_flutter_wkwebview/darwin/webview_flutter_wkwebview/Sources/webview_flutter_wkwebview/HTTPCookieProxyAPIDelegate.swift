@@ -10,7 +10,7 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]
   ) throws -> HTTPCookie {
-    let apiDelegate = pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate
+    let registrar = pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar
     
     let keyValueTuples = try! properties.map<[(HTTPCookiePropertyKey, Any)], PigeonError> {
       key, value in
@@ -47,13 +47,13 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
         if #available(iOS 13.0, macOS 10.15, *) {
           newKey = .sameSitePolicy
         } else {
-          throw apiDelegate
+          throw registrar
             .createUnsupportedVersionError(
               method: "HTTPCookiePropertyKey.sameSitePolicy",
               versionRequirements: "iOS 13.0, macOS 10.15")
         }
       case .unknown:
-        throw apiDelegate.createUnknownEnumError(
+        throw registrar.createUnknownEnumError(
           withEnum: key)
       }
 
@@ -65,7 +65,7 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
     if let cookie = cookie {
       return cookie
     } else {
-      throw apiDelegate.createConstructorNullError(type: HTTPCookie.self, parameters: ["properties": nativeProperties])
+      throw registrar.createConstructorNullError(type: HTTPCookie.self, parameters: ["properties": nativeProperties])
     }
   }
 

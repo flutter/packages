@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Implementation of `WebKitLibraryPigeonProxyApiDelegate` that provides each ProxyApi delegate implementation
-/// and any additional resources needed by an implementation.
-open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
+/// Implementation of `WebKitLibraryPigeonProxyApiRegistrar` that provides any additional resources needed by API implementations.
+open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
   let assetManager = FlutterAssetManager()
   let bundle = Bundle.main
-
+  
+  init(binaryMessenger: any FlutterBinaryMessenger) {
+    super.init(binaryMessenger: binaryMessenger, apiDelegate: ProxyAPIDelegate())
+  }
+  
   /// Creates an error when the `unknown` enum value is passed to a host method.
   func createUnknownEnumError(withEnum enumValue: Any) -> PigeonError {
     return PigeonError(
@@ -62,7 +65,10 @@ open class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
       }
     }
   }
+}
 
+/// Implementation of `WebKitLibraryPigeonProxyApiDelegate` that provides each ProxyApi delegate implementation.
+class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest
   {
     return PigeonApiURLRequest(pigeonRegistrar: registrar, delegate: URLRequestProxyAPIDelegate())

@@ -7,9 +7,9 @@ import WebKit
 /// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
 class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   let api: PigeonApiProtocolWKNavigationDelegate
-  let registrarApiDelegate: ProxyAPIDelegate
+  unowned let registrarApiDelegate: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolWKNavigationDelegate, registrarApiDelegate: ProxyAPIDelegate) {
+  init(api: PigeonApiProtocolWKNavigationDelegate, registrarApiDelegate: ProxyAPIRegistrar) {
     self.api = api
     self.registrarApiDelegate = registrarApiDelegate
   }
@@ -170,6 +170,6 @@ class NavigationDelegateProxyAPIDelegate: PigeonApiDelegateWKNavigationDelegate 
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKNavigationDelegate) throws
     -> WKNavigationDelegate
   {
-    return NavigationDelegateImpl(api: pigeonApi, registrarApiDelegate: pigeonApi.pigeonRegistrar.apiDelegate as! ProxyAPIDelegate)
+    return NavigationDelegateImpl(api: pigeonApi, registrarApiDelegate: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
 }
