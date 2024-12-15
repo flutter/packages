@@ -179,6 +179,16 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i3.PlatformWebViewControllerCreationParams);
 
   @override
+  _i5.Future<void> setAllowFileAccess(bool? allow) => (super.noSuchMethod(
+        Invocation.method(
+          #setAllowFileAccess,
+          [allow],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i5.Future<void> loadFile(String? absoluteFilePath) => (super.noSuchMethod(
         Invocation.method(
           #loadFile,
@@ -489,16 +499,6 @@ class MockAndroidWebViewController extends _i1.Mock
         Invocation.method(
           #setTextZoom,
           [textZoom],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> setAllowFileAccess(bool? enabled) => (super.noSuchMethod(
-        Invocation.method(
-          #setAllowFileAccess,
-          [enabled],
         ),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
