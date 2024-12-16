@@ -141,10 +141,10 @@ class WebViewProxyAPITests: XCTestCase {
     try? api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
 
     XCTAssertEqual(instance.loadFileUrlArgs?.count, 2)
-    let URL = try! XCTUnwrap(instance.loadFileUrlArgs![0])
+    let url = try! XCTUnwrap(instance.loadFileUrlArgs![0])
     let readAccessURL = try! XCTUnwrap(instance.loadFileUrlArgs![1])
 
-    XCTAssertTrue(URL.absoluteString.contains("index.html"))
+    XCTAssertTrue(url.absoluteString.contains("index.html"))
     XCTAssertTrue(readAccessURL.absoluteString.contains("assets/www/"))
   }
 
