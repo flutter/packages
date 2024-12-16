@@ -6,7 +6,10 @@
 
 import Foundation
 import WebKit
+
+#if os(iOS)
 import UIKit
+#endif
 
 #if os(iOS)
   import Flutter

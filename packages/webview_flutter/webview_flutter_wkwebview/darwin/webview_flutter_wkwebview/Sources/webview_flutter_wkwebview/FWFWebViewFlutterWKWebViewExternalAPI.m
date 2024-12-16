@@ -3,7 +3,11 @@
 // found in the LICENSE file.
 
 #import "./include/webview_flutter_wkwebview/FWFWebViewFlutterWKWebViewExternalAPI.h"
+#if TARGET_OS_IOS
 #import "webview_flutter_wkwebview-Swift.h"
+#elif TARGET_OS_OSX
+#import <webview_flutter_wkwebview/webview_flutter_wkwebview-Swift.h>
+#endif
 
 @implementation FWFWebViewFlutterWKWebViewExternalAPI
 + (nullable WKWebView *)webViewForIdentifier:(long)identifier

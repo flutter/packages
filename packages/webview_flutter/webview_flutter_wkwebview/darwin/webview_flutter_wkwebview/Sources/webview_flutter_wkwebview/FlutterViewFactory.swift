@@ -60,7 +60,13 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
     }
 #endif
 
+#if os(iOS)
   func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
     return FlutterStandardMessageCodec.sharedInstance()
   }
+#elseif os(macOS)
+  func createArgsCodec() -> (any FlutterMessageCodec & NSObjectProtocol)? {
+    return FlutterStandardMessageCodec.sharedInstance()
+  }
+  #endif
 }
