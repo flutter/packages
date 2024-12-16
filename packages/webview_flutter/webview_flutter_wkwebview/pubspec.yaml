@@ -32,11 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon:
-    git:
-      url: git@github.com:bparrishMines/packages.git
-      ref: pigeon_helper
-      path: packages/pigeon
+  pigeon: ^22.7.0
 
 topics:
   - html

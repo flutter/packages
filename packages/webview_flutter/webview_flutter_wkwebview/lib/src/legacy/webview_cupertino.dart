@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
-import '../common/web_kit2.g.dart';
+import '../common/web_kit.g.dart';
 import 'web_kit_webview_widget.dart';
 
 /// Builds an iOS webview.

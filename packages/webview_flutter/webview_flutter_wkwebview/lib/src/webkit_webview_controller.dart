@@ -13,7 +13,7 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'common/platform_webview.dart';
 import 'common/weak_reference_utils.dart';
-import 'common/web_kit2.g.dart';
+import 'common/web_kit.g.dart';
 import 'common/webkit_constants.dart';
 import 'webkit_proxy.dart';
 

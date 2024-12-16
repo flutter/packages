@@ -2,9 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
-
-import 'web_kit2.g.dart';
+import 'web_kit.g.dart';
 
 /// Possible error values that WebKit APIs can return.
 ///

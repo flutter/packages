@@ -4,7 +4,7 @@
 
 import 'package:flutter/foundation.dart';
 
-import 'web_kit2.g.dart';
+import 'web_kit.g.dart';
 
 class PlatformWebView {
   PlatformWebView({

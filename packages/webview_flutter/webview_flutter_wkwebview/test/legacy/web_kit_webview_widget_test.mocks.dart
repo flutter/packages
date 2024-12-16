@@ -15,7 +15,7 @@ import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_
     as _i6;
 import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart'
     as _i3;
-import 'package:webview_flutter_wkwebview/src/common/web_kit2.g.dart' as _i2;
+import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart' as _i2;
 import 'package:webview_flutter_wkwebview/src/legacy/web_kit_webview_widget.dart'
     as _i9;
 

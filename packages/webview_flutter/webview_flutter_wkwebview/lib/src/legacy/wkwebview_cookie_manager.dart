@@ -6,7 +6,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
-import '../common/web_kit2.g.dart';
+import '../common/web_kit.g.dart';
 import '../webkit_proxy.dart';
 
 /// Handles all cookie operations for the WebView platform.

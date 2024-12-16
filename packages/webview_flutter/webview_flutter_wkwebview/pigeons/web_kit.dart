@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
-    dartOut: 'lib/src/common/web_kit2.g.dart',
+    dartOut: 'lib/src/common/web_kit.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
     swiftOut:
         'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/WebKitLibrary.g.swift',

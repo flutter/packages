@@ -14,7 +14,7 @@ import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_
 
 import '../common/platform_webview.dart';
 import '../common/weak_reference_utils.dart';
-import '../common/web_kit2.g.dart';
+import '../common/web_kit.g.dart';
 import '../common/webkit_constants.dart';
 
 /// A [Widget] that displays a [WKWebView].
