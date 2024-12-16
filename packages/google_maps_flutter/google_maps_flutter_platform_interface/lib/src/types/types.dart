@@ -13,7 +13,6 @@ export 'circle_updates.dart';
 export 'cluster.dart';
 export 'cluster_manager.dart';
 export 'cluster_manager_updates.dart';
-export 'glyph.dart';
 export 'heatmap.dart';
 export 'heatmap_updates.dart';
 export 'joint_type.dart';

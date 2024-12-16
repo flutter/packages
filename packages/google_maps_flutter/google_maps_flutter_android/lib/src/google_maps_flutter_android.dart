@@ -952,15 +952,30 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
                 width: bytes.width,
                 height: bytes.height));
       case final PinConfig pinConfig:
-        final BitmapDescriptor? glyphBitmapDescriptor =
-            pinConfig.glyph?.bitmapDescriptor;
+        final AdvancedMarkerGlyph? glyph = pinConfig.glyph;
+        Color? glyphColor;
+        String? glyphText;
+        Color? glyphTextColor;
+        BitmapDescriptor? glyphBitmapDescriptor;
+        if (glyph != null) {
+          switch (glyph.runtimeType) {
+            case final CircleGlyph circleGlyph:
+              glyphColor = circleGlyph.color;
+            case final TextGlyph textGlyph:
+              glyphText = textGlyph.text;
+              glyphTextColor = textGlyph.textColor;
+            case final BitmapGlyph bitmapGlyph:
+              glyphBitmapDescriptor = bitmapGlyph.bitmap;
+          }
+        }
+
         return PlatformBitmap(
           bitmap: PlatformBitmapPinConfig(
             backgroundColor: pinConfig.backgroundColor?.value,
             borderColor: pinConfig.borderColor?.value,
-            glyphColor: pinConfig.glyph?.color?.value,
-            glyphText: pinConfig.glyph?.text,
-            glyphTextColor: pinConfig.glyph?.textColor?.value,
+            glyphColor: glyphColor?.value,
+            glyphText: glyphText,
+            glyphTextColor: glyphTextColor?.value,
             glyphBitmap: glyphBitmapDescriptor != null
                 ? platformBitmapFromBitmapDescriptor(glyphBitmapDescriptor)
                 : null,

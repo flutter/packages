@@ -17,8 +17,6 @@ import 'package:flutter/material.dart'
         createLocalImageConfiguration;
 import 'package:flutter/services.dart' show AssetBundle;
 
-import 'glyph.dart';
-
 /// Type of bitmap scaling to use on BitmapDescriptor creation.
 enum MapBitmapScaling {
   /// Automatically scale image with devices pixel ratio or to given size,
@@ -351,7 +349,7 @@ abstract class BitmapDescriptor {
   static BitmapDescriptor pinConfig({
     Color? backgroundColor,
     Color? borderColor,
-    Glyph? glyph,
+    AdvancedMarkerGlyph? glyph,
   }) {
     return PinConfig(
       backgroundColor: backgroundColor,
@@ -1049,14 +1047,14 @@ class PinConfig extends BitmapDescriptor {
   /// The type of the MapBitmap object, used for the JSON serialization.
   static const String type = 'pinConfig';
 
-  /// The background color of the pin
+  /// The background color of the pin.
   final Color? backgroundColor;
 
-  /// The border color of the pin
+  /// The border color of the pin.
   final Color? borderColor;
 
-  /// The glyph that is displayed on the pin marker
-  final Glyph? glyph;
+  /// The glyph that is displayed on the pin marker.
+  final AdvancedMarkerGlyph? glyph;
 
   @override
   Object toJson() => <Object>[
@@ -1065,12 +1063,81 @@ class PinConfig extends BitmapDescriptor {
           if (backgroundColor != null)
             'backgroundColor': backgroundColor?.value,
           if (borderColor != null) 'borderColor': borderColor?.value,
-          if (glyph?.text != null) 'glyphText': glyph?.text,
-          if (glyph?.textColor != null)
-            'glyphTextColor': glyph?.textColor?.value,
-          if (glyph?.color != null) 'glyphColor': glyph?.color?.value,
-          if (glyph?.bitmapDescriptor != null)
-            'glyphBitmapDescriptor': glyph?.bitmapDescriptor?.toJson(),
+          if (glyph != null) 'glyph': glyph?.toJson(),
         }
       ];
+}
+
+/// Defines a glyph (the element at the center of an [AdvancedMarker] icon).
+abstract class AdvancedMarkerGlyph extends BitmapDescriptor {
+  const AdvancedMarkerGlyph._() : super._();
+}
+
+/// Defines a glyph using the default circle, but with a custom color.
+class CircleGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph instance, using the default circle, but with
+  /// a custom color.
+  const CircleGlyph({
+    required this.color,
+  }) : super._();
+
+  /// Color of the circular icon.
+  final Color color;
+
+  @override
+  Object toJson() => <Object>[
+        'circleGlyph',
+        <String, Object>{
+          'color': color.value,
+        }
+      ];
+}
+
+/// Defines a glyph instance with a specified bitmap.
+class BitmapGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph with the specified [bitmap].
+  const BitmapGlyph({
+    required this.bitmap,
+  })  : assert(
+          bitmap is! AdvancedMarkerGlyph,
+          'BitmapDescriptor cannot be an AdvancedMarkerGlyph.',
+        ),
+        super._();
+
+  /// Bitmap image to be displayed in the center of the glyph.
+  final BitmapDescriptor bitmap;
+
+  @override
+  Object toJson() => <Object>[
+        'bitmapGlyph',
+        <String, Object>{
+          'bitmap': bitmap.toJson(),
+        }
+      ];
+}
+
+/// Defines a glyph instance with a specified text and color.
+class TextGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph with the specified [text] and [textColor].
+  const TextGlyph({
+    required this.text,
+    required this.textColor,
+  }) : super._();
+
+  /// Text to be displayed in the glyph.
+  final String text;
+
+  /// Color of the text.
+  final Color? textColor;
+
+  @override
+  Object toJson() {
+    return <Object>[
+      'textGlyph',
+      <String, Object>{
+        'text': text,
+        if (textColor != null) 'textColor': textColor!.value,
+      }
+    ];
+  }
 }

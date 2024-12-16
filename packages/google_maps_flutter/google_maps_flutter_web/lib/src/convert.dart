@@ -409,35 +409,33 @@ Future<Node?> _advancedMarkerIconFromBitmapDescriptor(
           : null
       ..borderColor = bitmapDescriptor.borderColor != null
           ? _getCssColor(bitmapDescriptor.borderColor!)
-          : null
-      ..glyphColor = bitmapDescriptor.glyph?.color != null
-          ? _getCssColor(bitmapDescriptor.glyph!.color!)
           : null;
 
-    final Glyph? glyph = bitmapDescriptor.glyph;
+    final AdvancedMarkerGlyph? glyph = bitmapDescriptor.glyph;
     if (glyph != null) {
-      if (glyph.text != null) {
-        // Set glyph text and text color.
-        final web.Element element = document.createElement('p');
-        element.innerHTML = glyph.text!.toJS;
-        if (glyph.textColor != null) {
-          element.setAttribute(
-            'style',
-            'color: ${_getCssColor(bitmapDescriptor.glyph!.textColor!)}',
+      switch (glyph.runtimeType) {
+        case final CircleGlyph circleGlyph:
+          options.glyphColor = _getCssColor(circleGlyph.color);
+        case final TextGlyph textGlyph:
+          final web.Element element = document.createElement('p');
+          element.innerHTML = textGlyph.text.toJS;
+          if (textGlyph.textColor != null) {
+            element.setAttribute(
+              'style',
+              'color: ${_getCssColor(textGlyph.textColor!)}',
+            );
+          }
+          options.glyph = element;
+        case final BitmapGlyph bitmapGlyph:
+          final Node? glyphBitmap =
+              await _advancedMarkerIconFromBitmapDescriptor(
+            bitmapGlyph.bitmap,
+            // Always opaque, opacity is handled by the parent marker.
+            opacity: 1.0,
+            // Always visible, as the visibility is handled by the parent marker.
+            isVisible: true,
           );
-        }
-
-        options.glyph = element;
-      } else if (glyph.bitmapDescriptor != null) {
-        // Create glyph from bitmap.
-        final Node? glyphBitmap = await _advancedMarkerIconFromBitmapDescriptor(
-          glyph.bitmapDescriptor!,
-          // Always opaque, opacity is handled by the parent marker.
-          opacity: 1.0,
-          // Always visible, as the visibility is handled by the parent marker.
-          isVisible: true,
-        );
-        options.glyph = glyphBitmap;
+          options.glyph = glyphBitmap;
       }
     }
 

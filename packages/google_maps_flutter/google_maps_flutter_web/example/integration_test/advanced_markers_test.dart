@@ -427,7 +427,7 @@ void main() {
           icon: BitmapDescriptor.pinConfig(
             backgroundColor: const Color(0xFF00FF00),
             borderColor: const Color(0xFFFF0000),
-            glyph: Glyph.color(const Color(0xFFFFFFFF)),
+            glyph: const CircleGlyph(color: Color(0xFFFFFFFF)),
           ),
         ),
       };
@@ -480,9 +480,9 @@ void main() {
           icon: BitmapDescriptor.pinConfig(
             backgroundColor: Colors.black,
             borderColor: Colors.black,
-            glyph: Glyph.text(
-              'Hey',
-              textColor: const Color(0xFF0000FF),
+            glyph: const TextGlyph(
+              text: 'Hey',
+              textColor: Color(0xFF0000FF),
             ),
           ),
         ),
@@ -524,8 +524,8 @@ void main() {
           icon: BitmapDescriptor.pinConfig(
             backgroundColor: Colors.black,
             borderColor: Colors.black,
-            glyph: Glyph.bitmap(
-              await BitmapDescriptor.asset(
+            glyph: BitmapGlyph(
+              bitmap: await BitmapDescriptor.asset(
                 const ImageConfiguration(
                   size: Size.square(12),
                 ),

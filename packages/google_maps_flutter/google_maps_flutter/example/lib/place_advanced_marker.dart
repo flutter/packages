@@ -68,7 +68,7 @@ class _PlaceAdvancedMarkerBodyState extends PlaceMarkerBodyState {
     return BitmapDescriptor.pinConfig(
       backgroundColor: isSelected ? Colors.blue : Colors.white,
       borderColor: isSelected ? Colors.white : Colors.blue,
-      glyph: Glyph.color(isSelected ? Colors.white : Colors.blue),
+      glyph: CircleGlyph(color: isSelected ? Colors.white : Colors.blue),
     );
   }
 

@@ -55,7 +55,7 @@ class _AdvancedMarkerClusteringBody extends ClusteringBody {
       icon: BitmapDescriptor.pinConfig(
         backgroundColor: Colors.white,
         borderColor: Colors.blue,
-        glyph: Glyph.color(Colors.blue),
+        glyph: const CircleGlyph(color: Colors.blue),
       ),
     );
   }
@@ -68,12 +68,12 @@ class _AdvancedMarkerClusteringBody extends ClusteringBody {
           ? BitmapDescriptor.pinConfig(
               backgroundColor: Colors.blue,
               borderColor: Colors.white,
-              glyph: Glyph.color(Colors.white),
+              glyph: const CircleGlyph(color: Colors.white),
             )
           : BitmapDescriptor.pinConfig(
               backgroundColor: Colors.white,
               borderColor: Colors.blue,
-              glyph: Glyph.color(Colors.blue),
+              glyph: const CircleGlyph(color: Colors.blue),
             ),
     );
   }

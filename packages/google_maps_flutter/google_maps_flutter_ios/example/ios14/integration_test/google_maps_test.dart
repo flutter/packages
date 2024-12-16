@@ -1391,7 +1391,7 @@ void main() {
         icon: BitmapDescriptor.pinConfig(
           backgroundColor: Colors.green,
           borderColor: Colors.greenAccent,
-          glyph: Glyph.text('A', textColor: Colors.white),
+          glyph: const TextGlyph(text: 'A', textColor: Colors.white),
         ),
       ),
     };

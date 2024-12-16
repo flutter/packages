@@ -707,13 +707,14 @@ void main() {
     });
 
     test('construct with glyph text', () {
-      final PinConfig pinConfig = PinConfig(
+      const PinConfig pinConfig = PinConfig(
         backgroundColor: Colors.green,
         borderColor: Colors.blue,
-        glyph: Glyph.text('Hello', textColor: Colors.red),
+        glyph: TextGlyph(text: 'Hello', textColor: Colors.red),
       );
-      expect(pinConfig.glyph?.text, 'Hello');
-      expect(pinConfig.glyph?.textColor, Colors.red);
+      expect(pinConfig.glyph, isA<TextGlyph>());
+      expect((pinConfig.glyph! as TextGlyph).text, 'Hello');
+      expect((pinConfig.glyph! as TextGlyph).textColor, Colors.red);
       expect(
         pinConfig.toJson(),
         <Object>[
@@ -730,10 +731,10 @@ void main() {
 
     test('construct with glyph bitmap', () async {
       const BitmapDescriptor bitmap = AssetBitmap(name: 'red_square.png');
-      final PinConfig pinConfig = PinConfig(
+      const PinConfig pinConfig = PinConfig(
         backgroundColor: Colors.black,
         borderColor: Colors.red,
-        glyph: Glyph.bitmap(bitmap),
+        glyph: BitmapGlyph(bitmap: bitmap),
       );
 
       expect(pinConfig.backgroundColor, Colors.black);
