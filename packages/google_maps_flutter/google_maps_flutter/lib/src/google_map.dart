@@ -128,10 +128,11 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-    this.mapId,
     this.markerType = MarkerType.marker,
-    @Deprecated('cloudMapId is deprecated. Use mapId instead.') this.cloudMapId,
-  });
+    String? mapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+    String? cloudMapId,
+  }) : mapId = mapId ?? cloudMapId;
 
   /// Callback method for when the map is ready to be used.
   ///
@@ -322,13 +323,6 @@ class GoogleMap extends StatefulWidget {
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
   final String? mapId;
-
-  /// Identifier that's associated with a specific cloud-based map style.
-  ///
-  /// See https://developers.google.com/maps/documentation/get-map-id
-  /// for more details.
-  @Deprecated('cloudMapId is deprecated. Use mapId instead.')
-  final String? cloudMapId;
 
   /// Indicates whether map should use [AdvancedMarker]s or [Marker]s.
   final MarkerType markerType;
@@ -628,7 +622,7 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
-    mapId: map.mapId ?? map.cloudMapId,
+    mapId: map.mapId,
     // A null style in the widget means no style, which is expressed as '' in
     // the configuration to distinguish from no change (null).
     style: map.style ?? '',
