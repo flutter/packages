@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if os(iOS)
 import UIKit
+#endif
 import WebKit
 import XCTest
 
@@ -27,6 +29,7 @@ class WebViewProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.configuration)
   }
 
+  #if os(iOS)
   @MainActor func testScrollView() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
@@ -36,6 +39,7 @@ class WebViewProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value, instance.scrollView)
   }
+  #endif
 
   @MainActor func testSetUIDelegate() {
     let registrar = TestProxyApiRegistrar()

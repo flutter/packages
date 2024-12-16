@@ -7,7 +7,6 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
-
 class HTTPCookieStoreProxyAPITests: XCTestCase {
   @MainActor func testSetCookie() {
     let registrar = TestProxyApiRegistrar()
@@ -26,9 +25,10 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
       }
     }
 
-    waitForExpectations(timeout: 1.0)
+    wait(for: [expect], timeout: 1.0)
     XCTAssertEqual(instance!.setCookieArg, cookie)
     
+    // Ensure instance is deallocated on main thread.
     DispatchQueue.main.async {
       instance = nil
     }

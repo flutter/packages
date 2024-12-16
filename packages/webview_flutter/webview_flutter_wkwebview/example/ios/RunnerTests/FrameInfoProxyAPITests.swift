@@ -7,6 +7,7 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
+@MainActor
 class FrameInfoProxyAPITests: XCTestCase {
   @MainActor func testIsMainFrame() {
     let registrar = TestProxyApiRegistrar()
@@ -16,10 +17,6 @@ class FrameInfoProxyAPITests: XCTestCase {
     let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance!)
 
     XCTAssertEqual(value, instance!.isMainFrame)
-    
-    DispatchQueue.main.async {
-      instance = nil
-    }
   }
 
   @MainActor func testRequest() {
@@ -30,10 +27,6 @@ class FrameInfoProxyAPITests: XCTestCase {
     let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
 
     XCTAssertEqual(value?.value, instance!.request)
-    
-    DispatchQueue.main.async {
-      instance = nil
-    }
   }
 }
 

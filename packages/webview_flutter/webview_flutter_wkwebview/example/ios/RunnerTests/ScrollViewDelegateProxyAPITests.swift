@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if os(iOS)
 import UIKit
+#endif
 import XCTest
 
 @testable import webview_flutter_wkwebview
 
 class ScrollViewDelegateProxyAPITests: XCTestCase {
+  #if os(iOS)
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIScrollViewDelegate(registrar)
@@ -28,8 +31,10 @@ class ScrollViewDelegateProxyAPITests: XCTestCase {
 
     XCTAssertEqual(api.scrollViewDidScrollArgs, [scrollView, x, y])
   }
+  #endif
 }
 
+#if os(iOS)
 class TestScrollViewDelegateApi: PigeonApiProtocolUIScrollViewDelegate {
   var scrollViewDidScrollArgs: [AnyHashable?]? = nil
   
@@ -37,3 +42,4 @@ class TestScrollViewDelegateApi: PigeonApiProtocolUIScrollViewDelegate {
     scrollViewDidScrollArgs = [scrollViewArg, xArg, yArg]
   }
 }
+#endif

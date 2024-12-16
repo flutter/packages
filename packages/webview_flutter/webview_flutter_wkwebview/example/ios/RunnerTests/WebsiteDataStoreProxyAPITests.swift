@@ -41,7 +41,7 @@ class WebsiteDataStoreProxyAPITests: XCTestCase {
       removeDataOfTypesExpectation.fulfill()
     })
 
-    wait(for: [removeDataOfTypesExpectation])
+    wait(for: [removeDataOfTypesExpectation], timeout: 5.0)
     XCTAssertNotNil(removeDataOfTypesResult)
   }
 }

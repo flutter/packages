@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if os(iOS)
 import UIKit
+#endif
 import XCTest
 
 @testable import webview_flutter_wkwebview
 
 class ScrollViewProxyAPITests: XCTestCase {
+  #if os(iOS)
   @MainActor func testGetContentOffset() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
@@ -51,8 +54,10 @@ class ScrollViewProxyAPITests: XCTestCase {
 
     XCTAssertEqual(instance.setDelegateArgs, [delegate])
   }
+  #endif
 }
 
+#if os(iOS)
 class TestScrollView: UIScrollView {
   var setContentOffsetArgs: [AnyHashable?]? = nil
   var setDelegateArgs: [AnyHashable?]? = nil
@@ -75,3 +80,4 @@ class TestScrollView: UIScrollView {
     }
   }
 }
+#endif

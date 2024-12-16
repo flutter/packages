@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if os(iOS)
 import UIKit
+#endif
 import XCTest
 
 @testable import webview_flutter_wkwebview
 
 class UIViewProxyAPITests: XCTestCase {
+  #if os(iOS)
   @MainActor func testSetBackgroundColor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIView(registrar)
@@ -34,4 +37,5 @@ class UIViewProxyAPITests: XCTestCase {
 
     XCTAssertEqual(instance.isOpaque, opaque)
   }
+#endif
 }

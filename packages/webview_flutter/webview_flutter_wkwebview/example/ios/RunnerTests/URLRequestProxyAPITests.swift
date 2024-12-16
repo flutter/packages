@@ -95,5 +95,4 @@ class RequestProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value, fields)
   }
-
 }

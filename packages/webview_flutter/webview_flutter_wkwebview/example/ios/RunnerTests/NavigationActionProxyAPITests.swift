@@ -17,6 +17,7 @@ class NavigationActionProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value?.value, instance!.request)
     
+    // Ensure instance is deallocated on the main frame.
     DispatchQueue.main.async {
       instance = nil
     }
@@ -31,6 +32,7 @@ class NavigationActionProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value, instance!.targetFrame)
     
+    // Ensure instance is deallocated on the main frame.
     DispatchQueue.main.async {
       instance = nil
     }
@@ -45,6 +47,7 @@ class NavigationActionProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value, .formSubmitted)
     
+    // Ensure instance is deallocated on the main frame.
     DispatchQueue.main.async {
       instance = nil
     }
