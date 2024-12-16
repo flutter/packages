@@ -29,13 +29,13 @@ class NavigationResponseProxyAPITests: XCTestCase {
   }
 }
 
-class TestNavigationResponse : WKNavigationResponse {
+class TestNavigationResponse: WKNavigationResponse {
   let testResponse = URLResponse()
-  
+
   override var isForMainFrame: Bool {
     return true
   }
-  
+
   override var response: URLResponse {
     return testResponse
   }

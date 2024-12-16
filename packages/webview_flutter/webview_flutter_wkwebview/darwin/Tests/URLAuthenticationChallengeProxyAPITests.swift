@@ -11,7 +11,9 @@ class URLAuthenticationChallengeProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLAuthenticationChallenge(registrar)
 
-    let instance = URLAuthenticationChallenge(protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 3, failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
+    let instance = URLAuthenticationChallenge(
+      protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 3,
+      failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
     let value = try? api.pigeonDelegate.getProtectionSpace(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.protectionSpace)

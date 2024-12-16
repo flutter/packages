@@ -23,18 +23,18 @@ class FrameInfoProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
-    var instance: TestFrameInfo?  = TestFrameInfo()
+    var instance: TestFrameInfo? = TestFrameInfo()
     let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
 
     XCTAssertEqual(value?.value, instance!.request)
   }
 }
 
-class TestFrameInfo : WKFrameInfo {
+class TestFrameInfo: WKFrameInfo {
   override var isMainFrame: Bool {
     return true
   }
-  
+
   override var request: URLRequest {
     return URLRequest(url: URL(string: "https://google.com")!)
   }

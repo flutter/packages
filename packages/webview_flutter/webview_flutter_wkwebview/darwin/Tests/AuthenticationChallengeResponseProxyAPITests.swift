@@ -11,7 +11,9 @@ class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, disposition: UrlSessionAuthChallengeDisposition.useCredential, credential: URLCredential())
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, disposition: UrlSessionAuthChallengeDisposition.useCredential,
+      credential: URLCredential())
     XCTAssertNotNil(instance)
   }
 
@@ -19,7 +21,8 @@ class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
 
-    let instance = AuthenticationChallengeResponse(disposition: .useCredential, credential: URLCredential())
+    let instance = AuthenticationChallengeResponse(
+      disposition: .useCredential, credential: URLCredential())
     let value = try? api.pigeonDelegate.disposition(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, UrlSessionAuthChallengeDisposition.useCredential)
@@ -29,7 +32,8 @@ class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
 
-    let instance = AuthenticationChallengeResponse(disposition: .useCredential, credential: URLCredential())
+    let instance = AuthenticationChallengeResponse(
+      disposition: .useCredential, credential: URLCredential())
     let value = try? api.pigeonDelegate.credential(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.credential)

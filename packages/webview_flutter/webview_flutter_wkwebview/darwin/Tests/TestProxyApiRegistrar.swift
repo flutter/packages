@@ -10,8 +10,10 @@ class TestProxyApiRegistrar: ProxyAPIRegistrar {
   init() {
     super.init(binaryMessenger: TestBinaryMessenger())
   }
-  
-  override func dispatchOnMainThread(execute work: @escaping (@escaping (String, PigeonError) -> Void) -> Void) {
+
+  override func dispatchOnMainThread(
+    execute work: @escaping (@escaping (String, PigeonError) -> Void) -> Void
+  ) {
     work { _, _ in }
   }
 }

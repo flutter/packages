@@ -6,11 +6,11 @@
 open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
   let assetManager = FlutterAssetManager()
   let bundle = Bundle.main
-  
+
   init(binaryMessenger: any FlutterBinaryMessenger) {
     super.init(binaryMessenger: binaryMessenger, apiDelegate: ProxyAPIDelegate())
   }
-  
+
   /// Creates an error when the `unknown` enum value is passed to a host method.
   func createUnknownEnumError(withEnum enumValue: Any) -> PigeonError {
     return PigeonError(
@@ -40,25 +40,32 @@ open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
       code: "FWFURLParsingError", message: "Failed parsing file path.",
       details: "Initializing URL with the supplied '\(url)' path resulted in a nil value.")
   }
-  
+
   /// Creates an error when the constructor of a class returns null.
   func createConstructorNullError(type: Any.Type, parameters: [String: Any?]) -> PigeonError {
-    if (type == URL.self && parameters["string"] != nil) {
+    if type == URL.self && parameters["string"] != nil {
       return createNullURLError(url: parameters["string"] as! String)
     }
-    
+
     return PigeonError(
-      code: "ConstructorReturnedNullError", message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
+      code: "ConstructorReturnedNullError",
+      message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
       details: nil)
   }
 
   // Creates an assertion failure when a Flutter method receives an error from Dart.
   fileprivate func assertFlutterMethodFailure(_ error: PigeonError, methodName: String) {
-    assertionFailure("\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))")
+    assertionFailure(
+      "\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))"
+    )
   }
-  
+
   /// Handles calling a Flutter method on the main thread.
-  func dispatchOnMainThread(execute work: @escaping (_ onFailure: @escaping (_ methodName: String, _ error: PigeonError) -> Void) -> Void) {
+  func dispatchOnMainThread(
+    execute work: @escaping (
+      _ onFailure: @escaping (_ methodName: String, _ error: PigeonError) -> Void
+    ) -> Void
+  ) {
     DispatchQueue.main.async {
       work { methodName, error in
         self.assertFlutterMethodFailure(error, methodName: methodName)

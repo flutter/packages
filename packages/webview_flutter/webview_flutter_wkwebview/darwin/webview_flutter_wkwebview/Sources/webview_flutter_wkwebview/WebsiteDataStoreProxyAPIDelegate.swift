@@ -47,7 +47,7 @@ class WebsiteDataStoreProxyAPIDelegate: PigeonApiDelegateWKWebsiteDataStore {
       })
 
     pigeonInstance.fetchDataRecords(ofTypes: nativeDataTypes) { records in
-      if (records.isEmpty) {
+      if records.isEmpty {
         completion(.success(false))
       } else {
         pigeonInstance.removeData(

@@ -94,7 +94,8 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
               decisionHandler(.cancel)
               assertionFailure(
                 self.registrar.createUnsupportedVersionMessage(
-                  "WKNavigationResponsePolicy.download", versionRequirements: "iOS 14.5, macOS 11.3"))
+                  "WKNavigationResponsePolicy.download", versionRequirements: "iOS 14.5, macOS 11.3"
+                ))
             }
           }
         case .failure(let error):
@@ -108,7 +109,8 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error)
   {
     registrar.dispatchOnMainThread { onFailure in
-      self.api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) { result in
+      self.api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) {
+        result in
         if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.didFailNavigation", error)
         }
@@ -133,7 +135,8 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
 
   func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
     registrar.dispatchOnMainThread { onFailure in
-      self.api.webViewWebContentProcessDidTerminate(pigeonInstance: self, webView: webView) { result in
+      self.api.webViewWebContentProcessDidTerminate(pigeonInstance: self, webView: webView) {
+        result in
         if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.webViewWebContentProcessDidTerminate", error)
         }
@@ -170,6 +173,7 @@ class NavigationDelegateProxyAPIDelegate: PigeonApiDelegateWKNavigationDelegate 
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKNavigationDelegate) throws
     -> WKNavigationDelegate
   {
-    return NavigationDelegateImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    return NavigationDelegateImpl(
+      api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
 }

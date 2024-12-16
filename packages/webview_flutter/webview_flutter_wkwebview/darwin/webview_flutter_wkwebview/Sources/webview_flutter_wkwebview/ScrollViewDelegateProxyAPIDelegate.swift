@@ -3,33 +3,33 @@
 // found in the LICENSE file.
 
 #if os(iOS)
-import UIKit
+  import UIKit
 #endif
 
 #if os(iOS)
-/// Implementation of `UIScrollViewDelegate` that calls to Dart in callback methods.
-class ScrollViewDelegateImpl: NSObject, UIScrollViewDelegate {
-  let api: PigeonApiProtocolUIScrollViewDelegate
-  unowned let registrar: ProxyAPIRegistrar
+  /// Implementation of `UIScrollViewDelegate` that calls to Dart in callback methods.
+  class ScrollViewDelegateImpl: NSObject, UIScrollViewDelegate {
+    let api: PigeonApiProtocolUIScrollViewDelegate
+    unowned let registrar: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolUIScrollViewDelegate, registrar: ProxyAPIRegistrar) {
-    self.api = api
-    self.registrar = registrar
-  }
+    init(api: PigeonApiProtocolUIScrollViewDelegate, registrar: ProxyAPIRegistrar) {
+      self.api = api
+      self.registrar = registrar
+    }
 
-  func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.scrollViewDidScroll(
-        pigeonInstance: self, scrollView: scrollView, x: scrollView.contentOffset.x,
-        y: scrollView.contentOffset.y
-      ) { result in
-        if case .failure(let error) = result {
-          onFailure("UIScrollViewDelegate.scrollViewDidScroll", error)
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.scrollViewDidScroll(
+          pigeonInstance: self, scrollView: scrollView, x: scrollView.contentOffset.x,
+          y: scrollView.contentOffset.y
+        ) { result in
+          if case .failure(let error) = result {
+            onFailure("UIScrollViewDelegate.scrollViewDidScroll", error)
+          }
         }
       }
     }
   }
-}
 #endif
 
 /// ProxyApi implementation for `UIScrollViewDelegate`.
@@ -38,10 +38,11 @@ class ScrollViewDelegateImpl: NSObject, UIScrollViewDelegate {
 /// or handle method calls on the associated native class or an instance of that class.
 class ScrollViewDelegateProxyAPIDelegate: PigeonApiDelegateUIScrollViewDelegate {
   #if os(iOS)
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws
-    -> UIScrollViewDelegate
-  {
-    return ScrollViewDelegateImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
-  }
+    func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws
+      -> UIScrollViewDelegate
+    {
+      return ScrollViewDelegateImpl(
+        api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    }
   #endif
 }

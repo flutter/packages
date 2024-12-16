@@ -11,7 +11,9 @@ class HTTPCookieProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiHTTPCookie(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, properties: [.name : "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"])
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api,
+      properties: [.name: "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"])
     XCTAssertNotNil(instance)
   }
 
@@ -19,7 +21,9 @@ class HTTPCookieProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiHTTPCookie(registrar)
 
-    let instance = HTTPCookie(properties: [.name : "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"])!
+    let instance = HTTPCookie(properties: [
+      .name: "foo", .value: "bar", .domain: "http://google.com", .path: "/anything",
+    ])!
     let value = try? api.pigeonDelegate.getProperties(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value?[.name] as? String, "foo")

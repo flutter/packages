@@ -13,9 +13,11 @@ class UserContentControllerProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
 
     let instance = TestUserContentController()
-    let handler = ScriptMessageHandlerImpl(api: registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar), registrar: registrar)
+    let handler = ScriptMessageHandlerImpl(
+      api: registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar), registrar: registrar)
     let name = "myString"
-    try? api.pigeonDelegate.addScriptMessageHandler(pigeonApi: api, pigeonInstance: instance, handler: handler, name: name)
+    try? api.pigeonDelegate.addScriptMessageHandler(
+      pigeonApi: api, pigeonInstance: instance, handler: handler, name: name)
 
     XCTAssertEqual(instance.addScriptMessageHandlerArgs, [handler, name])
   }
@@ -26,7 +28,8 @@ class UserContentControllerProxyAPITests: XCTestCase {
 
     let instance = TestUserContentController()
     let name = "myString"
-    try? api.pigeonDelegate.removeScriptMessageHandler(pigeonApi: api, pigeonInstance: instance, name: name)
+    try? api.pigeonDelegate.removeScriptMessageHandler(
+      pigeonApi: api, pigeonInstance: instance, name: name)
 
     XCTAssertEqual(instance.removeScriptMessageHandlerArgs, [name])
   }
@@ -47,7 +50,8 @@ class UserContentControllerProxyAPITests: XCTestCase {
 
     let instance = TestUserContentController()
     let userScript = WKUserScript(source: "", injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-    try? api.pigeonDelegate.addUserScript(pigeonApi: api, pigeonInstance: instance, userScript: userScript)
+    try? api.pigeonDelegate.addUserScript(
+      pigeonApi: api, pigeonInstance: instance, userScript: userScript)
 
     XCTAssertEqual(instance.addUserScriptArgs, [userScript])
   }
@@ -57,7 +61,7 @@ class UserContentControllerProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
 
     let instance = TestUserContentController()
-    try? api.pigeonDelegate.removeAllUserScripts(pigeonApi: api, pigeonInstance: instance )
+    try? api.pigeonDelegate.removeAllUserScripts(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.removeAllUserScriptsCalled)
   }
@@ -78,15 +82,15 @@ class TestUserContentController: WKUserContentController {
   override func removeScriptMessageHandler(forName name: String) {
     removeScriptMessageHandlerArgs = [name]
   }
-  
+
   override func removeAllScriptMessageHandlers() {
     removeAllScriptMessageHandlersCalled = true
   }
-  
+
   override func addUserScript(_ userScript: WKUserScript) {
     addUserScriptArgs = [userScript]
   }
-  
+
   override func removeAllUserScripts() {
     removeAllUserScriptsCalled = true
   }

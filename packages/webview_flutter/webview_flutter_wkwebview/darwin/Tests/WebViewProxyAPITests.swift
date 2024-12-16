@@ -2,20 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if os(iOS)
-import UIKit
-#endif
 import WebKit
 import XCTest
 
 @testable import webview_flutter_wkwebview
+
+#if os(iOS)
+  import UIKit
+#endif
 
 class WebViewProxyAPITests: XCTestCase {
   @MainActor func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, initialConfiguration: WKWebViewConfiguration())
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, initialConfiguration: WKWebViewConfiguration())
     XCTAssertNotNil(instance)
   }
 
@@ -30,15 +32,15 @@ class WebViewProxyAPITests: XCTestCase {
   }
 
   #if os(iOS)
-  @MainActor func testScrollView() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    @MainActor func testScrollView() {
+      let registrar = TestProxyApiRegistrar()
+      let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
-    let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: instance)
+      let instance = TestViewWKWebView()
+      let value = try? api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.scrollView)
-  }
+      XCTAssertEqual(value, instance.scrollView)
+    }
   #endif
 
   @MainActor func testSetUIDelegate() {
@@ -46,8 +48,10 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let delegate = UIDelegateImpl(api: registrar.apiDelegate.pigeonApiWKUIDelegate(registrar), registrar: registrar)
-    try? api.pigeonDelegate.setUIDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
+    let delegate = UIDelegateImpl(
+      api: registrar.apiDelegate.pigeonApiWKUIDelegate(registrar), registrar: registrar)
+    try? api.pigeonDelegate.setUIDelegate(
+      pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     XCTAssertEqual(instance.uiDelegate as! UIDelegateImpl, delegate)
   }
@@ -57,8 +61,10 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let delegate = NavigationDelegateImpl(api: registrar.apiDelegate.pigeonApiWKNavigationDelegate(registrar), registrar: registrar)
-    try? api.pigeonDelegate.setNavigationDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
+    let delegate = NavigationDelegateImpl(
+      api: registrar.apiDelegate.pigeonApiWKNavigationDelegate(registrar), registrar: registrar)
+    try? api.pigeonDelegate.setNavigationDelegate(
+      pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     XCTAssertEqual(instance.navigationDelegate as! NavigationDelegateImpl, delegate)
   }
@@ -78,7 +84,8 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.getEstimatedProgress(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.getEstimatedProgress(
+      pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.estimatedProgress)
   }
@@ -101,7 +108,8 @@ class WebViewProxyAPITests: XCTestCase {
     let instance = TestViewWKWebView()
     let string = "myString"
     let baseUrl = "http://google.com"
-    try? api.pigeonDelegate.loadHtmlString(pigeonApi: api, pigeonInstance: instance, string: string, baseUrl: baseUrl)
+    try? api.pigeonDelegate.loadHtmlString(
+      pigeonApi: api, pigeonInstance: instance, string: string, baseUrl: baseUrl)
 
     XCTAssertEqual(instance.loadHtmlStringArgs, [string, URL(string: baseUrl)])
   }
@@ -113,9 +121,15 @@ class WebViewProxyAPITests: XCTestCase {
     let instance = TestViewWKWebView()
     let url = "myDirectory/myFile.txt"
     let readAccessUrl = "myDirectory/"
-    try? api.pigeonDelegate.loadFileUrl(pigeonApi: api, pigeonInstance: instance, url: url, readAccessUrl: readAccessUrl)
+    try? api.pigeonDelegate.loadFileUrl(
+      pigeonApi: api, pigeonInstance: instance, url: url, readAccessUrl: readAccessUrl)
 
-    XCTAssertEqual(instance.loadFileUrlArgs, [URL(fileURLWithPath: url, isDirectory: false), URL(fileURLWithPath: readAccessUrl, isDirectory: true)])
+    XCTAssertEqual(
+      instance.loadFileUrlArgs,
+      [
+        URL(fileURLWithPath: url, isDirectory: false),
+        URL(fileURLWithPath: readAccessUrl, isDirectory: true),
+      ])
   }
 
   @MainActor func testLoadFlutterAsset() {
@@ -129,7 +143,7 @@ class WebViewProxyAPITests: XCTestCase {
     XCTAssertEqual(instance.loadFileUrlArgs?.count, 2)
     let URL = try! XCTUnwrap(instance.loadFileUrlArgs![0])
     let readAccessURL = try! XCTUnwrap(instance.loadFileUrlArgs![1])
-    
+
     XCTAssertTrue(URL.absoluteString.contains("index.html"))
     XCTAssertTrue(readAccessURL.absoluteString.contains("assets/www/"))
   }
@@ -139,7 +153,7 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.canGoBack)
   }
@@ -149,7 +163,7 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.canGoForward)
   }
@@ -159,7 +173,7 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    try? api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance )
+    try? api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.goBackCalled)
   }
@@ -169,7 +183,7 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    try? api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance )
+    try? api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.goForwardCalled)
   }
@@ -179,7 +193,7 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    try? api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance )
+    try? api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.reloadCalled)
   }
@@ -189,7 +203,7 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.title)
   }
@@ -200,7 +214,8 @@ class WebViewProxyAPITests: XCTestCase {
 
     let instance = TestViewWKWebView()
     let allow = true
-    try? api.pigeonDelegate.setAllowsBackForwardNavigationGestures(pigeonApi: api, pigeonInstance: instance, allow: allow)
+    try? api.pigeonDelegate.setAllowsBackForwardNavigationGestures(
+      pigeonApi: api, pigeonInstance: instance, allow: allow)
 
     XCTAssertEqual(instance.setAllowsBackForwardNavigationGesturesArgs, [allow])
   }
@@ -211,7 +226,8 @@ class WebViewProxyAPITests: XCTestCase {
 
     let instance = TestViewWKWebView()
     let userAgent = "myString"
-    try? api.pigeonDelegate.setCustomUserAgent(pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
+    try? api.pigeonDelegate.setCustomUserAgent(
+      pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
 
     XCTAssertEqual(instance.setCustomUserAgentArgs, [userAgent])
   }
@@ -222,16 +238,18 @@ class WebViewProxyAPITests: XCTestCase {
 
     let instance = TestViewWKWebView()
     let javaScriptString = "myString"
-    
+
     var resultValue: Any?
-    api.pigeonDelegate.evaluateJavaScript(pigeonApi: api, pigeonInstance: instance, javaScriptString: javaScriptString, completion: { result in
-      switch result {
-      case .success(let value):
-        resultValue = value
-      case .failure(_):
-        break
-      }
-    })
+    api.pigeonDelegate.evaluateJavaScript(
+      pigeonApi: api, pigeonInstance: instance, javaScriptString: javaScriptString,
+      completion: { result in
+        switch result {
+        case .success(let value):
+          resultValue = value
+        case .failure(_):
+          break
+        }
+      })
 
     XCTAssertEqual(instance.evaluateJavaScriptArgs, [javaScriptString])
     XCTAssertEqual(resultValue as! String, "returnValue")
@@ -243,7 +261,8 @@ class WebViewProxyAPITests: XCTestCase {
 
     let instance = TestViewWKWebView()
     let inspectable = true
-    try? api.pigeonDelegate.setInspectable(pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
+    try? api.pigeonDelegate.setInspectable(
+      pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
 
     XCTAssertEqual(instance.setInspectableArgs, [inspectable])
     XCTAssertFalse(instance.isInspectable)
@@ -254,7 +273,7 @@ class WebViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
 
     let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.customUserAgent)
   }
@@ -284,61 +303,61 @@ class TestViewWKWebView: WKWebView {
   override var configuration: WKWebViewConfiguration {
     return configurationTestValue
   }
-  
+
   override var scrollView: UIScrollView {
     return scrollViewTestValue
   }
-  
+
   override var url: URL? {
     return URL(string: "http://google.com")
   }
-  
+
   override var estimatedProgress: Double {
     return 2.0
   }
-  
+
   override func load(_ request: URLRequest) -> WKNavigation? {
     loadArgs = [request]
     return nil
   }
-  
+
   override func loadHTMLString(_ string: String, baseURL: URL?) -> WKNavigation? {
     loadHtmlStringArgs = [string, baseURL]
     return nil
   }
-  
+
   override func loadFileURL(_ URL: URL, allowingReadAccessTo readAccessURL: URL) -> WKNavigation? {
     loadFileUrlArgs = [URL, readAccessURL]
     return nil
   }
-  
+
   override var canGoBack: Bool {
     return false
   }
-  
+
   override var canGoForward: Bool {
     return true
   }
-  
+
   override func goBack() -> WKNavigation? {
     goBackCalled = true
     return nil
   }
-  
+
   override func goForward() -> WKNavigation? {
     goForwardCalled = true
     return nil
   }
-  
+
   override func reload() -> WKNavigation? {
     reloadCalled = true
     return nil
   }
-  
+
   override var title: String? {
     return "title"
   }
-  
+
   override var allowsBackForwardNavigationGestures: Bool {
     set {
       setAllowsBackForwardNavigationGesturesArgs = [newValue]
@@ -347,7 +366,7 @@ class TestViewWKWebView: WKWebView {
       return true
     }
   }
-  
+
   override var customUserAgent: String? {
     set {
       setCustomUserAgentArgs = [newValue]
@@ -356,12 +375,14 @@ class TestViewWKWebView: WKWebView {
       return "myUserAgent"
     }
   }
-  
-  override func evaluateJavaScript(_ javaScriptString: String, completionHandler: (@MainActor (Any?, (any Error)?) -> Void)? = nil) {
+
+  override func evaluateJavaScript(
+    _ javaScriptString: String, completionHandler: (@MainActor (Any?, (any Error)?) -> Void)? = nil
+  ) {
     evaluateJavaScriptArgs = [javaScriptString]
     completionHandler?("returnValue", nil)
   }
-  
+
   override var isInspectable: Bool {
     set {
       setInspectableArgs = [newValue]

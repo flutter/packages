@@ -11,7 +11,9 @@ class ProtectionSpaceProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
 
-    let instance = URLProtectionSpace(host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod")
+    let instance = URLProtectionSpace(
+      host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
+    )
     let value = try? api.pigeonDelegate.host(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.host)
@@ -21,7 +23,9 @@ class ProtectionSpaceProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
 
-    let instance = URLProtectionSpace(host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod")
+    let instance = URLProtectionSpace(
+      host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
+    )
     let value = try? api.pigeonDelegate.port(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, Int64(instance.port))
@@ -31,7 +35,9 @@ class ProtectionSpaceProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
 
-    let instance = URLProtectionSpace(host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod")
+    let instance = URLProtectionSpace(
+      host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
+    )
     let value = try? api.pigeonDelegate.realm(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.realm)
@@ -41,8 +47,11 @@ class ProtectionSpaceProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
 
-    let instance = URLProtectionSpace(host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod")
-    let value = try? api.pigeonDelegate.authenticationMethod(pigeonApi: api, pigeonInstance: instance)
+    let instance = URLProtectionSpace(
+      host: "host", port: 23, protocol: "protocol", realm: "realm", authenticationMethod: "myMethod"
+    )
+    let value = try? api.pigeonDelegate.authenticationMethod(
+      pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.authenticationMethod)
   }

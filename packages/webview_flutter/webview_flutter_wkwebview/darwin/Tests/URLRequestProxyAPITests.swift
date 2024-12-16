@@ -41,7 +41,7 @@ class RequestProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
 
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
-    
+
     let method = "POST"
     instance.value.httpMethod = method
     let value = try? api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: instance)
@@ -67,7 +67,7 @@ class RequestProxyAPITests: XCTestCase {
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let body = FlutterStandardTypedData(bytes: Data())
     instance.value.httpBody = body.data
-    let value = try? api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value?.data, body.data)
   }
@@ -78,7 +78,8 @@ class RequestProxyAPITests: XCTestCase {
 
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let fields = ["key": "value"]
-    try? api.pigeonDelegate.setAllHttpHeaderFields(pigeonApi: api, pigeonInstance: instance, fields: fields)
+    try? api.pigeonDelegate.setAllHttpHeaderFields(
+      pigeonApi: api, pigeonInstance: instance, fields: fields)
 
     XCTAssertEqual(instance.value.allHTTPHeaderFields, fields)
   }
@@ -90,8 +91,9 @@ class RequestProxyAPITests: XCTestCase {
     let instance = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
     let fields = ["key": "value"]
     instance.value.allHTTPHeaderFields = fields
-    
-    let value = try? api.pigeonDelegate.getAllHttpHeaderFields(pigeonApi: api, pigeonInstance: instance )
+
+    let value = try? api.pigeonDelegate.getAllHttpHeaderFields(
+      pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, fields)
   }

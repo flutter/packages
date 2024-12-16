@@ -14,7 +14,8 @@ class PreferencesProxyAPITests: XCTestCase {
 
     let instance = WKPreferences()
     let enabled = true
-    try? api.pigeonDelegate.setJavaScriptEnabled(pigeonApi: api, pigeonInstance: instance, enabled: enabled)
+    try? api.pigeonDelegate.setJavaScriptEnabled(
+      pigeonApi: api, pigeonInstance: instance, enabled: enabled)
 
     XCTAssertEqual(instance.javaScriptEnabled, enabled)
   }

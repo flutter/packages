@@ -13,7 +13,8 @@ class NSObjectImpl: NSObject {
   }
 
   static func handleObserveValue(
-    withApi api: PigeonApiProtocolNSObject, registrar: ProxyAPIRegistrar, instance: NSObject, forKeyPath keyPath: String?,
+    withApi api: PigeonApiProtocolNSObject, registrar: ProxyAPIRegistrar, instance: NSObject,
+    forKeyPath keyPath: String?,
     of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?
   ) {
     let wrapperKeys: [KeyValueChangeKey: Any]?
@@ -59,7 +60,8 @@ class NSObjectImpl: NSObject {
     context: UnsafeMutableRawPointer?
   ) {
     NSObjectImpl.handleObserveValue(
-      withApi: api, registrar: registrar, instance: self as NSObject, forKeyPath: keyPath, of: object, change: change,
+      withApi: api, registrar: registrar, instance: self as NSObject, forKeyPath: keyPath,
+      of: object, change: change,
       context: context)
   }
 }

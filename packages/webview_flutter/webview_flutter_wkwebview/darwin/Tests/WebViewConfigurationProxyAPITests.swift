@@ -12,7 +12,7 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
     XCTAssertNotNil(instance)
   }
 
@@ -22,7 +22,8 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     let instance = WKWebViewConfiguration()
     let controller = WKUserContentController()
-    try? api.pigeonDelegate.setUserContentController(pigeonApi: api, pigeonInstance: instance, controller: controller)
+    try? api.pigeonDelegate.setUserContentController(
+      pigeonApi: api, pigeonInstance: instance, controller: controller)
 
     XCTAssertEqual(instance.userContentController, controller)
   }
@@ -32,7 +33,8 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getUserContentController(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.getUserContentController(
+      pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.userContentController)
   }
@@ -44,7 +46,8 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     let instance = WKWebViewConfiguration()
     let dataStore = WKWebsiteDataStore(forIdentifier: UUID())
-    try? api.pigeonDelegate.setWebsiteDataStore(pigeonApi: api, pigeonInstance: instance, dataStore: dataStore)
+    try? api.pigeonDelegate.setWebsiteDataStore(
+      pigeonApi: api, pigeonInstance: instance, dataStore: dataStore)
 
     XCTAssertEqual(instance.websiteDataStore, dataStore)
   }
@@ -54,7 +57,8 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getWebsiteDataStore(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.getWebsiteDataStore(
+      pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.websiteDataStore)
   }
@@ -65,7 +69,8 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     let instance = WKWebViewConfiguration()
     let preferences = WKPreferences()
-    try? api.pigeonDelegate.setPreferences(pigeonApi: api, pigeonInstance: instance, preferences: preferences)
+    try? api.pigeonDelegate.setPreferences(
+      pigeonApi: api, pigeonInstance: instance, preferences: preferences)
 
     XCTAssertEqual(instance.preferences, preferences)
   }
@@ -75,7 +80,7 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let value = try? api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.preferences)
   }
@@ -86,12 +91,13 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     let instance = WKWebViewConfiguration()
     let allow = true
-    try? api.pigeonDelegate.setAllowsInlineMediaPlayback(pigeonApi: api, pigeonInstance: instance, allow: allow)
+    try? api.pigeonDelegate.setAllowsInlineMediaPlayback(
+      pigeonApi: api, pigeonInstance: instance, allow: allow)
 
     // setAllowsInlineMediaPlayback does not existing on macOS; the call above should no-op for macOS.
-#if !os(macOS)
-    XCTAssertEqual(instance.allowsInlineMediaPlayback, allow)
-#endif
+    #if !os(macOS)
+      XCTAssertEqual(instance.allowsInlineMediaPlayback, allow)
+    #endif
   }
 
   @available(iOS 14.0, *)
@@ -101,7 +107,8 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     let instance = WKWebViewConfiguration()
     let limit = true
-    try? api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(pigeonApi: api, pigeonInstance: instance, limit: limit)
+    try? api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(
+      pigeonApi: api, pigeonInstance: instance, limit: limit)
 
     XCTAssertEqual(instance.limitsNavigationsToAppBoundDomains, limit)
   }
@@ -112,7 +119,8 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     let instance = WKWebViewConfiguration()
     let type: AudiovisualMediaType = .none
-    try? api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(pigeonApi: api, pigeonInstance: instance, type: type)
+    try? api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(
+      pigeonApi: api, pigeonInstance: instance, type: type)
 
     XCTAssertEqual(instance.mediaTypesRequiringUserActionForPlayback, [])
   }

@@ -11,10 +11,10 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
     pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]
   ) throws -> HTTPCookie {
     let registrar = pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar
-    
+
     let keyValueTuples = try! properties.map<[(HTTPCookiePropertyKey, Any)], PigeonError> {
       key, value in
-      
+
       let newKey: HTTPCookiePropertyKey
       switch key {
       case .comment:
@@ -47,7 +47,8 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
         if #available(iOS 13.0, macOS 10.15, *) {
           newKey = .sameSitePolicy
         } else {
-          throw registrar
+          throw
+            registrar
             .createUnsupportedVersionError(
               method: "HTTPCookiePropertyKey.sameSitePolicy",
               versionRequirements: "iOS 13.0, macOS 10.15")
@@ -59,13 +60,14 @@ class HTTPCookieProxyAPIDelegate: PigeonApiDelegateHTTPCookie {
 
       return (newKey, value)
     }
-    
+
     let nativeProperties = Dictionary(uniqueKeysWithValues: keyValueTuples)
     let cookie = HTTPCookie(properties: nativeProperties)
     if let cookie = cookie {
       return cookie
     } else {
-      throw registrar.createConstructorNullError(type: HTTPCookie.self, parameters: ["properties": nativeProperties])
+      throw registrar.createConstructorNullError(
+        type: HTTPCookie.self, parameters: ["properties": nativeProperties])
     }
   }
 

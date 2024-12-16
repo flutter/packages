@@ -34,9 +34,9 @@ class ErrorProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiNSError(registrar)
 
     let userInfo: [String: String?] = ["some": "info"]
-    let instance = NSError(domain: "", code: 0, userInfo: userInfo as [String : Any])
+    let instance = NSError(domain: "", code: 0, userInfo: userInfo as [String: Any])
     let value = try? api.pigeonDelegate.userInfo(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value as! [String : String?], userInfo)
+    XCTAssertEqual(value as! [String: String?], userInfo)
   }
 }

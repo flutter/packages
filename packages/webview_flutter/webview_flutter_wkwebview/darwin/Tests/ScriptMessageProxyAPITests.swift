@@ -33,7 +33,7 @@ class TestScriptMessage: WKScriptMessage {
   override var name: String {
     return "myString"
   }
-  
+
   override var body: Any {
     return NSNumber(integerLiteral: 23)
   }

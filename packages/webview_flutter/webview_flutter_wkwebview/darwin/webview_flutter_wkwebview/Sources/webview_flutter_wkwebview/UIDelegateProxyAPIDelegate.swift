@@ -48,10 +48,11 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     @unknown default:
       wrapperCaptureType = .unknown
     }
-    
+
     registrar.dispatchOnMainThread { onFailure in
       self.api.requestMediaCapturePermission(
-        pigeonInstance: self, webView: webView, origin: origin, frame: frame, type: wrapperCaptureType
+        pigeonInstance: self, webView: webView, origin: origin, frame: frame,
+        type: wrapperCaptureType
       ) { result in
         switch result {
         case .success(let decision):
@@ -76,7 +77,9 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor () -> Void
   ) {
     registrar.dispatchOnMainThread { onFailure in
-      self.api.runJavaScriptAlertPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
+      self.api.runJavaScriptAlertPanel(
+        pigeonInstance: self, webView: webView, message: message, frame: frame
+      ) { result in
         if case .failure(let error) = result {
           onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
         }
@@ -90,7 +93,9 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor (Bool) -> Void
   ) {
     registrar.dispatchOnMainThread { onFailure in
-      self.api.runJavaScriptConfirmPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
+      self.api.runJavaScriptConfirmPanel(
+        pigeonInstance: self, webView: webView, message: message, frame: frame
+      ) { result in
         switch result {
         case .success(let confirmed):
           completionHandler(confirmed)
@@ -109,7 +114,8 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
   ) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptTextInputPanel(
-        pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText, frame: frame
+        pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
+        frame: frame
       ) { result in
         switch result {
         case .success(let response):
@@ -129,6 +135,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
 /// or handle method calls on the associated native class or an instance of that class.
 class UIDelegateProxyAPIDelegate: PigeonApiDelegateWKUIDelegate {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUIDelegate) throws -> WKUIDelegate {
-    return UIDelegateImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    return UIDelegateImpl(
+      api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
 }

@@ -12,7 +12,8 @@ class UserScriptProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, source: "myString", injectionTime: .atDocumentStart, isForMainFrameOnly: true)
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, source: "myString", injectionTime: .atDocumentStart, isForMainFrameOnly: true)
     XCTAssertNotNil(instance)
   }
 
@@ -20,7 +21,8 @@ class UserScriptProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
-    let instance = WKUserScript(source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+    let instance = WKUserScript(
+      source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     let value = try? api.pigeonDelegate.source(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.source)
@@ -30,7 +32,8 @@ class UserScriptProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
-    let instance = WKUserScript(source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+    let instance = WKUserScript(
+      source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     let value = try? api.pigeonDelegate.injectionTime(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, .atDocumentEnd)
@@ -40,7 +43,8 @@ class UserScriptProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
 
-    let instance = WKUserScript(source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
+    let instance = WKUserScript(
+      source: "source", injectionTime: .atDocumentEnd, forMainFrameOnly: false)
     let value = try? api.pigeonDelegate.isForMainFrameOnly(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.isForMainFrameOnly)

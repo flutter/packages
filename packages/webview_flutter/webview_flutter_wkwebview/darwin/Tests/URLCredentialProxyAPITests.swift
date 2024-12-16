@@ -11,7 +11,8 @@ class URLCredentialProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiURLCredential(registrar)
 
-    let instance = try? api.pigeonDelegate.withUser(pigeonApi: api, user: "myString", password: "myString", persistence: .none)
+    let instance = try? api.pigeonDelegate.withUser(
+      pigeonApi: api, user: "myString", password: "myString", persistence: .none)
     XCTAssertNotNil(instance)
   }
 }

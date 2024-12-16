@@ -21,12 +21,12 @@ public class WebViewFlutterPlugin: NSObject, FlutterPlugin {
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
-    let binaryMessenger = registrar.messenger()
+      let binaryMessenger = registrar.messenger()
     #else
-    let binaryMessenger = registrar.messenger
+      let binaryMessenger = registrar.messenger
     #endif
     let plugin = WebViewFlutterPlugin(binaryMessenger: binaryMessenger)
-    
+
     let viewFactory = FlutterViewFactory(instanceManager: plugin.proxyApiRegistrar!.instanceManager)
     registrar.register(viewFactory, withId: "plugins.flutter.io/webview")
     registrar.publish(plugin)

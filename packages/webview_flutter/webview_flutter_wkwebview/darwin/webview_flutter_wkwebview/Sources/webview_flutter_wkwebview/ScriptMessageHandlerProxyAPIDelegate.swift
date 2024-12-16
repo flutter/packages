@@ -37,6 +37,7 @@ class ScriptMessageHandlerProxyAPIDelegate: PigeonApiDelegateWKScriptMessageHand
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKScriptMessageHandler) throws
     -> WKScriptMessageHandler
   {
-    return ScriptMessageHandlerImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    return ScriptMessageHandlerImpl(
+      api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
 }

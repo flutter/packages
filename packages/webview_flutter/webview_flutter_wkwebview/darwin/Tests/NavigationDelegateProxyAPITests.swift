@@ -12,7 +12,7 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKNavigationDelegate(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
     XCTAssertNotNil(instance)
   }
 
@@ -43,7 +43,7 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let navigationAction = TestNavigationAction()
-    
+
     var result: WKNavigationActionPolicy?
     instance.webView(webView, decidePolicyFor: navigationAction) { policy in
       result = policy
@@ -59,7 +59,7 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let navigationResponse = TestNavigationResponse()
-    
+
     var result: WKNavigationResponsePolicy?
     instance.webView(webView, decidePolicyFor: navigationResponse) { policy in
       result = policy
@@ -106,15 +106,17 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
-    let challenge = URLAuthenticationChallenge(protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 32, failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
-    
+    let challenge = URLAuthenticationChallenge(
+      protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 32,
+      failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
+
     var dispositionResult: URLSession.AuthChallengeDisposition?
     var credentialResult: URLCredential?
     instance.webView(webView, didReceive: challenge) { disposition, credential in
       dispositionResult = disposition
       credentialResult = credential
     }
-    
+
     XCTAssertEqual(api.didReceiveAuthenticationChallengeArgs, [webView, challenge])
     XCTAssertEqual(dispositionResult, .useCredential)
     XCTAssertNotNil(credentialResult)
@@ -130,63 +132,111 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   var didFailProvisionalNavigationArgs: [AnyHashable?]? = nil
   var webViewWebContentProcessDidTerminateArgs: [AnyHashable?]? = nil
   var didReceiveAuthenticationChallengeArgs: [AnyHashable?]? = nil
-  
+
   func registrar() -> ProxyAPIDelegate {
     return ProxyAPIDelegate()
   }
-  
-  func didFinishNavigation(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, url urlArg: String?, completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func didFinishNavigation(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    url urlArg: String?,
+    completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
+  ) {
     didFinishNavigationArgs = [webViewArg, urlArg]
   }
-  
-  func didStartProvisionalNavigation(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, url urlArg: String?, completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func didStartProvisionalNavigation(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    url urlArg: String?,
+    completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
+  ) {
     didStartProvisionalNavigationArgs = [webViewArg, urlArg]
   }
-  
-  func decidePolicyForNavigationAction(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, navigationAction navigationActionArg: WKNavigationAction, completion: @escaping (Result<webview_flutter_wkwebview.NavigationActionPolicy, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func decidePolicyForNavigationAction(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    navigationAction navigationActionArg: WKNavigationAction,
+    completion: @escaping (
+      Result<
+        webview_flutter_wkwebview.NavigationActionPolicy, webview_flutter_wkwebview.PigeonError
+      >
+    ) -> Void
+  ) {
     decidePolicyForNavigationActionArgs = [webViewArg, navigationActionArg]
     completion(.success(.allow))
   }
-  
-  func decidePolicyForNavigationResponse(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, navigationResponse navigationResponseArg: WKNavigationResponse, completion: @escaping (Result<webview_flutter_wkwebview.NavigationResponsePolicy, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func decidePolicyForNavigationResponse(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    navigationResponse navigationResponseArg: WKNavigationResponse,
+    completion: @escaping (
+      Result<
+        webview_flutter_wkwebview.NavigationResponsePolicy, webview_flutter_wkwebview.PigeonError
+      >
+    ) -> Void
+  ) {
     decidePolicyForNavigationResponseArgs = [webViewArg, navigationResponseArg]
     completion(.success(.cancel))
   }
-  
-  func didFailNavigation(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, error errorArg: NSError, completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func didFailNavigation(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    error errorArg: NSError,
+    completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
+  ) {
     didFailNavigationArgs = [webViewArg, errorArg]
   }
-  
-  func didFailProvisionalNavigation(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, error errorArg: NSError, completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func didFailProvisionalNavigation(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    error errorArg: NSError,
+    completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
+  ) {
     didFailProvisionalNavigationArgs = [webViewArg, errorArg]
   }
-  
-  func webViewWebContentProcessDidTerminate(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func webViewWebContentProcessDidTerminate(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
+  ) {
     webViewWebContentProcessDidTerminateArgs = [webViewArg]
   }
-  
-  func didReceiveAuthenticationChallenge(pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView, challenge challengeArg: URLAuthenticationChallenge, completion: @escaping (Result<webview_flutter_wkwebview.AuthenticationChallengeResponse, webview_flutter_wkwebview.PigeonError>) -> Void) {
+
+  func didReceiveAuthenticationChallenge(
+    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    challenge challengeArg: URLAuthenticationChallenge,
+    completion: @escaping (
+      Result<
+        webview_flutter_wkwebview.AuthenticationChallengeResponse,
+        webview_flutter_wkwebview.PigeonError
+      >
+    ) -> Void
+  ) {
     didReceiveAuthenticationChallengeArgs = [webViewArg, challengeArg]
-    completion(.success(AuthenticationChallengeResponse(disposition: .useCredential, credential: URLCredential())))
+    completion(
+      .success(
+        AuthenticationChallengeResponse(disposition: .useCredential, credential: URLCredential())))
   }
 }
 
-class TestWebView : WKWebView {
+class TestWebView: WKWebView {
   override var url: URL? {
     return URL(string: "http://google.com")
   }
 }
 
-class TestURLAuthenticationChallengeSender : NSObject, URLAuthenticationChallengeSender, @unchecked Sendable {
+class TestURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender, @unchecked
+  Sendable
+{
   func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {
-    
+
   }
-  
+
   func continueWithoutCredential(for challenge: URLAuthenticationChallenge) {
-    
+
   }
-  
+
   func cancel(_ challenge: URLAuthenticationChallenge) {
-    
+
   }
 }

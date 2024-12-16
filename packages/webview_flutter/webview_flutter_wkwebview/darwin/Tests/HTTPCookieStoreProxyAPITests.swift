@@ -13,10 +13,13 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKHTTPCookieStore(registrar)
 
     var instance: TestCookieStore? = TestCookieStore.customInit()
-    let cookie = HTTPCookie(properties: [.name : "foo", .value: "bar", .domain: "http://google.com", .path: "/anything"])!
-    
+    let cookie = HTTPCookie(properties: [
+      .name: "foo", .value: "bar", .domain: "http://google.com", .path: "/anything",
+    ])!
+
     let expect = expectation(description: "Wait for setCookie.")
-    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance!, cookie: cookie) { result in
+    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance!, cookie: cookie) {
+      result in
       switch result {
       case .success(_):
         expect.fulfill()
@@ -27,7 +30,7 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
 
     wait(for: [expect], timeout: 1.0)
     XCTAssertEqual(instance!.setCookieArg, cookie)
-    
+
     // Ensure instance is deallocated on main thread.
     DispatchQueue.main.async {
       instance = nil
@@ -39,12 +42,12 @@ class TestCookieStore: WKHTTPCookieStore {
   var setCookieArg: HTTPCookie? = nil
 
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
-    static func customInit() -> TestCookieStore {
-      let instance =
+  static func customInit() -> TestCookieStore {
+    let instance =
       TestCookieStore.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestCookieStore
-      return instance
-    }
-  
+    return instance
+  }
+
   override func setCookie(_ cookie: HTTPCookie, completionHandler: (@MainActor () -> Void)? = nil) {
     setCookieArg = cookie
     completionHandler?()

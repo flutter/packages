@@ -12,7 +12,7 @@ class UIDelegateProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKUIDelegate(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
     XCTAssertNotNil(instance)
   }
 
@@ -23,8 +23,10 @@ class UIDelegateProxyAPITests: XCTestCase {
     let webView = WKWebView(frame: .zero)
     let configuration = WKWebViewConfiguration()
     let navigationAction = TestNavigationAction()
-    
-    let result = instance.webView(webView, createWebViewWith: configuration, for: navigationAction, windowFeatures: WKWindowFeatures())
+
+    let result = instance.webView(
+      webView, createWebViewWith: configuration, for: navigationAction,
+      windowFeatures: WKWindowFeatures())
 
     XCTAssertEqual(api.onCreateWebViewArgs, [webView, configuration, navigationAction])
     XCTAssertNil(result)
@@ -39,13 +41,16 @@ class UIDelegateProxyAPITests: XCTestCase {
     let origin = SecurityOriginProxyAPITests.testSecurityOrigin
     let frame = TestFrameInfo()
     let type: WKMediaCaptureType = .camera
-    
+
     var resultDecision: WKPermissionDecision?
-    instance.webView(webView, requestMediaCapturePermissionFor: origin, initiatedByFrame: frame, type: type) { decision in
+    instance.webView(
+      webView, requestMediaCapturePermissionFor: origin, initiatedByFrame: frame, type: type
+    ) { decision in
       resultDecision = decision
     }
 
-    XCTAssertEqual(api.requestMediaCapturePermissionArgs, [webView, origin, frame, MediaCaptureType.camera])
+    XCTAssertEqual(
+      api.requestMediaCapturePermissionArgs, [webView, origin, frame, MediaCaptureType.camera])
     XCTAssertEqual(resultDecision, .prompt)
   }
 
@@ -56,8 +61,9 @@ class UIDelegateProxyAPITests: XCTestCase {
     let webView = WKWebView(frame: .zero)
     let message = "myString"
     let frame = TestFrameInfo()
-    
-    instance.webView(webView, runJavaScriptAlertPanelWithMessage: message, initiatedByFrame: frame) {
+
+    instance.webView(webView, runJavaScriptAlertPanelWithMessage: message, initiatedByFrame: frame)
+    {
     }
 
     XCTAssertEqual(api.runJavaScriptAlertPanelArgs, [webView, message, frame])
@@ -70,9 +76,11 @@ class UIDelegateProxyAPITests: XCTestCase {
     let webView = WKWebView(frame: .zero)
     let message = "myString"
     let frame = TestFrameInfo()
-    
+
     var confirmedResult: Bool?
-    instance.webView(webView, runJavaScriptConfirmPanelWithMessage: message, initiatedByFrame: frame) { confirmed in
+    instance.webView(
+      webView, runJavaScriptConfirmPanelWithMessage: message, initiatedByFrame: frame
+    ) { confirmed in
       confirmedResult = confirmed
     }
 
@@ -88,9 +96,12 @@ class UIDelegateProxyAPITests: XCTestCase {
     let prompt = "myString"
     let defaultText = "myString3"
     let frame = TestFrameInfo()
-    
+
     var inputResult: String?
-    instance.webView(webView, runJavaScriptTextInputPanelWithPrompt: prompt, defaultText: defaultText, initiatedByFrame: frame) { input in
+    instance.webView(
+      webView, runJavaScriptTextInputPanelWithPrompt: prompt, defaultText: defaultText,
+      initiatedByFrame: frame
+    ) { input in
       inputResult = input
     }
 
@@ -105,26 +116,47 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   var runJavaScriptAlertPanelArgs: [AnyHashable?]? = nil
   var runJavaScriptConfirmPanelArgs: [AnyHashable?]? = nil
   var runJavaScriptTextInputPanelArgs: [AnyHashable?]? = nil
-  
-  func onCreateWebView(pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView, configuration configurationArg: WKWebViewConfiguration, navigationAction navigationActionArg: WKNavigationAction, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+
+  func onCreateWebView(
+    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    configuration configurationArg: WKWebViewConfiguration,
+    navigationAction navigationActionArg: WKNavigationAction,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     onCreateWebViewArgs = [webViewArg, configurationArg, navigationActionArg]
   }
 
-  func requestMediaCapturePermission(pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView, origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType, completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void) {
+  func requestMediaCapturePermission(
+    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType,
+    completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void
+  ) {
     requestMediaCapturePermissionArgs = [webViewArg, originArg, frameArg, typeArg]
     completion(.success(.prompt))
   }
-  
-  func runJavaScriptAlertPanel(pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+
+  func runJavaScriptAlertPanel(
+    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    message messageArg: String, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     runJavaScriptAlertPanelArgs = [webViewArg, messageArg, frameArg]
   }
-  
-  func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void) {
+
+  func runJavaScriptConfirmPanel(
+    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    message messageArg: String, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<Bool, PigeonError>) -> Void
+  ) {
     runJavaScriptConfirmPanelArgs = [webViewArg, messageArg, frameArg]
     completion(.success(true))
   }
-  
-  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void) {
+
+  func runJavaScriptTextInputPanel(
+    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<String?, PigeonError>) -> Void
+  ) {
     runJavaScriptTextInputPanelArgs = [webViewArg, promptArg, defaultTextArg, frameArg]
     completion(.success("myString2"))
   }

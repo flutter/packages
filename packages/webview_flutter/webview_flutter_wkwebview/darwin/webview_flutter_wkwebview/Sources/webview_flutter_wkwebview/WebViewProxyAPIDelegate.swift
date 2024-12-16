@@ -8,16 +8,19 @@ class WebViewImpl: WKWebView {
   let api: PigeonApiProtocolWKWebView
   unowned let registrar: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolWKWebView, registrar: ProxyAPIRegistrar, frame: CGRect, configuration: WKWebViewConfiguration) {
+  init(
+    api: PigeonApiProtocolWKWebView, registrar: ProxyAPIRegistrar, frame: CGRect,
+    configuration: WKWebViewConfiguration
+  ) {
     self.api = api
     self.registrar = registrar
     super.init(frame: frame, configuration: configuration)
-#if os(iOS)
+    #if os(iOS)
       scrollView.contentInsetAdjustmentBehavior = .never
       if #available(iOS 13.0, *) {
         scrollView.automaticallyAdjustsScrollIndicatorInsets = false
       }
-#endif
+    #endif
   }
 
   required init?(coder: NSCoder) {
@@ -29,27 +32,30 @@ class WebViewImpl: WKWebView {
     context: UnsafeMutableRawPointer?
   ) {
     NSObjectImpl.handleObserveValue(
-      withApi: (api as! PigeonApiWKWebView).pigeonApiNSObject, registrar: registrar, instance: self as NSObject,
+      withApi: (api as! PigeonApiWKWebView).pigeonApiNSObject, registrar: registrar,
+      instance: self as NSObject,
       forKeyPath: keyPath, of: object, change: change, context: context)
   }
-  
+
   override var frame: CGRect {
     get {
       return super.frame
     }
     set {
       super.frame = newValue
-#if os(iOS)
-      // Prevents the contentInsets from being adjusted by iOS and gives control to Flutter.
-      scrollView.contentInset = .zero
-      
-      // Adjust contentInset to compensate the adjustedContentInset so the sum will
-      //  always be 0.
-      if scrollView.adjustedContentInset != .zero {
-        let insetToAdjust = scrollView.adjustedContentInset
-        scrollView.contentInset = UIEdgeInsets(top: -insetToAdjust.top, left: -insetToAdjust.left, bottom: -insetToAdjust.bottom, right: -insetToAdjust.right)
-      }
-#endif
+      #if os(iOS)
+        // Prevents the contentInsets from being adjusted by iOS and gives control to Flutter.
+        scrollView.contentInset = .zero
+
+        // Adjust contentInset to compensate the adjustedContentInset so the sum will
+        //  always be 0.
+        if scrollView.adjustedContentInset != .zero {
+          let insetToAdjust = scrollView.adjustedContentInset
+          scrollView.contentInset = UIEdgeInsets(
+            top: -insetToAdjust.top, left: -insetToAdjust.left, bottom: -insetToAdjust.bottom,
+            right: -insetToAdjust.right)
+        }
+      #endif
     }
   }
 }
@@ -62,23 +68,27 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   PigeonApiDelegateNSViewWKWebView
 {
   #if os(iOS)
-  func scrollView(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
-    -> UIScrollView
-  {
-    return pigeonInstance.scrollView
-  }
+    func scrollView(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+      -> UIScrollView
+    {
+      return pigeonInstance.scrollView
+    }
   #endif
 
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiUIViewWKWebView, initialConfiguration: WKWebViewConfiguration
   ) throws -> WKWebView {
     return WebViewImpl(
-      api: pigeonApi.pigeonApiWKWebView, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar, frame: CGRect(), configuration: initialConfiguration)
+      api: pigeonApi.pigeonApiWKWebView, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar,
+      frame: CGRect(), configuration: initialConfiguration)
   }
-  
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSViewWKWebView, initialConfiguration: WKWebViewConfiguration) throws -> WKWebView {
+
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiNSViewWKWebView, initialConfiguration: WKWebViewConfiguration
+  ) throws -> WKWebView {
     return WebViewImpl(
-      api: pigeonApi.pigeonApiWKWebView, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar, frame: CGRect(), configuration: initialConfiguration)
+      api: pigeonApi.pigeonApiWKWebView, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar,
+      frame: CGRect(), configuration: initialConfiguration)
   }
 
   func configuration(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView)
@@ -86,8 +96,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   {
     return pigeonInstance.configuration
   }
-  
-  func configuration(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> WKWebViewConfiguration {
+
+  func configuration(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+    -> WKWebViewConfiguration
+  {
     return pigeonInstance.configuration
   }
 
@@ -96,8 +108,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   ) throws {
     pigeonInstance.uiDelegate = delegate
   }
-  
-  func setUIDelegate(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: any WKUIDelegate) throws {
+
+  func setUIDelegate(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: any WKUIDelegate
+  ) throws {
     pigeonInstance.uiDelegate = delegate
   }
 
@@ -106,15 +120,18 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   ) throws {
     pigeonInstance.navigationDelegate = delegate
   }
-  
-  func setNavigationDelegate(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: any WKNavigationDelegate) throws {
+
+  func setNavigationDelegate(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView,
+    delegate: any WKNavigationDelegate
+  ) throws {
     pigeonInstance.navigationDelegate = delegate
   }
 
   func getUrl(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
     return pigeonInstance.url?.absoluteString
   }
-  
+
   func getUrl(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
     return pigeonInstance.url?.absoluteString
   }
@@ -124,8 +141,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   {
     return pigeonInstance.estimatedProgress
   }
-  
-  func getEstimatedProgress(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Double {
+
+  func getEstimatedProgress(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+    -> Double
+  {
     return pigeonInstance.estimatedProgress
   }
 
@@ -134,8 +153,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   ) throws {
     pigeonInstance.load(request.value)
   }
-  
-  func load(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper) throws {
+
+  func load(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper
+  ) throws {
     pigeonInstance.load(request.value)
   }
 
@@ -144,8 +165,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   ) throws {
     pigeonInstance.loadHTMLString(string, baseURL: baseUrl != nil ? URL(string: baseUrl!)! : nil)
   }
-  
-  func loadHtmlString(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?) throws {
+
+  func loadHtmlString(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?
+  ) throws {
     pigeonInstance.loadHTMLString(string, baseURL: baseUrl != nil ? URL(string: baseUrl!)! : nil)
   }
 
@@ -158,8 +181,11 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
 
     pigeonInstance.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
   }
-  
-  func loadFileUrl(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, url: String, readAccessUrl: String) throws {
+
+  func loadFileUrl(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, url: String,
+    readAccessUrl: String
+  ) throws {
     let fileURL = URL(fileURLWithPath: url, isDirectory: false)
     let readAccessURL = URL(fileURLWithPath: readAccessUrl, isDirectory: true)
 
@@ -179,11 +205,15 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     if let url {
       pigeonInstance.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
     } else {
-      throw PigeonError(code: "FWFURLParsingError", message: "Failed to find asset with filepath: `\(assetFilePath)`.", details: nil)
+      throw PigeonError(
+        code: "FWFURLParsingError",
+        message: "Failed to find asset with filepath: `\(assetFilePath)`.", details: nil)
     }
   }
-  
-  func loadFlutterAsset(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, key: String) throws {
+
+  func loadFlutterAsset(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, key: String)
+    throws
+  {
     let registrar = pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar
     let assetFilePath = registrar.assetManager.lookupKeyForAsset(key)
 
@@ -194,14 +224,16 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     if let url {
       pigeonInstance.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
     } else {
-      throw PigeonError(code: "FWFURLParsingError", message: "Failed to find asset with filepath: `\(assetFilePath)`.", details: nil)
+      throw PigeonError(
+        code: "FWFURLParsingError",
+        message: "Failed to find asset with filepath: `\(assetFilePath)`.", details: nil)
     }
   }
 
   func canGoBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
     return pigeonInstance.canGoBack
   }
-  
+
   func canGoBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
     return pigeonInstance.canGoBack
   }
@@ -209,7 +241,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   func canGoForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
     return pigeonInstance.canGoForward
   }
-  
+
   func canGoForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
     return pigeonInstance.canGoForward
   }
@@ -217,7 +249,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   func goBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws {
     pigeonInstance.goBack()
   }
-  
+
   func goBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws {
     pigeonInstance.goBack()
   }
@@ -225,7 +257,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   func goForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws {
     pigeonInstance.goForward()
   }
-  
+
   func goForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws {
     pigeonInstance.goForward()
   }
@@ -233,7 +265,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   func reload(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws {
     pigeonInstance.reload()
   }
-  
+
   func reload(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws {
     pigeonInstance.reload()
   }
@@ -241,7 +273,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   func getTitle(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
     return pigeonInstance.title
   }
-  
+
   func getTitle(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
     return pigeonInstance.title
   }
@@ -251,8 +283,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   ) throws {
     pigeonInstance.allowsBackForwardNavigationGestures = allow
   }
-  
-  func setAllowsBackForwardNavigationGestures(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws {
+
+  func setAllowsBackForwardNavigationGestures(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool
+  ) throws {
     pigeonInstance.allowsBackForwardNavigationGestures = allow
   }
 
@@ -261,8 +295,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   ) throws {
     pigeonInstance.customUserAgent = userAgent
   }
-  
-  func setCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, userAgent: String?) throws {
+
+  func setCustomUserAgent(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, userAgent: String?
+  ) throws {
     pigeonInstance.customUserAgent = userAgent
   }
 
@@ -296,8 +332,11 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
       }
     }
   }
-  
-  func evaluateJavaScript(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String, completion: @escaping (Result<Any?, any Error>) -> Void) {
+
+  func evaluateJavaScript(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String,
+    completion: @escaping (Result<Any?, any Error>) -> Void
+  ) {
     pigeonInstance.evaluateJavaScript(javaScriptString) { result, error in
       if error == nil {
         if let optionalResult = result as Any?? {
@@ -340,8 +379,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
           versionRequirements: "iOS 16.4, macOS 13.3")
     }
   }
-  
-  func setInspectable(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool) throws {
+
+  func setInspectable(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool
+  ) throws {
     if #available(iOS 16.4, macOS 13.3, *) {
       pigeonInstance.isInspectable = inspectable
       if pigeonInstance.responds(to: Selector(("isInspectable:"))) {
@@ -360,8 +401,10 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   {
     return pigeonInstance.customUserAgent
   }
-  
-  func getCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
+
+  func getCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+    -> String?
+  {
     return pigeonInstance.customUserAgent
   }
 }

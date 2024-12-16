@@ -27,19 +27,23 @@ class WebsiteDataStoreProxyAPITests: XCTestCase {
     let instance = WKWebsiteDataStore.default()
     let dataTypes: [WebsiteDataType] = [.localStorage]
     let modificationTimeInSecondsSinceEpoch = 0.0
-    
-    let removeDataOfTypesExpectation = expectation(description: "Wait for result of removeDataOfTypes.")
-    
+
+    let removeDataOfTypesExpectation = expectation(
+      description: "Wait for result of removeDataOfTypes.")
+
     var removeDataOfTypesResult: Bool?
-    api.pigeonDelegate.removeDataOfTypes(pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes, modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch, completion: { result in
-      switch result {
-      case .success(let hasRecords):
-        removeDataOfTypesResult = hasRecords
-      case .failure(_): break
-      }
-      
-      removeDataOfTypesExpectation.fulfill()
-    })
+    api.pigeonDelegate.removeDataOfTypes(
+      pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes,
+      modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch,
+      completion: { result in
+        switch result {
+        case .success(let hasRecords):
+          removeDataOfTypesResult = hasRecords
+        case .failure(_): break
+        }
+
+        removeDataOfTypesExpectation.fulfill()
+      })
 
     wait(for: [removeDataOfTypesExpectation], timeout: 10.0)
     XCTAssertNotNil(removeDataOfTypesResult)

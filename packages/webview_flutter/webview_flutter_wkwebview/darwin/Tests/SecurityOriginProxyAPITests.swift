@@ -10,7 +10,7 @@ import XCTest
 @MainActor
 class SecurityOriginProxyAPITests: XCTestCase {
   static let testSecurityOrigin = TestSecurityOrigin.customInit()
-  
+
   @MainActor func testHost() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
@@ -44,20 +44,21 @@ class SecurityOriginProxyAPITests: XCTestCase {
 
 class TestSecurityOrigin: WKSecurityOrigin {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
-    static func customInit() -> TestSecurityOrigin {
-      let instance =
-      TestSecurityOrigin.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestSecurityOrigin
-      return instance
-    }
-  
+  static func customInit() -> TestSecurityOrigin {
+    let instance =
+      TestSecurityOrigin.perform(NSSelectorFromString("new")).takeRetainedValue()
+      as! TestSecurityOrigin
+    return instance
+  }
+
   override var host: String {
     return "host"
   }
-  
+
   override var port: Int {
     return 23
   }
-  
+
   override var `protocol`: String {
     return "protocol"
   }

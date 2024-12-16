@@ -12,7 +12,7 @@ class ScriptMessageHandlerProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
     XCTAssertNotNil(instance)
   }
 
@@ -22,7 +22,7 @@ class ScriptMessageHandlerProxyAPITests: XCTestCase {
     let instance = ScriptMessageHandlerImpl(api: api, registrar: registrar)
     let controller = WKUserContentController()
     let message = WKScriptMessage()
-    
+
     instance.userContentController(controller, didReceive: message)
 
     XCTAssertEqual(api.didReceiveScriptMessageArgs, [controller, message])
@@ -31,8 +31,12 @@ class ScriptMessageHandlerProxyAPITests: XCTestCase {
 
 class TestScriptMessageHandlerApi: PigeonApiProtocolWKScriptMessageHandler {
   var didReceiveScriptMessageArgs: [AnyHashable?]? = nil
-  
-  func didReceiveScriptMessage(pigeonInstance pigeonInstanceArg: any WKScriptMessageHandler, controller controllerArg: WKUserContentController, message messageArg: WKScriptMessage, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+
+  func didReceiveScriptMessage(
+    pigeonInstance pigeonInstanceArg: any WKScriptMessageHandler,
+    controller controllerArg: WKUserContentController, message messageArg: WKScriptMessage,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     didReceiveScriptMessageArgs = [controllerArg, messageArg]
   }
 }
