@@ -1,9 +1,3 @@
-//
-//  RunnerTests-Bridging-Header.h
-//  Runner
-//
-//  Created by Maurice Parrish on 11/30/24.
-//  Copyright © 2024 The Flutter Authors. All rights reserved.
-
-
-
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
