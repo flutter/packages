@@ -277,55 +277,59 @@ class WebViewProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value, instance.customUserAgent)
   }
-  
-#if os(iOS)
-  @MainActor func testWebViewContentInsetBehaviorShouldBeNever() {
-    let registrar = TestProxyApiRegistrar()
-    let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
-    
-    let webView = WebViewImpl(api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
-    
-    XCTAssertEqual(webView.scrollView.contentInsetAdjustmentBehavior, .never)
-  }
 
-  @available(iOS 13.0, *)
-  @MainActor
-  func testScrollViewsAutomaticallyAdjustsScrollIndicatorInsetsShouldbeFalse() {
-    let registrar = TestProxyApiRegistrar()
-    let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
-    
-    let webView = WebViewImpl(api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
-    
-    XCTAssertFalse(webView.scrollView.automaticallyAdjustsScrollIndicatorInsets)
-  }
+  #if os(iOS)
+    @MainActor func testWebViewContentInsetBehaviorShouldBeNever() {
+      let registrar = TestProxyApiRegistrar()
+      let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
 
-  @MainActor func testContentInsetsSumAlwaysZeroAfterSetFrame() {
-    let registrar = TestProxyApiRegistrar()
-    let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
-    
-    let webView = WebViewImpl(api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
-    
-    webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 300, right: 300)
-    
-    webView.frame = .zero
-    XCTAssertEqual(webView.scrollView.contentInset, .zero)
-  }
-  
-  @MainActor func testContentInsetsIsOppositeOfScrollViewAdjustedInset() {
-    let registrar = TestProxyApiRegistrar()
-    let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
-    
-    let webView = WebViewImpl(api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
-    
-    webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 300, right: 300)
-    
-    webView.frame = .zero
-    let contentInset: UIEdgeInsets = webView.scrollView.contentInset
-    XCTAssertEqual(contentInset.left, -webView.scrollView.adjustedContentInset.left)
-    XCTAssertEqual(contentInset.top, -webView.scrollView.adjustedContentInset.top)
-    XCTAssertEqual(contentInset.right, -webView.scrollView.adjustedContentInset.right)
-    XCTAssertEqual(contentInset.bottom, -webView.scrollView.adjustedContentInset.bottom)
-  }
+      let webView = WebViewImpl(
+        api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
+
+      XCTAssertEqual(webView.scrollView.contentInsetAdjustmentBehavior, .never)
+    }
+
+    @available(iOS 13.0, *)
+    @MainActor
+    func testScrollViewsAutomaticallyAdjustsScrollIndicatorInsetsShouldbeFalse() {
+      let registrar = TestProxyApiRegistrar()
+      let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
+
+      let webView = WebViewImpl(
+        api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
+
+      XCTAssertFalse(webView.scrollView.automaticallyAdjustsScrollIndicatorInsets)
+    }
+
+    @MainActor func testContentInsetsSumAlwaysZeroAfterSetFrame() {
+      let registrar = TestProxyApiRegistrar()
+      let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
+
+      let webView = WebViewImpl(
+        api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
+
+      webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 300, right: 300)
+
+      webView.frame = .zero
+      XCTAssertEqual(webView.scrollView.contentInset, .zero)
+    }
+
+    @MainActor func testContentInsetsIsOppositeOfScrollViewAdjustedInset() {
+      let registrar = TestProxyApiRegistrar()
+      let api = PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: WebViewProxyAPIDelegate())
+
+      let webView = WebViewImpl(
+        api: api, registrar: registrar, frame: .zero, configuration: WKWebViewConfiguration())
+
+      webView.scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 300, right: 300)
+
+      webView.frame = .zero
+      let contentInset: UIEdgeInsets = webView.scrollView.contentInset
+      XCTAssertEqual(contentInset.left, -webView.scrollView.adjustedContentInset.left)
+      XCTAssertEqual(contentInset.top, -webView.scrollView.adjustedContentInset.top)
+      XCTAssertEqual(contentInset.right, -webView.scrollView.adjustedContentInset.right)
+      XCTAssertEqual(contentInset.bottom, -webView.scrollView.adjustedContentInset.bottom)
+    }
   #endif
 }
 
@@ -333,7 +337,7 @@ class WebViewProxyAPITests: XCTestCase {
 class TestViewWKWebView: WKWebView {
   private var configurationTestValue = WKWebViewConfiguration()
   #if os(iOS)
-  private var scrollViewTestValue = TestAdjustedScrollView(frame: .zero)
+    private var scrollViewTestValue = TestAdjustedScrollView(frame: .zero)
   #endif
   var getUrlCalled = false
   var getEstimatedProgressCalled = false
@@ -357,9 +361,9 @@ class TestViewWKWebView: WKWebView {
   }
 
   #if os(iOS)
-  override var scrollView: UIScrollView {
-    return scrollViewTestValue
-  }
+    override var scrollView: UIScrollView {
+      return scrollViewTestValue
+    }
   #endif
 
   override var url: URL? {
@@ -448,10 +452,10 @@ class TestViewWKWebView: WKWebView {
 }
 
 #if os(iOS)
-@MainActor
-class TestAdjustedScrollView: UIScrollView {
-  override var adjustedContentInset: UIEdgeInsets {
-    return UIEdgeInsets(top: 10, left: 20, bottom: 30, right: 40)
+  @MainActor
+  class TestAdjustedScrollView: UIScrollView {
+    override var adjustedContentInset: UIEdgeInsets {
+      return UIEdgeInsets(top: 10, left: 20, bottom: 30, right: 40)
+    }
   }
-}
 #endif
