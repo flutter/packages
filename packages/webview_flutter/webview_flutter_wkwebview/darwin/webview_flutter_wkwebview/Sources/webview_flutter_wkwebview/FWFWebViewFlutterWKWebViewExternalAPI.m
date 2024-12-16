@@ -12,7 +12,7 @@
 @implementation FWFWebViewFlutterWKWebViewExternalAPI
 + (nullable WKWebView *)webViewForIdentifier:(long)identifier
                           withPluginRegistry:(id<FlutterPluginRegistry>)registry {
-  return [WebViewFlutterWKWebViewExternalAPI webViewForIdentifier:@(identifier)
+  return [WebViewFlutterWKWebViewExternalAPI webViewForIdentifier:identifier
                                                withPluginRegistry:registry];
 }
 @end

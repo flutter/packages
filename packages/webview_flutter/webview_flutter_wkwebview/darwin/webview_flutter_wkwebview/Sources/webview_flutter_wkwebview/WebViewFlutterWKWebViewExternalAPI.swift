@@ -16,12 +16,12 @@ import WebKit
 public class WebViewFlutterWKWebViewExternalAPI: NSObject {
   @objc
   public static func webView(
-    forIdentifier identifier: NSNumber, withPluginRegistry registry: FlutterPluginRegistry
+    forIdentifier identifier: Int64, withPluginRegistry registry: FlutterPluginRegistry
   ) -> WKWebView? {
     let plugin = registry.valuePublished(byPlugin: "WebViewFlutterPlugin") as! WebViewFlutterPlugin
 
     let webView: WKWebView? = plugin.proxyApiRegistrar?.instanceManager.instance(
-      forIdentifier: identifier.int64Value)
+      forIdentifier: identifier)
     return webView
   }
 }
