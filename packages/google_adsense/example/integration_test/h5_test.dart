@@ -38,7 +38,8 @@ void main() {
 
       // Pump frames so we can see what happened with adBreak
       await tester.pump();
-      await tester.pump();
+      // Wait for the async bits of adBreak
+      await tester.pump(const Duration(milliseconds: 250));
 
       expect(lastAdBreakPlacement, isNotNull);
       expect(lastAdBreakPlacement!.type?.toDart, 'reward');
@@ -70,7 +71,8 @@ void main() {
 
       // Pump frames so we can see what happened with adBreak
       await tester.pump();
-      await tester.pump();
+      // Wait for the async bits of adBreak
+      await tester.pump(const Duration(milliseconds: 250));
 
       expect(lastPlacementInfo, isNotNull);
       expect(lastPlacementInfo!.breakName, 'ok-for-tests');
@@ -91,7 +93,8 @@ void main() {
 
       // Pump frames so we can see what happened with adBreak
       await tester.pump();
-      await tester.pump();
+      // Wait for the async bits of adBreak
+      await tester.pump(const Duration(milliseconds: 250));
 
       expect(lastAdBreakPlacement!.name!.toDart, 'APFlutter-my-test-break');
     });
@@ -119,6 +122,7 @@ void main() {
 
       // Pump frames so we can see what happened with adConfig
       await tester.pump();
+      // adConfig doesn't have async bits
       await tester.pump();
 
       expect(lastAdConfigParameters, isNotNull);
