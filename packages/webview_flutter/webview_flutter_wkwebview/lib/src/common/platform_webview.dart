@@ -37,6 +37,7 @@ class PlatformWebView {
     }
   }
 
+  /// Creates a [PlatformWebView] with the native WebView instance.
   PlatformWebView.fromNativeWebView(WKWebView webView)
       : nativeWebView = webView;
 
