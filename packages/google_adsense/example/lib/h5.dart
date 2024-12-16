@@ -12,7 +12,15 @@ import 'package:google_adsense/h5.dart';
 // #enddocregion import-h5
 
 void main() async {
-  await adSense.initialize('0123456789012345');
+  // #docregion initialize-with-code-parameters
+  await adSense.initialize(
+    '0123456789012345',
+    adSenseCodeParameters: AdSenseCodeParameters(
+      adbreakTest: 'on',
+      adFrequencyHint: '30s',
+    ),
+  );
+  // #enddocregion initialize-with-code-parameters
   runApp(const MyApp());
 }
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:js_interop';
 
 import 'package:flutter/widgets.dart' show visibleForTesting;
@@ -117,9 +118,14 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
       beforeAd: beforeAd?.toJS,
       afterAd: afterAd?.toJS,
       beforeReward: beforeReward != null
-          ? (JSFunction fn) {
+          ? (JSFunction showAdFn) {
               beforeReward(() {
-                fn.callAsFunction();
+                // Delay the call to `showAdFn` so tap users don't trigger a click on the
+                // ad on pointerup. This should leaves enough time for Flutter to settle
+                // its tap events, before triggering the H5 ad.
+                Timer(const Duration(milliseconds: 100), () {
+                  showAdFn.callAsFunction();
+                });
               });
             }.toJS
           : null,

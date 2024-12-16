@@ -31,3 +31,23 @@ void main() async {
   runApp(const MyApp());
 }
 ```
+
+## Configure additional AdSense code parameters
+
+You can pass an `AdSenseCodeParameters` object to the `adSense.initialize` call
+to configure additional settings, like a custom channel ID, or for regulatory
+compliance.
+
+<?code-excerpt "../example/lib/h5.dart (initialize-with-code-parameters)"?>
+```dart
+await adSense.initialize(
+  '0123456789012345',
+  adSenseCodeParameters: AdSenseCodeParameters(
+    adbreakTest: 'on',
+    adFrequencyHint: '30s',
+  ),
+);
+```
+
+Check the Google AdSense Help for a complete list of
+[AdSense code parameter descriptions](https://support.google.com/adsense/answer/9955214#adsense_code_parameter_descriptions).
