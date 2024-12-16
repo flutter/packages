@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import '../core/js_interop/adsbygoogle.dart';
 import 'h5_js_interop.dart';
 
@@ -29,7 +31,12 @@ class H5GamesAdsClient {
   void adBreak(
     AdBreakPlacement placementConfig,
   ) {
-    adsbygoogle.adBreak(placementConfig);
+    // Delay the call to `adBreak` so tap users don't trigger a click on the ad
+    // on pointerup. This should leaves enough time for Flutter to settle its
+    // tap events, before triggering the H5 ad.
+    Timer(const Duration(milliseconds: 100), () {
+      adsbygoogle.adBreak(placementConfig);
+    });
   }
 
   /// Communicates the app's current configuration to the Ad Placement API.

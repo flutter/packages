@@ -118,12 +118,13 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
       beforeAd: beforeAd?.toJS,
       afterAd: afterAd?.toJS,
       beforeReward: beforeReward != null
-          ? (JSFunction fn) {
+          ? (JSFunction showAdFn) {
               beforeReward(() {
-                // Delay the call to `fn` so tap users don't trigger a click on
-                // the ad onTapUp.
+                // Delay the call to `showAdFn` so tap users don't trigger a click on the
+                // ad on pointerup. This should leaves enough time for Flutter to settle
+                // its tap events, before triggering the H5 ad.
                 Timer(const Duration(milliseconds: 100), () {
-                  fn.callAsFunction();
+                  showAdFn.callAsFunction();
                 });
               });
             }.toJS
