@@ -999,7 +999,7 @@ class BytesMapBitmap extends MapBitmap {
 /// PinConfig(
 ///   backgroundColor: Colors.blue,
 ///   borderColor: Colors.white,
-///   glyph: Glyph.color(Colors.blue)
+///   glyph: CircleGlyph(color: Colors.blue)
 /// )
 /// ```
 ///
@@ -1009,7 +1009,7 @@ class BytesMapBitmap extends MapBitmap {
 /// ```dart
 /// PinConfig(
 ///   backgroundColor: Colors.blue,
-///   glyph: Glyph.text('Pin', Colors.white)
+///   glyph: TextGlyph(text: 'Pin', textColor: Colors.white)
 /// )
 /// ```
 ///
@@ -1018,8 +1018,8 @@ class BytesMapBitmap extends MapBitmap {
 ///
 /// ```dart
 /// PinConfig(
-///   glyph: Glyph.bitmapDescriptor(
-///     BitmapDescriptor.asset(
+///   glyph: BitmapGlyph(
+///     bitmap: BitmapDescriptor.asset(
 ///       ImageConfiguration(size: Size(12, 12)),
 ///       'assets/cat.png'
 ///    )
@@ -1053,7 +1053,13 @@ class PinConfig extends BitmapDescriptor {
   /// The border color of the pin.
   final Color? borderColor;
 
-  /// The glyph that is displayed on the pin marker.
+  /// The glyph that is displayed on the pin marker. If null, the default
+  /// circular glyph is used.
+  ///
+  /// Can be one of the following:
+  /// * [CircleGlyph] to define a circular glyph with a custom color.
+  /// * [BitmapGlyph] to define a glyph with a specified bitmap.
+  /// * [TextGlyph] to define a glyph with a specified text and its color.
   final AdvancedMarkerGlyph? glyph;
 
   @override
@@ -1073,7 +1079,7 @@ abstract class AdvancedMarkerGlyph extends BitmapDescriptor {
   const AdvancedMarkerGlyph._() : super._();
 }
 
-/// Defines a glyph using the default circle, but with a custom color.
+/// Defines a circular glyph with a given color.
 class CircleGlyph extends AdvancedMarkerGlyph {
   /// Constructs a glyph instance, using the default circle, but with
   /// a custom color.
