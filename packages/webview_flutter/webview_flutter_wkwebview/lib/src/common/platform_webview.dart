@@ -7,6 +7,9 @@ import 'package:flutter/foundation.dart';
 import 'web_kit.g.dart';
 
 /// Platform agnostic native WebView.
+///
+/// iOS and macOS reference different `WebView` implementations, so this handles
+/// delegating calls to the implementation of the current platform.
 class PlatformWebView {
   /// Creates a [PlatformWebView].
   PlatformWebView({
@@ -37,8 +40,11 @@ class PlatformWebView {
   PlatformWebView.fromNativeWebView(WKWebView webView)
       : nativeWebView = webView;
 
+  /// The underlying native WebView instance.
   late final WKWebView nativeWebView;
 
+  /// Registers the observer object to receive KVO notifications for the key
+  /// path relative to the object receiving this message.
   Future<void> addObserver(
     NSObject observer,
     String keyPath,
