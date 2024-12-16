@@ -5,15 +5,15 @@
 /// Implementation of `NSObject` that calls to Dart in callback methods.
 class NSObjectImpl: NSObject {
   let api: PigeonApiProtocolNSObject
-  unowned let registrarApiDelegate: ProxyAPIRegistrar
+  unowned let registrar: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolNSObject, registrarApiDelegate: ProxyAPIRegistrar) {
+  init(api: PigeonApiProtocolNSObject, registrar: ProxyAPIRegistrar) {
     self.api = api
-    self.registrarApiDelegate = registrarApiDelegate
+    self.registrar = registrar
   }
 
   static func handleObserveValue(
-    withApi api: PigeonApiProtocolNSObject, registrarApiDelegate: ProxyAPIRegistrar, instance: NSObject, forKeyPath keyPath: String?,
+    withApi api: PigeonApiProtocolNSObject, registrar: ProxyAPIRegistrar, instance: NSObject, forKeyPath keyPath: String?,
     of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?
   ) {
     let wrapperKeys: [KeyValueChangeKey: Any]?
@@ -43,7 +43,7 @@ class NSObjectImpl: NSObject {
       wrapperKeys = nil
     }
 
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       api.observeValue(
         pigeonInstance: instance, keyPath: keyPath, object: object as? NSObject, change: wrapperKeys
       ) { result in
@@ -59,7 +59,7 @@ class NSObjectImpl: NSObject {
     context: UnsafeMutableRawPointer?
   ) {
     NSObjectImpl.handleObserveValue(
-      withApi: api, registrarApiDelegate: registrarApiDelegate, instance: self as NSObject, forKeyPath: keyPath, of: object, change: change,
+      withApi: api, registrar: registrar, instance: self as NSObject, forKeyPath: keyPath, of: object, change: change,
       context: context)
   }
 }
@@ -70,7 +70,7 @@ class NSObjectImpl: NSObject {
 /// or handle method calls on the associated native class or an instance of that class.
 class NSObjectProxyAPIDelegate: PigeonApiDelegateNSObject {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiNSObject) throws -> NSObject {
-    return NSObjectImpl(api: pigeonApi, registrarApiDelegate: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    return NSObjectImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
 
   func addObserver(

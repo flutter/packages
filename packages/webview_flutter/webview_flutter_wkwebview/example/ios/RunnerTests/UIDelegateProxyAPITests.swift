@@ -18,7 +18,8 @@ class UIDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testOnCreateWebView() {
     let api = TestDelegateApi()
-    let instance = UIDelegateImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let configuration = WKWebViewConfiguration()
     let navigationAction = TestNavigationAction()
@@ -32,7 +33,8 @@ class UIDelegateProxyAPITests: XCTestCase {
   @available(iOS 15.0, *)
   @MainActor func testRequestMediaCapturePermission() {
     let api = TestDelegateApi()
-    let instance = UIDelegateImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let origin = SecurityOriginProxyAPITests.testSecurityOrigin
     let frame = TestFrameInfo()
@@ -49,7 +51,8 @@ class UIDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testRunJavaScriptAlertPanel() {
     let api = TestDelegateApi()
-    let instance = UIDelegateImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let message = "myString"
     let frame = TestFrameInfo()
@@ -62,7 +65,8 @@ class UIDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testRunJavaScriptConfirmPanel() {
     let api = TestDelegateApi()
-    let instance = UIDelegateImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let message = "myString"
     let frame = TestFrameInfo()
@@ -78,7 +82,8 @@ class UIDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testRunJavaScriptTextInputPanel() {
     let api = TestDelegateApi()
-    let instance = UIDelegateImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = UIDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let prompt = "myString"
     let defaultText = "myString3"

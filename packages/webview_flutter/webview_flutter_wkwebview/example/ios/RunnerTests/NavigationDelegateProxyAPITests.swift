@@ -18,7 +18,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testDidFinishNavigation() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: TestProxyApiRegistrar().apiDelegate as! ProxyAPIDelegate)
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = TestWebView(frame: .zero)
 
     instance.webView(webView, didFinish: nil)
@@ -28,7 +29,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testDidStartProvisionalNavigation() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: ProxyAPIDelegate())
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = TestWebView(frame: .zero)
     instance.webView(webView, didStartProvisionalNavigation: nil)
 
@@ -37,7 +39,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testDecidePolicyForNavigationAction() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: ProxyAPIDelegate())
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let navigationAction = TestNavigationAction()
     
@@ -52,7 +55,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testDecidePolicyForNavigationResponse() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: ProxyAPIDelegate())
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let navigationResponse = TestNavigationResponse()
     
@@ -67,7 +71,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testDidFailNavigation() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: ProxyAPIDelegate())
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let error = NSError(domain: "", code: 12)
     instance.webView(webView, didFail: nil, withError: error)
@@ -77,7 +82,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testDidFailProvisionalNavigation() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: ProxyAPIDelegate())
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let error = NSError(domain: "", code: 12)
     instance.webView(webView, didFailProvisionalNavigation: nil, withError: error)
@@ -87,7 +93,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testWebViewWebContentProcessDidTerminate() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: ProxyAPIDelegate())
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     instance.webViewWebContentProcessDidTerminate(webView)
 
@@ -96,7 +103,8 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testDidReceiveAuthenticationChallenge() {
     let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api, registrarApiDelegate: ProxyAPIDelegate())
+    let registrar = TestProxyApiRegistrar()
+    let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let challenge = URLAuthenticationChallenge(protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 32, failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
     
@@ -123,7 +131,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   var webViewWebContentProcessDidTerminateArgs: [AnyHashable?]? = nil
   var didReceiveAuthenticationChallengeArgs: [AnyHashable?]? = nil
   
-  func registrarApiDelegate() -> ProxyAPIDelegate {
+  func registrar() -> ProxyAPIDelegate {
     return ProxyAPIDelegate()
   }
   

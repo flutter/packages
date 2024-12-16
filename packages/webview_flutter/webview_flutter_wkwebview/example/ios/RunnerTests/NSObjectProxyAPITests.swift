@@ -47,7 +47,8 @@ class ObjectProxyAPITests: XCTestCase {
   func testObserveValue() {
     let api = TestObjectApi()
     
-    let instance = NSObjectImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = NSObjectImpl(api: api, registrar: registrar)
     let keyPath = "myString"
     let object = NSObject()
     let change = [NSKeyValueChangeKey.indexesKey: -1]

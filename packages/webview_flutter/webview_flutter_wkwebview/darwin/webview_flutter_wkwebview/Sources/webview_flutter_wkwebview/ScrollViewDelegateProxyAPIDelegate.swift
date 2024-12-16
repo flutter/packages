@@ -10,15 +10,15 @@ import UIKit
 /// Implementation of `UIScrollViewDelegate` that calls to Dart in callback methods.
 class ScrollViewDelegateImpl: NSObject, UIScrollViewDelegate {
   let api: PigeonApiProtocolUIScrollViewDelegate
-  unowned let registrarApiDelegate: ProxyAPIRegistrar
+  unowned let registrar: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolUIScrollViewDelegate, registrarApiDelegate: ProxyAPIRegistrar) {
+  init(api: PigeonApiProtocolUIScrollViewDelegate, registrar: ProxyAPIRegistrar) {
     self.api = api
-    self.registrarApiDelegate = registrarApiDelegate
+    self.registrar = registrar
   }
 
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.scrollViewDidScroll(
         pigeonInstance: self, scrollView: scrollView, x: scrollView.contentOffset.x,
         y: scrollView.contentOffset.y
@@ -41,7 +41,7 @@ class ScrollViewDelegateProxyAPIDelegate: PigeonApiDelegateUIScrollViewDelegate 
   func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws
     -> UIScrollViewDelegate
   {
-    return ScrollViewDelegateImpl(api: pigeonApi, registrarApiDelegate: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    return ScrollViewDelegateImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
   #endif
 }

@@ -18,7 +18,8 @@ class ScrollViewDelegateProxyAPITests: XCTestCase {
 
   @MainActor func testScrollViewDidScroll() {
     let api = TestScrollViewDelegateApi()
-    let instance = ScrollViewDelegateImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = ScrollViewDelegateImpl(api: api, registrar: registrar)
     let scrollView = UIScrollView(frame: .zero)
     let x = 1.0
     let y = 1.0

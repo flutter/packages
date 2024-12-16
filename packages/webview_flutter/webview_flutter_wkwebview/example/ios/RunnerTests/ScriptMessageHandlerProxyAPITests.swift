@@ -18,7 +18,8 @@ class ScriptMessageHandlerProxyAPITests: XCTestCase {
 
   @MainActor func testDidReceiveScriptMessage() {
     let api = TestScriptMessageHandlerApi()
-    let instance = ScriptMessageHandlerImpl(api: api)
+    let registrar = TestProxyApiRegistrar()
+    let instance = ScriptMessageHandlerImpl(api: api, registrar: registrar)
     let controller = WKUserContentController()
     let message = WKScriptMessage()
     

@@ -7,17 +7,17 @@ import WebKit
 /// Implementation of `WKScriptMessageHandler` that calls to Dart in callback methods.
 class ScriptMessageHandlerImpl: NSObject, WKScriptMessageHandler {
   let api: PigeonApiProtocolWKScriptMessageHandler
-  unowned let registrarApiDelegate: ProxyAPIRegistrar
+  unowned let registrar: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolWKScriptMessageHandler, registrarApiDelegate: ProxyAPIRegistrar) {
+  init(api: PigeonApiProtocolWKScriptMessageHandler, registrar: ProxyAPIRegistrar) {
     self.api = api
-    self.registrarApiDelegate = registrarApiDelegate
+    self.registrar = registrar
   }
 
   func userContentController(
     _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
   ) {
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.didReceiveScriptMessage(
         pigeonInstance: self, controller: userContentController, message: message
       ) { result in
@@ -37,6 +37,6 @@ class ScriptMessageHandlerProxyAPIDelegate: PigeonApiDelegateWKScriptMessageHand
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKScriptMessageHandler) throws
     -> WKScriptMessageHandler
   {
-    return ScriptMessageHandlerImpl(api: pigeonApi, registrarApiDelegate: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    return ScriptMessageHandlerImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
 }

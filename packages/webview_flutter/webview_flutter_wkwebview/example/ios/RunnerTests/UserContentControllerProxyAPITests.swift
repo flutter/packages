@@ -13,7 +13,7 @@ class UserContentControllerProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
 
     let instance = TestUserContentController()
-    let handler = ScriptMessageHandlerImpl(api: registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar))
+    let handler = ScriptMessageHandlerImpl(api: registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar), registrar: registrar)
     let name = "myString"
     try? api.pigeonDelegate.addScriptMessageHandler(pigeonApi: api, pigeonInstance: instance, handler: handler, name: name)
 

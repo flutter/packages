@@ -6,13 +6,11 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
-class TestProxyApiRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
+class TestProxyApiRegistrar: ProxyAPIRegistrar {
   init() {
-    super.init(binaryMessenger: TestBinaryMessenger(), apiDelegate: TestProxyAPIDelegate())
+    super.init(binaryMessenger: TestBinaryMessenger())
   }
-}
-
-class TestProxyAPIDelegate: ProxyAPIDelegate {
+  
   override func dispatchOnMainThread(execute work: @escaping (@escaping (String, PigeonError) -> Void) -> Void) {
     work { _, _ in }
   }

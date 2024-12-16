@@ -46,7 +46,7 @@ class ScrollViewProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
     let instance = TestScrollView(frame: .zero)
-    let delegate = ScrollViewDelegateImpl(api: registrar.apiDelegate.pigeonApiUIScrollViewDelegate(registrar))
+    let delegate = ScrollViewDelegateImpl(api: registrar.apiDelegate.pigeonApiUIScrollViewDelegate(registrar), registrar: registrar)
     try? api.pigeonDelegate.setDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     XCTAssertEqual(instance.setDelegateArgs, [delegate])

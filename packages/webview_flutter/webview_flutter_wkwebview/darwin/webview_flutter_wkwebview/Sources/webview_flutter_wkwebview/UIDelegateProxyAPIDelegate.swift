@@ -7,18 +7,18 @@ import WebKit
 /// Implementation of `WKUIDelegate` that calls to Dart in callback methods.
 class UIDelegateImpl: NSObject, WKUIDelegate {
   let api: PigeonApiProtocolWKUIDelegate
-  unowned let registrarApiDelegate: ProxyAPIRegistrar
+  unowned let registrar: ProxyAPIRegistrar
 
-  init(api: PigeonApiProtocolWKUIDelegate, registrarApiDelegate: ProxyAPIRegistrar) {
+  init(api: PigeonApiProtocolWKUIDelegate, registrar: ProxyAPIRegistrar) {
     self.api = api
-    self.registrarApiDelegate = registrarApiDelegate
+    self.registrar = registrar
   }
 
   func webView(
     _ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration,
     for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures
   ) -> WKWebView? {
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.onCreateWebView(
         pigeonInstance: self, webView: webView, configuration: configuration,
         navigationAction: navigationAction
@@ -49,7 +49,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       wrapperCaptureType = .unknown
     }
     
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.requestMediaCapturePermission(
         pigeonInstance: self, webView: webView, origin: origin, frame: frame, type: wrapperCaptureType
       ) { result in
@@ -75,7 +75,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor () -> Void
   ) {
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptAlertPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
         if case .failure(let error) = result {
           onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
@@ -89,7 +89,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
     initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor (Bool) -> Void
   ) {
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptConfirmPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) { result in
         switch result {
         case .success(let confirmed):
@@ -107,7 +107,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     defaultText: String?, initiatedByFrame frame: WKFrameInfo,
     completionHandler: @escaping @MainActor (String?) -> Void
   ) {
-    registrarApiDelegate.dispatchOnMainThread { onFailure in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptTextInputPanel(
         pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText, frame: frame
       ) { result in
@@ -129,6 +129,6 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
 /// or handle method calls on the associated native class or an instance of that class.
 class UIDelegateProxyAPIDelegate: PigeonApiDelegateWKUIDelegate {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUIDelegate) throws -> WKUIDelegate {
-    return UIDelegateImpl(api: pigeonApi, registrarApiDelegate: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+    return UIDelegateImpl(api: pigeonApi, registrar: pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
   }
 }
