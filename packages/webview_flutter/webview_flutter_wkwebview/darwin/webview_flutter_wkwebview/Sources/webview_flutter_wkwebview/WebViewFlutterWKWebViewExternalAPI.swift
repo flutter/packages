@@ -13,7 +13,7 @@ import WebKit
 #endif
 
 @objc(WebViewFlutterWKWebViewExternalAPI)
-public class WebViewFlutterWKWebViewExternalAPI: NSObject {
+public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
   @objc
   public static func webView(
     forIdentifier identifier: Int64, withPluginRegistry registry: FlutterPluginRegistry

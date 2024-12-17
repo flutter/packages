@@ -20,12 +20,8 @@ let package = Package(
     .target(
       name: "webview_flutter_wkwebview",
       dependencies: [],
-      exclude: ["include/FlutterWebView.modulemap", "include/webview-umbrella.h"],
       resources: [
         .process("Resources")
-      ],
-      cSettings: [
-        .headerSearchPath("include/webview_flutter_wkwebview")
       ]
     )
   ]
