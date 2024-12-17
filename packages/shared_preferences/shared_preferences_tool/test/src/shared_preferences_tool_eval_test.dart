@@ -6,22 +6,57 @@ import 'dart:async';
 
 import 'package:devtools_app_shared/service.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_state.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_tool_eval.dart';
 import 'package:vm_service/vm_service.dart';
 
-@GenerateNiceMocks(<MockSpec<dynamic>>[
-  MockSpec<EvalOnDartLibrary>(),
-  MockSpec<VmService>(),
-])
-import 'shared_preferences_tool_eval_test.mocks.dart';
+typedef _Event = (String eventKind, Map<String, Object?> eventData);
+
+// ignore: subtype_of_sealed_class
+class _FakeEvalOnDartLibrary extends EvalOnDartLibrary {
+  _FakeEvalOnDartLibrary(VmService vmService)
+      : super(
+          'fake_library',
+          vmService,
+          serviceManager: ServiceManager<VmService>(),
+        );
+
+  final List<_Event> eventLog = <_Event>[];
+
+  late Future<InstanceRef?> Function() onEval;
+
+  @override
+  Future<InstanceRef?> eval(
+    String expression, {
+    required Disposable? isAlive,
+    Map<String, String>? scope,
+    bool shouldLogError = true,
+  }) async {
+    eventLog.add(
+      (
+        'eval',
+        <String, Object?>{
+          'expression': expression,
+        },
+      ),
+    );
+    return onEval();
+  }
+}
+
+class _FakeVmService extends VmService {
+  _FakeVmService() : super(const Stream<void>.empty(), (String _) {});
+
+  final List<_Event> eventLog = <_Event>[];
+
+  @override
+  late Stream<Event> onExtensionEvent;
+}
 
 void main() {
   group('SharedPreferencesToolEval', () {
-    late MockEvalOnDartLibrary eval;
-    late MockVmService vmService;
+    late _FakeEvalOnDartLibrary eval;
+    late _FakeVmService vmService;
     late SharedPreferencesToolEval sharedPreferencesToolEval;
 
     void stubEvalMethod({
@@ -30,13 +65,8 @@ void main() {
       required Map<String, Object?> response,
     }) {
       final StreamController<Event> eventStream = StreamController<Event>();
-      when(vmService.onExtensionEvent).thenAnswer((_) => eventStream.stream);
-      when(
-        eval.eval(
-          'SharedPreferencesDevToolsExtensionData().$method',
-          isAlive: anyNamed('isAlive'),
-        ),
-      ).thenAnswer((_) async {
+      vmService.onExtensionEvent = eventStream.stream;
+      eval.onEval = () async {
         eventStream.add(
           Event(
             extensionKind: 'shared_preferences.$eventKind',
@@ -44,12 +74,12 @@ void main() {
           ),
         );
         return null;
-      });
+      };
     }
 
     setUp(() {
-      eval = MockEvalOnDartLibrary();
-      vmService = MockVmService();
+      vmService = _FakeVmService();
+      eval = _FakeEvalOnDartLibrary(vmService);
       sharedPreferencesToolEval = SharedPreferencesToolEval(vmService, eval);
     });
 
@@ -234,12 +264,21 @@ void main() {
         false,
       );
 
-      verify(
-        eval.eval(
-          'SharedPreferencesDevToolsExtensionData().$method',
-          isAlive: anyNamed('isAlive'),
-        ),
-      ).called(1);
+      expect(eval.eventLog.length, equals(1));
+      final (
+        String eventKind,
+        Map<String, Object?> eventData,
+      ) = eval.eventLog.first;
+      expect(
+        eventKind,
+        equals('eval'),
+      );
+      expect(
+        eventData,
+        equals(<String, Object?>{
+          'expression': 'SharedPreferencesDevToolsExtensionData().$method',
+        }),
+      );
     });
 
     test('should delete key', () async {
@@ -256,12 +295,7 @@ void main() {
         false,
       );
 
-      verify(
-        eval.eval(
-          'SharedPreferencesDevToolsExtensionData().$method',
-          isAlive: anyNamed('isAlive'),
-        ),
-      ).called(1);
+      expect(eval.eventLog.length, equals(1));
     });
   });
 }
