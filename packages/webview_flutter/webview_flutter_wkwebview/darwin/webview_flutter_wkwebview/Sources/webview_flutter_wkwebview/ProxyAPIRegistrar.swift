@@ -2,6 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+
+#if os(iOS)
+  import Flutter
+  import UIKit
+#elseif os(macOS)
+  import FlutterMacOS
+  import Foundation
+#else
+  #error("Unsupported platform.")
+#endif
+
 /// Implementation of `WebKitLibraryPigeonProxyApiRegistrar` that provides any additional resources needed by API implementations.
 open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
   let assetManager = FlutterAssetManager()

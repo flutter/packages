@@ -7,6 +7,7 @@
   import UIKit
 #elseif os(macOS)
   import FlutterMacOS
+  import Foundation
 #else
   #error("Unsupported platform.")
 #endif

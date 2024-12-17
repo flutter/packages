@@ -2,6 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+
+#if os(iOS)
+  import Flutter
+  import UIKit
+#elseif os(macOS)
+  import FlutterMacOS
+  import Foundation
+#else
+  #error("Unsupported platform.")
+#endif
+
 /// ProxyApi implementation for `URLRequest`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance

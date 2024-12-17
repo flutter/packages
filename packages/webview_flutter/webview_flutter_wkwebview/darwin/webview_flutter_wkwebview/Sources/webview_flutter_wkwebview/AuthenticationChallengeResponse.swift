@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+
 /// Data class used to respond to auth challenges from `WKNavigationDelegate`.
 ///
 /// The `webView(_:didReceive:completionHandler:)` method in `WKNavigationDelegate`
