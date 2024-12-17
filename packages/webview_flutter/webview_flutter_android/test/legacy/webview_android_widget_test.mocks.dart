@@ -3,17 +3,16 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i5;
-import 'dart:typed_data' as _i7;
-import 'dart:ui' as _i3;
+import 'dart:async' as _i4;
+import 'dart:typed_data' as _i6;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i6;
-import 'package:webview_flutter_android/src/android_webview.dart' as _i2;
+import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 import 'package:webview_flutter_android/src/legacy/webview_android_widget.dart'
-    as _i8;
+    as _i7;
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart'
-    as _i4;
+    as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -28,8 +27,9 @@ import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeWebSettings_0 extends _i1.SmartFake implements _i2.WebSettings {
-  _FakeWebSettings_0(
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
+  _FakePigeonInstanceManager_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -38,8 +38,9 @@ class _FakeWebSettings_0 extends _i1.SmartFake implements _i2.WebSettings {
         );
 }
 
-class _FakeWebStorage_1 extends _i1.SmartFake implements _i2.WebStorage {
-  _FakeWebStorage_1(
+class _FakeFlutterAssetManager_1 extends _i1.SmartFake
+    implements _i2.FlutterAssetManager {
+  _FakeFlutterAssetManager_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -48,8 +49,8 @@ class _FakeWebStorage_1 extends _i1.SmartFake implements _i2.WebStorage {
         );
 }
 
-class _FakeOffset_2 extends _i1.SmartFake implements _i3.Offset {
-  _FakeOffset_2(
+class _FakeWebSettings_2 extends _i1.SmartFake implements _i2.WebSettings {
+  _FakeWebSettings_2(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -58,8 +59,8 @@ class _FakeOffset_2 extends _i1.SmartFake implements _i3.Offset {
         );
 }
 
-class _FakeWebView_3 extends _i1.SmartFake implements _i2.WebView {
-  _FakeWebView_3(
+class _FakeWebStorage_3 extends _i1.SmartFake implements _i2.WebStorage {
+  _FakeWebStorage_3(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -68,9 +69,40 @@ class _FakeWebView_3 extends _i1.SmartFake implements _i2.WebView {
         );
 }
 
-class _FakeDownloadListener_4 extends _i1.SmartFake
+class _FakeWebView_4 extends _i1.SmartFake implements _i2.WebView {
+  _FakeWebView_4(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWebViewPoint_5 extends _i1.SmartFake implements _i2.WebViewPoint {
+  _FakeWebViewPoint_5(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWebResourceRequest_6 extends _i1.SmartFake
+    implements _i2.WebResourceRequest {
+  _FakeWebResourceRequest_6(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeDownloadListener_7 extends _i1.SmartFake
     implements _i2.DownloadListener {
-  _FakeDownloadListener_4(
+  _FakeDownloadListener_7(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -79,9 +111,9 @@ class _FakeDownloadListener_4 extends _i1.SmartFake
         );
 }
 
-class _FakeJavascriptChannelRegistry_5 extends _i1.SmartFake
-    implements _i4.JavascriptChannelRegistry {
-  _FakeJavascriptChannelRegistry_5(
+class _FakeJavascriptChannelRegistry_8 extends _i1.SmartFake
+    implements _i3.JavascriptChannelRegistry {
+  _FakeJavascriptChannelRegistry_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -90,9 +122,9 @@ class _FakeJavascriptChannelRegistry_5 extends _i1.SmartFake
         );
 }
 
-class _FakeJavaScriptChannel_6 extends _i1.SmartFake
+class _FakeJavaScriptChannel_9 extends _i1.SmartFake
     implements _i2.JavaScriptChannel {
-  _FakeJavaScriptChannel_6(
+  _FakeJavaScriptChannel_9(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -101,9 +133,9 @@ class _FakeJavaScriptChannel_6 extends _i1.SmartFake
         );
 }
 
-class _FakeWebChromeClient_7 extends _i1.SmartFake
+class _FakeWebChromeClient_10 extends _i1.SmartFake
     implements _i2.WebChromeClient {
-  _FakeWebChromeClient_7(
+  _FakeWebChromeClient_10(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -112,8 +144,8 @@ class _FakeWebChromeClient_7 extends _i1.SmartFake
         );
 }
 
-class _FakeWebViewClient_8 extends _i1.SmartFake implements _i2.WebViewClient {
-  _FakeWebViewClient_8(
+class _FakeWebViewClient_11 extends _i1.SmartFake implements _i2.WebViewClient {
+  _FakeWebViewClient_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -132,29 +164,53 @@ class MockFlutterAssetManager extends _i1.Mock
   }
 
   @override
-  _i5.Future<List<String?>> list(String? path) => (super.noSuchMethod(
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<List<String>> list(String? path) => (super.noSuchMethod(
         Invocation.method(
           #list,
           [path],
         ),
-        returnValue: _i5.Future<List<String?>>.value(<String?>[]),
-      ) as _i5.Future<List<String?>>);
+        returnValue: _i4.Future<List<String>>.value(<String>[]),
+      ) as _i4.Future<List<String>>);
 
   @override
-  _i5.Future<String> getAssetFilePathByName(String? name) =>
+  _i4.Future<String> getAssetFilePathByName(String? name) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAssetFilePathByName,
           [name],
         ),
-        returnValue: _i5.Future<String>.value(_i6.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #getAssetFilePathByName,
             [name],
           ),
         )),
-      ) as _i5.Future<String>);
+      ) as _i4.Future<String>);
+
+  @override
+  _i2.FlutterAssetManager pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeFlutterAssetManager_1(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.FlutterAssetManager);
 }
 
 /// A class which mocks [WebSettings].
@@ -166,165 +222,174 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   }
 
   @override
-  _i5.Future<void> setDomStorageEnabled(bool? flag) => (super.noSuchMethod(
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<void> setDomStorageEnabled(bool? flag) => (super.noSuchMethod(
         Invocation.method(
           #setDomStorageEnabled,
           [flag],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setJavaScriptCanOpenWindowsAutomatically(bool? flag) =>
+  _i4.Future<void> setJavaScriptCanOpenWindowsAutomatically(bool? flag) =>
       (super.noSuchMethod(
         Invocation.method(
           #setJavaScriptCanOpenWindowsAutomatically,
           [flag],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setSupportMultipleWindows(bool? support) =>
+  _i4.Future<void> setSupportMultipleWindows(bool? support) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSupportMultipleWindows,
           [support],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setJavaScriptEnabled(bool? flag) => (super.noSuchMethod(
+  _i4.Future<void> setJavaScriptEnabled(bool? flag) => (super.noSuchMethod(
         Invocation.method(
           #setJavaScriptEnabled,
           [flag],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setUserAgentString(String? userAgentString) =>
+  _i4.Future<void> setUserAgentString(String? userAgentString) =>
       (super.noSuchMethod(
         Invocation.method(
           #setUserAgentString,
           [userAgentString],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
+  _i4.Future<void> setMediaPlaybackRequiresUserGesture(bool? require) =>
       (super.noSuchMethod(
         Invocation.method(
           #setMediaPlaybackRequiresUserGesture,
           [require],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setSupportZoom(bool? support) => (super.noSuchMethod(
+  _i4.Future<void> setSupportZoom(bool? support) => (super.noSuchMethod(
         Invocation.method(
           #setSupportZoom,
           [support],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setLoadWithOverviewMode(bool? overview) =>
+  _i4.Future<void> setLoadWithOverviewMode(bool? overview) =>
       (super.noSuchMethod(
         Invocation.method(
           #setLoadWithOverviewMode,
           [overview],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setUseWideViewPort(bool? use) => (super.noSuchMethod(
+  _i4.Future<void> setUseWideViewPort(bool? use) => (super.noSuchMethod(
         Invocation.method(
           #setUseWideViewPort,
           [use],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setDisplayZoomControls(bool? enabled) => (super.noSuchMethod(
+  _i4.Future<void> setDisplayZoomControls(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setDisplayZoomControls,
           [enabled],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setBuiltInZoomControls(bool? enabled) => (super.noSuchMethod(
+  _i4.Future<void> setBuiltInZoomControls(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setBuiltInZoomControls,
           [enabled],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setAllowFileAccess(bool? enabled) => (super.noSuchMethod(
+  _i4.Future<void> setAllowFileAccess(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setAllowFileAccess,
           [enabled],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
+  _i4.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
         Invocation.method(
           #setTextZoom,
           [textZoom],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<String> getUserAgentString() => (super.noSuchMethod(
+  _i4.Future<String> getUserAgentString() => (super.noSuchMethod(
         Invocation.method(
           #getUserAgentString,
           [],
         ),
-        returnValue: _i5.Future<String>.value(_i6.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #getUserAgentString,
             [],
           ),
         )),
-      ) as _i5.Future<String>);
+      ) as _i4.Future<String>);
 
   @override
-  _i2.WebSettings copy() => (super.noSuchMethod(
+  _i2.WebSettings pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWebSettings_0(
+        returnValue: _FakeWebSettings_2(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
@@ -340,25 +405,34 @@ class MockWebStorage extends _i1.Mock implements _i2.WebStorage {
   }
 
   @override
-  _i5.Future<void> deleteAllData() => (super.noSuchMethod(
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<void> deleteAllData() => (super.noSuchMethod(
         Invocation.method(
           #deleteAllData,
           [],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i2.WebStorage copy() => (super.noSuchMethod(
+  _i2.WebStorage pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWebStorage_1(
+        returnValue: _FakeWebStorage_3(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
@@ -376,58 +450,80 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   _i2.WebSettings get settings => (super.noSuchMethod(
         Invocation.getter(#settings),
-        returnValue: _FakeWebSettings_0(
+        returnValue: _FakeWebSettings_2(
           this,
           Invocation.getter(#settings),
         ),
       ) as _i2.WebSettings);
 
   @override
-  _i5.Future<void> loadData({
-    required String? data,
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i2.WebSettings pigeonVar_settings() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeonVar_settings,
+          [],
+        ),
+        returnValue: _FakeWebSettings_2(
+          this,
+          Invocation.method(
+            #pigeonVar_settings,
+            [],
+          ),
+        ),
+      ) as _i2.WebSettings);
+
+  @override
+  _i4.Future<void> loadData(
+    String? data,
     String? mimeType,
     String? encoding,
-  }) =>
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #loadData,
-          [],
-          {
-            #data: data,
-            #mimeType: mimeType,
-            #encoding: encoding,
-          },
+          [
+            data,
+            mimeType,
+            encoding,
+          ],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> loadDataWithBaseUrl({
+  _i4.Future<void> loadDataWithBaseUrl(
     String? baseUrl,
-    required String? data,
+    String? data,
     String? mimeType,
     String? encoding,
     String? historyUrl,
-  }) =>
+  ) =>
       (super.noSuchMethod(
         Invocation.method(
           #loadDataWithBaseUrl,
-          [],
-          {
-            #baseUrl: baseUrl,
-            #data: data,
-            #mimeType: mimeType,
-            #encoding: encoding,
-            #historyUrl: historyUrl,
-          },
+          [
+            baseUrl,
+            data,
+            mimeType,
+            encoding,
+            historyUrl,
+          ],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> loadUrl(
+  _i4.Future<void> loadUrl(
     String? url,
     Map<String, String>? headers,
   ) =>
@@ -439,14 +535,14 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             headers,
           ],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> postUrl(
+  _i4.Future<void> postUrl(
     String? url,
-    _i7.Uint8List? data,
+    _i6.Uint8List? data,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -456,98 +552,187 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             data,
           ],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<String?> getUrl() => (super.noSuchMethod(
+  _i4.Future<String?> getUrl() => (super.noSuchMethod(
         Invocation.method(
           #getUrl,
           [],
         ),
-        returnValue: _i5.Future<String?>.value(),
-      ) as _i5.Future<String?>);
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 
   @override
-  _i5.Future<bool> canGoBack() => (super.noSuchMethod(
+  _i4.Future<bool> canGoBack() => (super.noSuchMethod(
         Invocation.method(
           #canGoBack,
           [],
         ),
-        returnValue: _i5.Future<bool>.value(false),
-      ) as _i5.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i5.Future<bool> canGoForward() => (super.noSuchMethod(
+  _i4.Future<bool> canGoForward() => (super.noSuchMethod(
         Invocation.method(
           #canGoForward,
           [],
         ),
-        returnValue: _i5.Future<bool>.value(false),
-      ) as _i5.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i5.Future<void> goBack() => (super.noSuchMethod(
+  _i4.Future<void> goBack() => (super.noSuchMethod(
         Invocation.method(
           #goBack,
           [],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> goForward() => (super.noSuchMethod(
+  _i4.Future<void> goForward() => (super.noSuchMethod(
         Invocation.method(
           #goForward,
           [],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> reload() => (super.noSuchMethod(
+  _i4.Future<void> reload() => (super.noSuchMethod(
         Invocation.method(
           #reload,
           [],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> clearCache(bool? includeDiskFiles) => (super.noSuchMethod(
+  _i4.Future<void> clearCache(bool? includeDiskFiles) => (super.noSuchMethod(
         Invocation.method(
           #clearCache,
           [includeDiskFiles],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<String?> evaluateJavascript(String? javascriptString) =>
+  _i4.Future<String?> evaluateJavascript(String? javascriptString) =>
       (super.noSuchMethod(
         Invocation.method(
           #evaluateJavascript,
           [javascriptString],
         ),
-        returnValue: _i5.Future<String?>.value(),
-      ) as _i5.Future<String?>);
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 
   @override
-  _i5.Future<String?> getTitle() => (super.noSuchMethod(
+  _i4.Future<String?> getTitle() => (super.noSuchMethod(
         Invocation.method(
           #getTitle,
           [],
         ),
-        returnValue: _i5.Future<String?>.value(),
-      ) as _i5.Future<String?>);
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 
   @override
-  _i5.Future<void> scrollTo(
+  _i4.Future<void> setWebViewClient(_i2.WebViewClient? client) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setWebViewClient,
+          [client],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> addJavaScriptChannel(_i2.JavaScriptChannel? channel) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addJavaScriptChannel,
+          [channel],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> removeJavaScriptChannel(String? name) => (super.noSuchMethod(
+        Invocation.method(
+          #removeJavaScriptChannel,
+          [name],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setDownloadListener(_i2.DownloadListener? listener) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDownloadListener,
+          [listener],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setWebChromeClient(_i2.WebChromeClient? client) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setWebChromeClient,
+          [client],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setBackgroundColor(int? color) => (super.noSuchMethod(
+        Invocation.method(
+          #setBackgroundColor,
+          [color],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> destroy() => (super.noSuchMethod(
+        Invocation.method(
+          #destroy,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i2.WebView pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeWebView_4(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.WebView);
+
+  @override
+  _i4.Future<void> scrollTo(
     int? x,
     int? y,
   ) =>
@@ -559,12 +744,12 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             y,
           ],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> scrollBy(
+  _i4.Future<void> scrollBy(
     int? x,
     int? y,
   ) =>
@@ -576,124 +761,24 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
             y,
           ],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<int> getScrollX() => (super.noSuchMethod(
-        Invocation.method(
-          #getScrollX,
-          [],
-        ),
-        returnValue: _i5.Future<int>.value(0),
-      ) as _i5.Future<int>);
-
-  @override
-  _i5.Future<int> getScrollY() => (super.noSuchMethod(
-        Invocation.method(
-          #getScrollY,
-          [],
-        ),
-        returnValue: _i5.Future<int>.value(0),
-      ) as _i5.Future<int>);
-
-  @override
-  _i5.Future<_i3.Offset> getScrollPosition() => (super.noSuchMethod(
+  _i4.Future<_i2.WebViewPoint> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(
           #getScrollPosition,
           [],
         ),
-        returnValue: _i5.Future<_i3.Offset>.value(_FakeOffset_2(
+        returnValue: _i4.Future<_i2.WebViewPoint>.value(_FakeWebViewPoint_5(
           this,
           Invocation.method(
             #getScrollPosition,
             [],
           ),
         )),
-      ) as _i5.Future<_i3.Offset>);
-
-  @override
-  _i5.Future<void> setWebViewClient(_i2.WebViewClient? webViewClient) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setWebViewClient,
-          [webViewClient],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> addJavaScriptChannel(
-          _i2.JavaScriptChannel? javaScriptChannel) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #addJavaScriptChannel,
-          [javaScriptChannel],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> removeJavaScriptChannel(
-          _i2.JavaScriptChannel? javaScriptChannel) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #removeJavaScriptChannel,
-          [javaScriptChannel],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> setDownloadListener(_i2.DownloadListener? listener) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setDownloadListener,
-          [listener],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> setWebChromeClient(_i2.WebChromeClient? client) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setWebChromeClient,
-          [client],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> setBackgroundColor(_i3.Color? color) => (super.noSuchMethod(
-        Invocation.method(
-          #setBackgroundColor,
-          [color],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i2.WebView copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeWebView_3(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i2.WebView);
+      ) as _i4.Future<_i2.WebViewPoint>);
 }
 
 /// A class which mocks [WebResourceRequest].
@@ -708,7 +793,7 @@ class MockWebResourceRequest extends _i1.Mock
   @override
   String get url => (super.noSuchMethod(
         Invocation.getter(#url),
-        returnValue: _i6.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#url),
         ),
@@ -729,17 +814,35 @@ class MockWebResourceRequest extends _i1.Mock
   @override
   String get method => (super.noSuchMethod(
         Invocation.getter(#method),
-        returnValue: _i6.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#method),
         ),
       ) as String);
 
   @override
-  Map<String, String> get requestHeaders => (super.noSuchMethod(
-        Invocation.getter(#requestHeaders),
-        returnValue: <String, String>{},
-      ) as Map<String, String>);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i2.WebResourceRequest pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeWebResourceRequest_6(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.WebResourceRequest);
 }
 
 /// A class which mocks [DownloadListener].
@@ -752,6 +855,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
 
   @override
   void Function(
+    _i2.DownloadListener,
     String,
     String,
     String,
@@ -760,6 +864,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
   ) get onDownloadStart => (super.noSuchMethod(
         Invocation.getter(#onDownloadStart),
         returnValue: (
+          _i2.DownloadListener pigeon_instance,
           String url,
           String userAgent,
           String contentDisposition,
@@ -767,6 +872,7 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
           int contentLength,
         ) {},
       ) as void Function(
+        _i2.DownloadListener,
         String,
         String,
         String,
@@ -775,15 +881,24 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
       ));
 
   @override
-  _i2.DownloadListener copy() => (super.noSuchMethod(
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i2.DownloadListener pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeDownloadListener_4(
+        returnValue: _FakeDownloadListener_7(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
@@ -794,46 +909,64 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWebViewAndroidJavaScriptChannel extends _i1.Mock
-    implements _i8.WebViewAndroidJavaScriptChannel {
+    implements _i7.WebViewAndroidJavaScriptChannel {
   MockWebViewAndroidJavaScriptChannel() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i4.JavascriptChannelRegistry get javascriptChannelRegistry =>
+  _i3.JavascriptChannelRegistry get javascriptChannelRegistry =>
       (super.noSuchMethod(
         Invocation.getter(#javascriptChannelRegistry),
-        returnValue: _FakeJavascriptChannelRegistry_5(
+        returnValue: _FakeJavascriptChannelRegistry_8(
           this,
           Invocation.getter(#javascriptChannelRegistry),
         ),
-      ) as _i4.JavascriptChannelRegistry);
+      ) as _i3.JavascriptChannelRegistry);
 
   @override
   String get channelName => (super.noSuchMethod(
         Invocation.getter(#channelName),
-        returnValue: _i6.dummyValue<String>(
+        returnValue: _i5.dummyValue<String>(
           this,
           Invocation.getter(#channelName),
         ),
       ) as String);
 
   @override
-  void Function(String) get postMessage => (super.noSuchMethod(
+  void Function(
+    _i2.JavaScriptChannel,
+    String,
+  ) get postMessage => (super.noSuchMethod(
         Invocation.getter(#postMessage),
-        returnValue: (String message) {},
-      ) as void Function(String));
+        returnValue: (
+          _i2.JavaScriptChannel pigeon_instance,
+          String message,
+        ) {},
+      ) as void Function(
+        _i2.JavaScriptChannel,
+        String,
+      ));
 
   @override
-  _i2.JavaScriptChannel copy() => (super.noSuchMethod(
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i2.JavaScriptChannel pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeJavaScriptChannel_6(
+        returnValue: _FakeJavaScriptChannel_9(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
@@ -849,70 +982,79 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   }
 
   @override
-  _i5.Future<void> setSynchronousReturnValueForOnShowFileChooser(bool? value) =>
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<void> setSynchronousReturnValueForOnShowFileChooser(bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnShowFileChooser,
           [value],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setSynchronousReturnValueForOnConsoleMessage(bool? value) =>
+  _i4.Future<void> setSynchronousReturnValueForOnConsoleMessage(bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnConsoleMessage,
           [value],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setSynchronousReturnValueForOnJsAlert(bool? value) =>
+  _i4.Future<void> setSynchronousReturnValueForOnJsAlert(bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnJsAlert,
           [value],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setSynchronousReturnValueForOnJsConfirm(bool? value) =>
+  _i4.Future<void> setSynchronousReturnValueForOnJsConfirm(bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnJsConfirm,
           [value],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i5.Future<void> setSynchronousReturnValueForOnJsPrompt(bool? value) =>
+  _i4.Future<void> setSynchronousReturnValueForOnJsPrompt(bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForOnJsPrompt,
           [value],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i2.WebChromeClient copy() => (super.noSuchMethod(
+  _i2.WebChromeClient pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWebChromeClient_7(
+        returnValue: _FakeWebChromeClient_10(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
@@ -928,27 +1070,36 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
   }
 
   @override
-  _i5.Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<void> setSynchronousReturnValueForShouldOverrideUrlLoading(
           bool? value) =>
       (super.noSuchMethod(
         Invocation.method(
           #setSynchronousReturnValueForShouldOverrideUrlLoading,
           [value],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i2.WebViewClient copy() => (super.noSuchMethod(
+  _i2.WebViewClient pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWebViewClient_8(
+        returnValue: _FakeWebViewClient_11(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
@@ -959,16 +1110,16 @@ class MockWebViewClient extends _i1.Mock implements _i2.WebViewClient {
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockJavascriptChannelRegistry extends _i1.Mock
-    implements _i4.JavascriptChannelRegistry {
+    implements _i3.JavascriptChannelRegistry {
   MockJavascriptChannelRegistry() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  Map<String, _i4.JavascriptChannel> get channels => (super.noSuchMethod(
+  Map<String, _i3.JavascriptChannel> get channels => (super.noSuchMethod(
         Invocation.getter(#channels),
-        returnValue: <String, _i4.JavascriptChannel>{},
-      ) as Map<String, _i4.JavascriptChannel>);
+        returnValue: <String, _i3.JavascriptChannel>{},
+      ) as Map<String, _i3.JavascriptChannel>);
 
   @override
   void onJavascriptChannelMessage(
@@ -987,7 +1138,7 @@ class MockJavascriptChannelRegistry extends _i1.Mock
       );
 
   @override
-  void updateJavascriptChannelsFromSet(Set<_i4.JavascriptChannel>? channels) =>
+  void updateJavascriptChannelsFromSet(Set<_i3.JavascriptChannel>? channels) =>
       super.noSuchMethod(
         Invocation.method(
           #updateJavascriptChannelsFromSet,
@@ -1001,13 +1152,13 @@ class MockJavascriptChannelRegistry extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockWebViewPlatformCallbacksHandler extends _i1.Mock
-    implements _i4.WebViewPlatformCallbacksHandler {
+    implements _i3.WebViewPlatformCallbacksHandler {
   MockWebViewPlatformCallbacksHandler() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i5.FutureOr<bool> onNavigationRequest({
+  _i4.FutureOr<bool> onNavigationRequest({
     required String? url,
     required bool? isForMainFrame,
   }) =>
@@ -1020,8 +1171,8 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
             #isForMainFrame: isForMainFrame,
           },
         ),
-        returnValue: _i5.Future<bool>.value(false),
-      ) as _i5.FutureOr<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+      ) as _i4.FutureOr<bool>);
 
   @override
   void onPageStarted(String? url) => super.noSuchMethod(
@@ -1051,7 +1202,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
       );
 
   @override
-  void onWebResourceError(_i4.WebResourceError? error) => super.noSuchMethod(
+  void onWebResourceError(_i3.WebResourceError? error) => super.noSuchMethod(
         Invocation.method(
           #onWebResourceError,
           [error],
@@ -1063,7 +1214,7 @@ class MockWebViewPlatformCallbacksHandler extends _i1.Mock
 /// A class which mocks [WebViewProxy].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockWebViewProxy extends _i1.Mock implements _i8.WebViewProxy {
+class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
   MockWebViewProxy() {
     _i1.throwOnMissingStub(this);
   }
@@ -1074,7 +1225,7 @@ class MockWebViewProxy extends _i1.Mock implements _i8.WebViewProxy {
           #createWebView,
           [],
         ),
-        returnValue: _FakeWebView_3(
+        returnValue: _FakeWebView_4(
           this,
           Invocation.method(
             #createWebView,
@@ -1086,29 +1237,35 @@ class MockWebViewProxy extends _i1.Mock implements _i8.WebViewProxy {
   @override
   _i2.WebViewClient createWebViewClient({
     void Function(
+      _i2.WebViewClient,
       _i2.WebView,
       String,
     )? onPageStarted,
     void Function(
+      _i2.WebViewClient,
       _i2.WebView,
       String,
     )? onPageFinished,
     void Function(
+      _i2.WebViewClient,
       _i2.WebView,
       _i2.WebResourceRequest,
       _i2.WebResourceError,
     )? onReceivedRequestError,
     void Function(
+      _i2.WebViewClient,
       _i2.WebView,
       int,
       String,
       String,
     )? onReceivedError,
     void Function(
+      _i2.WebViewClient,
       _i2.WebView,
       _i2.WebResourceRequest,
     )? requestLoading,
     void Function(
+      _i2.WebViewClient,
       _i2.WebView,
       String,
     )? urlLoading,
@@ -1126,7 +1283,7 @@ class MockWebViewProxy extends _i1.Mock implements _i8.WebViewProxy {
             #urlLoading: urlLoading,
           },
         ),
-        returnValue: _FakeWebViewClient_8(
+        returnValue: _FakeWebViewClient_11(
           this,
           Invocation.method(
             #createWebViewClient,
@@ -1144,13 +1301,13 @@ class MockWebViewProxy extends _i1.Mock implements _i8.WebViewProxy {
       ) as _i2.WebViewClient);
 
   @override
-  _i5.Future<void> setWebContentsDebuggingEnabled(bool? enabled) =>
+  _i4.Future<void> setWebContentsDebuggingEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(
           #setWebContentsDebuggingEnabled,
           [enabled],
         ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

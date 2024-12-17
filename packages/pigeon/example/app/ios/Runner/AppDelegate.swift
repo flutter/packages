@@ -37,16 +37,63 @@ private class PigeonFlutterApi {
   }
 
   func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
   ) {
     flutterAPI.flutterMethod(aString: aStringArg) {
-      completion(.success($0))
+      completion($0)
     }
   }
 }
 // #enddocregion swift-class-flutter
 
-@UIApplicationMain
+// #docregion swift-class-event
+class EventListener: StreamEventsStreamHandler {
+  var eventSink: PigeonEventSink<PlatformEvent>?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    eventSink = sink
+  }
+
+  func onIntEvent(event: Int64) {
+    if let eventSink = eventSink {
+      eventSink.success(IntEvent(data: event))
+    }
+  }
+
+  func onStringEvent(event: String) {
+    if let eventSink = eventSink {
+      eventSink.success(StringEvent(data: event))
+    }
+  }
+
+  func onEventsDone() {
+    eventSink?.endOfStream()
+    eventSink = nil
+  }
+}
+// #enddocregion swift-class-event
+
+func sendEvents(_ eventListener: EventListener) {
+  var timer: Timer?
+  var count: Int64 = 0
+  timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+    DispatchQueue.main.async {
+      if count >= 100 {
+        eventListener.onEventsDone()
+        timer?.invalidate()
+      } else {
+        if (count % 2) == 0 {
+          eventListener.onIntEvent(event: Int64(count))
+        } else {
+          eventListener.onStringEvent(event: String(count))
+        }
+        count += 1
+      }
+    }
+  }
+}
+
+@main
 @objc class AppDelegate: FlutterAppDelegate {
   override func application(
     _ application: UIApplication,
@@ -57,6 +104,12 @@ private class PigeonFlutterApi {
     let controller = window?.rootViewController as! FlutterViewController
     let api = PigeonApiImplementation()
     ExampleHostApiSetup.setUp(binaryMessenger: controller.binaryMessenger, api: api)
+    // #docregion swift-init-event
+    let eventListener = EventListener()
+    StreamEventsStreamHandler.register(
+      with: controller.binaryMessenger, streamHandler: eventListener)
+    // #enddocregion swift-init-event
+    sendEvents(eventListener)
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
 

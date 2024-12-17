@@ -60,7 +60,7 @@ dependencies {
     implementation 'com.google.guava:guava:33.3.1-android'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
     implementation 'com.google.code.gson:gson:2.10.1'
-    androidTestImplementation 'org.hamcrest:hamcrest:2.2'
+    androidTestImplementation 'org.hamcrest:hamcrest:3.0'
 
     testImplementation 'junit:junit:4.13.2'
     testImplementation "com.google.truth:truth:1.1.3"

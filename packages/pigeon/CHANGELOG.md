@@ -1,3 +1,31 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 22.7.0
+
+* [swift, kotlin] Adds event channel support.
+* [swift, kotlin] Adds `sealed` class inheritance support.
+* [swift] Updates codec class names to be upper camel case.
+
+## 22.6.4
+
+* [swift] Fixes the channel names of the named constructors of ProxyApis.
+
+## 22.6.3
+
+* Replaces deprecated collection method usage.
+
+## 22.6.2
+
+* Removes the `@protected` annotation from the InstanceManager field of the
+  `PigeonInternalProxyApiBaseClass`.
+
+## 22.6.1
+
+* [gobject] Moves class declarations to the header to work around a bug in some
+  versions of glib.
+
 ## 22.6.0
 
 * [swift] Adds `includeErrorClass` to `SwiftOptions`.

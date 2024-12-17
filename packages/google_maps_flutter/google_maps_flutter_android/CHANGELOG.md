@@ -1,3 +1,7 @@
+## 2.14.11
+
+* Updates internal Pigeon API to use newer features.
+
 ## 2.14.10
 
 * Adds 'PlatformBitmap' type.

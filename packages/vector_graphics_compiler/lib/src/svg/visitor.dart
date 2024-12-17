@@ -45,7 +45,7 @@ abstract class Visitor<S, V> {
   S visitEmptyNode(Node node, V data);
 
   /// Visit a [PatternNode].
-  S visitPatternNode(PatternNode node, V data);
+  S visitPatternNode(PatternNode patternNode, V data);
 
   /// Visit a [ResolvedTextPositionNode].
   S visitResolvedTextPositionNode(

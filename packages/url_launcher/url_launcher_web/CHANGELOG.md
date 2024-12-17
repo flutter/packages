@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 2.3.3
 
 * Changes `launchUrl` so it always returns `true`, except for disallowed URL schemes.

@@ -54,7 +54,34 @@ GMSCameraPosition *FGMGetCameraPositionForPigeonCameraPosition(
                                 viewingAngle:position.tilt];
 }
 
-extern GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type) {
+NSArray<CLLocation *> *FGMGetPointsForPigeonLatLngs(NSArray<FGMPlatformLatLng *> *pigeonPoints) {
+  NSMutableArray *points = [[NSMutableArray alloc] initWithCapacity:pigeonPoints.count];
+  for (FGMPlatformLatLng *point in pigeonPoints) {
+    [points addObject:[[CLLocation alloc] initWithLatitude:point.latitude
+                                                 longitude:point.longitude]];
+  }
+  return points;
+}
+
+NSArray<NSArray<CLLocation *> *> *FGMGetHolesForPigeonLatLngArrays(
+    NSArray<NSArray<FGMPlatformLatLng *> *> *pigeonHolePoints) {
+  NSMutableArray<NSArray<CLLocation *> *> *holes =
+      [[NSMutableArray alloc] initWithCapacity:pigeonHolePoints.count];
+  for (NSArray<FGMPlatformLatLng *> *holePoints in pigeonHolePoints) {
+    [holes addObject:FGMGetPointsForPigeonLatLngs(holePoints)];
+  }
+  return holes;
+}
+
+GMSMutablePath *FGMGetPathFromPoints(NSArray<CLLocation *> *points) {
+  GMSMutablePath *path = [GMSMutablePath path];
+  for (CLLocation *location in points) {
+    [path addCoordinate:location.coordinate];
+  }
+  return path;
+}
+
+GMSMapViewType FGMGetMapViewTypeForPigeonMapType(FGMPlatformMapType type) {
   switch (type) {
     case FGMPlatformMapTypeNone:
       return kGMSTypeNone;
@@ -86,6 +113,77 @@ FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
                      markerIds:markerIDs];
 }
 
+GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate *cameraUpdate) {
+  // See note in messages.dart for why this is so loosely typed.
+  id update = cameraUpdate.cameraUpdate;
+  if ([update isKindOfClass:[FGMPlatformCameraUpdateNewCameraPosition class]]) {
+    return [GMSCameraUpdate
+        setCamera:FGMGetCameraPositionForPigeonCameraPosition(
+                      ((FGMPlatformCameraUpdateNewCameraPosition *)update).cameraPosition)];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateNewLatLng class]]) {
+    return [GMSCameraUpdate setTarget:FGMGetCoordinateForPigeonLatLng(
+                                          ((FGMPlatformCameraUpdateNewLatLng *)update).latLng)];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateNewLatLngBounds class]]) {
+    FGMPlatformCameraUpdateNewLatLngBounds *typedUpdate =
+        (FGMPlatformCameraUpdateNewLatLngBounds *)update;
+    return
+        [GMSCameraUpdate fitBounds:FGMGetCoordinateBoundsForPigeonLatLngBounds(typedUpdate.bounds)
+                       withPadding:typedUpdate.padding];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateNewLatLngZoom class]]) {
+    FGMPlatformCameraUpdateNewLatLngZoom *typedUpdate =
+        (FGMPlatformCameraUpdateNewLatLngZoom *)update;
+    return [GMSCameraUpdate setTarget:FGMGetCoordinateForPigeonLatLng(typedUpdate.latLng)
+                                 zoom:typedUpdate.zoom];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateScrollBy class]]) {
+    FGMPlatformCameraUpdateScrollBy *typedUpdate = (FGMPlatformCameraUpdateScrollBy *)update;
+    return [GMSCameraUpdate scrollByX:typedUpdate.dx Y:typedUpdate.dy];
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateZoomBy class]]) {
+    FGMPlatformCameraUpdateZoomBy *typedUpdate = (FGMPlatformCameraUpdateZoomBy *)update;
+    if (typedUpdate.focus) {
+      return [GMSCameraUpdate zoomBy:typedUpdate.amount
+                             atPoint:FGMGetCGPointForPigeonPoint(typedUpdate.focus)];
+    } else {
+      return [GMSCameraUpdate zoomBy:typedUpdate.amount];
+    }
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateZoom class]]) {
+    if (((FGMPlatformCameraUpdateZoom *)update).out) {
+      return [GMSCameraUpdate zoomOut];
+    } else {
+      return [GMSCameraUpdate zoomIn];
+    }
+  } else if ([update isKindOfClass:[FGMPlatformCameraUpdateZoomTo class]]) {
+    return [GMSCameraUpdate zoomTo:((FGMPlatformCameraUpdateZoomTo *)update).zoom];
+  }
+  return nil;
+}
+
+UIColor *FGMGetColorForRGBA(NSInteger rgba) {
+  return [UIColor colorWithRed:((CGFloat)((rgba & 0xFF0000) >> 16)) / 255.0
+                         green:((CGFloat)((rgba & 0xFF00) >> 8)) / 255.0
+                          blue:((CGFloat)(rgba & 0xFF)) / 255.0
+                         alpha:((CGFloat)((rgba & 0xFF000000) >> 24)) / 255.0];
+}
+
+NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
+    NSArray<FGMPlatformPatternItem *> *patterns, UIColor *strokeColor) {
+  NSMutableArray *strokeStyles = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
+  for (FGMPlatformPatternItem *pattern in patterns) {
+    UIColor *color =
+        pattern.type == FGMPlatformPatternItemTypeGap ? UIColor.clearColor : strokeColor;
+    [strokeStyles addObject:[GMSStrokeStyle solidColor:color]];
+  }
+  return strokeStyles;
+}
+
+NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(NSArray<FGMPlatformPatternItem *> *patterns) {
+  NSMutableArray *lengths = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
+  for (FGMPlatformPatternItem *pattern in patterns) {
+    NSNumber *length = pattern.length ?: @0;
+    [lengths addObject:length];
+  }
+  return lengths;
+}
+
 @implementation FLTGoogleMapJSONConversions
 
 // These constants must match the corresponding constants in serialization.dart
@@ -114,11 +212,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 }
 
 + (UIColor *)colorFromRGBA:(NSNumber *)numberColor {
-  unsigned long value = [numberColor unsignedLongValue];
-  return [UIColor colorWithRed:((float)((value & 0xFF0000) >> 16)) / 255.0
-                         green:((float)((value & 0xFF00) >> 8)) / 255.0
-                          blue:((float)(value & 0xFF)) / 255.0
-                         alpha:((float)((value & 0xFF000000) >> 24)) / 255.0];
+  return FGMGetColorForRGBA(numberColor.unsignedLongValue);
 }
 
 + (NSNumber *)RGBAFromColor:(UIColor *)color {
@@ -127,104 +221,6 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   unsigned long value = ((unsigned long)(alpha * 255) << 24) | ((unsigned long)(red * 255) << 16) |
                         ((unsigned long)(green * 255) << 8) | ((unsigned long)(blue * 255));
   return @(value);
-}
-
-+ (NSArray<CLLocation *> *)pointsFromLatLongs:(NSArray *)data {
-  NSMutableArray *points = [[NSMutableArray alloc] init];
-  for (unsigned i = 0; i < [data count]; i++) {
-    NSNumber *latitude = data[i][0];
-    NSNumber *longitude = data[i][1];
-    CLLocation *point = [[CLLocation alloc] initWithLatitude:[latitude doubleValue]
-                                                   longitude:[longitude doubleValue]];
-    [points addObject:point];
-  }
-
-  return points;
-}
-
-+ (NSArray<NSArray<CLLocation *> *> *)holesFromPointsArray:(NSArray *)data {
-  NSMutableArray<NSArray<CLLocation *> *> *holes = [[[NSMutableArray alloc] init] init];
-  for (unsigned i = 0; i < [data count]; i++) {
-    NSArray<CLLocation *> *points = [FLTGoogleMapJSONConversions pointsFromLatLongs:data[i]];
-    [holes addObject:points];
-  }
-
-  return holes;
-}
-
-+ (nullable GMSCameraPosition *)cameraPostionFromDictionary:(nullable NSDictionary *)data {
-  if (!data) {
-    return nil;
-  }
-  return [GMSCameraPosition
-      cameraWithTarget:[FLTGoogleMapJSONConversions locationFromLatLong:data[@"target"]]
-                  zoom:[data[@"zoom"] floatValue]
-               bearing:[data[@"bearing"] doubleValue]
-          viewingAngle:[data[@"tilt"] doubleValue]];
-}
-
-+ (GMSCoordinateBounds *)coordinateBoundsFromLatLongs:(NSArray *)latlongs {
-  return [[GMSCoordinateBounds alloc]
-      initWithCoordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[0]]
-              coordinate:[FLTGoogleMapJSONConversions locationFromLatLong:latlongs[1]]];
-}
-
-+ (nullable GMSCameraUpdate *)cameraUpdateFromArray:(NSArray *)channelValue {
-  NSString *update = channelValue[0];
-  if ([update isEqualToString:@"newCameraPosition"]) {
-    return [GMSCameraUpdate
-        setCamera:[FLTGoogleMapJSONConversions cameraPostionFromDictionary:channelValue[1]]];
-  } else if ([update isEqualToString:@"newLatLng"]) {
-    return [GMSCameraUpdate
-        setTarget:[FLTGoogleMapJSONConversions locationFromLatLong:channelValue[1]]];
-  } else if ([update isEqualToString:@"newLatLngBounds"]) {
-    return [GMSCameraUpdate
-          fitBounds:[FLTGoogleMapJSONConversions coordinateBoundsFromLatLongs:channelValue[1]]
-        withPadding:[channelValue[2] doubleValue]];
-  } else if ([update isEqualToString:@"newLatLngZoom"]) {
-    return
-        [GMSCameraUpdate setTarget:[FLTGoogleMapJSONConversions locationFromLatLong:channelValue[1]]
-                              zoom:[channelValue[2] floatValue]];
-  } else if ([update isEqualToString:@"scrollBy"]) {
-    return [GMSCameraUpdate scrollByX:[channelValue[1] doubleValue]
-                                    Y:[channelValue[2] doubleValue]];
-  } else if ([update isEqualToString:@"zoomBy"]) {
-    if (channelValue.count == 2) {
-      return [GMSCameraUpdate zoomBy:[channelValue[1] floatValue]];
-    } else {
-      return [GMSCameraUpdate zoomBy:[channelValue[1] floatValue]
-                             atPoint:[FLTGoogleMapJSONConversions pointFromArray:channelValue[2]]];
-    }
-  } else if ([update isEqualToString:@"zoomIn"]) {
-    return [GMSCameraUpdate zoomIn];
-  } else if ([update isEqualToString:@"zoomOut"]) {
-    return [GMSCameraUpdate zoomOut];
-  } else if ([update isEqualToString:@"zoomTo"]) {
-    return [GMSCameraUpdate zoomTo:[channelValue[1] floatValue]];
-  }
-  return nil;
-}
-
-+ (NSArray<GMSStrokeStyle *> *)strokeStylesFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns
-                                            strokeColor:(UIColor *)strokeColor {
-  NSMutableArray *strokeStyles = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
-  for (NSArray *pattern in patterns) {
-    NSString *patternType = pattern[0];
-    UIColor *color = [patternType isEqualToString:@"gap"] ? [UIColor clearColor] : strokeColor;
-    [strokeStyles addObject:[GMSStrokeStyle solidColor:color]];
-  }
-
-  return strokeStyles;
-}
-
-+ (NSArray<NSNumber *> *)spanLengthsFromPatterns:(NSArray<NSArray<NSObject *> *> *)patterns {
-  NSMutableArray *lengths = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
-  for (NSArray *pattern in patterns) {
-    NSNumber *length = [pattern count] > 1 ? pattern[1] : @0;
-    [lengths addObject:length];
-  }
-
-  return lengths;
 }
 
 + (GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data {

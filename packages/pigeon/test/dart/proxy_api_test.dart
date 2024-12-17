@@ -177,6 +177,62 @@ void main() {
       );
     });
 
+    group('ProxyApi base class', () {
+      test('class name', () {
+        final Root root = Root(apis: <Api>[
+          AstProxyApi(
+            name: 'Api',
+            constructors: <Constructor>[],
+            fields: <ApiField>[],
+            methods: <Method>[],
+          )
+        ], classes: <Class>[], enums: <Enum>[]);
+        final StringBuffer sink = StringBuffer();
+        const DartGenerator generator = DartGenerator();
+        generator.generate(
+          const DartOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(
+          code,
+          contains(r'abstract class PigeonInternalProxyApiBaseClass'),
+        );
+      });
+
+      test('InstanceManager field', () {
+        final Root root = Root(apis: <Api>[
+          AstProxyApi(
+            name: 'Api',
+            constructors: <Constructor>[],
+            fields: <ApiField>[],
+            methods: <Method>[],
+          )
+        ], classes: <Class>[], enums: <Enum>[]);
+        final StringBuffer sink = StringBuffer();
+        const DartGenerator generator = DartGenerator();
+        generator.generate(
+          const DartOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains(
+            '/// Maintains instances stored to communicate with native language objects. '
+            'final PigeonInstanceManager pigeon_instanceManager;',
+          ),
+        );
+      });
+    });
+
     group('inheritance', () {
       test('extends', () {
         final AstProxyApi api2 = AstProxyApi(

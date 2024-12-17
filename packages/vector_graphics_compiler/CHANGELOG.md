@@ -1,3 +1,19 @@
+## 1.1.16
+
+* Sets stroke-width to 1 by default when an invalid value is parsed instead of throwing an exception.
+
+## 1.1.15
+
+* Fixes a bug where empty tags caused the parser to crash.
+
+## 1.1.14
+
+* Makes the package WASM compatible.
+
+## 1.1.13
+
+* Relaxes dependency constraint on vector_graphics_codec.
+
 ## 1.1.12
 
 * Transfers the package source from https://github.com/dnfield/vector_graphics

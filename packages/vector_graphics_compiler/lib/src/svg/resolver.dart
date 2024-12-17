@@ -287,13 +287,14 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   }
 
   @override
-  Node visitPatternNode(PatternNode node, AffineMatrix data) {
-    final AttributedNode? resolvedPattern = node.resolver(node.patternId);
+  Node visitPatternNode(PatternNode patternNode, AffineMatrix data) {
+    final AttributedNode? resolvedPattern =
+        patternNode.resolver(patternNode.patternId);
     if (resolvedPattern == null) {
-      return node.child.accept(this, data);
+      return patternNode.child.accept(this, data);
     }
-    final Node child = node.child.accept(this, data);
-    final AffineMatrix childTransform = node.concatTransform(data);
+    final Node child = patternNode.child.accept(this, data);
+    final AffineMatrix childTransform = patternNode.concatTransform(data);
     final Node pattern = resolvedPattern.accept(this, childTransform);
 
     return ResolvedPatternNode(
@@ -304,7 +305,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
       width: resolvedPattern.attributes.width!,
       height: resolvedPattern.attributes.height!,
       transform: data,
-      id: node.patternId,
+      id: patternNode.patternId,
     );
   }
 

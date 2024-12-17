@@ -54,6 +54,8 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
     ProxyApiSuperClass? nullableProxyApiParam,
   );
 
+  ProxyApiTestClass.namedConstructor();
+
   late bool aBool;
   late int anInt;
   late double aDouble;

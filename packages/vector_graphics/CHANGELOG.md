@@ -1,3 +1,15 @@
+## 1.1.15
+
+* Updates error handling in VectorGraphicWidget to handle errors when the bytes of the graphic cannot be loaded.
+
+## 1.1.14
+
+* Relaxes dependency constraint on vector_graphics_codec.
+
+## 1.1.13
+
+* Fix execution on the web with WebAssembly.
+
 ## 1.1.12
 
 * Transfers the package source from https://github.com/dnfield/vector_graphics

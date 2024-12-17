@@ -5,69 +5,60 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import android.webkit.WebChromeClient.FileChooserParams;
-import io.flutter.plugin.common.BinaryMessenger;
-import java.util.Arrays;
-import java.util.Objects;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class FileChooserParamsTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+  @Test
+  public void isCaptureEnabled() {
+    final PigeonApiFileChooserParams api =
+        new TestProxyApiRegistrar().getPigeonApiFileChooserParams();
 
-  @Mock public FileChooserParams mockFileChooserParams;
+    final FileChooserParams instance = mock(FileChooserParams.class);
+    final Boolean value = true;
+    when(instance.isCaptureEnabled()).thenReturn(value);
 
-  @Mock public BinaryMessenger mockBinaryMessenger;
-
-  InstanceManager instanceManager;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
+    assertEquals(value, api.isCaptureEnabled(instance));
   }
 
   @Test
-  public void flutterApiCreate() {
-    final FileChooserParamsFlutterApiImpl spyFlutterApi =
-        spy(new FileChooserParamsFlutterApiImpl(mockBinaryMessenger, instanceManager));
+  public void acceptTypes() {
+    final PigeonApiFileChooserParams api =
+        new TestProxyApiRegistrar().getPigeonApiFileChooserParams();
 
-    when(mockFileChooserParams.isCaptureEnabled()).thenReturn(true);
-    when(mockFileChooserParams.getAcceptTypes()).thenReturn(new String[] {"my", "list"});
-    when(mockFileChooserParams.getMode()).thenReturn(FileChooserParams.MODE_OPEN_MULTIPLE);
-    when(mockFileChooserParams.getFilenameHint()).thenReturn("filenameHint");
-    spyFlutterApi.create(mockFileChooserParams, reply -> {});
+    final FileChooserParams instance = mock(FileChooserParams.class);
+    final List<String> value = Collections.singletonList("myString");
+    when(instance.getAcceptTypes()).thenReturn(value.toArray(new String[0]));
 
-    final long identifier =
-        Objects.requireNonNull(
-            instanceManager.getIdentifierForStrongReference(mockFileChooserParams));
-    final ArgumentCaptor<GeneratedAndroidWebView.FileChooserMode> modeCaptor =
-        ArgumentCaptor.forClass(GeneratedAndroidWebView.FileChooserMode.class);
+    assertEquals(value, api.acceptTypes(instance));
+  }
 
-    verify(spyFlutterApi)
-        .create(
-            eq(identifier),
-            eq(true),
-            eq(Arrays.asList("my", "list")),
-            modeCaptor.capture(),
-            eq("filenameHint"),
-            any());
-    assertEquals(modeCaptor.getValue(), GeneratedAndroidWebView.FileChooserMode.OPEN_MULTIPLE);
+  @Test
+  public void mode() {
+    final PigeonApiFileChooserParams api =
+        new TestProxyApiRegistrar().getPigeonApiFileChooserParams();
+
+    final FileChooserParams instance = mock(FileChooserParams.class);
+    final FileChooserMode value = io.flutter.plugins.webviewflutter.FileChooserMode.OPEN;
+    when(instance.getMode()).thenReturn(FileChooserParams.MODE_OPEN);
+
+    assertEquals(value, api.mode(instance));
+  }
+
+  @Test
+  public void filenameHint() {
+    final PigeonApiFileChooserParams api =
+        new TestProxyApiRegistrar().getPigeonApiFileChooserParams();
+
+    final FileChooserParams instance = mock(FileChooserParams.class);
+    final String value = "myString";
+    when(instance.getFilenameHint()).thenReturn(value);
+
+    assertEquals(value, api.filenameHint(instance));
   }
 }

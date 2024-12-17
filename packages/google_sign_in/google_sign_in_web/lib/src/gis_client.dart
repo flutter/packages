@@ -188,9 +188,9 @@ class GisSdkClient {
   //
   // Token clients have an additional `error_callback` for miscellaneous
   // errors, like "popup couldn't open" or "popup closed by user".
-  void _onTokenError(Object? error) {
+  void _onTokenError(GoogleIdentityServicesError? error) {
     if (error != null) {
-      _tokenResponses.addError((error as GoogleIdentityServicesError).type);
+      _tokenResponses.addError(error.type);
     }
   }
 
@@ -223,9 +223,9 @@ class GisSdkClient {
     }
   }
 
-  void _onCodeError(Object? error) {
+  void _onCodeError(GoogleIdentityServicesError? error) {
     if (error != null) {
-      _codeResponses.addError((error as GoogleIdentityServicesError).type);
+      _codeResponses.addError(error.type);
     }
   }
 
