@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 14.7.0
 
 - Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.

@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
+import 'shared_preferences_devtools_extension_data.dart';
+
 /// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
 /// a persistent store for simple data.
 ///
@@ -285,3 +287,10 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
     _completer = null;
   }
 }
+
+// Include an unused import to ensure this library is included
+// when running `flutter run -d chrome`.
+// Check this discussion for more info: https://github.com/flutter/packages/pull/6749/files/6eb1b4fdce1eba107294770d581713658ff971e9#discussion_r1755375409
+// ignore: unused_element
+final bool _fieldToKeepDevtoolsExtensionReachable =
+    fieldToKeepDevtoolsExtensionLibraryAlive;
