@@ -339,8 +339,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
         name,
         pathParameters: pathParameters,
         queryParameters: queryParameters,
-      ) +
-      ((fragment?.isNotEmpty ?? false) ? '#$fragment' : '');
+        fragment: fragment,
+      );
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
   /// `/family/f2/person/p1?color=blue`
@@ -372,9 +372,9 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       /// Construct location with optional fragment, using null-safe navigation
       go(
         namedLocation(name,
-                pathParameters: pathParameters,
-                queryParameters: queryParameters) +
-            ((fragment?.isNotEmpty ?? false) ? '#$fragment' : ''),
+            pathParameters: pathParameters,
+            queryParameters: queryParameters,
+            fragment: fragment),
         extra: extra,
       );
 
