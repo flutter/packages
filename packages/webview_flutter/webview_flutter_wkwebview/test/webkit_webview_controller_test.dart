@@ -716,10 +716,8 @@ void main() {
       // UIScrollView.setBackgroundColor must be called last.
       verifyInOrder(<Object>[
         mockWebView.setOpaque(false),
-        mockWebView.setBackgroundColor(
-          Colors.transparent.toARGB32(),
-        ),
-        mockScrollView.setBackgroundColor(Colors.red.toARGB32()),
+        mockWebView.setBackgroundColor(Colors.transparent.value),
+        mockScrollView.setBackgroundColor(Colors.red.value),
       ]);
 
       debugDefaultTargetPlatformOverride = null;
