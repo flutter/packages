@@ -19,7 +19,7 @@ open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
   let assetManager = FlutterAssetManager()
   let bundle = Bundle.main
 
-  init(binaryMessenger: any FlutterBinaryMessenger) {
+  init(binaryMessenger: FlutterBinaryMessenger) {
     super.init(binaryMessenger: binaryMessenger, apiDelegate: ProxyAPIDelegate())
   }
 

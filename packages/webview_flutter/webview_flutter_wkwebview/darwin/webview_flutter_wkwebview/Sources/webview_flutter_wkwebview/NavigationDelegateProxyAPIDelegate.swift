@@ -39,9 +39,8 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   }
 
   func webView(
-    _ webView: WKWebView,
-    decidePolicyFor navigationAction: WKNavigationAction,
-    decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
+    _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+    decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void
   ) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationAction(
@@ -106,8 +105,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error)
-  {
+  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) {
         result in
@@ -120,7 +118,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
 
   func webView(
     _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
-    withError error: any Error
+    withError error: Error
   ) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didFailProvisionalNavigation(
