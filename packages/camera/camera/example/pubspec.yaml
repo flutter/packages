@@ -27,6 +27,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  leak_tracker_flutter_testing: any
 
 dependency_overrides:
   camera_web:
