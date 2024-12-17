@@ -899,7 +899,7 @@ targets:
       channel: master
       env_variables: >-
         {
-          "CHANNEL": "master",
+          "CHANNEL": "master"
         }
 
   - name: Linux_web web_platform_tests_shard_1 stable
