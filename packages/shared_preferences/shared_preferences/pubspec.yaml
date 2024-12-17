@@ -28,6 +28,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  leak_tracker_flutter_testing: any
   shared_preferences_android: ^2.3.0
   shared_preferences_foundation: ^2.5.0
   shared_preferences_linux: ^2.4.0
