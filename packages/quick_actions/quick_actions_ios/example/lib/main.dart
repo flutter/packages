@@ -51,6 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
       const ShortcutItem(
         type: 'action_one',
         localizedTitle: 'Action one',
+        localizedSubtitle: 'Action one subtitle',
         icon: 'AppIcon',
       ),
       const ShortcutItem(

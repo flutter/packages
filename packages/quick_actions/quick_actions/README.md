@@ -34,7 +34,7 @@ Finally, manage the app's quick actions, for instance:
 ```dart
 quickActions.setShortcutItems(<ShortcutItem>[
   const ShortcutItem(type: 'action_main', localizedTitle: 'Main view', icon: 'icon_main'),
-  const ShortcutItem(type: 'action_help', localizedTitle: 'Help', icon: 'icon_help')
+  const ShortcutItem(type: 'action_help', localizedTitle: 'Help', localizedSubtitle: 'Tap to get help', icon: 'icon_help')
 ]);
 ```
 

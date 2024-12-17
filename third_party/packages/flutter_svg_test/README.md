@@ -15,33 +15,42 @@ configuration of the `BytesLoader` with the giving test attribute.
 
 The following example shows how you can find svgs with the matching `SvgAssetLoader`.
 
- ```dart
-testWidgets('Finds svg', (WidgetTester widgetTester) async {
-  
-  final SvgPicture asset = SvgPicture.asset('/test/path/my.svg');
-  
-  await widgetTester.pumpWidget(asset);
-  
+<?code-excerpt "test/flutter_svg_test_test.dart (ByLoader)"?>
+```dart
+testWidgets('asset svg', (WidgetTester widgetTester) async {
+  final SvgPicture asset = SvgPicture.asset('test/flutter_logo.svg');
+  await widgetTester.pumpWidget(
+    DefaultAssetBundle(
+      bundle: _FakeAssetBundle(),
+      child: asset,
+    ),
+  );
+
   expect(find.svg(asset.bytesLoader), findsOneWidget);
 });
 ```
 
 #### Find by svg path
 
-Sometimes it is more convenient instead of instantiate the whole `BytesLoader` to 
-compare only specific attributes.
+Sometimes it is more convenient instead of instantiating the whole `BytesLoader`
+to compare only specific attributes.
 
 The following example shows how you can find svgs with the specified attribute.
 
- ```dart
+<?code-excerpt "test/flutter_svg_test_test.dart (ByPath)"?>
+```dart
 testWidgets('asset svg with path', (WidgetTester widgetTester) async {
   const String svgPath = 'test/flutter_logo.svg';
-  
-  await widgetTester.pumpWidget(SvgPicture.asset(svgPath));
-  
+  await widgetTester.pumpWidget(
+    DefaultAssetBundle(
+      bundle: _FakeAssetBundle(),
+      child: SvgPicture.asset(svgPath),
+    ),
+  );
+
   expect(find.svgAssetWithPath(svgPath), findsOneWidget);
 });
- ```
+```
 
 ## Commemoration
 
