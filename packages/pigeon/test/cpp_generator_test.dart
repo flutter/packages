@@ -249,23 +249,29 @@ void main() {
   });
 
   test('Error field is private with public accessors', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'doSomething',
-          location: ApiLocation.host,
-          parameters: <Parameter>[
-            Parameter(
-                type: const TypeDeclaration(
-                  baseName: 'int',
-                  isNullable: false,
-                ),
-                name: 'someInput')
-          ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-        )
-      ])
-    ], classes: <Class>[], enums: <Enum>[]);
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+            name: 'doSomething',
+            location: ApiLocation.host,
+            parameters: <Parameter>[
+              Parameter(
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
+                  name: 'someInput')
+            ],
+            returnType:
+                const TypeDeclaration(baseName: 'int', isNullable: false),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+      containsHostApi: true,
+    );
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
@@ -2070,6 +2076,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
