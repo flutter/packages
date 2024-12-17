@@ -6,12 +6,11 @@
 
 @implementation FLTDefaultPermissionService
 - (AVAuthorizationStatus)authorizationStatusForMediaType:(AVMediaType)mediaType {
-    return [AVCaptureDevice authorizationStatusForMediaType:mediaType];
+  return [AVCaptureDevice authorizationStatusForMediaType:mediaType];
 }
 
 - (void)requestAccessForMediaType:(AVMediaType)mediaType
-               completionHandler:(void (^)(BOOL granted))handler {
-    [AVCaptureDevice requestAccessForMediaType:mediaType
-                            completionHandler:handler];
+                completionHandler:(void (^)(BOOL granted))handler {
+  [AVCaptureDevice requestAccessForMediaType:mediaType completionHandler:handler];
 }
 @end

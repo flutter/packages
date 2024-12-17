@@ -6,13 +6,14 @@
 
 @implementation MockCameraDeviceDiscovery
 
-- (NSArray<id<FLTCaptureDeviceControlling>> *)discoverySessionWithDeviceTypes:(NSArray<AVCaptureDeviceType> *)deviceTypes
-                                                    mediaType:(AVMediaType)mediaType
-                                                     position:(AVCaptureDevicePosition)position {
-    if (self.discoverySessionStub) {
-        return self.discoverySessionStub(deviceTypes, mediaType, position);
-    }
-    return @[];
+- (NSArray<id<FLTCaptureDeviceControlling>> *)
+    discoverySessionWithDeviceTypes:(NSArray<AVCaptureDeviceType> *)deviceTypes
+                          mediaType:(AVMediaType)mediaType
+                           position:(AVCaptureDevicePosition)position {
+  if (self.discoverySessionStub) {
+    return self.discoverySessionStub(deviceTypes, mediaType, position);
+  }
+  return @[];
 }
 
 @end

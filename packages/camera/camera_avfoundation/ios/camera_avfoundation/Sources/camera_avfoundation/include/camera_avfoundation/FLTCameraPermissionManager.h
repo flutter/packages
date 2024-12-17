@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef void (^FLTCameraPermissionRequestCompletionHandler)(FlutterError *_Nullable);
 
 @interface FLTCameraPermissionManager : NSObject
-@property (nonatomic, strong) id<FLTPermissionService> permissionService;
+@property(nonatomic, strong) id<FLTPermissionService> permissionService;
 
 - (instancetype)initWithPermissionService:(id<FLTPermissionService>)service;
 
@@ -25,8 +25,8 @@ typedef void (^FLTCameraPermissionRequestCompletionHandler)(FlutterError *_Nulla
 /// @param handler if access permission is (or was previously) granted, completion handler will be
 /// called without error; Otherwise completion handler will be called with error. Handler can be
 /// called on an arbitrary dispatch queue.
-- (void)requestCameraPermissionWithCompletionHandler:(
-    FLTCameraPermissionRequestCompletionHandler)handler;
+- (void)requestCameraPermissionWithCompletionHandler:
+    (FLTCameraPermissionRequestCompletionHandler)handler;
 
 /// Requests audio access permission.
 ///
@@ -37,8 +37,8 @@ typedef void (^FLTCameraPermissionRequestCompletionHandler)(FlutterError *_Nulla
 /// @param handler if access permission is (or was previously) granted, completion handler will be
 /// called without error; Otherwise completion handler will be called with error. Handler can be
 /// called on an arbitrary dispatch queue.
-- (void)requestAudioPermissionWithCompletionHandler:(
-    FLTCameraPermissionRequestCompletionHandler)handler;
+- (void)requestAudioPermissionWithCompletionHandler:
+    (FLTCameraPermissionRequestCompletionHandler)handler;
 
 @end
 

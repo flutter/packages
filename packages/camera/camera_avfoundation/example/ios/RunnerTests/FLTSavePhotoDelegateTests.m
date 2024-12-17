@@ -57,9 +57,7 @@
       }];
 
   MockPhotoData *mockData = [[MockPhotoData alloc] init];
-  mockData.writeToFileStub = ^BOOL(NSString *path,
-                                    NSDataWritingOptions options,
-                                    NSError **error) {
+  mockData.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError **error) {
     *error = ioError;
     return NO;
   };
@@ -86,11 +84,8 @@
         [completionExpectation fulfill];
       }];
 
-  
   MockPhotoData *mockData = [[MockPhotoData alloc] init];
-  mockData.writeToFileStub = ^BOOL(NSString *path,
-                                    NSDataWritingOptions options,
-                                    NSError **error) {
+  mockData.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError **error) {
     return YES;
   };
 
@@ -112,17 +107,14 @@
   dispatch_queue_t ioQueue = dispatch_queue_create("test", NULL);
   const char *ioQueueSpecific = "io_queue_specific";
   dispatch_queue_set_specific(ioQueue, ioQueueSpecific, (void *)ioQueueSpecific, NULL);
-  
+
   MockPhotoData *mockData = [[MockPhotoData alloc] init];
-  mockData.writeToFileStub = ^BOOL(NSString *path,
-                                    NSDataWritingOptions options,
-                                    NSError **error) {
+  mockData.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError **error) {
     if (dispatch_get_specific(ioQueueSpecific)) {
       [writeFileQueueExpectation fulfill];
     }
     return YES;
   };
-
 
   NSString *filePath = @"test";
   FLTSavePhotoDelegate *delegate = [[FLTSavePhotoDelegate alloc]

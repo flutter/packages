@@ -21,7 +21,7 @@
   [super setUp];
   _mockEventChannel = [[MockEventChannel alloc] init];
   _threadSafeEventChannel =
-       [[FLTThreadSafeEventChannel alloc] initWithEventChannel:_mockEventChannel];
+      [[FLTThreadSafeEventChannel alloc] initWithEventChannel:_mockEventChannel];
 }
 
 - (void)testSetStreamHandler_shouldStayOnMainThreadIfCalledFromMainThread {
@@ -30,19 +30,19 @@
   XCTestExpectation *mainThreadCompletionExpectation =
       [self expectationWithDescription:
                 @"setStreamHandler's completion block must be called on the main thread"];
-  
+
   [_mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
     if (NSThread.isMainThread) {
       [mainThreadExpectation fulfill];
     }
   }];
-  
+
   [_threadSafeEventChannel setStreamHandler:nil
-                                completion:^{
-                                  if (NSThread.isMainThread) {
-                                    [mainThreadCompletionExpectation fulfill];
-                                  }
-                                }];
+                                 completion:^{
+                                   if (NSThread.isMainThread) {
+                                     [mainThreadCompletionExpectation fulfill];
+                                   }
+                                 }];
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
@@ -52,8 +52,7 @@
   XCTestExpectation *mainThreadCompletionExpectation =
       [self expectationWithDescription:
                 @"setStreamHandler's completion block must be called on the main thread"];
-  
-  
+
   [_mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
     if (NSThread.isMainThread) {
       [mainThreadExpectation fulfill];
@@ -63,11 +62,11 @@
   __weak typeof(self) weakSelf = self;
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     [weakSelf.threadSafeEventChannel setStreamHandler:nil
-                                  completion:^{
-                                    if (NSThread.isMainThread) {
-                                      [mainThreadCompletionExpectation fulfill];
-                                    }
-                                  }];
+                                           completion:^{
+                                             if (NSThread.isMainThread) {
+                                               [mainThreadCompletionExpectation fulfill];
+                                             }
+                                           }];
   });
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
@@ -75,11 +74,11 @@
 - (void)testEventChannel_shouldBeKeptAliveWhenDispatchingBackToMainThread {
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"Completion should be called."];
-  
+
   __weak typeof(self) weakSelf = self;
   dispatch_async(dispatch_queue_create("test", NULL), ^{
-    FLTThreadSafeEventChannel *channel = [[FLTThreadSafeEventChannel alloc]
-                                          initWithEventChannel:weakSelf.mockEventChannel];
+    FLTThreadSafeEventChannel *channel =
+        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:weakSelf.mockEventChannel];
 
     [channel setStreamHandler:nil
                    completion:^{

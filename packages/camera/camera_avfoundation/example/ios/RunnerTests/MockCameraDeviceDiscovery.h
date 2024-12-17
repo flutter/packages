@@ -8,8 +8,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MockCameraDeviceDiscovery : NSObject <FLTCameraDeviceDiscovery>
-@property(nonatomic, copy) NSArray<id<FLTCaptureDeviceControlling>> *_Nullable (^discoverySessionStub)
-    (NSArray<AVCaptureDeviceType> *deviceTypes, AVMediaType mediaType, AVCaptureDevicePosition position);
+@property(nonatomic, copy)
+    NSArray<id<FLTCaptureDeviceControlling>> *_Nullable (^discoverySessionStub)
+        (NSArray<AVCaptureDeviceType> *deviceTypes, AVMediaType mediaType,
+         AVCaptureDevicePosition position);
 @end
 
 NS_ASSUME_NONNULL_END

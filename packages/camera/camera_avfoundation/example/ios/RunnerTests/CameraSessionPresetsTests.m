@@ -9,10 +9,9 @@
 
 @import AVFoundation;
 @import XCTest;
-#import <OCMock/OCMock.h>
 #import "CameraTestUtils.h"
-#import "MockCaptureSession.h"
 #import "MockCaptureDeviceController.h"
+#import "MockCaptureSession.h"
 
 /// Includes test cases related to resolution presets setting  operations for FLTCam class.
 @interface FLTCamSessionPresetsTest : XCTestCase
@@ -26,18 +25,18 @@
   XCTestExpectation *formatExpectation = [self expectationWithDescription:@"Expected format set"];
 
   MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
-
-  id captureFormatMock = OCMClassMock([AVCaptureDeviceFormat class]);
-  
   MockCaptureDeviceController *captureDeviceMock = [[MockCaptureDeviceController alloc] init];
-  captureDeviceMock.formats = @[captureFormatMock];
-  captureDeviceMock.setActiveFormatStub = ^(AVCaptureDeviceFormat * _Nonnull format) {
-    if (format == captureFormatMock) {
+  MockCaptureDeviceFormat *fakeFormat = [[MockCaptureDeviceFormat alloc] init];
+  captureDeviceMock.formats = @[ fakeFormat ];
+  captureDeviceMock.activeFormat = fakeFormat;
+
+  captureDeviceMock.setActiveFormatStub = ^(id<FLTCaptureDeviceFormat> format) {
+    if (format == fakeFormat) {
       [formatExpectation fulfill];
     }
   };
-  
-  videoSessionMock.setSessionPresetStub = ^(AVCaptureSessionPreset  _Nonnull preset) {
+
+  videoSessionMock.setSessionPresetStub = ^(AVCaptureSessionPreset _Nonnull preset) {
     if (preset == expectedPreset) {
       [presetExpectation fulfill];
     }
@@ -62,13 +61,13 @@
   MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
   // Make sure that setting resolution preset for session always succeeds.
   videoSessionMock.mockCanSetSessionPreset = YES;
-  
-  videoSessionMock.setSessionPresetStub = ^(AVCaptureSessionPreset  _Nonnull preset) {
+
+  videoSessionMock.setSessionPresetStub = ^(AVCaptureSessionPreset _Nonnull preset) {
     if (preset == expectedPreset) {
       [expectation fulfill];
     }
   };
-  
+
   FLTCreateCamWithVideoCaptureSession(videoSessionMock, FCPPlatformResolutionPresetMax);
 
   [self waitForExpectationsWithTimeout:1 handler:nil];
@@ -79,12 +78,12 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"Expected preset set"];
 
   MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
-  
+
   // Make sure that setting resolution preset for session always succeeds.
   videoSessionMock.mockCanSetSessionPreset = YES;
-  
+
   // Expect that setting "ultraHigh" resolutionPreset correctly updates videoCaptureSession.
-  videoSessionMock.setSessionPresetStub = ^(AVCaptureSessionPreset  _Nonnull preset) {
+  videoSessionMock.setSessionPresetStub = ^(AVCaptureSessionPreset _Nonnull preset) {
     if (preset == expectedPreset) {
       [expectation fulfill];
     }

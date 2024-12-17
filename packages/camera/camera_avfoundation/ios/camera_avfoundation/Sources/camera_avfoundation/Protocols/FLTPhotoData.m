@@ -15,8 +15,8 @@
 }
 
 - (BOOL)writeToFile:(NSString *)path
-           options:(NSDataWritingOptions)writeOptionsMask
-             error:(NSError **)errorPtr {
+            options:(NSDataWritingOptions)writeOptionsMask
+              error:(NSError **)errorPtr {
   return [self.data writeToFile:path options:writeOptionsMask error:errorPtr];
 }
 @end

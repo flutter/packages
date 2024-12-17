@@ -7,6 +7,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol FLTCaptureDeviceFormat <NSObject>
+@property(nonatomic, readonly) CMFormatDescriptionRef formatDescription;
+@property(nonatomic, readonly) NSArray<AVFrameRateRange *> *videoSupportedFrameRateRanges;
+@property(nonatomic, readonly) AVCaptureDeviceFormat *format;
+@end
+
 @protocol FLTCaptureDeviceControlling <NSObject>
 
 - (NSString *)uniqueID;
@@ -15,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (AVCaptureDevicePosition)position;
 
 // Format/Configuration
-- (AVCaptureDeviceFormat *)activeFormat;
-- (NSArray<AVCaptureDeviceFormat *> *)formats;
-- (void)setActiveFormat:(AVCaptureDeviceFormat *)format;
+- (id<FLTCaptureDeviceFormat>)activeFormat;
+- (NSArray<id<FLTCaptureDeviceFormat>> *)formats;
+- (void)setActiveFormat:(id<FLTCaptureDeviceFormat>)format;
 
 // Flash/Torch
 - (BOOL)hasFlash;
@@ -39,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setExposurePointOfInterest:(CGPoint)point;
 - (float)minExposureTargetBias;
 - (float)maxExposureTargetBias;
-- (void)setExposureTargetBias:(float)bias completionHandler:(void (^ _Nullable)(CMTime))handler;
+- (void)setExposureTargetBias:(float)bias completionHandler:(void (^_Nullable)(CMTime))handler;
 - (BOOL)isExposureModeSupported:(AVCaptureExposureMode)mode;
 
 // Zoom
@@ -63,12 +69,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (CMTime)activeVideoMaxFrameDuration;
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration;
 
-- (AVCaptureInput *)createInput:(NSError * _Nullable * _Nullable)error;
+- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error;
 
 @end
 
 @interface FLTDefaultCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
 - (instancetype)initWithDevice:(AVCaptureDevice *)device;
+@end
+
+@interface FLTDefaultCaptureDeviceFormat : NSObject <FLTCaptureDeviceFormat>
+- (instancetype)initWithFormat:(AVCaptureDeviceFormat *)format;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -28,7 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outError The optional error.
  * @result A BOOL indicating whether the device was successfully locked for configuration.
  */
-- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice error:(NSError *_Nullable *_Nullable)outError;
+- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice
+             error:(NSError *_Nullable *_Nullable)outError;
 
 /**
  * @method unlockDevice:
@@ -60,7 +61,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMinFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
+- (void)setMinFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
 
 /**
  * @method setMaxFrameDuration:onDevice:
@@ -69,7 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMaxFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
+- (void)setMaxFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
 
 /**
  * @method assetWriterAudioInputWithOutputSettings:

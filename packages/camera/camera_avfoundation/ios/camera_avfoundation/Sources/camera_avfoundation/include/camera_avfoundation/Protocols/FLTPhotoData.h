@@ -8,10 +8,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTPhotoData <NSObject>
 - (BOOL)writeToFile:(NSString *)path
-           options:(NSDataWritingOptions)writeOptionsMask
-             error:(NSError **)errorPtr;
+            options:(NSDataWritingOptions)writeOptionsMask
+              error:(NSError **)errorPtr;
 @end
-
 
 @interface FLTDefaultPhotoData : NSObject <FLTPhotoData>
 @property(nonatomic, strong, readonly) NSData *data;

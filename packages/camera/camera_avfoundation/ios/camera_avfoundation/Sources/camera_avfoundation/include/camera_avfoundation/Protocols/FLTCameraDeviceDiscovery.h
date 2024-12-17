@@ -10,9 +10,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTCameraDeviceDiscovery <NSObject>
-- (NSArray<id<FLTCaptureDeviceControlling>> *)discoverySessionWithDeviceTypes:(NSArray<AVCaptureDeviceType> *)deviceTypes
-                                                                    mediaType:(AVMediaType)mediaType
-                                                                     position:(AVCaptureDevicePosition)position;
+- (NSArray<id<FLTCaptureDeviceControlling>> *)
+    discoverySessionWithDeviceTypes:(NSArray<AVCaptureDeviceType> *)deviceTypes
+                          mediaType:(AVMediaType)mediaType
+                           position:(AVCaptureDevicePosition)position;
 @end
 
 @interface FLTDefaultCameraDeviceDiscovery : NSObject <FLTCameraDeviceDiscovery>

@@ -9,8 +9,8 @@
 @import XCTest;
 @import AVFoundation;
 
-#import "MockCaptureSession.h"
 #import "MockCaptureDeviceController.h"
+#import "MockCaptureSession.h"
 
 @interface CameraMethodChannelTests : XCTestCase
 @end
@@ -20,14 +20,19 @@
 - (void)testCreate_ShouldCallResultOnMainThread {
   MockCaptureSession *avCaptureSessionMock = [[MockCaptureSession alloc] init];
   avCaptureSessionMock.mockCanSetSessionPreset = YES;
-  
+
   MockCaptureDeviceController *mockDeviceController = [[MockCaptureDeviceController alloc] init];
-  
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil globalAPI:nil deviceDiscovery:nil sessionFactory:^id<FLTCaptureSessionProtocol>{
-    return avCaptureSessionMock;
-  } deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-    return mockDeviceController;
-  }];
+
+  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
+      messenger:nil
+      globalAPI:nil
+      deviceDiscovery:nil
+      sessionFactory:^id<FLTCaptureSessionProtocol> {
+        return avCaptureSessionMock;
+      }
+      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        return mockDeviceController;
+      }];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
@@ -55,18 +60,19 @@
 - (void)testDisposeShouldDeallocCamera {
   MockCaptureSession *avCaptureSessionMock = [[MockCaptureSession alloc] init];
   avCaptureSessionMock.mockCanSetSessionPreset = YES;
-  
+
   MockCaptureDeviceController *mockDeviceController = [[MockCaptureDeviceController alloc] init];
-  
-  CameraPlugin *camera = [[CameraPlugin alloc]
-                          initWithRegistry:nil
-                          messenger:nil
-                          globalAPI:nil
-                          deviceDiscovery:nil sessionFactory:^id{
-    return avCaptureSessionMock;
-  } deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-    return mockDeviceController;
-  }];
+
+  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
+      messenger:nil
+      globalAPI:nil
+      deviceDiscovery:nil
+      sessionFactory:^id {
+        return avCaptureSessionMock;
+      }
+      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        return mockDeviceController;
+      }];
 
   XCTestExpectation *createExpectation =
       [self expectationWithDescription:@"create's result block must be called"];

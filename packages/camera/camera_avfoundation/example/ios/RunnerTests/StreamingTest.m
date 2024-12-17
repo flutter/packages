@@ -8,20 +8,67 @@
 #endif
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
 #import "CameraTestUtils.h"
+
+@interface MockImageStreamHandler : FLTImageStreamHandler
+@property(nonatomic, copy) void (^onEventSinkCalled)(id event);
+@end
+
+@implementation MockImageStreamHandler
+
+- (FlutterEventSink)eventSink {
+  if (self.onEventSinkCalled) {
+    return ^(id event) {
+      self.onEventSinkCalled(event);
+    };
+  }
+  return nil;
+}
+
+@end
+
+@interface MockFlutterBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@end
+
+@implementation MockFlutterBinaryMessenger
+- (void)sendOnChannel:(NSString *)channel message:(NSData *)message {
+}
+
+- (void)sendOnChannel:(NSString *)channel
+              message:(NSData *)message
+          binaryReply:(FlutterBinaryReply)callback {
+}
+
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler)handler {
+  return 0;
+}
+
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+}
+
+- (void)cleanupConnection:(FlutterBinaryMessengerConnection)connection {
+}
+@end
 
 @interface StreamingTests : XCTestCase
 @property(readonly, nonatomic) FLTCam *camera;
 @property(readonly, nonatomic) CMSampleBufferRef sampleBuffer;
+@property(readonly, nonatomic) MockImageStreamHandler *mockStreamHandler;
+@property(readonly, nonatomic) MockFlutterBinaryMessenger *messengerMock;
+
 @end
 
 @implementation StreamingTests
 
 - (void)setUp {
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
+  _mockStreamHandler =
+      [[MockImageStreamHandler alloc] initWithCaptureSessionQueue:captureSessionQueue];
   _camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
   _sampleBuffer = FLTCreateTestSampleBuffer();
+  _messengerMock = [[MockFlutterBinaryMessenger alloc] init];
 }
 
 - (void)tearDown {
@@ -32,13 +79,11 @@
   XCTestExpectation *streamingExpectation = [self
       expectationWithDescription:@"Must not call handler over maxStreamingPendingFramesCount"];
 
-  id handlerMock = OCMClassMock([FLTImageStreamHandler class]);
-  OCMStub([handlerMock eventSink]).andReturn(^(id event) {
+  _mockStreamHandler.onEventSinkCalled = ^(id eventSink) {
     [streamingExpectation fulfill];
-  });
+  };
 
-  id messenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
-  [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock];
+  [_camera startImageStreamWithMessenger:_messengerMock imageStreamHandler:_mockStreamHandler];
 
   XCTKVOExpectation *expectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isStreamingImages"
                                                                        object:_camera
@@ -59,13 +104,11 @@
       [self expectationWithDescription:
                 @"Must be able to call the handler again when receivedImageStreamData is called"];
 
-  id handlerMock = OCMClassMock([FLTImageStreamHandler class]);
-  OCMStub([handlerMock eventSink]).andReturn(^(id event) {
+  _mockStreamHandler.onEventSinkCalled = ^(id eventSink) {
     [streamingExpectation fulfill];
-  });
+  };
 
-  id messenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
-  [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock];
+  [_camera startImageStreamWithMessenger:_messengerMock imageStreamHandler:_mockStreamHandler];
 
   XCTKVOExpectation *expectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isStreamingImages"
                                                                        object:_camera

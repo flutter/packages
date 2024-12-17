@@ -16,11 +16,13 @@
   return self;
 }
 
-- (void)requestAudioPermissionWithCompletionHandler:(__strong FLTCameraPermissionRequestCompletionHandler)handler {
+- (void)requestAudioPermissionWithCompletionHandler:
+    (__strong FLTCameraPermissionRequestCompletionHandler)handler {
   [self requestPermissionForAudio:YES handler:handler];
 }
 
-- (void)requestCameraPermissionWithCompletionHandler:(__strong FLTCameraPermissionRequestCompletionHandler)handler {
+- (void)requestCameraPermissionWithCompletionHandler:
+    (__strong FLTCameraPermissionRequestCompletionHandler)handler {
   [self requestPermissionForAudio:NO handler:handler];
 }
 
@@ -71,26 +73,26 @@
     }
     case AVAuthorizationStatusNotDetermined: {
       [_permissionService requestAccessForMediaType:mediaType
-                               completionHandler:^(BOOL granted) {
-                                 // handler can be invoked on an arbitrary dispatch queue.
-                                 if (granted) {
-                                   handler(nil);
-                                 } else {
-                                   FlutterError *flutterError;
-                                   if (forAudio) {
-                                     flutterError = [FlutterError
-                                         errorWithCode:@"AudioAccessDenied"
-                                               message:@"User denied the audio access request."
-                                               details:nil];
-                                   } else {
-                                     flutterError = [FlutterError
-                                         errorWithCode:@"CameraAccessDenied"
-                                               message:@"User denied the camera access request."
-                                               details:nil];
-                                   }
-                                   handler(flutterError);
-                                 }
-                               }];
+                                  completionHandler:^(BOOL granted) {
+                                    // handler can be invoked on an arbitrary dispatch queue.
+                                    if (granted) {
+                                      handler(nil);
+                                    } else {
+                                      FlutterError *flutterError;
+                                      if (forAudio) {
+                                        flutterError = [FlutterError
+                                            errorWithCode:@"AudioAccessDenied"
+                                                  message:@"User denied the audio access request."
+                                                  details:nil];
+                                      } else {
+                                        flutterError = [FlutterError
+                                            errorWithCode:@"CameraAccessDenied"
+                                                  message:@"User denied the camera access request."
+                                                  details:nil];
+                                      }
+                                      handler(flutterError);
+                                    }
+                                  }];
       break;
     }
   }

@@ -6,8 +6,6 @@
 @import AVFoundation;
 
 @interface MockPhotoData : NSObject <FLTPhotoData>
-@property(nonatomic, copy) BOOL (^writeToFileStub)(NSString *path,
-                                                     NSDataWritingOptions options,
-                                                     NSError **error);
+@property(nonatomic, copy) BOOL (^writeToFileStub)
+    (NSString *path, NSDataWritingOptions options, NSError **error);
 @end
-

@@ -5,10 +5,12 @@
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureSessionProtocol.h"
+#import "./include/camera_avfoundation/Protocols/FLTAssetWriter.h"
 
 @implementation FLTCamMediaSettingsAVWrapper
 
-- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice error:(NSError *_Nullable *_Nullable)outError {
+- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice
+             error:(NSError *_Nullable *_Nullable)outError {
   return [captureDevice lockForConfiguration:outError];
 }
 
@@ -24,11 +26,13 @@
   [videoCaptureSession commitConfiguration];
 }
 
-- (void)setMinFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)setMinFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
   captureDevice.activeVideoMinFrameDuration = duration;
 }
 
-- (void)setMaxFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)setMaxFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
   captureDevice.activeVideoMaxFrameDuration = duration;
 }
 
@@ -44,7 +48,7 @@
                                             outputSettings:outputSettings];
 }
 
-- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer {
+- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(id<FLTAssetWriter>)writer {
   [writer addInput:writerInput];
 }
 

@@ -9,6 +9,8 @@
 #import "CameraProperties.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTCaptureDeviceControlling.h"
+#import "FLTCapturePhotoOutput.h"
+#import "FLTAssetWriter.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,9 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// Used in tests to inject a device into FLTCam.
 typedef id<FLTCaptureDeviceControlling> _Nonnull (^CaptureDeviceFactory)(void);
 
+typedef id<FLTAssetWriter> _Nonnull (^AssetWriterFactory)(NSURL*, AVFileType, NSError * _Nullable * _Nullable);
+
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
-typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
+typedef CMVideoDimensions (^VideoDimensionsForFormat)(id<FLTCaptureDeviceFormat>);
 
 /// A class that manages camera's state and performs camera operations.
 @interface FLTCam : NSObject <FlutterTexture>
@@ -48,23 +52,23 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
 /// @param orientation the orientation of camera
 /// @param captureSessionQueue the queue on which camera's capture session operations happen.
 /// @param error report to the caller if any error happened creating the camera.
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                       orientation:(UIDeviceOrientation)orientation
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error;
+//- (instancetype)initWithCameraName:(NSString *)cameraName
+//                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
+//            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
+//                       orientation:(UIDeviceOrientation)orientation
+//               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+//                             error:(NSError **)error;
 
 /// Initializes a camera instance.
 /// Allows for injecting dependencies that are usually internal.
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                       orientation:(UIDeviceOrientation)orientation
-               videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
-               audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error;
+//- (instancetype)initWithCameraName:(NSString *)cameraName
+//                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
+//            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
+//                       orientation:(UIDeviceOrientation)orientation
+//               videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
+//               audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
+//               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+//                             error:(NSError **)error;
 
 ///  Initializes a camera instance.
 ///  Allows for testing with specified resolution, audio preference, orientation,
@@ -77,6 +81,8 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
              videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+                   capturePhotoOutput:(id<FLTCapturePhotoOutput>)capturePhotoOutput
+                   assetWriterFactory:(AssetWriterFactory)assetWriterFactory
                                 error:(NSError **)error;
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.
@@ -125,7 +131,8 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
 ///
 /// @param focusMode The focus mode that should be applied to the @captureDevice instance.
 /// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
+              onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
 - (void)pausePreview;
 - (void)resumePreview;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName

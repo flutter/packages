@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
-#import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/Protocols/FLTEventChannelProtocol.h"
+#import "./include/camera_avfoundation/QueueUtils.h"
 
 @interface FLTThreadSafeEventChannel ()
 @property(nonatomic, strong) id<FLTEventChannelProtocol> channel;

@@ -8,15 +8,15 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MockCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
-@property(nonatomic, assign) NSString* uniqueID;
+@property(nonatomic, assign) NSString *uniqueID;
 
 // Position/Orientation
 @property(nonatomic, assign) AVCaptureDevicePosition position;
 
 // Format/Configuration
-@property(nonatomic, strong) AVCaptureDeviceFormat *activeFormat;
-@property(nonatomic, strong) NSArray<AVCaptureDeviceFormat *> *formats;
-@property(nonatomic, copy) void (^setActiveFormatStub)(AVCaptureDeviceFormat *format);
+@property(nonatomic, strong) id<FLTCaptureDeviceFormat> activeFormat;
+@property(nonatomic, strong) NSArray<id<FLTCaptureDeviceFormat>> *formats;
+@property(nonatomic, copy) void (^setActiveFormatStub)(id<FLTCaptureDeviceFormat> format);
 
 // Flash/Torch
 @property(nonatomic, assign) BOOL hasFlash;
@@ -43,7 +43,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) void (^setExposurePointOfInterestStub)(CGPoint point);
 @property(nonatomic, assign) float minExposureTargetBias;
 @property(nonatomic, assign) float maxExposureTargetBias;
-@property(nonatomic, copy) void (^setExposureTargetBiasStub)(float bias, void (^_Nullable handler)(CMTime));
+@property(nonatomic, copy) void (^setExposureTargetBiasStub)
+    (float bias, void (^_Nullable handler)(CMTime));
 
 // Zoom
 @property(nonatomic, assign) float maxAvailableVideoZoomFactor;
@@ -71,6 +72,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) AVCaptureInput *inputToReturn;
 @property(nonatomic, copy) void (^createInputStub)(NSError **error);
 
+@end
+
+@interface MockCaptureDeviceFormat : NSObject <FLTCaptureDeviceFormat>
+@property(nonatomic, strong) NSArray<AVFrameRateRange *> *videoSupportedFrameRateRanges;
+@property(nonatomic, assign) CMFormatDescriptionRef formatDescription;
+
+- (instancetype)initWithDimensions:(CMVideoDimensions)dimensions;
 @end
 
 NS_ASSUME_NONNULL_END

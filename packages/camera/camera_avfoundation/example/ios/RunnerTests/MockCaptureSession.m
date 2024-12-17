@@ -7,18 +7,18 @@
 @implementation MockCaptureSession
 
 - (instancetype)init {
-    self = [super init];
-    if (self) {
-        _inputs = [NSMutableArray array];
-        _outputs = [NSMutableArray array];
-    }
-    return self;
+  self = [super init];
+  if (self) {
+    _inputs = [NSMutableArray array];
+    _outputs = [NSMutableArray array];
+  }
+  return self;
 }
 
 - (void)beginConfiguration {
   if (self.beginConfigurationStub) {
     self.beginConfigurationStub();
-    }
+  }
 }
 
 - (void)commitConfiguration {
@@ -30,7 +30,7 @@
 - (void)startRunning {
   if (self.startRunningStub) {
     self.startRunningStub();
-    }
+  }
 }
 
 - (void)stopRunning {
@@ -43,56 +43,43 @@
   return self.mockCanSetSessionPreset;
 }
 
-- (void)addConnection:(nonnull AVCaptureConnection *)connection { 
-  
+- (void)addConnection:(nonnull AVCaptureConnection *)connection {
 }
 
-
-- (void)addInput:(nonnull AVCaptureInput *)input { 
-  
+- (void)addInput:(nonnull AVCaptureInput *)input {
 }
-
 
 - (void)addInputWithNoConnections:(nonnull AVCaptureInput *)input {
 }
 
-
 - (void)addOutput:(nonnull AVCaptureOutput *)output {
 }
 
-
-- (void)addOutputWithNoConnections:(nonnull AVCaptureOutput *)output { 
+- (void)addOutputWithNoConnections:(nonnull AVCaptureOutput *)output {
 }
 
-
-- (BOOL)canAddConnection:(nonnull AVCaptureConnection *)connection { 
+- (BOOL)canAddConnection:(nonnull AVCaptureConnection *)connection {
   return YES;
 }
 
-
-- (BOOL)canAddInput:(nonnull AVCaptureInput *)input { 
+- (BOOL)canAddInput:(nonnull AVCaptureInput *)input {
   return YES;
 }
 
-
-- (BOOL)canAddOutput:(nonnull AVCaptureOutput *)output { 
+- (BOOL)canAddOutput:(nonnull AVCaptureOutput *)output {
   return YES;
 }
 
-
-- (void)removeInput:(nonnull AVCaptureInput *)input { 
-  
+- (void)removeInput:(nonnull AVCaptureInput *)input {
 }
 
-
-- (void)removeOutput:(nonnull AVCaptureOutput *)output { 
-  
+- (void)removeOutput:(nonnull AVCaptureOutput *)output {
 }
 
 - (void)setSessionPreset:(AVCaptureSessionPreset)sessionPreset {
   if (_setSessionPresetStub) {
     _setSessionPresetStub(sessionPreset);
-    }
+  }
 }
 
 @end

@@ -6,8 +6,8 @@
 
 #import "CameraPlugin.h"
 #import "FLTCam.h"
-#import "messages.g.h"
 #import "FLTCameraDeviceDiscovery.h"
+#import "messages.g.h"
 
 /// APIs exposed for unit testing.
 @interface CameraPlugin ()
@@ -29,8 +29,7 @@
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI
                  deviceDiscovery:(id<FLTCameraDeviceDiscovery>)deviceDiscovery
                   sessionFactory:(CaptureSessionFactory)sessionFactory
-                   deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
-NS_DESIGNATED_INITIALIZER;
+                   deviceFactory:(CaptureNamedDeviceFactory)deviceFactory NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.
 - (instancetype)init NS_UNAVAILABLE;

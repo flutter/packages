@@ -4,8 +4,8 @@
 
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate_Test.h"
+#import "./include/camera_avfoundation/Protocols/FLTCapturePhotoOutput.h"
 #import "./include/camera_avfoundation/Protocols/FLTPhotoData.h"
-
 
 @interface FLTSavePhotoDelegate ()
 /// The file path for the captured photo.
@@ -48,13 +48,13 @@
   });
 }
 
-- (void)captureOutput:(AVCapturePhotoOutput *)output
+- (void)captureOutput:(id<FLTCapturePhotoOutput>)output
     didFinishProcessingPhoto:(AVCapturePhoto *)photo
                        error:(NSError *)error {
   [self handlePhotoCaptureResultWithError:error
                         photoDataProvider:^id<FLTPhotoData> {
                           NSData *data = [photo fileDataRepresentation];
-                          return [[FLTDefaultPhotoData alloc] init];
+                          return [[FLTDefaultPhotoData alloc] initWithData:data];
                         }];
 }
 

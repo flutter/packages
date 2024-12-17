@@ -7,8 +7,8 @@
 @implementation MockPhotoData
 
 - (BOOL)writeToFile:(NSString *)path
-           options:(NSDataWritingOptions)writeOptionsMask
-             error:(NSError **)errorPtr {
+            options:(NSDataWritingOptions)writeOptionsMask
+              error:(NSError **)errorPtr {
   if (self.writeToFileStub) {
     return _writeToFileStub(path, writeOptionsMask, errorPtr);
   }

@@ -3,11 +3,14 @@
 // found in the LICENSE file.
 
 #import "FLTCam.h"
-#import "FLTSavePhotoDelegate.h"
 #import "FLTCaptureDeviceControlling.h"
+#import "FLTCapturePhotoOutput.h"
 #import "FLTCaptureSessionProtocol.h"
+#import "FLTSavePhotoDelegate.h"
+#import "FLTCaptureConnection.h"
 
 @interface FLTImageStreamHandler : NSObject <FlutterStreamHandler>
+- (instancetype)initWithCaptureSessionQueue:(dispatch_queue_t)captureSessionQueue;
 
 /// The queue on which `eventSink` property should be accessed.
 @property(nonatomic, strong) dispatch_queue_t captureSessionQueue;
@@ -27,7 +30,7 @@
 @property(readonly, nonatomic) AVCaptureVideoDataOutput *captureVideoOutput;
 
 /// The output for photo capturing. Exposed setter for unit tests.
-@property(strong, nonatomic) AVCapturePhotoOutput *capturePhotoOutput;
+@property(strong, nonatomic) id<FLTCapturePhotoOutput> capturePhotoOutput;
 
 /// True when images from the camera are being streamed.
 @property(assign, nonatomic) BOOL isStreamingImages;
@@ -42,9 +45,9 @@
 
 /// Delegate callback when receiving a new video or audio sample.
 /// Exposed for unit tests.
-- (void)captureOutput:(AVCaptureOutput *)output
+- (void)captureOutput:(AVCaptureVideoDataOutput *)output
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-           fromConnection:(AVCaptureConnection *)connection;
+           fromConnection:(id<FLTCaptureConnection>)connection;
 
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger

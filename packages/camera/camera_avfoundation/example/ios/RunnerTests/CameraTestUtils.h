@@ -20,7 +20,9 @@ extern FLTCam *_Nullable FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
     dispatch_queue_t _Nullable captureSessionQueue,
     FCPPlatformMediaSettings *_Nullable mediaSettings,
     FLTCamMediaSettingsAVWrapper *_Nullable mediaSettingsAVWrapper,
-    CaptureDeviceFactory _Nullable captureDeviceFactory);
+    CaptureDeviceFactory _Nullable captureDeviceFactory,
+    id<FLTCapturePhotoOutput> _Nullable capturePhotoOutput,
+    id<FLTAssetWriter> _Nullable assetWriter);
 
 extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue);
 
@@ -39,8 +41,9 @@ extern FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSessionProtocol>
 /// @param videoDimensionsForFormat custom code to determine video dimensions
 /// @return an FLTCam object.
 extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-                                                        id<FLTCaptureSessionProtocol> captureSession, FCPPlatformResolutionPreset resolutionPreset,
-                                                        id<FLTCaptureDeviceControlling> captureDevice, VideoDimensionsForFormat videoDimensionsForFormat);
+    id<FLTCaptureSessionProtocol> captureSession, FCPPlatformResolutionPreset resolutionPreset,
+    id<FLTCaptureDeviceControlling> captureDevice,
+    VideoDimensionsForFormat videoDimensionsForFormat);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.

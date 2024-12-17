@@ -29,7 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-
 @interface FLTDefaultCaptureSession : NSObject <FLTCaptureSessionProtocol>
 - (instancetype)initWithCaptureSession:(AVCaptureSession *)session;
 @end

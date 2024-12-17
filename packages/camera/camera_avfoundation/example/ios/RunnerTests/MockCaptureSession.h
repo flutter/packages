@@ -8,16 +8,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MockCaptureSession : NSObject <FLTCaptureSessionProtocol>
-  @property(nonatomic, copy) void (^beginConfigurationStub)(void);
-  @property(nonatomic, copy) void (^commitConfigurationStub)(void);
-  @property(nonatomic, copy) void (^startRunningStub)(void);
-  @property(nonatomic, copy) void (^stopRunningStub)(void);
-  @property(nonatomic, copy) void (^setSessionPresetStub)(AVCaptureSessionPreset preset);
+@property(nonatomic, copy) void (^beginConfigurationStub)(void);
+@property(nonatomic, copy) void (^commitConfigurationStub)(void);
+@property(nonatomic, copy) void (^startRunningStub)(void);
+@property(nonatomic, copy) void (^stopRunningStub)(void);
+@property(nonatomic, copy) void (^setSessionPresetStub)(AVCaptureSessionPreset preset);
 
-  @property(nonatomic, strong) NSMutableArray<AVCaptureInput *> *inputs;
-  @property(nonatomic, strong) NSMutableArray<AVCaptureOutput *> *outputs;
-  @property(nonatomic, assign) BOOL mockCanSetSessionPreset;
-  @property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
+@property(nonatomic, strong) NSMutableArray<AVCaptureInput *> *inputs;
+@property(nonatomic, strong) NSMutableArray<AVCaptureOutput *> *outputs;
+@property(nonatomic, assign) BOOL mockCanSetSessionPreset;
+@property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
 
 @end
 
