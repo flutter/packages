@@ -53,7 +53,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       self.api.requestMediaCapturePermission(
         pigeonInstance: self, webView: webView, origin: origin, frame: frame,
         type: wrapperCaptureType
-      ) { result in
+      ) { @MainActor result in
         switch result {
         case .success(let decision):
           switch decision {
@@ -79,7 +79,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptAlertPanel(
         pigeonInstance: self, webView: webView, message: message, frame: frame
-      ) { result in
+      ) { @MainActor result in
         if case .failure(let error) = result {
           onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
         }
@@ -95,7 +95,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptConfirmPanel(
         pigeonInstance: self, webView: webView, message: message, frame: frame
-      ) { result in
+      ) { @MainActor result in
         switch result {
         case .success(let confirmed):
           completionHandler(confirmed)
@@ -116,7 +116,7 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
       self.api.runJavaScriptTextInputPanel(
         pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
         frame: frame
-      ) { result in
+      ) { @MainActor result in
         switch result {
         case .success(let response):
           completionHandler(response)

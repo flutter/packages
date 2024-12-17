@@ -46,7 +46,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     registrar.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationAction(
         pigeonInstance: self, webView: webView, navigationAction: navigationAction
-      ) { result in
+      ) { @MainActor result in
         switch result {
         case .success(let policy):
           switch policy {
@@ -79,7 +79,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     registrar.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationResponse(
         pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
-      ) { result in
+      ) { @MainActor result in
         switch result {
         case .success(let policy):
           switch policy {
@@ -152,7 +152,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didReceiveAuthenticationChallenge(
         pigeonInstance: self, webView: webView, challenge: challenge
-      ) { result in
+      ) { @MainActor result in
         switch result {
         case .success(let response):
           completionHandler(response.disposition, response.credential)
