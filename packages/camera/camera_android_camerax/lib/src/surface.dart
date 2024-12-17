@@ -34,4 +34,21 @@ class Surface extends JavaObject {
   ///
   /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_270.
   static const int rotation270 = 3;
+
+// TODO(camsim99): Confirm directionality.
+  static int getCounterClockwiseRotationDegrees(int surfaceRotationConstant) {
+    switch (surfaceRotationConstant) {
+      case Surface.rotation0:
+        return 0;
+      case Surface.rotation90:
+        return 270;
+      case Surface.rotation180:
+        return 180;
+      case Surface.rotation270:
+        return 90;
+      default:
+        throw ArgumentError(
+            '$surfaceRotationConstant is an invalid Surface rotation constant.');
+    }
+  }
 }

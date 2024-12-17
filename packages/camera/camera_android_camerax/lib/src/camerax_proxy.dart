@@ -70,6 +70,7 @@ class CameraXProxy {
     this.getCamera2CameraInfo = _getCamera2CameraInfo,
     this.getUiOrientation = _getUiOrientation,
     this.getSensorOrientation = _getSensorOrientation,
+    this.getDeviceOrientation = _getDeviceOrientation,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -199,6 +200,9 @@ class CameraXProxy {
   /// Gets camera sensor orientation from [camera2CameraInfo].
   Future<int> Function(Camera2CameraInfo camera2CameraInfo)
       getSensorOrientation;
+
+  /// Gets the orientation of the device.
+  Future<int> Function() getDeviceOrientation;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -354,5 +358,11 @@ class CameraXProxy {
   static Future<int> _getSensorOrientation(
       Camera2CameraInfo camera2CameraInfo) async {
     return camera2CameraInfo.getSensorOrientation();
+  }
+
+  static Future<int> _getDeviceOrientation() async {
+    final int deviceOrientation =
+        await DeviceOrientationManager.getDeviceOrientation();
+    return deviceOrientation;
   }
 }

@@ -97,4 +97,13 @@ class MockTestDeviceOrientationManagerHostApi extends _i1.Mock
           ),
         ),
       ) as String);
+
+  @override
+  int getDeviceOrientation() => (super.noSuchMethod(
+        Invocation.method(
+          #getDeviceOrientation,
+          [],
+        ),
+        returnValue: 0,
+      ) as int);
 }
