@@ -1,5 +1,10 @@
-## NEXT
+## 0.2.3+4
 
+* Updates README to remove contributor-focused documentation.
+
+## 0.2.3+3
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.2.3+2

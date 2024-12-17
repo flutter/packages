@@ -334,6 +334,46 @@ void defineTests() {
     );
 
     testWidgets(
+      'should gracefully handle image URLs with empty scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        expect(find.byType(Image), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'should gracefully handle image URLs with invalid scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](ttps://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        // On the web, any URI with an unrecognized scheme is treated as a network image.
+        // Thus the error builder of the Image widget is called.
+        // On non-web, any URI with an unrecognized scheme is treated as a file image.
+        // However, constructing a file from an invalid URI will throw an exception.
+        // Thus the Image widget is never created, nor is its error builder called.
+        if (kIsWeb) {
+          expect(find.byType(Image), findsOneWidget);
+        } else {
+          expect(find.byType(Image), findsNothing);
+        }
+
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
       'should gracefully handle width parsing failures',
       (WidgetTester tester) async {
         const String data = '![alt](https://img#x50)';

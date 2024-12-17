@@ -115,7 +115,9 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   For example, the string "Hello" would be encoded as:
 ///
-///       05 00 00 00 00 00 00 00  48 65 6C 6C 6F
+///   ```none
+///   05 00 00 00 00 00 00 00  48 65 6C 6C 6F
+///   ```
 ///
 /// * Lists are encoded as an integer length, followed by that many values
 ///   back to back. When lists are of specific types (e.g. lists of imports),
@@ -124,15 +126,19 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   followed by the value (tagged lists). For example, a list of integers with
 ///   the values 1 and 2 in that order would be encoded as:
 ///
-///       02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
-///       02 00 00 00 00 00 00 00
+///   ```none
+///   02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
+///   02 00 00 00 00 00 00 00
+///   ```
 ///
 ///   A list of arbitrary values that happens to contain one string "Hello"
 ///   would be encoded as follows; 0x04 is the tag for "String" (the full list
 ///   of tags is described below):
 ///
-///       01 00 00 00 00 00 00 00  04 05 00 00 00 00 00 00
-///       00 48 65 6C 6C 6F
+///   ```none
+///   01 00 00 00 00 00 00 00  04 05 00 00 00 00 00 00
+///   00 48 65 6C 6C 6F
+///   ```
 ///
 ///   A list of length zero is eight zero bytes with no additional payload.
 ///
@@ -147,8 +153,10 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   strings, so they are untagged) is encoded as follows (0x02 is the tag for
 ///   integers):
 ///
-///       01 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
-///       61 02 0F 00 00 00 00 00  00 00
+///   ```none
+///   01 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
+///   61 02 0F 00 00 00 00 00  00 00
+///   ```
 ///
 /// Objects are encoded as follows:
 ///
@@ -159,8 +167,10 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///   one of the subparts of the imported library name. For example, `import
 ///   a.b` is encoded as:
 ///
-///       02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
-///       61 01 00 00 00 00 00 00  00 62
+///   ```none
+///   02 00 00 00 00 00 00 00  01 00 00 00 00 00 00 00
+///   61 01 00 00 00 00 00 00  00 62
+///   ```
 ///
 /// * Widget declarations are encoded as a string giving the declaration name,
 ///   an untagged map for the initial state, and finally the value that
@@ -220,7 +230,7 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   For example, this switch:
 ///
-///   ```
+///   ```none
 ///   switch (args.a) {
 ///    0: 'z',
 ///    1: 'o',
@@ -230,11 +240,13 @@ Uint8List encodeLibraryBlob(RemoteWidgetLibrary value) {
 ///
 ///   ...is encoded as follows (including the tag for the switch itself):
 ///
-///       0F 0A 01 00 00 00 00 00  00 00 61 03 00 00 00 00
-///       00 00 00 02 00 00 00 00  00 00 00 00 04 01 00 00
-///       00 00 00 00 00 7A 02 01  00 00 00 00 00 00 00 04
-///       01 00 00 00 00 00 00 00  6F 10 04 01 00 00 00 00
-///       00 00 00 64
+///   ```none
+///   0F 0A 01 00 00 00 00 00  00 00 61 03 00 00 00 00
+///   00 00 00 02 00 00 00 00  00 00 00 00 04 01 00 00
+///   00 00 00 00 00 7A 02 01  00 00 00 00 00 00 00 04
+///   01 00 00 00 00 00 00 00  6F 10 04 01 00 00 00 00
+///   00 00 00 64
+///   ```
 ///
 /// * Event handlers have the tag 0x0E, and are encoded as a string
 ///   ([EventHandler.eventName]) and an untagged map

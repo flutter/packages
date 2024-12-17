@@ -431,7 +431,7 @@ this command.
   /// usually at "example/{ios,macos}/Runner.xcworkspace".
   Future<_PlatformResult> _runXcodeTests(
     RepositoryPackage plugin,
-    String platform,
+    String targetPlatform,
     _TestMode mode, {
     List<String> extraFlags = const <String>[],
   }) async {
@@ -456,7 +456,7 @@ this command.
       final String? targetToCheck =
           testTarget ?? (mode.unit ? unitTestTarget : null);
       final Directory xcodeProject = example.directory
-          .childDirectory(platform.toLowerCase())
+          .childDirectory(targetPlatform.toLowerCase())
           .childDirectory('Runner.xcodeproj');
       if (targetToCheck != null) {
         final bool? hasTarget =
@@ -473,16 +473,17 @@ this command.
         }
       }
 
-      _printRunningExampleTestsMessage(example, platform);
+      _printRunningExampleTestsMessage(example, targetPlatform);
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
-        platform,
+        targetPlatform,
         // Clean before testing to remove cached swiftmodules from previous
         // runs, which can cause conflicts.
         actions: <String>['clean', 'test'],
-        workspace: '${platform.toLowerCase()}/Runner.xcworkspace',
+        workspace: '${targetPlatform.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
+        hostPlatform: platform,
         extraFlags: <String>[
           if (testTarget != null) '-only-testing:$testTarget',
           ...extraFlags,
@@ -494,9 +495,10 @@ this command.
       const int xcodebuildNoTestExitCode = 66;
       switch (exitCode) {
         case xcodebuildNoTestExitCode:
-          _printNoExampleTestsMessage(example, platform);
+          _printNoExampleTestsMessage(example, targetPlatform);
         case 0:
-          printSuccess('Successfully ran $platform xctest for $exampleName');
+          printSuccess(
+              'Successfully ran $targetPlatform xctest for $exampleName');
           // If this is the first test, assume success until something fails.
           if (overallResult == RunState.skipped) {
             overallResult = RunState.succeeded;

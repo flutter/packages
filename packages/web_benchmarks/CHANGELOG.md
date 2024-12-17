@@ -1,3 +1,16 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 4.0.0
+
+* **Breaking change:** Removes `CompilationOptions.renderer` and the
+  `WebRenderer` enum.
+
+## 3.1.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 3.1.0
 
 * Add `flutter_frame.total_time`, `flutter_frame.build_time`, and `flutter_frame.raster_time`

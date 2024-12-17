@@ -226,4 +226,28 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
     await fulfillment(of: [expectation], timeout: 5)
   }
+
+  func testRestoreProductSuccess() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
+    let restoreExpectation = self.expectation(description: "Restore request should succeed")
+
+    plugin.purchase(id: "subscription_silver", options: nil) { result in
+      switch result {
+      case .success(_):
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+    plugin.restorePurchases { result in
+      switch result {
+      case .success():
+        restoreExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Restore purchases should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [restoreExpectation, purchaseExpectation], timeout: 5)
+  }
 }

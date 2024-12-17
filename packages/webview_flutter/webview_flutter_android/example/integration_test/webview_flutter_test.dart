@@ -14,13 +14,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:webview_flutter_android/src/android_webview.dart' as android;
-import 'package:webview_flutter_android/src/android_webview.g.dart';
-import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
-import 'package:webview_flutter_android/src/instance_manager.dart';
+import 'package:webview_flutter_android/src/android_proxy.dart';
+import 'package:webview_flutter_android/src/android_webkit.g.dart'
+    as android_webkit;
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+
+// `IntegrationTestWidgetsFlutterBinding.watchPerformance` is throwing an
+// exception when called. See https://github.com/flutter/flutter/issues/159500
+// for more info.
+const bool skipFor159500 = true;
 
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -88,7 +92,8 @@ Future<void> main() async {
       'withWeakRefenceTo allows encapsulating class to be garbage collected',
       (WidgetTester tester) async {
     final Completer<int> gcCompleter = Completer<int>();
-    final InstanceManager instanceManager = InstanceManager(
+    final android_webkit.PigeonInstanceManager instanceManager =
+        android_webkit.PigeonInstanceManager(
       onWeakReferenceRemoved: gcCompleter.complete,
     );
 
@@ -104,45 +109,39 @@ Future<void> main() async {
 
     final int gcIdentifier = await gcCompleter.future;
     expect(gcIdentifier, 0);
-  }, timeout: const Timeout(Duration(seconds: 10)));
+  }, timeout: const Timeout(Duration(seconds: 10)), skip: skipFor159500);
 
   testWidgets(
     'WebView is released by garbage collection',
     (WidgetTester tester) async {
       final Completer<void> webViewGCCompleter = Completer<void>();
 
-      late final InstanceManager instanceManager;
-      instanceManager =
-          InstanceManager(onWeakReferenceRemoved: (int identifier) {
-        final Copyable instance =
-            instanceManager.getInstanceWithWeakReference(identifier)!;
-        if (instance is android.WebView && !webViewGCCompleter.isCompleted) {
+      const int webViewToken = -1;
+      final Finalizer<int> finalizer = Finalizer<int>((int token) {
+        if (token == webViewToken) {
           webViewGCCompleter.complete();
         }
       });
-
-      // Since the InstanceManager of the apis are being changed, the native
-      // InstanceManager needs to be cleared otherwise an exception will be
-      // thrown that an identifier is being reused.
-      await InstanceManagerHostApi().clear();
-
-      android.WebView.api = WebViewHostApiImpl(
-        instanceManager: instanceManager,
-      );
-      android.WebSettings.api =
-          WebSettingsHostApiImpl(instanceManager: instanceManager);
-      android.WebChromeClient.api = WebChromeClientHostApiImpl(
-        instanceManager: instanceManager,
-      );
 
       await tester.pumpWidget(
         Builder(
           builder: (BuildContext context) {
             return PlatformWebViewWidget(
               AndroidWebViewWidgetCreationParams(
-                instanceManager: instanceManager,
                 controller: PlatformWebViewController(
-                  const PlatformWebViewControllerCreationParams(),
+                  AndroidWebViewControllerCreationParams(
+                    androidWebViewProxy: AndroidWebViewProxy(newWebView: ({
+                      void Function(android_webkit.WebView, int, int, int, int)?
+                          onScrollChanged,
+                    }) {
+                      final android_webkit.WebView webView =
+                          android_webkit.WebView(
+                        onScrollChanged: onScrollChanged,
+                      );
+                      finalizer.attach(webView, webViewToken);
+                      return webView;
+                    }),
+                  ),
                 ),
               ),
             ).build(context);
@@ -156,7 +155,6 @@ Future<void> main() async {
           builder: (BuildContext context) {
             return PlatformWebViewWidget(
               AndroidWebViewWidgetCreationParams(
-                instanceManager: instanceManager,
                 controller: PlatformWebViewController(
                   const PlatformWebViewControllerCreationParams(),
                 ),
@@ -175,12 +173,9 @@ Future<void> main() async {
 
       await tester.pumpAndSettle();
       await expectLater(webViewGCCompleter.future, completes);
-
-      android.WebView.api = WebViewHostApiImpl();
-      android.WebSettings.api = WebSettingsHostApiImpl();
-      android.WebChromeClient.api = WebChromeClientHostApiImpl();
     },
     timeout: const Timeout(Duration(seconds: 10)),
+    skip: skipFor159500,
   );
 
   testWidgets('runJavaScriptReturningResult', (WidgetTester tester) async {
@@ -1692,13 +1687,15 @@ class ResizableWebViewState extends State<ResizableWebView> {
   }
 }
 
-class CopyableObjectWithCallback with Copyable {
+class CopyableObjectWithCallback
+    extends android_webkit.PigeonInternalProxyApiBaseClass {
   CopyableObjectWithCallback(this.callback);
 
   final VoidCallback callback;
 
   @override
-  CopyableObjectWithCallback copy() {
+  // ignore: non_constant_identifier_names
+  CopyableObjectWithCallback pigeon_copy() {
     return CopyableObjectWithCallback(callback);
   }
 }

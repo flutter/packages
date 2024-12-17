@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   setUp(() {
@@ -57,6 +58,36 @@ void main() {
     expect((await loader.prepareMessage(null))!.lengthInBytes, 0);
     expect((await packageLoader.prepareMessage(null))!.lengthInBytes, 1);
   });
+
+  test('SvgNetworkLoader closes internal client', () async {
+    final List<VerifyCloseClient> createdClients = <VerifyCloseClient>[];
+
+    await http.runWithClient(() async {
+      const SvgNetworkLoader loader = SvgNetworkLoader('');
+
+      expect(createdClients, isEmpty);
+      await loader.prepareMessage(null);
+
+      expect(createdClients, hasLength(1));
+      expect(createdClients[0].closeCalled, isTrue);
+    }, () {
+      final VerifyCloseClient client = VerifyCloseClient();
+      createdClients.add(client);
+      return client;
+    });
+  });
+
+  test("SvgNetworkLoader doesn't close passed client", () async {
+    final VerifyCloseClient client = VerifyCloseClient();
+    final SvgNetworkLoader loader = SvgNetworkLoader(
+      '',
+      httpClient: client as http.Client,
+    );
+
+    expect(client.closeCalled, isFalse);
+    await loader.prepareMessage(null);
+    expect(client.closeCalled, isFalse);
+  });
 }
 
 class TestBundle extends Fake implements AssetBundle {
@@ -94,5 +125,20 @@ class _TestColorMapper extends ColorMapper {
   Color substitute(
       String? id, String elementName, String attributeName, Color color) {
     return color;
+  }
+}
+
+class VerifyCloseClient extends Fake implements http.Client {
+  bool closeCalled = false;
+
+  @override
+  Future<http.Response> get(Uri url, {Map<String, String>? headers}) async {
+    return http.Response('', 200);
+  }
+
+  @override
+  void close() {
+    assert(!closeCalled);
+    closeCalled = true;
   }
 }

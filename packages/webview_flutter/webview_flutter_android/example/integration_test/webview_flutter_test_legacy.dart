@@ -15,9 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:webview_flutter_android/src/android_webview.dart' as android;
-import 'package:webview_flutter_android/src/android_webview_api_impls.dart';
-import 'package:webview_flutter_android/src/instance_manager.dart';
+import 'package:webview_flutter_android/src/android_webkit.g.dart' as android;
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
 import 'package:webview_flutter_android/src/webview_flutter_android_legacy.dart';
 import 'package:webview_flutter_android_example/legacy/navigation_decision.dart';
@@ -107,7 +105,8 @@ Future<void> main() async {
       'withWeakRefenceTo allows encapsulating class to be garbage collected',
       (WidgetTester tester) async {
     final Completer<int> gcCompleter = Completer<int>();
-    final InstanceManager instanceManager = InstanceManager(
+    final android.PigeonInstanceManager instanceManager =
+        android.PigeonInstanceManager(
       onWeakReferenceRemoved: gcCompleter.complete,
     );
 
@@ -132,31 +131,15 @@ Future<void> main() async {
     (WidgetTester tester) async {
       final Completer<void> webViewGCCompleter = Completer<void>();
 
-      late final InstanceManager instanceManager;
-      instanceManager =
-          InstanceManager(onWeakReferenceRemoved: (int identifier) {
-        final Copyable instance =
+      late final android.PigeonInstanceManager instanceManager;
+      instanceManager = android.PigeonInstanceManager(
+          onWeakReferenceRemoved: (int identifier) {
+        final android.PigeonInternalProxyApiBaseClass instance =
             instanceManager.getInstanceWithWeakReference(identifier)!;
         if (instance is android.WebView && !webViewGCCompleter.isCompleted) {
           webViewGCCompleter.complete();
         }
       });
-
-      android.WebView.api = WebViewHostApiImpl(
-        instanceManager: instanceManager,
-      );
-      android.WebSettings.api = WebSettingsHostApiImpl(
-        instanceManager: instanceManager,
-      );
-      android.WebChromeClient.api = WebChromeClientHostApiImpl(
-        instanceManager: instanceManager,
-      );
-      android.WebViewClient.api = WebViewClientHostApiImpl(
-        instanceManager: instanceManager,
-      );
-      android.DownloadListener.api = DownloadListenerHostApiImpl(
-        instanceManager: instanceManager,
-      );
 
       // Continually recreate web views until one is disposed through garbage
       // collection.
@@ -185,15 +168,6 @@ Future<void> main() async {
         await tester.pumpWidget(Container());
         await tester.pumpAndSettle();
       }
-
-      android.WebView.api = WebViewHostApiImpl();
-      android.WebSettings.api = WebSettingsHostApiImpl();
-      android.WebChromeClient.api = WebChromeClientHostApiImpl();
-      android.WebViewClient.api = WebViewClientHostApiImpl();
-      android.DownloadListener.api = DownloadListenerHostApiImpl();
-
-      // Create a new `WebStorage` with the default InstanceManager.
-      android.WebStorage.instance = android.WebStorage();
     },
     skip: true,
   );
@@ -1613,13 +1587,15 @@ class ResizableWebViewState extends State<ResizableWebView> {
   }
 }
 
-class CopyableObjectWithCallback with Copyable {
+class CopyableObjectWithCallback
+    extends android.PigeonInternalProxyApiBaseClass {
   CopyableObjectWithCallback(this.callback);
 
   final VoidCallback callback;
 
   @override
-  CopyableObjectWithCallback copy() {
+  // ignore: non_constant_identifier_names
+  CopyableObjectWithCallback pigeon_copy() {
     return CopyableObjectWithCallback(callback);
   }
 }

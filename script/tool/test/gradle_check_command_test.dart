@@ -255,6 +255,7 @@ include ":app"
     RepositoryPackage package, {
     required bool includeNamespace,
     required bool commentNamespace,
+    required bool includeNameSpaceAsDeclaration,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -263,7 +264,7 @@ include ":app"
     buildGradle.createSync(recursive: true);
 
     final String namespace =
-        "${commentNamespace ? '// ' : ''}namespace '$_defaultFakeNamespace'";
+        "${commentNamespace ? '// ' : ''}namespace ${includeNameSpaceAsDeclaration ? '= ' : ''}'$_defaultFakeNamespace'";
     buildGradle.writeAsStringSync('''
 def flutterRoot = localProperties.getProperty('flutter.sdk')
 if (flutterRoot == null) {
@@ -303,6 +304,7 @@ dependencies {
     required String pluginName,
     bool includeNamespace = true,
     bool commentNamespace = false,
+    bool includeNameSpaceAsDeclaration = false,
     bool warningsConfigured = true,
     String? kotlinVersion,
     bool includeBuildArtifactHub = true,
@@ -317,7 +319,9 @@ dependencies {
       includeArtifactHub: includeBuildArtifactHub,
     );
     writeFakeExampleAppBuildGradle(package,
-        includeNamespace: includeNamespace, commentNamespace: commentNamespace);
+        includeNamespace: includeNamespace,
+        commentNamespace: commentNamespace,
+        includeNameSpaceAsDeclaration: includeNameSpaceAsDeclaration);
     writeFakeExampleTopLevelSettingsGradle(
       package,
       includeArtifactHub: includeSettingsArtifactHub,
@@ -330,6 +334,7 @@ dependencies {
     required String pluginName,
     bool includeNamespace = true,
     bool commentNamespace = false,
+    bool includeNameSpaceAsDeclaration = false,
     bool warningsConfigured = true,
     String? kotlinVersion,
     required bool includeBuildArtifactHub,
@@ -344,7 +349,9 @@ dependencies {
       includeArtifactHub: includeBuildArtifactHub,
     );
     writeFakeExampleAppBuildGradle(package,
-        includeNamespace: includeNamespace, commentNamespace: commentNamespace);
+        includeNamespace: includeNamespace,
+        commentNamespace: commentNamespace,
+        includeNameSpaceAsDeclaration: includeNameSpaceAsDeclaration);
     writeFakeExampleSettingsGradle(
       package,
       includeArtifactHub: includeSettingsArtifactHub,
@@ -657,6 +664,30 @@ dependencies {
         contains('build.gradle must set a "namespace"'),
       ]),
     );
+  });
+
+  test('passes when namespace is declared with "=" declaration', () async {
+    const String pluginName = 'a_plugin';
+    final RepositoryPackage package = createFakePlugin(pluginName, packagesDir);
+    writeFakePluginBuildGradle(package, includeLanguageVersion: true);
+    writeFakeManifest(package);
+    final RepositoryPackage example = package.getExamples().first;
+    writeFakeExampleBuildGradles(example,
+        pluginName: pluginName, includeNameSpaceAsDeclaration: true);
+    writeFakeManifest(example, isApp: true);
+
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['gradle-check'], errorHandler: (Error e) {
+      print((e as ToolExit).stackTrace);
+    });
+
+    expect(
+        output,
+        containsAllInOrder(
+          <Matcher>[
+            contains('Validating android/app/build.gradle'),
+          ],
+        ));
   });
 
   test('fails if gradle-driven lint-warnings-as-errors is missing', () async {

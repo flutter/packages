@@ -594,7 +594,6 @@ class _GoogleMapState extends State<GoogleMap> {
 
 /// Builds a [MapConfiguration] from the given [map].
 MapConfiguration _configurationFromMapWidget(GoogleMap map) {
-  assert(!map.liteModeEnabled || Platform.isAndroid);
   return MapConfiguration(
     webGestureHandling: map.webGestureHandling,
     compassEnabled: map.compassEnabled,

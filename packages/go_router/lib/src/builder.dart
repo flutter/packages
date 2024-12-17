@@ -110,6 +110,8 @@ class RouteBuilder {
     return builderWithNav(
       context,
       _CustomNavigator(
+        // The state needs to persist across rebuild.
+        key: GlobalObjectKey(configuration.navigatorKey.hashCode),
         navigatorKey: configuration.navigatorKey,
         observers: observers,
         navigatorRestorationId: restorationScopeId,
@@ -271,16 +273,22 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       route: match.route,
       routerState: state,
       navigatorKey: navigatorKey,
+      match: match,
       routeMatchList: widget.matchList,
-      navigatorBuilder:
-          (List<NavigatorObserver>? observers, String? restorationScopeId) {
+      navigatorBuilder: (
+        GlobalKey<NavigatorState> navigatorKey,
+        ShellRouteMatch match,
+        RouteMatchList matchList,
+        List<NavigatorObserver>? observers,
+        String? restorationScopeId,
+      ) {
         return _CustomNavigator(
           // The state needs to persist across rebuild.
           key: GlobalObjectKey(navigatorKey.hashCode),
           navigatorRestorationId: restorationScopeId,
           navigatorKey: navigatorKey,
           matches: match.matches,
-          matchList: widget.matchList,
+          matchList: matchList,
           configuration: widget.configuration,
           observers: observers ?? const <NavigatorObserver>[],
           onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,

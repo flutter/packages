@@ -144,12 +144,9 @@ To update a wrapper for a platform, follow the steps:
     - [iOS SDK]
     - Pigeon file to update: `pigeons/interactive_media_ads_ios.dart`
 
-##### 3. Run the code generator from the terminal
+Once the file is updated, [run pigeon] to update generated code with the changes.
 
-* Android: `dart run pigeon --input pigeons/interactive_media_ads_android.dart`
-* iOS: `dart run pigeon --input pigeons/interactive_media_ads_ios.dart`
-
-##### 4. Update the generated APIs in native code
+##### 3. Update the generated APIs in native code
 
 Running the `flutter build` step from step 1 again should provide build errors and indicate what
 needs to be done. Alternatively, it can be easier to update native code with the platform's specific
@@ -158,7 +155,7 @@ IDE:
 * Android: Open `example/android/` in a separate Android Studio project.
 * iOS: Open `example/ios/` in Xcode.
 
-##### 5. Write API tests
+##### 4. Write API tests
 
 Assuming a non-static method or constructor was added to the native wrapper, a native test will need
 to be added.
@@ -169,8 +166,7 @@ to be added.
 #### Dart Unit Testing
 
 Tests for the platform implementations use [mockito] to generate mock objects of the native Dart
-wrappers. To generate the mock objects in `test/`, run
-`dart run build_runner build --delete-conflicting-outputs`.
+wrappers. To generate the mock objects in `test/`, [run mockito].
 
 ### App-facing Interface
 
@@ -214,3 +210,5 @@ implementation.
 [Android SDK]: https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/package-summary
 [iOS SDK]: https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes
 [mockito]: https://pub.dev/packages/mockito
+[run pigeon]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#pigeon
+[run mockito]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#mockito
