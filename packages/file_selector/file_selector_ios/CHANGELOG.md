@@ -1,5 +1,10 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.5.3+1
+
+* Updates Pigeon for non-nullable collection type support.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.5.3

@@ -3,8 +3,8 @@ description: "Demonstrates how to use the pointer_interceptor_ios plugin."
 publish_to: 'none'
 
 environment:
-  sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 dependencies:
   cupertino_icons: ^1.0.2

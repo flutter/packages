@@ -48,7 +48,7 @@ class MessageData {
 
   Code code;
 
-  Map<String?, String?> data;
+  Map<String, String> data;
 
   Object encode() {
     return <Object?>[
@@ -65,7 +65,7 @@ class MessageData {
       name: result[0] as String?,
       description: result[1] as String?,
       code: result[2]! as Code,
-      data: (result[3] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      data: (result[3] as Map<Object?, Object?>?)!.cast<String, String>(),
     );
   }
 }

@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 5.7.8
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 5.7.7
 
 * Fixes "callee requires a non-null parameter" analyzer warning.

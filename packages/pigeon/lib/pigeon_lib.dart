@@ -23,6 +23,7 @@ import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:collection/collection.dart' as collection;
 import 'package:path/path.dart' as path;
+import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
@@ -139,7 +140,7 @@ class FlutterApi {
 /// methods.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
-  const ProxyApi({this.superClass, this.kotlinOptions});
+  const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});
 
   /// The proxy api that is a super class to this one.
   ///
@@ -150,9 +151,25 @@ class ProxyApi {
   /// with inherited method names.
   final Type? superClass;
 
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
+
   /// Options that control how Kotlin code will be generated for a specific
   /// ProxyApi.
   final KotlinProxyApiOptions? kotlinOptions;
+}
+
+/// Metadata to annotate a pigeon API that contains event channels.
+///
+/// This class is a tool to designate a set of event channel methods,
+/// the class itself will not be generated.
+///
+/// All methods contained within the class will return a `Stream` of the
+/// defined return type of the method definition.
+class EventChannelApi {
+  /// Constructor.
+  const EventChannelApi();
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -273,10 +290,10 @@ class PigeonOptions {
   /// Path to the file which will be processed.
   final String? input;
 
-  /// Path to the dart file that will be generated.
+  /// Path to the Dart file that will be generated.
   final String? dartOut;
 
-  /// Path to the dart file that will be generated for test support classes.
+  /// Path to the Dart file that will be generated for test support classes.
   final String? dartTestOut;
 
   /// Path to the ".h" Objective-C file will be generated.
@@ -532,6 +549,29 @@ DartOptions _dartOptionsWithCopyrightHeader(
   ));
 }
 
+void _errorOnEventChannelApi(List<Error> errors, String generator, Root root) {
+  if (root.containsEventChannel) {
+    errors.add(Error(message: '$generator does not support event channels'));
+  }
+}
+
+void _errorOnSealedClass(List<Error> errors, String generator, Root root) {
+  if (root.classes.any(
+    (Class element) => element.isSealed,
+  )) {
+    errors.add(Error(message: '$generator does not support sealed classes'));
+  }
+}
+
+void _errorOnInheritedClass(List<Error> errors, String generator, Root root) {
+  if (root.classes.any(
+    (Class element) => element.superClass != null,
+  )) {
+    errors.add(
+        Error(message: '$generator does not support inheritance in classes'));
+  }
+}
+
 /// A [GeneratorAdapter] that generates the AST.
 class AstGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [AstGeneratorAdapter].
@@ -558,6 +598,9 @@ class AstGeneratorAdapter implements GeneratorAdapter {
 class DartGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [DartGeneratorAdapter].
   DartGeneratorAdapter();
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'Dart';
 
   @override
   List<FileType> fileTypeList = const <FileType>[FileType.na];
@@ -639,6 +682,9 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   ObjcGeneratorAdapter(
       {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
 
+  /// A string representing the name of the language being generated.
+  String languageString = 'Objective-C';
+
   @override
   List<FileType> fileTypeList;
 
@@ -680,13 +726,22 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates Java source code.
 class JavaGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [JavaGeneratorAdapter].
   JavaGeneratorAdapter();
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'Java';
 
   @override
   List<FileType> fileTypeList = const <FileType>[FileType.na];
@@ -717,13 +772,22 @@ class JavaGeneratorAdapter implements GeneratorAdapter {
       _openSink(options.javaOut, basePath: options.basePath ?? '');
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates Swift source code.
 class SwiftGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [SwiftGeneratorAdapter].
   SwiftGeneratorAdapter();
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'Swift';
 
   @override
   List<FileType> fileTypeList = const <FileType>[FileType.na];
@@ -740,6 +804,7 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
               path.posix.join(options.basePath ?? '', options.copyrightHeader))
           : null,
       errorClassName: swiftOptions.errorClassName,
+      includeErrorClass: swiftOptions.includeErrorClass,
     ));
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
@@ -763,6 +828,9 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [CppGeneratorAdapter].
   CppGeneratorAdapter(
       {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'C++';
 
   @override
   List<FileType> fileTypeList;
@@ -799,7 +867,13 @@ class CppGeneratorAdapter implements GeneratorAdapter {
   }
 
   @override
-  List<Error> validate(PigeonOptions options, Root root) => <Error>[];
+  List<Error> validate(PigeonOptions options, Root root) {
+    final List<Error> errors = <Error>[];
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+    return errors;
+  }
 }
 
 /// A [GeneratorAdapter] that generates GObject source code.
@@ -807,6 +881,9 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
   /// Constructor for [GObjectGeneratorAdapter].
   GObjectGeneratorAdapter(
       {this.fileTypeList = const <FileType>[FileType.header, FileType.source]});
+
+  /// A string representing the name of the language being generated.
+  String languageString = 'GObject';
 
   @override
   List<FileType> fileTypeList;
@@ -856,6 +933,10 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
           message:
               'GObject generator does not yet support more than $totalCustomCodecKeysAllowed custom types.'));
     }
+    _errorOnEventChannelApi(errors, languageString, root);
+    _errorOnSealedClass(errors, languageString, root);
+    _errorOnInheritedClass(errors, languageString, root);
+
     return errors;
   }
 }
@@ -980,6 +1061,24 @@ List<Error> _validateAst(Root root, String source) {
           lineNumber: _calculateLineNumberNullable(source, field.offset),
         ));
       }
+      if (classDefinition.isSealed) {
+        if (classDefinition.fields.isNotEmpty) {
+          result.add(Error(
+            message:
+                'Sealed class: "${classDefinition.name}" must not contain fields.',
+            lineNumber: _calculateLineNumberNullable(source, field.offset),
+          ));
+        }
+      }
+      if (classDefinition.superClass != null) {
+        if (!classDefinition.superClass!.isSealed) {
+          result.add(Error(
+            message:
+                'Child class: "${classDefinition.name}" must extend a sealed class.',
+            lineNumber: _calculateLineNumberNullable(source, field.offset),
+          ));
+        }
+      }
     }
   }
 
@@ -1011,6 +1110,13 @@ List<Error> _validateAst(Root root, String source) {
         result.add(Error(
           message:
               'Method name must not begin with "$matchingPrefix" in method "${method.name}" in API: "${api.name}"',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (api is AstEventChannelApi && method.parameters.isNotEmpty) {
+        result.add(Error(
+          message:
+              'event channel methods must not be contain parameters, in method "${method.name}" in API: "${api.name}"',
           lineNumber: _calculateLineNumberNullable(source, method.offset),
         ));
       }
@@ -1381,20 +1487,43 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         getReferencedTypes(_apis, _classes);
     final Set<String> referencedTypeNames =
         referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
-    final List<Class> nonReferencedClasses = List<Class>.from(_classes);
-    nonReferencedClasses
+    final List<Class> nonReferencedTypes = List<Class>.from(_classes);
+    nonReferencedTypes
         .removeWhere((Class x) => referencedTypeNames.contains(x.name));
-    for (final Class x in nonReferencedClasses) {
+    for (final Class x in nonReferencedTypes) {
       x.isReferenced = false;
     }
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
-    final Root completeRoot =
-        Root(apis: _apis, classes: _classes, enums: referencedEnums);
+    bool containsHostApi = false;
+    bool containsFlutterApi = false;
+    bool containsProxyApi = false;
+    bool containsEventChannel = false;
 
-    final List<Error> validateErrors = _validateAst(completeRoot, source);
+    for (final Api api in _apis) {
+      switch (api) {
+        case AstHostApi():
+          containsHostApi = true;
+        case AstFlutterApi():
+          containsFlutterApi = true;
+        case AstProxyApi():
+          containsProxyApi = true;
+        case AstEventChannelApi():
+          containsEventChannel = true;
+      }
+    }
+
+    final Root completeRoot = Root(
+      apis: _apis,
+      classes: _classes,
+      enums: referencedEnums,
+      containsHostApi: containsHostApi,
+      containsFlutterApi: containsFlutterApi,
+      containsProxyApi: containsProxyApi,
+      containsEventChannel: containsEventChannel,
+    );
+
     final List<Error> totalErrors = List<Error>.from(_errors);
-    totalErrors.addAll(validateErrors);
 
     for (final MapEntry<TypeDeclaration, List<int>> element
         in referencedTypes.entries) {
@@ -1423,6 +1552,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       classDefinition.fields = _attachAssociatedDefinitions(
         classDefinition.fields,
       );
+      classDefinition.superClass = _attachSuperClass(classDefinition);
     }
 
     for (final Api api in _apis) {
@@ -1450,6 +1580,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         api.interfaces = newInterfaceSet;
       }
     }
+    final List<Error> validateErrors = _validateAst(completeRoot, source);
+    totalErrors.addAll(validateErrors);
 
     return ParseResults(
       root: totalErrors.isEmpty
@@ -1495,6 +1627,20 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       );
     }
     return result;
+  }
+
+  Class? _attachSuperClass(Class childClass) {
+    if (childClass.superClassName == null) {
+      return null;
+    }
+
+    for (final Class parentClass in _classes) {
+      if (parentClass.name == childClass.superClassName) {
+        parentClass.children.add(childClass);
+        return parentClass;
+      }
+    }
+    return null;
   }
 
   Object _expressionToMap(dart_ast.Expression expression) {
@@ -1593,6 +1739,14 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     _storeCurrentClass();
 
     if (node.abstractKeyword != null) {
+      if (node.metadata.length > 2 ||
+          (node.metadata.length > 1 &&
+              !_hasMetadata(node.metadata, 'ConfigurePigeon'))) {
+        _errors.add(Error(
+            message:
+                'API "${node.name.lexeme}" can only have one API annotation but contains: ${node.metadata}',
+            lineNumber: _calculateLineNumber(source, node.offset)));
+      }
       if (_hasMetadata(node.metadata, 'HostApi')) {
         final dart_ast.Annotation hostApi = node.metadata.firstWhere(
             (dart_ast.Annotation element) => element.name.name == 'HostApi');
@@ -1674,6 +1828,40 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           }
         }
 
+        SwiftProxyApiOptions? swiftOptions;
+        final Map<String, Object?>? swiftOptionsMap =
+            annotationMap['swiftOptions'] as Map<String, Object?>?;
+        if (swiftOptionsMap != null) {
+          swiftOptions = SwiftProxyApiOptions(
+            name: swiftOptionsMap['name'] as String?,
+            import: swiftOptionsMap['import'] as String?,
+            minIosApi: swiftOptionsMap['minIosApi'] as String?,
+            minMacosApi: swiftOptionsMap['minMacosApi'] as String?,
+            supportsIos: swiftOptionsMap['supportsIos'] as bool? ?? true,
+            supportsMacos: swiftOptionsMap['supportsMacos'] as bool? ?? true,
+          );
+        }
+
+        void tryParseApiRequirement(String? version) {
+          if (version == null) {
+            return;
+          }
+          try {
+            Version.parse(version);
+          } on FormatException catch (error) {
+            _errors.add(
+              Error(
+                message:
+                    'Could not parse version: ${error.message}. Please use semantic versioning format: "1.2.3".',
+                lineNumber: _calculateLineNumber(source, node.offset),
+              ),
+            );
+          }
+        }
+
+        tryParseApiRequirement(swiftOptions?.minIosApi);
+        tryParseApiRequirement(swiftOptions?.minMacosApi);
+
         KotlinProxyApiOptions? kotlinOptions;
         final Map<String, Object?>? kotlinOptionsMap =
             annotationMap['kotlinOptions'] as Map<String, Object?>?;
@@ -1691,7 +1879,15 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           fields: <ApiField>[],
           superClass: superClass,
           interfaces: interfaces,
+          swiftOptions: swiftOptions,
           kotlinOptions: kotlinOptions,
+          documentationComments:
+              _documentationCommentsParser(node.documentationComment?.tokens),
+        );
+      } else if (_hasMetadata(node.metadata, 'EventChannelApi')) {
+        _currentApi = AstEventChannelApi(
+          name: node.name.lexeme,
+          methods: <Method>[],
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
@@ -1700,6 +1896,10 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _currentClass = Class(
         name: node.name.lexeme,
         fields: <NamedType>[],
+        superClassName:
+            node.implementsClause?.interfaces.first.name2.toString() ??
+                node.extendsClause?.superclass.name2.toString(),
+        isSealed: node.sealedKeyword != null,
         isSwiftClass: _hasMetadata(node.metadata, 'SwiftClass'),
         documentationComments:
             _documentationCommentsParser(node.documentationComment?.tokens),
@@ -1848,6 +2048,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             AstHostApi() => ApiLocation.host,
             AstProxyApi() => ApiLocation.host,
             AstFlutterApi() => ApiLocation.flutter,
+            AstEventChannelApi() => ApiLocation.host,
           },
           isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,

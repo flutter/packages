@@ -47,14 +47,11 @@ base class SharedPreferencesAsyncFoundation
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
-    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
     return (await _convertKnownExceptions<List<String>>(
-            () async => (await _api.getKeys(
+            () async => _api.getKeys(
                   filter.allowList?.toList(),
                   _convertOptionsToPigeonOptions(options),
-                ))
-                    .cast<String>()))!
+                )))!
         .toSet();
   }
 
@@ -153,8 +150,8 @@ base class SharedPreferencesAsyncFoundation
     String key,
     SharedPreferencesOptions options,
   ) async {
-    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
-    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
+    // Since `getValue` is not strongly typed, the array type won't be set
+    // during deserialization, and needs to be manually cast.
     return _convertKnownExceptions<List<String>>(() async =>
         ((await _api.getValue(key, _convertOptionsToPigeonOptions(options)))
                 as List<Object?>?)
@@ -180,14 +177,11 @@ base class SharedPreferencesAsyncFoundation
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    final Map<String?, Object?>? data =
-        await _convertKnownExceptions<Map<String?, Object?>>(
-            () async => _api.getAll(
-                  filter.allowList?.toList(),
-                  _convertOptionsToPigeonOptions(options),
-                ));
-
-    return data!.cast<String, Object>();
+    return (await _convertKnownExceptions<Map<String, Object>>(
+        () async => _api.getAll(
+              filter.allowList?.toList(),
+              _convertOptionsToPigeonOptions(options),
+            )))!;
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {

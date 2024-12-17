@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 
+import 'package:web_benchmarks/metrics.dart';
 import 'package:web_benchmarks/server.dart';
 import 'package:web_benchmarks/src/common.dart';
 
@@ -29,25 +30,25 @@ Future<void> main() async {
   );
 
   test(
-    'Can run a web benchmark with an alternate initial page',
+    'Can run a web benchmark with an alternate benchmarkPath',
     () async {
       final BenchmarkResults results = await _runBenchmarks(
-        benchmarkNames: <String>[BenchmarkName.simpleInitialPageCheck.name],
+        benchmarkNames: <String>[BenchmarkName.simpleBenchmarkPathCheck.name],
         entryPoint:
-            'benchmark/test_infra/client/simple_initial_page_client.dart',
-        initialPage: testBenchmarkInitialPage,
+            'benchmark/test_infra/client/simple_benchmark_path_client.dart',
+        benchmarkPath: testBenchmarkPath,
       );
+
+      final List<BenchmarkScore>? scores =
+          results.scores[BenchmarkName.simpleBenchmarkPathCheck.name];
+      expect(scores, isNotNull);
 
       // The runner puts an `expectedUrl` metric in the results so that we can
       // verify the initial page value that should be passed on initial load
       // and on reloads.
-      final List<BenchmarkScore>? scores =
-          results.scores[BenchmarkName.simpleInitialPageCheck.name];
-      expect(scores, isNotNull);
-
-      final BenchmarkScore isWasmScore = scores!
+      final BenchmarkScore expectedUrlScore = scores!
           .firstWhere((BenchmarkScore score) => score.metric == 'expectedUrl');
-      expect(isWasmScore.value, 1);
+      expect(expectedUrlScore.value, 1);
     },
     timeout: Timeout.none,
   );
@@ -79,44 +80,37 @@ Future<void> main() async {
 Future<BenchmarkResults> _runBenchmarks({
   required List<String> benchmarkNames,
   required String entryPoint,
-  String initialPage = defaultInitialPage,
+  String benchmarkPath = defaultInitialPath,
   CompilationOptions compilationOptions = const CompilationOptions.js(),
 }) async {
   final BenchmarkResults taskResult = await serveWebBenchmark(
     benchmarkAppDirectory: Directory('testing/test_app'),
     entryPoint: entryPoint,
     treeShakeIcons: false,
-    initialPage: initialPage,
+    benchmarkPath: benchmarkPath,
     compilationOptions: compilationOptions,
   );
 
-  // The skwasm renderer doesn't have preroll or apply frame steps in its rendering.
-  final List<String> expectedMetrics = compilationOptions.useWasm
-      ? <String>['drawFrameDuration']
-      : <String>[
-          'preroll_frame',
-          'apply_frame',
-          'drawFrameDuration',
-        ];
+  final List<String> expectedMetrics =
+      expectedBenchmarkMetrics(useWasm: compilationOptions.useWasm)
+          .map((BenchmarkMetric metric) => metric.label)
+          .toList();
 
   for (final String benchmarkName in benchmarkNames) {
     for (final String metricName in expectedMetrics) {
-      for (final String valueName in <String>[
-        'average',
-        'outlierAverage',
-        'outlierRatio',
-        'noise',
-      ]) {
+      for (final BenchmarkMetricComputation computation
+          in BenchmarkMetricComputation.values) {
         expect(
-          taskResult.scores[benchmarkName]!.where((BenchmarkScore score) =>
-              score.metric == '$metricName.$valueName'),
-          hasLength(1),
-        );
+            taskResult.scores[benchmarkName]!.where((BenchmarkScore score) =>
+                score.metric == '$metricName.${computation.name}'),
+            hasLength(1),
+            reason: 'Expected to find a metric named '
+                '$metricName.${computation.name}');
       }
     }
     expect(
-      taskResult.scores[benchmarkName]!.where(
-          (BenchmarkScore score) => score.metric == 'totalUiFrame.average'),
+      taskResult.scores[benchmarkName]!
+          .where((BenchmarkScore score) => score.metric == totalUiFrameAverage),
       hasLength(1),
     );
   }

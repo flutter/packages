@@ -14,7 +14,7 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Map<String?, Object?> getAll(
+  Map<String, Object> getAll(
     String prefix,
     List<String?>? allowList,
   ) {
@@ -22,11 +22,11 @@ class _MockSharedPreferencesApi implements TestUserDefaultsApi {
     if (allowList != null) {
       allowSet = Set<String>.from(allowList);
     }
-    return <String?, Object?>{
-      for (final String key in items.keys)
-        if (key.startsWith(prefix) &&
-            (allowSet == null || allowSet.contains(key)))
-          key: items[key]
+    return <String, Object>{
+      for (final MapEntry<String, Object> entry in items.entries)
+        if (entry.key.startsWith(prefix) &&
+            (allowSet == null || allowSet.contains(entry.key)))
+          entry.key: entry.value
     };
   }
 
@@ -98,7 +98,7 @@ void main() {
 
   setUp(() {
     api = _MockSharedPreferencesApi();
-    TestUserDefaultsApi.setup(api);
+    TestUserDefaultsApi.setUp(api);
   });
 
   test('registerWith', () async {

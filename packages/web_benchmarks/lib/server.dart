@@ -47,6 +47,9 @@ const int defaultChromeDebugPort = 10000;
 /// [compilationOptions] specify the compiler and renderer to use for the
 /// benchmark app. This can either use dart2wasm & skwasm or
 /// dart2js & canvaskit.
+///
+/// [benchmarkPath] specifies the path for the URL that will be loaded upon
+/// opening the benchmark app in Chrome.
 Future<BenchmarkResults> serveWebBenchmark({
   required io.Directory benchmarkAppDirectory,
   required String entryPoint,
@@ -54,8 +57,8 @@ Future<BenchmarkResults> serveWebBenchmark({
   int chromeDebugPort = defaultChromeDebugPort,
   bool headless = true,
   bool treeShakeIcons = true,
-  String initialPage = defaultInitialPage,
   CompilationOptions compilationOptions = const CompilationOptions.js(),
+  String benchmarkPath = defaultInitialPath,
 }) async {
   // Reduce logging level. Otherwise, package:webkit_inspection_protocol is way too spammy.
   Logger.root.level = Level.INFO;
@@ -64,10 +67,10 @@ Future<BenchmarkResults> serveWebBenchmark({
     benchmarkAppDirectory: benchmarkAppDirectory,
     entryPoint: entryPoint,
     benchmarkServerPort: benchmarkServerPort,
+    benchmarkPath: benchmarkPath,
     chromeDebugPort: chromeDebugPort,
     headless: headless,
     compilationOptions: compilationOptions,
     treeShakeIcons: treeShakeIcons,
-    initialPage: initialPage,
   ).run();
 }

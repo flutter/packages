@@ -85,12 +85,9 @@ class LocalAuthDarwin extends LocalAuthPlatform {
 
   @override
   Future<List<BiometricType>> getEnrolledBiometrics() async {
-    final List<AuthBiometricWrapper?> result =
-        await _api.getEnrolledBiometrics();
-    return result
-        .cast<AuthBiometricWrapper>()
-        .map((AuthBiometricWrapper entry) {
-      switch (entry.value) {
+    final List<AuthBiometric> result = await _api.getEnrolledBiometrics();
+    return result.map((AuthBiometric value) {
+      switch (value) {
         case AuthBiometric.face:
           return BiometricType.face;
         case AuthBiometric.fingerprint:

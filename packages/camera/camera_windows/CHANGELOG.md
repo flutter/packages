@@ -1,5 +1,19 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.2.6+1
+
+* Fixes black bars on camera preview [#122966](https://github.com/flutter/flutter/issues/122966).
+
+## 0.2.6
+
+* Reverts streaming frame support, as the implementation was incorrect and never
+  exposed.
+
+## 0.2.5+1
+
+* Updates C++ to Dart communication to use Pigeon.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.2.5

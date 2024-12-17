@@ -9,6 +9,7 @@ import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart'
 import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_ad_display_container.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_loader.dart';
+import 'package:interactive_media_ads/src/ios/ios_content_progress_provider.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -70,6 +71,8 @@ void main() {
       const String adTag = 'myAdTag';
 
       final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
+      final ima.IMAContentPlayhead contentPlayheadInstance =
+          ima.IMAContentPlayhead();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
         newIMAAdsRequest: ({
@@ -79,8 +82,10 @@ void main() {
         }) {
           expect(adTagUrl, adTag);
           expect(adDisplayContainer, container.adDisplayContainer);
+          expect(contentPlayhead, contentPlayheadInstance);
           return MockIMAAdsRequest();
         },
+        newIMAContentPlayhead: () => contentPlayheadInstance,
       );
 
       final IOSAdsLoader loader = IOSAdsLoader(
@@ -92,7 +97,14 @@ void main() {
         ),
       );
 
-      await loader.requestAds(AdsRequest(adTagUrl: adTag));
+      final IOSContentProgressProvider provider = IOSContentProgressProvider(
+        IOSContentProgressProviderCreationParams(proxy: imaProxy),
+      );
+
+      await loader.requestAds(PlatformAdsRequest(
+        adTagUrl: adTag,
+        contentProgressProvider: provider,
+      ));
 
       verify(mockLoader.requestAds(any));
     });

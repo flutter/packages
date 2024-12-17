@@ -10,7 +10,7 @@ AlternativeBillingOnlyReportingDetailsWrapper
     _$AlternativeBillingOnlyReportingDetailsWrapperFromJson(Map json) =>
         AlternativeBillingOnlyReportingDetailsWrapper(
           responseCode: const BillingResponseConverter()
-              .fromJson(json['responseCode'] as int?),
+              .fromJson((json['responseCode'] as num?)?.toInt()),
           debugMessage: json['debugMessage'] as String? ?? '',
           externalTransactionToken:
               json['externalTransactionToken'] as String? ?? '',

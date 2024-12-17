@@ -22,6 +22,8 @@ void main() {
           (PlatformAdDisplayContainerCreationParams params) {
         throw UnimplementedError();
       },
+      onCreatePlatformContentProgressProvider: (_) =>
+          throw UnimplementedError(),
     );
 
     void onAdEvent(AdEvent event) {}

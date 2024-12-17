@@ -105,11 +105,14 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllTypes,
  * enum_list: field in this object.
  * object_list: field in this object.
  * list_list: field in this object.
+ * map_list: field in this object.
  * map: field in this object.
  * string_map: field in this object.
  * int_map: field in this object.
  * enum_map: field in this object.
  * object_map: field in this object.
+ * list_map: field in this object.
+ * map_map: field in this object.
  *
  * Creates a new #AllTypes object.
  *
@@ -125,8 +128,9 @@ CoreTestsPigeonTestAllTypes* core_tests_pigeon_test_all_types_new(
     CoreTestsPigeonTestAnotherEnum another_enum, const gchar* a_string,
     FlValue* an_object, FlValue* list, FlValue* string_list, FlValue* int_list,
     FlValue* double_list, FlValue* bool_list, FlValue* enum_list,
-    FlValue* object_list, FlValue* list_list, FlValue* map, FlValue* string_map,
-    FlValue* int_map, FlValue* enum_map, FlValue* object_map);
+    FlValue* object_list, FlValue* list_list, FlValue* map_list, FlValue* map,
+    FlValue* string_map, FlValue* int_map, FlValue* enum_map,
+    FlValue* object_map, FlValue* list_map, FlValue* map_map);
 
 /**
  * core_tests_pigeon_test_all_types_get_a_bool
@@ -354,6 +358,17 @@ FlValue* core_tests_pigeon_test_all_types_get_list_list(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_types_get_map_list
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the mapList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_map_list(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
  * core_tests_pigeon_test_all_types_get_map
  * @object: a #CoreTestsPigeonTestAllTypes.
  *
@@ -409,6 +424,28 @@ FlValue* core_tests_pigeon_test_all_types_get_object_map(
     CoreTestsPigeonTestAllTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_types_get_list_map
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the listMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_list_map(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_types_get_map_map
+ * @object: a #CoreTestsPigeonTestAllTypes.
+ *
+ * Gets the value of the mapMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_types_get_map_map(
+    CoreTestsPigeonTestAllTypes* object);
+
+/**
  * CoreTestsPigeonTestAllNullableTypes:
  *
  * A class containing all supported nullable types.
@@ -445,12 +482,15 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestAllNullableTypes,
  * enum_list: field in this object.
  * object_list: field in this object.
  * list_list: field in this object.
+ * map_list: field in this object.
  * recursive_class_list: field in this object.
  * map: field in this object.
  * string_map: field in this object.
  * int_map: field in this object.
  * enum_map: field in this object.
  * object_map: field in this object.
+ * list_map: field in this object.
+ * map_map: field in this object.
  * recursive_class_map: field in this object.
  *
  * Creates a new #AllNullableTypes object.
@@ -471,9 +511,10 @@ core_tests_pigeon_test_all_nullable_types_new(
     CoreTestsPigeonTestAllNullableTypes* all_nullable_types, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
     FlValue* bool_list, FlValue* enum_list, FlValue* object_list,
-    FlValue* list_list, FlValue* recursive_class_list, FlValue* map,
-    FlValue* string_map, FlValue* int_map, FlValue* enum_map,
-    FlValue* object_map, FlValue* recursive_class_map);
+    FlValue* list_list, FlValue* map_list, FlValue* recursive_class_list,
+    FlValue* map, FlValue* string_map, FlValue* int_map, FlValue* enum_map,
+    FlValue* object_map, FlValue* list_map, FlValue* map_map,
+    FlValue* recursive_class_map);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_get_a_nullable_bool
@@ -718,6 +759,17 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_list_list(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_get_map_list
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the mapList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_nullable_types_get_map_list(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
  * core_tests_pigeon_test_all_nullable_types_get_recursive_class_list
  * @object: a #CoreTestsPigeonTestAllNullableTypes.
  *
@@ -784,6 +836,28 @@ FlValue* core_tests_pigeon_test_all_nullable_types_get_object_map(
     CoreTestsPigeonTestAllNullableTypes* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_get_list_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the listMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_nullable_types_get_list_map(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_get_map_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypes.
+ *
+ * Gets the value of the mapMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue* core_tests_pigeon_test_all_nullable_types_get_map_map(
+    CoreTestsPigeonTestAllNullableTypes* object);
+
+/**
  * core_tests_pigeon_test_all_nullable_types_get_recursive_class_map
  * @object: a #CoreTestsPigeonTestAllNullableTypes.
  *
@@ -833,11 +907,14 @@ G_DECLARE_FINAL_TYPE(
  * enum_list: field in this object.
  * object_list: field in this object.
  * list_list: field in this object.
+ * map_list: field in this object.
  * map: field in this object.
  * string_map: field in this object.
  * int_map: field in this object.
  * enum_map: field in this object.
  * object_map: field in this object.
+ * list_map: field in this object.
+ * map_map: field in this object.
  *
  * Creates a new #AllNullableTypesWithoutRecursion object.
  *
@@ -856,8 +933,9 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_new(
     const gchar* a_nullable_string, FlValue* a_nullable_object, FlValue* list,
     FlValue* string_list, FlValue* int_list, FlValue* double_list,
     FlValue* bool_list, FlValue* enum_list, FlValue* object_list,
-    FlValue* list_list, FlValue* map, FlValue* string_map, FlValue* int_map,
-    FlValue* enum_map, FlValue* object_map);
+    FlValue* list_list, FlValue* map_list, FlValue* map, FlValue* string_map,
+    FlValue* int_map, FlValue* enum_map, FlValue* object_map, FlValue* list_map,
+    FlValue* map_map);
 
 /**
  * core_tests_pigeon_test_all_nullable_types_without_recursion_get_a_nullable_bool
@@ -1107,6 +1185,18 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_list_list(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_get_map_list
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Gets the value of the mapList field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_map_list(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
  * core_tests_pigeon_test_all_nullable_types_without_recursion_get_map
  * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
  *
@@ -1163,6 +1253,30 @@ core_tests_pigeon_test_all_nullable_types_without_recursion_get_enum_map(
  */
 FlValue*
 core_tests_pigeon_test_all_nullable_types_without_recursion_get_object_map(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_get_list_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Gets the value of the listMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_list_map(
+    CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
+
+/**
+ * core_tests_pigeon_test_all_nullable_types_without_recursion_get_map_map
+ * @object: a #CoreTestsPigeonTestAllNullableTypesWithoutRecursion.
+ *
+ * Gets the value of the mapMap field of @object.
+ *
+ * Returns: the field value.
+ */
+FlValue*
+core_tests_pigeon_test_all_nullable_types_without_recursion_get_map_map(
     CoreTestsPigeonTestAllNullableTypesWithoutRecursion* object);
 
 /**
@@ -1313,6 +1427,15 @@ CoreTestsPigeonTestTestMessage* core_tests_pigeon_test_test_message_new(
  */
 FlValue* core_tests_pigeon_test_test_message_get_test_list(
     CoreTestsPigeonTestTestMessage* object);
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
+                     core_tests_pigeon_test_message_codec,
+                     CORE_TESTS_PIGEON_TEST, MESSAGE_CODEC,
+                     FlStandardMessageCodec)
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApi,
+                     core_tests_pigeon_test_host_integration_core_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API, GObject)
 
 G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle,
@@ -11755,6 +11878,10 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
     GError** error);
 
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostTrivialApi,
+                     core_tests_pigeon_test_host_trivial_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_TRIVIAL_API, GObject)
+
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostTrivialApiNoopResponse,
                      core_tests_pigeon_test_host_trivial_api_noop_response,
                      CORE_TESTS_PIGEON_TEST, HOST_TRIVIAL_API_NOOP_RESPONSE,
@@ -11821,6 +11948,10 @@ void core_tests_pigeon_test_host_trivial_api_set_method_handlers(
  */
 void core_tests_pigeon_test_host_trivial_api_clear_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix);
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApi,
+                     core_tests_pigeon_test_host_small_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_SMALL_API, GObject)
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApiResponseHandle,
                      core_tests_pigeon_test_host_small_api_response_handle,

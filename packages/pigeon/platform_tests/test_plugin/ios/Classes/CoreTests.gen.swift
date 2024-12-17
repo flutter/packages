@@ -129,11 +129,14 @@ struct AllTypes {
   var enumList: [AnEnum]
   var objectList: [Any]
   var listList: [[Any?]]
+  var mapList: [[AnyHashable?: Any?]]
   var map: [AnyHashable?: Any?]
   var stringMap: [String: String]
   var intMap: [Int64: Int64]
   var enumMap: [AnEnum: AnEnum]
   var objectMap: [AnyHashable: Any]
+  var listMap: [Int64: [Any?]]
+  var mapMap: [Int64: [AnyHashable?: Any?]]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AllTypes? {
@@ -157,11 +160,14 @@ struct AllTypes {
     let enumList = pigeonVar_list[17] as! [AnEnum]
     let objectList = pigeonVar_list[18] as! [Any]
     let listList = pigeonVar_list[19] as! [[Any?]]
-    let map = pigeonVar_list[20] as! [AnyHashable?: Any?]
-    let stringMap = pigeonVar_list[21] as! [String: String]
-    let intMap = pigeonVar_list[22] as! [Int64: Int64]
-    let enumMap = pigeonVar_list[23] as? [AnEnum: AnEnum]
-    let objectMap = pigeonVar_list[24] as! [AnyHashable: Any]
+    let mapList = pigeonVar_list[20] as! [[AnyHashable?: Any?]]
+    let map = pigeonVar_list[21] as! [AnyHashable?: Any?]
+    let stringMap = pigeonVar_list[22] as! [String: String]
+    let intMap = pigeonVar_list[23] as! [Int64: Int64]
+    let enumMap = pigeonVar_list[24] as? [AnEnum: AnEnum]
+    let objectMap = pigeonVar_list[25] as! [AnyHashable: Any]
+    let listMap = pigeonVar_list[26] as! [Int64: [Any?]]
+    let mapMap = pigeonVar_list[27] as! [Int64: [AnyHashable?: Any?]]
 
     return AllTypes(
       aBool: aBool,
@@ -184,11 +190,14 @@ struct AllTypes {
       enumList: enumList,
       objectList: objectList,
       listList: listList,
+      mapList: mapList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
       enumMap: enumMap!,
-      objectMap: objectMap
+      objectMap: objectMap,
+      listMap: listMap,
+      mapMap: mapMap
     )
   }
   func toList() -> [Any?] {
@@ -213,11 +222,14 @@ struct AllTypes {
       enumList,
       objectList,
       listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
+      listMap,
+      mapMap,
     ]
   }
 }
@@ -248,12 +260,15 @@ class AllNullableTypes {
     enumList: [AnEnum?]? = nil,
     objectList: [Any?]? = nil,
     listList: [[Any?]?]? = nil,
+    mapList: [[AnyHashable?: Any?]?]? = nil,
     recursiveClassList: [AllNullableTypes?]? = nil,
     map: [AnyHashable?: Any?]? = nil,
     stringMap: [String?: String?]? = nil,
     intMap: [Int64?: Int64?]? = nil,
     enumMap: [AnEnum?: AnEnum?]? = nil,
     objectMap: [AnyHashable?: Any?]? = nil,
+    listMap: [Int64?: [Any?]?]? = nil,
+    mapMap: [Int64?: [AnyHashable?: Any?]?]? = nil,
     recursiveClassMap: [Int64?: AllNullableTypes?]? = nil
   ) {
     self.aNullableBool = aNullableBool
@@ -277,12 +292,15 @@ class AllNullableTypes {
     self.enumList = enumList
     self.objectList = objectList
     self.listList = listList
+    self.mapList = mapList
     self.recursiveClassList = recursiveClassList
     self.map = map
     self.stringMap = stringMap
     self.intMap = intMap
     self.enumMap = enumMap
     self.objectMap = objectMap
+    self.listMap = listMap
+    self.mapMap = mapMap
     self.recursiveClassMap = recursiveClassMap
   }
   var aNullableBool: Bool?
@@ -306,12 +324,15 @@ class AllNullableTypes {
   var enumList: [AnEnum?]?
   var objectList: [Any?]?
   var listList: [[Any?]?]?
+  var mapList: [[AnyHashable?: Any?]?]?
   var recursiveClassList: [AllNullableTypes?]?
   var map: [AnyHashable?: Any?]?
   var stringMap: [String?: String?]?
   var intMap: [Int64?: Int64?]?
   var enumMap: [AnEnum?: AnEnum?]?
   var objectMap: [AnyHashable?: Any?]?
+  var listMap: [Int64?: [Any?]?]?
+  var mapMap: [Int64?: [AnyHashable?: Any?]?]?
   var recursiveClassMap: [Int64?: AllNullableTypes?]?
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -337,13 +358,16 @@ class AllNullableTypes {
     let enumList: [AnEnum?]? = nilOrValue(pigeonVar_list[18])
     let objectList: [Any?]? = nilOrValue(pigeonVar_list[19])
     let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[20])
-    let recursiveClassList: [AllNullableTypes?]? = nilOrValue(pigeonVar_list[21])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[22])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[23])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[24])
-    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[25] as? [AnEnum?: AnEnum?]
-    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[26])
-    let recursiveClassMap: [Int64?: AllNullableTypes?]? = nilOrValue(pigeonVar_list[27])
+    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[21])
+    let recursiveClassList: [AllNullableTypes?]? = nilOrValue(pigeonVar_list[22])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[23])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[24])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[25])
+    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[26] as? [AnEnum?: AnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[27])
+    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[28])
+    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[29])
+    let recursiveClassMap: [Int64?: AllNullableTypes?]? = nilOrValue(pigeonVar_list[30])
 
     return AllNullableTypes(
       aNullableBool: aNullableBool,
@@ -367,12 +391,15 @@ class AllNullableTypes {
       enumList: enumList,
       objectList: objectList,
       listList: listList,
+      mapList: mapList,
       recursiveClassList: recursiveClassList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
       enumMap: enumMap,
       objectMap: objectMap,
+      listMap: listMap,
+      mapMap: mapMap,
       recursiveClassMap: recursiveClassMap
     )
   }
@@ -399,12 +426,15 @@ class AllNullableTypes {
       enumList,
       objectList,
       listList,
+      mapList,
       recursiveClassList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
+      listMap,
+      mapMap,
       recursiveClassMap,
     ]
   }
@@ -436,11 +466,14 @@ struct AllNullableTypesWithoutRecursion {
   var enumList: [AnEnum?]? = nil
   var objectList: [Any?]? = nil
   var listList: [[Any?]?]? = nil
+  var mapList: [[AnyHashable?: Any?]?]? = nil
   var map: [AnyHashable?: Any?]? = nil
   var stringMap: [String?: String?]? = nil
   var intMap: [Int64?: Int64?]? = nil
   var enumMap: [AnEnum?: AnEnum?]? = nil
   var objectMap: [AnyHashable?: Any?]? = nil
+  var listMap: [Int64?: [Any?]?]? = nil
+  var mapMap: [Int64?: [AnyHashable?: Any?]?]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AllNullableTypesWithoutRecursion? {
@@ -464,11 +497,14 @@ struct AllNullableTypesWithoutRecursion {
     let enumList: [AnEnum?]? = nilOrValue(pigeonVar_list[17])
     let objectList: [Any?]? = nilOrValue(pigeonVar_list[18])
     let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[19])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[20])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[21])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[22])
-    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[23] as? [AnEnum?: AnEnum?]
-    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[24])
+    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[20])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[21])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[22])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[23])
+    let enumMap: [AnEnum?: AnEnum?]? = pigeonVar_list[24] as? [AnEnum?: AnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[25])
+    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[26])
+    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[27])
 
     return AllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -491,11 +527,14 @@ struct AllNullableTypesWithoutRecursion {
       enumList: enumList,
       objectList: objectList,
       listList: listList,
+      mapList: mapList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
       enumMap: enumMap,
-      objectMap: objectMap
+      objectMap: objectMap,
+      listMap: listMap,
+      mapMap: mapMap
     )
   }
   func toList() -> [Any?] {
@@ -520,11 +559,14 @@ struct AllNullableTypesWithoutRecursion {
       enumList,
       objectList,
       listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
       objectMap,
+      listMap,
+      mapMap,
     ]
   }
 }

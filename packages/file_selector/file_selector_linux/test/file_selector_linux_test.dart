@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file_selector_linux/file_selector_linux.dart';
+import 'package:file_selector_linux/src/messages.g.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,20 +11,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  late FakeFileSelectorApi api;
   late FileSelectorLinux plugin;
-  late List<MethodCall> log;
 
   setUp(() {
-    plugin = FileSelectorLinux();
-    log = <MethodCall>[];
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-      plugin.channel,
-      (MethodCall methodCall) async {
-        log.add(methodCall);
-        return null;
-      },
-    );
+    api = FakeFileSelectorApi();
+    plugin = FileSelectorLinux(api: api);
   });
 
   test('registers instance', () {
@@ -32,6 +25,22 @@ void main() {
   });
 
   group('openFile', () {
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
+
+      expect((await plugin.openFile())?.path, path);
+
+      expect(api.passedType, PlatformFileChooserActionType.open);
+      expect(api.passedOptions?.selectMultiple, false);
+    });
+
+    test('handles empty return for cancel', () async {
+      api.result = <String>[];
+
+      expect(await plugin.openFile(), null);
+    });
+
     test('passes the accepted type groups correctly', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
@@ -47,55 +56,31 @@ void main() {
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'text',
-              'extensions': <String>['*.txt'],
-              'mimeTypes': <String>['text/plain'],
-            },
-            <String, Object>{
-              'label': 'image',
-              'extensions': <String>['*.jpg'],
-              'mimeTypes': <String>['image/jpg'],
-            },
-          ],
-          'initialDirectory': null,
-          'confirmButtonText': null,
-          'multiple': false,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
+      // Extensions should be converted to *.<extension> format.
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions,
+          <String>['*.txt']);
+      expect(
+          api.passedOptions?.allowedFileTypes?[0].mimeTypes, group.mimeTypes);
+      expect(api.passedOptions?.allowedFileTypes?[1].label, groupTwo.label);
+      expect(api.passedOptions?.allowedFileTypes?[1].extensions,
+          <String>['*.jpg']);
+      expect(api.passedOptions?.allowedFileTypes?[1].mimeTypes,
+          groupTwo.mimeTypes);
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.openFile(initialDirectory: '/example/directory');
+      const String path = '/example/directory';
+      await plugin.openFile(initialDirectory: path);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'initialDirectory': '/example/directory',
-          'confirmButtonText': null,
-          'multiple': false,
-        },
-      );
+      expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.openFile(confirmButtonText: 'Open File');
+      const String button = 'Open File';
+      await plugin.openFile(confirmButtonText: button);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'initialDirectory': null,
-          'confirmButtonText': 'Open File',
-          'multiple': false,
-        },
-      );
+      expect(api.passedOptions?.acceptButtonLabel, button);
     });
 
     test('throws for a type group that does not support Linux', () async {
@@ -116,25 +101,24 @@ void main() {
 
       await plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'any',
-              'extensions': <String>['*'],
-            },
-          ],
-          'initialDirectory': null,
-          'confirmButtonText': null,
-          'multiple': false,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
   });
 
   group('openFiles', () {
+    test('passes the core flags correctly', () async {
+      api.result = <String>['/foo/bar', 'baz'];
+
+      final List<XFile> files = await plugin.openFiles();
+
+      expect(files.length, 2);
+      expect(files[0].path, api.result[0]);
+      expect(files[1].path, api.result[1]);
+
+      expect(api.passedType, PlatformFileChooserActionType.open);
+      expect(api.passedOptions?.selectMultiple, true);
+    });
+
     test('passes the accepted type groups correctly', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
@@ -150,55 +134,31 @@ void main() {
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'text',
-              'extensions': <String>['*.txt'],
-              'mimeTypes': <String>['text/plain'],
-            },
-            <String, Object>{
-              'label': 'image',
-              'extensions': <String>['*.jpg'],
-              'mimeTypes': <String>['image/jpg'],
-            },
-          ],
-          'initialDirectory': null,
-          'confirmButtonText': null,
-          'multiple': true,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
+      // Extensions should be converted to *.<extension> format.
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions,
+          <String>['*.txt']);
+      expect(
+          api.passedOptions?.allowedFileTypes?[0].mimeTypes, group.mimeTypes);
+      expect(api.passedOptions?.allowedFileTypes?[1].label, groupTwo.label);
+      expect(api.passedOptions?.allowedFileTypes?[1].extensions,
+          <String>['*.jpg']);
+      expect(api.passedOptions?.allowedFileTypes?[1].mimeTypes,
+          groupTwo.mimeTypes);
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.openFiles(initialDirectory: '/example/directory');
+      const String path = '/example/directory';
+      await plugin.openFiles(initialDirectory: path);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'initialDirectory': '/example/directory',
-          'confirmButtonText': null,
-          'multiple': true,
-        },
-      );
+      expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.openFiles(confirmButtonText: 'Open File');
+      const String button = 'Open File';
+      await plugin.openFiles(confirmButtonText: button);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'initialDirectory': null,
-          'confirmButtonText': 'Open File',
-          'multiple': true,
-        },
-      );
+      expect(api.passedOptions?.acceptButtonLabel, button);
     });
 
     test('throws for a type group that does not support Linux', () async {
@@ -219,25 +179,20 @@ void main() {
 
       await plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]);
 
-      expectMethodCall(
-        log,
-        'openFile',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'any',
-              'extensions': <String>['*'],
-            },
-          ],
-          'initialDirectory': null,
-          'confirmButtonText': null,
-          'multiple': true,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
   });
 
   group('getSaveLocation', () {
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
+
+      expect((await plugin.getSaveLocation())?.path, path);
+
+      expect(api.passedType, PlatformFileChooserActionType.save);
+    });
+
     test('passes the accepted type groups correctly', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
@@ -254,58 +209,33 @@ void main() {
       await plugin
           .getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'text',
-              'extensions': <String>['*.txt'],
-              'mimeTypes': <String>['text/plain'],
-            },
-            <String, Object>{
-              'label': 'image',
-              'extensions': <String>['*.jpg'],
-              'mimeTypes': <String>['image/jpg'],
-            },
-          ],
-          'initialDirectory': null,
-          'suggestedName': null,
-          'confirmButtonText': null,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
+      // Extensions should be converted to *.<extension> format.
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions,
+          <String>['*.txt']);
+      expect(
+          api.passedOptions?.allowedFileTypes?[0].mimeTypes, group.mimeTypes);
+      expect(api.passedOptions?.allowedFileTypes?[1].label, groupTwo.label);
+      expect(api.passedOptions?.allowedFileTypes?[1].extensions,
+          <String>['*.jpg']);
+      expect(api.passedOptions?.allowedFileTypes?[1].mimeTypes,
+          groupTwo.mimeTypes);
     });
 
     test('passes initialDirectory correctly', () async {
+      const String path = '/example/directory';
       await plugin.getSaveLocation(
-          options:
-              const SaveDialogOptions(initialDirectory: '/example/directory'));
+          options: const SaveDialogOptions(initialDirectory: path));
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'initialDirectory': '/example/directory',
-          'suggestedName': null,
-          'confirmButtonText': null,
-        },
-      );
+      expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
+      const String button = 'Open File';
       await plugin.getSaveLocation(
-          options: const SaveDialogOptions(confirmButtonText: 'Open File'));
+          options: const SaveDialogOptions(confirmButtonText: button));
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'initialDirectory': null,
-          'suggestedName': null,
-          'confirmButtonText': 'Open File',
-        },
-      );
+      expect(api.passedOptions?.acceptButtonLabel, button);
     });
 
     test('throws for a type group that does not support Linux', () async {
@@ -326,25 +256,20 @@ void main() {
 
       await plugin.getSaveLocation(acceptedTypeGroups: <XTypeGroup>[group]);
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'any',
-              'extensions': <String>['*'],
-            },
-          ],
-          'initialDirectory': null,
-          'suggestedName': null,
-          'confirmButtonText': null,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
   });
 
   group('getSavePath (deprecated)', () {
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
+
+      expect(await plugin.getSavePath(), path);
+
+      expect(api.passedType, PlatformFileChooserActionType.save);
+    });
+
     test('passes the accepted type groups correctly', () async {
       const XTypeGroup group = XTypeGroup(
         label: 'text',
@@ -361,55 +286,31 @@ void main() {
       await plugin
           .getSavePath(acceptedTypeGroups: <XTypeGroup>[group, groupTwo]);
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'text',
-              'extensions': <String>['*.txt'],
-              'mimeTypes': <String>['text/plain'],
-            },
-            <String, Object>{
-              'label': 'image',
-              'extensions': <String>['*.jpg'],
-              'mimeTypes': <String>['image/jpg'],
-            },
-          ],
-          'initialDirectory': null,
-          'suggestedName': null,
-          'confirmButtonText': null,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].label, group.label);
+      // Extensions should be converted to *.<extension> format.
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions,
+          <String>['*.txt']);
+      expect(
+          api.passedOptions?.allowedFileTypes?[0].mimeTypes, group.mimeTypes);
+      expect(api.passedOptions?.allowedFileTypes?[1].label, groupTwo.label);
+      expect(api.passedOptions?.allowedFileTypes?[1].extensions,
+          <String>['*.jpg']);
+      expect(api.passedOptions?.allowedFileTypes?[1].mimeTypes,
+          groupTwo.mimeTypes);
     });
 
     test('passes initialDirectory correctly', () async {
-      await plugin.getSavePath(initialDirectory: '/example/directory');
+      const String path = '/example/directory';
+      await plugin.getSavePath(initialDirectory: path);
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'initialDirectory': '/example/directory',
-          'suggestedName': null,
-          'confirmButtonText': null,
-        },
-      );
+      expect(api.passedOptions?.currentFolderPath, path);
     });
 
     test('passes confirmButtonText correctly', () async {
-      await plugin.getSavePath(confirmButtonText: 'Open File');
+      const String button = 'Open File';
+      await plugin.getSavePath(confirmButtonText: button);
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'initialDirectory': null,
-          'suggestedName': null,
-          'confirmButtonText': 'Open File',
-        },
-      );
+      expect(api.passedOptions?.acceptButtonLabel, button);
     });
 
     test('throws for a type group that does not support Linux', () async {
@@ -430,99 +331,87 @@ void main() {
 
       await plugin.getSavePath(acceptedTypeGroups: <XTypeGroup>[group]);
 
-      expectMethodCall(
-        log,
-        'getSavePath',
-        arguments: <String, dynamic>{
-          'acceptedTypeGroups': <Map<String, dynamic>>[
-            <String, Object>{
-              'label': 'any',
-              'extensions': <String>['*'],
-            },
-          ],
-          'initialDirectory': null,
-          'suggestedName': null,
-          'confirmButtonText': null,
-        },
-      );
+      expect(api.passedOptions?.allowedFileTypes?[0].extensions, <String>['*']);
     });
   });
 
   group('getDirectoryPath', () {
-    test('passes initialDirectory correctly', () async {
-      await plugin.getDirectoryPath(initialDirectory: '/example/directory');
+    test('passes the core flags correctly', () async {
+      const String path = '/foo/bar';
+      api.result = <String>[path];
 
-      expectMethodCall(
-        log,
-        'getDirectoryPath',
-        arguments: <String, dynamic>{
-          'initialDirectory': '/example/directory',
-          'confirmButtonText': null,
-        },
-      );
+      expect(await plugin.getDirectoryPath(), path);
+
+      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
+      expect(api.passedOptions?.selectMultiple, false);
     });
-    test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectoryPath(confirmButtonText: 'Select Folder');
 
-      expectMethodCall(
-        log,
-        'getDirectoryPath',
-        arguments: <String, dynamic>{
-          'initialDirectory': null,
-          'confirmButtonText': 'Select Folder',
-        },
-      );
+    test('passes initialDirectory correctly', () async {
+      const String path = '/example/directory';
+      await plugin.getDirectoryPath(initialDirectory: path);
+
+      expect(api.passedOptions?.currentFolderPath, path);
+    });
+
+    test('passes confirmButtonText correctly', () async {
+      const String button = 'Select Folder';
+      await plugin.getDirectoryPath(confirmButtonText: button);
+
+      expect(api.passedOptions?.acceptButtonLabel, button);
     });
   });
 
   group('getDirectoryPaths', () {
+    test('passes the core flags correctly', () async {
+      api.result = <String>['/foo/bar', 'baz'];
+
+      expect(await plugin.getDirectoryPaths(), api.result);
+
+      expect(api.passedType, PlatformFileChooserActionType.chooseDirectory);
+      expect(api.passedOptions?.selectMultiple, true);
+    });
+
     test('passes initialDirectory correctly', () async {
-      await plugin.getDirectoryPaths(initialDirectory: '/example/directory');
+      const String path = '/example/directory';
+      await plugin.getDirectoryPaths(initialDirectory: path);
 
-      expectMethodCall(
-        log,
-        'getDirectoryPath',
-        arguments: <String, dynamic>{
-          'initialDirectory': '/example/directory',
-          'confirmButtonText': null,
-          'multiple': true,
-        },
-      );
+      expect(api.passedOptions?.currentFolderPath, path);
     });
+
     test('passes confirmButtonText correctly', () async {
-      await plugin.getDirectoryPaths(
-          confirmButtonText: 'Select one or mode folders');
+      const String button = 'Select one or mode folders';
+      await plugin.getDirectoryPaths(confirmButtonText: button);
 
-      expectMethodCall(
-        log,
-        'getDirectoryPath',
-        arguments: <String, dynamic>{
-          'initialDirectory': null,
-          'confirmButtonText': 'Select one or mode folders',
-          'multiple': true,
-        },
-      );
+      expect(api.passedOptions?.acceptButtonLabel, button);
     });
+
     test('passes multiple flag correctly', () async {
       await plugin.getDirectoryPaths();
 
-      expectMethodCall(
-        log,
-        'getDirectoryPath',
-        arguments: <String, dynamic>{
-          'initialDirectory': null,
-          'confirmButtonText': null,
-          'multiple': true,
-        },
-      );
+      expect(api.passedOptions?.selectMultiple, true);
     });
   });
 }
 
-void expectMethodCall(
-  List<MethodCall> log,
-  String methodName, {
-  Map<String, dynamic>? arguments,
-}) {
-  expect(log, <Matcher>[isMethodCall(methodName, arguments: arguments)]);
+/// Fake implementation that stores arguments and provides a canned response.
+class FakeFileSelectorApi implements FileSelectorApi {
+  List<String> result = <String>[];
+  PlatformFileChooserActionType? passedType;
+  PlatformFileChooserOptions? passedOptions;
+
+  @override
+  Future<List<String>> showFileChooser(PlatformFileChooserActionType type,
+      PlatformFileChooserOptions options) async {
+    passedType = type;
+    passedOptions = options;
+    return result;
+  }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }

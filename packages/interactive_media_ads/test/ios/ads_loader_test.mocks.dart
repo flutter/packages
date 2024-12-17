@@ -540,6 +540,28 @@ class MockUIViewController extends _i1.Mock implements _i2.UIViewController {
       ) as _i2.PigeonInstanceManager);
 
   @override
+  _i2.UIView pigeonVar_view() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeonVar_view,
+          [],
+        ),
+        returnValue: _FakeUIView_6(
+          this,
+          Invocation.method(
+            #pigeonVar_view,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeUIView_6(
+          this,
+          Invocation.method(
+            #pigeonVar_view,
+            [],
+          ),
+        ),
+      ) as _i2.UIView);
+
+  @override
   _i2.UIViewController pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,

@@ -148,11 +148,7 @@ extension on SK2SubscriptionInfoMessage {
   SK2SubscriptionInfo convertFromPigeon() {
     return SK2SubscriptionInfo(
         subscriptionGroupID: subscriptionGroupID,
-        // Note that promotionalOffers should NOT be nullable, but is only declared
-        // so because of pigeon cannot handle non null lists.
-        // There should be NO NULLS.
         promotionalOffers: promotionalOffers
-            .whereType<SK2SubscriptionOfferMessage>()
             .map((SK2SubscriptionOfferMessage offer) =>
                 offer.convertFromPigeon())
             .toList(),
@@ -264,6 +260,51 @@ extension on SK2PriceLocaleMessage {
   }
 }
 
+/// Wrapper around [PurchaseResult]
+/// https://developer.apple.com/documentation/storekit/product/purchaseresult
+enum SK2ProductPurchaseResult {
+  /// The purchase succeeded and results in a transaction.
+  success,
+
+  /// The user canceled the purchase.
+  userCancelled,
+
+  /// The purchase is pending, and requires action from the customer.
+  pending
+}
+
+/// Wrapper around [PurchaseOption]
+/// https://developer.apple.com/documentation/storekit/product/purchaseoption
+class SK2ProductPurchaseOptions {
+  /// Creates a new instance of [SK2ProductPurchaseOptions]
+  SK2ProductPurchaseOptions({this.appAccountToken, this.quantity});
+
+  /// Sets a UUID to associate the purchase with an account in your system.
+  final String? appAccountToken;
+
+  /// Indicates the quantity of items the customer is purchasing.
+  final int? quantity;
+
+  /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage]
+  SK2ProductPurchaseOptionsMessage convertToPigeon() {
+    return SK2ProductPurchaseOptionsMessage(
+        appAccountToken: appAccountToken, quantity: quantity);
+  }
+}
+
+extension on SK2ProductPurchaseResultMessage {
+  SK2ProductPurchaseResult convertFromPigeon() {
+    switch (this) {
+      case SK2ProductPurchaseResultMessage.success:
+        return SK2ProductPurchaseResult.success;
+      case SK2ProductPurchaseResultMessage.userCancelled:
+        return SK2ProductPurchaseResult.userCancelled;
+      case SK2ProductPurchaseResultMessage.pending:
+        return SK2ProductPurchaseResult.pending;
+    }
+  }
+}
+
 /// A wrapper around StoreKit2's [Product](https://developer.apple.com/documentation/storekit/product).
 /// The Product type represents the in-app purchases that you configure in
 /// App Store Connect and make available for purchase within your app.
@@ -322,6 +363,20 @@ class SK2Product {
         .whereType<SK2ProductMessage>()
         .map((SK2ProductMessage product) => product.convertFromPigeon())
         .toList();
+  }
+
+  /// Wrapper for StoreKit's [Product.purchase]
+  /// https://developer.apple.com/documentation/storekit/product/3791971-purchase
+  /// Initiates a purchase for the product with the App Store and displays the confirmation sheet.
+  static Future<SK2ProductPurchaseResult> purchase(String id,
+      {SK2ProductPurchaseOptions? options}) async {
+    SK2ProductPurchaseResultMessage result;
+    if (options != null) {
+      result = await _hostApi.purchase(id, options: options.convertToPigeon());
+    } else {
+      result = await _hostApi.purchase(id);
+    }
+    return result.convertFromPigeon();
   }
 
   /// Converts this instance of [SK2Product] to it's pigeon representation [SK2ProductMessage]

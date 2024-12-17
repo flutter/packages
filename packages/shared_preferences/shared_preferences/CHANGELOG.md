@@ -1,3 +1,7 @@
+## 2.3.3
+
+* Clarifies scope of prefix handling in README.
+
 ## 2.3.2
 
 * Removes outdated testing information from README.

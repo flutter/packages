@@ -17,9 +17,7 @@ abstract class LegacyUserDefaultsApi {
   void setBool(String key, bool value);
   void setDouble(String key, double value);
   void setValue(String key, Object value);
-  // TODO(stuartmorgan): Make these non-nullable once
-  // https://github.com/flutter/flutter/issues/97848 is fixed.
-  Map<String?, Object?> getAll(String prefix, List<String>? allowList);
+  Map<String, Object> getAll(String prefix, List<String>? allowList);
   bool clear(String prefix, List<String>? allowList);
 }
 

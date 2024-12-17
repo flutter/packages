@@ -22,7 +22,7 @@ dev_dependencies:
   http: ^1.2.2
   integration_test:
     sdk: flutter
-  mockito: 5.4.4
+  mockito: ^5.4.4
 
 flutter:
   assets:

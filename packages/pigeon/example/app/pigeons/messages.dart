@@ -30,8 +30,6 @@ import 'package:pigeon/pigeon.dart';
 ))
 // #enddocregion config
 
-// This file and ./messages_test.dart must be identical below this line.
-
 // #docregion host-definitions
 enum Code { one, two }
 
@@ -40,7 +38,7 @@ class MessageData {
   String? name;
   String? description;
   Code code;
-  Map<String?, String?> data;
+  Map<String, String> data;
 }
 
 @HostApi()

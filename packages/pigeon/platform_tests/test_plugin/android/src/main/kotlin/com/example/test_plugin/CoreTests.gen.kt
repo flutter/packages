@@ -102,11 +102,14 @@ data class AllTypes(
     val enumList: List<AnEnum>,
     val objectList: List<Any>,
     val listList: List<List<Any?>>,
+    val mapList: List<Map<Any?, Any?>>,
     val map: Map<Any, Any?>,
     val stringMap: Map<String, String>,
     val intMap: Map<Long, Long>,
     val enumMap: Map<AnEnum, AnEnum>,
-    val objectMap: Map<Any, Any>
+    val objectMap: Map<Any, Any>,
+    val listMap: Map<Long, List<Any?>>,
+    val mapMap: Map<Long, Map<Any?, Any?>>
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AllTypes {
@@ -130,11 +133,14 @@ data class AllTypes(
       val enumList = pigeonVar_list[17] as List<AnEnum>
       val objectList = pigeonVar_list[18] as List<Any>
       val listList = pigeonVar_list[19] as List<List<Any?>>
-      val map = pigeonVar_list[20] as Map<Any, Any?>
-      val stringMap = pigeonVar_list[21] as Map<String, String>
-      val intMap = pigeonVar_list[22] as Map<Long, Long>
-      val enumMap = pigeonVar_list[23] as Map<AnEnum, AnEnum>
-      val objectMap = pigeonVar_list[24] as Map<Any, Any>
+      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>>
+      val map = pigeonVar_list[21] as Map<Any, Any?>
+      val stringMap = pigeonVar_list[22] as Map<String, String>
+      val intMap = pigeonVar_list[23] as Map<Long, Long>
+      val enumMap = pigeonVar_list[24] as Map<AnEnum, AnEnum>
+      val objectMap = pigeonVar_list[25] as Map<Any, Any>
+      val listMap = pigeonVar_list[26] as Map<Long, List<Any?>>
+      val mapMap = pigeonVar_list[27] as Map<Long, Map<Any?, Any?>>
       return AllTypes(
           aBool,
           anInt,
@@ -156,11 +162,14 @@ data class AllTypes(
           enumList,
           objectList,
           listList,
+          mapList,
           map,
           stringMap,
           intMap,
           enumMap,
-          objectMap)
+          objectMap,
+          listMap,
+          mapMap)
     }
   }
 
@@ -186,11 +195,14 @@ data class AllTypes(
         enumList,
         objectList,
         listList,
+        mapList,
         map,
         stringMap,
         intMap,
         enumMap,
         objectMap,
+        listMap,
+        mapMap,
     )
   }
 }
@@ -222,12 +234,15 @@ data class AllNullableTypes(
     val enumList: List<AnEnum?>? = null,
     val objectList: List<Any?>? = null,
     val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
     val recursiveClassList: List<AllNullableTypes?>? = null,
     val map: Map<Any, Any?>? = null,
     val stringMap: Map<String?, String?>? = null,
     val intMap: Map<Long?, Long?>? = null,
     val enumMap: Map<AnEnum?, AnEnum?>? = null,
     val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
     val recursiveClassMap: Map<Long?, AllNullableTypes?>? = null
 ) {
   companion object {
@@ -253,13 +268,16 @@ data class AllNullableTypes(
       val enumList = pigeonVar_list[18] as List<AnEnum?>?
       val objectList = pigeonVar_list[19] as List<Any?>?
       val listList = pigeonVar_list[20] as List<List<Any?>?>?
-      val recursiveClassList = pigeonVar_list[21] as List<AllNullableTypes?>?
-      val map = pigeonVar_list[22] as Map<Any, Any?>?
-      val stringMap = pigeonVar_list[23] as Map<String?, String?>?
-      val intMap = pigeonVar_list[24] as Map<Long?, Long?>?
-      val enumMap = pigeonVar_list[25] as Map<AnEnum?, AnEnum?>?
-      val objectMap = pigeonVar_list[26] as Map<Any?, Any?>?
-      val recursiveClassMap = pigeonVar_list[27] as Map<Long?, AllNullableTypes?>?
+      val mapList = pigeonVar_list[21] as List<Map<Any?, Any?>?>?
+      val recursiveClassList = pigeonVar_list[22] as List<AllNullableTypes?>?
+      val map = pigeonVar_list[23] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[24] as Map<String?, String?>?
+      val intMap = pigeonVar_list[25] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[26] as Map<AnEnum?, AnEnum?>?
+      val objectMap = pigeonVar_list[27] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
+      val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
+      val recursiveClassMap = pigeonVar_list[30] as Map<Long?, AllNullableTypes?>?
       return AllNullableTypes(
           aNullableBool,
           aNullableInt,
@@ -282,12 +300,15 @@ data class AllNullableTypes(
           enumList,
           objectList,
           listList,
+          mapList,
           recursiveClassList,
           map,
           stringMap,
           intMap,
           enumMap,
           objectMap,
+          listMap,
+          mapMap,
           recursiveClassMap)
     }
   }
@@ -315,12 +336,15 @@ data class AllNullableTypes(
         enumList,
         objectList,
         listList,
+        mapList,
         recursiveClassList,
         map,
         stringMap,
         intMap,
         enumMap,
         objectMap,
+        listMap,
+        mapMap,
         recursiveClassMap,
     )
   }
@@ -353,11 +377,14 @@ data class AllNullableTypesWithoutRecursion(
     val enumList: List<AnEnum?>? = null,
     val objectList: List<Any?>? = null,
     val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
     val map: Map<Any, Any?>? = null,
     val stringMap: Map<String?, String?>? = null,
     val intMap: Map<Long?, Long?>? = null,
     val enumMap: Map<AnEnum?, AnEnum?>? = null,
-    val objectMap: Map<Any?, Any?>? = null
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AllNullableTypesWithoutRecursion {
@@ -381,11 +408,14 @@ data class AllNullableTypesWithoutRecursion(
       val enumList = pigeonVar_list[17] as List<AnEnum?>?
       val objectList = pigeonVar_list[18] as List<Any?>?
       val listList = pigeonVar_list[19] as List<List<Any?>?>?
-      val map = pigeonVar_list[20] as Map<Any, Any?>?
-      val stringMap = pigeonVar_list[21] as Map<String?, String?>?
-      val intMap = pigeonVar_list[22] as Map<Long?, Long?>?
-      val enumMap = pigeonVar_list[23] as Map<AnEnum?, AnEnum?>?
-      val objectMap = pigeonVar_list[24] as Map<Any?, Any?>?
+      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>?>?
+      val map = pigeonVar_list[21] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[22] as Map<String?, String?>?
+      val intMap = pigeonVar_list[23] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[24] as Map<AnEnum?, AnEnum?>?
+      val objectMap = pigeonVar_list[25] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[26] as Map<Long?, List<Any?>?>?
+      val mapMap = pigeonVar_list[27] as Map<Long?, Map<Any?, Any?>?>?
       return AllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
@@ -407,11 +437,14 @@ data class AllNullableTypesWithoutRecursion(
           enumList,
           objectList,
           listList,
+          mapList,
           map,
           stringMap,
           intMap,
           enumMap,
-          objectMap)
+          objectMap,
+          listMap,
+          mapMap)
     }
   }
 
@@ -437,11 +470,14 @@ data class AllNullableTypesWithoutRecursion(
         enumList,
         objectList,
         listList,
+        mapList,
         map,
         stringMap,
         intMap,
         enumMap,
         objectMap,
+        listMap,
+        mapMap,
     )
   }
 }

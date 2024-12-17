@@ -174,6 +174,13 @@ Directory get dataHome =>
 /// Throws [StateError] if the HOME environment variable is not set.
 Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR');
 
+/// The base directory relative to which user-specific state data should be
+/// written. (Corresponds to `$XDG_STATE_HOME`).
+///
+/// Throws [StateError] if the HOME environment variable is not set.
+Directory get stateHome =>
+    _directoryFromEnvironmentWithFallback('XDG_STATE_HOME', '.local/state');
+
 /// Gets the xdg user directory named by `dirName`.
 ///
 /// Use [getUserDirectoryNames] to find out the list of available names.

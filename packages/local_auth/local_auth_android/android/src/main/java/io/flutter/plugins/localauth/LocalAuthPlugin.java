@@ -24,7 +24,6 @@ import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import io.flutter.plugins.localauth.Messages.AuthClassification;
-import io.flutter.plugins.localauth.Messages.AuthClassificationWrapper;
 import io.flutter.plugins.localauth.Messages.AuthOptions;
 import io.flutter.plugins.localauth.Messages.AuthResult;
 import io.flutter.plugins.localauth.Messages.AuthStrings;
@@ -82,21 +81,17 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     return hasBiometricHardware();
   }
 
-  public @NonNull List<AuthClassificationWrapper> getEnrolledBiometrics() {
-    ArrayList<AuthClassificationWrapper> biometrics = new ArrayList<>();
+  public @NonNull List<AuthClassification> getEnrolledBiometrics() {
+    ArrayList<AuthClassification> biometrics = new ArrayList<>();
     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
         == BiometricManager.BIOMETRIC_SUCCESS) {
-      biometrics.add(wrappedBiometric(AuthClassification.WEAK));
+      biometrics.add(AuthClassification.WEAK);
     }
     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
         == BiometricManager.BIOMETRIC_SUCCESS) {
-      biometrics.add(wrappedBiometric(AuthClassification.STRONG));
+      biometrics.add(AuthClassification.STRONG);
     }
     return biometrics;
-  }
-
-  private @NonNull AuthClassificationWrapper wrappedBiometric(AuthClassification value) {
-    return new AuthClassificationWrapper.Builder().setValue(value).build();
   }
 
   public @NonNull Boolean stopAuthentication() {
@@ -208,12 +203,12 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    LocalAuthApi.setup(binding.getBinaryMessenger(), this);
+    LocalAuthApi.setUp(binding.getBinaryMessenger(), this);
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    LocalAuthApi.setup(binding.getBinaryMessenger(), null);
+    LocalAuthApi.setUp(binding.getBinaryMessenger(), null);
   }
 
   private void setServicesFromActivity(Activity activity) {

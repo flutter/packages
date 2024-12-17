@@ -92,6 +92,44 @@ void main() {
           false);
     });
 
+    testWidgets('PopScope intercepts back button on root route',
+        (WidgetTester tester) async {
+      bool didPop = false;
+
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/',
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => PopScope(
+              onPopInvokedWithResult: (bool result, _) {
+                didPop = true;
+              },
+              canPop: false,
+              child: const Text('Home'),
+            ),
+          ),
+        ],
+      );
+
+      addTearDown(goRouter.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(
+        routerConfig: goRouter,
+      ));
+
+      expect(find.text('Home'), findsOneWidget);
+
+      // Simulate back button press
+      await tester.binding.handlePopRoute();
+
+      await tester.pumpAndSettle();
+
+      // Verify that PopScope intercepted the back button
+      expect(didPop, isTrue);
+      expect(find.text('Home'), findsOneWidget);
+    });
+
     testWidgets('pops more than matches count should return false',
         (WidgetTester tester) async {
       final GoRouter goRouter = await createGoRouter(tester)

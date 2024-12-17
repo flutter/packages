@@ -108,12 +108,9 @@ class DartTestCommand extends PackageLoopingCommand {
       platform = 'chrome';
     }
 
-    // All the web tests assume the canvaskit renderer currently.
-    final String? webRenderer = (platform == 'chrome') ? 'canvaskit' : null;
     bool passed;
     if (package.requiresFlutter()) {
-      passed = await _runFlutterTests(package,
-          platform: platform, webRenderer: webRenderer);
+      passed = await _runFlutterTests(package, platform: platform);
     } else {
       passed = await _runDartTests(package, platform: platform);
     }
@@ -122,7 +119,7 @@ class DartTestCommand extends PackageLoopingCommand {
 
   /// Runs the Dart tests for a Flutter package, returning true on success.
   Future<bool> _runFlutterTests(RepositoryPackage package,
-      {String? platform, String? webRenderer}) async {
+      {String? platform}) async {
     final String experiment = getStringArg(kEnableExperiment);
 
     final int exitCode = await processRunner.runAndStream(
@@ -134,7 +131,6 @@ class DartTestCommand extends PackageLoopingCommand {
         // Flutter defaults to VM mode (under a different name) and explicitly
         // setting it is deprecated, so pass nothing in that case.
         if (platform != null && platform != 'vm') '--platform=$platform',
-        if (webRenderer != null) '--web-renderer=$webRenderer',
       ],
       workingDir: package.directory,
     );

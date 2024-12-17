@@ -3,8 +3,8 @@ description: Demonstrates how to use the camera_windows plugin.
 publish_to: 'none'
 
 environment:
-  sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 dependencies:
   camera_platform_interface: ^2.6.0

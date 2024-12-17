@@ -31,8 +31,8 @@ android {
 
     defaultConfig {
         applicationId "io.flutter.plugins.cameraexample"
-        minSdkVersion 21
-        targetSdkVersion 28
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

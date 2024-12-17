@@ -202,4 +202,20 @@ static const BOOL gTestEnableAudio = YES;
   XCTAssertNotNil(resultValue);
 }
 
+- (void)testSettings_ShouldSelectFormatWhichSupports60FPS {
+  FCPPlatformMediaSettings *settings =
+      [FCPPlatformMediaSettings makeWithResolutionPreset:gTestResolutionPreset
+                                         framesPerSecond:@(60)
+                                            videoBitrate:@(gTestVideoBitrate)
+                                            audioBitrate:@(gTestAudioBitrate)
+                                             enableAudio:gTestEnableAudio];
+
+  FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
+      dispatch_queue_create("test", NULL), settings, nil, nil);
+
+  AVFrameRateRange *range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
+  XCTAssertLessThanOrEqual(range.minFrameRate, 60);
+  XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60);
+}
+
 @end

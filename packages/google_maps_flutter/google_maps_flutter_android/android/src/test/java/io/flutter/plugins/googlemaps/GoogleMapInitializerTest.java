@@ -26,7 +26,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.P)
+@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoogleMapInitializerTest {
   private GoogleMapInitializer googleMapInitializer;
 

@@ -4,8 +4,8 @@ version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 flutter:
   plugin:

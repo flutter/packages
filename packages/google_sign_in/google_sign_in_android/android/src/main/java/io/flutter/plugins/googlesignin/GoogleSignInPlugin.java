@@ -31,14 +31,11 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.googlesignin.Messages.FlutterError;
 import io.flutter.plugins.googlesignin.Messages.GoogleSignInApi;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -56,13 +53,13 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       @NonNull GoogleSignInWrapper googleSignInWrapper) {
     this.messenger = messenger;
     delegate = new Delegate(context, googleSignInWrapper);
-    GoogleSignInApi.setup(messenger, delegate);
+    GoogleSignInApi.setUp(messenger, delegate);
   }
 
   private void dispose() {
     delegate = null;
     if (messenger != null) {
-      GoogleSignInApi.setup(messenger, null);
+      GoogleSignInApi.setUp(messenger, null);
       messenger = null;
     }
   }
@@ -111,217 +108,16 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     disposeActivity();
   }
 
-  // TODO(stuartmorgan): Remove this, and convert the unit tests to IDelegate tests. This is left
-  // here only to allow the existing tests to continue to work unchanged during the Pigeon migration
-  // to ensure that the refactoring didn't change any behavior, and is not actually used by the
-  // plugin.
-  @VisibleForTesting
-  void onMethodCall(
-      @NonNull io.flutter.plugin.common.MethodCall call, @NonNull MethodChannel.Result result) {
-    switch (call.method) {
-      case "init":
-        String signInOption = Objects.requireNonNull(call.argument("signInOption"));
-        List<String> requestedScopes = Objects.requireNonNull(call.argument("scopes"));
-        String hostedDomain = call.argument("hostedDomain");
-        String clientId = call.argument("clientId");
-        String serverClientId = call.argument("serverClientId");
-        boolean forceCodeForRefreshToken =
-            Objects.requireNonNull(call.argument("forceCodeForRefreshToken"));
-        delegate.init(
-            result,
-            signInOption,
-            requestedScopes,
-            hostedDomain,
-            clientId,
-            serverClientId,
-            forceCodeForRefreshToken);
-        break;
-
-      case "signInSilently":
-        delegate.signInSilently(result);
-        break;
-
-      case "signIn":
-        delegate.signIn(result);
-        break;
-
-      case "getTokens":
-        String email = Objects.requireNonNull(call.argument("email"));
-        boolean shouldRecoverAuth = Objects.requireNonNull(call.argument("shouldRecoverAuth"));
-        delegate.getTokens(result, email, shouldRecoverAuth);
-        break;
-
-      case "signOut":
-        delegate.signOut(result);
-        break;
-
-      case "clearAuthCache":
-        String token = Objects.requireNonNull(call.argument("token"));
-        delegate.clearAuthCache(result, token);
-        break;
-
-      case "disconnect":
-        delegate.disconnect(result);
-        break;
-
-      case "isSignedIn":
-        delegate.isSignedIn(result);
-        break;
-
-      case "requestScopes":
-        List<String> scopes = Objects.requireNonNull(call.argument("scopes"));
-        delegate.requestScopes(result, scopes);
-        break;
-
-      default:
-        result.notImplemented();
-    }
-  }
-
-  /**
-   * A delegate interface that exposes all of the sign-in functionality for other plugins to use.
-   * The below {@link Delegate} implementation should be used by any clients unless they need to
-   * override some of these functions, such as for testing.
-   */
-  public interface IDelegate {
-    /** Initializes this delegate so that it is ready to perform other operations. */
-    void init(
-        @NonNull MethodChannel.Result result,
-        @NonNull String signInOption,
-        @NonNull List<String> requestedScopes,
-        @Nullable String hostedDomain,
-        @Nullable String clientId,
-        @Nullable String serverClientId,
-        boolean forceCodeForRefreshToken);
-
-    /**
-     * Returns the account information for the user who is signed in to this app. If no user is
-     * signed in, tries to sign the user in without displaying any user interface.
-     */
-    void signInSilently(@NonNull MethodChannel.Result result);
-
-    /**
-     * Signs the user in via the sign-in user interface, including the OAuth consent flow if scopes
-     * were requested.
-     */
-    void signIn(@NonNull MethodChannel.Result result);
-
-    /**
-     * Gets an OAuth access token with the scopes that were specified during initialization for the
-     * user with the specified email address.
-     *
-     * <p>If shouldRecoverAuth is set to true and user needs to recover authentication for method to
-     * complete, the method will attempt to recover authentication and rerun method.
-     */
-    void getTokens(
-        final @NonNull MethodChannel.Result result,
-        final @NonNull String email,
-        final boolean shouldRecoverAuth);
-
-    /**
-     * Clears the token from any client cache forcing the next {@link #getTokens} call to fetch a
-     * new one.
-     */
-    void clearAuthCache(final @NonNull MethodChannel.Result result, final @NonNull String token);
-
-    /**
-     * Signs the user out. Their credentials may remain valid, meaning they'll be able to silently
-     * sign back in.
-     */
-    void signOut(@NonNull MethodChannel.Result result);
-
-    /** Signs the user out, and revokes their credentials. */
-    void disconnect(@NonNull MethodChannel.Result result);
-
-    /** Checks if there is a signed in user. */
-    void isSignedIn(@NonNull MethodChannel.Result result);
-
-    /** Prompts the user to grant an additional Oauth scopes. */
-    void requestScopes(
-        final @NonNull MethodChannel.Result result, final @NonNull List<String> scopes);
-  }
-
-  /**
-   * Helper class for supporting the legacy IDelegate interface based on raw method channels, which
-   * handles converting any FlutterErrors (or other {@code Throwable}s in case any non- FlutterError
-   * exceptions slip through) thrown by the new code paths into {@code error} callbacks.
-   *
-   * @param <T> The Result type of the result to convert from.
-   */
-  private abstract static class ErrorConvertingMethodChannelResult<T>
-      implements Messages.Result<T> {
-    final @NonNull MethodChannel.Result result;
-
-    public ErrorConvertingMethodChannelResult(@NonNull MethodChannel.Result result) {
-      this.result = result;
-    }
-
-    @Override
-    public void error(@NonNull Throwable error) {
-      if (error instanceof FlutterError) {
-        FlutterError flutterError = (FlutterError) error;
-        result.error(flutterError.code, flutterError.getMessage(), flutterError.details);
-      } else {
-        result.error("exception", error.getMessage(), null);
-      }
-    }
-  }
-
-  /**
-   * Helper class for supporting the legacy IDelegate interface based on raw method channels, which
-   * handles converting responses from methods that return {@code Messages.UserData}.
-   */
-  private static class UserDataMethodChannelResult
-      extends ErrorConvertingMethodChannelResult<Messages.UserData> {
-    public UserDataMethodChannelResult(MethodChannel.Result result) {
-      super(result);
-    }
-
-    @Override
-    public void success(Messages.UserData data) {
-      Map<String, Object> response = new HashMap<>();
-      response.put("email", data.getEmail());
-      response.put("id", data.getId());
-      response.put("idToken", data.getIdToken());
-      response.put("serverAuthCode", data.getServerAuthCode());
-      response.put("displayName", data.getDisplayName());
-      if (data.getPhotoUrl() != null) {
-        response.put("photoUrl", data.getPhotoUrl());
-      }
-      result.success(response);
-    }
-  }
-
-  /**
-   * Helper class for supporting the legacy IDelegate interface based on raw method channels, which
-   * handles converting responses from methods that return {@code Void}.
-   */
-  private static class VoidMethodChannelResult extends ErrorConvertingMethodChannelResult<Void> {
-    public VoidMethodChannelResult(MethodChannel.Result result) {
-      super(result);
-    }
-
-    @Override
-    public void success(Void unused) {
-      result.success(null);
-    }
-  }
-
   /**
    * Delegate class that does the work for the Google sign-in plugin. This is exposed as a dedicated
    * class for use in other plugins that wrap basic sign-in functionality.
    *
    * <p>All methods in this class assume that they are run to completion before any other method is
-   * invoked. In this context, "run to completion" means that their {@link MethodChannel.Result}
-   * argument has been completed (either successfully or in error). This class provides no
-   * synchronization constructs to guarantee such behavior; callers are responsible for providing
-   * such guarantees.
+   * invoked. In this context, "run to completion" means that their {@link Messages.Result} argument
+   * has been completed (either successfully or in error). This class provides no synchronization
+   * constructs to guarantee such behavior; callers are responsible for providing such guarantees.
    */
-  // TODO(stuartmorgan): Remove this in a breaking change, replacing it with something using
-  // structured types rather than strings and dictionaries left over from the pre-Pigeon method
-  // channel implementation.
-  public static class Delegate
-      implements IDelegate, PluginRegistry.ActivityResultListener, GoogleSignInApi {
+  public static class Delegate implements PluginRegistry.ActivityResultListener, GoogleSignInApi {
     private static final int REQUEST_CODE_SIGNIN = 53293;
     private static final int REQUEST_CODE_RECOVER_AUTH = 53294;
     @VisibleForTesting static final int REQUEST_CODE_REQUEST_SCOPE = 53295;
@@ -335,9 +131,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     private static final String ERROR_REASON_SIGN_IN_FAILED = "sign_in_failed";
     private static final String ERROR_FAILURE_TO_RECOVER_AUTH = "failed_to_recover_auth";
     private static final String ERROR_USER_RECOVERABLE_AUTH = "user_recoverable_auth";
-
-    private static final String DEFAULT_SIGN_IN = "SignInOption.standard";
-    private static final String DEFAULT_GAMES_SIGN_IN = "SignInOption.games";
 
     private final @NonNull Context context;
     // Only set activity for v2 embedder. Always access activity from getActivity() method.
@@ -367,7 +160,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     private void checkAndSetPendingOperation(
         String method,
         Messages.Result<Messages.UserData> userDataResult,
-        Messages.Result<Void> voidResult,
+        Messages.VoidResult voidResult,
         Messages.Result<Boolean> boolResult,
         Messages.Result<String> stringResult,
         Object data) {
@@ -385,7 +178,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     private void checkAndSetPendingVoidOperation(
-        String method, @NonNull Messages.Result<Void> result) {
+        String method, @NonNull Messages.VoidResult result) {
       checkAndSetPendingOperation(method, null, result, null, null, null);
     }
 
@@ -472,43 +265,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       }
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void init(
-        @NonNull MethodChannel.Result result,
-        @NonNull String signInOption,
-        @NonNull List<String> requestedScopes,
-        @Nullable String hostedDomain,
-        @Nullable String clientId,
-        @Nullable String serverClientId,
-        boolean forceCodeForRefreshToken) {
-      try {
-        Messages.SignInType type;
-        switch (signInOption) {
-          case DEFAULT_GAMES_SIGN_IN:
-            type = Messages.SignInType.GAMES;
-            break;
-          case DEFAULT_SIGN_IN:
-            type = Messages.SignInType.STANDARD;
-            break;
-          default:
-            throw new IllegalStateException("Unknown signInOption");
-        }
-        init(
-            new Messages.InitParams.Builder()
-                .setSignInType(type)
-                .setScopes(requestedScopes)
-                .setHostedDomain(hostedDomain)
-                .setClientId(clientId)
-                .setServerClientId(serverClientId)
-                .setForceCodeForRefreshToken(forceCodeForRefreshToken)
-                .build());
-        result.success(null);
-      } catch (FlutterError e) {
-        result.error(e.code, e.getMessage(), e.details);
-      }
-    }
-
     /**
      * Returns the account information for the user who is signed in to this app. If no user is
      * signed in, tries to sign the user in without displaying any user interface.
@@ -523,12 +279,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       } else {
         task.addOnCompleteListener(this::onSignInResult);
       }
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void signInSilently(@NonNull MethodChannel.Result result) {
-      signInSilently(new UserDataMethodChannelResult(result));
     }
 
     /**
@@ -546,18 +296,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       getActivity().startActivityForResult(signInIntent, REQUEST_CODE_SIGNIN);
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void signIn(@NonNull MethodChannel.Result result) {
-      signIn(new UserDataMethodChannelResult(result));
-    }
-
     /**
      * Signs the user out. Their credentials may remain valid, meaning they'll be able to silently
      * sign back in.
      */
     @Override
-    public void signOut(@NonNull Messages.Result<Void> result) {
+    public void signOut(@NonNull Messages.VoidResult result) {
       checkAndSetPendingVoidOperation("signOut", result);
 
       signInClient
@@ -572,15 +316,9 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
               });
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void signOut(@NonNull MethodChannel.Result result) {
-      signOut(new VoidMethodChannelResult(result));
-    }
-
     /** Signs the user out, and revokes their credentials. */
     @Override
-    public void disconnect(@NonNull Messages.Result<Void> result) {
+    public void disconnect(@NonNull Messages.VoidResult result) {
       checkAndSetPendingVoidOperation("disconnect", result);
 
       signInClient
@@ -595,23 +333,11 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
               });
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void disconnect(@NonNull MethodChannel.Result result) {
-      signOut(new VoidMethodChannelResult(result));
-    }
-
     /** Checks if there is a signed in user. */
     @NonNull
     @Override
     public Boolean isSignedIn() {
       return GoogleSignIn.getLastSignedInAccount(context) != null;
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void isSignedIn(final @NonNull MethodChannel.Result result) {
-      result.success(isSignedIn());
     }
 
     @Override
@@ -641,19 +367,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
 
       googleSignInWrapper.requestPermissions(
           getActivity(), REQUEST_CODE_REQUEST_SCOPE, account, wrappedScopes.toArray(new Scope[0]));
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void requestScopes(@NonNull MethodChannel.Result result, @NonNull List<String> scopes) {
-      requestScopes(
-          scopes,
-          new ErrorConvertingMethodChannelResult<Boolean>(result) {
-            @Override
-            public void success(Boolean value) {
-              result.success(value);
-            }
-          });
     }
 
     private void onSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -705,7 +418,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     private void finishWithSuccess() {
-      Objects.requireNonNull(pendingOperation.voidResult).success(null);
+      Objects.requireNonNull(pendingOperation.voidResult).success();
       pendingOperation = null;
     }
 
@@ -720,24 +433,27 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     private void finishWithError(String errorCode, String errorMessage) {
-      Messages.Result<?> result;
-      if (pendingOperation.userDataResult != null) {
-        result = pendingOperation.userDataResult;
-      } else if (pendingOperation.boolResult != null) {
-        result = pendingOperation.boolResult;
-      } else if (pendingOperation.stringResult != null) {
-        result = pendingOperation.stringResult;
+      if (pendingOperation.voidResult != null) {
+        Objects.requireNonNull(pendingOperation.voidResult)
+            .error(new FlutterError(errorCode, errorMessage, null));
       } else {
-        result = pendingOperation.voidResult;
+        Messages.Result<?> result;
+        if (pendingOperation.userDataResult != null) {
+          result = pendingOperation.userDataResult;
+        } else if (pendingOperation.boolResult != null) {
+          result = pendingOperation.boolResult;
+        } else {
+          result = pendingOperation.stringResult;
+        }
+        Objects.requireNonNull(result).error(new FlutterError(errorCode, errorMessage, null));
       }
-      Objects.requireNonNull(result).error(new FlutterError(errorCode, errorMessage, null));
       pendingOperation = null;
     }
 
     private static class PendingOperation {
       final @NonNull String method;
       final @Nullable Messages.Result<Messages.UserData> userDataResult;
-      final @Nullable Messages.Result<Void> voidResult;
+      final @Nullable Messages.VoidResult voidResult;
       final @Nullable Messages.Result<Boolean> boolResult;
       final @Nullable Messages.Result<String> stringResult;
       final @Nullable Object data;
@@ -745,7 +461,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       PendingOperation(
           @NonNull String method,
           @Nullable Messages.Result<Messages.UserData> userDataResult,
-          @Nullable Messages.Result<Void> voidResult,
+          @Nullable Messages.VoidResult voidResult,
           @Nullable Messages.Result<Boolean> boolResult,
           @Nullable Messages.Result<String> stringResult,
           @Nullable Object data) {
@@ -764,7 +480,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
 
     /** Clears the token kept in the client side cache. */
     @Override
-    public void clearAuthCache(@NonNull String token, @NonNull Messages.Result<Void> result) {
+    public void clearAuthCache(@NonNull String token, @NonNull Messages.VoidResult result) {
       Callable<Void> clearTokenTask =
           () -> {
             GoogleAuthUtil.clearToken(context, token);
@@ -775,7 +491,8 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           clearTokenTask,
           clearTokenFuture -> {
             try {
-              result.success(clearTokenFuture.get());
+              clearTokenFuture.get();
+              result.success();
             } catch (ExecutionException e) {
               @Nullable Throwable cause = e.getCause();
               result.error(
@@ -786,13 +503,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
               Thread.currentThread().interrupt();
             }
           });
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void clearAuthCache(
-        final @NonNull MethodChannel.Result result, final @NonNull String token) {
-      clearAuthCache(token, new VoidMethodChannelResult(result));
     }
 
     /**
@@ -852,25 +562,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
             } catch (InterruptedException e) {
               result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
               Thread.currentThread().interrupt();
-            }
-          });
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void getTokens(
-        @NonNull final MethodChannel.Result result,
-        @NonNull final String email,
-        final boolean shouldRecoverAuth) {
-      getAccessToken(
-          email,
-          shouldRecoverAuth,
-          new ErrorConvertingMethodChannelResult<String>(result) {
-            @Override
-            public void success(String value) {
-              HashMap<String, String> tokenResult = new HashMap<>();
-              tokenResult.put("accessToken", value);
-              result.success(tokenResult);
             }
           });
     }

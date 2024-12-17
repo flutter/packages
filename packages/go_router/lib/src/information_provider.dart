@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import 'match.dart';
+import 'path_utils.dart';
 
 /// The type of the navigation.
 ///
@@ -79,17 +80,21 @@ class GoRouteInformationProvider extends RouteInformationProvider
     required String initialLocation,
     required Object? initialExtra,
     Listenable? refreshListenable,
+    bool routerNeglect = false,
   })  : _refreshListenable = refreshListenable,
         _value = RouteInformation(
           uri: Uri.parse(initialLocation),
           state: RouteInformationState<void>(
               extra: initialExtra, type: NavigatingType.go),
         ),
-        _valueInEngine = _kEmptyRouteInformation {
+        _valueInEngine = _kEmptyRouteInformation,
+        _routerNeglect = routerNeglect {
     _refreshListenable?.addListener(notifyListeners);
   }
 
   final Listenable? _refreshListenable;
+
+  final bool _routerNeglect;
 
   static WidgetsBinding get _binding => WidgetsBinding.instance;
   static final RouteInformation _kEmptyRouteInformation =
@@ -120,7 +125,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     SystemNavigator.routeInformationUpdated(
       uri: routeInformation.uri,
       state: routeInformation.state,
-      replace: replace,
+      replace: _routerNeglect || replace,
     );
     _value = _valueInEngine = routeInformation;
   }
@@ -135,11 +140,16 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   void _setValue(String location, Object state) {
-    final Uri uri = Uri.parse(location);
+    Uri uri = Uri.parse(location);
+
+    // Check for relative location
+    if (location.startsWith('./')) {
+      uri = concatenateUris(_value.uri, uri);
+    }
 
     final bool shouldNotify =
         _valueHasChanged(newLocationUri: uri, newState: state);
-    _value = RouteInformation(uri: Uri.parse(location), state: state);
+    _value = RouteInformation(uri: uri, state: state);
     if (shouldNotify) {
       notifyListeners();
     }

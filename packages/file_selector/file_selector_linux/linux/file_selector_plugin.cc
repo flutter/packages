@@ -8,25 +8,9 @@
 #include <gtk/gtk.h>
 
 #include "file_selector_plugin_private.h"
+#include "messages.g.h"
 
-// From file_selector_linux.dart
-const char kChannelName[] = "plugins.flutter.dev/file_selector_linux";
-
-const char kOpenFileMethod[] = "openFile";
-const char kGetSavePathMethod[] = "getSavePath";
-const char kGetDirectoryPathMethod[] = "getDirectoryPath";
-
-const char kAcceptedTypeGroupsKey[] = "acceptedTypeGroups";
-const char kConfirmButtonTextKey[] = "confirmButtonText";
-const char kInitialDirectoryKey[] = "initialDirectory";
-const char kMultipleKey[] = "multiple";
-const char kSuggestedNameKey[] = "suggestedName";
-
-const char kTypeGroupLabelKey[] = "label";
-const char kTypeGroupExtensionsKey[] = "extensions";
-const char kTypeGroupMimeTypesKey[] = "mimeTypes";
-
-// Errors
+// Error codes.
 const char kBadArgumentsError[] = "Bad Arguments";
 const char kNoScreenError[] = "No Screen";
 
@@ -34,39 +18,28 @@ struct _FlFileSelectorPlugin {
   GObject parent_instance;
 
   FlPluginRegistrar* registrar;
-
-  // Connection to Flutter engine.
-  FlMethodChannel* channel;
 };
 
 G_DEFINE_TYPE(FlFileSelectorPlugin, fl_file_selector_plugin, G_TYPE_OBJECT)
 
 // Converts a type group received from Flutter into a GTK file filter.
-static GtkFileFilter* type_group_to_filter(FlValue* value) {
+static GtkFileFilter* type_group_to_filter(FfsPlatformTypeGroup* group) {
   g_autoptr(GtkFileFilter) filter = gtk_file_filter_new();
 
-  FlValue* label = fl_value_lookup_string(value, kTypeGroupLabelKey);
-  if (label != nullptr && fl_value_get_type(label) == FL_VALUE_TYPE_STRING) {
-    gtk_file_filter_set_name(filter, fl_value_get_string(label));
-  }
+  const gchar* label = ffs_platform_type_group_get_label(group);
+  gtk_file_filter_set_name(filter, label);
 
-  FlValue* extensions = fl_value_lookup_string(value, kTypeGroupExtensionsKey);
-  if (extensions != nullptr &&
-      fl_value_get_type(extensions) == FL_VALUE_TYPE_LIST) {
-    for (size_t i = 0; i < fl_value_get_length(extensions); i++) {
-      FlValue* v = fl_value_get_list_value(extensions, i);
-      const gchar* pattern = fl_value_get_string(v);
-      gtk_file_filter_add_pattern(filter, pattern);
-    }
+  FlValue* extensions = ffs_platform_type_group_get_extensions(group);
+  for (size_t i = 0; i < fl_value_get_length(extensions); i++) {
+    FlValue* v = fl_value_get_list_value(extensions, i);
+    const gchar* pattern = fl_value_get_string(v);
+    gtk_file_filter_add_pattern(filter, pattern);
   }
-  FlValue* mime_types = fl_value_lookup_string(value, kTypeGroupMimeTypesKey);
-  if (mime_types != nullptr &&
-      fl_value_get_type(mime_types) == FL_VALUE_TYPE_LIST) {
-    for (size_t i = 0; i < fl_value_get_length(mime_types); i++) {
-      FlValue* v = fl_value_get_list_value(mime_types, i);
-      const gchar* pattern = fl_value_get_string(v);
-      gtk_file_filter_add_mime_type(filter, pattern);
-    }
+  FlValue* mime_types = ffs_platform_type_group_get_mime_types(group);
+  for (size_t i = 0; i < fl_value_get_length(mime_types); i++) {
+    FlValue* v = fl_value_get_list_value(mime_types, i);
+    const gchar* pattern = fl_value_get_string(v);
+    gtk_file_filter_add_mime_type(filter, pattern);
   }
 
   return GTK_FILE_FILTER(g_object_ref(filter));
@@ -75,39 +48,45 @@ static GtkFileFilter* type_group_to_filter(FlValue* value) {
 // Creates a GtkFileChooserNative for the given method call details.
 static GtkFileChooserNative* create_dialog(
     GtkWindow* window, GtkFileChooserAction action, const gchar* title,
-    const gchar* default_confirm_button_text, FlValue* properties) {
-  const gchar* confirm_button_text = default_confirm_button_text;
-  FlValue* value = fl_value_lookup_string(properties, kConfirmButtonTextKey);
-  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_STRING)
-    confirm_button_text = fl_value_get_string(value);
+    const gchar* default_confirm_button_text,
+    FfsPlatformFileChooserOptions* options) {
+  const gchar* confirm_button_text =
+      ffs_platform_file_chooser_options_get_accept_button_label(options);
+  if (confirm_button_text == nullptr) {
+    confirm_button_text = default_confirm_button_text;
+  }
 
   g_autoptr(GtkFileChooserNative) dialog =
       GTK_FILE_CHOOSER_NATIVE(gtk_file_chooser_native_new(
           title, window, action, confirm_button_text, "_Cancel"));
 
-  value = fl_value_lookup_string(properties, kMultipleKey);
-  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_BOOL) {
+  const gboolean* select_multiple =
+      ffs_platform_file_chooser_options_get_select_multiple(options);
+  if (select_multiple != nullptr) {
     gtk_file_chooser_set_select_multiple(GTK_FILE_CHOOSER(dialog),
-                                         fl_value_get_bool(value));
+                                         *select_multiple);
   }
 
-  value = fl_value_lookup_string(properties, kInitialDirectoryKey);
-  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_STRING) {
+  const gchar* current_folder =
+      ffs_platform_file_chooser_options_get_current_folder_path(options);
+  if (current_folder != nullptr) {
     gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog),
-                                        fl_value_get_string(value));
+                                        current_folder);
   }
 
-  value = fl_value_lookup_string(properties, kSuggestedNameKey);
-  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_STRING) {
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
-                                      fl_value_get_string(value));
+  const gchar* current_name =
+      ffs_platform_file_chooser_options_get_current_name(options);
+  if (current_name != nullptr) {
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), current_name);
   }
 
-  value = fl_value_lookup_string(properties, kAcceptedTypeGroupsKey);
-  if (value != nullptr && fl_value_get_type(value) == FL_VALUE_TYPE_LIST) {
-    for (size_t i = 0; i < fl_value_get_length(value); i++) {
-      FlValue* type_group = fl_value_get_list_value(value, i);
-      GtkFileFilter* filter = type_group_to_filter(type_group);
+  FlValue* type_groups =
+      ffs_platform_file_chooser_options_get_allowed_file_types(options);
+  if (type_groups != nullptr) {
+    for (size_t i = 0; i < fl_value_get_length(type_groups); i++) {
+      FlValue* type_group = fl_value_get_list_value(type_groups, i);
+      GtkFileFilter* filter = type_group_to_filter(FFS_PLATFORM_TYPE_GROUP(
+          fl_value_get_custom_value_object(type_group)));
       if (filter == nullptr) {
         return nullptr;
       }
@@ -118,99 +97,69 @@ static GtkFileChooserNative* create_dialog(
   return GTK_FILE_CHOOSER_NATIVE(g_object_ref(dialog));
 }
 
-// TODO(stuartmorgan): Move this logic back into method_call_cb once
-// https://github.com/flutter/flutter/issues/88724 is fixed, and test
-// through the public API instead. This only exists to move as much
-// logic as possible behind the private entry point used by unit tests.
-GtkFileChooserNative* create_dialog_for_method(GtkWindow* window,
-                                               const gchar* method,
-                                               FlValue* properties) {
-  if (strcmp(method, kOpenFileMethod) == 0) {
-    return create_dialog(window, GTK_FILE_CHOOSER_ACTION_OPEN, "Open File",
-                         "_Open", properties);
-  } else if (strcmp(method, kGetDirectoryPathMethod) == 0) {
-    return create_dialog(window, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                         "Choose Directory", "_Open", properties);
-  } else if (strcmp(method, kGetSavePathMethod) == 0) {
-    return create_dialog(window, GTK_FILE_CHOOSER_ACTION_SAVE, "Save File",
-                         "_Save", properties);
+GtkFileChooserNative* create_dialog_of_type(
+    GtkWindow* window, FfsPlatformFileChooserActionType type,
+    FfsPlatformFileChooserOptions* options) {
+  switch (type) {
+    case FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_OPEN:
+      return create_dialog(window, GTK_FILE_CHOOSER_ACTION_OPEN, "Open File",
+                           "_Open", options);
+    case FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_CHOOSE_DIRECTORY:
+      return create_dialog(window, GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                           "Choose Directory", "_Open", options);
+    case FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE:
+      return create_dialog(window, GTK_FILE_CHOOSER_ACTION_SAVE, "Save File",
+                           "_Save", options);
   }
   return nullptr;
 }
 
 // Shows the requested dialog type.
-static FlMethodResponse* show_dialog(FlFileSelectorPlugin* self,
-                                     const gchar* method, FlValue* properties,
-                                     bool return_list) {
-  if (fl_value_get_type(properties) != FL_VALUE_TYPE_MAP) {
-    return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        kBadArgumentsError, "Argument map missing or malformed", nullptr));
-  }
+static FfsFileSelectorApiShowFileChooserResponse* handle_show_file_chooser(
+    FfsPlatformFileChooserActionType type,
+    FfsPlatformFileChooserOptions* options, gpointer user_data) {
+  FlFileSelectorPlugin* self = FL_FILE_SELECTOR_PLUGIN(user_data);
 
   FlView* view = fl_plugin_registrar_get_view(self->registrar);
   if (view == nullptr) {
-    return FL_METHOD_RESPONSE(
-        fl_method_error_response_new(kNoScreenError, nullptr, nullptr));
+    return ffs_file_selector_api_show_file_chooser_response_new_error(
+        kNoScreenError, nullptr, nullptr);
   }
   GtkWindow* window = GTK_WINDOW(gtk_widget_get_toplevel(GTK_WIDGET(view)));
 
   g_autoptr(GtkFileChooserNative) dialog =
-      create_dialog_for_method(window, method, properties);
+      create_dialog_of_type(window, type, options);
 
   if (dialog == nullptr) {
-    return FL_METHOD_RESPONSE(fl_method_error_response_new(
-        kBadArgumentsError, "Unable to create dialog from arguments", nullptr));
+    return ffs_file_selector_api_show_file_chooser_response_new_error(
+        kBadArgumentsError, "Unable to create dialog from arguments", nullptr);
   }
+  return show_file_chooser(GTK_FILE_CHOOSER_NATIVE(dialog),
+                           gtk_native_dialog_run);
+}
 
-  gint response = gtk_native_dialog_run(GTK_NATIVE_DIALOG(dialog));
-  g_autoptr(FlValue) result = nullptr;
+FfsFileSelectorApiShowFileChooserResponse* show_file_chooser(
+    GtkFileChooserNative* dialog, gint (*run_dialog)(GtkNativeDialog*)) {
+  gint response = run_dialog(GTK_NATIVE_DIALOG(dialog));
+  g_autoptr(FlValue) result = fl_value_new_list();
   if (response == GTK_RESPONSE_ACCEPT) {
-    if (return_list) {
-      result = fl_value_new_list();
-      g_autoptr(GSList) filenames =
-          gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
-      for (GSList* link = filenames; link != nullptr; link = link->next) {
-        g_autofree gchar* filename = static_cast<gchar*>(link->data);
-        fl_value_append_take(result, fl_value_new_string(filename));
-      }
-    } else {
-      g_autofree gchar* filename =
-          gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      result = fl_value_new_string(filename);
+    g_autoptr(GSList) filenames =
+        gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(dialog));
+    for (GSList* link = filenames; link != nullptr; link = link->next) {
+      g_autofree gchar* filename = static_cast<gchar*>(link->data);
+      fl_value_append_take(result, fl_value_new_string(filename));
     }
   }
 
-  return FL_METHOD_RESPONSE(fl_method_success_response_new(result));
-}
-
-// Called when a method call is received from Flutter.
-static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
-                           gpointer user_data) {
-  FlFileSelectorPlugin* self = FL_FILE_SELECTOR_PLUGIN(user_data);
-
-  const gchar* method = fl_method_call_get_name(method_call);
-  FlValue* args = fl_method_call_get_args(method_call);
-
-  g_autoptr(FlMethodResponse) response = nullptr;
-  if (strcmp(method, kOpenFileMethod) == 0 ||
-      strcmp(method, kGetDirectoryPathMethod) == 0) {
-    response = show_dialog(self, method, args, true);
-  } else if (strcmp(method, kGetSavePathMethod) == 0) {
-    response = show_dialog(self, method, args, false);
-  } else {
-    response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
-  }
-
-  g_autoptr(GError) error = nullptr;
-  if (!fl_method_call_respond(method_call, response, &error))
-    g_warning("Failed to send method call response: %s", error->message);
+  return ffs_file_selector_api_show_file_chooser_response_new(result);
 }
 
 static void fl_file_selector_plugin_dispose(GObject* object) {
   FlFileSelectorPlugin* self = FL_FILE_SELECTOR_PLUGIN(object);
 
+  ffs_file_selector_api_clear_method_handlers(
+      fl_plugin_registrar_get_messenger(self->registrar), nullptr);
   g_clear_object(&self->registrar);
-  g_clear_object(&self->channel);
 
   G_OBJECT_CLASS(fl_file_selector_plugin_parent_class)->dispose(object);
 }
@@ -229,12 +178,12 @@ FlFileSelectorPlugin* fl_file_selector_plugin_new(
 
   self->registrar = FL_PLUGIN_REGISTRAR(g_object_ref(registrar));
 
-  g_autoptr(FlStandardMethodCodec) codec = fl_standard_method_codec_new();
-  self->channel =
-      fl_method_channel_new(fl_plugin_registrar_get_messenger(registrar),
-                            kChannelName, FL_METHOD_CODEC(codec));
-  fl_method_channel_set_method_call_handler(self->channel, method_call_cb,
-                                            g_object_ref(self), g_object_unref);
+  static FfsFileSelectorApiVTable api_vtable = {
+      .show_file_chooser = handle_show_file_chooser,
+  };
+  ffs_file_selector_api_set_method_handlers(
+      fl_plugin_registrar_get_messenger(registrar), nullptr, &api_vtable,
+      g_object_ref(self), g_object_unref);
 
   return self;
 }

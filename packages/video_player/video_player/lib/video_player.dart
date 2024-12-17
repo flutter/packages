@@ -465,6 +465,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             errorDescription: null,
             isCompleted: false,
           );
+          assert(
+            !initializingCompleter.isCompleted,
+            'VideoPlayerController already initialized. This is typically a '
+            'sign that an implementation of the VideoPlayerPlatform '
+            '(${_videoPlayerPlatform.runtimeType}) has a bug and is sending '
+            'more than one initialized event per instance.',
+          );
+          if (initializingCompleter.isCompleted) {
+            throw StateError('VideoPlayerController already initialized');
+          }
           initializingCompleter.complete(null);
           _applyLooping();
           _applyVolume();

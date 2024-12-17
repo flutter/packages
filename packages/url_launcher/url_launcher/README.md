@@ -170,19 +170,6 @@ String? encodeQueryParameters(Map<String, String> params) {
   launchUrl(emailLaunchUri);
 ```
 
-Encoding for `sms` is slightly different:
-
-<?code-excerpt "lib/encoding.dart (sms)"?>
-```dart
-final Uri smsLaunchUri = Uri(
-  scheme: 'sms',
-  path: '0118 999 881 999 119 7253',
-  queryParameters: <String, String>{
-    'body': Uri.encodeComponent('Example Subject & Symbols are allowed!'),
-  },
-);
-```
-
 ### URLs not handled by `Uri`
 
 In rare cases, you may need to launch a URL that the host system considers

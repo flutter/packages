@@ -3,10 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:file_selector_android/src/file_selector_api.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -30,45 +31,54 @@ class MockFileSelectorApi extends _i1.Mock implements _i2.FileSelectorApi {
   }
 
   @override
-  _i3.Future<_i2.FileResponse?> openFile(
-    String? arg_initialDirectory,
-    _i2.FileTypes? arg_allowedTypes,
+  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
+        Invocation.getter(#pigeonVar_messageChannelSuffix),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+      ) as String);
+
+  @override
+  _i4.Future<_i2.FileResponse?> openFile(
+    String? initialDirectory,
+    _i2.FileTypes? allowedTypes,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #openFile,
           [
-            arg_initialDirectory,
-            arg_allowedTypes,
+            initialDirectory,
+            allowedTypes,
           ],
         ),
-        returnValue: _i3.Future<_i2.FileResponse?>.value(),
-      ) as _i3.Future<_i2.FileResponse?>);
+        returnValue: _i4.Future<_i2.FileResponse?>.value(),
+      ) as _i4.Future<_i2.FileResponse?>);
 
   @override
-  _i3.Future<List<_i2.FileResponse?>> openFiles(
-    String? arg_initialDirectory,
-    _i2.FileTypes? arg_allowedTypes,
+  _i4.Future<List<_i2.FileResponse>> openFiles(
+    String? initialDirectory,
+    _i2.FileTypes? allowedTypes,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #openFiles,
           [
-            arg_initialDirectory,
-            arg_allowedTypes,
+            initialDirectory,
+            allowedTypes,
           ],
         ),
         returnValue:
-            _i3.Future<List<_i2.FileResponse?>>.value(<_i2.FileResponse?>[]),
-      ) as _i3.Future<List<_i2.FileResponse?>>);
+            _i4.Future<List<_i2.FileResponse>>.value(<_i2.FileResponse>[]),
+      ) as _i4.Future<List<_i2.FileResponse>>);
 
   @override
-  _i3.Future<String?> getDirectoryPath(String? arg_initialDirectory) =>
+  _i4.Future<String?> getDirectoryPath(String? initialDirectory) =>
       (super.noSuchMethod(
         Invocation.method(
           #getDirectoryPath,
-          [arg_initialDirectory],
+          [initialDirectory],
         ),
-        returnValue: _i3.Future<String?>.value(),
-      ) as _i3.Future<String?>);
+        returnValue: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 }

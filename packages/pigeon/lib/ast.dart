@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 import 'generator_tools.dart';
 import 'kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
+import 'swift_generator.dart' show SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -142,6 +143,7 @@ class AstProxyApi extends Api {
     required this.fields,
     this.superClass,
     this.interfaces = const <TypeDeclaration>{},
+    this.swiftOptions,
     this.kotlinOptions,
   });
 
@@ -156,6 +158,10 @@ class AstProxyApi extends Api {
 
   /// Name of the classes this class considers to be implemented.
   Set<TypeDeclaration> interfaces;
+
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
 
   /// Options that control how Kotlin code will be generated for a specific
   /// ProxyApi.
@@ -332,6 +338,21 @@ class AstProxyApi extends Api {
     return '(ProxyApi name:$name methods:$methods field:$fields '
         'documentationComments:$documentationComments '
         'superClassName:$superClass interfacesNames:$interfaces)';
+  }
+}
+
+/// Represents a collection of [Method]s that are wrappers for Event
+class AstEventChannelApi extends Api {
+  /// Parametric constructor for [AstEventChannelApi].
+  AstEventChannelApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+  });
+
+  @override
+  String toString() {
+    return '(EventChannelApi name:$name methods:$methods documentationComments:$documentationComments)';
   }
 }
 
@@ -674,6 +695,9 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.superClassName,
+    this.superClass,
+    this.isSealed = false,
     this.isReferenced = true,
     this.isSwiftClass = false,
     this.documentationComments = const <String>[],
@@ -684,6 +708,20 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<NamedType> fields;
+
+  /// Name of parent class, will be empty when there is no super class.
+  String? superClassName;
+
+  /// The definition of the parent class.
+  Class? superClass;
+
+  /// List of class definitions of children.
+  ///
+  /// This is only meant to be used by sealed classes used in event channel methods.
+  List<Class> children = <Class>[];
+
+  /// Whether the class is sealed.
+  bool isSealed;
 
   /// Whether the class is referenced in any API.
   bool isReferenced;
@@ -703,7 +741,7 @@ class Class extends Node {
 
   @override
   String toString() {
-    return '(Class name:$name fields:$fields documentationComments:$documentationComments)';
+    return '(Class name:$name fields:$fields superClass:$superClassName children:$children isSealed:$isSealed isReferenced:$isReferenced documentationComments:$documentationComments)';
   }
 }
 
@@ -766,6 +804,10 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    this.containsHostApi = false,
+    this.containsFlutterApi = false,
+    this.containsProxyApi = false,
+    this.containsEventChannel = false,
   });
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
@@ -782,10 +824,25 @@ class Root extends Node {
   /// All of the enums contained in the AST.
   List<Enum> enums;
 
+  /// Whether the root has any Host API definitions.
+  bool containsHostApi;
+
+  /// Whether the root has any Flutter API definitions.
+  bool containsFlutterApi;
+
+  /// Whether the root has any Proxy API definitions.
+  bool containsProxyApi;
+
+  /// Whether the root has any event channel definitions.
+  bool containsEventChannel;
+
   /// Returns true if the number of custom types would exceed the available enumerations
   /// on the standard codec.
   bool get requiresOverflowClass =>
-      classes.length + enums.length >= totalCustomCodecKeysAllowed;
+      classes.length - _numberOfSealedClasses() + enums.length >=
+      totalCustomCodecKeysAllowed;
+
+  int _numberOfSealedClasses() => classes.where((Class c) => c.isSealed).length;
 
   @override
   String toString() {

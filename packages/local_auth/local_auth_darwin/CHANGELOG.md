@@ -1,5 +1,14 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 1.4.2
+
+* Adds compatibility with `intl` 0.20.0.
+
+## 1.4.1
+
+* Updates to the current version of Pigeon.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 1.4.0
