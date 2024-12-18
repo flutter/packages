@@ -249,16 +249,17 @@ void main() {
       expect(tester.takeException(), isAssertionError);
     });
 
-    testWidgets('redirects to a valid route based on fragment.', (WidgetTester tester) async {
+    testWidgets('redirects to a valid route based on fragment.',
+        (WidgetTester tester) async {
       final GoRouter router = await createRouter(
         <RouteBase>[
           GoRoute(
-            path: '/', 
-            builder: (_, __) => const Text('home'), 
+            path: '/',
+            builder: (_, __) => const Text('home'),
             routes: <RouteBase>[
               GoRoute(
-                path: 'route', 
-                name: 'route', 
+                path: 'route',
+                name: 'route',
                 redirect: (context, state) {
                   // Redirection logic based on the fragment in the URI
                   if (state.uri.fragment == '1') {
@@ -269,8 +270,9 @@ void main() {
                 },
                 routes: <RouteBase>[
                   GoRoute(
-                    path: '1', 
-                    builder: (_, __) => const Text('/route/1'), // Renders "/route/1" text
+                    path: '1',
+                    builder: (_, __) =>
+                        const Text('/route/1'), // Renders "/route/1" text
                   ),
                 ],
               ),
@@ -283,12 +285,14 @@ void main() {
       expect(find.text('home'), findsOneWidget);
 
       // Generate a location string for the named route "route" with fragment "2"
-      final String locationWithFragment = router.namedLocation('route', fragment: '2');
-      expect(locationWithFragment, '/route#2'); // Expect the generated location to be "/route#2"
+      final String locationWithFragment =
+          router.namedLocation('route', fragment: '2');
+      expect(locationWithFragment,
+          '/route#2'); // Expect the generated location to be "/route#2"
 
       // Navigate to the named route "route" with fragment "1"
       router.goNamed('route', fragment: '1');
-      await tester.pumpAndSettle(); 
+      await tester.pumpAndSettle();
 
       // Verify that navigating to "/route" with fragment "1" redirects to "/route/1"
       expect(find.text('/route/1'), findsOneWidget);
@@ -296,7 +300,7 @@ void main() {
       // Ensure no exceptions occurred during navigation
       expect(tester.takeException(), isNull);
     });
-    
+
     testWidgets('throw if sub route does not conform with parent navigator key',
         (WidgetTester tester) async {
       final GlobalKey<NavigatorState> key1 = GlobalKey<NavigatorState>();
