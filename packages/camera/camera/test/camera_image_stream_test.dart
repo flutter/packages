@@ -100,8 +100,11 @@ void main() {
 
     await cameraController.startImageStream((CameraImage image) {});
 
-    expect(mockPlatform.streamCallLog,
-        <String>['onStreamedFrameAvailable', 'listen']);
+    expect(mockPlatform.streamCallLog, <String>[
+      'supportsImageStreaming',
+      'onStreamedFrameAvailable',
+      'listen'
+    ]);
   });
 
   test('stopImageStream() throws $CameraException when uninitialized', () {
@@ -160,8 +163,13 @@ void main() {
     await cameraController.startImageStream((CameraImage image) {});
     await cameraController.stopImageStream();
 
-    expect(mockPlatform.streamCallLog,
-        <String>['onStreamedFrameAvailable', 'listen', 'cancel']);
+    expect(mockPlatform.streamCallLog, <String>[
+      'supportsImageStreaming',
+      'onStreamedFrameAvailable',
+      'listen',
+      'supportsImageStreaming',
+      'cancel'
+    ]);
   });
 
   test('startVideoRecording() can stream images', () async {
@@ -233,6 +241,12 @@ class MockStreamingCameraPlatform extends MockCameraPlatform {
 
   void _onFrameStreamListen() {
     streamCallLog.add('listen');
+  }
+
+  @override
+  bool supportsImageStreaming() {
+    streamCallLog.add('supportsImageStreaming');
+    return true;
   }
 
   FutureOr<void> _onFrameStreamCancel() async {

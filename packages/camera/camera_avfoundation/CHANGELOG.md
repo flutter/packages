@@ -1,6 +1,7 @@
-## NEXT
+## 0.9.18
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds API support query for image streaming.
 
 ## 0.9.17+5
 

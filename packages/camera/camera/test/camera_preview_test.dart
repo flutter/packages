@@ -132,6 +132,9 @@ class FakeController extends ValueNotifier<CameraValue>
 
   @override
   CameraDescription get description => value.description;
+
+  @override
+  bool supportsImageStreaming() => true;
 }
 
 void main() {
