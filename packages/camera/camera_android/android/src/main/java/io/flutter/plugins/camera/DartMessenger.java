@@ -95,17 +95,14 @@ public class DartMessenger {
     handler.post(() -> eventApi.closed(new NoOpVoidResult()));
   }
 
-  // TODO(schectman): Make `description` non-null, see
-  // https://github.com/flutter/flutter/issues/156729
   /**
    * Sends a message to the Flutter client informing that an error occurred while interacting with
    * the camera.
    *
    * @param description contains details regarding the error that occurred.
    */
-  void sendCameraErrorEvent(@Nullable String description) {
-    String errorMessage = (description == null) ? "" : description;
-    handler.post(() -> eventApi.error(errorMessage, new NoOpVoidResult()));
+  void sendCameraErrorEvent(@NonNull String description) {
+    handler.post(() -> eventApi.error(description, new NoOpVoidResult()));
   }
 
   /**
@@ -113,7 +110,7 @@ public class DartMessenger {
    *
    * @param payload The payload to send.
    */
-  public void finish(@NonNull MethodChannel.Result result, @Nullable Object payload) {
+  public <T> void finish(@NonNull Messages.Result<T> result, @NonNull T payload) {
     handler.post(() -> result.success(payload));
   }
 
@@ -124,11 +121,12 @@ public class DartMessenger {
    * @param errorMessage error message.
    * @param errorDetails error details.
    */
-  public void error(
-      @NonNull MethodChannel.Result result,
+  public <T> void error(
+      @NonNull Messages.Result<T> result,
       @NonNull String errorCode,
       @Nullable String errorMessage,
       @Nullable Object errorDetails) {
-    handler.post(() -> result.error(errorCode, errorMessage, errorDetails));
+    handler.post(
+        () -> result.error(new Messages.FlutterError(errorCode, errorMessage, errorDetails)));
   }
 }

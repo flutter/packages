@@ -60,7 +60,6 @@ class WebWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) async {
-    // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
       html,
       mimeType: 'text/html',
@@ -78,7 +77,6 @@ class WebWebViewController extends PlatformWebViewController {
     if (params.headers.isEmpty &&
         (params.body == null || params.body!.isEmpty) &&
         params.method == LoadRequestMethod.get) {
-      // ignore: unsafe_html
       _webWebViewParams.iFrame.src = params.uri.toString();
     } else {
       await _updateIFrameFromXhr(params);
@@ -99,7 +97,6 @@ class WebWebViewController extends PlatformWebViewController {
     final ContentType contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
-    // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
       (await response.text().toDart).toDart,
       mimeType: contentType.mimeType,

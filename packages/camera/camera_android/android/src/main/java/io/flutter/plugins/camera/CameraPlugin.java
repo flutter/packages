@@ -24,7 +24,7 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
 
   private static final String TAG = "CameraPlugin";
   private @Nullable FlutterPluginBinding flutterPluginBinding;
-  private @Nullable MethodCallHandlerImpl methodCallHandler;
+  private @Nullable CameraApiImpl cameraApi;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -55,9 +55,9 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
   @Override
   public void onDetachedFromActivity() {
     // Could be on too low of an SDK to have started listening originally.
-    if (methodCallHandler != null) {
-      methodCallHandler.stopListening();
-      methodCallHandler = null;
+    if (cameraApi != null) {
+      cameraApi.tearDownMessageHandler();
+      cameraApi = null;
     }
   }
 
@@ -76,8 +76,8 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
       BinaryMessenger messenger,
       PermissionsRegistry permissionsRegistry,
       TextureRegistry textureRegistry) {
-    methodCallHandler =
-        new MethodCallHandlerImpl(
+    cameraApi =
+        new CameraApiImpl(
             activity, messenger, new CameraPermissions(), permissionsRegistry, textureRegistry);
   }
 }

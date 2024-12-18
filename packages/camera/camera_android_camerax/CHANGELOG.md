@@ -1,3 +1,7 @@
+## 0.6.10+1
+
+* Removes nonnull annotation from MeteringPointHostApiImpl#getDefaultPointSize.
+
 ## 0.6.10
 
 * Removes logic that explicitly removes `READ_EXTERNAL_STORAGE` permission that may be implied

@@ -62,6 +62,11 @@ android {
                outputs.upToDateWhen {false}
                showStandardStreams = true
             }
+            // The org.gradle.jvmargs property that may be set in gradle.properties does not impact
+            // the Java heap size when running the Android unit tests. The following property here
+            // sets the heap size to a size large enough to run the robolectric tests across
+            // multiple SDK levels.
+            jvmArgs "-Xmx1g"
         }
     }
 }

@@ -662,22 +662,30 @@ abstract class PackageCommand extends Command<void> {
   }
 
   String? _getCurrentDirectoryPackageName() {
-    // Ensure that the current directory is within the packages directory.
-    final Directory absolutePackagesDir = packagesDir.absolute;
+    final Set<Directory> absolutePackagesDirs = <Directory>{
+      packagesDir.absolute,
+      thirdPartyPackagesDir.absolute,
+    };
+    bool isATopLevelPackagesDir(Directory directory) =>
+        absolutePackagesDirs.any((Directory d) => d.path == directory.path);
+
     Directory currentDir = packagesDir.fileSystem.currentDirectory.absolute;
-    if (!currentDir.path.startsWith(absolutePackagesDir.path) ||
-        currentDir.path == packagesDir.path) {
+    // Ensure that the current directory is within one of the top-level packages
+    // directories.
+    if (isATopLevelPackagesDir(currentDir) ||
+        !absolutePackagesDirs
+            .any((Directory d) => currentDir.path.startsWith(d.path))) {
       return null;
     }
-    // If the current directory is a direct subdirectory of the packages
+    // If the current directory is a direct subdirectory of a packages
     // directory, then that's the target.
-    if (currentDir.parent.path == absolutePackagesDir.path) {
+    if (isATopLevelPackagesDir(currentDir.parent)) {
       return currentDir.basename;
     }
     // Otherwise, walk up until a package is found...
     while (!isPackage(currentDir)) {
       currentDir = currentDir.parent;
-      if (currentDir.path == absolutePackagesDir.path) {
+      if (isATopLevelPackagesDir(currentDir)) {
         return null;
       }
     }

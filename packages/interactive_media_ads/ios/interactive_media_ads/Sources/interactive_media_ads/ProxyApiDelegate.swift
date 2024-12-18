@@ -112,7 +112,7 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   )
     -> PigeonApiIMAAdsRenderingSettings
   {
-    PigeonApiIMAAdsRenderingSettings(
+    return PigeonApiIMAAdsRenderingSettings(
       pigeonRegistrar: registrar, delegate: AdsRenderingSettingsProxyAPIDelegate())
   }
 
@@ -121,7 +121,28 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   )
     -> PigeonApiIMAFriendlyObstruction
   {
-    PigeonApiIMAFriendlyObstruction(
+    return PigeonApiIMAFriendlyObstruction(
       pigeonRegistrar: registrar, delegate: FriendlyObstructionProxyAPIDelegate())
+  }
+
+  func pigeonApiIMACompanionAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionAd
+  {
+    return PigeonApiIMACompanionAd(
+      pigeonRegistrar: registrar, delegate: CompanionAdProxyAPIDelegate())
+  }
+
+  func pigeonApiIMACompanionAdSlot(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionAdSlot
+  {
+    return PigeonApiIMACompanionAdSlot(
+      pigeonRegistrar: registrar, delegate: CompanionAdSlotProxyAPIDelegate())
+  }
+
+  func pigeonApiIMACompanionDelegate(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMACompanionDelegate
+  {
+    return PigeonApiIMACompanionDelegate(
+      pigeonRegistrar: registrar, delegate: CompanionDelegateProxyAPIDelegate())
   }
 }

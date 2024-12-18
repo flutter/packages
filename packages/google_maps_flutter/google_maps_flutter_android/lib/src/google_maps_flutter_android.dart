@@ -750,9 +750,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolygon _platformPolygonFromPolygon(Polygon polygon) {
-    final List<PlatformLatLng?> points =
+    final List<PlatformLatLng> points =
         polygon.points.map(_platformLatLngFromLatLng).toList();
-    final List<List<PlatformLatLng?>?> holes =
+    final List<List<PlatformLatLng>> holes =
         polygon.holes.map((List<LatLng> hole) {
       return hole.map(_platformLatLngFromLatLng).toList();
     }).toList();
@@ -771,9 +771,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformPolyline _platformPolylineFromPolyline(Polyline polyline) {
-    final List<PlatformLatLng?> points =
+    final List<PlatformLatLng> points =
         polyline.points.map(_platformLatLngFromLatLng).toList();
-    final List<PlatformPatternItem?> pattern =
+    final List<PlatformPatternItem> pattern =
         polyline.patterns.map(platformPatternItemFromPatternItem).toList();
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
@@ -885,6 +885,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       case final DefaultMarker marker:
         return PlatformBitmap(
             bitmap: PlatformBitmapDefaultMarker(hue: marker.hue?.toDouble()));
+      // Clients may still use this deprecated format, so it must be supported.
+      // ignore: deprecated_member_use
       case final BytesBitmap bytes:
         return PlatformBitmap(
             bitmap: PlatformBitmapBytes(
@@ -895,6 +897,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       case final AssetBitmap asset:
         return PlatformBitmap(
             bitmap: PlatformBitmapAsset(name: asset.name, pkg: asset.package));
+      // Clients may still use this deprecated format, so it must be supported.
+      // ignore: deprecated_member_use
       case final AssetImageBitmap asset:
         return PlatformBitmap(
             bitmap: PlatformBitmapAssetImage(

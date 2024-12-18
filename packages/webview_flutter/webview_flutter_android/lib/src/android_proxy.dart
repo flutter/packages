@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'android_webview.dart' as android_webview;
+import 'android_webkit.g.dart';
 
 /// Handles constructing objects and calling static methods for the Android
 /// WebView native library.
@@ -14,119 +14,124 @@ import 'android_webview.dart' as android_webview;
 /// By default each function calls the default constructor of the WebView class
 /// it intends to return.
 class AndroidWebViewProxy {
-  /// Constructs a [AndroidWebViewProxy].
+  /// Constructs an [AndroidWebViewProxy].
   const AndroidWebViewProxy({
-    this.createAndroidWebView = android_webview.WebView.new,
-    this.createAndroidWebChromeClient = android_webview.WebChromeClient.new,
-    this.createAndroidWebViewClient = android_webview.WebViewClient.new,
-    this.createFlutterAssetManager = android_webview.FlutterAssetManager.new,
-    this.createJavaScriptChannel = android_webview.JavaScriptChannel.new,
-    this.createDownloadListener = android_webview.DownloadListener.new,
+    this.newWebView = WebView.new,
+    this.newJavaScriptChannel = JavaScriptChannel.new,
+    this.newWebViewClient = WebViewClient.new,
+    this.newDownloadListener = DownloadListener.new,
+    this.newWebChromeClient = WebChromeClient.new,
+    this.setWebContentsDebuggingEnabledWebView =
+        WebView.setWebContentsDebuggingEnabled,
+    this.instanceCookieManager = _instanceCookieManager,
+    this.instanceFlutterAssetManager = _instanceFlutterAssetManager,
+    this.instanceWebStorage = _instanceWebStorage,
   });
 
-  /// Constructs a [android_webview.WebView].
-  final android_webview.WebView Function({
-    void Function(int left, int top, int oldLeft, int oldTop)? onScrollChanged,
-  }) createAndroidWebView;
+  /// Constructs [WebView].
+  final WebView Function({
+    void Function(
+      WebView,
+      int left,
+      int top,
+      int oldLeft,
+      int oldTop,
+    )? onScrollChanged,
+  }) newWebView;
 
-  /// Constructs a [android_webview.WebChromeClient].
-  final android_webview.WebChromeClient Function({
-    void Function(android_webview.WebView webView, int progress)?
-        onProgressChanged,
-    Future<List<String>> Function(
-      android_webview.WebView webView,
-      android_webview.FileChooserParams params,
-    )? onShowFileChooser,
-    void Function(
-      android_webview.WebChromeClient instance,
-      android_webview.PermissionRequest request,
-    )? onPermissionRequest,
-    Future<void> Function(String origin,
-            android_webview.GeolocationPermissionsCallback callback)?
-        onGeolocationPermissionsShowPrompt,
-    void Function(android_webview.WebChromeClient instance)?
-        onGeolocationPermissionsHidePrompt,
-    void Function(android_webview.WebChromeClient instance,
-            android_webview.ConsoleMessage message)?
-        onConsoleMessage,
-    void Function(
-            android_webview.WebChromeClient instance,
-            android_webview.View view,
-            android_webview.CustomViewCallback callback)?
-        onShowCustomView,
-    void Function(android_webview.WebChromeClient instance)? onHideCustomView,
-    Future<void> Function(String url, String message)? onJsAlert,
-    Future<bool> Function(String url, String message)? onJsConfirm,
-    Future<String> Function(String url, String message, String defaultValue)?
-        onJsPrompt,
-  }) createAndroidWebChromeClient;
+  /// Constructs [JavaScriptChannel].
+  final JavaScriptChannel Function({
+    required String channelName,
+    required void Function(JavaScriptChannel, String) postMessage,
+  }) newJavaScriptChannel;
 
-  /// Constructs a [android_webview.WebViewClient].
-  final android_webview.WebViewClient Function({
-    void Function(android_webview.WebView webView, String url)? onPageStarted,
-    void Function(android_webview.WebView webView, String url)? onPageFinished,
+  /// Constructs [WebViewClient].
+  final WebViewClient Function({
+    void Function(WebViewClient, WebView, String)? onPageStarted,
+    void Function(WebViewClient, WebView, String)? onPageFinished,
     void Function(
-      android_webview.WebView webView,
-      android_webview.WebResourceRequest request,
-      android_webview.WebResourceResponse response,
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceResponse,
     )? onReceivedHttpError,
     void Function(
-      android_webview.WebView webView,
-      android_webview.WebResourceRequest request,
-      android_webview.WebResourceError error,
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceError,
     )? onReceivedRequestError,
-    @Deprecated('Only called on Android version < 23.')
     void Function(
-      android_webview.WebView webView,
-      int errorCode,
-      String description,
-      String failingUrl,
-    )? onReceivedError,
-    void Function(
-      android_webview.WebView webView,
-      android_webview.WebResourceRequest request,
-    )? requestLoading,
-    void Function(android_webview.WebView webView, String url)? urlLoading,
-    void Function(android_webview.WebView webView, String url, bool isReload)?
-        doUpdateVisitedHistory,
-    void Function(
-      android_webview.WebView webView,
-      android_webview.HttpAuthHandler handler,
-      String host,
-      String realm,
-    )? onReceivedHttpAuthRequest,
-  }) createAndroidWebViewClient;
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceErrorCompat,
+    )? onReceivedRequestErrorCompat,
+    void Function(WebViewClient, WebView, int, String, String)? onReceivedError,
+    void Function(WebViewClient, WebView, WebResourceRequest)? requestLoading,
+    void Function(WebViewClient, WebView, String)? urlLoading,
+    void Function(WebViewClient, WebView, String, bool)? doUpdateVisitedHistory,
+    void Function(WebViewClient, WebView, HttpAuthHandler, String, String)?
+        onReceivedHttpAuthRequest,
+  }) newWebViewClient;
 
-  /// Constructs a [android_webview.FlutterAssetManager].
-  final android_webview.FlutterAssetManager Function()
-      createFlutterAssetManager;
-
-  /// Constructs a [android_webview.JavaScriptChannel].
-  final android_webview.JavaScriptChannel Function(
-    String channelName, {
-    required void Function(String) postMessage,
-  }) createJavaScriptChannel;
-
-  /// Constructs a [android_webview.DownloadListener].
-  final android_webview.DownloadListener Function({
+  /// Constructs [DownloadListener].
+  final DownloadListener Function({
     required void Function(
-      String url,
-      String userAgent,
-      String contentDisposition,
-      String mimetype,
-      int contentLength,
-    ) onDownloadStart,
-  }) createDownloadListener;
+            DownloadListener, String, String, String, String, int)
+        onDownloadStart,
+  }) newDownloadListener;
 
-  /// Enables debugging of web contents (HTML / CSS / JavaScript) loaded into any WebViews of this application.
-  ///
-  /// This flag can be enabled in order to facilitate debugging of web layouts
-  /// and JavaScript code running inside WebViews. Please refer to
-  /// [android_webview.WebView] documentation for the debugging guide. The
-  /// default is false.
-  ///
-  /// See [android_webview.WebView].setWebContentsDebuggingEnabled.
-  Future<void> setWebContentsDebuggingEnabled(bool enabled) {
-    return android_webview.WebView.setWebContentsDebuggingEnabled(enabled);
-  }
+  /// Constructs [WebChromeClient].
+  final WebChromeClient Function({
+    void Function(WebChromeClient, WebView, int)? onProgressChanged,
+    Future<List<String>> Function(
+      WebChromeClient,
+      WebView,
+      FileChooserParams,
+    )? onShowFileChooser,
+    void Function(WebChromeClient, PermissionRequest)? onPermissionRequest,
+    void Function(WebChromeClient, View, CustomViewCallback)? onShowCustomView,
+    void Function(WebChromeClient)? onHideCustomView,
+    void Function(
+      WebChromeClient,
+      String,
+      GeolocationPermissionsCallback,
+    )? onGeolocationPermissionsShowPrompt,
+    void Function(WebChromeClient)? onGeolocationPermissionsHidePrompt,
+    void Function(WebChromeClient, ConsoleMessage)? onConsoleMessage,
+    Future<void> Function(WebChromeClient, WebView, String, String)? onJsAlert,
+    Future<bool> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+    )? onJsConfirm,
+    Future<String?> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+      String,
+    )? onJsPrompt,
+  }) newWebChromeClient;
+
+  /// Calls to [WebView.setWebContentsDebuggingEnabled].
+  final Future<void> Function(bool) setWebContentsDebuggingEnabledWebView;
+
+  /// Calls to [CookieManager.instance].
+  final CookieManager Function() instanceCookieManager;
+
+  /// Calls to [FlutterAssetManager.instance].
+  final FlutterAssetManager Function() instanceFlutterAssetManager;
+
+  /// Calls to [WebStorage.instance].
+  final WebStorage Function() instanceWebStorage;
+
+  static CookieManager _instanceCookieManager() => CookieManager.instance;
+
+  static FlutterAssetManager _instanceFlutterAssetManager() =>
+      FlutterAssetManager.instance;
+
+  static WebStorage _instanceWebStorage() => WebStorage.instance;
 }

@@ -7,99 +7,45 @@ package io.flutter.plugins.webviewflutter;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
-import androidx.annotation.NonNull;
-import io.flutter.plugin.common.BinaryMessenger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class CookieManagerTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-  @Mock public CookieManager mockCookieManager;
-  @Mock public BinaryMessenger mockBinaryMessenger;
-  @Mock public CookieManagerHostApiImpl.CookieManagerProxy mockProxy;
-  InstanceManager instanceManager;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
-  }
-
-  @Test
-  public void getInstance() {
-    final CookieManager mockCookieManager = mock(CookieManager.class);
-    final long instanceIdentifier = 1;
-
-    when(mockProxy.getInstance()).thenReturn(mockCookieManager);
-
-    final CookieManagerHostApiImpl hostApi =
-        new CookieManagerHostApiImpl(mockBinaryMessenger, instanceManager, mockProxy);
-    hostApi.attachInstance(instanceIdentifier);
-
-    assertEquals(instanceManager.getInstance(instanceIdentifier), mockCookieManager);
-  }
-
   @Test
   public void setCookie() {
-    final String url = "testString";
-    final String value = "testString2";
+    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
 
-    final long instanceIdentifier = 0;
-    instanceManager.addDartCreatedInstance(mockCookieManager, instanceIdentifier);
+    final CookieManager instance = mock(CookieManager.class);
+    final String url = "myString";
+    final String value = "myString2";
+    api.setCookie(instance, url, value);
 
-    final CookieManagerHostApiImpl hostApi =
-        new CookieManagerHostApiImpl(mockBinaryMessenger, instanceManager);
-
-    hostApi.setCookie(instanceIdentifier, url, value);
-
-    verify(mockCookieManager).setCookie(url, value);
+    verify(instance).setCookie(url, value);
   }
 
-  @SuppressWarnings({"rawtypes", "unchecked"})
   @Test
-  public void clearCookies() {
-    final long instanceIdentifier = 0;
-    instanceManager.addDartCreatedInstance(mockCookieManager, instanceIdentifier);
+  public void removeAllCookies() {
+    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
 
-    final CookieManagerHostApiImpl hostApi =
-        new CookieManagerHostApiImpl(
-            mockBinaryMessenger,
-            instanceManager,
-            new CookieManagerHostApiImpl.CookieManagerProxy(),
-            (int version) -> version <= Build.VERSION_CODES.LOLLIPOP);
+    final CookieManager instance = mock(CookieManager.class);
 
     final Boolean[] successResult = new Boolean[1];
-    hostApi.removeAllCookies(
-        instanceIdentifier,
-        new GeneratedAndroidWebView.Result<Boolean>() {
-          @Override
-          public void success(Boolean result) {
-            successResult[0] = result;
-          }
+    api.removeAllCookies(
+        instance,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              successResult[0] = reply.getOrNull();
+              return null;
+            }));
 
-          @Override
-          public void error(@NonNull Throwable error) {}
-        });
-
-    final ArgumentCaptor<ValueCallback> valueCallbackArgumentCaptor =
+    @SuppressWarnings("unchecked")
+    final ArgumentCaptor<ValueCallback<Boolean>> valueCallbackArgumentCaptor =
         ArgumentCaptor.forClass(ValueCallback.class);
-    verify(mockCookieManager).removeAllCookies(valueCallbackArgumentCaptor.capture());
+    verify(instance).removeAllCookies(valueCallbackArgumentCaptor.capture());
 
     final Boolean returnValue = true;
     valueCallbackArgumentCaptor.getValue().onReceiveValue(returnValue);
@@ -109,24 +55,13 @@ public class CookieManagerTest {
 
   @Test
   public void setAcceptThirdPartyCookies() {
-    final WebView mockWebView = mock(WebView.class);
-    final long webViewIdentifier = 4;
-    instanceManager.addDartCreatedInstance(mockWebView, webViewIdentifier);
+    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
 
+    final CookieManager instance = mock(CookieManager.class);
+    final android.webkit.WebView webView = mock(WebView.class);
     final boolean accept = true;
+    api.setAcceptThirdPartyCookies(instance, webView, accept);
 
-    final long instanceIdentifier = 0;
-    instanceManager.addDartCreatedInstance(mockCookieManager, instanceIdentifier);
-
-    final CookieManagerHostApiImpl hostApi =
-        new CookieManagerHostApiImpl(
-            mockBinaryMessenger,
-            instanceManager,
-            new CookieManagerHostApiImpl.CookieManagerProxy(),
-            (int version) -> version <= Build.VERSION_CODES.LOLLIPOP);
-
-    hostApi.setAcceptThirdPartyCookies(instanceIdentifier, webViewIdentifier, accept);
-
-    verify(mockCookieManager).setAcceptThirdPartyCookies(mockWebView, accept);
+    verify(instance).setAcceptThirdPartyCookies(webView, accept);
   }
 }

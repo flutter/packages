@@ -6,6 +6,7 @@
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
 #include <flutter/standard_method_codec.h>
+#include <shlwapi.h>
 #include <windows.h>
 
 #include <memory>
@@ -98,7 +99,19 @@ ErrorOr<bool> UrlLauncherPlugin::CanLaunchUrl(const std::string& url) {
 }
 
 ErrorOr<bool> UrlLauncherPlugin::LaunchUrl(const std::string& url) {
-  std::wstring url_wide = Utf16FromUtf8(url);
+  std::wstring url_wide;
+  if (url.find("file:") == 0) {
+    // ShellExecuteW does not process %-encoded UTF8 strings in file URLs.
+    DWORD unescaped_len = 0;
+    std::string unescaped_url = url;
+    if (FAILED(::UrlUnescapeA(unescaped_url.data(), /*pszUnescaped=*/nullptr,
+                              &unescaped_len, URL_UNESCAPE_INPLACE))) {
+      return FlutterError("open_error", "Failed to unescape file URL");
+    }
+    url_wide = Utf16FromUtf8(unescaped_url);
+  } else {
+    url_wide = Utf16FromUtf8(url);
+  }
 
   int status = static_cast<int>(reinterpret_cast<INT_PTR>(
       system_apis_->ShellExecuteW(nullptr, TEXT("open"), url_wide.c_str(),

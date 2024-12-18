@@ -530,6 +530,22 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
 }
 
+- (void)testAudioOnlyHLSControls {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"TestAudioOnlyHLSControls"];
+
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  NSDictionary<NSString *, id> *videoInitialization =
+      [self testPlugin:videoPlayerPlugin
+                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/"
+                       @"bee_audio_only.m3u8"];
+  XCTAssertEqualObjects(videoInitialization[@"height"], @0);
+  XCTAssertEqualObjects(videoInitialization[@"width"], @0);
+  XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
+}
+
 #if TARGET_OS_IOS
 - (void)testTransformFix {
   [self validateTransformFixForOrientation:UIImageOrientationUp];
@@ -788,6 +804,39 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   XCTAssertNotNil(publishedValue);
   XCTAssertTrue([publishedValue isKindOfClass:[FVPVideoPlayerPlugin class]]);
+}
+
+- (void)testFailedToLoadVideoEventShouldBeAlwaysSent {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"testFailedToLoadVideoEventShouldBeAlwaysSent"];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FlutterError *error;
+
+  [videoPlayerPlugin initialize:&error];
+
+  FVPCreationOptions *create = [FVPCreationOptions makeWithAsset:nil
+                                                             uri:@""
+                                                     packageName:nil
+                                                      formatHint:nil
+                                                     httpHeaders:@{}];
+  NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  XCTAssertNotNil(player);
+
+  [self keyValueObservingExpectationForObject:(id)player.player.currentItem
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusFailed)];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+
+  XCTestExpectation *failedExpectation = [self expectationWithDescription:@"failed"];
+  [player onListenWithArguments:nil
+                      eventSink:^(FlutterError *event) {
+                        if ([event isKindOfClass:FlutterError.class]) {
+                          [failedExpectation fulfill];
+                        }
+                      }];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
 }
 
 #if TARGET_OS_IOS

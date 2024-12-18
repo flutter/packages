@@ -52,6 +52,36 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
   OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
+  id frameRateRangeMock1 = OCMClassMock([AVFrameRateRange class]);
+  OCMStub([frameRateRangeMock1 minFrameRate]).andReturn(3);
+  OCMStub([frameRateRangeMock1 maxFrameRate]).andReturn(30);
+  id captureDeviceFormatMock1 = OCMClassMock([AVCaptureDeviceFormat class]);
+  OCMStub([captureDeviceFormatMock1 videoSupportedFrameRateRanges]).andReturn(@[
+    frameRateRangeMock1
+  ]);
+
+  id frameRateRangeMock2 = OCMClassMock([AVFrameRateRange class]);
+  OCMStub([frameRateRangeMock2 minFrameRate]).andReturn(3);
+  OCMStub([frameRateRangeMock2 maxFrameRate]).andReturn(60);
+  id captureDeviceFormatMock2 = OCMClassMock([AVCaptureDeviceFormat class]);
+  OCMStub([captureDeviceFormatMock2 videoSupportedFrameRateRanges]).andReturn(@[
+    frameRateRangeMock2
+  ]);
+
+  id captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([captureDeviceMock lockForConfiguration:[OCMArg setTo:nil]]).andReturn(YES);
+  OCMStub([captureDeviceMock formats]).andReturn((@[
+    captureDeviceFormatMock1, captureDeviceFormatMock2
+  ]));
+  __block AVCaptureDeviceFormat *format = captureDeviceFormatMock1;
+  OCMStub([captureDeviceMock setActiveFormat:[OCMArg any]]).andDo(^(NSInvocation *invocation) {
+    [invocation retainArguments];
+    [invocation getArgument:&format atIndex:2];
+  });
+  OCMStub([captureDeviceMock activeFormat]).andDo(^(NSInvocation *invocation) {
+    [invocation setReturnValue:&format];
+  });
+
   id fltCam = [[FLTCam alloc] initWithMediaSettings:mediaSettings
                              mediaSettingsAVWrapper:mediaSettingsAVWrapper
                              orientation:UIDeviceOrientationPortrait
@@ -59,7 +89,7 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
                              audioCaptureSession:audioSessionMock
                              captureSessionQueue:captureSessionQueue
                                captureDeviceFactory:captureDeviceFactory ?: ^AVCaptureDevice *(void) {
-                               return [AVCaptureDevice deviceWithUniqueID:@"camera"];
+                               return captureDeviceMock;
                              }
                              videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
                                return CMVideoFormatDescriptionGetDimensions(format.formatDescription);

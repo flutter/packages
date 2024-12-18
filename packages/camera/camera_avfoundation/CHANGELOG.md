@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.9.17+5
+
+* Adds ability to use any supported FPS and fixes crash when using unsupported FPS.
+
 ## 0.9.17+4
 
 * Updates Pigeon for non-nullable collection type support.
@@ -13,7 +21,7 @@
 
 ## 0.9.17+1
 
-* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
+* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO.
 
 ## 0.9.17
 

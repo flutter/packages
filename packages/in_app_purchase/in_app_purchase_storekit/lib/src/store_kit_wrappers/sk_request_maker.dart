@@ -52,7 +52,12 @@ class SKRequestMaker {
   /// * isRevoked: whether the receipt has been revoked.
   /// * isVolumePurchase: whether the receipt is a Volume Purchase Plan receipt.
   Future<void> startRefreshReceiptRequest(
-      {Map<String, dynamic>? receiptProperties}) {
+      {Map<String, Object?>? receiptProperties}) {
     return _hostApi.refreshReceipt(receiptProperties: receiptProperties);
+  }
+
+  /// Check if current device supports StoreKit 2.
+  static Future<bool> supportsStoreKit2() async {
+    return _hostApi.supportsStoreKit2();
   }
 }

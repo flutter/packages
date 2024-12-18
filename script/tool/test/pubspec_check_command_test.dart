@@ -1674,7 +1674,8 @@ ${_topicsSection()}
         );
       });
 
-      test('passes when a pinned dependency is on the pinned allow list',
+      test(
+          'passes when an exactly-pinned dependency is on the pinned allow list',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir);
@@ -1683,6 +1684,34 @@ ${_topicsSection()}
 ${_headerSection('a_package')}
 ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test(
+          'passes when an explicit-range-pinned dependency is on the pinned allow list',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
 

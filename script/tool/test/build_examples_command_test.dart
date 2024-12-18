@@ -485,7 +485,6 @@ void main() {
       );
     });
 
-
     test('building for macOS with Swift Package Manager on master channel',
         () async {
       mockPlatform.isMacOS = true;

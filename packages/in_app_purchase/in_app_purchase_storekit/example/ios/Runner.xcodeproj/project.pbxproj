@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -18,14 +19,14 @@
 		C4667AA10A6BC70CE9A5007C /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AB9CD9DD098BDAB3D5053EE5 /* libPods-RunnerTests.a */; };
 		E680BD031412EB2D02C9190B /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21CE6E615CF661FC0E18FB0A /* libPods-Runner.a */; };
 		F22BF91C2BC9B40B00713878 /* SwiftStubs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */; };
+		F22FD7A22CB080AE0006F28F /* StoreKit2TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22FD7A12CB080AE0006F28F /* StoreKit2TranslatorTests.swift */; };
 		F24C45E22C409D42000C6C72 /* InAppPurchasePluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F24C45E12C409D41000C6C72 /* InAppPurchasePluginTests.swift */; };
 		F276940B2C47268700277144 /* ProductRequestHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F276940A2C47268700277144 /* ProductRequestHandlerTests.swift */; };
 		F27694112C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694102C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift */; };
 		F27694172C49DBCA00277144 /* FIATransactionCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27694162C49DBCA00277144 /* FIATransactionCacheTests.swift */; };
-		F2858EE72C76A3B70063A092 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2858EE62C76A3B70063A092 /* InAppPurchaseStoreKit2PluginTests.swift */; };
 		F2858EE82C76A4230063A092 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = F6E5D5F926131C4800C68BED /* Configuration.storekit */; };
-		F2858EF02C7F98E70063A092 /* StoreKit2TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2858EEF2C7F98E70063A092 /* StoreKit2TranslatorTests.swift */; };
 		F295AD3A2C1256DD0067C78A /* Stubs.m in Sources */ = {isa = PBXBuildFile; fileRef = F295AD392C1256DD0067C78A /* Stubs.m */; };
+		F2D127492CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D127482CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift */; };
 		F2D5271A2C50627500C137C7 /* PaymentQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527192C50627500C137C7 /* PaymentQueueTests.swift */; };
 		F2D5272A2C583C4A00C137C7 /* TranslatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D527292C583C4A00C137C7 /* TranslatorTests.swift */; };
 /* End PBXBuildFile section */
@@ -78,14 +79,14 @@
 		CC9E5595B2B9B9B90632DA75 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		F22BF91A2BC9B40B00713878 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftStubs.swift; sourceTree = "<group>"; };
+		F22FD7A12CB080AE0006F28F /* StoreKit2TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = StoreKit2TranslatorTests.swift; path = ../shared/RunnerTests/StoreKit2TranslatorTests.swift; sourceTree = SOURCE_ROOT; };
 		F24C45E12C409D41000C6C72 /* InAppPurchasePluginTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InAppPurchasePluginTests.swift; path = ../../shared/RunnerTests/InAppPurchasePluginTests.swift; sourceTree = "<group>"; };
 		F276940A2C47268700277144 /* ProductRequestHandlerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProductRequestHandlerTests.swift; path = ../../shared/RunnerTests/ProductRequestHandlerTests.swift; sourceTree = "<group>"; };
 		F27694102C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIAPPaymentQueueDeleteTests.swift; path = ../../shared/RunnerTests/FIAPPaymentQueueDeleteTests.swift; sourceTree = "<group>"; };
 		F27694162C49DBCA00277144 /* FIATransactionCacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FIATransactionCacheTests.swift; path = ../../shared/RunnerTests/FIATransactionCacheTests.swift; sourceTree = "<group>"; };
-		F2858EE62C76A3B70063A092 /* InAppPurchaseStoreKit2PluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppPurchaseStoreKit2PluginTests.swift; sourceTree = "<group>"; };
-		F2858EEF2C7F98E70063A092 /* StoreKit2TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKit2TranslatorTests.swift; sourceTree = "<group>"; };
 		F295AD362C1251300067C78A /* Stubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Stubs.h; path = ../../shared/RunnerTests/Stubs.h; sourceTree = "<group>"; };
 		F295AD392C1256DD0067C78A /* Stubs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Stubs.m; path = ../../shared/RunnerTests/Stubs.m; sourceTree = "<group>"; };
+		F2D127482CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InAppPurchaseStoreKit2PluginTests.swift; path = ../shared/RunnerTests/InAppPurchaseStoreKit2PluginTests.swift; sourceTree = SOURCE_ROOT; };
 		F2D527192C50627500C137C7 /* PaymentQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PaymentQueueTests.swift; path = ../../shared/RunnerTests/PaymentQueueTests.swift; sourceTree = "<group>"; };
 		F2D527292C583C4A00C137C7 /* TranslatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TranslatorTests.swift; path = ../../shared/RunnerTests/TranslatorTests.swift; sourceTree = "<group>"; };
 		F6E5D5F926131C4800C68BED /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
@@ -96,6 +97,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */,
 				A5279298219369C600FF69E6 /* StoreKit.framework in Frameworks */,
 				E680BD031412EB2D02C9190B /* libPods-Runner.a in Frameworks */,
 			);
@@ -191,6 +193,8 @@
 		A59001A521E69658004A3E5E /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				F2D127482CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift */,
+				F22FD7A12CB080AE0006F28F /* StoreKit2TranslatorTests.swift */,
 				F2D527292C583C4A00C137C7 /* TranslatorTests.swift */,
 				F2D527192C50627500C137C7 /* PaymentQueueTests.swift */,
 				F27694162C49DBCA00277144 /* FIATransactionCacheTests.swift */,
@@ -201,8 +205,6 @@
 				F295AD362C1251300067C78A /* Stubs.h */,
 				F22BF91B2BC9B40B00713878 /* SwiftStubs.swift */,
 				F22BF91A2BC9B40B00713878 /* RunnerTests-Bridging-Header.h */,
-				F2858EE62C76A3B70063A092 /* InAppPurchaseStoreKit2PluginTests.swift */,
-				F2858EEF2C7F98E70063A092 /* StoreKit2TranslatorTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -238,6 +240,9 @@
 			dependencies = (
 			);
 			name = Runner;
+			packageProductDependencies = (
+				78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */,
+			);
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
@@ -296,6 +301,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -337,12 +345,10 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh",
 				"${PODS_CONFIGURATION_BUILD_DIR}/in_app_purchase_storekit/in_app_purchase_storekit_privacy.bundle",
-				"${PODS_CONFIGURATION_BUILD_DIR}/shared_preferences_foundation/shared_preferences_foundation_privacy.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/in_app_purchase_storekit_privacy.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/shared_preferences_foundation_privacy.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -444,12 +450,12 @@
 				F2D5271A2C50627500C137C7 /* PaymentQueueTests.swift in Sources */,
 				F24C45E22C409D42000C6C72 /* InAppPurchasePluginTests.swift in Sources */,
 				F22BF91C2BC9B40B00713878 /* SwiftStubs.swift in Sources */,
-				F2858EE72C76A3B70063A092 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */,
-				F2858EF02C7F98E70063A092 /* StoreKit2TranslatorTests.swift in Sources */,
+				F22FD7A22CB080AE0006F28F /* StoreKit2TranslatorTests.swift in Sources */,
 				F276940B2C47268700277144 /* ProductRequestHandlerTests.swift in Sources */,
 				F295AD3A2C1256DD0067C78A /* Stubs.m in Sources */,
 				F2D5272A2C583C4A00C137C7 /* TranslatorTests.swift in Sources */,
 				F27694172C49DBCA00277144 /* FIATransactionCacheTests.swift in Sources */,
+				F2D127492CB4A76D005FA2E5 /* InAppPurchaseStoreKit2PluginTests.swift in Sources */,
 				F27694112C49BF6F00277144 /* FIAPPaymentQueueDeleteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -735,6 +741,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FlutterGeneratedPluginSwiftPackage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }

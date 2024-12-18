@@ -9,6 +9,7 @@ import 'package:meta/meta.dart';
 import '../platform_interface/platform_interface.dart';
 import 'interactive_media_ads.g.dart';
 import 'ios_ads_manager_delegate.dart';
+import 'ios_ads_rendering_settings.dart';
 
 /// Implementation of [PlatformAdsManager] for iOS.
 class IOSAdsManager extends PlatformAdsManager {
@@ -30,8 +31,15 @@ class IOSAdsManager extends PlatformAdsManager {
   }
 
   @override
-  Future<void> init(AdsManagerInitParams params) {
-    return _manager.initialize(null);
+  Future<void> init({PlatformAdsRenderingSettings? settings}) {
+    IMAAdsRenderingSettings? nativeSettings;
+    if (settings != null) {
+      nativeSettings = settings is IOSAdsRenderingSettings
+          ? settings.nativeSettings
+          : IOSAdsRenderingSettings(settings.params).nativeSettings;
+    }
+
+    return _manager.initialize(nativeSettings);
   }
 
   @override

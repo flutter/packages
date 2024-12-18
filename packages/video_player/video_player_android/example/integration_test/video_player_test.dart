@@ -95,6 +95,7 @@ void main() {
     await tester.pumpAndSettle(_playDuration);
 
     await player.pause(textureId);
+    await tester.pumpAndSettle(_playDuration);
     final Duration pausedDuration = await player.getPosition(textureId);
     await tester.pumpAndSettle(_playDuration);
 

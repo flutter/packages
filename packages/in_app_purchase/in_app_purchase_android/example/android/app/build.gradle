@@ -1,3 +1,9 @@
+plugins {
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -44,14 +50,6 @@ if (project.APP_ID == "io.flutter.plugins.inapppurchaseexample.DEFAULT_DO_NOT_US
 if (!configured) {
     logger.error('The app could not be configured for release signing. In app purchases will not be testable. See `example/README.md` for more info and instructions.')
 }
-
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
-}
-
-apply plugin: 'com.android.application'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace 'io.flutter.plugins.inapppurchaseexample'

@@ -1,0 +1,13 @@
+<!-- multiple clip-rules -->
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="myClip">
+      <path d="M 250,75 L 323,301 131,161 369,161 177,301 z" clip-rule="evenodd"/>
+      <path d="M 250,75 L 323,301 131,161 369,161 177,301 z" transform="translate(250, 0)" clip-rule="nonzero"/>
+    </clipPath>
+  </defs>
+  <circle cx="400" cy="200" r="150" fill="green" fill-opacity=".5" stroke="black" clip-path="url(#myClip)" />
+  <g clip-path="url(#myClip)">
+    <circle cx="450" cy="300" r="150" fill="blue" fill-opacity=".6" stroke="black" />
+  </g>
+</svg>
