@@ -9,14 +9,17 @@ import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:dart_style/dart_style.dart' as dart_style;
 import 'package:go_router_builder/src/go_router_generator.dart';
+import 'package:package_config/package_config.dart';
 import 'package:path/path.dart' as p;
+import 'package:pub_semver/pub_semver.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
 
 const GoRouterGenerator generator = GoRouterGenerator();
 
 Future<void> main() async {
-  final dart_style.DartFormatter formatter = dart_style.DartFormatter();
+  final dart_style.DartFormatter formatter = dart_style.DartFormatter(
+      languageVersion: await _webPackageLanguageVersion());
   final Directory dir = Directory('test_inputs');
   final List<File> testFiles = dir
       .listSync()
@@ -58,4 +61,23 @@ Future<void> main() async {
       expect(generated, equals(expectResult.replaceAll('\r\n', '\n')));
     }, timeout: const Timeout(Duration(seconds: 100)));
   }
+}
+
+Future<Version> _webPackageLanguageVersion() async {
+  final String pkgPath = Platform.script.resolve('../').path;
+  final PackageConfig? packageConfig =
+      await findPackageConfig(Directory(pkgPath));
+  if (packageConfig == null) {
+    throw StateError('No package config for "$pkgPath"');
+  }
+  final Package? package =
+      packageConfig.packageOf(Uri.file(p.join(pkgPath, 'pubspec.yaml')));
+  if (package == null) {
+    throw StateError('No package at "$pkgPath"');
+  }
+  final LanguageVersion? languageVersion = package.languageVersion;
+  if (languageVersion == null) {
+    throw StateError('No language version "$pkgPath"');
+  }
+  return Version.parse('$languageVersion.0');
 }
