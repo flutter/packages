@@ -12,22 +12,24 @@ Draw SVG files using Flutter.
 
 Basic usage (to create an SVG rendering widget from an asset):
 
+<?code-excerpt "example/lib/readme_excerpts.dart (SimpleAsset)"?>
 ```dart
-final String assetName = 'assets/image.svg';
+const String assetName = 'assets/dart.svg';
 final Widget svg = SvgPicture.asset(
   assetName,
-  semanticsLabel: 'Acme Logo'
+  semanticsLabel: 'Dart Logo',
 );
 ```
 
 You can color/tint the image like so:
 
+<?code-excerpt "example/lib/readme_excerpts.dart (ColorizedAsset)"?>
 ```dart
-final String assetName = 'assets/up_arrow.svg';
+const String assetName = 'assets/simple/dash_path.svg';
 final Widget svgIcon = SvgPicture.asset(
   assetName,
-  colorFilter: ColorFilter.mode(Colors.red, BlendMode.srcIn),
-  semanticsLabel: 'A red up arrow'
+  colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
+  semanticsLabel: 'Red dash paths',
 );
 ```
 
@@ -40,13 +42,17 @@ mode.
 You can also specify a placeholder widget. The placeholder will display during
 parsing/loading (normally only relevant for network access).
 
+<?code-excerpt "example/lib/readme_excerpts.dart (MissingAsset)"?>
 ```dart
 // Will print error messages to the console.
-final String assetName = 'assets/image_that_does_not_exist.svg';
+const String assetName = 'assets/image_that_does_not_exist.svg';
 final Widget svg = SvgPicture.asset(
   assetName,
 );
+```
 
+<?code-excerpt "example/lib/readme_excerpts.dart (AssetWithPlaceholder)"?>
+```dart
 final Widget networkSvg = SvgPicture.network(
   'https://site-that-takes-a-while.com/image.svg',
   semanticsLabel: 'A shark?!',
@@ -58,18 +64,21 @@ final Widget networkSvg = SvgPicture.network(
 
 If you'd like to render the SVG to some other canvas, you can do something like:
 
+<?code-excerpt "example/lib/readme_excerpts.dart (OutputConversion)"?>
 ```dart
-import 'package:flutter_svg/flutter_svg.dart';
-final String rawSvg = '''<svg ...>...</svg>''';
-final PictureInfo pictureInfo = await vg.loadPicture(SvgStringLoader(rawSvg), null);
+import 'dart:ui' as ui;
+// ···
+  const String rawSvg = '''<svg ...>...</svg>''';
+  final PictureInfo pictureInfo =
+      await vg.loadPicture(const SvgStringLoader(rawSvg), null);
 
-// You can draw the picture to a canvas:
-canvas.drawPicture(pictureInfo.picture);
+  // You can draw the picture to a canvas:
+  canvas.drawPicture(pictureInfo.picture);
 
-// Or convert the picture to an image:
-final ui.Image image = pictureInfo.picture.toImage(...);
+  // Or convert the picture to an image:
+  final ui.Image image = await pictureInfo.picture.toImage(width, height);
 
-pictureInfo.picture.dispose();
+  pictureInfo.picture.dispose();
 ```
 
 The `SvgPicture` helps to automate this logic, and it provides some convenience
@@ -92,13 +101,11 @@ dart run vector_graphics_compiler -i assets/foo.svg -o assets/foo.svg.vec
 The output `foo.svg.vec` can be loaded using the default constructor of
 `SvgPicture`.
 
+<?code-excerpt "example/lib/readme_excerpts.dart (PrecompiledAsset)"?>
 ```dart
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vector_graphics/vector_graphics.dart';
-
-final Widget svg = SvgPicture(
-  const AssetBytesLoader('assets/foo.svg.vec')
-);
+// ···
+  const Widget svg = SvgPicture(AssetBytesLoader('assets/foo.svg.vec'));
 ```
 
 ### Check SVG compatibility

@@ -6,8 +6,6 @@
 # TODO(stuartmorgan): Remove everything from this list. See
 # https://github.com/flutter/flutter/issues/102679
 - espresso
-- flutter_svg
-- flutter_svg_test
 - in_app_purchase/in_app_purchase
 - pointer_interceptor
 - quick_actions/quick_actions

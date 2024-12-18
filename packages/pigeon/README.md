@@ -26,6 +26,8 @@ Pigeon uses the `StandardMessageCodec` so it supports
 
 Custom classes, nested datatypes, and enums are also supported. 
 
+Basic inheritance with empty `sealed` parent classes is allowed only in the Swift, Kotlin, and Dart generators.
+
 Nullable enums in Objective-C generated code will be wrapped in a class to allow for nullability.
 
 By default, custom classes in Swift are defined as structs. 
@@ -104,9 +106,10 @@ to the api to allow for multiple instances to be created and operate in parallel
 1) Method declarations on the API classes should have arguments and a return
    value whose types are defined in the file, are supported datatypes, or are
    `void`.
-1) Generics are supported, but can currently only be used with nullable types
-   (example: `List<int?>`).
-1) Objc and Swift have special naming conventions that can be utilized with the
+1) Event channels are supported only on the Swift, Kotlin, and Dart generators.
+1) Event channel methods should be wrapped in an `abstract class` with the metadata `@EventChannelApi`.
+1) Event channel definitions should not include the `Stream` return type, just the type that is being streamed.
+1) Objective-C and Swift have special naming conventions that can be utilized with the
    `@ObjCSelector` and `@SwiftFunction` respectively. 
 
 ### Flutter calling into iOS steps

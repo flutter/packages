@@ -89,6 +89,11 @@
     - any-glob-to-any-file:
       - packages/go_router_builder/**/*
 
+'p: google_adsense':
+  - changed-files:
+    - any-glob-to-any-file:
+      - packages/google_adsense/**
+
 'p: google_identity_services':
   - changed-files:
     - any-glob-to-any-file:
