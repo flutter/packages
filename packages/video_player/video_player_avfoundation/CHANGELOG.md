@@ -1,6 +1,7 @@
 ## 2.6.6
 
 * Fixes playback speed resetting.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.6.5
 
