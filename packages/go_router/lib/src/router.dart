@@ -261,7 +261,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// Accessing this property via GoRouter.of(context).state will not
   /// cause rebuild if the state has changed, consider using
   /// GoRouterState.of(context) instead.
-  GoRouterState? get state => routerDelegate.state;
+  GoRouterState get state => routerDelegate.state;
 
   /// Whether the imperative API affects browser URL bar.
   ///
