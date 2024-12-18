@@ -40,7 +40,7 @@ class ScrollViewDelegateProxyAPITests: XCTestCase {
     var scrollViewDidScrollArgs: [AnyHashable?]? = nil
 
     func scrollViewDidScroll(
-      pigeonInstance pigeonInstanceArg: any UIScrollViewDelegate,
+      pigeonInstance pigeonInstanceArg: UIScrollViewDelegate,
       scrollView scrollViewArg: UIScrollView, x xArg: Double, y yArg: Double,
       completion: @escaping (Result<Void, PigeonError>) -> Void
     ) {
