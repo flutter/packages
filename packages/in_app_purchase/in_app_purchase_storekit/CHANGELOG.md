@@ -1,3 +1,7 @@
+## 0.3.20+3
+
+* Fixes finishTransaction() not completing.
+
 ## 0.3.20+2
 
 * Fixes price not being displayed correctly.
