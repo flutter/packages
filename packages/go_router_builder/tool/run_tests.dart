@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
@@ -18,8 +19,8 @@ import 'package:test/test.dart';
 const GoRouterGenerator generator = GoRouterGenerator();
 
 Future<void> main() async {
-  final dart_style.DartFormatter formatter = dart_style.DartFormatter(
-      languageVersion: await _webPackageLanguageVersion());
+  final dart_style.DartFormatter formatter =
+      dart_style.DartFormatter(languageVersion: await _packageVersion());
   final Directory dir = Directory('test_inputs');
   final List<File> testFiles = dir
       .listSync()
@@ -63,13 +64,11 @@ Future<void> main() async {
   }
 }
 
-Future<Version> _webPackageLanguageVersion() async {
+Future<Version> _packageVersion() async {
+  final PackageConfig packageConfig =
+      await loadPackageConfigUri(Isolate.packageConfigSync!);
+
   final String pkgPath = Platform.script.resolve('../').path;
-  final PackageConfig? packageConfig =
-      await findPackageConfig(Directory(pkgPath));
-  if (packageConfig == null) {
-    throw StateError('No package config for "$pkgPath"');
-  }
   final Package? package =
       packageConfig.packageOf(Uri.file(p.join(pkgPath, 'pubspec.yaml')));
   if (package == null) {
