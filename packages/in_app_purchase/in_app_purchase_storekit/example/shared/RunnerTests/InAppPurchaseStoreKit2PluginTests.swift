@@ -61,32 +61,32 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testGetTransactions() async throws {
-    let purchase_expectation = self.expectation(description: "Purchase should succeed")
-    let transaction_expectation = self.expectation(
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let transactionExpectation = self.expectation(
       description: "Getting transactions should succeed")
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success(let purchase):
-        purchase_expectation.fulfill()
+        purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
 
-    await fulfillment(of: [purchase_expectation], timeout: 5)
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
 
     plugin.transactions {
       result in
       switch result {
       case .success(let transactions):
         assert(transactions.count == 1)
-        transaction_expectation.fulfill()
+        transactionExpectation.fulfill()
       case .failure(let error):
         XCTFail("Getting transactions should NOT fail. Failed with \(error)")
       }
     }
-    await fulfillment(of: [transaction_expectation], timeout: 5)
+    await fulfillment(of: [transactionExpectation], timeout: 5)
   }
 
   func testGetDiscountedProducts() async throws {
@@ -281,30 +281,30 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   func testFinishTransaction() async throws {
-    let purchase_expectation = self.expectation(description: "Purchase should succeed")
-    let finish_expectation = self.expectation(description: "Finishing purchase should succeed")
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let finishExpectation = self.expectation(description: "Finishing purchase should succeed")
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success(let purchase):
-        purchase_expectation.fulfill()
+        purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
 
-    await fulfillment(of: [purchase_expectation], timeout: 5)
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
 
     // id should always be 0 as it is the first purchase
     plugin.finish(id: 0) { result in
       switch result {
       case .success():
-        finish_expectation.fulfill()
+        finishExpectation.fulfill()
       case .failure(let error):
         XCTFail("FInish purchases should NOT fail. Failed with \(error)")
       }
     }
 
-    await fulfillment(of: [finish_expectation], timeout: 5)
+    await fulfillment(of: [finishExpectation], timeout: 5)
   }
 }
