@@ -213,7 +213,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
       forResource: (assetFilePath as NSString).deletingPathExtension,
       withExtension: (assetFilePath as NSString).pathExtension)
 
-    if let url {
+    if let url = url {
       pigeonInstance.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
     } else {
       throw PigeonError(
