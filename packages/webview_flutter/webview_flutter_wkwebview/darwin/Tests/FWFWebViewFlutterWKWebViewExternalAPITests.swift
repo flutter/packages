@@ -36,7 +36,7 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
 class TestRegistry: NSObject, FlutterPluginRegistry {
   let registrar = TestFlutterPluginRegistrar()
 
-  func registrar(forPlugin pluginKey: String) -> (any FlutterPluginRegistrar)? {
+  func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar? {
     return registrar
   }
 
@@ -53,7 +53,7 @@ class TestRegistry: NSObject, FlutterPluginRegistry {
 }
 
 class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
-  func register(_ texture: any FlutterTexture) -> Int64 {
+  func register(_ texture: FlutterTexture) -> Int64 {
     return 0
   }
 
@@ -69,19 +69,19 @@ class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
 class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   var plugin: WebViewFlutterPlugin?
 
-  func messenger() -> any FlutterBinaryMessenger {
+  func messenger() -> FlutterBinaryMessenger {
     return TestBinaryMessenger()
   }
 
-  func textures() -> any FlutterTextureRegistry {
+  func textures() -> FlutterTextureRegistry {
     return TestFlutterTextureRegistry()
   }
 
-  func register(_ factory: any FlutterPlatformViewFactory, withId factoryId: String) {
+  func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {
   }
 
   func register(
-    _ factory: any FlutterPlatformViewFactory, withId factoryId: String,
+    _ factory: FlutterPlatformViewFactory, withId factoryId: String,
     gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
   ) {
   }
@@ -90,11 +90,11 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
     plugin = (value as! WebViewFlutterPlugin)
   }
 
-  func addMethodCallDelegate(_ delegate: any FlutterPlugin, channel: FlutterMethodChannel) {
+  func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {
 
   }
 
-  func addApplicationDelegate(_ delegate: any FlutterPlugin) {
+  func addApplicationDelegate(_ delegate: FlutterPlugin) {
 
   }
 

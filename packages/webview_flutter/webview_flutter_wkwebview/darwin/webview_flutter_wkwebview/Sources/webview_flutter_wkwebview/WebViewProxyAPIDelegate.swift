@@ -339,7 +339,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
 
   func evaluateJavaScript(
     pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String,
-    completion: @escaping (Result<Any?, any Error>) -> Void
+    completion: @escaping (Result<Any?, Error>) -> Void
   ) {
     evaluateJavaScript(
       pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance,

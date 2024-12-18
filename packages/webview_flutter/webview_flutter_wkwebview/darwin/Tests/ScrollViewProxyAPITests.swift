@@ -74,7 +74,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       }
     }
 
-    override var delegate: (any UIScrollViewDelegate)? {
+    override var delegate: UIScrollViewDelegate? {
       get {
         return nil
       }

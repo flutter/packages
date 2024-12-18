@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Foundation
+
 #if os(iOS)
   import Flutter
   import UIKit
 #elseif os(macOS)
   import FlutterMacOS
-  import Foundation
 #else
   #error("Unsupported platform.")
 #endif
@@ -66,7 +67,7 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
       return FlutterStandardMessageCodec.sharedInstance()
     }
   #elseif os(macOS)
-    func createArgsCodec() -> (any FlutterMessageCodec & NSObjectProtocol)? {
+    func createArgsCodec() -> (FlutterMessageCodec & NSObjectProtocol)? {
       return FlutterStandardMessageCodec.sharedInstance()
     }
   #endif

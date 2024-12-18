@@ -435,7 +435,7 @@ class TestViewWKWebView: WKWebView {
   }
 
   override func evaluateJavaScript(
-    _ javaScriptString: String, completionHandler: (@MainActor (Any?, (any Error)?) -> Void)? = nil
+    _ javaScriptString: String, completionHandler: (@MainActor (Any?, Error?) -> Void)? = nil
   ) {
     evaluateJavaScriptArgs = [javaScriptString]
     completionHandler?("returnValue", nil)
