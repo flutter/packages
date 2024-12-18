@@ -840,7 +840,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    return Texture(textureId: cameraId);
+    return RotatedBox(quarterTurns: 1, child: Texture(textureId: cameraId));
   }
 
   /// Captures an image and returns the file where it was saved.
