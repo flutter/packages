@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Adds shared preferences devtools extension.
+
 ## 2.3.4
 
 * Security update, requires shared_preferences_android to be 2.3.4.
