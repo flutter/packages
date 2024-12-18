@@ -1,7 +1,7 @@
 ## 2.7.2
 
 - Supports the latest `package:analyzer` and `package:source_gen`.
-- Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+- Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 2.7.1
 
