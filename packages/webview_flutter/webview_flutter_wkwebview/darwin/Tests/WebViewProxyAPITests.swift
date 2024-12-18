@@ -384,8 +384,8 @@ class TestViewWKWebView: WKWebView {
     return nil
   }
 
-  override func loadFileURL(_ URL: URL, allowingReadAccessTo readAccessURL: URL) -> WKNavigation? {
-    loadFileUrlArgs = [URL, readAccessURL]
+  override func loadFileURL(_ url: URL, allowingReadAccessTo readAccessURL: URL) -> WKNavigation? {
+    loadFileUrlArgs = [url, readAccessURL]
     return nil
   }
 
