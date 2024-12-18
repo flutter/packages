@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds lensType in the PlatformCameraDescription
 
 ## 0.9.17+5
 
@@ -10,6 +11,7 @@
 
 * Updates Pigeon for non-nullable collection type support.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Adds lensType in the PlatformCameraDescription
 
 ## 0.9.17+3
 

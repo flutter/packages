@@ -118,24 +118,50 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
     NSMutableArray<FCPPlatformCameraDescription *> *reply =
         [[NSMutableArray alloc] initWithCapacity:devices.count];
+
     for (AVCaptureDevice *device in devices) {
       FCPPlatformCameraLensDirection lensFacing;
-      switch (device.position) {
-        case AVCaptureDevicePositionBack:
-          lensFacing = FCPPlatformCameraLensDirectionBack;
-          break;
-        case AVCaptureDevicePositionFront:
-          lensFacing = FCPPlatformCameraLensDirectionFront;
-          break;
-        case AVCaptureDevicePositionUnspecified:
-          lensFacing = FCPPlatformCameraLensDirectionExternal;
-          break;
-      }
+      FCPPlatformCameraLensType lensType;
+      getLensDirectionAndType(device, &lensFacing, &lensType);
+
       [reply addObject:[FCPPlatformCameraDescription makeWithName:device.uniqueID
-                                                    lensDirection:lensFacing]];
+                                                    lensDirection:lensFacing
+                                                         lensType:lensType]];
     }
     completion(reply, nil);
   });
+}
+
+static void getLensDirectionAndType(AVCaptureDevice *device,
+                                    FCPPlatformCameraLensDirection *lensDirection,
+                                    FCPPlatformCameraLensType *lensType) {
+  switch (device.position) {
+    case AVCaptureDevicePositionBack:
+      *lensDirection = FCPPlatformCameraLensDirectionBack;
+      break;
+    case AVCaptureDevicePositionFront:
+      *lensDirection = FCPPlatformCameraLensDirectionFront;
+      break;
+    case AVCaptureDevicePositionUnspecified:
+      *lensDirection = FCPPlatformCameraLensDirectionExternal;
+      break;
+  }
+
+  if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInWideAngleCamera]) {
+    *lensType = FCPPlatformCameraLensTypeWide;
+  } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTelephotoCamera]) {
+    *lensType = FCPPlatformCameraLensTypeTelephoto;
+  } else if (@available(iOS 13.0, *)) {
+    if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
+      *lensType = FCPPlatformCameraLensTypeUltraWide;
+    } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
+      *lensType = FCPPlatformCameraLensTypeWide;
+    } else {
+      *lensType = FCPPlatformCameraLensTypeUnknown;
+    }
+  } else {
+    *lensType = FCPPlatformCameraLensTypeUnknown;
+  }
 }
 
 - (void)createCameraWithName:(nonnull NSString *)cameraName
