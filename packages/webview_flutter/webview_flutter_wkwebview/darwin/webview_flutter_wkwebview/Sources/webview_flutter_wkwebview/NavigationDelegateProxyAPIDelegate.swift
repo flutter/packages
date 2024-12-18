@@ -38,7 +38,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  @objc(webview(_:decidePolicyFor:decisionHandler:))
+  @objc(webview:decidePolicyForNavigationAction:decisionHandler:)
   func webView(
     _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
     decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void
