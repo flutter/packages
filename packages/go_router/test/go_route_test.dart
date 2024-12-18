@@ -260,7 +260,7 @@ void main() {
               GoRoute(
                 path: 'route',
                 name: 'route',
-                redirect: (context, state) {
+                redirect: (BuildContext context, GoRouterState state) {
                   // Redirection logic based on the fragment in the URI
                   if (state.uri.fragment == '1') {
                     // If fragment is "1", redirect to "/route/1"
