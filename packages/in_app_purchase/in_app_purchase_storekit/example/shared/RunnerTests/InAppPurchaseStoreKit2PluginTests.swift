@@ -62,7 +62,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   func testGetTransactions() async throws {
     let purchase_expectation = self.expectation(description: "Purchase should succeed")
-    let transaction_expectation = self.expectation(description: "Getting transactions should succeed")
+    let transaction_expectation = self.expectation(
+      description: "Getting transactions should succeed")
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
@@ -75,7 +76,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     await fulfillment(of: [purchase_expectation], timeout: 5)
 
-    plugin.transactions() {
+    plugin.transactions {
       result in
       switch result {
       case .success(let transactions):
