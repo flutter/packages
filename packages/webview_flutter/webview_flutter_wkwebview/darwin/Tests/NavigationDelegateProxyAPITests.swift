@@ -138,7 +138,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func didFinishNavigation(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     url urlArg: String?,
     completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
   ) {
@@ -146,7 +146,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func didStartProvisionalNavigation(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     url urlArg: String?,
     completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
   ) {
@@ -154,7 +154,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func decidePolicyForNavigationAction(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     navigationAction navigationActionArg: WKNavigationAction,
     completion: @escaping (
       Result<
@@ -167,7 +167,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func decidePolicyForNavigationResponse(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     navigationResponse navigationResponseArg: WKNavigationResponse,
     completion: @escaping (
       Result<
@@ -180,7 +180,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func didFailNavigation(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     error errorArg: NSError,
     completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
   ) {
@@ -188,7 +188,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func didFailProvisionalNavigation(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     error errorArg: NSError,
     completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
   ) {
@@ -196,14 +196,14 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func webViewWebContentProcessDidTerminate(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     completion: @escaping (Result<Void, webview_flutter_wkwebview.PigeonError>) -> Void
   ) {
     webViewWebContentProcessDidTerminateArgs = [webViewArg]
   }
 
   func didReceiveAuthenticationChallenge(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     challenge challengeArg: URLAuthenticationChallenge,
     completion: @escaping (
       Result<

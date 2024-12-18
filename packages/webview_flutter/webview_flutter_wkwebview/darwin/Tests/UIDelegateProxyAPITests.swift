@@ -118,7 +118,7 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   var runJavaScriptTextInputPanelArgs: [AnyHashable?]? = nil
 
   func onCreateWebView(
-    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
     configuration configurationArg: WKWebViewConfiguration,
     navigationAction navigationActionArg: WKNavigationAction,
     completion: @escaping (Result<Void, PigeonError>) -> Void
@@ -127,7 +127,7 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   }
 
   func requestMediaCapturePermission(
-    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
     origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType,
     completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void
   ) {
@@ -136,7 +136,7 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   }
 
   func runJavaScriptAlertPanel(
-    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
     message messageArg: String, frame frameArg: WKFrameInfo,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
@@ -144,7 +144,7 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   }
 
   func runJavaScriptConfirmPanel(
-    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
     message messageArg: String, frame frameArg: WKFrameInfo,
     completion: @escaping (Result<Bool, PigeonError>) -> Void
   ) {
@@ -153,7 +153,7 @@ class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
   }
 
   func runJavaScriptTextInputPanel(
-    pigeonInstance pigeonInstanceArg: any WKUIDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
     prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo,
     completion: @escaping (Result<String?, PigeonError>) -> Void
   ) {

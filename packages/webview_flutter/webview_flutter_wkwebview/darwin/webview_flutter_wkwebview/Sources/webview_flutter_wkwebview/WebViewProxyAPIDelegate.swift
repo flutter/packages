@@ -114,7 +114,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   }
 
   func setUIDelegate(
-    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: any WKUIDelegate
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: WKUIDelegate
   ) throws {
     try setUIDelegate(
       pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance,
@@ -129,7 +129,7 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
 
   func setNavigationDelegate(
     pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView,
-    delegate: any WKNavigationDelegate
+    delegate: WKNavigationDelegate
   ) throws {
     try setNavigationDelegate(
       pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance,

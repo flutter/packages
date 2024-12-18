@@ -33,7 +33,7 @@ class TestScriptMessageHandlerApi: PigeonApiProtocolWKScriptMessageHandler {
   var didReceiveScriptMessageArgs: [AnyHashable?]? = nil
 
   func didReceiveScriptMessage(
-    pigeonInstance pigeonInstanceArg: any WKScriptMessageHandler,
+    pigeonInstance pigeonInstanceArg: WKScriptMessageHandler,
     controller controllerArg: WKUserContentController, message messageArg: WKScriptMessage,
     completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {

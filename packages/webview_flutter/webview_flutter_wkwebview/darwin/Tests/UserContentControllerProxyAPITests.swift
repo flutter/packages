@@ -75,7 +75,7 @@ class TestUserContentController: WKUserContentController {
   var addUserScriptArgs: [AnyHashable?]? = nil
   var removeAllUserScriptsCalled = false
 
-  override func add(_ scriptMessageHandler: any WKScriptMessageHandler, name: String) {
+  override func add(_ scriptMessageHandler: WKScriptMessageHandler, name: String) {
     addScriptMessageHandlerArgs = [scriptMessageHandler as! NSObject, name]
   }
 
