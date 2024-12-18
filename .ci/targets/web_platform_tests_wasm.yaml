@@ -12,5 +12,3 @@ tasks:
   - name: drive examples
     script: .ci/scripts/tool_runner.sh
     args: ["drive-examples", "--web", "--wasm", "--run-chromedriver", "--exclude=script/configs/exclude_integration_web_wasm.yaml"]
-
-# DO NOT PUSH THIS FILE! Temporarily changed to test --wasm without waiting for CI
