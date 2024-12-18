@@ -6,8 +6,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.4.0
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
 
 flutter:
   plugin:
@@ -28,7 +28,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  shared_preferences_android: ^2.3.0
+  shared_preferences_android: ^2.3.4
   shared_preferences_foundation: ^2.5.0
   shared_preferences_linux: ^2.4.0
   shared_preferences_platform_interface: ^2.4.0
