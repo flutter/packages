@@ -60,6 +60,34 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssertEqual(testProductMsg, fetchedProductMsg)
   }
 
+  func testGetTransactions() async throws {
+    let purchase_expectation = self.expectation(description: "Purchase should succeed")
+    let transaction_expectation = self.expectation(description: "Getting transactions should succeed")
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success(let purchase):
+        purchase_expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [purchase_expectation], timeout: 5)
+
+    plugin.transactions() {
+      result in
+      switch result {
+      case .success(let transactions):
+        assert(transactions.count == 1)
+        transaction_expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Getting transactions should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [transaction_expectation], timeout: 5)
+  }
+
   func testGetDiscountedProducts() async throws {
     let expectation = self.expectation(description: "products successfully fetched")
 
@@ -127,7 +155,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success(_):
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -192,7 +220,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success(_):
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -205,7 +233,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success(_):
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -218,7 +246,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable_discounted", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success(_):
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -249,5 +277,33 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
 
     await fulfillment(of: [restoreExpectation, purchaseExpectation], timeout: 5)
+  }
+
+  func testFinishTransaction() async throws {
+    let purchase_expectation = self.expectation(description: "Purchase should succeed")
+    let finish_expectation = self.expectation(description: "Finishing purchase should succeed")
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success(let purchase):
+        purchase_expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [purchase_expectation], timeout: 5)
+
+    // id should always be 0 as it is the first purchase
+    plugin.finish(id: 0) { result in
+      switch result {
+      case .success():
+        finish_expectation.fulfill()
+      case .failure(let error):
+        XCTFail("FInish purchases should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [finish_expectation], timeout: 5)
   }
 }
