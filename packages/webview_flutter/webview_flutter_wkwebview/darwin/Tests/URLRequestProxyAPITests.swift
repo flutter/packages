@@ -6,6 +6,14 @@ import XCTest
 
 @testable import webview_flutter_wkwebview
 
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
+
 class RequestProxyAPITests: XCTestCase {
   func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
