@@ -12,8 +12,18 @@ import WebKit
   #error("Unsupported platform.")
 #endif
 
+/// App and package facing native API provided by the `webview_flutter_wkwebview` plugin.
+///
+/// This class follows the convention of breaking changes of the Dart API, which means that any
+/// changes to the class that are not backwards compatible will only be made with a major version
+/// change of the plugin. Native code other than this external API does not follow breaking change
+/// conventions, so app or plugin clients should not use any other native APIs.
 @objc(WebViewFlutterWKWebViewExternalAPI)
 public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
+  /// Retrieves the `WKWebView` that is associated with `identifier`.
+  ///
+  /// See the Dart method `WebKitWebViewController.webViewIdentifier` to get the identifier of an
+  /// underlying `WKWebView`.
   @objc
   public static func webView(
     forIdentifier identifier: Int64, with registry: FlutterPluginRegistry
