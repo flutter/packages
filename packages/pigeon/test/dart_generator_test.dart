@@ -667,7 +667,7 @@ void main() {
     expect(code, matches('pigeonVar_channel.send[(]null[)]'));
   });
 
-  test('mock dart handler', () {
+  test('mock Dart handler', () {
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', dartHostTestHandler: 'ApiMock', methods: <Method>[
         Method(
@@ -1711,17 +1711,22 @@ name: foobar
   });
 
   test('connection error contains channel name', () {
-    final Root root = Root(apis: <Api>[
-      AstHostApi(name: 'Api', methods: <Method>[
-        Method(
-          name: 'method',
-          location: ApiLocation.host,
-          parameters: <Parameter>[],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
-        )
-      ])
-    ], classes: <Class>[], enums: <Enum>[]);
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+            name: 'method',
+            location: ApiLocation.host,
+            parameters: <Parameter>[],
+            returnType:
+                const TypeDeclaration(baseName: 'Output', isNullable: false),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+      containsHostApi: true,
+    );
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(

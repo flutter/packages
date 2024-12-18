@@ -3,3 +3,4 @@
 // found in the LICENSE file.
 
 export 'src/file_selector_android.dart';
+export 'src/types/native_illegal_argument_exception.dart';

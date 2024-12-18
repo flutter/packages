@@ -3,5 +3,6 @@
 // found in the LICENSE file.
 
 export 'src/generated/core_tests.gen.dart';
+export 'src/generated/event_channel_tests.gen.dart';
 export 'src/generated/proxy_api_tests.gen.dart'
     show ProxyApiSuperClass, ProxyApiTestClass, ProxyApiTestEnum;
