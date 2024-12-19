@@ -253,12 +253,14 @@ class RouteConfiguration {
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    String? fragment,
   }) {
     assert(() {
       log('getting location for name: '
           '"$name"'
           '${pathParameters.isEmpty ? '' : ', pathParameters: $pathParameters'}'
-          '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
+          '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}'
+          '${fragment != null ? ', fragment: $fragment' : ''}');
       return true;
     }());
     assert(_nameToPath.containsKey(name), 'unknown route name: $name');
@@ -285,7 +287,8 @@ class RouteConfiguration {
     final String location = patternToPath(path, encodedParams);
     return Uri(
             path: location,
-            queryParameters: queryParameters.isEmpty ? null : queryParameters)
+            queryParameters: queryParameters.isEmpty ? null : queryParameters,
+            fragment: fragment)
         .toString();
   }
 
