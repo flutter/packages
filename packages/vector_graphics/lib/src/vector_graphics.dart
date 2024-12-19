@@ -684,6 +684,7 @@ class VectorGraphicUtilities {
     BuildContext? context, {
     bool clipViewbox = true,
     VectorGraphicsErrorListener? onError,
+    Size? targetSize,
   }) async {
     TextDirection textDirection = TextDirection.ltr;
     Locale locale = ui.PlatformDispatcher.instance.locale;
@@ -700,6 +701,7 @@ class VectorGraphicUtilities {
           loader: loader,
           clipViewbox: clipViewbox,
           onError: onError,
+          targetSize: targetSize,
         );
       } catch (e) {
         debugPrint('Failed to decode $loader');

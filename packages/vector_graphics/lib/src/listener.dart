@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -62,6 +63,7 @@ Future<PictureInfo> decodeVectorGraphics(
   required bool clipViewbox,
   required BytesLoader loader,
   VectorGraphicsErrorListener? onError,
+  Size? targetSize,
 }) {
   try {
     // We might be in a test that's using a fake async zone. Make sure that any
@@ -86,6 +88,7 @@ Future<PictureInfo> decodeVectorGraphics(
         textDirection: textDirection,
         clipViewbox: clipViewbox,
         onError: onError,
+        targetSize: targetSize,
       );
       DecodeResponse response = _codec.decode(data, listener);
       if (response.complete) {
@@ -207,6 +210,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     @visibleForTesting
     PictureFactory pictureFactory = const _DefaultPictureFactory(),
     VectorGraphicsErrorListener? onError,
+    Size? targetSize,
   }) {
     final PictureRecorder recorder = pictureFactory.createPictureRecorder();
     return FlutterVectorGraphicsListener._(
@@ -217,6 +221,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       locale,
       textDirection,
       clipViewbox,
+      targetSize,
       onError: onError,
     );
   }
@@ -228,7 +233,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     this._canvas,
     this._locale,
     this._textDirection,
-    this._clipViewbox, {
+    this._clipViewbox,
+    this._targetSize, {
     this.onError,
   });
 
@@ -239,6 +245,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   final Locale? _locale;
   final TextDirection? _textDirection;
   final bool _clipViewbox;
+  final Size? _targetSize;
 
   final PictureRecorder _recorder;
   final Canvas _canvas;
@@ -477,6 +484,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       _locale,
       _textDirection,
       _clipViewbox,
+      null,
     );
 
     patternListener._size =
@@ -561,6 +569,14 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onSize(double width, double height) {
+    final double targetWidth = _targetSize?.width ?? width;
+    final double targetHeight = _targetSize?.height ?? height;
+
+    final double sx = targetWidth / width;
+    final double sy = targetHeight / height;
+
+    _canvas.scale(min(sx, sy));
+
     if (_clipViewbox) {
       _canvas.clipRect(Offset.zero & Size(width, height));
     }

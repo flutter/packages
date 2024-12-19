@@ -1,3 +1,7 @@
+## 1.1.16
+
+* allow specifying target size when parsing SVG
+
 ## 1.1.15
 
 * Updates error handling in VectorGraphicWidget to handle errors when the bytes of the graphic cannot be loaded.
