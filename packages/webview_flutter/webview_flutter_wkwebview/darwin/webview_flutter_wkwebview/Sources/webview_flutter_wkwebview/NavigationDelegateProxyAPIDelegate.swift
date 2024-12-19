@@ -26,7 +26,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+  public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!)
+  {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didStartProvisionalNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
@@ -40,7 +41,7 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
 
   public func webView(
     _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
-    decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void
+    decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
   ) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationAction(
@@ -105,7 +106,9 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+  public func webView(
+    _ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error
+  ) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) {
         result in
