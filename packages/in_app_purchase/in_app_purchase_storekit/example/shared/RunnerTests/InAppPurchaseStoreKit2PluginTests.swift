@@ -67,7 +67,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(let purchase):
+      case .success:
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -80,7 +80,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       result in
       switch result {
       case .success(let transactions):
-        assert(transactions.count == 1)
+        XCTAssert(transactions.count == 1)
         transactionExpectation.fulfill()
       case .failure(let error):
         XCTFail("Getting transactions should NOT fail. Failed with \(error)")
@@ -120,7 +120,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success(let productMessages):
         fetchedProductMsg = productMessages
         expectation.fulfill()
-      case .failure(_):
+      case .failure:
         XCTFail("Products should be successfully fetched")
       }
     }
@@ -139,7 +139,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     plugin.products(identifiers: ["subscription_silver"]) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("This `products` call should not succeed")
       case .failure(let error):
         expectation.fulfill()
@@ -156,7 +156,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -172,7 +172,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "products request should fail")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
         XCTAssertEqual(
@@ -191,7 +191,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
         XCTAssertEqual(error.localizedDescription, "Item Unavailable")
@@ -205,7 +205,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "products request should fail")
     plugin.purchase(id: "invalid_product", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
         let pigeonError = error as! PigeonError
@@ -221,7 +221,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -234,7 +234,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -247,7 +247,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable_discounted", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -262,7 +262,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     plugin.purchase(id: "subscription_silver", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
