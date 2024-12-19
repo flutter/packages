@@ -1550,6 +1550,53 @@ window.addEventListener("error", function(e) {
       });
     });
 
+    test('setOnCanGoBackChange', () async {
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+
+      late final void Function(
+        String keyPath,
+        NSObject object,
+        Map<NSKeyValueChangeKey, Object?> change,
+      ) webViewObserveValue;
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (
+          _, {
+          void Function(
+            String keyPath,
+            NSObject object,
+            Map<NSKeyValueChangeKey, Object?> change,
+          )? observeValue,
+        }) {
+          webViewObserveValue = observeValue!;
+          return mockWebView;
+        },
+      );
+
+      verify(
+        mockWebView.addObserver(
+          mockWebView,
+          keyPath: 'canGoBack',
+          options: <NSKeyValueObservingOptions>{
+            NSKeyValueObservingOptions.newValue,
+          },
+        ),
+      );
+
+      late final bool callbackCanGoBack;
+
+      await controller.setOnCanGoBackChange(
+          (bool canGoBack) => callbackCanGoBack = canGoBack);
+
+      webViewObserveValue(
+        'canGoBack',
+        mockWebView,
+        <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: true},
+      );
+
+      expect(callbackCanGoBack, true);
+    });
+
     test('setOnScrollPositionChange', () async {
       final WebKitWebViewController controller = createControllerWithMocks();
 
