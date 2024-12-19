@@ -4,6 +4,41 @@
 
 import WebKit
 
+extension NavigationDelegateImpl {
+  public func webView(
+    _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+    decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
+  ) {
+    registrar.dispatchOnMainThread { onFailure in
+      self.api.decidePolicyForNavigationAction(
+        pigeonInstance: self, webView: webView, navigationAction: navigationAction
+      ) { @MainActor result in
+        switch result {
+        case .success(let policy):
+          switch policy {
+          case .allow:
+            decisionHandler(.allow)
+          case .cancel:
+            decisionHandler(.cancel)
+          case .download:
+            if #available(iOS 14.5, macOS 11.3, *) {
+              decisionHandler(.download)
+            } else {
+              decisionHandler(.cancel)
+              assertionFailure(
+                self.registrar.createUnsupportedVersionMessage(
+                  "WKNavigationActionPolicy.download", versionRequirements: "iOS 14.5, macOS 11.3"))
+            }
+          }
+        case .failure(let error):
+          decisionHandler(.cancel)
+          onFailure("WKNavigationDelegate.decidePolicyForNavigationAction", error)
+        }
+      }
+    }
+  }
+}
+
 /// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
 public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   let api: PigeonApiProtocolWKNavigationDelegate
@@ -34,39 +69,6 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       ) { result in
         if case .failure(let error) = result {
           onFailure("WKNavigationDelegate.didStartProvisionalNavigation", error)
-        }
-      }
-    }
-  }
-
-  public func webView(
-    _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
-    decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
-  ) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.decidePolicyForNavigationAction(
-        pigeonInstance: self, webView: webView, navigationAction: navigationAction
-      ) { @MainActor result in
-        switch result {
-        case .success(let policy):
-          switch policy {
-          case .allow:
-            decisionHandler(.allow)
-          case .cancel:
-            decisionHandler(.cancel)
-          case .download:
-            if #available(iOS 14.5, macOS 11.3, *) {
-              decisionHandler(.download)
-            } else {
-              decisionHandler(.cancel)
-              assertionFailure(
-                self.registrar.createUnsupportedVersionMessage(
-                  "WKNavigationActionPolicy.download", versionRequirements: "iOS 14.5, macOS 11.3"))
-            }
-          }
-        case .failure(let error):
-          decisionHandler(.cancel)
-          onFailure("WKNavigationDelegate.decidePolicyForNavigationAction", error)
         }
       }
     }
