@@ -53,14 +53,16 @@ class _MyHomePageState extends State<MyHomePage> {
       const ShortcutItem(
         type: 'action_one',
         localizedTitle: 'Action one',
+        localizedSubtitle: 'Action one subtitle',
         icon: 'AppIcon',
       ),
       // NOTE: This second action icon will only work on Android.
       // In a real world project keep the same file name for both platforms.
       const ShortcutItem(
-          type: 'action_two',
-          localizedTitle: 'Action two',
-          icon: 'ic_launcher'),
+        type: 'action_two',
+        localizedTitle: 'Action two',
+        icon: 'ic_launcher',
+      ),
     ]).then((void _) {
       setState(() {
         if (shortcut == 'no action set') {
