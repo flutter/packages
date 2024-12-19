@@ -5,6 +5,7 @@
 // ignore_for_file: avoid_print
 
 // Imports the Flutter Driver API.
+import 'package:flutter/foundation.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -70,7 +71,8 @@ Future<void> _fullyRenderApp(WidgetTester tester) async {
   await tester.pumpWidget(const app.MyApp());
   // Pump 2 frames so the framework injects the platform view into the DOM.
   await tester.pump();
-  await tester.pump();
+  // Give the browser some time to perform DOM operations (for Wasm code)
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 // Calls [_getHtmlElementAt] passing it the center of the widget identified by
