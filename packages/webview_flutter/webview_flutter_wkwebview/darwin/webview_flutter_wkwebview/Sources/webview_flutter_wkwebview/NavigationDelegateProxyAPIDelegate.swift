@@ -14,6 +14,39 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     self.registrar = registrar
   }
 
+  public func webView(
+    _ webView: WKWebView, decidePolicyFor navigationAction: WebKit.WKNavigationAction,
+    decisionHandler: @escaping @MainActor (WebKit.WKNavigationActionPolicy) -> Void
+  ) {
+    registrar.dispatchOnMainThread { onFailure in
+      self.api.decidePolicyForNavigationAction(
+        pigeonInstance: self, webView: webView, navigationAction: navigationAction
+      ) { @MainActor result in
+        switch result {
+        case .success(let policy):
+          switch policy {
+          case .allow:
+            decisionHandler(.allow)
+          case .cancel:
+            decisionHandler(.cancel)
+          case .download:
+            if #available(iOS 14.5, macOS 11.3, *) {
+              decisionHandler(.download)
+            } else {
+              decisionHandler(.cancel)
+              assertionFailure(
+                self.registrar.createUnsupportedVersionMessage(
+                  "WKNavigationActionPolicy.download", versionRequirements: "iOS 14.5, macOS 11.3"))
+            }
+          }
+        case .failure(let error):
+          decisionHandler(.cancel)
+          onFailure("WKNavigationDelegate.decidePolicyForNavigationAction", error)
+        }
+      }
+    }
+  }
+
   public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didFinishNavigation(
@@ -80,38 +113,6 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
 }
 
 //extension NavigationDelegateImpl {
-//  public func webView(
-//    _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
-//    decisionHandler: @escaping @MainActor (WKNavigationActionPolicy) -> Void
-//  ) {
-//    registrar.dispatchOnMainThread { onFailure in
-//      self.api.decidePolicyForNavigationAction(
-//        pigeonInstance: self, webView: webView, navigationAction: navigationAction
-//      ) { @MainActor result in
-//        switch result {
-//        case .success(let policy):
-//          switch policy {
-//          case .allow:
-//            decisionHandler(.allow)
-//          case .cancel:
-//            decisionHandler(.cancel)
-//          case .download:
-//            if #available(iOS 14.5, macOS 11.3, *) {
-//              decisionHandler(.download)
-//            } else {
-//              decisionHandler(.cancel)
-//              assertionFailure(
-//                self.registrar.createUnsupportedVersionMessage(
-//                  "WKNavigationActionPolicy.download", versionRequirements: "iOS 14.5, macOS 11.3"))
-//            }
-//          }
-//        case .failure(let error):
-//          decisionHandler(.cancel)
-//          onFailure("WKNavigationDelegate.decidePolicyForNavigationAction", error)
-//        }
-//      }
-//    }
-//  }
 //
 //  public func webView(
 //    _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
