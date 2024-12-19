@@ -5,7 +5,7 @@
 import WebKit
 
 /// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
-class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
+public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   let api: PigeonApiProtocolWKNavigationDelegate
   unowned let registrar: ProxyAPIRegistrar
 
@@ -14,7 +14,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     self.registrar = registrar
   }
 
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+  public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didFinishNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
@@ -26,7 +26,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+  public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didStartProvisionalNavigation(
         pigeonInstance: self, webView: webView, url: webView.url?.absoluteString
@@ -71,7 +71,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  func webView(
+  public func webView(
     _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
     decisionHandler: @escaping @MainActor (WKNavigationResponsePolicy) -> Void
   ) {
@@ -105,7 +105,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+  public func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didFailNavigation(pigeonInstance: self, webView: webView, error: error as NSError) {
         result in
@@ -116,7 +116,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  func webView(
+  public func webView(
     _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
     withError error: Error
   ) {
@@ -131,7 +131,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+  public func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
     registrar.dispatchOnMainThread { onFailure in
       self.api.webViewWebContentProcessDidTerminate(pigeonInstance: self, webView: webView) {
         result in
@@ -142,7 +142,7 @@ class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   }
 
-  func webView(
+  public func webView(
     _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
     completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) ->
       Void
