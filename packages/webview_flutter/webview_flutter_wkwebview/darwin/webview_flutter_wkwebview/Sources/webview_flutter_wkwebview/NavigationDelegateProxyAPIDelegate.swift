@@ -123,7 +123,7 @@ extension NavigationDelegateImpl {
     registrar.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationResponse(
         pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
-      ) { @MainActor result in
+      ) { result in
         DispatchQueue.main.async {
           switch result {
           case .success(let policy):
@@ -161,7 +161,7 @@ extension NavigationDelegateImpl {
     registrar.dispatchOnMainThread { onFailure in
       self.api.didReceiveAuthenticationChallenge(
         pigeonInstance: self, webView: webView, challenge: challenge
-      ) { @MainActor result in
+      ) { result in
         DispatchQueue.main.async {
           switch result {
           case .success(let response):

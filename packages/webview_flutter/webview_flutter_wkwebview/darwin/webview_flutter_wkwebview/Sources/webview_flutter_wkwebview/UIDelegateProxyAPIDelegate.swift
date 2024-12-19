@@ -55,20 +55,22 @@ extension UIDelegateImpl {
       self.api.requestMediaCapturePermission(
         pigeonInstance: self, webView: webView, origin: origin, frame: frame,
         type: wrapperCaptureType
-      ) { @MainActor result in
-        switch result {
-        case .success(let decision):
-          switch decision {
-          case .deny:
+      ) { result in
+        DispatchQueue.main.async {
+          switch result {
+          case .success(let decision):
+            switch decision {
+            case .deny:
+              decisionHandler(.deny)
+            case .grant:
+              decisionHandler(.grant)
+            case .prompt:
+              decisionHandler(.prompt)
+            }
+          case .failure(let error):
             decisionHandler(.deny)
-          case .grant:
-            decisionHandler(.grant)
-          case .prompt:
-            decisionHandler(.prompt)
+            onFailure("WKUIDelegate.requestMediaCapturePermission", error)
           }
-        case .failure(let error):
-          decisionHandler(.deny)
-          onFailure("WKUIDelegate.requestMediaCapturePermission", error)
         }
       }
     }
@@ -81,11 +83,13 @@ extension UIDelegateImpl {
     registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptAlertPanel(
         pigeonInstance: self, webView: webView, message: message, frame: frame
-      ) { @MainActor result in
-        if case .failure(let error) = result {
-          onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
+      ) { result in
+        DispatchQueue.main.async {
+          if case .failure(let error) = result {
+            onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
+          }
+          completionHandler()
         }
-        completionHandler()
       }
     }
   }
@@ -97,13 +101,15 @@ extension UIDelegateImpl {
     registrar.dispatchOnMainThread { onFailure in
       self.api.runJavaScriptConfirmPanel(
         pigeonInstance: self, webView: webView, message: message, frame: frame
-      ) { @MainActor result in
-        switch result {
-        case .success(let confirmed):
-          completionHandler(confirmed)
-        case .failure(let error):
-          completionHandler(false)
-          onFailure("WKUIDelegate.runJavaScriptConfirmPanel", error)
+      ) { result in
+        DispatchQueue.main.async {
+          switch result {
+          case .success(let confirmed):
+            completionHandler(confirmed)
+          case .failure(let error):
+            completionHandler(false)
+            onFailure("WKUIDelegate.runJavaScriptConfirmPanel", error)
+          }
         }
       }
     }
@@ -118,13 +124,15 @@ extension UIDelegateImpl {
       self.api.runJavaScriptTextInputPanel(
         pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
         frame: frame
-      ) { @MainActor result in
-        switch result {
-        case .success(let response):
-          completionHandler(response)
-        case .failure(let error):
-          completionHandler(nil)
-          onFailure("WKUIDelegate.runJavaScriptTextInputPanel", error)
+      ) { result in
+        DispatchQueue.main.async {
+          switch result {
+          case .success(let response):
+            completionHandler(response)
+          case .failure(let error):
+            completionHandler(nil)
+            onFailure("WKUIDelegate.runJavaScriptTextInputPanel", error)
+          }
         }
       }
     }
