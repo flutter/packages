@@ -200,7 +200,7 @@
       ^id<FLTCaptureDeviceControlling>(void) {
         return captureDeviceMock;
       },
-      nil, nil);
+      nil, nil, nil);
 
   //  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   //  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);

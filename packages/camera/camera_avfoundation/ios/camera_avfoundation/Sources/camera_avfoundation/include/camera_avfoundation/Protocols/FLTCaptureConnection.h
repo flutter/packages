@@ -7,6 +7,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTCaptureConnection <NSObject>
+@property(nonatomic, readonly) AVCaptureConnection *connection;
 @property(nonatomic) BOOL videoMirrored;
 @property(nonatomic) AVCaptureVideoOrientation videoOrientation;
 @property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *inputPorts;

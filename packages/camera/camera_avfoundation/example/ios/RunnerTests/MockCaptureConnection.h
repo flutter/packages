@@ -8,6 +8,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MockCaptureConnection : NSObject <FLTCaptureConnection>
+@property(nonatomic, strong) AVCaptureConnection *connection;
 @property(nonatomic, assign) BOOL videoMirrored;
 @property(nonatomic, assign) AVCaptureVideoOrientation videoOrientation;
 @property(nonatomic, strong) NSArray<AVCaptureInputPort *> *inputPorts;

@@ -66,6 +66,10 @@
   return [self.input expectsMediaDataInRealTime];
 }
 
+- (void)setExpectsMediaDataInRealTime:(BOOL)expectsMediaDataInRealTime {
+  self.input.expectsMediaDataInRealTime = expectsMediaDataInRealTime;
+}
+
 - (BOOL)isReadyForMoreMediaData {
   return [self.input isReadyForMoreMediaData];
 }
@@ -86,7 +90,8 @@
   return self;
 }
 
-- (BOOL)appendPixelBuffer:(nonnull CVPixelBufferRef)pixelBuffer withPresentationTime:(CMTime)presentationTime { 
+- (BOOL)appendPixelBuffer:(nonnull CVPixelBufferRef)pixelBuffer
+     withPresentationTime:(CMTime)presentationTime {
   return [_adaptor appendPixelBuffer:pixelBuffer withPresentationTime:presentationTime];
 }
 

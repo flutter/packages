@@ -11,12 +11,12 @@
 
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
+#import "./include/camera_avfoundation/Protocols/FLTCaptureConnection.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
 #import "./include/camera_avfoundation/Protocols/FLTCapturePhotoSettings.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureSessionProtocol.h"
 #import "./include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
 #import "./include/camera_avfoundation/Protocols/FLTEventChannelProtocol.h"
-#import "./include/camera_avfoundation/Protocols/FLTCaptureConnection.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/messages.g.h"
 
@@ -63,15 +63,15 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) id<FLTCaptureSessionProtocol> videoCaptureSession;
 @property(readonly, nonatomic) id<FLTCaptureSessionProtocol> audioCaptureSession;
 
-@property(readonly, nonatomic) AVCaptureInput *captureVideoInput;
+@property(readonly, nonatomic) id<FLTCaptureInput> captureVideoInput;
 /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
 /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
 @property(readwrite, nonatomic) CVPixelBufferRef latestPixelBuffer;
 @property(readonly, nonatomic) CGSize captureSize;
 @property(strong, nonatomic) id<FLTAssetWriter> videoWriter;
-@property(strong, nonatomic) AVAssetWriterInput *videoWriterInput;
-@property(strong, nonatomic) AVAssetWriterInput *audioWriterInput;
-@property(strong, nonatomic) AVAssetWriterInputPixelBufferAdaptor *assetWriterPixelBufferAdaptor;
+@property(strong, nonatomic) id<FLTAssetWriterInput> videoWriterInput;
+@property(strong, nonatomic) id<FLTAssetWriterInput> audioWriterInput;
+@property(strong, nonatomic) id<FLTPixelBufferAdaptor> assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(strong, nonatomic) NSString *videoRecordingPath;
@@ -94,7 +94,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(assign, nonatomic) CMTime videoTimeOffset;
 @property(assign, nonatomic) CMTime audioTimeOffset;
 @property(nonatomic) CMMotionManager *motionManager;
-@property AVAssetWriterInputPixelBufferAdaptor *videoAdaptor;
+@property id<FLTPixelBufferAdaptor> videoAdaptor;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
 /// The queue on which `latestPixelBuffer` property is accessed.
@@ -109,7 +109,9 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
+@property(nonatomic, copy) CaptureDeviceFactory audioCaptureDeviceFactory;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
+@property(nonatomic, copy) PixelBufferAdaptorFactory pixelBufferAdaptorFactory;
 @property(readonly, nonatomic) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 /// Reports the given error message to the Dart side of the plugin.
 ///
@@ -135,9 +137,9 @@ NSString *const errorMethod = @"error";
 //               mediaSettings:mediaSettings
 //      mediaSettingsAVWrapper:mediaSettingsAVWrapper
 //                 orientation:orientation
-//         videoCaptureSession:[[FLTDefaultCaptureSession alloc] initWithCaptureSession:videoSession]
-//         audioCaptureSession:[[FLTDefaultCaptureSession alloc] initWithCaptureSession:audioSession]
-//         captureSessionQueue:captureSessionQueue
+//         videoCaptureSession:[[FLTDefaultCaptureSession alloc]
+//         initWithCaptureSession:videoSession] audioCaptureSession:[[FLTDefaultCaptureSession
+//         alloc] initWithCaptureSession:audioSession] captureSessionQueue:captureSessionQueue
 //                       error:error];
 //}
 
@@ -164,9 +166,10 @@ NSString *const errorMethod = @"error";
 //      }
 //      capturePhotoOutput:[[FLTDefaultCapturePhotoOutput alloc]
 //                             initWithPhotoOutput:[AVCapturePhotoOutput new]]
-//                  assetWriterFactory:^id<FLTAssetWriter> _Nonnull(NSURL * _Nonnull url, AVFileType _Nonnull fileType, NSError * _Nullable __autoreleasing * _Nullable error) {
+//                  assetWriterFactory:^id<FLTAssetWriter> _Nonnull(NSURL * _Nonnull url, AVFileType
+//                  _Nonnull fileType, NSError * _Nullable __autoreleasing * _Nullable error) {
 //    return [[FLTDefaultAssetWriter alloc] initWithURL:url fileType:fileType error:error];
-//    
+//
 //  } error:error
 //  ];
 //}
@@ -175,7 +178,7 @@ NSString *const errorMethod = @"error";
 static double bestFrameRateForFormat(id<FLTCaptureDeviceFormat> format, double targetFrameRate) {
   double bestFrameRate = 0;
   double minDistance = DBL_MAX;
-  for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+  for (id<FLTFrameRateRange> range in format.videoSupportedFrameRateRanges) {
     double frameRate = MIN(MAX(targetFrameRate, range.minFrameRate), range.maxFrameRate);
     double distance = fabs(frameRate - targetFrameRate);
     if (distance < minDistance) {
@@ -231,9 +234,11 @@ static void selectBestFormatForRequestedFrameRate(
                   audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+            audioCaptureDeviceFactory:(CaptureDeviceFactory)audioCaptureDeviceFactory
              videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
                    capturePhotoOutput:(id<FLTCapturePhotoOutput>)capturePhotoOutput
                    assetWriterFactory:(AssetWriterFactory)assetWriterFactory
+            pixelBufferAdaptorFactory:(PixelBufferAdaptorFactory)pixelBufferAdaptorFactory
                                 error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -248,6 +253,7 @@ static void selectBestFormatForRequestedFrameRate(
   _audioCaptureSession = audioCaptureSession;
   _captureDeviceFactory = captureDeviceFactory;
   _captureDevice = captureDeviceFactory();
+  _audioCaptureDeviceFactory = audioCaptureDeviceFactory;
   _videoDimensionsForFormat = videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FCPPlatformFlashModeAuto : FCPPlatformFlashModeOff;
   _exposureMode = FCPPlatformExposureModeAuto;
@@ -258,6 +264,7 @@ static void selectBestFormatForRequestedFrameRate(
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
   _fileFormat = FCPPlatformImageFileFormatJpeg;
   _assetWriterFactory = assetWriterFactory;
+  _pixelBufferAdaptorFactory = pixelBufferAdaptorFactory;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -273,13 +280,13 @@ static void selectBestFormatForRequestedFrameRate(
     return nil;
   }
 
-  [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
+  [_videoCaptureSession addInputWithNoConnections:_captureVideoInput.input];
   [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
   [_videoCaptureSession addConnection:connection];
 
   _capturePhotoOutput = capturePhotoOutput;
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
-  [_videoCaptureSession addOutput:_capturePhotoOutput];
+  [_videoCaptureSession addOutput:_capturePhotoOutput.photoOutput];
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
@@ -417,7 +424,7 @@ static void selectBestFormatForRequestedFrameRate(
                                         ? _lockedCaptureOrientation
                                         : _deviceOrientation;
 
-  [self updateOrientation:orientation forCaptureOutput:_capturePhotoOutput];
+  [self updateOrientation:orientation forCaptureOutput:_capturePhotoOutput.photoOutput];
   [self updateOrientation:orientation forCaptureOutput:_captureVideoOutput];
 }
 
@@ -552,8 +559,7 @@ static void selectBestFormatForRequestedFrameRate(
       if (bestFormat) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
         if ([_captureDevice lockForConfiguration:NULL]) {
-          // Set the best device format found and finish the device configuration.
-          _captureDevice.activeFormat = bestFormat;
+          // Set the best device formaxRQX= bestFormat;
           [_captureDevice unlockForConfiguration];
           break;
         }
@@ -776,7 +782,7 @@ static void selectBestFormatForRequestedFrameRate(
       CMTime nextSampleTime = CMTimeSubtract(_lastVideoSampleTime, _videoTimeOffset);
       // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
       // https://github.com/flutter/flutter/issues/132073
-      if (_videoWriterInput.readyForMoreMediaData) {
+      if (_videoWriterInput.isReadyForMoreMediaData) {
         [_videoAdaptor appendPixelBuffer:nextBuffer withPresentationTime:nextSampleTime];
       }
     } else {
@@ -835,7 +841,7 @@ static void selectBestFormatForRequestedFrameRate(
     }
     return;
   }
-  if (_videoWriterInput.readyForMoreMediaData) {
+  if (_videoWriterInput.isReadyForMoreMediaData) {
     if (![_videoWriterInput appendSampleBuffer:sampleBuffer]) {
       [self reportErrorMessage:@"Unable to write to video input"];
     }
@@ -849,7 +855,7 @@ static void selectBestFormatForRequestedFrameRate(
     }
     return;
   }
-  if (_audioWriterInput.readyForMoreMediaData) {
+  if (_audioWriterInput.isReadyForMoreMediaData) {
     if (![_audioWriterInput appendSampleBuffer:sampleBuffer]) {
       [self reportErrorMessage:@"Unable to write to audio input"];
     }
@@ -1315,8 +1321,8 @@ static void selectBestFormatForRequestedFrameRate(
     [self setUpCaptureSessionForAudio];
   }
 
-  _videoWriter =_assetWriterFactory(outputURL, AVFileTypeMPEG4, &error);
-  
+  _videoWriter = _assetWriterFactory(outputURL, AVFileTypeMPEG4, &error);
+
   NSParameterAssert(_videoWriter);
   if (error) {
     [self reportErrorMessage:error.description];
@@ -1344,11 +1350,8 @@ static void selectBestFormatForRequestedFrameRate(
   _videoWriterInput =
       [_mediaSettingsAVWrapper assetWriterVideoInputWithOutputSettings:videoSettings];
 
-  _videoAdaptor = [AVAssetWriterInputPixelBufferAdaptor
-      assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
-                                 sourcePixelBufferAttributes:@{
-                                   (NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)
-                                 }];
+  _videoAdaptor = _pixelBufferAdaptorFactory(
+      _videoWriterInput, @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)});
 
   NSParameterAssert(_videoWriterInput);
 
@@ -1401,17 +1404,16 @@ static void selectBestFormatForRequestedFrameRate(
   NSError *error = nil;
   // Create a device input with the device and add it to the session.
   // Setup the audio input.
-  AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-  AVCaptureDeviceInput *audioInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice
-                                                                           error:&error];
+  id<FLTCaptureDeviceControlling> audioDevice = _audioCaptureDeviceFactory();
+  id<FLTCaptureInput> audioInput = [audioDevice createInput:&error];
   if (error) {
     [self reportErrorMessage:error.description];
   }
   // Setup the audio output.
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
 
-  if ([_audioCaptureSession canAddInput:audioInput]) {
-    [_audioCaptureSession addInput:audioInput];
+  if ([_audioCaptureSession canAddInput:audioInput.input]) {
+    [_audioCaptureSession addInput:audioInput.input];
 
     if ([_audioCaptureSession canAddOutput:_audioOutput]) {
       [_audioCaptureSession addOutput:_audioOutput];

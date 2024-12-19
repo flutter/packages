@@ -7,10 +7,10 @@
 @import Flutter;
 
 #import "CameraProperties.h"
+#import "FLTAssetWriter.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTCaptureDeviceControlling.h"
 #import "FLTCapturePhotoOutput.h"
-#import "FLTAssetWriter.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -19,7 +19,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// Used in tests to inject a device into FLTCam.
 typedef id<FLTCaptureDeviceControlling> _Nonnull (^CaptureDeviceFactory)(void);
 
-typedef id<FLTAssetWriter> _Nonnull (^AssetWriterFactory)(NSURL*, AVFileType, NSError * _Nullable * _Nullable);
+typedef id<FLTCaptureDeviceControlling> _Nonnull (^AudioCaptureDeviceFactory)(void);
+
+typedef id<FLTAssetWriter> _Nonnull (^AssetWriterFactory)(NSURL *, AVFileType,
+                                                          NSError *_Nullable *_Nullable);
+
+typedef id<FLTPixelBufferAdaptor> _Nonnull (^PixelBufferAdaptorFactory)(
+    id<FLTAssetWriterInput>, NSDictionary<NSString *, id> *_Nullable);
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
@@ -80,9 +86,11 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(id<FLTCaptureDeviceFormat>
                   audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+            audioCaptureDeviceFactory:(CaptureDeviceFactory)audioCaptureDeviceFactory
              videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
                    capturePhotoOutput:(id<FLTCapturePhotoOutput>)capturePhotoOutput
                    assetWriterFactory:(AssetWriterFactory)assetWriterFactory
+            pixelBufferAdaptorFactory:(PixelBufferAdaptorFactory)pixelBufferAdaptorFactory
                                 error:(NSError **)error;
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.

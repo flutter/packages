@@ -38,13 +38,26 @@
   [_photoOutput capturePhotoWithSettings:settings.settings delegate:delegate];
 }
 
-- (nullable AVCaptureConnection *)connectionWithMediaType:(nonnull AVMediaType)mediaType { 
+- (nullable AVCaptureConnection *)connectionWithMediaType:(nonnull AVMediaType)mediaType {
   return [_photoOutput connectionWithMediaType:mediaType];
 }
 
-
 - (NSArray<NSNumber *> *)supportedFlashModes {
   return _photoOutput.supportedFlashModes;
+}
+
+- (void)forwardInvocation:(NSInvocation *)invocation {
+  NSLog(@"Selector being called: %@", NSStringFromSelector([invocation selector]));
+  if ([_photoOutput respondsToSelector:[invocation selector]]) {
+    [invocation invokeWithTarget:_photoOutput];
+  } else {
+    [super forwardInvocation:invocation];
+  }
+}
+
+- (BOOL)respondsToSelector:(SEL)aSelector {
+  NSLog(@"Checking selector: %@", NSStringFromSelector(aSelector));
+  return [super respondsToSelector:aSelector] || [_photoOutput respondsToSelector:aSelector];
 }
 
 @end

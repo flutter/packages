@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTAssetWriter <NSObject>
 @property(nonatomic, readonly) AVAssetWriterStatus status;
-@property (readonly, nullable) NSError *error;
+@property(readonly, nullable) NSError *error;
 - (BOOL)startWriting;
 - (void)finishWritingWithCompletionHandler:(void (^)(void))handler;
 - (void)startSessionAtSourceTime:(CMTime)startTime;
@@ -17,14 +17,15 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol FLTAssetWriterInput <NSObject>
-@property(nonatomic, readonly) BOOL expectsMediaDataInRealTime;
+@property(nonatomic, readonly) AVAssetWriterInput *input;
+@property(nonatomic, assign) BOOL expectsMediaDataInRealTime;
 @property(nonatomic, readonly) BOOL isReadyForMoreMediaData;
 - (BOOL)appendSampleBuffer:(CMSampleBufferRef)sampleBuffer;
 @end
 
 @protocol FLTPixelBufferAdaptor <NSObject>
 - (BOOL)appendPixelBuffer:(CVPixelBufferRef)pixelBuffer
-    withPresentationTime:(CMTime)presentationTime;
+     withPresentationTime:(CMTime)presentationTime;
 @end
 
 @interface FLTDefaultAssetWriter : NSObject <FLTAssetWriter>

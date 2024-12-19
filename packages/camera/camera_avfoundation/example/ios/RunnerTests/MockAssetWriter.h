@@ -14,6 +14,7 @@
 @end
 
 @interface MockAssetWriterInput : NSObject <FLTAssetWriterInput>
+@property(nonatomic, strong) AVAssetWriterInput *input;
 @property(nonatomic, assign) BOOL isReadyForMoreMediaData;
 @property(nonatomic, assign) BOOL expectsMediaDataInRealTime;
 @property(nonatomic, copy) BOOL (^appendSampleBufferStub)(CMSampleBufferRef);

@@ -9,7 +9,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTCapturePhotoSettings <NSObject>
 @property(nonatomic, readonly) AVCapturePhotoSettings *settings;
-
 @property(readonly, nonatomic) int64_t uniqueID;
 @property(nonatomic, copy, readonly) NSDictionary<NSString *, id> *format;
 

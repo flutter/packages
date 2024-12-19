@@ -114,7 +114,7 @@
   return self.exposureModeSupported;
 }
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
+- (id<FLTCaptureInput>)createInput:(NSError *_Nullable *_Nullable)error {
   if (self.createInputStub) {
     self.createInputStub(error);
   }
@@ -124,6 +124,7 @@
 @end
 
 @implementation MockCaptureDeviceFormat
+
 - (void)dealloc {
   if (_formatDescription) {
     CFRelease(_formatDescription);
@@ -139,6 +140,22 @@
   return self;
 }
 
-@synthesize format;
+@end
 
+@implementation MockFrameRateRange
+
+- (instancetype)initWithMinFrameRate:(float)minFrameRate maxFrameRate:(float)maxFrameRate {
+  self = [super init];
+  if (self) {
+    _minFrameRate = minFrameRate;
+    _maxFrameRate = maxFrameRate;
+  }
+  return self;
+}
+
+@end
+
+@implementation MockCaptureInput
+@synthesize ports;
+@synthesize input;
 @end

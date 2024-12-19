@@ -24,10 +24,8 @@
 - (void)startSessionAtSourceTime:(CMTime)startTime {
 }
 
-- (void)addInput:(nonnull AVAssetWriterInput *)input { 
-  
+- (void)addInput:(nonnull AVAssetWriterInput *)input {
 }
-
 
 @end
 
@@ -41,7 +39,8 @@
 @end
 
 @implementation MockPixelBufferAdaptor
-- (BOOL)appendPixelBuffer:(nonnull CVPixelBufferRef)pixelBuffer withPresentationTime:(CMTime)presentationTime {
+- (BOOL)appendPixelBuffer:(nonnull CVPixelBufferRef)pixelBuffer
+     withPresentationTime:(CMTime)presentationTime {
   if (self.appendPixelBufferStub) {
     return self.appendPixelBufferStub(pixelBuffer, presentationTime);
   }

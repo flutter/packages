@@ -69,16 +69,27 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) void (^setActiveVideoMaxFrameDurationStub)(CMTime duration);
 
 // Input Creation
-@property(nonatomic, strong) AVCaptureInput *inputToReturn;
+@property(nonatomic, strong) id<FLTCaptureInput> inputToReturn;
 @property(nonatomic, copy) void (^createInputStub)(NSError **error);
 
 @end
 
 @interface MockCaptureDeviceFormat : NSObject <FLTCaptureDeviceFormat>
-@property(nonatomic, strong) NSArray<AVFrameRateRange *> *videoSupportedFrameRateRanges;
+@property(nonatomic, strong) NSArray<id<FLTFrameRateRange>> *videoSupportedFrameRateRanges;
 @property(nonatomic, assign) CMFormatDescriptionRef formatDescription;
+@property(nonatomic, strong) AVCaptureDeviceFormat *format;
 
 - (instancetype)initWithDimensions:(CMVideoDimensions)dimensions;
+@end
+
+@interface MockFrameRateRange : NSObject <FLTFrameRateRange>
+- (instancetype)initWithMinFrameRate:(float)minFrameRate maxFrameRate:(float)maxFrameRate;
+@property(nonatomic, readwrite) float minFrameRate;
+@property(nonatomic, readwrite) float maxFrameRate;
+@end
+
+@interface MockCaptureInput : NSObject <FLTCaptureInput>
+@property(nonatomic, strong) NSArray<AVCaptureInputPort *> *ports;
 @end
 
 NS_ASSUME_NONNULL_END

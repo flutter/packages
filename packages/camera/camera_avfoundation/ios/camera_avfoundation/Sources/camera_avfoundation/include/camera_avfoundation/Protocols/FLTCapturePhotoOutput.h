@@ -11,6 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTCapturePhotoOutput <NSObject>
+@property(nonatomic, readonly) AVCapturePhotoOutput *photoOutput;
 @property(nonatomic, readonly) NSArray<AVVideoCodecType> *availablePhotoCodecTypes;
 @property(nonatomic, assign, getter=isHighResolutionCaptureEnabled)
     BOOL highResolutionCaptureEnabled;
@@ -18,13 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)capturePhotoWithSettings:(id<FLTCapturePhotoSettings>)settings
                         delegate:(id<AVCapturePhotoCaptureDelegate>)delegate;
-
 - (nullable AVCaptureConnection *)connectionWithMediaType:(AVMediaType)mediaType;
 @end
 
 @interface FLTDefaultCapturePhotoOutput : NSObject <FLTCapturePhotoOutput>
 - (instancetype)initWithPhotoOutput:(AVCapturePhotoOutput *)photoOutput;
-@property(nonatomic, readonly) AVCapturePhotoOutput *photoOutput;
 @end
 
 NS_ASSUME_NONNULL_END

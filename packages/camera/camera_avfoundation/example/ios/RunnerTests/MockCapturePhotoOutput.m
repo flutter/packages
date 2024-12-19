@@ -11,4 +11,9 @@
     self.capturePhotoWithSettingsStub(settings, delegate);
   }
 }
+
+- (nullable AVCaptureConnection *)connectionWithMediaType:(nonnull AVMediaType)mediaType {
+  return nil;
+}
+
 @end

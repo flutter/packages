@@ -48,7 +48,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
       deviceDiscovery:[[FLTDefaultCameraDeviceDiscovery alloc] init]
       sessionFactory:^id<FLTCaptureSessionProtocol>(void) {
-        return [[FLTDefaultCaptureSession alloc] init];
+        return [[FLTDefaultCaptureSession alloc]
+            initWithCaptureSession:[[AVCaptureSession alloc] init]];
       }
       deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
         AVCaptureDevice *device = [AVCaptureDevice deviceWithUniqueID:name];
@@ -510,14 +511,28 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       captureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull {
         return weakSelf.captureDeviceFactory(name);
       }
+      audioCaptureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull {
+        return [[FLTDefaultCaptureDeviceController alloc]
+            initWithDevice:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio]];
+      }
       videoDimensionsForFormat:^CMVideoDimensions(id<FLTCaptureDeviceFormat> _Nonnull format) {
-        return CMVideoFormatDescriptionGetDimensions(format.format.formatDescription);
+        return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
       }
       capturePhotoOutput:[[FLTDefaultCapturePhotoOutput alloc]
                              initWithPhotoOutput:[AVCapturePhotoOutput new]]
-     assetWriterFactory:^id<FLTAssetWriter> _Nonnull(NSURL * _Nonnull url,  AVFileType _Nonnull fileType, NSError * _Nullable __autoreleasing * _Nullable error) {
+      assetWriterFactory:^id<FLTAssetWriter> _Nonnull(
+          NSURL *_Nonnull url, AVFileType _Nonnull fileType,
+          NSError *_Nullable __autoreleasing *_Nullable error) {
         return [[FLTDefaultAssetWriter alloc] initWithURL:url fileType:fileType error:error];
-    }
+      }
+      pixelBufferAdaptorFactory:^id<FLTPixelBufferAdaptor> _Nonnull(
+          id<FLTAssetWriterInput> _Nonnull assetWriterInput,
+          NSDictionary<NSString *, id> *_Nullable sourcePixelBufferAttributes) {
+        return [[FLTDefaultPixelBufferAdaptor alloc]
+            initWithAdaptor:[[AVAssetWriterInputPixelBufferAdaptor alloc]
+                                   initWithAssetWriterInput:assetWriterInput.input
+                                sourcePixelBufferAttributes:sourcePixelBufferAttributes]];
+      }
       error:&error];
 
   if (error) {

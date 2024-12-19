@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "../include/camera_avfoundation/Protocols/FLTCaptureSessionProtocol.h"
+#import "../include/camera_avfoundation/Protocols/FLTCaptureConnection.h"
 
 @interface FLTDefaultCaptureSession ()
 @property(nonatomic, strong) AVCaptureSession *captureSession;
@@ -38,24 +39,24 @@
   return [_captureSession canSetSessionPreset:preset];
 }
 
-- (void)addInputWithNoConnections:(AVCaptureInput *)input {
-  [_captureSession addInputWithNoConnections:input];
+- (void)addInputWithNoConnections:(id<FLTCaptureInput>)input {
+  [_captureSession addInputWithNoConnections:input.input];
 }
 
 - (void)addOutputWithNoConnections:(AVCaptureOutput *)output {
   [_captureSession addOutputWithNoConnections:output];
 }
 
-- (void)addConnection:(AVCaptureConnection *)connection {
-  [_captureSession addConnection:connection];
+- (void)addConnection:(id<FLTCaptureConnection>)connection {
+  [_captureSession addConnection:connection.connection];
 }
 
 - (void)addOutput:(AVCaptureOutput *)output {
   [_captureSession addOutput:output];
 }
 
-- (void)removeInput:(AVCaptureInput *)input {
-  [_captureSession removeInput:input];
+- (void)removeInput:(id<FLTCaptureInput>)input {
+  [_captureSession removeInput:input.input];
 }
 
 - (void)removeOutput:(AVCaptureOutput *)output {
@@ -78,20 +79,20 @@
   return _captureSession.outputs;
 }
 
-- (BOOL)canAddInput:(AVCaptureInput *)input {
-  return [_captureSession canAddInput:input];
+- (BOOL)canAddInput:(id<FLTCaptureInput>)input {
+  return [_captureSession canAddInput:input.input];
 }
 
 - (BOOL)canAddOutput:(AVCaptureOutput *)output {
   return [_captureSession canAddOutput:output];
 }
 
-- (BOOL)canAddConnection:(AVCaptureConnection *)connection {
-  return [_captureSession canAddConnection:connection];
+- (BOOL)canAddConnection:(id<FLTCaptureConnection>)connection {
+  return [_captureSession canAddConnection:connection.connection];
 }
 
-- (void)addInput:(AVCaptureInput *)input {
-  [_captureSession addInput:input];
+- (void)addInput:(id<FLTCaptureInput>)input {
+  [_captureSession addInput:input.input];
 }
 
 @end

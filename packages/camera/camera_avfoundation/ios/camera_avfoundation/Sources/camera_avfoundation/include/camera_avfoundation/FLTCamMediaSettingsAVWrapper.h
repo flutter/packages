@@ -5,6 +5,7 @@
 @import AVFoundation;
 @import Foundation;
 
+#import "FLTAssetWriter.h"
 #import "FLTCaptureDeviceControlling.h"
 #import "FLTCaptureSessionProtocol.h"
 
@@ -81,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outputSettings The settings used for encoding the audio appended to the output.
  * @result An instance of `AVAssetWriterInput`.
  */
-- (AVAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
+- (id<FLTAssetWriterInput>)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings;
 
 /**
@@ -91,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outputSettings The settings used for encoding the video appended to the output.
  * @result An instance of `AVAssetWriterInput`.
  */
-- (AVAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
+- (id<FLTAssetWriterInput>)assetWriterVideoInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings;
 
 /**
@@ -100,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param writerInput The `AVAssetWriterInput` object to be added.
  * @param writer The `AVAssetWriter` object.
  */
-- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer;
+- (void)addInput:(id<FLTAssetWriterInput>)writerInput toAssetWriter:(AVAssetWriter *)writer;
 
 /**
  * @method recommendedVideoSettingsForAssetWriterWithFileType:forOutput:

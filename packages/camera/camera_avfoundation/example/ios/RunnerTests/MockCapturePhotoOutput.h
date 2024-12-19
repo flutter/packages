@@ -9,4 +9,8 @@
 @property(nonatomic, copy) void (^capturePhotoWithSettingsStub)
     (id<FLTCapturePhotoSettings>, id<AVCapturePhotoCaptureDelegate>);
 @property(nonatomic, strong) NSArray<AVVideoCodecType> *availablePhotoCodecTypes;
+@property(nonatomic, strong) AVCapturePhotoOutput *photoOutput;
+@property(nonatomic, assign, getter=isHighResolutionCaptureEnabled)
+    BOOL highResolutionCaptureEnabled;
+@property(nonatomic, strong) NSArray<NSNumber *> *supportedFlashModes;
 @end

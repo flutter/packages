@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 #import "FLTCam.h"
+#import "FLTCaptureConnection.h"
 #import "FLTCaptureDeviceControlling.h"
 #import "FLTCapturePhotoOutput.h"
 #import "FLTCaptureSessionProtocol.h"
 #import "FLTSavePhotoDelegate.h"
-#import "FLTCaptureConnection.h"
 
 @interface FLTImageStreamHandler : NSObject <FlutterStreamHandler>
 - (instancetype)initWithCaptureSessionQueue:(dispatch_queue_t)captureSessionQueue;

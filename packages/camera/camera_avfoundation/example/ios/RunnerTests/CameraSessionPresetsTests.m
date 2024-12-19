@@ -22,19 +22,12 @@
 - (void)testResolutionPresetWithBestFormat_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPresetInputPriority;
   XCTestExpectation *presetExpectation = [self expectationWithDescription:@"Expected preset set"];
-  XCTestExpectation *formatExpectation = [self expectationWithDescription:@"Expected format set"];
 
   MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
   MockCaptureDeviceController *captureDeviceMock = [[MockCaptureDeviceController alloc] init];
   MockCaptureDeviceFormat *fakeFormat = [[MockCaptureDeviceFormat alloc] init];
   captureDeviceMock.formats = @[ fakeFormat ];
   captureDeviceMock.activeFormat = fakeFormat;
-
-  captureDeviceMock.setActiveFormatStub = ^(id<FLTCaptureDeviceFormat> format) {
-    if (format == fakeFormat) {
-      [formatExpectation fulfill];
-    }
-  };
 
   videoSessionMock.setSessionPresetStub = ^(AVCaptureSessionPreset _Nonnull preset) {
     if (preset == expectedPreset) {
@@ -44,7 +37,7 @@
 
   FLTCreateCamWithVideoDimensionsForFormat(videoSessionMock, FCPPlatformResolutionPresetMax,
                                            captureDeviceMock,
-                                           ^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+                                           ^CMVideoDimensions(id<FLTCaptureDeviceFormat> format) {
                                              CMVideoDimensions videoDimensions;
                                              videoDimensions.width = 1;
                                              videoDimensions.height = 1;

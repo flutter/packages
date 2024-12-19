@@ -4,6 +4,8 @@
 
 @import AVFoundation;
 
+#import "FLTCaptureDeviceControlling.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTCaptureSessionProtocol <NSObject>
@@ -17,12 +19,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addOutputWithNoConnections:(AVCaptureOutput *)output;
 - (void)addConnection:(AVCaptureConnection *)connection;
 - (void)addOutput:(AVCaptureOutput *)output;
-- (void)removeInput:(AVCaptureInput *)input;
+- (void)removeInput:(id<FLTCaptureInput>)input;
 - (void)removeOutput:(AVCaptureOutput *)output;
-- (BOOL)canAddInput:(AVCaptureInput *)input;
+- (BOOL)canAddInput:(id<FLTCaptureInput>)input;
 - (BOOL)canAddOutput:(AVCaptureOutput *)output;
 - (BOOL)canAddConnection:(AVCaptureConnection *)connection;
-- (void)addInput:(AVCaptureInput *)input;
+- (void)addInput:(id<FLTCaptureInput>)input;
 @property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
 @property(nonatomic, readonly) NSArray<AVCaptureInput *> *inputs;
 @property(nonatomic, readonly) NSArray<AVCaptureOutput *> *outputs;

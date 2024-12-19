@@ -7,10 +7,20 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol FLTFrameRateRange <NSObject>
+@property(readonly, nonatomic) float minFrameRate;
+@property(readonly, nonatomic) float maxFrameRate;
+@end
+
 @protocol FLTCaptureDeviceFormat <NSObject>
-@property(nonatomic, readonly) CMFormatDescriptionRef formatDescription;
-@property(nonatomic, readonly) NSArray<AVFrameRateRange *> *videoSupportedFrameRateRanges;
 @property(nonatomic, readonly) AVCaptureDeviceFormat *format;
+@property(nonatomic, readonly) CMFormatDescriptionRef formatDescription;
+@property(nonatomic, readonly) NSArray<id<FLTFrameRateRange>> *videoSupportedFrameRateRanges;
+@end
+
+@protocol FLTCaptureInput <NSObject>
+@property(nonatomic, readonly) AVCaptureInput *input;
+@property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *ports;
 @end
 
 @protocol FLTCaptureDeviceControlling <NSObject>
@@ -69,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (CMTime)activeVideoMaxFrameDuration;
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration;
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error;
+- (id<FLTCaptureInput>)createInput:(NSError *_Nullable *_Nullable)error;
 
 @end
 
@@ -79,6 +89,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTDefaultCaptureDeviceFormat : NSObject <FLTCaptureDeviceFormat>
 - (instancetype)initWithFormat:(AVCaptureDeviceFormat *)format;
+@end
+
+@interface FLTDefaultFrameRateRange : NSObject <FLTFrameRateRange>
+- (instancetype)initWithRange:(AVFrameRateRange *)range;
+@end
+
+@interface FLTDefaultCaptureInput : NSObject <FLTCaptureInput>
+- (instancetype)initWithInput:(AVCaptureInput *)input;
 @end
 
 NS_ASSUME_NONNULL_END

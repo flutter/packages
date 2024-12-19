@@ -6,6 +6,7 @@
 @import AVFoundation;
 
 @interface MockCapturePhotoSettings : NSObject <FLTCapturePhotoSettings>
+@property(nonatomic, strong) AVCapturePhotoSettings *settings;
 @property(nonatomic, assign) int64_t uniqueID;
 @property(nonatomic, copy) NSDictionary<NSString *, id> *format;
 @property(nonatomic, assign) AVCaptureFlashMode flashMode;

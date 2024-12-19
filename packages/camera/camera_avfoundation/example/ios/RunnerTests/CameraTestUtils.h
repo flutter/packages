@@ -22,7 +22,8 @@ extern FLTCam *_Nullable FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
     FLTCamMediaSettingsAVWrapper *_Nullable mediaSettingsAVWrapper,
     CaptureDeviceFactory _Nullable captureDeviceFactory,
     id<FLTCapturePhotoOutput> _Nullable capturePhotoOutput,
-    id<FLTAssetWriter> _Nullable assetWriter);
+    id<FLTAssetWriter> _Nullable assetWriter,
+    id<FLTPixelBufferAdaptor> _Nullable pixelBufferAdaptor);
 
 extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue);
 

@@ -170,20 +170,23 @@
   self.device.activeVideoMaxFrameDuration = duration;
 }
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
-  return [AVCaptureDeviceInput deviceInputWithDevice:_device error:error];
+- (id<FLTCaptureInput>)createInput:(NSError *_Nullable *_Nullable)error {
+  return [[FLTDefaultCaptureInput alloc]
+      initWithInput:[AVCaptureDeviceInput deviceInputWithDevice:_device error:error]];
 }
 
 @end
 
-@implementation FLTDefaultCaptureDeviceFormat {
-  id<FLTCaptureDeviceFormat> _format;
-}
+@interface FLTDefaultCaptureDeviceFormat ()
+@property(nonatomic, strong) AVCaptureDeviceFormat *format;
+@end
 
-- (instancetype)initWithFormat:(id<FLTCaptureDeviceFormat>)format {
+@implementation FLTDefaultCaptureDeviceFormat
+
+- (instancetype)initWithFormat:(AVCaptureDeviceFormat *)format {
   self = [super init];
   if (self) {
-    format = format;
+    _format = format;
   }
   return self;
 }
@@ -192,10 +195,57 @@
   return _format.formatDescription;
 }
 
-- (NSArray<AVFrameRateRange *> *)videoSupportedFrameRateRanges {
-  return _format.videoSupportedFrameRateRanges;
+- (NSArray<id<FLTFrameRateRange>> *)videoSupportedFrameRateRanges {
+  NSMutableArray<id<FLTFrameRateRange>> *ranges = [NSMutableArray array];
+  for (AVFrameRateRange *range in _format.videoSupportedFrameRateRanges) {
+    FLTDefaultFrameRateRange *wrapper = [[FLTDefaultFrameRateRange alloc] initWithRange:range];
+    [ranges addObject:wrapper];
+  }
+  return ranges;
 }
 
-@synthesize format;
+@end
+
+@interface FLTDefaultFrameRateRange ()
+@property(nonatomic, strong) AVFrameRateRange *range;
+@end
+
+@implementation FLTDefaultFrameRateRange
+
+- (instancetype)initWithRange:(AVFrameRateRange *)range {
+  self = [super init];
+  if (self) {
+    _range = range;
+  }
+  return self;
+}
+
+- (float)minFrameRate {
+  return self.range.minFrameRate;
+}
+
+- (float)maxFrameRate {
+  return self.range.maxFrameRate;
+}
+
+@end
+
+@interface FLTDefaultCaptureInput ()
+@property(nonatomic, strong) AVCaptureInput *input;
+@end
+
+@implementation FLTDefaultCaptureInput
+
+- (instancetype)initWithInput:(AVCaptureInput *)input {
+  self = [super init];
+  if (self) {
+    _input = input;
+  }
+  return self;
+}
+
+- (NSArray<AVCaptureInputPort *> *)ports {
+  return self.input.ports;
+}
 
 @end

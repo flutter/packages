@@ -4,31 +4,33 @@
 
 #import "../include/camera_avfoundation/Protocols/FLTCapturePhotoSettings.h"
 
+@interface FLTDefaultCapturePhotoSettings ()
+@property(nonatomic, strong) AVCapturePhotoSettings *settings;
+@end
+
 @implementation FLTDefaultCapturePhotoSettings
 - (instancetype)initWithSettings:(AVCapturePhotoSettings *)settings {
   self = [super init];
   if (self) {
-    settings = settings;
+    _settings = settings;
   }
   return self;
 }
 
 - (int64_t)uniqueID {
-  return settings.uniqueID;
+  return _settings.uniqueID;
 }
 
 - (NSDictionary<NSString *, id> *)format {
-  return settings.format;
+  return _settings.format;
 }
 
 - (void)setFlashMode:(AVCaptureFlashMode)flashMode {
-  [settings setFlashMode:flashMode];
+  [_settings setFlashMode:flashMode];
 }
 
 - (void)setHighResolutionPhotoEnabled:(BOOL)enabled {
-  [settings setHighResolutionPhotoEnabled:enabled];
+  [_settings setHighResolutionPhotoEnabled:enabled];
 }
-
-@synthesize settings;
 
 @end
