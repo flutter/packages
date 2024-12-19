@@ -43,11 +43,15 @@ class UIDelegateProxyAPITests: XCTestCase {
     let type: WKMediaCaptureType = .camera
 
     var resultDecision: WKPermissionDecision?
+    let callbackExpectation = expectation(description: "Wait for callback.")
     instance.webView(
       webView, requestMediaCapturePermissionFor: origin, initiatedByFrame: frame, type: type
     ) { decision in
       resultDecision = decision
+      callbackExpectation.fulfill()
     }
+
+    wait(for: [callbackExpectation], timeout: 1.0)
 
     XCTAssertEqual(
       api.requestMediaCapturePermissionArgs, [webView, origin, frame, MediaCaptureType.camera])
@@ -78,11 +82,15 @@ class UIDelegateProxyAPITests: XCTestCase {
     let frame = TestFrameInfo()
 
     var confirmedResult: Bool?
+    let callbackExpectation = expectation(description: "Wait for callback.")
     instance.webView(
       webView, runJavaScriptConfirmPanelWithMessage: message, initiatedByFrame: frame
     ) { confirmed in
       confirmedResult = confirmed
+      callbackExpectation.fulfill()
     }
+
+    wait(for: [callbackExpectation], timeout: 1.0)
 
     XCTAssertEqual(api.runJavaScriptConfirmPanelArgs, [webView, message, frame])
     XCTAssertEqual(confirmedResult, true)
@@ -98,12 +106,16 @@ class UIDelegateProxyAPITests: XCTestCase {
     let frame = TestFrameInfo()
 
     var inputResult: String?
+    let callbackExpectation = expectation(description: "Wait for callback.")
     instance.webView(
       webView, runJavaScriptTextInputPanelWithPrompt: prompt, defaultText: defaultText,
       initiatedByFrame: frame
     ) { input in
       inputResult = input
+      callbackExpectation.fulfill()
     }
+
+    wait(for: [callbackExpectation], timeout: 1.0)
 
     XCTAssertEqual(api.runJavaScriptTextInputPanelArgs, [webView, prompt, defaultText, frame])
     XCTAssertEqual(inputResult, "myString2")

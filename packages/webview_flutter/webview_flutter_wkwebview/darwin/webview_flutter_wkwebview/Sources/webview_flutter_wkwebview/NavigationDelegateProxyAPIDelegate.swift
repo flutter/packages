@@ -84,11 +84,11 @@ extension NavigationDelegateImpl {
     _ webView: WKWebView, decidePolicyFor navigationAction: WebKit.WKNavigationAction,
     decisionHandler: @escaping @MainActor (WebKit.WKNavigationActionPolicy) -> Void
   ) {
-    registrar.dispatchOnMainThread { _ in
+    registrar.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationAction(
         pigeonInstance: self, webView: webView, navigationAction: navigationAction
       ) { result in
-        self.registrar.dispatchOnMainThread { onFailure in
+        DispatchQueue.main.async {
           switch result {
           case .success(let policy):
             switch policy {

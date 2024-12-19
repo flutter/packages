@@ -44,10 +44,14 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let webView = WKWebView(frame: .zero)
     let navigationAction = TestNavigationAction()
 
+    let callbackExpectation = expectation(description: "Wait for callback.")
     var result: WKNavigationActionPolicy?
     instance.webView(webView, decidePolicyFor: navigationAction) { policy in
       result = policy
+      callbackExpectation.fulfill()
     }
+
+    wait(for: [callbackExpectation], timeout: 1.0)
 
     XCTAssertEqual(api.decidePolicyForNavigationActionArgs, [webView, navigationAction])
     XCTAssertEqual(result, .allow)
@@ -61,9 +65,13 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let navigationResponse = TestNavigationResponse()
 
     var result: WKNavigationResponsePolicy?
+    let callbackExpectation = expectation(description: "Wait for callback.")
     instance.webView(webView, decidePolicyFor: navigationResponse) { policy in
       result = policy
+      callbackExpectation.fulfill()
     }
+
+    wait(for: [callbackExpectation], timeout: 1.0)
 
     XCTAssertEqual(api.decidePolicyForNavigationResponseArgs, [webView, navigationResponse])
     XCTAssertEqual(result, .cancel)
@@ -112,10 +120,14 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
     var dispositionResult: URLSession.AuthChallengeDisposition?
     var credentialResult: URLCredential?
+    let callbackExpectation = expectation(description: "Wait for callback.")
     instance.webView(webView, didReceive: challenge) { disposition, credential in
       dispositionResult = disposition
       credentialResult = credential
+      callbackExpectation.fulfill()
     }
+
+    wait(for: [callbackExpectation], timeout: 1.0)
 
     XCTAssertEqual(api.didReceiveAuthenticationChallengeArgs, [webView, challenge])
     XCTAssertEqual(dispositionResult, .useCredential)
