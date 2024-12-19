@@ -374,7 +374,7 @@ void main() {
           '/foobar2': (BuildContext context) => const Text('Internal route 2'),
         },
         home: Column(
-          children: [
+          children: <Widget>[
             WebLinkDelegate(TestLinkInfo(
               uri: uri1,
               target: LinkTarget.blank,

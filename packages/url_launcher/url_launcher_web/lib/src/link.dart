@@ -172,7 +172,7 @@ typedef TriggerLinkCallback = void Function(int viewId, html.MouseEvent? mouseEv
 /// 2. A DOM event signal. This signal indicates that a click or keyboard event
 ///    was received on the link's corresponding DOM element.
 ///
-/// These signals can arrive at any order depending on how the user triggers
+/// These signals can arrive in any order depending on how the user triggers
 /// the link.
 ///
 /// Each signal may be accompanied by a view ID. The view IDs, when present,
@@ -582,7 +582,7 @@ class LinkViewController extends PlatformViewController {
   ///
   /// Returns null if [target] is not a semantics element for one of our Links.
   static int? _getViewIdFromSemanticsLink(html.Element? target) {
-    // TODO: The whole <flutter-view> could be inside a shadow root. In that case,
+    // TODO(mdebbar): The whole <flutter-view> could be inside a shadow root. In that case,
     //       the target is always the shadow root (because we are listening on window).
     if (target == null) {
       return null;
