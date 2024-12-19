@@ -644,8 +644,10 @@ abstract class MapsApi {
   /// animation.
   void moveCamera(PlatformCameraUpdate cameraUpdate);
 
-  /// Moves the camera according to [cameraUpdate], animating the update.
-  void animateCamera(PlatformCameraUpdate cameraUpdate);
+  /// Moves the camera according to [cameraUpdate], animating the update using a
+  /// duration in milliseconds if provided.
+  void animateCamera(
+      PlatformCameraUpdate cameraUpdate, int? durationMilliseconds);
 
   /// Gets the current map zoom level.
   double getZoomLevel();
@@ -772,4 +774,5 @@ abstract class MapsInspectorApi {
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
   PlatformZoomRange getZoomRange();
   List<PlatformCluster> getClusters(String clusterManagerId);
+  PlatformCameraPosition getCameraPosition();
 }
