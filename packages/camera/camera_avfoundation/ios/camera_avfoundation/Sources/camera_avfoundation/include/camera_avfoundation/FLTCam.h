@@ -71,6 +71,7 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(id<FLTCaptureDeviceFormat>
                    capturePhotoOutput:(id<FLTCapturePhotoOutput>)capturePhotoOutput
                    assetWriterFactory:(AssetWriterFactory)assetWriterFactory
             pixelBufferAdaptorFactory:(PixelBufferAdaptorFactory)pixelBufferAdaptorFactory
+                 photoSettingsFactory:(id<FLTCapturePhotoSettingsFactory>)photoSettingsFactory
                                 error:(NSError **)error;
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.

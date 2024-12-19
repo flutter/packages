@@ -531,6 +531,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                                    initWithAssetWriterInput:assetWriterInput.input
                                 sourcePixelBufferAttributes:sourcePixelBufferAttributes]];
       }
+      photoSettingsFactory:[[FLTDefaultCapturePhotoSettingsFactory alloc] init]
       error:&error];
 
   if (error) {

@@ -10,6 +10,7 @@
 #import "MockAssetWriter.h"
 #import "MockCaptureDeviceController.h"
 #import "MockCaptureSession.h"
+#import "MockCapturePhotoSettings.h"
 
 static FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
     FCPPlatformResolutionPreset resolutionPreset) {
@@ -92,6 +93,7 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
                              pixelBufferAdaptorFactory:^id<FLTPixelBufferAdaptor> _Nonnull(id<FLTAssetWriterInput> _Nonnull writerInput, NSDictionary<NSString *,id> * _Nullable source) {
                                return pixelBufferAdaptor;
                              }
+                            photoSettingsFactory: [[MockCapturePhotoSettingsFactory alloc] init]
                             error:nil];
 
   return fltCam;
@@ -128,6 +130,7 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSession> captureSession
           NSDictionary<NSString *, id> *_Nullable source) {
         return [[MockPixelBufferAdaptor alloc] init];
       }
+      photoSettingsFactory: [[MockCapturePhotoSettingsFactory alloc] init]
       error:nil];
 }
 
@@ -162,6 +165,7 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
           NSDictionary<NSString *, id> *_Nullable source) {
         return [[MockPixelBufferAdaptor alloc] init];
       }
+      photoSettingsFactory: [[MockCapturePhotoSettingsFactory alloc] init]
       error:nil];
 }
 

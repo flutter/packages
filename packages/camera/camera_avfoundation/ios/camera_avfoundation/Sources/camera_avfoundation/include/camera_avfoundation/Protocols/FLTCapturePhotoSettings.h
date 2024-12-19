@@ -16,8 +16,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setHighResolutionPhotoEnabled:(BOOL)enabled;
 @end
 
+@protocol FLTCapturePhotoSettingsFactory <NSObject>
+- (id<FLTCapturePhotoSettings>)createPhotoSettings;
+- (id<FLTCapturePhotoSettings>)createPhotoSettingsWithFormat:(NSDictionary<NSString *, id> *)format;
+@end
+
 @interface FLTDefaultCapturePhotoSettings : NSObject <FLTCapturePhotoSettings>
 - (instancetype)initWithSettings:(AVCapturePhotoSettings *)settings;
+@end
+
+@interface FLTDefaultCapturePhotoSettingsFactory : NSObject <FLTCapturePhotoSettingsFactory>
 @end
 
 NS_ASSUME_NONNULL_END

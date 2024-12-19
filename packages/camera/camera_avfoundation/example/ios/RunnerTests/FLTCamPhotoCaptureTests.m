@@ -29,10 +29,6 @@
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
 
-  //  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  //  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  //  OCMStub([mockSettings photoSettings]).andReturn(settings);
-
   NSError *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
 
   MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
@@ -70,10 +66,6 @@
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
 
-  //  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  //  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  //  OCMStub([mockSettings photoSettings]).andReturn(settings);
-
   NSString *filePath = @"test";
 
   MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
@@ -108,13 +100,6 @@
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
   [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
 
-  //  AVCapturePhotoSettings *settings =
-  //      [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey :
-  //      AVVideoCodecTypeHEVC}];
-  //
-  //  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  //  OCMStub([mockSettings photoSettingsWithFormat:OCMOCK_ANY]).andReturn(settings);
-
   MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
   // Set availablePhotoCodecTypes to HEVC
   mockOutput.availablePhotoCodecTypes = @[ AVVideoCodecTypeHEVC ];
@@ -148,10 +133,6 @@
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
   [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
-
-  //  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  //  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  //  OCMStub([mockSettings photoSettings]).andReturn(settings);
 
   MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
   mockOutput.capturePhotoWithSettingsStub =
@@ -201,10 +182,6 @@
         return captureDeviceMock;
       },
       nil, nil, nil);
-
-  //  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  //  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  //  OCMStub([mockSettings photoSettings]).andReturn(settings);
 
   NSString *filePath = @"test";
 

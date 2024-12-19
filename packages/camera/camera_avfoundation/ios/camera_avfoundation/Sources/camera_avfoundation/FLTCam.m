@@ -112,7 +112,9 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) CaptureDeviceFactory audioCaptureDeviceFactory;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) PixelBufferAdaptorFactory pixelBufferAdaptorFactory;
+@property(readonly, nonatomic) id<FLTCapturePhotoSettingsFactory> photoSettingsFactory;
 @property(readonly, nonatomic) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
+
 /// Reports the given error message to the Dart side of the plugin.
 ///
 /// Can be called from any thread.
@@ -188,6 +190,7 @@ static void selectBestFormatForRequestedFrameRate(
                    capturePhotoOutput:(id<FLTCapturePhotoOutput>)capturePhotoOutput
                    assetWriterFactory:(AssetWriterFactory)assetWriterFactory
             pixelBufferAdaptorFactory:(PixelBufferAdaptorFactory)pixelBufferAdaptorFactory
+                 photoSettingsFactory:(id<FLTCapturePhotoSettingsFactory>)photoSettingsFactory
                                 error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -214,7 +217,8 @@ static void selectBestFormatForRequestedFrameRate(
   _fileFormat = FCPPlatformImageFileFormatJpeg;
   _assetWriterFactory = assetWriterFactory;
   _pixelBufferAdaptorFactory = pixelBufferAdaptorFactory;
-
+  _photoSettingsFactory = photoSettingsFactory;
+  
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
   // https://github.com/flutter/plugins/pull/4520#discussion_r766335637
@@ -391,8 +395,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)captureToFileWithCompletion:(void (^)(NSString *_Nullable,
                                               FlutterError *_Nullable))completion {
-  id<FLTCapturePhotoSettings> settings = [[FLTDefaultCapturePhotoSettings alloc]
-      initWithSettings:[AVCapturePhotoSettings photoSettings]];
+  id<FLTCapturePhotoSettings> settings = [_photoSettingsFactory createPhotoSettings];
 
   if (self.mediaSettings.resolutionPreset == FCPPlatformResolutionPresetMax) {
     [settings setHighResolutionPhotoEnabled:YES];
@@ -404,9 +407,7 @@ static void selectBestFormatForRequestedFrameRate(
       [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
 
   if (_fileFormat == FCPPlatformImageFileFormatHeif && isHEVCCodecAvailable) {
-    settings = [[FLTDefaultCapturePhotoSettings alloc]
-        initWithSettings:[AVCapturePhotoSettings
-                             photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}]];
+    settings = [_photoSettingsFactory createPhotoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
     extension = @"heif";
   } else {
     extension = @"jpg";
