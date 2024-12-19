@@ -14,6 +14,7 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     self.registrar = registrar
   }
 
+  @objc(webView:decidePolicyForNavigationAction:decisionHandler:)
   public func webView(
     _ webView: WKWebView, decidePolicyFor navigationAction: WebKit.WKNavigationAction,
     decisionHandler: @escaping @MainActor (WebKit.WKNavigationActionPolicy) -> Void
