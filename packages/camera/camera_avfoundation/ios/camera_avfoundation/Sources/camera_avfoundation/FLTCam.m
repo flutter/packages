@@ -14,9 +14,9 @@
 #import "./include/camera_avfoundation/Protocols/FLTCaptureConnection.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
 #import "./include/camera_avfoundation/Protocols/FLTCapturePhotoSettings.h"
-#import "./include/camera_avfoundation/Protocols/FLTCaptureSessionProtocol.h"
+#import "./include/camera_avfoundation/Protocols/FLTCaptureSession.h"
 #import "./include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
-#import "./include/camera_avfoundation/Protocols/FLTEventChannelProtocol.h"
+#import "./include/camera_avfoundation/Protocols/FLTEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/messages.g.h"
 
@@ -60,8 +60,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
-@property(readonly, nonatomic) id<FLTCaptureSessionProtocol> videoCaptureSession;
-@property(readonly, nonatomic) id<FLTCaptureSessionProtocol> audioCaptureSession;
+@property(readonly, nonatomic) id<FLTCaptureSession> videoCaptureSession;
+@property(readonly, nonatomic) id<FLTCaptureSession> audioCaptureSession;
 
 @property(readonly, nonatomic) id<FLTCaptureInput> captureVideoInput;
 /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
@@ -123,57 +123,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 
 NSString *const errorMethod = @"error";
 
-//- (instancetype)initWithCameraName:(NSString *)cameraName
-//                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-//            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-//                       orientation:(UIDeviceOrientation)orientation
-//               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-//                             error:(NSError **)error {
-//  AVCaptureSession *videoSession = [[AVCaptureSession alloc] init];
-//  AVCaptureSession *audioSession = [[AVCaptureSession alloc] init];
-//
-//  return [self
-//          initWithCameraName:cameraName
-//               mediaSettings:mediaSettings
-//      mediaSettingsAVWrapper:mediaSettingsAVWrapper
-//                 orientation:orientation
-//         videoCaptureSession:[[FLTDefaultCaptureSession alloc]
-//         initWithCaptureSession:videoSession] audioCaptureSession:[[FLTDefaultCaptureSession
-//         alloc] initWithCaptureSession:audioSession] captureSessionQueue:captureSessionQueue
-//                       error:error];
-//}
-
-//- (instancetype)initWithCameraName:(NSString *)cameraName
-//                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-//            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-//                       orientation:(UIDeviceOrientation)orientation
-//               videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
-//               audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
-//               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-//                             error:(NSError **)error {
-//  return [self initWithMediaSettings:mediaSettings
-//      mediaSettingsAVWrapper:mediaSettingsAVWrapper
-//      orientation:orientation
-//      videoCaptureSession:videoCaptureSession
-//      audioCaptureSession:videoCaptureSession
-//      captureSessionQueue:captureSessionQueue
-//      captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
-//        AVCaptureDevice *device = [AVCaptureDevice deviceWithUniqueID:cameraName];
-//        return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:device];
-//      }
-//      videoDimensionsForFormat:^CMVideoDimensions(id<FLTCaptureDeviceFormat> format) {
-//        return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-//      }
-//      capturePhotoOutput:[[FLTDefaultCapturePhotoOutput alloc]
-//                             initWithPhotoOutput:[AVCapturePhotoOutput new]]
-//                  assetWriterFactory:^id<FLTAssetWriter> _Nonnull(NSURL * _Nonnull url, AVFileType
-//                  _Nonnull fileType, NSError * _Nullable __autoreleasing * _Nullable error) {
-//    return [[FLTDefaultAssetWriter alloc] initWithURL:url fileType:fileType error:error];
-//
-//  } error:error
-//  ];
-//}
-
 // Returns frame rate supported by format closest to targetFrameRate.
 static double bestFrameRateForFormat(id<FLTCaptureDeviceFormat> format, double targetFrameRate) {
   double bestFrameRate = 0;
@@ -230,8 +179,8 @@ static void selectBestFormatForRequestedFrameRate(
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                           orientation:(UIDeviceOrientation)orientation
-                  videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
-                  audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
+                  videoCaptureSession:(id<FLTCaptureSession>)videoCaptureSession
+                  audioCaptureSession:(id<FLTCaptureSession>)audioCaptureSession
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
             audioCaptureDeviceFactory:(CaptureDeviceFactory)audioCaptureDeviceFactory
@@ -1116,7 +1065,7 @@ static void selectBestFormatForRequestedFrameRate(
 
   // Remove the old video capture connections.
   [_videoCaptureSession beginConfiguration];
-  [_videoCaptureSession removeInput:_captureVideoInput];
+  [_videoCaptureSession removeInput:_captureVideoInput.input];
   [_videoCaptureSession removeOutput:_captureVideoOutput];
 
   NSError *error = nil;
@@ -1132,11 +1081,11 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   // Add the new connections to the session.
-  if (![_videoCaptureSession canAddInput:_captureVideoInput])
+  if (![_videoCaptureSession canAddInput:_captureVideoInput.input])
     completion([FlutterError errorWithCode:@"VideoError"
                                    message:@"Unable switch video input"
                                    details:nil]);
-  [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
+  [_videoCaptureSession addInputWithNoConnections:_captureVideoInput.input];
   if (![_videoCaptureSession canAddOutput:_captureVideoOutput])
     completion([FlutterError errorWithCode:@"VideoError"
                                    message:@"Unable switch video output"
@@ -1238,7 +1187,7 @@ static void selectBestFormatForRequestedFrameRate(
     FlutterEventChannel *eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
              binaryMessenger:messenger];
-    id<FLTEventChannelProtocol> eventChannelProtocol =
+    id<FLTEventChannel> eventChannelProtocol =
         [[FLTDefaultEventChannel alloc] initWithEventChannel:eventChannel];
     FLTThreadSafeEventChannel *threadSafeEventChannel =
         [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannelProtocol];

@@ -27,7 +27,7 @@
       messenger:nil
       globalAPI:nil
       deviceDiscovery:nil
-      sessionFactory:^id<FLTCaptureSessionProtocol> {
+      sessionFactory:^id<FLTCaptureSession> {
         return avCaptureSessionMock;
       }
       deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {

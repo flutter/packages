@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MockCaptureSession : NSObject <FLTCaptureSessionProtocol>
+@interface MockCaptureSession : NSObject <FLTCaptureSession>
 @property(nonatomic, copy) void (^beginConfigurationStub)(void);
 @property(nonatomic, copy) void (^commitConfigurationStub)(void);
 @property(nonatomic, copy) void (^startRunningStub)(void);

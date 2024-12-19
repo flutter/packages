@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MockEventChannel : NSObject <FLTEventChannelProtocol>
+@interface MockEventChannel : NSObject <FLTEventChannel>
 @property(nonatomic, copy) void (^setStreamHandlerStub)(NSObject<FlutterStreamHandler> *);
 @end
 

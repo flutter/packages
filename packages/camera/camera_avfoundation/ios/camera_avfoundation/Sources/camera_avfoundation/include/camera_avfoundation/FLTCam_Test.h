@@ -6,7 +6,7 @@
 #import "FLTCaptureConnection.h"
 #import "FLTCaptureDeviceControlling.h"
 #import "FLTCapturePhotoOutput.h"
-#import "FLTCaptureSessionProtocol.h"
+#import "FLTCaptureSession.h"
 #import "FLTSavePhotoDelegate.h"
 
 @interface FLTImageStreamHandler : NSObject <FlutterStreamHandler>

@@ -47,7 +47,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       messenger:messenger
       globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
       deviceDiscovery:[[FLTDefaultCameraDeviceDiscovery alloc] init]
-      sessionFactory:^id<FLTCaptureSessionProtocol>(void) {
+      sessionFactory:^id<FLTCaptureSession>(void) {
         return [[FLTDefaultCaptureSession alloc]
             initWithCaptureSession:[[AVCaptureSession alloc] init]];
       }
@@ -80,7 +80,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   dispatch_queue_set_specific(_captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
-  // TODO: use device orientation protocol
   [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(orientationChanged:)
@@ -94,7 +93,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 }
 
 - (void)orientationChanged:(NSNotification *)note {
-  // TODO: change to protocol
   UIDevice *device = note.object;
   UIDeviceOrientation orientation = device.orientation;
 

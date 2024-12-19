@@ -46,10 +46,10 @@
 - (void)addConnection:(nonnull AVCaptureConnection *)connection {
 }
 
-- (void)addInput:(nonnull id<FLTCaptureInput>)input {
+- (void)addInput:(nonnull AVCaptureInput *)input {
 }
 
-- (void)addInputWithNoConnections:(nonnull id<FLTCaptureInput>)input {
+- (void)addInputWithNoConnections:(nonnull AVCaptureInput *)input {
 }
 
 - (void)addOutput:(nonnull AVCaptureOutput *)output {
@@ -62,7 +62,7 @@
   return YES;
 }
 
-- (BOOL)canAddInput:(nonnull id<FLTCaptureInput>)input {
+- (BOOL)canAddInput:(nonnull AVCaptureInput *)input {
   return YES;
 }
 
@@ -70,7 +70,7 @@
   return YES;
 }
 
-- (void)removeInput:(nonnull id<FLTCaptureInput>)input {
+- (void)removeInput:(nonnull AVCaptureInput *)input {
 }
 
 - (void)removeOutput:(nonnull AVCaptureOutput *)output {

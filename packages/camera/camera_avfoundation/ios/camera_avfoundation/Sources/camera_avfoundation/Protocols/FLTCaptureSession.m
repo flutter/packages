@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "../include/camera_avfoundation/Protocols/FLTCaptureSessionProtocol.h"
+#import "../include/camera_avfoundation/Protocols/FLTCaptureSession.h"
 #import "../include/camera_avfoundation/Protocols/FLTCaptureConnection.h"
 
 @interface FLTDefaultCaptureSession ()
@@ -39,8 +39,8 @@
   return [_captureSession canSetSessionPreset:preset];
 }
 
-- (void)addInputWithNoConnections:(id<FLTCaptureInput>)input {
-  [_captureSession addInputWithNoConnections:input.input];
+- (void)addInputWithNoConnections:(AVCaptureInput *)input {
+  [_captureSession addInputWithNoConnections:input];
 }
 
 - (void)addOutputWithNoConnections:(AVCaptureOutput *)output {
@@ -55,8 +55,8 @@
   [_captureSession addOutput:output];
 }
 
-- (void)removeInput:(id<FLTCaptureInput>)input {
-  [_captureSession removeInput:input.input];
+- (void)removeInput:(AVCaptureInput *)input {
+  [_captureSession removeInput:input];
 }
 
 - (void)removeOutput:(AVCaptureOutput *)output {
@@ -79,8 +79,8 @@
   return _captureSession.outputs;
 }
 
-- (BOOL)canAddInput:(id<FLTCaptureInput>)input {
-  return [_captureSession canAddInput:input.input];
+- (BOOL)canAddInput:(AVCaptureInput *)input {
+  return [_captureSession canAddInput:input];
 }
 
 - (BOOL)canAddOutput:(AVCaptureOutput *)output {
@@ -91,8 +91,8 @@
   return [_captureSession canAddConnection:connection.connection];
 }
 
-- (void)addInput:(id<FLTCaptureInput>)input {
-  [_captureSession addInput:input.input];
+- (void)addInput:(AVCaptureInput *)input {
+  [_captureSession addInput:input];
 }
 
 @end

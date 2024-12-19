@@ -32,10 +32,10 @@
 - (void)unlockDevice:(AVCaptureDevice *)captureDevice {
 }
 
-- (void)beginConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession {
+- (void)beginConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
 }
 
-- (void)commitConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession {
+- (void)commitConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
 }
 
 - (void)setMinFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice {

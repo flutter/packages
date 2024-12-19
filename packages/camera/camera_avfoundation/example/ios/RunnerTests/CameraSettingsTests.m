@@ -67,11 +67,11 @@ static const BOOL gTestEnableAudio = YES;
   [_unlockExpectation fulfill];
 }
 
-- (void)beginConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession {
+- (void)beginConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
   [_beginConfigurationExpectation fulfill];
 }
 
-- (void)commitConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession {
+- (void)commitConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
   [_commitConfigurationExpectation fulfill];
 }
 
@@ -175,7 +175,7 @@ static const BOOL gTestEnableAudio = YES;
       messenger:nil
       globalAPI:nil
       deviceDiscovery:nil
-      sessionFactory:^id<FLTCaptureSessionProtocol> {
+      sessionFactory:^id<FLTCaptureSession> {
         return mockSession;
       }
       deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {

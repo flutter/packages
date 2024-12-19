@@ -77,27 +77,27 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
                              audioCaptureSession:audioSessionMock
                              captureSessionQueue:captureSessionQueue
                              captureDeviceFactory:captureDeviceFactory ?: ^id<FLTCaptureDeviceControlling>(void) {
-                              return mockDevice;
+                               return mockDevice;
                              }
                              audioCaptureDeviceFactory:captureDeviceFactory ?: ^id<FLTCaptureDeviceControlling>(void) {
-                              return mockDevice;
+                               return mockDevice;
                              }
                              videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
                                return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
                              }
                              capturePhotoOutput:capturePhotoOutput
                              assetWriterFactory:^id<FLTAssetWriter> _Nonnull(NSURL *url, AVFileType fileType, NSError * _Nullable __autoreleasing * _Nullable error) {
-                                  return assetWriter;
-                            }
-                          pixelBufferAdaptorFactory:^id<FLTPixelBufferAdaptor> _Nonnull(id<FLTAssetWriterInput> _Nonnull writerInput, NSDictionary<NSString *,id> * _Nullable source) {
-    return pixelBufferAdaptor;
-  }
+                               return assetWriter;
+                             }
+                             pixelBufferAdaptorFactory:^id<FLTPixelBufferAdaptor> _Nonnull(id<FLTAssetWriterInput> _Nonnull writerInput, NSDictionary<NSString *,id> * _Nullable source) {
+                               return pixelBufferAdaptor;
+                             }
                             error:nil];
 
   return fltCam;
 }
 
-FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSessionProtocol> captureSession,
+FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSession> captureSession,
                                             FCPPlatformResolutionPreset resolutionPreset) {
   MockCaptureSession *audioSessionMock = [[MockCaptureSession alloc] init];
   audioSessionMock.mockCanSetSessionPreset = YES;
@@ -132,7 +132,7 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSessionProtocol> captur
 }
 
 FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    id<FLTCaptureSessionProtocol> captureSession, FCPPlatformResolutionPreset resolutionPreset,
+    id<FLTCaptureSession> captureSession, FCPPlatformResolutionPreset resolutionPreset,
     id<FLTCaptureDeviceControlling> captureDevice,
     VideoDimensionsForFormat videoDimensionsForFormat) {
   MockCaptureSession *audioSessionMock = [[MockCaptureSession alloc] init];

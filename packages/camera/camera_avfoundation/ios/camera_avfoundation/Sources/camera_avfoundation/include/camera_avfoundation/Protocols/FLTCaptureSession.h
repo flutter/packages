@@ -8,7 +8,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol FLTCaptureSessionProtocol <NSObject>
+@protocol FLTCaptureSession <NSObject>
+
+@property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
+@property(nonatomic, readonly) NSArray<AVCaptureInput *> *inputs;
+@property(nonatomic, readonly) NSArray<AVCaptureOutput *> *outputs;
 
 - (void)beginConfiguration;
 - (void)commitConfiguration;
@@ -19,19 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)addOutputWithNoConnections:(AVCaptureOutput *)output;
 - (void)addConnection:(AVCaptureConnection *)connection;
 - (void)addOutput:(AVCaptureOutput *)output;
-- (void)removeInput:(id<FLTCaptureInput>)input;
+- (void)removeInput:(AVCaptureInput *)input;
 - (void)removeOutput:(AVCaptureOutput *)output;
-- (BOOL)canAddInput:(id<FLTCaptureInput>)input;
+- (BOOL)canAddInput:(AVCaptureInput *)input;
 - (BOOL)canAddOutput:(AVCaptureOutput *)output;
 - (BOOL)canAddConnection:(AVCaptureConnection *)connection;
-- (void)addInput:(id<FLTCaptureInput>)input;
-@property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
-@property(nonatomic, readonly) NSArray<AVCaptureInput *> *inputs;
-@property(nonatomic, readonly) NSArray<AVCaptureOutput *> *outputs;
+- (void)addInput:(AVCaptureInput *)input;
 
 @end
 
-@interface FLTDefaultCaptureSession : NSObject <FLTCaptureSessionProtocol>
+@interface FLTDefaultCaptureSession : NSObject <FLTCaptureSession>
 - (instancetype)initWithCaptureSession:(AVCaptureSession *)session;
 @end
 

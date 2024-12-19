@@ -51,39 +51,19 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(id<FLTCaptureDeviceFormat>
 @property(assign, nonatomic) CGFloat maximumAvailableZoomFactor;
 
 /// Initializes an `FLTCam` instance.
-/// @param cameraName a name used to uniquely identify the camera.
+/// Allows for testing with specified resolution, audio preference, orientation,
+/// and direct access to capture sessions and blocks.
 /// @param mediaSettings the media settings configuration parameters
 /// @param mediaSettingsAVWrapper AVFoundation wrapper to perform media settings related operations
 /// (for dependency injection in unit tests).
 /// @param orientation the orientation of camera
 /// @param captureSessionQueue the queue on which camera's capture session operations happen.
 /// @param error report to the caller if any error happened creating the camera.
-//- (instancetype)initWithCameraName:(NSString *)cameraName
-//                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-//            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-//                       orientation:(UIDeviceOrientation)orientation
-//               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-//                             error:(NSError **)error;
-
-/// Initializes a camera instance.
-/// Allows for injecting dependencies that are usually internal.
-//- (instancetype)initWithCameraName:(NSString *)cameraName
-//                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-//            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-//                       orientation:(UIDeviceOrientation)orientation
-//               videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
-//               audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
-//               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-//                             error:(NSError **)error;
-
-///  Initializes a camera instance.
-///  Allows for testing with specified resolution, audio preference, orientation,
-///  and direct access to capture sessions and blocks.
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
                           orientation:(UIDeviceOrientation)orientation
-                  videoCaptureSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession
-                  audioCaptureSession:(id<FLTCaptureSessionProtocol>)audioCaptureSession
+                  videoCaptureSession:(id<FLTCaptureSession>)videoCaptureSession
+                  audioCaptureSession:(id<FLTCaptureSession>)audioCaptureSession
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
             audioCaptureDeviceFactory:(CaptureDeviceFactory)audioCaptureDeviceFactory

@@ -7,7 +7,7 @@
 
 #import "FLTAssetWriter.h"
 #import "FLTCaptureDeviceControlling.h"
-#import "FLTCaptureSessionProtocol.h"
+#import "FLTCaptureSession.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  * operations on a running session into atomic updates.
  * @param videoCaptureSession The video capture session.
  */
-- (void)beginConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession;
+- (void)beginConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession;
 
 /**
  * @method commitConfigurationForSession:
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * operations on a running session into atomic updates.
  * @param videoCaptureSession The video capture session.
  */
-- (void)commitConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession;
+- (void)commitConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession;
 
 /**
  * @method setMinFrameDuration:onDevice:

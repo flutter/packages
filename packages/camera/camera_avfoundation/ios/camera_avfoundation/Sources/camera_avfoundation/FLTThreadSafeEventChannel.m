@@ -3,16 +3,16 @@
 // found in the LICENSE file.
 
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
-#import "./include/camera_avfoundation/Protocols/FLTEventChannelProtocol.h"
+#import "./include/camera_avfoundation/Protocols/FLTEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
 
 @interface FLTThreadSafeEventChannel ()
-@property(nonatomic, strong) id<FLTEventChannelProtocol> channel;
+@property(nonatomic, strong) id<FLTEventChannel> channel;
 @end
 
 @implementation FLTThreadSafeEventChannel
 
-- (instancetype)initWithEventChannel:(id<FLTEventChannelProtocol>)channel {
+- (instancetype)initWithEventChannel:(id<FLTEventChannel>)channel {
   self = [super init];
   if (self) {
     _channel = channel;

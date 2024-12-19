@@ -5,7 +5,7 @@
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
 #import "./include/camera_avfoundation/Protocols/FLTAssetWriter.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
-#import "./include/camera_avfoundation/Protocols/FLTCaptureSessionProtocol.h"
+#import "./include/camera_avfoundation/Protocols/FLTCaptureSession.h"
 
 @implementation FLTCamMediaSettingsAVWrapper
 
@@ -18,11 +18,11 @@
   return [captureDevice unlockForConfiguration];
 }
 
-- (void)beginConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession {
+- (void)beginConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
   [videoCaptureSession beginConfiguration];
 }
 
-- (void)commitConfigurationForSession:(id<FLTCaptureSessionProtocol>)videoCaptureSession {
+- (void)commitConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
   [videoCaptureSession commitConfiguration];
 }
 

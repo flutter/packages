@@ -88,7 +88,7 @@
       messenger:nil
       globalAPI:_eventAPI
       deviceDiscovery:_deviceDiscovery
-      sessionFactory:^id<FLTCaptureSessionProtocol> {
+      sessionFactory:^id<FLTCaptureSession> {
         return weakSelf.captureSession;
       }
       deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
@@ -139,7 +139,7 @@
       messenger:nil
       globalAPI:eventAPI
       deviceDiscovery:_deviceDiscovery
-      sessionFactory:^id<FLTCaptureSessionProtocol> {
+      sessionFactory:^id<FLTCaptureSession> {
         return weakSelf.captureSession;
       }
       deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
@@ -183,7 +183,7 @@
         messenger:nil
         globalAPI:_eventAPI
         deviceDiscovery:_deviceDiscovery
-        sessionFactory:^id<FLTCaptureSessionProtocol> {
+        sessionFactory:^id<FLTCaptureSession> {
           return weakSelf.captureSession;
         }
         deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {

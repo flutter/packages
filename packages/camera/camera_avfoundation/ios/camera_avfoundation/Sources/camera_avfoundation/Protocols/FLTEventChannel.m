@@ -4,7 +4,7 @@
 
 @import Flutter;
 
-#import "FLTEventChannelProtocol.h"
+#import "FLTEventChannel.h"
 
 @interface FLTDefaultEventChannel ()
 @property(nonatomic, strong) FlutterEventChannel *channel;
