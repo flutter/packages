@@ -87,7 +87,7 @@ extension NavigationDelegateImpl {
     registrar.dispatchOnMainThread { onFailure in
       self.api.decidePolicyForNavigationAction(
         pigeonInstance: self, webView: webView, navigationAction: navigationAction
-      ) { @MainActor result in
+      ) { result in
         switch result {
         case .success(let policy):
           switch policy {
