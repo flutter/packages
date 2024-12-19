@@ -198,7 +198,9 @@ void main() {
 
         expect(controller.value.position,
             lessThanOrEqualTo(controller.value.duration));
-      },
+      }, skip: kIsWeb,
+      // This test is flaky on the web, because browsers don't like to
+      // non-buffered positions of a video.
     );
 
     testWidgets('test video player view with local asset',
