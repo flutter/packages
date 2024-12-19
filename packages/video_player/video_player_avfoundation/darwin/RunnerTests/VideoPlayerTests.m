@@ -672,6 +672,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // Change playback speed.
   [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:textureId.integerValue error:&error];
   XCTAssertNil(error);
+  [videoPlayerPlugin playPlayer:textureId.integerValue error:&error];
+  XCTAssertNil(error);
   XCTAssertEqual(avPlayer.rate, 2);
   XCTAssertEqual(avPlayer.timeControlStatus, AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate);
 
@@ -837,6 +839,41 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                         }
                       }];
   [self waitForExpectationsWithTimeout:10.0 handler:nil];
+}
+
+- (void)testUpdatePlayingStateShouldNotResetRate {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"testUpdatePlayingStateShouldNotResetRate"];
+
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+      displayLinkFactory:nil
+               registrar:registrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}];
+  NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  [player onListenWithArguments:nil
+                      eventSink:^(NSDictionary<NSString *, id> *event) {
+                        if ([event[@"event"] isEqualToString:@"initialized"]) {
+                          [initializedExpectation fulfill];
+                        }
+                      }];
+  [self waitForExpectationsWithTimeout:10 handler:nil];
+
+  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:textureId.integerValue error:&error];
+  [videoPlayerPlugin playPlayer:textureId.integerValue error:&error];
+  XCTAssertEqual(player.player.rate, 2);
 }
 
 #if TARGET_OS_IOS
