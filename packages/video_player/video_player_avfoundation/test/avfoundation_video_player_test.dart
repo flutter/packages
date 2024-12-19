@@ -374,5 +374,20 @@ void main() {
             ),
           ]));
     });
+
+    test('playback speed should remain after seeking', () async {
+      // Set initial playback speed
+      await player.setPlaybackSpeed(1, 2.0); // Set to 2.0x
+      expect(log.log.last, 'setPlaybackSpeed');
+      expect(log.playbackSpeed, 2.0);
+
+      // Now seek to a different position
+      await player.seekTo(1, const Duration(milliseconds: 5000)); // Seek to 5 seconds
+      expect(log.log.last, 'seekTo');
+      expect(log.position, 5000);
+
+      // After seeking, the playback speed should still be 2.0x
+      expect(log.playbackSpeed, 2.0);
+    });
   });
 }
