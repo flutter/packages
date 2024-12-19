@@ -30,7 +30,9 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     }
     return nil
   }
+}
 
+extension UIDelegateImpl {
   @available(iOS 15.0, macOS 12.0, *)
   func webView(
     _ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
