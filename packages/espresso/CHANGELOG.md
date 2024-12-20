@@ -1,3 +1,7 @@
+## 0.4.0+4
+
+* Bumps com.google.code.gson:gson from 2.10.1 to 2.11.0.
+
 ## 0.4.0+3
 
 * Updates Java compatibility version to 11.
