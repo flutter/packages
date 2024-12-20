@@ -1,3 +1,7 @@
+## 0.6.10+2
+
+* Bumps camerax_version from 1.3.4 to 1.4.1.
+
 ## 0.6.10+1
 
 * Removes nonnull annotation from MeteringPointHostApiImpl#getDefaultPointSize.
