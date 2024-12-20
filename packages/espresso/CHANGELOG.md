@@ -1,3 +1,7 @@
+## 0.4.0+4
+
+* Bumps com.squareup.okhttp3:okhttp from 4.11.0 to 4.12.0.
+
 ## 0.4.0+3
 
 * Updates Java compatibility version to 11.
