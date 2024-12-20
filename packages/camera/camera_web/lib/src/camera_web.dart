@@ -634,6 +634,21 @@ class CameraPlugin extends CameraPlatform {
   }
 
   @override
+  Stream<CameraImageData> onStreamedFrameAvailable(
+    int cameraId, {
+    CameraImageStreamOptions? options,
+  }) {
+    try {
+      return getCamera(cameraId).cameraFrameStream(options: options);
+    } on web.DOMException catch (e) {
+      throw PlatformException(code: e.name, message: e.message);
+    } on CameraWebException catch (e) {
+      _addCameraErrorEvent(e);
+      throw PlatformException(code: e.code.toString(), message: e.description);
+    }
+  }
+
+  @override
   Future<void> pausePreview(int cameraId) async {
     try {
       getCamera(cameraId).pause();
