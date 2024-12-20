@@ -1,3 +1,7 @@
+## 0.8.12+19
+
+* Updates activity lib to 1.9.2.
+
 ## 0.8.12+18
 
 * Fixes a security issue related to improperly trusting filenames provided by a `ContentProvider`.
