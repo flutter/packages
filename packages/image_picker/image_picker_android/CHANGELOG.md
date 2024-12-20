@@ -1,6 +1,6 @@
 ## 0.8.12+19
 
-* Updates activity lib to 1.9.2.
+* Updates androidx.activity:activity to 1.9.3.
 
 ## 0.8.12+18
 
