@@ -301,7 +301,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success():
         finishExpectation.fulfill()
       case .failure(let error):
-        XCTFail("FInish purchases should NOT fail. Failed with \(error)")
+        XCTFail("Finish purchases should NOT fail. Failed with \(error)")
       }
     }
 
