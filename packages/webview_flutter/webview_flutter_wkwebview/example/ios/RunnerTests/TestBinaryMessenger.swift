@@ -1,0 +1,1 @@
+../../../darwin/Tests/TestBinaryMessenger.swift

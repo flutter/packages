@@ -1,0 +1,1 @@
+../../../darwin/Tests/ScriptMessageHandlerProxyAPITests.swift
