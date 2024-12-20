@@ -32,12 +32,12 @@ class AdUnitParams {
   /// The ads inside a Multiplex ad unit are arranged in a grid. You can specify how many rows and columns you want to show within that grid<br>
   /// Sets the number of rows<br>
   /// Requires setting [AdUnitParams.MATCHED_CONTENT_UI_TYPE]
-  static const String MATCHED_CONTENT_ROWS_NUM = 'macthedContentRowsNum';
+  static const String MATCHED_CONTENT_ROWS_NUM = 'matchedContentRowsNum';
 
   /// The ads inside a Multiplex ad unit are arranged in a grid. You can specify how many rows and columns you want to show within that grid<br>
   /// Sets the number of columns<br>
   /// Requires setting [AdUnitParams.MATCHED_CONTENT_UI_TYPE]
-  static const String MATCHED_CONTENT_COLUMNS_NUM = 'macthedContentColumnsNum';
+  static const String MATCHED_CONTENT_COLUMNS_NUM = 'matchedContentColumnsNum';
 
   /// testing environment flag, defaults to kIsDebug
   static const String AD_TEST = 'adtest';
