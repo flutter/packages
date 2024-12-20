@@ -26,6 +26,10 @@ android {
     namespace 'io.flutter.plugins.sharedpreferencesexample'
     compileSdk flutter.compileSdkVersion
 
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
