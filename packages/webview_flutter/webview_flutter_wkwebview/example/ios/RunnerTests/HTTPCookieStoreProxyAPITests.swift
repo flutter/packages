@@ -48,8 +48,21 @@ class TestCookieStore: WKHTTPCookieStore {
     return instance
   }
 
-  override func setCookie(_ cookie: HTTPCookie, completionHandler: (@MainActor () -> Void)? = nil) {
-    setCookieArg = cookie
-    completionHandler?()
-  }
+  #if compiler(>=6.0)
+    public override func setCookie(
+      _ cookie: HTTPCookie, completionHandler: (@MainActor () -> Void)? = nil
+    ) {
+      setCookieArg = cookie
+      DispatchQueue.main.async {
+        completionHandler?()
+      }
+    }
+  #else
+    public override func setCookie(_ cookie: HTTPCookie, completionHandler: (() -> Void)? = nil) {
+      setCookieArg = cookie
+      DispatchQueue.main.async {
+        completionHandler?()
+      }
+    }
+  #endif
 }

@@ -434,12 +434,22 @@ class TestViewWKWebView: WKWebView {
     }
   }
 
-  override func evaluateJavaScript(
-    _ javaScriptString: String, completionHandler: (@MainActor (Any?, Error?) -> Void)? = nil
-  ) {
-    evaluateJavaScriptArgs = [javaScriptString]
-    completionHandler?("returnValue", nil)
-  }
+  #if compiler(>=6.0)
+    public override func evaluateJavaScript(
+      _ javaScriptString: String,
+      completionHandler: (@MainActor @Sendable (Any?, (any Error)?) -> Void)? = nil
+    ) {
+      evaluateJavaScriptArgs = [javaScriptString]
+      completionHandler?("returnValue", nil)
+    }
+  #else
+    public override func evaluateJavaScript(
+      _ javaScriptString: String, completionHandler: ((Any?, Error?) -> Void)? = nil
+    ) {
+      evaluateJavaScriptArgs = [javaScriptString]
+      completionHandler?("returnValue", nil)
+    }
+  #endif
 
   override var isInspectable: Bool {
     set {
