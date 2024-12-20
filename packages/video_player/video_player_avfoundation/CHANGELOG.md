@@ -1,6 +1,11 @@
 ## 2.7.0
 
 * Adds support for platform views as an optional way of displaying a video.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.6.5
+
+* Bugfix to allow the audio-only HLS (.m3u8) on iOS.
 
 ## 2.6.4
 
