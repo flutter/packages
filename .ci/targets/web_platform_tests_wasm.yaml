@@ -11,4 +11,11 @@ tasks:
   #   args: ["build-examples", "--web", "--wasm"]
   - name: drive examples
     script: .ci/scripts/tool_runner.sh
-    args: ["drive-examples", "--web", "--wasm", "--run-chromedriver", "--exclude=script/configs/exclude_integration_web_wasm.yaml"]
+    args: [
+      "drive-examples",
+      "--web",
+      "--wasm",
+      "--run-chromedriver",
+      "--exclude=script/configs/exclude_integration_web.yaml",
+      "--exclude=script/configs/exclude_integration_web_wasm.yaml"
+    ]
