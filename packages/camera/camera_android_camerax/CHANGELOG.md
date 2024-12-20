@@ -1,3 +1,7 @@
+## 0.6.10+2
+
+* Bumps com.google.guava:guava from 33.3.1-android to 33.4.0-android.
+
 ## 0.6.10+1
 
 * Removes nonnull annotation from MeteringPointHostApiImpl#getDefaultPointSize.
