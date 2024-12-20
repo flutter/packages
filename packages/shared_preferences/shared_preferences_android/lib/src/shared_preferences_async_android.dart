@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
@@ -10,6 +12,7 @@ import 'package:shared_preferences_platform_interface/types.dart';
 import 'messages_async.g.dart';
 
 const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
+const String _jsonListPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!';
 
 /// The Android implementation of [SharedPreferencesAsyncPlatform].
 ///
@@ -130,6 +133,21 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
+    final String stringValue = '$_jsonListPrefix${jsonEncode(value)}';
+    return api.setString(key, stringValue, pigeonOptions);
+  }
+
+  /// Adds a `List<String>` to preferences using the no longer used system to test
+  /// moving from the old system to the new one.
+  @visibleForTesting
+  Future<void> setStringListLegacyForTesting(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return api.setStringList(key, value, pigeonOptions);
   }
 
@@ -189,10 +207,25 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
-    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
-    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
-    return _convertKnownExceptions<List<String>>(() async =>
-        (await api.getStringList(key, pigeonOptions))?.cast<String>().toList());
+    final Object? dynamicStringList = await _convertKnownExceptions<dynamic>(
+        () async => api.getStringList(key, pigeonOptions));
+    if (dynamicStringList.runtimeType == String) {
+      final String jsonEncodedString =
+          (dynamicStringList! as String).substring(_jsonListPrefix.length);
+      try {
+        final List<String> decodedList =
+            (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
+        return decodedList;
+      } catch (e) {
+        throw TypeError();
+      }
+    } else if (dynamicStringList.runtimeType == List<Object?>) {
+      return (dynamicStringList! as List<Object?>).cast<String>().toList();
+    } else if (dynamicStringList.runtimeType == Null) {
+      return null;
+    } else {
+      throw TypeError();
+    }
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {
@@ -236,6 +269,16 @@ base class SharedPreferencesAsyncAndroid
       filter.allowList?.toList(),
       pigeonOptions,
     );
+    data.forEach((String? key, Object? value) {
+      if (value.runtimeType == String &&
+          (value! as String).startsWith(_jsonListPrefix)) {
+        data[key!] =
+            (jsonDecode((value as String).substring(_jsonListPrefix.length))
+                    as List<dynamic>)
+                .cast<String>()
+                .toList();
+      }
+    });
     return data.cast<String, Object>();
   }
 }

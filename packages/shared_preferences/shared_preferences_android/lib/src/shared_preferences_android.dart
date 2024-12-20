@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
@@ -9,6 +11,11 @@ import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages.g.dart';
 import 'shared_preferences_async_android.dart';
+
+const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
+const String _bigIntPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy';
+const String _doublePrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu';
+const String _jsonListPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!';
 
 /// The Android implementation of [SharedPreferencesStorePlatform].
 ///
@@ -39,7 +46,15 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   Future<bool> setValue(String valueType, String key, Object value) async {
     switch (valueType) {
       case 'String':
-        return _api.setString(key, value as String);
+        value as String;
+        if (value.startsWith(_listPrefix) ||
+            value.startsWith(_jsonListPrefix) ||
+            value.startsWith(_bigIntPrefix) ||
+            value.startsWith(_doublePrefix)) {
+          throw ArgumentError(
+              'The string $value cannot be stored as it clashes with special identifier prefixes');
+        }
+        return _api.setString(key, value);
       case 'Bool':
         return _api.setBool(key, value as bool);
       case 'Int':
@@ -47,12 +62,12 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       case 'Double':
         return _api.setDouble(key, value as double);
       case 'StringList':
+        return _api.setString(key, '$_jsonListPrefix${jsonEncode(value)}');
+      case 'LegacyStringListForTesting':
         return _api.setStringList(key, value as List<String>);
     }
-    // TODO(tarrinneal): change to ArgumentError across all platforms.
-    throw PlatformException(
-        code: 'InvalidOperation',
-        message: '"$valueType" is not a supported type.');
+    throw ArgumentError(
+        'value: $value of type: $valueType" is not of a supported type.');
   }
 
   @override
@@ -100,6 +115,16 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
     final PreferencesFilter filter = parameters.filter;
     final Map<String?, Object?> data =
         await _api.getAll(filter.prefix, filter.allowList?.toList());
+    data.forEach((String? key, Object? value) {
+      if (value.runtimeType == String &&
+          (value! as String).startsWith(_jsonListPrefix)) {
+        data[key!] =
+            (jsonDecode((value as String).substring(_jsonListPrefix.length))
+                    as List<dynamic>)
+                .cast<String>()
+                .toList();
+      }
+    });
     return data.cast<String, Object>();
   }
 }

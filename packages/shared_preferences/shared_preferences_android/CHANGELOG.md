@@ -1,3 +1,9 @@
+## 3.0.0
+
+* Updates un-supported type errors to `ArgumentError`.
+* Removes support for reading `BigInt` and `Set<String>`.
+* Moves `List<String>` encoding to dart `JSON` package.
+
 ## 2.4.0
 
 * Adds `SharedPreferences` support within `SharedPreferencesAsyncAndroid` API.
