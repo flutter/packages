@@ -483,7 +483,7 @@ void main() {
       ];
       for (final String prefix in specialPrefixes) {
         expect(preferences.setValue('String', key, prefix + value),
-            throwsA(isA<PlatformException>()));
+            throwsA(isA<ArgumentError>()));
         final Map<String, Object> values =
             await preferences.getAllWithParameters(
           GetAllParameters(
@@ -492,6 +492,37 @@ void main() {
         );
         expect(values[key], null);
       }
+    });
+
+    testWidgets(
+        'old list encoding with getPreferences can be re-added with new encoding without data loss',
+        (WidgetTester _) async {
+      await preferences.clearWithParameters(
+        ClearParameters(
+          filter: PreferencesFilter(prefix: ''),
+        ),
+      );
+      await preferences.setValue('String', 'String', allTestValues['String']!);
+      await preferences.setValue('Bool', 'Bool', allTestValues['Bool']!);
+      await preferences.setValue('Int', 'Int', allTestValues['Int']!);
+      await preferences.setValue('Double', 'Double', allTestValues['Double']!);
+      await preferences.setValue('LegacyStringListForTesting', 'StringList',
+          allTestValues['StringList']!);
+      Map<String, Object> prefs = await preferences.getAllWithParameters(
+        GetAllParameters(
+          filter: PreferencesFilter(prefix: ''),
+        ),
+      );
+      expect(prefs['StringList'], allTestValues['StringList']);
+      await preferences.setValue(
+          'StringList', 'StringList', prefs['StringList']!);
+      prefs = await preferences.getAllWithParameters(
+        GetAllParameters(
+          filter: PreferencesFilter(prefix: ''),
+        ),
+      );
+
+      expect(prefs['StringList'], allTestValues['StringList']);
     });
   });
 
@@ -755,6 +786,69 @@ void main() {
         expect(await preferences.getBool(boolKey, options), null);
         expect(await preferences.getInt(intKey, options), testInt);
         expect(await preferences.getDouble(doubleKey, options), testDouble);
+        expect(await preferences.getStringList(listKey, options), testList);
+      });
+
+      testWidgets(
+          'list encoding updates to new encoding process without data loss with $backend',
+          (WidgetTester _) async {
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncAndroid preferences =
+            getPreferences() as SharedPreferencesAsyncAndroid;
+        await clearPreferences(preferences, options);
+        await preferences.setStringListLegacyForTesting(
+            listKey, testList, options);
+        final List<String>? oldSystemList =
+            await preferences.getStringList(listKey, options);
+        expect(oldSystemList, testList);
+        await preferences.setStringList(listKey, oldSystemList!, options);
+        expect(await preferences.getStringList(listKey, options), testList);
+      });
+
+      testWidgets(
+          'old list encoding still functions with getPreferences with $backend',
+          (WidgetTester _) async {
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncAndroid preferences =
+            getPreferences() as SharedPreferencesAsyncAndroid;
+        await clearPreferences(preferences, options);
+        await Future.wait(<Future<void>>[
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringListLegacyForTesting(listKey, testList, options)
+        ]);
+
+        final Map<String, Object> prefs = await preferences.getPreferences(
+            const GetPreferencesParameters(filter: PreferencesFilters()),
+            options);
+        expect(prefs[listKey], testList);
+      });
+
+      testWidgets(
+          'old list encoding with getPreferences can be re-added with new encoding without data loss with $backend',
+          (WidgetTester _) async {
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncAndroid preferences =
+            getPreferences() as SharedPreferencesAsyncAndroid;
+        await clearPreferences(preferences, options);
+        await Future.wait(<Future<void>>[
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+          preferences.setStringListLegacyForTesting(listKey, testList, options)
+        ]);
+
+        final Map<String, Object> prefs = await preferences.getPreferences(
+            const GetPreferencesParameters(filter: PreferencesFilters()),
+            options);
+        await preferences.setStringList(listKey,
+            (prefs[listKey]! as List<Object?>).cast<String>(), options);
         expect(await preferences.getStringList(listKey, options), testList);
       });
     });

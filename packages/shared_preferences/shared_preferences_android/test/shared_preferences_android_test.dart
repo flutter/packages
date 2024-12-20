@@ -259,7 +259,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Future<Map<String?, Object?>> getAll(
+  Future<Map<String, Object>> getAll(
     String prefix,
     List<String?>? allowList,
   ) async {
@@ -267,11 +267,11 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
     if (allowList != null) {
       allowSet = Set<String>.from(allowList);
     }
-    return <String?, Object?>{
+    return <String, Object>{
       for (final String key in items.keys)
         if (key.startsWith(prefix) &&
             (allowSet == null || allowSet.contains(key)))
-          key: items[key]
+          key: items[key]!
     };
   }
 
@@ -321,4 +321,12 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
     items[key] = value;
     return true;
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => throw UnimplementedError();
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => throw UnimplementedError();
 }

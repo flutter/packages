@@ -31,6 +31,7 @@ import kotlinx.coroutines.runBlocking
 const val TAG = "SharedPreferencesPlugin"
 const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
 const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
+const val JSON_LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 
 private val Context.sharedPreferencesDataStore: DataStore<Preferences> by
@@ -189,9 +190,16 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>? {
-    val value: List<*>? = transformPref(getString(key, options) as Any?, listEncoder) as List<*>?
-    return value?.filterIsInstance<String>()
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): Any? {
+    val stringValue = getString(key, options)
+    stringValue?.let {
+      if (stringValue.startsWith(JSON_LIST_PREFIX)) {
+        return stringValue
+      }
+      val value: List<*>? = transformPref(stringValue, listEncoder) as List<*>?
+      return value?.filterIsInstance<String>()
+    }
+    return null
   }
 
   /** Gets all properties from data store. */
@@ -360,13 +368,16 @@ class SharedPreferencesBackend(
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>? {
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): Any? {
     val preferences = createSharedPreferences(options)
-    return if (preferences.contains(key)) {
-      (transformPref(preferences.getString(key, ""), listEncoder) as List<*>?)?.filterIsInstance<
-          String>()
+    if (preferences.contains(key)) {
+      val transformed = transformPref(preferences.getString(key, ""), listEncoder)
+      if (transformed is String) {
+        return transformed
+      }
+      return (transformed as List<*>?)?.filterIsInstance<String>()
     } else {
-      null
+      return null
     }
   }
 
@@ -400,7 +411,9 @@ internal fun preferencesFilter(key: String, value: Any?, allowList: Set<String>?
 /** Transforms preferences that are stored as Strings back to original type. */
 internal fun transformPref(value: Any?, listEncoder: SharedPreferencesListEncoder): Any? {
   if (value is String) {
-    if (value.startsWith(LIST_PREFIX)) {
+    if (value.startsWith(JSON_LIST_PREFIX)) {
+      return value
+    } else if (value.startsWith(LIST_PREFIX)) {
       return listEncoder.decode(value.substring(LIST_PREFIX.length))
     } else if (value.startsWith(DOUBLE_PREFIX)) {
       return value.substring(DOUBLE_PREFIX.length).toDouble()

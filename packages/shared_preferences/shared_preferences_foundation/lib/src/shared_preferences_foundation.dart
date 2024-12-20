@@ -98,9 +98,8 @@ class SharedPreferencesFoundation extends SharedPreferencesStorePlatform {
   Future<bool> setValue(String valueType, String key, Object value) async {
     final _Setter? setter = _setters[valueType];
     if (setter == null) {
-      throw PlatformException(
-          code: 'InvalidOperation',
-          message: '"$valueType" is not a supported type.');
+      throw ArgumentError(
+          'value: $value of type: $valueType" is not of a supported type.');
     }
     await setter(key, value);
     return true;
