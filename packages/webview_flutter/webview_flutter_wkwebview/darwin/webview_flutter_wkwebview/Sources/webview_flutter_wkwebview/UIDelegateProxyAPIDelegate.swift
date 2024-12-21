@@ -30,113 +30,224 @@ class UIDelegateImpl: NSObject, WKUIDelegate {
     }
     return nil
   }
-}
 
-extension UIDelegateImpl {
-  @available(iOS 15.0, macOS 12.0, *)
-  func webView(
-    _ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
-    initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
-    decisionHandler: @escaping @MainActor (WKPermissionDecision) -> Void
-  ) {
-    let wrapperCaptureType: MediaCaptureType
-    switch type {
-    case .camera:
-      wrapperCaptureType = .camera
-    case .microphone:
-      wrapperCaptureType = .microphone
-    case .cameraAndMicrophone:
-      wrapperCaptureType = .cameraAndMicrophone
-    @unknown default:
-      wrapperCaptureType = .unknown
-    }
+  #if compiler(>=6.0)
+    @available(iOS 15.0, macOS 12.0, *)
+    func webView(
+      _ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+      initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
+      decisionHandler: @escaping @MainActor (WKPermissionDecision) -> Void
+    ) {
+      let wrapperCaptureType: MediaCaptureType
+      switch type {
+      case .camera:
+        wrapperCaptureType = .camera
+      case .microphone:
+        wrapperCaptureType = .microphone
+      case .cameraAndMicrophone:
+        wrapperCaptureType = .cameraAndMicrophone
+      @unknown default:
+        wrapperCaptureType = .unknown
+      }
 
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.requestMediaCapturePermission(
-        pigeonInstance: self, webView: webView, origin: origin, frame: frame,
-        type: wrapperCaptureType
-      ) { result in
-        DispatchQueue.main.async {
-          switch result {
-          case .success(let decision):
-            switch decision {
-            case .deny:
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.requestMediaCapturePermission(
+          pigeonInstance: self, webView: webView, origin: origin, frame: frame,
+          type: wrapperCaptureType
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let decision):
+              switch decision {
+              case .deny:
+                decisionHandler(.deny)
+              case .grant:
+                decisionHandler(.grant)
+              case .prompt:
+                decisionHandler(.prompt)
+              }
+            case .failure(let error):
               decisionHandler(.deny)
-            case .grant:
-              decisionHandler(.grant)
-            case .prompt:
-              decisionHandler(.prompt)
+              onFailure("WKUIDelegate.requestMediaCapturePermission", error)
             }
-          case .failure(let error):
-            decisionHandler(.deny)
-            onFailure("WKUIDelegate.requestMediaCapturePermission", error)
           }
         }
       }
     }
-  }
+  #else
+    @available(iOS 15.0, macOS 12.0, *)
+    func webView(
+      _ webView: WKWebView, requestMediaCapturePermissionFor origin: WKSecurityOrigin,
+      initiatedByFrame frame: WKFrameInfo, type: WKMediaCaptureType,
+      decisionHandler: @escaping (WKPermissionDecision) -> Void
+    ) {
+      let wrapperCaptureType: MediaCaptureType
+      switch type {
+      case .camera:
+        wrapperCaptureType = .camera
+      case .microphone:
+        wrapperCaptureType = .microphone
+      case .cameraAndMicrophone:
+        wrapperCaptureType = .cameraAndMicrophone
+      @unknown default:
+        wrapperCaptureType = .unknown
+      }
 
-  func webView(
-    _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
-    initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor () -> Void
-  ) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.runJavaScriptAlertPanel(
-        pigeonInstance: self, webView: webView, message: message, frame: frame
-      ) { result in
-        DispatchQueue.main.async {
-          if case .failure(let error) = result {
-            onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.requestMediaCapturePermission(
+          pigeonInstance: self, webView: webView, origin: origin, frame: frame,
+          type: wrapperCaptureType
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let decision):
+              switch decision {
+              case .deny:
+                decisionHandler(.deny)
+              case .grant:
+                decisionHandler(.grant)
+              case .prompt:
+                decisionHandler(.prompt)
+              }
+            case .failure(let error):
+              decisionHandler(.deny)
+              onFailure("WKUIDelegate.requestMediaCapturePermission", error)
+            }
           }
-          completionHandler()
         }
       }
     }
-  }
+  #endif
 
-  func webView(
-    _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
-    initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor (Bool) -> Void
-  ) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.runJavaScriptConfirmPanel(
-        pigeonInstance: self, webView: webView, message: message, frame: frame
-      ) { result in
-        DispatchQueue.main.async {
-          switch result {
-          case .success(let confirmed):
-            completionHandler(confirmed)
-          case .failure(let error):
-            completionHandler(false)
-            onFailure("WKUIDelegate.runJavaScriptConfirmPanel", error)
+  #if compiler(>=6.0)
+    func webView(
+      _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
+      initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor () -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.runJavaScriptAlertPanel(
+          pigeonInstance: self, webView: webView, message: message, frame: frame
+        ) { result in
+          DispatchQueue.main.async {
+            if case .failure(let error) = result {
+              onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
+            }
+            completionHandler()
           }
         }
       }
     }
-  }
+  #else
+    func webView(
+      _ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String,
+      initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.runJavaScriptAlertPanel(
+          pigeonInstance: self, webView: webView, message: message, frame: frame
+        ) { result in
+          DispatchQueue.main.async {
+            if case .failure(let error) = result {
+              onFailure("WKUIDelegate.runJavaScriptAlertPanel", error)
+            }
+            completionHandler()
+          }
+        }
+      }
+    }
+  #endif
 
-  func webView(
-    _ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String,
-    defaultText: String?, initiatedByFrame frame: WKFrameInfo,
-    completionHandler: @escaping @MainActor (String?) -> Void
-  ) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.runJavaScriptTextInputPanel(
-        pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
-        frame: frame
-      ) { result in
-        DispatchQueue.main.async {
-          switch result {
-          case .success(let response):
-            completionHandler(response)
-          case .failure(let error):
-            completionHandler(nil)
-            onFailure("WKUIDelegate.runJavaScriptTextInputPanel", error)
+  #if compiler(>=6.0)
+    func webView(
+      _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
+      initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping @MainActor (Bool) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.runJavaScriptConfirmPanel(
+          pigeonInstance: self, webView: webView, message: message, frame: frame
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let confirmed):
+              completionHandler(confirmed)
+            case .failure(let error):
+              completionHandler(false)
+              onFailure("WKUIDelegate.runJavaScriptConfirmPanel", error)
+            }
           }
         }
       }
     }
-  }
+  #else
+    func webView(
+      _ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String,
+      initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping (Bool) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.runJavaScriptConfirmPanel(
+          pigeonInstance: self, webView: webView, message: message, frame: frame
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let confirmed):
+              completionHandler(confirmed)
+            case .failure(let error):
+              completionHandler(false)
+              onFailure("WKUIDelegate.runJavaScriptConfirmPanel", error)
+            }
+          }
+        }
+      }
+    }
+  #endif
+
+  #if compiler(>=6.0)
+    func webView(
+      _ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String,
+      defaultText: String?, initiatedByFrame frame: WKFrameInfo,
+      completionHandler: @escaping @MainActor (String?) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.runJavaScriptTextInputPanel(
+          pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
+          frame: frame
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+              completionHandler(response)
+            case .failure(let error):
+              completionHandler(nil)
+              onFailure("WKUIDelegate.runJavaScriptTextInputPanel", error)
+            }
+          }
+        }
+      }
+    }
+  #else
+    func webView(
+      _ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String,
+      defaultText: String?, initiatedByFrame frame: WKFrameInfo,
+      completionHandler: @escaping (String?) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.runJavaScriptTextInputPanel(
+          pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText,
+          frame: frame
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+              completionHandler(response)
+            case .failure(let error):
+              completionHandler(nil)
+              onFailure("WKUIDelegate.runJavaScriptTextInputPanel", error)
+            }
+          }
+        }
+      }
+    }
+  #endif
 }
 
 /// ProxyApi implementation for `WKUIDelegate`.

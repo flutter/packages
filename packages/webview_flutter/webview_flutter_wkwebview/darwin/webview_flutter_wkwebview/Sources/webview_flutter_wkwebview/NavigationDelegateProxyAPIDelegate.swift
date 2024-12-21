@@ -77,44 +77,82 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
       }
     }
   }
-}
 
-extension NavigationDelegateImpl {
-  public func webView(
-    _ webView: WKWebView, decidePolicyFor navigationAction: WebKit.WKNavigationAction,
-    decisionHandler: @escaping @MainActor (WebKit.WKNavigationActionPolicy) -> Void
-  ) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.decidePolicyForNavigationAction(
-        pigeonInstance: self, webView: webView, navigationAction: navigationAction
-      ) { result in
-        DispatchQueue.main.async {
-          switch result {
-          case .success(let policy):
-            switch policy {
-            case .allow:
-              decisionHandler(.allow)
-            case .cancel:
-              decisionHandler(.cancel)
-            case .download:
-              if #available(iOS 14.5, macOS 11.3, *) {
-                decisionHandler(.download)
-              } else {
+  #if compiler(>=6.0)
+    public func webView(
+      _ webView: WKWebView, decidePolicyFor navigationAction: WebKit.WKNavigationAction,
+      decisionHandler: @escaping @MainActor (WebKit.WKNavigationActionPolicy) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.decidePolicyForNavigationAction(
+          pigeonInstance: self, webView: webView, navigationAction: navigationAction
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let policy):
+              switch policy {
+              case .allow:
+                decisionHandler(.allow)
+              case .cancel:
                 decisionHandler(.cancel)
-                assertionFailure(
-                  self.registrar.createUnsupportedVersionMessage(
-                    "WKNavigationActionPolicy.download", versionRequirements: "iOS 14.5, macOS 11.3"
-                  ))
+              case .download:
+                if #available(iOS 14.5, macOS 11.3, *) {
+                  decisionHandler(.download)
+                } else {
+                  decisionHandler(.cancel)
+                  assertionFailure(
+                    self.registrar.createUnsupportedVersionMessage(
+                      "WKNavigationActionPolicy.download",
+                      versionRequirements: "iOS 14.5, macOS 11.3"
+                    ))
+                }
               }
+            case .failure(let error):
+              decisionHandler(.cancel)
+              onFailure("WKNavigationDelegate.decidePolicyForNavigationAction", error)
             }
-          case .failure(let error):
-            decisionHandler(.cancel)
-            onFailure("WKNavigationDelegate.decidePolicyForNavigationAction", error)
           }
         }
       }
     }
-  }
+  #else
+    public func webView(
+      _ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+      decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.decidePolicyForNavigationAction(
+          pigeonInstance: self, webView: webView, navigationAction: navigationAction
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let policy):
+              switch policy {
+              case .allow:
+                decisionHandler(.allow)
+              case .cancel:
+                decisionHandler(.cancel)
+              case .download:
+                if #available(iOS 14.5, macOS 11.3, *) {
+                  decisionHandler(.download)
+                } else {
+                  decisionHandler(.cancel)
+                  assertionFailure(
+                    self.registrar.createUnsupportedVersionMessage(
+                      "WKNavigationActionPolicy.download",
+                      versionRequirements: "iOS 14.5, macOS 11.3"
+                    ))
+                }
+              }
+            case .failure(let error):
+              decisionHandler(.cancel)
+              onFailure("WKNavigationDelegate.decidePolicyForNavigationAction", error)
+            }
+          }
+        }
+      }
+    }
+  #endif
 
   #if compiler(>=6.0)
     public func webView(
@@ -192,27 +230,52 @@ extension NavigationDelegateImpl {
     }
   #endif
 
-  public func webView(
-    _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
-    completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?) ->
-      Void
-  ) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.didReceiveAuthenticationChallenge(
-        pigeonInstance: self, webView: webView, challenge: challenge
-      ) { result in
-        DispatchQueue.main.async {
-          switch result {
-          case .success(let response):
-            completionHandler(response.disposition, response.credential)
-          case .failure(let error):
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)
+  #if compiler(>=6.0)
+    public func webView(
+      _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
+      completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?)
+        ->
+        Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.didReceiveAuthenticationChallenge(
+          pigeonInstance: self, webView: webView, challenge: challenge
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+              completionHandler(response.disposition, response.credential)
+            case .failure(let error):
+              completionHandler(.cancelAuthenticationChallenge, nil)
+              onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)
+            }
           }
         }
       }
     }
-  }
+  #else
+    public func webView(
+      _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
+      completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) ->
+        Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.didReceiveAuthenticationChallenge(
+          pigeonInstance: self, webView: webView, challenge: challenge
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let response):
+              completionHandler(response.disposition, response.credential)
+            case .failure(let error):
+              completionHandler(.cancelAuthenticationChallenge, nil)
+              onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)
+            }
+          }
+        }
+      }
+    }
+  #endif
 }
 
 /// ProxyApi implementation for `WKNavigationDelegate`.
