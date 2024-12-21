@@ -116,42 +116,81 @@ extension NavigationDelegateImpl {
     }
   }
 
-  public func webView(
-    _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
-    decisionHandler: @escaping @MainActor (WKNavigationResponsePolicy) -> Void
-  ) {
-    registrar.dispatchOnMainThread { onFailure in
-      self.api.decidePolicyForNavigationResponse(
-        pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
-      ) { result in
-        DispatchQueue.main.async {
-          switch result {
-          case .success(let policy):
-            switch policy {
-            case .allow:
-              decisionHandler(.allow)
-            case .cancel:
-              decisionHandler(.cancel)
-            case .download:
-              if #available(iOS 14.5, macOS 11.3, *) {
-                decisionHandler(.download)
-              } else {
+  #if compiler(>=6.0)
+    public func webView(
+      _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
+      decisionHandler: @escaping @MainActor (WKNavigationResponsePolicy) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.decidePolicyForNavigationResponse(
+          pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let policy):
+              switch policy {
+              case .allow:
+                decisionHandler(.allow)
+              case .cancel:
                 decisionHandler(.cancel)
-                assertionFailure(
-                  self.registrar.createUnsupportedVersionMessage(
-                    "WKNavigationResponsePolicy.download",
-                    versionRequirements: "iOS 14.5, macOS 11.3"
-                  ))
+              case .download:
+                if #available(iOS 14.5, macOS 11.3, *) {
+                  decisionHandler(.download)
+                } else {
+                  decisionHandler(.cancel)
+                  assertionFailure(
+                    self.registrar.createUnsupportedVersionMessage(
+                      "WKNavigationResponsePolicy.download",
+                      versionRequirements: "iOS 14.5, macOS 11.3"
+                    ))
+                }
               }
+            case .failure(let error):
+              decisionHandler(.cancel)
+              onFailure("WKNavigationDelegate.decidePolicyForNavigationResponse", error)
             }
-          case .failure(let error):
-            decisionHandler(.cancel)
-            onFailure("WKNavigationDelegate.decidePolicyForNavigationResponse", error)
           }
         }
       }
     }
-  }
+  #else
+    public func webView(
+      _ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse,
+      decisionHandler: @escaping (WKNavigationResponsePolicy) -> Void
+    ) {
+      registrar.dispatchOnMainThread { onFailure in
+        self.api.decidePolicyForNavigationResponse(
+          pigeonInstance: self, webView: webView, navigationResponse: navigationResponse
+        ) { result in
+          DispatchQueue.main.async {
+            switch result {
+            case .success(let policy):
+              switch policy {
+              case .allow:
+                decisionHandler(.allow)
+              case .cancel:
+                decisionHandler(.cancel)
+              case .download:
+                if #available(iOS 14.5, macOS 11.3, *) {
+                  decisionHandler(.download)
+                } else {
+                  decisionHandler(.cancel)
+                  assertionFailure(
+                    self.registrar.createUnsupportedVersionMessage(
+                      "WKNavigationResponsePolicy.download",
+                      versionRequirements: "iOS 14.5, macOS 11.3"
+                    ))
+                }
+              }
+            case .failure(let error):
+              decisionHandler(.cancel)
+              onFailure("WKNavigationDelegate.decidePolicyForNavigationResponse", error)
+            }
+          }
+        }
+      }
+    }
+  #endif
 
   public func webView(
     _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
