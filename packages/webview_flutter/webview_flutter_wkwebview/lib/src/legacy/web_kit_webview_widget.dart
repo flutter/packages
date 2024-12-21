@@ -189,18 +189,10 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
             ),
           );
         },
-        decidePolicyForNavigationResponse: (
-          WKNavigationDelegate pigeon_instance,
-          WKWebView webView,
-          WKNavigationResponse navigationResponse,
-        ) async {
+        decidePolicyForNavigationResponse: (_, __, ___) async {
           return NavigationResponsePolicy.allow;
         },
-        didReceiveAuthenticationChallenge: (
-          WKNavigationDelegate pigeon_instance,
-          WKWebView webView,
-          URLAuthenticationChallenge challenge,
-        ) async {
+        didReceiveAuthenticationChallenge: (_, __, ___) async {
           return AuthenticationChallengeResponse(
             disposition:
                 UrlSessionAuthChallengeDisposition.performDefaultHandling,
@@ -728,12 +720,12 @@ class WebViewWidgetProxy {
     void Function(WKNavigationDelegate, WKWebView webView)?
         webViewWebContentProcessDidTerminate,
     required Future<NavigationResponsePolicy> Function(
-      WKNavigationDelegate pigeon_instance,
+      WKNavigationDelegate,
       WKWebView webView,
       WKNavigationResponse navigationResponse,
     ) decidePolicyForNavigationResponse,
     required Future<AuthenticationChallengeResponse> Function(
-      WKNavigationDelegate pigeon_instance,
+      WKNavigationDelegate,
       WKWebView webView,
       URLAuthenticationChallenge challenge,
     ) didReceiveAuthenticationChallenge,
