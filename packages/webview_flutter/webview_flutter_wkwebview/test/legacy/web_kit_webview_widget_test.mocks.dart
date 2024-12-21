@@ -1815,7 +1815,7 @@ class MockWebViewWidgetProxy extends _i1.Mock
       _i2.WKWebView,
       String?,
     )? didStartProvisionalNavigation,
-    _i4.Future<_i2.NavigationActionPolicy> Function(
+    required _i4.Future<_i2.NavigationActionPolicy> Function(
       _i2.WKNavigationDelegate,
       _i2.WKWebView,
       _i2.WKNavigationAction,
@@ -1834,6 +1834,16 @@ class MockWebViewWidgetProxy extends _i1.Mock
       _i2.WKNavigationDelegate,
       _i2.WKWebView,
     )? webViewWebContentProcessDidTerminate,
+    required _i4.Future<_i2.NavigationResponsePolicy> Function(
+      _i2.WKNavigationDelegate,
+      _i2.WKWebView,
+      _i2.WKNavigationResponse,
+    )? decidePolicyForNavigationResponse,
+    required _i4.Future<_i2.AuthenticationChallengeResponse> Function(
+      _i2.WKNavigationDelegate,
+      _i2.WKWebView,
+      _i2.URLAuthenticationChallenge,
+    )? didReceiveAuthenticationChallenge,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1847,6 +1857,10 @@ class MockWebViewWidgetProxy extends _i1.Mock
             #didFailProvisionalNavigation: didFailProvisionalNavigation,
             #webViewWebContentProcessDidTerminate:
                 webViewWebContentProcessDidTerminate,
+            #decidePolicyForNavigationResponse:
+                decidePolicyForNavigationResponse,
+            #didReceiveAuthenticationChallenge:
+                didReceiveAuthenticationChallenge,
           },
         ),
         returnValue: _FakeWKNavigationDelegate_3(
@@ -1862,6 +1876,10 @@ class MockWebViewWidgetProxy extends _i1.Mock
               #didFailProvisionalNavigation: didFailProvisionalNavigation,
               #webViewWebContentProcessDidTerminate:
                   webViewWebContentProcessDidTerminate,
+              #decidePolicyForNavigationResponse:
+                  decidePolicyForNavigationResponse,
+              #didReceiveAuthenticationChallenge:
+                  didReceiveAuthenticationChallenge,
             },
           ),
         ),

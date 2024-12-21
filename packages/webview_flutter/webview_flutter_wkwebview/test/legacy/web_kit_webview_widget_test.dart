@@ -73,6 +73,10 @@ void main() {
         didFailProvisionalNavigation: anyNamed('didFailProvisionalNavigation'),
         webViewWebContentProcessDidTerminate:
             anyNamed('webViewWebContentProcessDidTerminate'),
+        decidePolicyForNavigationResponse:
+            anyNamed('decidePolicyForNavigationResponse'),
+        didReceiveAuthenticationChallenge:
+            anyNamed('didReceiveAuthenticationChallenge'),
       )).thenReturn(mocks.navigationDelegate);
       when(mocks.webView.configuration).thenReturn(mocks.webViewConfiguration);
       when(mocks.webViewConfiguration.getUserContentController()).thenAnswer(
@@ -1150,6 +1154,10 @@ void main() {
               anyNamed('didFailProvisionalNavigation'),
           webViewWebContentProcessDidTerminate:
               anyNamed('webViewWebContentProcessDidTerminate'),
+          decidePolicyForNavigationResponse:
+              anyNamed('decidePolicyForNavigationResponse'),
+          didReceiveAuthenticationChallenge:
+              anyNamed('didReceiveAuthenticationChallenge'),
         )).captured.single as void Function(
                 WKNavigationDelegate, WKWebView, String);
         didStartProvisionalNavigation(
@@ -1178,6 +1186,10 @@ void main() {
               anyNamed('didFailProvisionalNavigation'),
           webViewWebContentProcessDidTerminate:
               anyNamed('webViewWebContentProcessDidTerminate'),
+          decidePolicyForNavigationResponse:
+              anyNamed('decidePolicyForNavigationResponse'),
+          didReceiveAuthenticationChallenge:
+              anyNamed('didReceiveAuthenticationChallenge'),
         )).captured.single as void Function(
                 WKNavigationDelegate, WKWebView, String);
         didFinishNavigation(
@@ -1207,6 +1219,10 @@ void main() {
               anyNamed('didFailProvisionalNavigation'),
           webViewWebContentProcessDidTerminate:
               anyNamed('webViewWebContentProcessDidTerminate'),
+          decidePolicyForNavigationResponse:
+              anyNamed('decidePolicyForNavigationResponse'),
+          didReceiveAuthenticationChallenge:
+              anyNamed('didReceiveAuthenticationChallenge'),
         )).captured.single as void Function(
                 WKNavigationDelegate, WKWebView, NSError);
 
@@ -1251,6 +1267,10 @@ void main() {
               captureAnyNamed('didFailProvisionalNavigation'),
           webViewWebContentProcessDidTerminate:
               anyNamed('webViewWebContentProcessDidTerminate'),
+          decidePolicyForNavigationResponse:
+              anyNamed('decidePolicyForNavigationResponse'),
+          didReceiveAuthenticationChallenge:
+              anyNamed('didReceiveAuthenticationChallenge'),
         )).captured.single as void Function(
                 WKNavigationDelegate, WKWebView, NSError);
 
@@ -1299,6 +1319,10 @@ void main() {
               anyNamed('didFailProvisionalNavigation'),
           webViewWebContentProcessDidTerminate:
               captureAnyNamed('webViewWebContentProcessDidTerminate'),
+          decidePolicyForNavigationResponse:
+              anyNamed('decidePolicyForNavigationResponse'),
+          didReceiveAuthenticationChallenge:
+              anyNamed('didReceiveAuthenticationChallenge'),
         )).captured.single as void Function(WKNavigationDelegate, WKWebView);
         webViewWebContentProcessDidTerminate(
           mocks.navigationDelegate,
@@ -1337,6 +1361,10 @@ void main() {
               anyNamed('didFailProvisionalNavigation'),
           webViewWebContentProcessDidTerminate:
               anyNamed('webViewWebContentProcessDidTerminate'),
+          decidePolicyForNavigationResponse:
+              anyNamed('decidePolicyForNavigationResponse'),
+          didReceiveAuthenticationChallenge:
+              anyNamed('didReceiveAuthenticationChallenge'),
         )).captured.single as Future<NavigationActionPolicy> Function(
                 WKNavigationDelegate, WKWebView, WKNavigationAction);
 
