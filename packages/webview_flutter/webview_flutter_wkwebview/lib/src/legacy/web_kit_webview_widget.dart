@@ -189,6 +189,23 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
             ),
           );
         },
+        decidePolicyForNavigationResponse: (
+          WKNavigationDelegate pigeon_instance,
+          WKWebView webView,
+          WKNavigationResponse navigationResponse,
+        ) async {
+          return NavigationResponsePolicy.allow;
+        },
+        didReceiveAuthenticationChallenge: (
+          WKNavigationDelegate pigeon_instance,
+          WKWebView webView,
+          URLAuthenticationChallenge challenge,
+        ) async {
+          return AuthenticationChallengeResponse(
+            disposition:
+                UrlSessionAuthChallengeDisposition.performDefaultHandling,
+          );
+        },
       );
     },
   );
@@ -699,17 +716,27 @@ class WebViewWidgetProxy {
         didFinishNavigation,
     void Function(WKNavigationDelegate, WKWebView webView, String? url)?
         didStartProvisionalNavigation,
-    Future<NavigationActionPolicy> Function(
+    required Future<NavigationActionPolicy> Function(
       WKNavigationDelegate,
       WKWebView webView,
       WKNavigationAction navigationAction,
-    )? decidePolicyForNavigationAction,
+    ) decidePolicyForNavigationAction,
     void Function(WKNavigationDelegate, WKWebView webView, NSError error)?
         didFailNavigation,
     void Function(WKNavigationDelegate, WKWebView webView, NSError error)?
         didFailProvisionalNavigation,
     void Function(WKNavigationDelegate, WKWebView webView)?
         webViewWebContentProcessDidTerminate,
+    required Future<NavigationResponsePolicy> Function(
+      WKNavigationDelegate pigeon_instance,
+      WKWebView webView,
+      WKNavigationResponse navigationResponse,
+    ) decidePolicyForNavigationResponse,
+    required Future<AuthenticationChallengeResponse> Function(
+      WKNavigationDelegate pigeon_instance,
+      WKWebView webView,
+      URLAuthenticationChallenge challenge,
+    ) didReceiveAuthenticationChallenge,
   }) {
     return WKNavigationDelegate(
       didFinishNavigation: didFinishNavigation,
@@ -719,6 +746,8 @@ class WebViewWidgetProxy {
       didFailProvisionalNavigation: didFailProvisionalNavigation,
       webViewWebContentProcessDidTerminate:
           webViewWebContentProcessDidTerminate,
+      decidePolicyForNavigationResponse: decidePolicyForNavigationResponse,
+      didReceiveAuthenticationChallenge: didReceiveAuthenticationChallenge,
     );
   }
 }
