@@ -2501,9 +2501,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     for (final String import in apisOfImports.keys) {
       final List<String> unsupportedPlatforms = <String>[
         if (!apisOfImports[import]!
-            .every((AstProxyApi api) => api.swiftOptions?.supportsIos ?? true))
+            .any((AstProxyApi api) => api.swiftOptions?.supportsIos ?? true))
           '!os(iOS)',
-        if (!apisOfImports[import]!.every(
+        if (!apisOfImports[import]!.any(
             (AstProxyApi api) => api.swiftOptions?.supportsMacos ?? true))
           '!os(macOS)',
       ];

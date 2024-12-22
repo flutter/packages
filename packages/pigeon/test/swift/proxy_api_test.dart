@@ -287,6 +287,45 @@ void main() {
           contains('#if !os(iOS) || !os(macOS)\nimport MyImport\n#endif'),
         );
       });
+
+      test('do not add check if at least one class is supported', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+            AstProxyApi(
+              name: 'Api2',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, isNot(contains('#if !os(iOS)\nimport MyImport')));
+      });
     });
 
     group('inheritance', () {
