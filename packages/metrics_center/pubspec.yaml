@@ -6,7 +6,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/metrics_cente
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+metrics_center%22
 
 environment:
-  sdk: ^3.3.0
+  sdk: ^3.4.0
 
 dependencies:
   _discoveryapis_commons: ^1.0.0
