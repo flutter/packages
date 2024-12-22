@@ -2496,6 +2496,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     }
 
     for (final String import in apisOfImports.keys) {
+      // If every ProxyApi that shares an import excludes a platform for
+      // support, surround the import with `#if !os(...) #endif`.
       final List<String> unsupportedPlatforms = <String>[
         if (!apisOfImports[import]!
             .any((AstProxyApi api) => api.swiftOptions?.supportsIos ?? true))
