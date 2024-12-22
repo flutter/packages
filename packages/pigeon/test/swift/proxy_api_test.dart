@@ -138,12 +138,6 @@ void main() {
       expect(
         code,
         contains(
-          'var pigeonRegistrar: MyFilePigeonProxyApiRegistrar { get }',
-        ),
-      );
-      expect(
-        code,
-        contains(
           r'class PigeonApiApi: PigeonApiProtocolApi',
         ),
       );

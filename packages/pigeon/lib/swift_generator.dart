@@ -1148,9 +1148,6 @@ if (wrapped == nil) {
     final String swiftApiProtocolName =
         '${hostProxyApiPrefix}Protocol${api.name}';
     indent.writeScoped('protocol $swiftApiProtocolName {', '}', () {
-      indent.writeln(
-        'var pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)} { get }',
-      );
       _writeProxyApiFlutterMethods(
         indent,
         api,
@@ -2503,8 +2500,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         if (!apisOfImports[import]!
             .any((AstProxyApi api) => api.swiftOptions?.supportsIos ?? true))
           '!os(iOS)',
-        if (!apisOfImports[import]!.any(
-            (AstProxyApi api) => api.swiftOptions?.supportsMacos ?? true))
+        if (!apisOfImports[import]!
+            .any((AstProxyApi api) => api.swiftOptions?.supportsMacos ?? true))
           '!os(macOS)',
       ];
 

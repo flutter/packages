@@ -967,7 +967,6 @@ protocol PigeonApiDelegateProxyApiTestClass {
 }
 
 protocol PigeonApiProtocolProxyApiTestClass {
-  var pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar { get }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   func flutterNoop(
@@ -3896,7 +3895,6 @@ protocol PigeonApiDelegateProxyApiSuperClass {
 }
 
 protocol PigeonApiProtocolProxyApiSuperClass {
-  var pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar { get }
 }
 
 final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
@@ -4002,7 +4000,6 @@ open class PigeonApiDelegateProxyApiInterface {
 }
 
 protocol PigeonApiProtocolProxyApiInterface {
-  var pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar { get }
   func anInterfaceMethod(
     pigeonInstance pigeonInstanceArg: ProxyApiInterface,
     completion: @escaping (Result<Void, ProxyApiTestsError>) -> Void)
@@ -4103,7 +4100,6 @@ protocol PigeonApiDelegateClassWithApiRequirement {
 }
 
 protocol PigeonApiProtocolClassWithApiRequirement {
-  var pigeonRegistrar: ProxyApiTestsPigeonProxyApiRegistrar { get }
 }
 
 final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequirement {
