@@ -1,7 +1,7 @@
-## NEXT
+## 14.7.0
 
-* Updated the minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* Added new top level `onEnter` callback for controlling incoming route navigation.
+- Updated the minimum supported SDK version to Flutter 3.22/Dart 3.4.
+- Added new top level `onEnter` callback for controlling incoming route navigation.
 
 ## 14.6.2
 
