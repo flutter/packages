@@ -138,6 +138,12 @@ void main() {
       expect(
         code,
         contains(
+          'var pigeonRegistrar: MyFilePigeonProxyApiRegistrar { get }',
+        ),
+      );
+      expect(
+        code,
+        contains(
           r'class PigeonApiApi: PigeonApiProtocolApi',
         ),
       );
@@ -185,6 +191,102 @@ void main() {
           'func doSomethingElse(pigeonInstance pigeonInstanceArg: MyLibraryApi, input inputArg: Input, completion: @escaping (Result<String, PigeonError>) -> Void)',
         ),
       );
+    });
+
+    group('imports', () {
+      test('add check if every class does not support iOS', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, contains('#if !os(iOS)\nimport MyImport\n#endif'));
+      });
+
+      test('add check if every class does not support macOS', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsMacos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, contains('#if !os(macOS)\nimport MyImport\n#endif'));
+      });
+
+      test('add check if for multiple unsupported platforms', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+                supportsMacos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(
+          code,
+          contains('#if !os(iOS) || !os(macOS)\nimport MyImport\n#endif'),
+        );
+      });
     });
 
     group('inheritance', () {

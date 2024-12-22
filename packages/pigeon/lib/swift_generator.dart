@@ -154,14 +154,7 @@ class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
   }) {
     indent.writeln('import Foundation');
 
-    final Iterable<String> proxyApiImports = root.apis
-        .whereType<AstProxyApi>()
-        .map((AstProxyApi proxyApi) => proxyApi.swiftOptions?.import)
-        .nonNulls
-        .toSet();
-    for (final String import in proxyApiImports) {
-      indent.writeln('import $import');
-    }
+    _writeProxyApiImports(indent, root.apis.whereType<AstProxyApi>());
     indent.newln();
 
     indent.format('''
@@ -1155,6 +1148,9 @@ if (wrapped == nil) {
     final String swiftApiProtocolName =
         '${hostProxyApiPrefix}Protocol${api.name}';
     indent.writeScoped('protocol $swiftApiProtocolName {', '}', () {
+      indent.writeln(
+        'var pigeonRegistrar: ${proxyApiRegistrarName(generatorOptions)} { get }',
+      );
       _writeProxyApiFlutterMethods(
         indent,
         api,
@@ -2486,6 +2482,40 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         }, addTrailingNewline: false);
       });
     });
+  }
+
+  void _writeProxyApiImports(Indent indent, Iterable<AstProxyApi> apis) {
+    final Map<String, List<AstProxyApi>> apisOfImports =
+        <String, List<AstProxyApi>>{};
+    for (final AstProxyApi proxyApi in apis) {
+      final String? import = proxyApi.swiftOptions?.import;
+      if (import != null) {
+        if (apisOfImports.containsKey(import)) {
+          apisOfImports[import]!.add(proxyApi);
+        } else {
+          apisOfImports[import] = <AstProxyApi>[proxyApi];
+        }
+      }
+    }
+
+    for (final String import in apisOfImports.keys) {
+      final List<String> unsupportedPlatforms = <String>[
+        if (!apisOfImports[import]!
+            .every((AstProxyApi api) => api.swiftOptions?.supportsIos ?? true))
+          '!os(iOS)',
+        if (!apisOfImports[import]!.every(
+            (AstProxyApi api) => api.swiftOptions?.supportsMacos ?? true))
+          '!os(macOS)',
+      ];
+
+      if (unsupportedPlatforms.isNotEmpty) {
+        indent.writeln('#if ${unsupportedPlatforms.join(' || ')}');
+      }
+      indent.writeln('import $import');
+      if (unsupportedPlatforms.isNotEmpty) {
+        indent.writeln('#endif');
+      }
+    }
   }
 }
 
