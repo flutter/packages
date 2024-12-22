@@ -1,3 +1,4 @@
+// ignore_for_file: use_build_context_synchronously
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -8,11 +9,9 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import 'configuration.dart';
-import 'information_provider.dart';
+import '../go_router.dart';
 import 'logging.dart';
 import 'match.dart';
-import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
 ///
@@ -32,8 +31,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a [GoRouteInformationParser].
   GoRouteInformationParser({
     required this.configuration,
+    required String? initialLocation,
     required this.onParserException,
-  }) : _routeMatchListCodec = RouteMatchListCodec(configuration);
+  })  : _routeMatchListCodec = RouteMatchListCodec(configuration),
+        _initialLocation = initialLocation;
 
   /// The route configuration used for parsing [RouteInformation]s.
   final RouteConfiguration configuration;
@@ -45,8 +46,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   final ParserExceptionHandler? onParserException;
 
   final RouteMatchListCodec _routeMatchListCodec;
+  final String? _initialLocation;
 
-  final Random _random = Random();
+  // Store the last successful match list so we can truly "stay" on the same route.
+  RouteMatchList? _lastMatchList;
 
   /// The future of current route parsing.
   ///
@@ -54,81 +57,129 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   @visibleForTesting
   Future<RouteMatchList>? debugParserFuture;
 
+  final Random _random = Random();
+
   /// Called by the [Router]. The
   @override
   Future<RouteMatchList> parseRouteInformationWithDependencies(
     RouteInformation routeInformation,
     BuildContext context,
   ) {
-    assert(routeInformation.state != null);
-    final Object state = routeInformation.state!;
+    // 1) Defensive check: if we get a null state, just return empty (unlikely).
+    if (routeInformation.state == null) {
+      return SynchronousFuture<RouteMatchList>(RouteMatchList.empty);
+    }
 
-    if (state is! RouteInformationState) {
-      // This is a result of browser backward/forward button or state
-      // restoration. In this case, the route match list is already stored in
-      // the state.
+    final Object infoState = routeInformation.state!;
+
+    // 2) If state is not RouteInformationState => typically browser nav or state restoration
+    // => decode an existing match from the saved Map.
+    if (infoState is! RouteInformationState) {
       final RouteMatchList matchList =
-          _routeMatchListCodec.decode(state as Map<Object?, Object?>);
-      return debugParserFuture = _redirect(context, matchList)
-          .then<RouteMatchList>((RouteMatchList value) {
+          _routeMatchListCodec.decode(infoState as Map<Object?, Object?>);
+
+      return debugParserFuture =
+          _redirect(context, matchList).then((RouteMatchList value) {
         if (value.isError && onParserException != null) {
-          // TODO(chunhtai): Figure out what to return if context is invalid.
-          // ignore: use_build_context_synchronously
           return onParserException!(context, value);
         }
+        _lastMatchList = value; // store after success
         return value;
       });
     }
 
+    // 3) If there's an `onEnter` callback, let's see if we want to short-circuit.
+    //    (Note that .host.isNotEmpty check is optional — depends on your scenario.)
+
+    if (configuration.onEnter != null) {
+      final RouteMatchList onEnterMatches = configuration.findMatch(
+        routeInformation.uri,
+        extra: infoState.extra,
+      );
+
+      final GoRouterState state =
+          configuration.buildTopLevelGoRouterState(onEnterMatches);
+
+      final bool canEnter = configuration.onEnter!(
+        context,
+        state,
+      );
+
+      if (!canEnter) {
+        // The user "handled" the deep link => do NOT navigate.
+        // Return our *last known route* if possible.
+        if (_lastMatchList != null) {
+          return SynchronousFuture<RouteMatchList>(_lastMatchList!);
+        } else {
+          // Fallback if we've never parsed a route before:
+          final Uri defaultUri = Uri.parse(_initialLocation ?? '/');
+          final RouteMatchList fallbackMatches = configuration.findMatch(
+            defaultUri,
+            extra: infoState.extra,
+          );
+          _lastMatchList = fallbackMatches;
+          return SynchronousFuture<RouteMatchList>(fallbackMatches);
+        }
+      }
+    }
+
+    // 4) Otherwise, do normal route matching:
     Uri uri = routeInformation.uri;
     if (uri.hasEmptyPath) {
       uri = uri.replace(path: '/');
     } else if (uri.path.length > 1 && uri.path.endsWith('/')) {
-      // Remove trailing `/`.
       uri = uri.replace(path: uri.path.substring(0, uri.path.length - 1));
     }
+
     final RouteMatchList initialMatches = configuration.findMatch(
       uri,
-      extra: state.extra,
+      extra: infoState.extra,
     );
     if (initialMatches.isError) {
       log('No initial matches: ${routeInformation.uri.path}');
     }
 
-    return debugParserFuture = _redirect(
-      context,
-      initialMatches,
-    ).then<RouteMatchList>((RouteMatchList matchList) {
+    // 5) Possibly do a redirect:
+    return debugParserFuture =
+        _redirect(context, initialMatches).then((RouteMatchList matchList) {
+      // If error, call parser exception if any
       if (matchList.isError && onParserException != null) {
-        // TODO(chunhtai): Figure out what to return if context is invalid.
-        // ignore: use_build_context_synchronously
         return onParserException!(context, matchList);
       }
 
+      // 6) Check for redirect-only route leftover
       assert(() {
         if (matchList.isNotEmpty) {
-          assert(!matchList.last.route.redirectOnly,
-              'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
+          assert(
+              !matchList.last.route.redirectOnly,
+              'A redirect-only route must redirect to a different location.\n'
+              'Offending route: ${matchList.last.route}');
         }
         return true;
       }());
-      return _updateRouteMatchList(
+
+      // 7) If it's a push/replace etc., handle that
+      final RouteMatchList updated = _updateRouteMatchList(
         matchList,
-        baseRouteMatchList: state.baseRouteMatchList,
-        completer: state.completer,
-        type: state.type,
+        baseRouteMatchList: infoState.baseRouteMatchList,
+        completer: infoState.completer,
+        type: infoState.type,
       );
+
+      // 8) Save as our "last known good" config
+      _lastMatchList = updated;
+      return updated;
     });
   }
 
   @override
   Future<RouteMatchList> parseRouteInformation(
       RouteInformation routeInformation) {
+    // Not used in go_router, so we can unimplement or throw:
     throw UnimplementedError(
-        'use parseRouteInformationWithDependencies instead');
+        'Use parseRouteInformationWithDependencies instead');
   }
 
-  /// for use by the Router architecture as part of the RouteInformationParser
   @override
   RouteInformation? restoreRouteInformation(RouteMatchList configuration) {
     if (configuration.isEmpty) {
@@ -139,7 +190,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         (configuration.matches.last is ImperativeRouteMatch ||
             configuration.matches.last is ShellRouteMatch)) {
       RouteMatchBase route = configuration.matches.last;
-
       while (route is! ImperativeRouteMatch) {
         if (route is ShellRouteMatch && route.matches.isNotEmpty) {
           route = route.matches.last;
@@ -147,7 +197,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           break;
         }
       }
-
       if (route case final ImperativeRouteMatch safeRoute) {
         location = safeRoute.matches.uri.toString();
       }
@@ -158,16 +207,22 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     );
   }
 
+  // Just calls configuration.redirect, wrapped in synchronous future if needed.
   Future<RouteMatchList> _redirect(
-      BuildContext context, RouteMatchList routeMatch) {
-    final FutureOr<RouteMatchList> redirectedFuture = configuration
-        .redirect(context, routeMatch, redirectHistory: <RouteMatchList>[]);
-    if (redirectedFuture is RouteMatchList) {
-      return SynchronousFuture<RouteMatchList>(redirectedFuture);
+      BuildContext context, RouteMatchList matchList) {
+    final FutureOr<RouteMatchList> result = configuration.redirect(
+      context,
+      matchList,
+      redirectHistory: <RouteMatchList>[],
+    );
+    if (result is RouteMatchList) {
+      return SynchronousFuture<RouteMatchList>(result);
     }
-    return redirectedFuture;
+    return result;
   }
 
+  // If the user performed push/pushReplacement, etc., we might wrap newMatches
+  // in ImperativeRouteMatches.
   RouteMatchList _updateRouteMatchList(
     RouteMatchList newMatchList, {
     required RouteMatchList? baseRouteMatchList,
@@ -212,15 +267,21 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       case NavigatingType.go:
         return newMatchList;
       case NavigatingType.restore:
-        // Still need to consider redirection.
-        return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()
-            ? newMatchList
-            : baseRouteMatchList;
+        // If the URIs differ, we might want the new one; if they're the same,
+        // keep the old.
+        if (baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()) {
+          return newMatchList;
+        } else {
+          return baseRouteMatchList;
+        }
     }
   }
 
   ValueKey<String> _getUniqueValueKey() {
-    return ValueKey<String>(String.fromCharCodes(
-        List<int>.generate(32, (_) => _random.nextInt(33) + 89)));
+    return ValueKey<String>(
+      String.fromCharCodes(
+        List<int>.generate(32, (_) => _random.nextInt(33) + 89),
+      ),
+    );
   }
 }

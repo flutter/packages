@@ -122,6 +122,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   factory GoRouter({
     required List<RouteBase> routes,
+    OnEnter? onEnter,
     Codec<Object?, Object?>? extraCodec,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
@@ -146,6 +147,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
             redirect: redirect ?? RoutingConfig._defaultRedirect,
             redirectLimit: redirectLimit),
       ),
+      onEnter: onEnter,
       extraCodec: extraCodec,
       onException: onException,
       errorPageBuilder: errorPageBuilder,
@@ -169,6 +171,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   GoRouter.routingConfig({
     required ValueListenable<RoutingConfig> routingConfig,
     Codec<Object?, Object?>? extraCodec,
+    OnEnter? onEnter,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
@@ -206,6 +209,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       _routingConfig,
       navigatorKey: navigatorKey,
       extraCodec: extraCodec,
+      onEnter: onEnter,
     );
 
     final ParserExceptionHandler? parserExceptionHandler;
@@ -224,6 +228,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     routeInformationParser = GoRouteInformationParser(
       onParserException: parserExceptionHandler,
       configuration: configuration,
+      initialLocation: initialLocation,
     );
 
     routeInformationProvider = GoRouteInformationProvider(
@@ -565,6 +570,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 /// A routing config that is never going to change.
 class _ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
   const _ConstantRoutingConfig(this.value);
+
   @override
   void addListener(VoidCallback listener) {
     // Intentionally empty because listener will never be called.

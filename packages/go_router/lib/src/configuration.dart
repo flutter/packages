@@ -20,6 +20,9 @@ import 'state.dart';
 typedef GoRouterRedirect = FutureOr<String?> Function(
     BuildContext context, GoRouterState state);
 
+/// The signature of the onEnter callback.
+typedef OnEnter = bool Function(BuildContext context, GoRouterState state);
+
 /// The route configuration for GoRouter configured by the app.
 class RouteConfiguration {
   /// Constructs a [RouteConfiguration].
@@ -27,6 +30,7 @@ class RouteConfiguration {
     this._routingConfig, {
     required this.navigatorKey,
     this.extraCodec,
+    this.onEnter,
   }) {
     _onRoutingTableChanged();
     _routingConfig.addListener(_onRoutingTableChanged);
@@ -245,6 +249,35 @@ class RouteConfiguration {
   ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
   ///    example.
   final Codec<Object?, Object?>? extraCodec;
+
+  /// A callback invoked for every incoming route before it is processed.
+  ///
+  /// This callback allows you to control navigation by inspecting the incoming
+  /// route and conditionally preventing the navigation. If the callback returns
+  /// `true`, the GoRouter proceeds with the regular navigation and redirection
+  /// logic. If the callback returns `false`, the navigation is canceled.
+  ///
+  /// When a deep link opens the app and `onEnter` returns `false`,  GoRouter
+  /// will automatically redirect to the initial route or '/'.
+  ///
+  /// Example:
+  /// ```dart
+  /// final GoRouter router = GoRouter(
+  ///   routes: [...],
+  ///   onEnter: (BuildContext context, Uri uri) {
+  ///     if (uri.path == '/login' && isUserLoggedIn()) {
+  ///       return false; // Prevent navigation to /login
+  ///     }
+  ///     if (uri.path == '/referral') {
+  ///       // Save the referral code and prevent navigation
+  ///       saveReferralCode(uri.queryParameters['code']);
+  ///       return false;
+  ///     }
+  ///     return true; // Allow navigation
+  ///   },
+  /// );
+  /// ```
+  final OnEnter? onEnter;
 
   final Map<String, String> _nameToPath = <String, String>{};
 
