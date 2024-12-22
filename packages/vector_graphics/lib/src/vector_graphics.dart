@@ -120,7 +120,7 @@ class VectorGraphic extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    this.transitionDuration = const Duration(milliseconds: 500),
+    this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
     this.colorFilter,
@@ -140,7 +140,7 @@ class VectorGraphic extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
-    this.transitionDuration = const Duration(milliseconds: 500),
+    this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
     this.colorFilter,
@@ -223,7 +223,7 @@ class VectorGraphic extends StatefulWidget {
   final VectorGraphicsErrorWidget? errorBuilder;
 
   /// Set transition duration while switching from placeholder to url image
-  final Duration transitionDuration;
+  final Duration? transitionDuration;
 
   /// If provided, a color filter to apply to the vector graphic when painting.
   ///
@@ -519,7 +519,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
     } else {
       child = widget.placeholderBuilder != null
           ? AnimatedSwitcher(
-              duration: widget.transitionDuration, // User-defined duration
+              duration: widget.transitionDuration ??
+                  const Duration(milliseconds: 500), // User-defined duration
               child: widget.placeholderBuilder!.call(context),
               transitionBuilder: (Widget child, Animation<double> animation) {
                 return FadeTransition(
