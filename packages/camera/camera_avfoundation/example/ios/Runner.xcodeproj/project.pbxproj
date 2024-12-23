@@ -12,9 +12,10 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		334733EA2668111C00DCC49E /* CameraOrientationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 03BB767226653ABE00CE5A93 /* CameraOrientationTests.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		3C036CAD15FEA6FC964935EE /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE1D7C55B3760E3991BE41E /* libPods-Runner.a */; };
 		43ED1537282570DE00EB00DE /* AvailableCamerasTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 43ED1536282570DE00EB00DE /* AvailableCamerasTest.m */; };
 		788A065A27B0E02900533D74 /* StreamingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 788A065927B0E02900533D74 /* StreamingTest.m */; };
-		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		78A318202AECB46A00862997 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		7D5FCCD42AEF9D0200FB7108 /* CameraSettingsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5FCCD32AEF9D0200FB7108 /* CameraSettingsTests.m */; };
 		7F87E80E2D03283E00A3549C /* CameraExposureTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F87E80D2D03283E00A3549C /* CameraExposureTests.m */; };
 		7FF2D09B2D15AB7A0092C411 /* MockAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FF2D0872D15AB7A0092C411 /* MockAssetWriter.m */; };
@@ -32,7 +33,6 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		ABA022F748E0C5AECBCD8F5F /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8FE1D7C55B3760E3991BE41E /* libPods-Runner.a */; };
 		CEF6611A2B5E36A500D33FD4 /* CameraSessionPresetsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CEF661192B5E36A500D33FD4 /* CameraSessionPresetsTests.m */; };
 		E01EE4A82799F3A5008C1950 /* QueueUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E01EE4A72799F3A5008C1950 /* QueueUtilsTests.m */; };
 		E032F250279F5E94009E9028 /* CameraCaptureSessionQueueRaceConditionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E032F24F279F5E94009E9028 /* CameraCaptureSessionQueueRaceConditionTests.m */; };
@@ -147,8 +147,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */,
-				236906D1621AE863A5B2E770 /* libPods-Runner.a in Frameworks */,
+				78A318202AECB46A00862997 /* BuildFile in Frameworks */,
+				3C036CAD15FEA6FC964935EE /* libPods-Runner.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,8 +304,6 @@
 				03BB766E2665316900CE5A93 /* PBXTargetDependency */,
 			);
 			name = RunnerTests;
-			packageProductDependencies = (
-			);
 			productName = camera_exampleTests;
 			productReference = 03BB76682665316900CE5A93 /* RunnerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -328,9 +326,6 @@
 			dependencies = (
 			);
 			name = Runner;
-			packageProductDependencies = (
-				78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */,
-			);
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
@@ -364,7 +359,6 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
-			packageReferences = ();
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -574,7 +568,7 @@
 /* Begin XCBuildConfiguration section */
 		03BB766F2665316900CE5A93 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E27055DF15226B1DFE032420 /* Pods-RunnerTests.debug.xcconfig */;
+			baseConfigurationReference = 73BD4FD74789D3EB46FB5774 /* Pods-RunnerTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -604,7 +598,7 @@
 		};
 		03BB76702665316900CE5A93 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CB65379B3085E03D11D2786A /* Pods-RunnerTests.release.xcconfig */;
+			baseConfigurationReference = 5A32C345E4881D9C7CE9479C /* Pods-RunnerTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
