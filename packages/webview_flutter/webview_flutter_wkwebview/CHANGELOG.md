@@ -1,4 +1,4 @@
-## NEXT
+## 3.16.4
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * Adds a change listener for the canGoBack attribute.
