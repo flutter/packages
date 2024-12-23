@@ -48,7 +48,7 @@ void defineTests() {
       'should work with alignments',
       (WidgetTester tester) async {
         const String data =
-            '|Header 1|Header 2|\n|:----:|----:|\n|Col 1|Col 2|';
+            '|Header 1|Header 2|Header 3|\n|:----|:----:|----:|\n|Col 1|Col 2|Col 3|';
         await tester.pumpWidget(
           boilerplate(
             const MarkdownBody(data: data),
@@ -58,21 +58,9 @@ void defineTests() {
         final Iterable<DefaultTextStyle> styles =
             tester.widgetList(find.byType(DefaultTextStyle));
 
-        expect(styles.first.textAlign, TextAlign.center);
+        expect(styles.first.textAlign, TextAlign.left);
+        expect(styles.elementAt(1).textAlign, TextAlign.center);
         expect(styles.last.textAlign, TextAlign.right);
-      },
-    );
-
-    testWidgets(
-      'should work with table alignments',
-      (WidgetTester tester) async {
-        const String data =
-            '|Header 1|Header 2|Header 3|\n|:----|:----:|----:|\n|Col 1|Col 2|Col 3|';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
 
         final Iterable<Wrap> wraps = tester.widgetList(find.byType(Wrap));
 
