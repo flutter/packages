@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Add missing `await` keyword to `onTap` callback in `navigation.md`.
 
 ## 14.6.2
 
