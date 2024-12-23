@@ -1,3 +1,7 @@
+## 0.8.12+19
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
 ## 0.8.12+18
 
 * Fixes a security issue related to improperly trusting filenames provided by a `ContentProvider`.

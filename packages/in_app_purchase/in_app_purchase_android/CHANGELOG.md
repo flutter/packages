@@ -1,3 +1,7 @@
+## 0.3.6+13
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
 ## 0.3.6+12
 
 * Updates README to remove contributor-focused documentation.
