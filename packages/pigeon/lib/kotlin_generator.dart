@@ -156,6 +156,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('import io.flutter.plugin.common.StandardMessageCodec');
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
+    if (root.apis.any((Api api) => api.methods.any((Method it) =>
+        it.isModernAsynchronous && it.location == ApiLocation.host))) {
+      indent.writeln('import kotlinx.coroutines.launch');
+      indent.writeln('import kotlinx.coroutines.CoroutineScope');
+      indent.writeln('import kotlinx.coroutines.Dispatchers');
+      indent.writeln('import kotlinx.coroutines.withContext');
+    }
   }
 
   @override
@@ -338,7 +345,8 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     if (root.apis.any((Api api) =>
         api is AstHostApi &&
-        api.methods.any((Method it) => it.isAsynchronous))) {
+        api.methods.any((Method it) =>
+            it.isCallbackAsynchronous || it.isModernAsynchronous))) {
       indent.newln();
     }
     super.writeApis(generatorOptions, root, indent,
@@ -621,7 +629,7 @@ if (wrapped == null) {
           documentationComments: method.documentationComments,
           returnType: method.returnType,
           parameters: method.parameters,
-          isAsynchronous: method.isAsynchronous,
+          asynchronousType: method.asynchronousType,
         );
       }
 
@@ -637,8 +645,12 @@ if (wrapped == null) {
         indent.writeln(
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
         indent.writeln('@JvmOverloads');
+        final String coroutineScope =
+            api.methods.any((Method method) => method.isModernAsynchronous)
+                ? ', coroutineScope: CoroutineScope'
+                : '';
         indent.write(
-            'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = "") ');
+            'fun setUp(binaryMessenger: BinaryMessenger, api: $apiName?, messageChannelSuffix: String = ""$coroutineScope) ');
         indent.addScoped('{', '}', () {
           indent.writeln(
               r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
@@ -651,7 +663,7 @@ if (wrapped == null) {
               taskQueueType: method.taskQueueType,
               parameters: method.parameters,
               returnType: method.returnType,
-              isAsynchronous: method.isAsynchronous,
+              asynchronousType: method.asynchronousType,
             );
           }
         });
@@ -1163,11 +1175,11 @@ if (wrapped == null) {
     required List<Parameter> parameters,
     List<String> documentationComments = const <String>[],
     int? minApiRequirement,
-    bool isAsynchronous = false,
     bool isOpen = false,
     bool isAbstract = false,
     String Function(int index, NamedType type) getArgumentName =
         _getArgumentName,
+    AsynchronousType asynchronousType = AsynchronousType.none,
   }) {
     final List<String> argSignature = <String>[];
     if (parameters.isNotEmpty) {
@@ -1199,19 +1211,20 @@ if (wrapped == null) {
 
     final String openKeyword = isOpen ? 'open ' : '';
     final String abstractKeyword = isAbstract ? 'abstract ' : '';
+    final String suspendKeyword = asynchronousType.isModern ? 'suspend ' : '';
 
-    if (isAsynchronous) {
+    if (asynchronousType.isCallback) {
       argSignature.add('callback: (Result<$resultType>) -> Unit');
       indent.writeln(
         '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
       );
     } else if (returnType.isVoid) {
       indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')})',
+        '$openKeyword$abstractKeyword${suspendKeyword}fun $name(${argSignature.join(', ')})',
       );
     } else {
       indent.writeln(
-        '$openKeyword${abstractKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
+        '$openKeyword$abstractKeyword${suspendKeyword}fun $name(${argSignature.join(', ')}): $returnTypeString',
       );
     }
   }
@@ -1224,9 +1237,9 @@ if (wrapped == null) {
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
     String setHandlerCondition = 'api != null',
-    bool isAsynchronous = false,
     String Function(List<String> safeArgNames, {required String apiVarName})?
         onCreateCall,
+    AsynchronousType asynchronousType = AsynchronousType.none,
   }) {
     indent.write('run ');
     indent.addScoped('{', '}', () {
@@ -1268,7 +1281,7 @@ if (wrapped == null) {
               ? onCreateCall(methodArguments, apiVarName: 'api')
               : 'api.$name(${methodArguments.join(', ')})';
 
-          if (isAsynchronous) {
+          if (asynchronousType.isCallback) {
             final String resultType = returnType.isVoid
                 ? 'Unit'
                 : _nullSafeKotlinTypeForDartType(returnType);
@@ -1288,6 +1301,10 @@ if (wrapped == null) {
               });
             });
           } else {
+            if (asynchronousType.isModern) {
+              indent.writeln('coroutineScope.launch {');
+              indent.inc();
+            }
             indent.writeScoped('val wrapped: List<Any?> = try {', '}', () {
               if (returnType.isVoid) {
                 indent.writeln(call);
@@ -1300,9 +1317,21 @@ if (wrapped == null) {
             indent.addScoped('{', '}', () {
               indent.writeln('wrapError(exception)');
             });
+            if (asynchronousType.isModern) {
+              indent.writeln('withContext(Dispatchers.Main) {');
+              indent.inc();
+            }
             indent.writeln('reply.reply(wrapped)');
+            if (asynchronousType.isModern) {
+              indent.dec();
+              indent.writeln('}');
+            }
           }
         });
+        if (asynchronousType.isModern) {
+          indent.dec();
+          indent.writeln('}');
+        }
       }, addTrailingNewline: false);
       indent.addScoped(' else {', '}', () {
         indent.writeln('channel.setMessageHandler(null)');
@@ -1334,7 +1363,7 @@ if (wrapped == null) {
       returnType: returnType,
       parameters: parameters,
       documentationComments: documentationComments,
-      isAsynchronous: true,
+      asynchronousType: AsynchronousType.callback,
       minApiRequirement: minApiRequirement,
       getArgumentName: _getSafeArgumentName,
     );
@@ -1627,8 +1656,8 @@ if (wrapped == null) {
         name: method.name,
         returnType: method.returnType,
         documentationComments: method.documentationComments,
-        isAsynchronous: method.isAsynchronous,
         isAbstract: true,
+        asynchronousType: method.asynchronousType,
         minApiRequirement: _findAndroidHighestApiRequirement(
           <TypeDeclaration>[
             if (!method.isStatic) apiAsTypeDeclaration,
@@ -1822,7 +1851,7 @@ if (wrapped == null) {
                 channelName: makeChannelName(api, method, dartPackageName),
                 taskQueueType: method.taskQueueType,
                 returnType: method.returnType,
-                isAsynchronous: method.isAsynchronous,
+                asynchronousType: method.asynchronousType,
                 parameters: <Parameter>[
                   if (!method.isStatic)
                     Parameter(

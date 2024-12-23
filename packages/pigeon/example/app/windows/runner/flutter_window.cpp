@@ -41,6 +41,15 @@ class PigeonApiImplementation : public ExampleHostApi {
     }
     result(true);
   }
+
+  void SendMessageModernAsync(const MessageData& message,
+                              std::function<void(ErrorOr<bool> reply)> result) {
+    if (message.code() == Code::kOne) {
+      result(FlutterError("code", "message", "details"));
+      return;
+    }
+    result(true);
+  }
 };
 // #enddocregion cpp-class
 

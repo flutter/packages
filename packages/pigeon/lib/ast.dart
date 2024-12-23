@@ -23,6 +23,30 @@ enum ApiLocation {
   flutter,
 }
 
+/// Enum that represents the type of asynchronous a method is.
+enum AsynchronousType {
+  /// No asynchronous implementation.
+  none,
+
+  /// Basic callback implementation.
+  callback,
+
+  /// Modern async implementation.
+  ///
+  /// * Swift - async.
+  /// * Kotlin - suspend.
+  modern;
+
+  /// Returns true if the [AsynchronousType] is [AsynchronousType.none].
+  bool get isNone => this == AsynchronousType.none;
+
+  /// Returns true if the [AsynchronousType] is [AsynchronousType.callback].
+  bool get isCallback => this == AsynchronousType.callback;
+
+  /// Returns true if the [AsynchronousType] is [AsynchronousType.modern].
+  bool get isModern => this == AsynchronousType.modern;
+}
+
 /// Superclass for all AST nodes.
 class Node {}
 
@@ -35,13 +59,13 @@ class Method extends Node {
     required this.parameters,
     required this.location,
     this.isRequired = true,
-    this.isAsynchronous = false,
     this.isStatic = false,
     this.offset,
     this.objcSelector = '',
     this.swiftFunction = '',
     this.taskQueueType = TaskQueueType.serial,
     this.documentationComments = const <String>[],
+    this.asynchronousType = AsynchronousType.none,
   });
 
   /// The name of the method.
@@ -52,9 +76,6 @@ class Method extends Node {
 
   /// The parameters passed into the [Method].
   List<Parameter> parameters;
-
-  /// Whether the receiver of this method is expected to return synchronously or not.
-  bool isAsynchronous;
 
   /// The offset in the source file where the field appears.
   int? offset;
@@ -87,13 +108,26 @@ class Method extends Node {
   /// Whether this is a static method of a ProxyApi.
   bool isStatic;
 
+  /// Whether this method is asynchronous and how it should be implemented.
+  AsynchronousType asynchronousType;
+
+  /// Whether this method is asynchronous.
+  bool get isAsynchronous => asynchronousType != AsynchronousType.none;
+
+  /// Whether this method is asynchronous with callback.
+  bool get isCallbackAsynchronous =>
+      asynchronousType == AsynchronousType.callback;
+
+  /// Whether this method is asynchronous with modern Api.
+  bool get isModernAsynchronous => asynchronousType == AsynchronousType.modern;
+
   @override
   String toString() {
     final String objcSelectorStr =
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final String swiftFunctionStr =
         swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
-    return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
+    return '(Method name:$name returnType:$returnType parameters:$parameters asynchronousType:$asynchronousType$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 

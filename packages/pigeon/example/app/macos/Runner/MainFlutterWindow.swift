@@ -24,6 +24,16 @@ private class PigeonApiImplementation: ExampleHostApi {
     }
     completion(.success(true))
   }
+
+  func sendMessageModernAsync(message: MessageData) async throws -> Bool {
+    try? await Task.sleep(nanoseconds: 2_000_000_000)
+
+    if message.code == Code.one {
+      throw PigeonError(code: "code", message: "message", details: "details")
+    }
+
+    return true
+  }
 }
 
 class MainFlutterWindow: NSWindow {

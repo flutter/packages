@@ -611,7 +611,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
@@ -648,6 +648,68 @@ void main() {
     expect(code, isNot(contains('if (')));
   });
 
+  test('gen one modern async Host Api', () {
+    final Root root = Root(apis: <Api>[
+      AstHostApi(name: 'Api', methods: <Method>[
+        Method(
+          name: 'doSomething',
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
+                  baseName: 'Input',
+                  associatedClass: emptyClass,
+                  isNullable: false,
+                ),
+                name: 'arg')
+          ],
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            associatedClass: emptyClass,
+            isNullable: false,
+          ),
+          asynchronousType: AsynchronousType.modern,
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('protocol Api'));
+    expect(
+      code,
+      contains('func doSomething(arg: Input) async throws -> Output'),
+    );
+    expect(code, contains('try await api.doSomething(arg: argArg)'));
+    expect(code, contains('Task'));
+    expect(code, contains('await MainActor.run {'));
+    expect(code, contains('reply(wrapResult(result))'));
+  });
+
   test('gen one async Flutter Api', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
@@ -668,7 +730,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
@@ -1094,7 +1156,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              isAsynchronous: true,
+              asynchronousType: AsynchronousType.callback,
               parameters: <Parameter>[])
         ])
       ],
@@ -1339,7 +1401,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
