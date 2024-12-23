@@ -1037,18 +1037,66 @@ abstract class FocusMeteringResult {
   late bool isFocusSuccessful;
 }
 
-@HostApi(dartHostTestHandler: 'TestCaptureRequestOptionsHostApi')
-abstract class CaptureRequestOptionsHostApi {
-  void create(int identifier, Map<int, Object?> options);
+/// An immutable package of settings and outputs needed to capture a single
+/// image from the camera device.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CaptureRequest',
+  ),
+)
+abstract class CaptureRequest {
+  /// Whether auto-exposure (AE) is currently locked to its latest calculated
+  /// values.
+  ///
+  /// Value is boolean.
+  ///
+  /// This key is available on all devices.
+  @static
+  late CaptureRequestKey controlAELock;
 }
 
-@HostApi(dartHostTestHandler: 'TestCamera2CameraControlHostApi')
-abstract class Camera2CameraControlHostApi {
-  void create(int identifier, int cameraControlIdentifier);
+/// A Key is used to do capture request field lookups with CaptureRequest.get or
+/// to set fields with `CaptureRequest.Builder.set`.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.Key.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CaptureRequest.Key',
+  ),
+)
+abstract class CaptureRequestKey {}
 
+/// A bundle of Camera2 capture request options.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/camera2/interop/CaptureRequestOptions.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.camera2.interop.CaptureRequestOptions',
+  ),
+)
+abstract class CaptureRequestOptions {
+  CaptureRequestOptions(Map<CaptureRequestKey, Object?> options);
+}
+
+/// An class that provides ability to interoperate with the
+/// 1android.hardware.camera21 APIs.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/camera2/interop/Camera2CameraControl.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.camera2.interop.Camera2CameraControl',
+  ),
+)
+abstract class Camera2CameraControl {
+  /// Gets the `Camera2CameraControl` from a `CameraControl`.
+  Camera2CameraControl.from(CameraControl cameraControl);
+
+  /// Adds a `CaptureRequestOptions` updates the session with the options it
+  /// contains.
   @async
-  void addCaptureRequestOptions(
-      int identifier, int captureRequestOptionsIdentifier);
+  void addCaptureRequestOptions(CaptureRequestOptions bundle);
 }
 
 /// Applications can filter out unsuitable sizes and sort the resolution list in
@@ -1064,18 +1112,59 @@ abstract class ResolutionFilter {
   ResolutionFilter.createWithOnePreferredSize(CameraSize preferredSize);
 }
 
-@HostApi(dartHostTestHandler: 'TestCamera2CameraInfoHostApi')
-abstract class Camera2CameraInfoHostApi {
-  int createFrom(int cameraInfoIdentifier);
+/// A Key is used to do camera characteristics field lookups with
+/// `CameraCharacteristics.get`.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics.Key.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CameraCharacteristics.Key',
+  ),
+)
+abstract class CameraCharacteristicsKey {}
 
-  int getSupportedHardwareLevel(int identifier);
+/// The properties describing a `CameraDevice`.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CameraCharacteristics',
+  ),
+)
+abstract class CameraCharacteristics {
+  /// Generally classifies the overall set of the camera device functionality.
+  ///
+  /// Value is Integer.
+  ///
+  /// This key is available on all devices.
+  @static
+  late CameraCharacteristicsKey infoSupportedHardwareLevel;
 
-  String getCameraId(int identifier);
-
-  int getSensorOrientation(int identifier);
+  /// Clockwise angle through which the output image needs to be rotated to be
+  /// upright on the device screen in its native orientation..
+  ///
+  /// Value is Integer.
+  ///
+  /// This key is available on all devices.
+  @static
+  late CameraCharacteristicsKey sensorOrientation;
 }
 
-@FlutterApi()
-abstract class Camera2CameraInfoFlutterApi {
-  void create(int identifier);
+/// An interface for retrieving Camera2-related camera information.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/camera2/interop/Camera2CameraInfo.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.camera2.interop.Camera2CameraInfo',
+  ),
+)
+abstract class Camera2CameraInfo {
+  /// Gets the `Camera2CameraInfo` from a `CameraInfo`.
+  Camera2CameraInfo.from(CameraInfo cameraInfo);
+
+  /// Gets the string camera ID.
+  String getCameraId();
+
+  /// Gets a camera characteristic value.
+  Object? getCameraCharacteristic(CameraCharacteristicsKey key);
 }
