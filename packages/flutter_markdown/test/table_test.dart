@@ -67,6 +67,12 @@ void defineTests() {
         expect(wraps.first.alignment, WrapAlignment.start);
         expect(wraps.elementAt(1).alignment, WrapAlignment.center);
         expect(wraps.last.alignment, WrapAlignment.end);
+
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+
+        expect(texts.first.textAlign, TextAlign.left);
+        expect(texts.elementAt(1).textAlign, TextAlign.center);
+        expect(texts.last.textAlign, TextAlign.right);
       },
     );
 
