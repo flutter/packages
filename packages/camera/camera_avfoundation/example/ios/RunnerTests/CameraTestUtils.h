@@ -9,42 +9,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Creates an `FLTCam` that runs its capture session operations on a given queue.
-/// @param captureSessionQueue the capture session queue
-/// @param mediaSettings media settings configuration parameters
-/// @param mediaSettingsAVWrapper provider to perform media settings operations (for unit test
-/// dependency injection).
-/// @param captureDeviceFactory a callback to create capture device instances
-/// @return an FLTCam object.
-extern FLTCam *_Nullable FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-    dispatch_queue_t _Nullable captureSessionQueue,
-    FCPPlatformMediaSettings *_Nullable mediaSettings,
-    FLTCamMediaSettingsAVWrapper *_Nullable mediaSettingsAVWrapper,
-    CaptureDeviceFactory _Nullable captureDeviceFactory,
-    id<FLTCapturePhotoOutput> _Nullable capturePhotoOutput,
-    id<FLTAssetWriter> _Nullable assetWriter,
-    id<FLTPixelBufferAdaptor> _Nullable pixelBufferAdaptor);
+extern FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
+    FCPPlatformResolutionPreset resolutionPreset);
 
-extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue);
+/// Creates a test `FLTCamConfiguration` that has a default mock setup.
+extern FLTCamConfiguration *FLTCreateTestConfiguration(void);
 
-/// Creates an `FLTCam` with a given captureSession and resolutionPreset
-/// @param captureSession AVCaptureSession for video
-/// @param resolutionPreset preset for camera's captureSession resolution
-/// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSession> captureSession,
-                                                   FCPPlatformResolutionPreset resolutionPreset);
-
-/// Creates an `FLTCam` with a given captureSession and resolutionPreset.
-/// Allows to inject a capture device and a block to compute the video dimensions.
-/// @param captureSession AVCaptureSession for video
-/// @param resolutionPreset preset for camera's captureSession resolution
-/// @param captureDevice AVCaptureDevice to be used
-/// @param videoDimensionsForFormat custom code to determine video dimensions
-/// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    id<FLTCaptureSession> captureSession, FCPPlatformResolutionPreset resolutionPreset,
-    id<FLTCaptureDeviceControlling> captureDevice,
-    VideoDimensionsForFormat videoDimensionsForFormat);
+/// Creates an `FLTCam` with a test configuration.
+extern FLTCam *FLTCreateCamWithConfiguration(FLTCamConfiguration *configuration);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.

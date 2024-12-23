@@ -9,6 +9,7 @@ framework module camera_avfoundation {
     header "CameraProperties.h"
     header "FLTCam.h"
     header "FLTCam_Test.h"
+    header "FLTCamConfiguration.h"
     header "FLTSavePhotoDelegate_Test.h"
     header "FLTThreadSafeEventChannel.h"
     header "FLTPermissionService.h"

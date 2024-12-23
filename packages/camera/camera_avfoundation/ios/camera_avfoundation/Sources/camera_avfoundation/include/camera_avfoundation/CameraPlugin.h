@@ -9,7 +9,6 @@
 #import "FLTCaptureDeviceControlling.h"
 #import "FLTCaptureSession.h"
 
-typedef id<FLTCaptureSession> (^CaptureSessionFactory)(void);
 typedef id<FLTCaptureDeviceControlling> (^CaptureNamedDeviceFactory)(NSString *name);
 
 @interface CameraPlugin : NSObject <FlutterPlugin, FCPCameraApi>

@@ -85,14 +85,27 @@
   _adaptorMock = [[MockPixelBufferAdaptor alloc] init];
   _mediaSettingsWrapper = [[FakeMediaSettingsAVWrapper alloc] initWithInputMock:_inputMock];
 
-  _camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      _captureSessionQueue,
+  FLTCamConfiguration *configuration = FLTCreateTestConfiguration();
+  configuration.captureSessionQueue = _captureSessionQueue;
+  configuration.mediaSettings =
       [FCPPlatformMediaSettings makeWithResolutionPreset:FCPPlatformResolutionPresetMedium
                                          framesPerSecond:nil
                                             videoBitrate:nil
                                             audioBitrate:nil
-                                             enableAudio:YES],
-      _mediaSettingsWrapper, nil, nil, _writerMock, _adaptorMock);
+                                             enableAudio:YES];
+  configuration.mediaSettingsWrapper = _mediaSettingsWrapper;
+
+  __weak typeof(self) weakSelf = self;
+  configuration.assetWriterFactory =
+      ^id<FLTAssetWriter> _Nonnull(NSURL *url, AVFileType fileType, NSError **error) {
+    return weakSelf.writerMock;
+  };
+  configuration.pixelBufferAdaptorFactory = ^id<FLTPixelBufferAdaptor> _Nonnull(
+      id<FLTAssetWriterInput> input, NSDictionary<NSString *, id> *settings) {
+    return weakSelf.adaptorMock;
+  };
+
+  _camera = FLTCreateCamWithConfiguration(configuration);
 }
 
 - (void)testSampleBufferCallbackQueueMustBeCaptureSessionQueue {

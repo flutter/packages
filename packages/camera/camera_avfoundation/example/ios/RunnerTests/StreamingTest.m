@@ -66,7 +66,9 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
   _mockStreamHandler =
       [[MockImageStreamHandler alloc] initWithCaptureSessionQueue:captureSessionQueue];
-  _camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCamConfiguration *configuration = FLTCreateTestConfiguration();
+  configuration.captureSessionQueue = captureSessionQueue;
+  _camera = FLTCreateCamWithConfiguration(configuration);
   _sampleBuffer = FLTCreateTestSampleBuffer();
   _messengerMock = [[MockFlutterBinaryMessenger alloc] init];
 }

@@ -38,11 +38,14 @@
 @implementation FLTDefaultCapturePhotoSettingsFactory
 
 - (id<FLTCapturePhotoSettings>)createPhotoSettings {
-    return [[FLTDefaultCapturePhotoSettings alloc] initWithSettings:[AVCapturePhotoSettings photoSettings]];
+  return [[FLTDefaultCapturePhotoSettings alloc]
+      initWithSettings:[AVCapturePhotoSettings photoSettings]];
 }
 
-- (id<FLTCapturePhotoSettings>)createPhotoSettingsWithFormat:(NSDictionary<NSString *, id> *)format {
-    return [[FLTDefaultCapturePhotoSettings alloc] initWithSettings:[AVCapturePhotoSettings photoSettingsWithFormat:format]];
+- (id<FLTCapturePhotoSettings>)createPhotoSettingsWithFormat:
+    (NSDictionary<NSString *, id> *)format {
+  return [[FLTDefaultCapturePhotoSettings alloc]
+      initWithSettings:[AVCapturePhotoSettings photoSettingsWithFormat:format]];
 }
 
 @end

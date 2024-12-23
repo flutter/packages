@@ -143,8 +143,11 @@ static const BOOL gTestEnableAudio = YES;
   TestMediaSettingsAVWrapper *injectedWrapper =
       [[TestMediaSettingsAVWrapper alloc] initWithTestCase:self];
 
-  FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, injectedWrapper, nil, nil, nil, nil);
+  FLTCamConfiguration *configuration = FLTCreateTestConfiguration();
+  configuration.mediaSettings = settings;
+  configuration.mediaSettingsWrapper = injectedWrapper;
+
+  FLTCam *camera = FLTCreateCamWithConfiguration(configuration);
 
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
@@ -213,9 +216,10 @@ static const BOOL gTestEnableAudio = YES;
                                             videoBitrate:@(gTestVideoBitrate)
                                             audioBitrate:@(gTestAudioBitrate)
                                              enableAudio:gTestEnableAudio];
+  FLTCamConfiguration *configuration = FLTCreateTestConfiguration();
+  configuration.mediaSettings = settings;
 
-  FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, nil, nil, nil, nil, nil);
+  FLTCam *camera = FLTCreateCamWithConfiguration(configuration);
 
   id<FLTFrameRateRange> range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
   XCTAssertLessThanOrEqual(range.minFrameRate, 60);

@@ -15,5 +15,6 @@
 
 @interface MockCapturePhotoSettingsFactory : NSObject <FLTCapturePhotoSettingsFactory>
 @property(nonatomic, copy) id<FLTCapturePhotoSettings> (^createPhotoSettingsStub)(void);
-@property(nonatomic, copy) id<FLTCapturePhotoSettings> (^createPhotoSettingsWithFormatStub)(NSDictionary<NSString *, id> *);
+@property(nonatomic, copy) id<FLTCapturePhotoSettings> (^createPhotoSettingsWithFormatStub)
+    (NSDictionary<NSString *, id> *);
 @end

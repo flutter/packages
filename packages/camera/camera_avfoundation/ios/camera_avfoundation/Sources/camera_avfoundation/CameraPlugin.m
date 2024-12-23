@@ -500,39 +500,20 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   NSError *error;
 
   __weak typeof(self) weakSelf = self;
-  FLTCam *cam = [[FLTCam alloc] initWithMediaSettings:settings
-      mediaSettingsAVWrapper:mediaSettingsAVWrapper
-      orientation:[[UIDevice currentDevice] orientation]
-      videoCaptureSession:_captureSessionFactory()
-      audioCaptureSession:_captureSessionFactory()
-      captureSessionQueue:self.captureSessionQueue
+
+  FLTCamConfiguration *configuration = [[FLTCamConfiguration alloc] initWithMediaSettings:settings
+      mediaSettingsWrapper:mediaSettingsAVWrapper
       captureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull {
         return weakSelf.captureDeviceFactory(name);
       }
+      captureSessionQueue:self.captureSessionQueue
+      captureSessionFactory:_captureSessionFactory
       audioCaptureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull {
         return [[FLTDefaultCaptureDeviceController alloc]
             initWithDevice:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio]];
-      }
-      videoDimensionsForFormat:^CMVideoDimensions(id<FLTCaptureDeviceFormat> _Nonnull format) {
-        return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-      }
-      capturePhotoOutput:[[FLTDefaultCapturePhotoOutput alloc]
-                             initWithPhotoOutput:[AVCapturePhotoOutput new]]
-      assetWriterFactory:^id<FLTAssetWriter> _Nonnull(
-          NSURL *_Nonnull url, AVFileType _Nonnull fileType,
-          NSError *_Nullable __autoreleasing *_Nullable error) {
-        return [[FLTDefaultAssetWriter alloc] initWithURL:url fileType:fileType error:error];
-      }
-      pixelBufferAdaptorFactory:^id<FLTPixelBufferAdaptor> _Nonnull(
-          id<FLTAssetWriterInput> _Nonnull assetWriterInput,
-          NSDictionary<NSString *, id> *_Nullable sourcePixelBufferAttributes) {
-        return [[FLTDefaultPixelBufferAdaptor alloc]
-            initWithAdaptor:[[AVAssetWriterInputPixelBufferAdaptor alloc]
-                                   initWithAssetWriterInput:assetWriterInput.input
-                                sourcePixelBufferAttributes:sourcePixelBufferAttributes]];
-      }
-      photoSettingsFactory:[[FLTDefaultCapturePhotoSettingsFactory alloc] init]
-      error:&error];
+      }];
+
+  FLTCam *cam = [[FLTCam alloc] initWithConfiguration:configuration error:&error];
 
   if (error) {
     completion(nil, FlutterErrorFromNSError(error));

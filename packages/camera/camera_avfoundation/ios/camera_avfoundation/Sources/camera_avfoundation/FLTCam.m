@@ -9,6 +9,7 @@
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
+#import "./include/camera_avfoundation/FLTCamConfiguration.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureConnection.h"
@@ -178,47 +179,35 @@ static void selectBestFormatForRequestedFrameRate(
   mediaSettings.framesPerSecond = @(bestFrameRate);
 }
 
-- (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-               mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                          orientation:(UIDeviceOrientation)orientation
-                  videoCaptureSession:(id<FLTCaptureSession>)videoCaptureSession
-                  audioCaptureSession:(id<FLTCaptureSession>)audioCaptureSession
-                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                 captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
-            audioCaptureDeviceFactory:(CaptureDeviceFactory)audioCaptureDeviceFactory
-             videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
-                   capturePhotoOutput:(id<FLTCapturePhotoOutput>)capturePhotoOutput
-                   assetWriterFactory:(AssetWriterFactory)assetWriterFactory
-            pixelBufferAdaptorFactory:(PixelBufferAdaptorFactory)pixelBufferAdaptorFactory
-                 photoSettingsFactory:(id<FLTCapturePhotoSettingsFactory>)photoSettingsFactory
-                                error:(NSError **)error {
+- (nonnull instancetype)initWithConfiguration:(nonnull FLTCamConfiguration *)configuration
+                                        error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  _mediaSettings = mediaSettings;
-  _mediaSettingsAVWrapper = mediaSettingsAVWrapper;
+  _mediaSettings = configuration.mediaSettings;
+  _mediaSettingsAVWrapper = configuration.mediaSettingsWrapper;
 
-  _captureSessionQueue = captureSessionQueue;
+  _captureSessionQueue = configuration.captureSessionQueue;
   _pixelBufferSynchronizationQueue =
       dispatch_queue_create("io.flutter.camera.pixelBufferSynchronizationQueue", NULL);
   _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
-  _videoCaptureSession = videoCaptureSession;
-  _audioCaptureSession = audioCaptureSession;
-  _captureDeviceFactory = captureDeviceFactory;
-  _captureDevice = captureDeviceFactory();
-  _audioCaptureDeviceFactory = audioCaptureDeviceFactory;
-  _videoDimensionsForFormat = videoDimensionsForFormat;
+  _videoCaptureSession = configuration.videoCaptureSession;
+  _audioCaptureSession = configuration.audioCaptureSession;
+  _captureDeviceFactory = configuration.captureDeviceFactory;
+  _captureDevice = _captureDeviceFactory();
+  _audioCaptureDeviceFactory = configuration.audioCaptureDeviceFactory;
+  _videoDimensionsForFormat = configuration.videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FCPPlatformFlashModeAuto : FCPPlatformFlashModeOff;
   _exposureMode = FCPPlatformExposureModeAuto;
   _focusMode = FCPPlatformFocusModeAuto;
   _lockedCaptureOrientation = UIDeviceOrientationUnknown;
-  _deviceOrientation = orientation;
+  _deviceOrientation = configuration.orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
   _fileFormat = FCPPlatformImageFileFormatJpeg;
-  _assetWriterFactory = assetWriterFactory;
-  _pixelBufferAdaptorFactory = pixelBufferAdaptorFactory;
-  _photoSettingsFactory = photoSettingsFactory;
-  
+  _assetWriterFactory = configuration.assetWriterFactory;
+  _pixelBufferAdaptorFactory = configuration.pixelBufferAdaptorFactory;
+  _photoSettingsFactory = configuration.photoSettingsFactory;
+
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
   // https://github.com/flutter/plugins/pull/4520#discussion_r766335637
@@ -237,18 +226,18 @@ static void selectBestFormatForRequestedFrameRate(
   [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
   [_videoCaptureSession addConnection:connection];
 
-  _capturePhotoOutput = capturePhotoOutput;
+  _capturePhotoOutput = configuration.capturePhotoOutput;
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
   [_videoCaptureSession addOutput:_capturePhotoOutput.photoOutput];
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  _deviceOrientationProvider = [[FLTDefaultDeviceOrientationProvider alloc] init];
+  _deviceOrientationProvider = configuration.deviceOrientationProvider;
 
   if (_mediaSettings.framesPerSecond) {
     // The frame rate can be changed only on a locked for configuration device.
-    if ([mediaSettingsAVWrapper lockDevice:_captureDevice error:error]) {
+    if ([_mediaSettingsAVWrapper lockDevice:_captureDevice error:error]) {
       [_mediaSettingsAVWrapper beginConfigurationForSession:_videoCaptureSession];
 
       // Possible values for presets are hard-coded in FLT interface having
@@ -269,8 +258,8 @@ static void selectBestFormatForRequestedFrameRate(
       int fpsNominator = floor([_mediaSettings.framesPerSecond doubleValue] * 10.0);
       CMTime duration = CMTimeMake(10, fpsNominator);
 
-      [mediaSettingsAVWrapper setMinFrameDuration:duration onDevice:_captureDevice];
-      [mediaSettingsAVWrapper setMaxFrameDuration:duration onDevice:_captureDevice];
+      [_mediaSettingsAVWrapper setMinFrameDuration:duration onDevice:_captureDevice];
+      [_mediaSettingsAVWrapper setMaxFrameDuration:duration onDevice:_captureDevice];
 
       [_mediaSettingsAVWrapper commitConfigurationForSession:_videoCaptureSession];
       [_mediaSettingsAVWrapper unlockDevice:_captureDevice];
@@ -407,7 +396,8 @@ static void selectBestFormatForRequestedFrameRate(
       [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
 
   if (_fileFormat == FCPPlatformImageFileFormatHeif && isHEVCCodecAvailable) {
-    settings = [_photoSettingsFactory createPhotoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
+    settings = [_photoSettingsFactory
+        createPhotoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
     extension = @"heif";
   } else {
     extension = @"jpg";
