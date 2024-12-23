@@ -792,13 +792,12 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   // Accesses the TextSpan property correctly depending on the widget type.
   // Returns null if not a valid (text) widget.
-  InlineSpan? _getInlineSpanFromText(Widget widget) =>
-    switch (widget) {
-      SelectableText() => widget.textSpan,
-      Text()           => widget.textSpan,
-      RichText()       => widget.text,
-      _                => null
-    };
+  InlineSpan? _getInlineSpanFromText(Widget widget) => switch (widget) {
+        SelectableText() => widget.textSpan,
+        Text() => widget.textSpan,
+        RichText() => widget.text,
+        _ => null
+      };
 
   /// Merges adjacent [TextSpan] children.
   /// Also forces a specific [TextAlign] regardless of merging.
@@ -814,7 +813,6 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     bool lastIsText = false;
     for (final Widget child in children) {
-
       final InlineSpan? currentSpan = _getInlineSpanFromText(child);
       final bool currentIsText = currentSpan != null;
 
@@ -830,10 +828,8 @@ class MarkdownBuilder implements md.NodeVisitor {
 
       if (lastIsText) {
         // Removes last widget from the list for merging and extracts its spans
-        spans.addAll(
-          _getInlineSpansFromSpan(
-            _getInlineSpanFromText(
-              mergedWidgets.removeLast())!));
+        spans.addAll(_getInlineSpansFromSpan(
+            _getInlineSpanFromText(mergedWidgets.removeLast())!));
       }
 
       spans.addAll(_getInlineSpansFromSpan(currentSpan));
@@ -844,12 +840,11 @@ class MarkdownBuilder implements md.NodeVisitor {
       if (spans.isEmpty) {
         // no spans found, just insert the current widget
         mergedWidget = child;
-
       } else {
         final InlineSpan first = spans.first;
-        final TextSpan textSpan =
-          (spans.length == 1 && first is TextSpan)
-          ? first : TextSpan(children: spans);
+        final TextSpan textSpan = (spans.length == 1 && first is TextSpan)
+            ? first
+            : TextSpan(children: spans);
         mergedWidget = _buildRichText(textSpan, textAlign: textAlign);
       }
 
