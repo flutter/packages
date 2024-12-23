@@ -6,13 +6,13 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
+    copyrightHeader: 'pigeons/copyright.txt',
     dartOut: 'lib/src/camerax_library.g.dart',
-    dartTestOut: 'test/test_camerax_library.g.dart',
-    dartOptions: DartOptions(copyrightHeader: <String>[
-      'Copyright 2013 The Flutter Authors. All rights reserved.',
-      'Use of this source code is governed by a BSD-style license that can be',
-      'found in the LICENSE file.',
-    ]),
+    kotlinOut:
+        'android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/CameraXLibrary.g.kt',
+    kotlinOptions: KotlinOptions(
+      package: 'io.flutter.plugins.camerax',
+    ),
     javaOut:
         'android/src/main/java/io/flutter/plugins/camerax/GeneratedCameraXLibrary.java',
     javaOptions: JavaOptions(
