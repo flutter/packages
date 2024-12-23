@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
+## 0.7.4+4
+
+* Makes table column custom alignment work even when text wraps.
+
 ## 0.7.4+3
 
 * Passes a default error builder to image widgets.
