@@ -9,3 +9,6 @@ git fetch origin main
 
 cd script/tool
 dart pub get
+
+# DO NOT SUBMIT: Trying with flutter config --explicit-package-dependencies.
+flutter config --explicit-package-dependencies
