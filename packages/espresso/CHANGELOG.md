@@ -1,3 +1,7 @@
+## 0.4.0+4
+
+* Updates agp to 8.7.2.
+
 ## 0.4.0+3
 
 * Updates Java compatibility version to 11.
