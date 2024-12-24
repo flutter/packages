@@ -76,6 +76,9 @@ abstract class ExampleHostApi {
 
   @async
   bool sendMessage(MessageData message);
+
+  @ModernAsync(isSwiftThrows: false)
+  bool sendMessageModernAsync(MessageData message);
 }
 ```
 
@@ -113,6 +116,16 @@ Future<bool> sendMessage(String messageText) {
     return Future<bool>(() => true);
   }
 }
+
+Future<bool> sendMessageModernAsync(String messageText) {
+  final MessageData message = MessageData(
+    code: Code.two,
+    data: <String, String>{'header': 'this is a header'},
+    description: 'uri text',
+  );
+
+  return _api.sendMessageModernAsync(message);
+}
 ```
 
 ### Swift
@@ -140,6 +153,10 @@ private class PigeonApiImplementation: ExampleHostApi {
     }
     completion(.success(true))
   }
+
+  func sendMessageModernAsync(message: MessageData) async -> Bool {
+    return true
+  }
 }
 ```
 
@@ -165,6 +182,14 @@ private class PigeonApiImplementation : ExampleHostApi {
     }
     callback(Result.success(true))
   }
+
+  override suspend fun sendMessageModernAsync(message: MessageData): Boolean {
+    if (message.code == Code.ONE) {
+      throw FlutterError("code", "message", "details")
+    }
+
+    return true
+  }
 }
 ```
 
@@ -185,6 +210,15 @@ class PigeonApiImplementation : public ExampleHostApi {
   }
   void SendMessage(const MessageData& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
+    if (message.code() == Code::kOne) {
+      result(FlutterError("code", "message", "details"));
+      return;
+    }
+    result(true);
+  }
+
+  void SendMessageModernAsync(const MessageData& message,
+                              std::function<void(ErrorOr<bool> reply)> result) {
     if (message.code() == Code::kOne) {
       result(FlutterError("code", "message", "details"));
       return;
@@ -231,10 +265,28 @@ static void handle_send_message(
                                                                TRUE);
 }
 
+static void handle_send_message_modern_async(
+    PigeonExamplePackageMessageData* message,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gpointer user_data) {
+  PigeonExamplePackageCode code =
+      pigeon_example_package_message_data_get_code(message);
+  if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
+    g_autoptr(FlValue) details = fl_value_new_string("details");
+    pigeon_example_package_example_host_api_respond_error_send_message_modern_async(
+        response_handle, "code", "message", details);
+    return;
+  }
+
+  pigeon_example_package_example_host_api_respond_send_message_modern_async(
+      response_handle, TRUE);
+}
+
 static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
     .get_host_language = handle_get_host_language,
     .add = handle_add,
-    .send_message = handle_send_message};
+    .send_message = handle_send_message,
+    .send_message_modern_async = handle_send_message_modern_async};
 ```
 
 ## FlutterApi Example

@@ -229,6 +229,32 @@ void SetUpPGNExampleHostApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
       [channel setMessageHandler:nil];
     }
   }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_example_package."
+                                                   @"ExampleHostApi.sendMessageModernAsync",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:PGNGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(sendMessageModernAsyncMessage:completion:)],
+                @"PGNExampleHostApi api (%@) doesn't respond to "
+                @"@selector(sendMessageModernAsyncMessage:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        PGNMessageData *arg_message = GetNullableObjectAtIndex(args, 0);
+        [api sendMessageModernAsyncMessage:arg_message
+                                completion:^(NSNumber *_Nullable output,
+                                             FlutterError *_Nullable error) {
+                                  callback(wrapResult(output, error));
+                                }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
 }
 @interface PGNMessageFlutterApi ()
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;

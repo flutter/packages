@@ -601,7 +601,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
@@ -663,7 +663,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
@@ -1025,12 +1025,13 @@ void main() {
       apis: <Api>[
         AstFlutterApi(name: 'Api', methods: <Method>[
           Method(
-              name: 'doit',
-              location: ApiLocation.flutter,
-              returnType:
-                  const TypeDeclaration(baseName: 'int', isNullable: false),
-              parameters: <Parameter>[],
-              isAsynchronous: true)
+            name: 'doit',
+            location: ApiLocation.flutter,
+            returnType:
+                const TypeDeclaration(baseName: 'int', isNullable: false),
+            parameters: <Parameter>[],
+            asynchronousType: AsynchronousType.callback,
+          )
         ])
       ],
       classes: <Class>[],
@@ -1234,7 +1235,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              isAsynchronous: true,
+              asynchronousType: AsynchronousType.callback,
               parameters: <Parameter>[])
         ])
       ],
@@ -1530,7 +1531,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[

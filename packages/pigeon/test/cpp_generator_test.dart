@@ -1855,7 +1855,7 @@ void main() {
             isNullable: false,
             associatedClass: emptyClass,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
@@ -1984,7 +1984,7 @@ void main() {
           location: ApiLocation.host,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         ),
         Method(
           name: 'doSomething',
@@ -1999,7 +1999,7 @@ void main() {
           ],
           returnType:
               const TypeDeclaration(baseName: 'double', isNullable: false),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         ),
       ]),
       AstFlutterApi(name: 'FlutterApi', methods: <Method>[
@@ -2008,7 +2008,7 @@ void main() {
           location: ApiLocation.flutter,
           parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         ),
         Method(
           name: 'doSomething',
@@ -2023,7 +2023,7 @@ void main() {
           ],
           returnType:
               const TypeDeclaration(baseName: 'bool', isNullable: false),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         ),
       ])
     ], classes: <Class>[], enums: <Enum>[]);

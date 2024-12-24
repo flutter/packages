@@ -12,6 +12,10 @@ import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private fun wrapResult(result: Any?): List<Any?> {
   return listOf(result)
@@ -120,6 +124,8 @@ interface ExampleHostApi {
 
   fun sendMessage(message: MessageData, callback: (Result<Boolean>) -> Unit)
 
+  suspend fun sendMessageModernAsync(message: MessageData): Boolean
+
   companion object {
     /** The codec used by ExampleHostApi. */
     val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
@@ -128,7 +134,8 @@ interface ExampleHostApi {
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: ExampleHostApi?,
-        messageChannelSuffix: String = ""
+        messageChannelSuffix: String = "",
+        coroutineScope: CoroutineScope
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
@@ -193,6 +200,30 @@ interface ExampleHostApi {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
               }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessageModernAsync$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val messageArg = args[0] as MessageData
+            coroutineScope.launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.sendMessageModernAsync(messageArg))
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              withContext(Dispatchers.Main) { reply.reply(wrapped) }
             }
           }
         } else {
