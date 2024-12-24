@@ -44,10 +44,32 @@ class _Asynchronous {
 /// Metadata to annotate a Api method as asynchronous
 const Object async = _Asynchronous();
 
-class _ModernAsynchronous {
-  const _ModernAsynchronous();
+/// {@macro pigeon_lib.modern_async}
+class ModernAsync {
+  /// Constructor for [ModernAsync].
+  const ModernAsync({
+    this.isSwiftThrows,
+  });
+
+  /// Whether the method throws in Swift.
+  ///
+  /// If `true`:
+  ///
+  /// ```swift
+  /// func sendMessage(message: MessageData) async throws -> Bool
+  /// ```
+  ///
+  /// If `false`:
+  ///
+  /// ```swift
+  /// func sendMessage(message: MessageData) async -> Bool
+  /// ```
+  ///
+  /// The default value is `true`.
+  final bool? isSwiftThrows;
 }
 
+/// {@template pigeon_lib.modern_async}
 /// Provides a modern asynchronous Api (only Swift and Kotlin).
 ///
 /// Example:
@@ -70,7 +92,10 @@ class _ModernAsynchronous {
 /// ```kotlin
 /// suspend fun sendMessage(message: MessageData) : Boolean
 /// ```
-const Object modernAsync = _ModernAsynchronous();
+/// {@endtemplate}
+///
+/// You could configure more using [ModernAsync].
+const Object modernAsync = ModernAsync();
 
 class _Attached {
   const _Attached();
@@ -2338,14 +2363,33 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 AsynchronousType _parseAsynchronousType(
     dart_ast.NodeList<dart_ast.Annotation> metadata) {
   if (_hasMetadata(metadata, 'async')) {
-    return AsynchronousType.callback;
+    return const CallbackAsynchronous();
   }
 
   if (_hasMetadata(metadata, 'modernAsync')) {
-    return AsynchronousType.modern;
+    return const ModernAsynchronous(
+        swiftOptions: SwiftModernAsynchronousOptions(throws: true));
   }
 
-  return AsynchronousType.none;
+  final dart_ast.Annotation? meta = _findMetadata(metadata, 'ModernAsync');
+
+  if (meta == null) {
+    return AsynchronousType.none;
+  }
+
+  return ModernAsynchronous(
+    swiftOptions: SwiftModernAsynchronousOptions(
+      throws: meta.arguments?.arguments
+              .whereType<dart_ast.NamedExpression>()
+              .where((dart_ast.NamedExpression element) =>
+                  element.name.label.name == 'isSwiftThrows')
+              .map((dart_ast.NamedExpression element) => element.expression)
+              .whereType<dart_ast.BooleanLiteral>()
+              .firstOrNull
+              ?.value ??
+          true,
+    ),
+  );
 }
 
 int? _calculateLineNumberNullable(String contents, int? offset) {

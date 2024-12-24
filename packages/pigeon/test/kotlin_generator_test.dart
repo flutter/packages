@@ -812,7 +812,9 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          asynchronousType: AsynchronousType.modern,
+          asynchronousType: const ModernAsynchronous(
+            swiftOptions: SwiftModernAsynchronousOptions(throws: true),
+          ),
         )
       ])
     ], classes: <Class>[

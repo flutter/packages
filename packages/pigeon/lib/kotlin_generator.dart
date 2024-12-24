@@ -157,7 +157,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
     if (root.apis.any((Api api) => api.methods.any((Method it) =>
-        it.isModernAsynchronous && it.location == ApiLocation.host))) {
+        it.asynchronousType.isModern && it.location == ApiLocation.host))) {
       indent.writeln('import kotlinx.coroutines.launch');
       indent.writeln('import kotlinx.coroutines.CoroutineScope');
       indent.writeln('import kotlinx.coroutines.Dispatchers');
@@ -345,8 +345,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   }) {
     if (root.apis.any((Api api) =>
         api is AstHostApi &&
-        api.methods.any((Method it) =>
-            it.isCallbackAsynchronous || it.isModernAsynchronous))) {
+        api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
     super.writeApis(generatorOptions, root, indent,
@@ -646,7 +645,7 @@ if (wrapped == null) {
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
         indent.writeln('@JvmOverloads');
         final String coroutineScope =
-            api.methods.any((Method method) => method.isModernAsynchronous)
+            api.methods.any((Method method) => method.asynchronousType.isModern)
                 ? ', coroutineScope: CoroutineScope'
                 : '';
         indent.write(

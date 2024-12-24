@@ -49,8 +49,6 @@ private class PigeonApiImplementation : ExampleHostApi {
       throw FlutterError("code", "message", "details")
     }
 
-    delay(2000)
-
     return true
   }
 }

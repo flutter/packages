@@ -23,28 +23,64 @@ enum ApiLocation {
   flutter,
 }
 
-/// Enum that represents the type of asynchronous a method is.
-enum AsynchronousType {
-  /// No asynchronous implementation.
-  none,
+/// Represents the type of asynchronous api will be used.
+sealed class AsynchronousType {
+  /// Constructor for [AsynchronousType].
+  const AsynchronousType();
 
-  /// Basic callback implementation.
-  callback,
+  /// No asynchronous.
+  static const NoAsynchronous none = NoAsynchronous();
 
-  /// Modern async implementation.
-  ///
-  /// * Swift - async.
-  /// * Kotlin - suspend.
-  modern;
+  /// Callback asynchronous.
+  static const CallbackAsynchronous callback = CallbackAsynchronous();
 
-  /// Returns true if the [AsynchronousType] is [AsynchronousType.none].
-  bool get isNone => this == AsynchronousType.none;
+  /// Returns true if the [AsynchronousType] is [CallbackAsynchronous].
+  bool get isCallback => this is CallbackAsynchronous;
 
-  /// Returns true if the [AsynchronousType] is [AsynchronousType.callback].
-  bool get isCallback => this == AsynchronousType.callback;
+  /// Returns true if the [AsynchronousType] is [ModernAsynchronous].
+  bool get isModern => this is ModernAsynchronous;
 
-  /// Returns true if the [AsynchronousType] is [AsynchronousType.modern].
-  bool get isModern => this == AsynchronousType.modern;
+  /// Returns true if the [AsynchronousType] is [NoAsynchronous].
+  bool get isNone => this is NoAsynchronous;
+}
+
+/// Represents a callback asynchronous api will be used.
+class CallbackAsynchronous extends AsynchronousType {
+  /// Constructor for [CallbackAsynchronous].
+  const CallbackAsynchronous();
+}
+
+/// Represents a modern asynchronous api will be used.
+///
+/// * Swift - async.
+/// * Kotlin - suspend.
+class ModernAsynchronous extends AsynchronousType {
+  /// Constructor for [ModernAsynchronous].
+  const ModernAsynchronous({
+    required this.swiftOptions,
+  });
+
+  /// {@macro ast.swift_modern_asynchronous_options}
+  final SwiftModernAsynchronousOptions swiftOptions;
+}
+
+/// Represents a no asynchronous api will be used.
+class NoAsynchronous extends AsynchronousType {
+  /// Constructor for [NoAsynchronous].
+  const NoAsynchronous();
+}
+
+/// {@template ast.swift_modern_asynchronous_options}
+/// Options for Swift modern asynchronous.
+/// {@endtemplate}
+class SwiftModernAsynchronousOptions {
+  /// Constructor for [SwiftModernAsynchronousOptions].
+  const SwiftModernAsynchronousOptions({
+    required this.throws,
+  });
+
+  /// Whether the function throws an exception or not.
+  final bool throws;
 }
 
 /// Superclass for all AST nodes.
@@ -112,14 +148,7 @@ class Method extends Node {
   AsynchronousType asynchronousType;
 
   /// Whether this method is asynchronous.
-  bool get isAsynchronous => asynchronousType != AsynchronousType.none;
-
-  /// Whether this method is asynchronous with callback.
-  bool get isCallbackAsynchronous =>
-      asynchronousType == AsynchronousType.callback;
-
-  /// Whether this method is asynchronous with modern Api.
-  bool get isModernAsynchronous => asynchronousType == AsynchronousType.modern;
+  bool get isAsynchronous => !asynchronousType.isNone;
 
   @override
   String toString() {

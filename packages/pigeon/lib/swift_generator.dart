@@ -602,8 +602,7 @@ if (wrapped == nil) {
   }) {
     if (root.apis.any((Api api) =>
         api is AstHostApi &&
-        api.methods.any((Method it) =>
-            it.isCallbackAsynchronous || it.isModernAsynchronous))) {
+        api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
     super.writeApis(generatorOptions, root, indent,
@@ -1574,7 +1573,15 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             }
           });
         }
-        final String tryStatement = asynchronousType.isCallback ? '' : 'try ';
+        final bool throws = switch (asynchronousType) {
+          CallbackAsynchronous() => false,
+          ModernAsynchronous(
+            :final SwiftModernAsynchronousOptions swiftOptions
+          ) =>
+            swiftOptions.throws,
+          NoAsynchronous() => true,
+        };
+        final String tryStatement = throws ? 'try ' : '';
         final String awaitKeyword = asynchronousType.isModern ? 'await ' : '';
         late final String call;
         if (onCreateCall == null) {
@@ -1625,8 +1632,24 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             return body();
           }
 
-          indent.write('do ');
-          indent.addScoped('{', '}', () {
+          void wrapInDo(void Function() body) {
+            if (!throws) {
+              return body();
+            }
+
+            indent.write('do ');
+            indent.writeScoped(
+              '{',
+              '}',
+              () => body(),
+              addTrailingNewline: false,
+            );
+            indent.addScoped(' catch {', '}', () {
+              wrapMainActorRun(() => indent.writeln('reply(wrapError(error))'));
+            });
+          }
+
+          wrapInDo(() {
             if (returnType.isVoid) {
               indent.writeln(call);
               wrapMainActorRun(() => indent.writeln('reply(wrapResult(nil))'));
@@ -1636,9 +1659,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                 () => indent.writeln('reply(wrapResult(result))'),
               );
             }
-          }, addTrailingNewline: false);
-          indent.addScoped(' catch {', '}', () {
-            wrapMainActorRun(() => indent.writeln('reply(wrapError(error))'));
           });
         }
       });
@@ -2253,7 +2273,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                   required String apiVarName,
                 }) {
                   final String tryStatement =
-                      method.isCallbackAsynchronous ? '' : 'try ';
+                      method.asynchronousType.isCallback ? '' : 'try ';
                   final List<String> parameters = <String>[
                     'pigeonApi: $apiVarName',
                     // Skip the identifier used by the InstanceManager.
@@ -2751,12 +2771,18 @@ String _getMethodSignature({
       return 'func ${components.name}($parameterSignature, completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
     }
   } else {
-    final String asyncKeyword = asynchronousType.isModern ? 'async ' : '';
+    final String asyncKeyword = (asynchronousType.isModern) ? ' async' : '';
+    final String throwsKeyword = switch (asynchronousType) {
+      CallbackAsynchronous() => '',
+      ModernAsynchronous(:final SwiftModernAsynchronousOptions swiftOptions) =>
+        swiftOptions.throws ? ' throws' : '',
+      NoAsynchronous() => ' throws',
+    };
 
     if (returnType.isVoid) {
-      return 'func ${components.name}($parameterSignature) ${asyncKeyword}throws';
+      return 'func ${components.name}($parameterSignature)$asyncKeyword$throwsKeyword';
     } else {
-      return 'func ${components.name}($parameterSignature) ${asyncKeyword}throws -> $returnTypeString';
+      return 'func ${components.name}($parameterSignature)$asyncKeyword$throwsKeyword -> $returnTypeString';
     }
   }
 }
