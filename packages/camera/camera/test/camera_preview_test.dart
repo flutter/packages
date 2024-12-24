@@ -144,6 +144,7 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
       final FakeController controller = FakeController();
+      addTearDown(controller.dispose);
       controller.value = controller.value.copyWith(
         isInitialized: true,
         isRecordingVideo: true,
@@ -179,6 +180,7 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
       final FakeController controller = FakeController();
+      addTearDown(controller.dispose);
       controller.value = controller.value.copyWith(
         isInitialized: true,
         deviceOrientation: DeviceOrientation.portraitUp,
@@ -213,6 +215,7 @@ void main() {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
       final FakeController controller = FakeController();
+      addTearDown(controller.dispose);
       controller.value = controller.value.copyWith(
         isInitialized: true,
         deviceOrientation: DeviceOrientation.portraitUp,
@@ -241,6 +244,7 @@ void main() {
       (WidgetTester tester) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     final FakeController controller = FakeController();
+    addTearDown(controller.dispose);
     controller.value = controller.value.copyWith(
       isInitialized: true,
       previewSize: const Size(480, 640),
