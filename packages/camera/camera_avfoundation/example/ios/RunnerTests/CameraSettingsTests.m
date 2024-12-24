@@ -8,8 +8,10 @@
 #endif
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
 #import "CameraTestUtils.h"
+#import "MockAssetWriter.h"
+#import "MockCaptureDeviceController.h"
+#import "MockCaptureSession.h"
 
 static const FCPPlatformResolutionPreset gTestResolutionPreset = FCPPlatformResolutionPresetMedium;
 static const int gTestFramesPerSecond = 15;
@@ -65,11 +67,11 @@ static const BOOL gTestEnableAudio = YES;
   [_unlockExpectation fulfill];
 }
 
-- (void)beginConfigurationForSession:(AVCaptureSession *)videoCaptureSession {
+- (void)beginConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
   [_beginConfigurationExpectation fulfill];
 }
 
-- (void)commitConfigurationForSession:(AVCaptureSession *)videoCaptureSession {
+- (void)commitConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
   [_commitConfigurationExpectation fulfill];
 }
 
@@ -93,17 +95,16 @@ static const BOOL gTestEnableAudio = YES;
   }
 }
 
-- (AVAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
+- (id<FLTAssetWriterInput>)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
   if ([outputSettings[AVEncoderBitRateKey] isEqual:@(gTestAudioBitrate)]) {
     [_audioSettingsExpectation fulfill];
   }
 
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
-                                            outputSettings:outputSettings];
+  return [[MockAssetWriterInput alloc] init];
 }
 
-- (AVAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
+- (id<FLTAssetWriterInput>)assetWriterVideoInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
   if ([outputSettings[AVVideoCompressionPropertiesKey] isKindOfClass:[NSMutableDictionary class]]) {
     NSDictionary *compressionProperties = outputSettings[AVVideoCompressionPropertiesKey];
@@ -115,8 +116,7 @@ static const BOOL gTestEnableAudio = YES;
     }
   }
 
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
-                                            outputSettings:outputSettings];
+  return [[MockAssetWriterInput alloc] init];
 }
 
 - (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer {
@@ -143,8 +143,11 @@ static const BOOL gTestEnableAudio = YES;
   TestMediaSettingsAVWrapper *injectedWrapper =
       [[TestMediaSettingsAVWrapper alloc] initWithTestCase:self];
 
-  FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, injectedWrapper, nil);
+  FLTCamConfiguration *configuration = FLTCreateTestConfiguration();
+  configuration.mediaSettings = settings;
+  configuration.mediaSettingsWrapper = injectedWrapper;
+
+  FLTCam *camera = FLTCreateCamWithConfiguration(configuration);
 
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
@@ -167,18 +170,22 @@ static const BOOL gTestEnableAudio = YES;
 }
 
 - (void)testSettings_ShouldBeSupportedByMethodCall {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  MockCaptureDeviceController *mockDeviceController = [[MockCaptureDeviceController alloc] init];
+  MockCaptureSession *mockSession = [[MockCaptureSession alloc] init];
+  mockSession.mockCanSetSessionPreset = YES;
+
+  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
+      messenger:nil
+      globalAPI:nil
+      deviceDiscovery:nil
+      sessionFactory:^id<FLTCaptureSession> {
+        return mockSession;
+      }
+      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        return mockDeviceController;
+      }];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
-
-  // Set up mocks for initWithCameraName method
-  id avCaptureDeviceInputMock = OCMClassMock([AVCaptureDeviceInput class]);
-  OCMStub([avCaptureDeviceInputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg anyObjectRef]])
-      .andReturn([AVCaptureInput alloc]);
-
-  id avCaptureSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
-  OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   // Set up method call
   FCPPlatformMediaSettings *mediaSettings =
@@ -209,11 +216,12 @@ static const BOOL gTestEnableAudio = YES;
                                             videoBitrate:@(gTestVideoBitrate)
                                             audioBitrate:@(gTestAudioBitrate)
                                              enableAudio:gTestEnableAudio];
+  FLTCamConfiguration *configuration = FLTCreateTestConfiguration();
+  configuration.mediaSettings = settings;
 
-  FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, nil, nil);
+  FLTCam *camera = FLTCreateCamWithConfiguration(configuration);
 
-  AVFrameRateRange *range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
+  id<FLTFrameRateRange> range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
   XCTAssertLessThanOrEqual(range.minFrameRate, 60);
   XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60);
 }

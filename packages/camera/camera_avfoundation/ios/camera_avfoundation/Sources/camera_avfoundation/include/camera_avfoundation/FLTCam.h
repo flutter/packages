@@ -7,7 +7,12 @@
 @import Flutter;
 
 #import "CameraProperties.h"
+#import "FLTAssetWriter.h"
+#import "FLTCamConfiguration.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
+#import "FLTCaptureDeviceControlling.h"
+#import "FLTCapturePhotoOutput.h"
+#import "FLTDeviceOrientationProviding.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// A class that manages camera's state and performs camera operations.
 @interface FLTCam : NSObject <FlutterTexture>
 
-@property(readonly, nonatomic) AVCaptureDevice *captureDevice;
+@property(readonly, nonatomic) id<FLTCaptureDeviceControlling> captureDevice;
 @property(readonly, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) BOOL isPreviewPaused;
 @property(nonatomic, copy) void (^onFrameAvailable)(void);
@@ -32,19 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) CGFloat maximumAvailableZoomFactor;
 
 /// Initializes an `FLTCam` instance.
-/// @param cameraName a name used to uniquely identify the camera.
-/// @param mediaSettings the media settings configuration parameters
-/// @param mediaSettingsAVWrapper AVFoundation wrapper to perform media settings related operations
-/// (for dependency injection in unit tests).
-/// @param orientation the orientation of camera
-/// @param captureSessionQueue the queue on which camera's capture session operations happen.
+/// Allows for testing with specified resolution, audio preference, orientation,
+/// and direct access to capture sessions and blocks.
 /// @param error report to the caller if any error happened creating the camera.
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                       orientation:(UIDeviceOrientation)orientation
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error;
+- (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.
 - (void)reportInitializationState;
@@ -92,7 +88,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param focusMode The focus mode that should be applied to the @captureDevice instance.
 /// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice;
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
+              onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
 - (void)pausePreview;
 - (void)resumePreview;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName

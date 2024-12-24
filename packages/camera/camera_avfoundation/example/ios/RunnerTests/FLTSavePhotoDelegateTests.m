@@ -8,7 +8,8 @@
 #endif
 @import AVFoundation;
 @import XCTest;
-#import <OCMock/OCMock.h>
+
+#import "MockPhotoData.h"
 
 @interface FLTSavePhotoDelegateTests : XCTestCase
 
@@ -32,7 +33,7 @@
       }];
 
   [delegate handlePhotoCaptureResultWithError:captureError
-                            photoDataProvider:^NSData * {
+                            photoDataProvider:^id<FLTPhotoData> {
                               return nil;
                             }];
   [self waitForExpectationsWithTimeout:1 handler:nil];
@@ -55,15 +56,14 @@
         [completionExpectation fulfill];
       }];
 
-  // Do not use OCMClassMock for NSData because some XCTest APIs uses NSData (e.g.
-  // `XCTRunnerIDESession::logDebugMessage:`) on a private queue.
-  id mockData = OCMPartialMock([NSData data]);
-  OCMStub([mockData writeToFile:OCMOCK_ANY
-                        options:NSDataWritingAtomic
-                          error:[OCMArg setTo:ioError]])
-      .andReturn(NO);
+  MockPhotoData *mockData = [[MockPhotoData alloc] init];
+  mockData.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError **error) {
+    *error = ioError;
+    return NO;
+  };
+
   [delegate handlePhotoCaptureResultWithError:nil
-                            photoDataProvider:^NSData * {
+                            photoDataProvider:^id<FLTPhotoData> {
                               return mockData;
                             }];
   [self waitForExpectationsWithTimeout:1 handler:nil];
@@ -84,14 +84,13 @@
         [completionExpectation fulfill];
       }];
 
-  // Do not use OCMClassMock for NSData because some XCTest APIs uses NSData (e.g.
-  // `XCTRunnerIDESession::logDebugMessage:`) on a private queue.
-  id mockData = OCMPartialMock([NSData data]);
-  OCMStub([mockData writeToFile:filePath options:NSDataWritingAtomic error:[OCMArg setTo:nil]])
-      .andReturn(YES);
+  MockPhotoData *mockData = [[MockPhotoData alloc] init];
+  mockData.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError **error) {
+    return YES;
+  };
 
   [delegate handlePhotoCaptureResultWithError:nil
-                            photoDataProvider:^NSData * {
+                            photoDataProvider:^id<FLTPhotoData> {
                               return mockData;
                             }];
   [self waitForExpectationsWithTimeout:1 handler:nil];
@@ -109,16 +108,13 @@
   const char *ioQueueSpecific = "io_queue_specific";
   dispatch_queue_set_specific(ioQueue, ioQueueSpecific, (void *)ioQueueSpecific, NULL);
 
-  // Do not use OCMClassMock for NSData because some XCTest APIs uses NSData (e.g.
-  // `XCTRunnerIDESession::logDebugMessage:`) on a private queue.
-  id mockData = OCMPartialMock([NSData data]);
-  OCMStub([mockData writeToFile:OCMOCK_ANY options:NSDataWritingAtomic error:[OCMArg setTo:nil]])
-      .andDo(^(NSInvocation *invocation) {
-        if (dispatch_get_specific(ioQueueSpecific)) {
-          [writeFileQueueExpectation fulfill];
-        }
-      })
-      .andReturn(YES);
+  MockPhotoData *mockData = [[MockPhotoData alloc] init];
+  mockData.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError **error) {
+    if (dispatch_get_specific(ioQueueSpecific)) {
+      [writeFileQueueExpectation fulfill];
+    }
+    return YES;
+  };
 
   NSString *filePath = @"test";
   FLTSavePhotoDelegate *delegate = [[FLTSavePhotoDelegate alloc]
@@ -129,7 +125,7 @@
       }];
 
   [delegate handlePhotoCaptureResultWithError:nil
-                            photoDataProvider:^NSData * {
+                            photoDataProvider:^id<FLTPhotoData> {
                               if (dispatch_get_specific(ioQueueSpecific)) {
                                 [dataProviderQueueExpectation fulfill];
                               }
