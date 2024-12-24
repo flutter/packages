@@ -109,7 +109,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
         [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
             mutableCopy];
     if (@available(iOS 13.0, *)) {
-      [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
+      [discoveryDevices addObjectsFromArray:@[AVCaptureDeviceTypeBuiltInUltraWideCamera, AVCaptureDeviceTypeBuiltInTripleCamera, AVCaptureDeviceTypeBuiltInDualWideCamera, AVCaptureDeviceTypeBuiltInDualCamera]];
     }
     AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
         discoverySessionWithDeviceTypes:discoveryDevices
@@ -131,8 +131,35 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
           lensFacing = FCPPlatformCameraLensDirectionExternal;
           break;
       }
+      FCPPlatformCaptureDeviceType deviceType = FCPPlatformCaptureDeviceTypeUnknown;
+      // AVCaptureDeviceType is a constant, and hence can't  be used in a switch/case statement.
+      if (device.deviceType == AVCaptureDeviceTypeExternal) {
+        deviceType = FCPPlatformCaptureDeviceTypeExternal;
+      }
+      if (device.deviceType == AVCaptureDeviceTypeBuiltInWideAngleCamera) {
+        deviceType = FCPPlatformCaptureDeviceTypeBuiltInWideAngleCamera;
+      }
+      if (device.deviceType == AVCaptureDeviceTypeBuiltInTelephotoCamera) {
+        deviceType = FCPPlatformCaptureDeviceTypeBuiltInTelephotoCamera;
+      }
+      if (device.deviceType == AVCaptureDeviceTypeBuiltInUltraWideCamera) {
+        deviceType = FCPPlatformCaptureDeviceTypeBuiltInUltraWideCamera;
+      }
+      if (device.deviceType == AVCaptureDeviceTypeBuiltInDualCamera) {
+        deviceType = FCPPlatformCaptureDeviceTypeBuiltInDualCamera;
+      }
+      if (device.deviceType == AVCaptureDeviceTypeBuiltInDualWideCamera) {
+        deviceType = FCPPlatformCaptureDeviceTypeBuiltInDualWideCamera;
+      }
+      if (device.deviceType == AVCaptureDeviceTypeBuiltInTripleCamera) {
+        deviceType = FCPPlatformCaptureDeviceTypeBuiltInTripleCamera;
+      }
       [reply addObject:[FCPPlatformCameraDescription makeWithName:device.uniqueID
-                                                    lensDirection:lensFacing]];
+                                                    lensDirection:lensFacing
+                                                    deviceType: deviceType
+                                                    manufacturer: device.manufacturer
+                                                    model: device.modelID
+                                                    localisedName: device.localizedName]];
     }
     completion(reply, nil);
   });
