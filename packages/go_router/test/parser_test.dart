@@ -636,4 +636,58 @@ void main() {
     expect(match.matches, hasLength(1));
     expect(matchesObj.error, isNull);
   });
+
+  testWidgets(
+      'GoRouteInformationParser short-circuits if onEnter returns false',
+      (WidgetTester tester) async {
+    bool onEnterCalled = false;
+    final GoRouter router = GoRouter(
+      // Provide a custom onEnter callback that always returns true.
+      onEnter: (BuildContext context, GoRouterState state) {
+        onEnterCalled = true;
+        return false; // Always prevent entering new uris.
+      },
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const Placeholder(),
+          routes: <GoRoute>[
+            GoRoute(path: 'abc', builder: (_, __) => const Placeholder()),
+          ],
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    // Pump the widget so the router is actually in the tree.
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+    // Grab the parser we want to test.
+    final GoRouteInformationParser parser = router.routeInformationParser;
+
+    final BuildContext context = tester.element(find.byType(Router<Object>));
+    // Save what we consider "old route" (the route we're currently on).
+    final RouteMatchList oldConfiguration =
+        router.routerDelegate.currentConfiguration;
+
+    // Attempt to parse a new deep link: "/abc"
+    final RouteInformation routeInfo = RouteInformation(
+      uri: Uri.parse('/abc'),
+      state: RouteInformationState<void>(type: NavigatingType.go),
+    );
+    final RouteMatchList newMatch =
+        await parser.parseRouteInformationWithDependencies(
+      routeInfo,
+      context,
+    );
+
+    // Because our onEnter returned `true`, we expect we "did nothing."
+    //  => Check that the parser short-circuited (did not produce a new route).
+    expect(onEnterCalled, isTrue, reason: 'onEnter was not called.');
+    expect(
+      newMatch,
+      equals(oldConfiguration),
+      reason: 'Expected the parser to short-circuit and keep the old route.',
+    );
+  });
 }
