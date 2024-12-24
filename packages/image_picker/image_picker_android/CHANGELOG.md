@@ -1,3 +1,7 @@
+## 0.8.12+19
+
+* Bumps androidx.core:core from 1.13.1 to 1.15.0.
+
 ## 0.8.12+18
 
 * Fixes a security issue related to improperly trusting filenames provided by a `ContentProvider`.
