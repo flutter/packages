@@ -66,6 +66,12 @@ class EventListener: StreamEventsStreamHandler {
     }
   }
 
+  func onEmptyEvent() {
+    if let eventSink = eventSink {
+      eventSink.success(EmptyEvent())
+    }
+  }
+
   func onEventsDone() {
     eventSink?.endOfStream()
     eventSink = nil
@@ -84,6 +90,8 @@ func sendEvents(_ eventListener: EventListener) {
       } else {
         if (count % 2) == 0 {
           eventListener.onIntEvent(event: Int64(count))
+        } else if (count % 5) == 0 {
+          eventListener.onEmptyEvent()
         } else {
           eventListener.onStringEvent(event: String(count))
         }
