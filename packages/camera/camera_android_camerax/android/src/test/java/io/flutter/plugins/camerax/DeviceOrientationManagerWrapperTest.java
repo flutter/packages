@@ -15,6 +15,7 @@ import android.app.Activity;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.DeviceOrientationManager.DeviceOrientationChangeCallback;
+import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationInfo;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.DeviceOrientationManagerFlutterApi.Reply;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,6 +40,8 @@ public class DeviceOrientationManagerWrapperTest {
     final Activity mockActivity = mock(Activity.class);
     final Boolean isFrontFacing = true;
     final int sensorOrientation = 90;
+    final DeviceOrientation newDeviceOrientation = DeviceOrientation.PORTRAIT_DOWN;
+    final int newRotation = 270;
 
     DeviceOrientationManagerFlutterApiImpl flutterApi =
         mock(DeviceOrientationManagerFlutterApiImpl.class);
@@ -69,10 +72,23 @@ public class DeviceOrientationManagerWrapperTest {
     DeviceOrientationChangeCallback deviceOrientationChangeCallback =
         deviceOrientationChangeCallbackCaptor.getValue();
 
-    deviceOrientationChangeCallback.onChange(DeviceOrientation.PORTRAIT_DOWN);
+    final ArgumentCaptor<DeviceOrientationInfo> deviceOrientationInfoCaptor =
+        ArgumentCaptor.forClass(DeviceOrientationInfo.class);
+    DeviceOrientationInfo expectedDeviceOrientationInfo =
+        new DeviceOrientationInfo.Builder()
+            .setUiOrientation(newDeviceOrientation.toString())
+            .setDefaultDisplayRotation(Long.valueOf(newRotation))
+            .build();
+
+    deviceOrientationChangeCallback.onChange(newDeviceOrientation, newRotation);
     verify(flutterApi)
         .sendDeviceOrientationChangedEvent(
-            eq(DeviceOrientation.PORTRAIT_DOWN.toString()), ArgumentMatchers.<Reply<Void>>any());
+            deviceOrientationInfoCaptor.capture(), ArgumentMatchers.<Reply<Void>>any());
+
+    // Verify expected device orientation, rotation info is sent to the callback.
+    DeviceOrientationInfo deviceOrientationInfo = deviceOrientationInfoCaptor.getValue();
+    assertEquals(deviceOrientationInfo.getUiOrientation(), newDeviceOrientation.toString());
+    assertEquals(deviceOrientationInfo.getDefaultDisplayRotation(), Long.valueOf(newRotation));
 
     // Test that the DeviceOrientationManager starts listening for device orientation changes.
     verify(mockDeviceOrientationManager).start();
