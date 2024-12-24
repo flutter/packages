@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Creates a copy of `app_shared` named `app` (`app_shared` will no longer be used).
 
 ## 4.2.1
 
