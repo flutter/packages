@@ -4,6 +4,7 @@
 
 package dev.flutter.pigeon_example_app
 
+import EmptyEvent
 import ExampleHostApi
 import FlutterError
 import IntEvent
@@ -72,6 +73,10 @@ class EventListener : StreamEventsStreamHandler() {
     eventSink?.success(StringEvent(data = event))
   }
 
+  fun onEmptyEvent() {
+    eventSink?.success(EmptyEvent())
+  }
+
   fun onEventsDone() {
     eventSink?.endOfStream()
     eventSink = null
@@ -91,6 +96,11 @@ fun sendEvents(eventListener: EventListener) {
             if (count % 2 == 0) {
               handler.post {
                 eventListener.onIntEvent(count.toLong())
+                count++
+              }
+            } else if (count % 5 == 0) {
+              handler.post {
+                eventListener.onEmptyEvent()
                 count++
               }
             } else {
