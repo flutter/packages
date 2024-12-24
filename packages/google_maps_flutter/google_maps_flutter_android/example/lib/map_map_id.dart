@@ -48,7 +48,7 @@ class MapIdBodyState extends State<MapIdBody> {
     super.initState();
   }
 
-  String _getInitializedsRendererType() {
+  String _getInitializedRendererType() {
     switch (_initializedRenderer) {
       case AndroidMapRenderer.latest:
         return 'latest';
@@ -79,7 +79,7 @@ class MapIdBodyState extends State<MapIdBody> {
         zoom: 7.0,
       ),
       key: _key,
-      cloudMapId: _mapId,
+      mapId: _mapId,
     );
 
     final List<Widget> columnChildren = <Widget>[
@@ -114,7 +114,7 @@ class MapIdBodyState extends State<MapIdBody> {
           padding: const EdgeInsets.all(10.0),
           child: Text(
               'On Android, Cloud-based maps styling only works with "latest" renderer.\n\n'
-              'Current initialized renderer is "${_getInitializedsRendererType()}".'),
+              'Current initialized renderer is "${_getInitializedRendererType()}".'),
         ),
     ];
 
