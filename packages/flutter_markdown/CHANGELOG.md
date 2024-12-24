@@ -1,3 +1,7 @@
+## 0.8.0
+
+* Introduce `MarkdownImageConfig` for `sizedImageBuilder` builder.
+
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
