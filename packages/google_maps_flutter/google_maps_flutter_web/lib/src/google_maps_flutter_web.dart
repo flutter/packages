@@ -132,6 +132,17 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     return moveCamera(cameraUpdate, mapId: mapId);
   }
 
+  @override
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate,
+    CameraUpdateAnimationConfiguration configuration, {
+    required int mapId,
+  }) {
+    // TODO(jokerttu): Implement animation duration support
+    // https://github.com/flutter/flutter/issues/159265
+    return animateCamera(cameraUpdate, mapId: mapId);
+  }
+
   /// Applies the given `cameraUpdate` to the current viewport.
   @override
   Future<void> moveCamera(
@@ -362,6 +373,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorWeb(
       (int mapId) => _map(mapId).configuration,
       (int mapId) => _map(mapId).clusterManagersController,
+      (int mapId) => _map(mapId),
     );
   }
 }
