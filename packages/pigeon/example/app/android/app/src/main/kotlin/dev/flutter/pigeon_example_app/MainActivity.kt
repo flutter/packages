@@ -21,7 +21,6 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 
 // #docregion kotlin-class
 private class PigeonApiImplementation : ExampleHostApi {
