@@ -467,6 +467,9 @@ class InteractiveMediaAdsProxy {
     this.lowerQualityOrHigherThanFallbackStrategy =
         FallbackStrategy.lowerQualityOrHigherThan,
     this.lowerQualityThanFallbackStrategy = FallbackStrategy.lowerQualityThan,
+    this.newFocusMeteringActionBuilder = FocusMeteringActionBuilder.new,
+    this.withModeFocusMeteringActionBuilder =
+        FocusMeteringActionBuilder.withMode,
     this.newCaptureRequestOptions = CaptureRequestOptions.new,
     this.fromCamera2CameraControl = Camera2CameraControl.from,
     this.createWithOnePreferredSizeResolutionFilter =
@@ -547,7 +550,7 @@ class InteractiveMediaAdsProxy {
   /// Constructs [ImageCapture].
   final ImageCapture Function({
     int? targetRotation,
-    FlashMode? flashMode,
+    CameraXFlashMode? flashMode,
     ResolutionSelector? resolutionSelector,
   }) newImageCapture;
 
@@ -566,7 +569,7 @@ class InteractiveMediaAdsProxy {
 
   /// Constructs [AspectRatioStrategy].
   final AspectRatioStrategy Function({
-    required int preferredAspectRatio,
+    required AspectRatio preferredAspectRatio,
     required AspectRatioStrategyFallbackRule fallbackRule,
   }) newAspectRatioStrategy;
 
@@ -610,6 +613,16 @@ class InteractiveMediaAdsProxy {
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({required VideoQuality quality})
       lowerQualityThanFallbackStrategy;
+
+  /// Constructs [FocusMeteringActionBuilder].
+  final FocusMeteringActionBuilder Function({required MeteringPoint point})
+      newFocusMeteringActionBuilder;
+
+  /// Constructs [FocusMeteringActionBuilder].
+  final FocusMeteringActionBuilder Function({
+    required MeteringPoint point,
+    required MeteringMode mode,
+  }) withModeFocusMeteringActionBuilder;
 
   /// Constructs [CaptureRequestOptions].
   final CaptureRequestOptions Function(
@@ -703,6 +716,37 @@ class InteractiveMediaAdsProxy {
 }
 
 
+/// Generally classifies the overall set of the camera device functionality.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3.
+enum InfoSupportedHardwareLevel {
+  /// This camera device is capable of YUV reprocessing and RAW data capture, in
+  /// addition to FULL-level capabilities.
+  level3,
+  /// This camera device is backed by an external camera connected to this
+  /// Android device.
+  external,
+  /// This camera device is capable of supporting advanced imaging applications.
+  full,
+  /// This camera device is running in backward compatibility mode.
+  legacy,
+  /// This camera device does not have enough capabilities to qualify as a FULL
+  /// device or better.
+  limited,
+}
+
+/// The aspect ratio of the use case.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/AspectRatio.
+enum AspectRatio {
+  /// 16:9 standard aspect ratio.
+  ratio16To9,
+  /// 4:3 standard aspect ratio.
+  ratio4To3,
+  /// The aspect ratio representing no preference for aspect ratio.
+  ratioDefault,
+}
+
 /// The states the camera can be in.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraState.Type.
@@ -778,7 +822,7 @@ enum LensFacing {
 /// FlashModes for image capture.
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture#FLASH_MODE_AUTO().
-enum FlashMode {
+enum CameraXFlashMode {
   /// Auto flash.
   ///
   /// The flash will be used according to the camera system's determination when
@@ -841,12 +885,12 @@ enum AspectRatioStrategyFallbackRule {
 enum CameraStateErrorCode {
   /// An error indicating that the camera device could not be opened due to a
   /// device policy.
-  disabled,
+  cameraDisabled,
   /// An error indicating that the camera device was closed due to a fatal
   /// error.
-  fatalError,
+  cameraFatalError,
   /// An error indicating that the camera device is already in use.
-  inUse,
+  cameraInUse,
   /// An error indicating that the camera could not be opened because "Do Not
   /// Disturb" mode is enabled on devices affected by a bug in Android 9 (API
   /// level 28).
@@ -898,35 +942,41 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is CameraStateType) {
+    }    else if (value is InfoSupportedHardwareLevel) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is LiveDataSupportedType) {
+    }    else if (value is AspectRatio) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is VideoQuality) {
+    }    else if (value is CameraStateType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is MeteringMode) {
+    }    else if (value is LiveDataSupportedType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is LensFacing) {
+    }    else if (value is VideoQuality) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is FlashMode) {
+    }    else if (value is MeteringMode) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is ResolutionStrategyFallbackRule) {
+    }    else if (value is LensFacing) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is AspectRatioStrategyFallbackRule) {
+    }    else if (value is CameraXFlashMode) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is CameraStateErrorCode) {
+    }    else if (value is ResolutionStrategyFallbackRule) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is CameraPermissionsErrorData) {
+    }    else if (value is AspectRatioStrategyFallbackRule) {
       buffer.putUint8(138);
+      writeValue(buffer, value.index);
+    }    else if (value is CameraStateErrorCode) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.index);
+    }    else if (value is CameraPermissionsErrorData) {
+      buffer.putUint8(140);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -938,32 +988,38 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : CameraStateType.values[value];
+        return value == null ? null : InfoSupportedHardwareLevel.values[value];
       case 130: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : LiveDataSupportedType.values[value];
+        return value == null ? null : AspectRatio.values[value];
       case 131: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : VideoQuality.values[value];
+        return value == null ? null : CameraStateType.values[value];
       case 132: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : MeteringMode.values[value];
+        return value == null ? null : LiveDataSupportedType.values[value];
       case 133: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : LensFacing.values[value];
+        return value == null ? null : VideoQuality.values[value];
       case 134: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : FlashMode.values[value];
+        return value == null ? null : MeteringMode.values[value];
       case 135: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : ResolutionStrategyFallbackRule.values[value];
+        return value == null ? null : LensFacing.values[value];
       case 136: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : AspectRatioStrategyFallbackRule.values[value];
+        return value == null ? null : CameraXFlashMode.values[value];
       case 137: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : CameraStateErrorCode.values[value];
+        return value == null ? null : ResolutionStrategyFallbackRule.values[value];
       case 138: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : AspectRatioStrategyFallbackRule.values[value];
+      case 139: 
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : CameraStateErrorCode.values[value];
+      case 140: 
         return CameraPermissionsErrorData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -4093,7 +4149,7 @@ class ImageCapture extends UseCase {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     int? targetRotation,
-    FlashMode? flashMode,
+    CameraXFlashMode? flashMode,
     ResolutionSelector? resolutionSelector,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
@@ -4194,7 +4250,7 @@ class ImageCapture extends UseCase {
   }
 
   /// Set the flash mode.
-  Future<void> setFlashMode(FlashMode flashMode) async {
+  Future<void> setFlashMode(CameraXFlashMode flashMode) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecImageCapture;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -4572,7 +4628,7 @@ class AspectRatioStrategy extends PigeonInternalProxyApiBaseClass {
   AspectRatioStrategy({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required int preferredAspectRatio,
+    required AspectRatio preferredAspectRatio,
     required AspectRatioStrategyFallbackRule fallbackRule,
   }) {
     final int pigeonVar_instanceIdentifier =
@@ -6556,6 +6612,82 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction.Builder.
 class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
+  /// Creates a Builder from a `MeteringPoint` with default mode FLAG_AF |
+  /// FLAG_AE | FLAG_AWB.
+  FocusMeteringActionBuilder({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required MeteringPoint point,
+  }) {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecFocusMeteringActionBuilder;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.camera_android_camerax.FocusMeteringActionBuilder.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+              .send(<Object?>[pigeonVar_instanceIdentifier, point])
+          as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Creates a Builder from a `MeteringPoint` and `MeteringMode`.
+  FocusMeteringActionBuilder.withMode({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required MeteringPoint point,
+    required MeteringMode mode,
+  }) {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecFocusMeteringActionBuilder;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.camera_android_camerax.FocusMeteringActionBuilder.withMode';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+              .send(<Object?>[pigeonVar_instanceIdentifier, point, mode])
+          as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
   /// Constructs [FocusMeteringActionBuilder] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -7594,7 +7726,7 @@ class CameraCharacteristics extends PigeonInternalProxyApiBaseClass {
 
   /// Generally classifies the overall set of the camera device functionality.
   ///
-  /// Value is Integer.
+  /// Value is `InfoSupportedHardwareLeve`.
   ///
   /// This key is available on all devices.
   static final CameraCharacteristicsKey infoSupportedHardwareLevel =

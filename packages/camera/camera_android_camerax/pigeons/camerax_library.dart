@@ -64,6 +64,43 @@ class CameraPermissionsErrorData {
   String description;
 }
 
+/// Generally classifies the overall set of the camera device functionality.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3.
+enum InfoSupportedHardwareLevel {
+  /// This camera device is capable of YUV reprocessing and RAW data capture, in
+  /// addition to FULL-level capabilities.
+  level3,
+
+  /// This camera device is backed by an external camera connected to this
+  /// Android device.
+  external,
+
+  /// This camera device is capable of supporting advanced imaging applications.
+  full,
+
+  /// This camera device is running in backward compatibility mode.
+  legacy,
+
+  /// This camera device does not have enough capabilities to qualify as a FULL
+  /// device or better.
+  limited,
+}
+
+/// The aspect ratio of the use case.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/AspectRatio.
+enum AspectRatio {
+  /// 16:9 standard aspect ratio.
+  ratio16To9,
+
+  /// 4:3 standard aspect ratio.
+  ratio4To3,
+
+  /// The aspect ratio representing no preference for aspect ratio.
+  ratioDefault,
+}
+
 /// The states the camera can be in.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraState.Type.
@@ -514,7 +551,7 @@ abstract class Recording {
 /// FlashModes for image capture.
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture#FLASH_MODE_AUTO().
-enum FlashMode {
+enum CameraXFlashMode {
   /// Auto flash.
   ///
   /// The flash will be used according to the camera system's determination when
@@ -549,12 +586,12 @@ enum FlashMode {
 abstract class ImageCapture extends UseCase {
   ImageCapture(
     int? targetRotation,
-    FlashMode? flashMode,
+    CameraXFlashMode? flashMode,
     ResolutionSelector? resolutionSelector,
   );
 
   /// Set the flash mode.
-  void setFlashMode(FlashMode flashMode);
+  void setFlashMode(CameraXFlashMode flashMode);
 
   /// Captures a new still image for in memory access.
   @async
@@ -655,7 +692,7 @@ abstract class AspectRatioStrategy {
   /// Creates a new AspectRatioStrategy instance, configured with the specified
   /// preferred aspect ratio and fallback rule.
   AspectRatioStrategy(
-    int preferredAspectRatio,
+    AspectRatio preferredAspectRatio,
     AspectRatioStrategyFallbackRule fallbackRule,
   );
 
@@ -762,14 +799,14 @@ abstract class Analyzer {
 enum CameraStateErrorCode {
   /// An error indicating that the camera device could not be opened due to a
   /// device policy.
-  disabled,
+  cameraDisabled,
 
   /// An error indicating that the camera device was closed due to a fatal
   /// error.
-  fatalError,
+  cameraFatalError,
 
   /// An error indicating that the camera device is already in use.
-  inUse,
+  cameraInUse,
 
   /// An error indicating that the camera could not be opened because "Do Not
   /// Disturb" mode is enabled on devices affected by a bug in Android 9 (API
@@ -971,6 +1008,13 @@ abstract class CameraControl {
   ),
 )
 abstract class FocusMeteringActionBuilder {
+  /// Creates a Builder from a `MeteringPoint` with default mode FLAG_AF |
+  /// FLAG_AE | FLAG_AWB.
+  FocusMeteringActionBuilder(MeteringPoint point);
+
+  /// Creates a Builder from a `MeteringPoint` and `MeteringMode`.
+  FocusMeteringActionBuilder.withMode(MeteringPoint point, MeteringMode mode);
+
   /// Adds another MeteringPoint with default metering mode.
   void addPoint(MeteringPoint point);
 
@@ -1116,7 +1160,7 @@ abstract class CameraCharacteristicsKey {}
 abstract class CameraCharacteristics {
   /// Generally classifies the overall set of the camera device functionality.
   ///
-  /// Value is Integer.
+  /// Value is `InfoSupportedHardwareLeve`.
   ///
   /// This key is available on all devices.
   @static

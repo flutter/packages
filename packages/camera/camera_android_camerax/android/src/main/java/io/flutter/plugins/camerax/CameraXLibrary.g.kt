@@ -770,7 +770,7 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
   }
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
-    if (value is Boolean || value is ByteArray || value is Double || value is DoubleArray || value is FloatArray || value is Int || value is IntArray || value is List<*> || value is Long || value is LongArray || value is Map<*, *> || value is String || value is CameraStateType || value is LiveDataSupportedType || value is VideoQuality || value is MeteringMode || value is LensFacing || value is FlashMode || value is ResolutionStrategyFallbackRule || value is AspectRatioStrategyFallbackRule || value is CameraStateErrorCode || value == null) {
+    if (value is Boolean || value is ByteArray || value is Double || value is DoubleArray || value is FloatArray || value is Int || value is IntArray || value is List<*> || value is Long || value is LongArray || value is Map<*, *> || value is String || value is InfoSupportedHardwareLevel || value is AspectRatio || value is CameraStateType || value is LiveDataSupportedType || value is VideoQuality || value is MeteringMode || value is LensFacing || value is CameraXFlashMode || value is ResolutionStrategyFallbackRule || value is AspectRatioStrategyFallbackRule || value is CameraStateErrorCode || value == null) {
       super.writeValue(stream, value)
       return
     }
@@ -934,6 +934,59 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
 }
 
 /**
+ * Generally classifies the overall set of the camera device functionality.
+ *
+ * See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3.
+ */
+enum class InfoSupportedHardwareLevel(val raw: Int) {
+  /**
+   * This camera device is capable of YUV reprocessing and RAW data capture, in
+   * addition to FULL-level capabilities.
+   */
+  LEVEL3(0),
+  /**
+   * This camera device is backed by an external camera connected to this
+   * Android device.
+   */
+  EXTERNAL(1),
+  /** This camera device is capable of supporting advanced imaging applications. */
+  FULL(2),
+  /** This camera device is running in backward compatibility mode. */
+  LEGACY(3),
+  /**
+   * This camera device does not have enough capabilities to qualify as a FULL
+   * device or better.
+   */
+  LIMITED(4);
+
+  companion object {
+    fun ofRaw(raw: Int): InfoSupportedHardwareLevel? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/**
+ * The aspect ratio of the use case.
+ *
+ * See https://developer.android.com/reference/kotlin/androidx/camera/core/AspectRatio.
+ */
+enum class AspectRatio(val raw: Int) {
+  /** 16:9 standard aspect ratio. */
+  RATIO16TO9(0),
+  /** 4:3 standard aspect ratio. */
+  RATIO4TO3(1),
+  /** The aspect ratio representing no preference for aspect ratio. */
+  RATIO_DEFAULT(2);
+
+  companion object {
+    fun ofRaw(raw: Int): AspectRatio? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/**
  * The states the camera can be in.
  *
  * See https://developer.android.com/reference/androidx/camera/core/CameraState.Type.
@@ -1056,7 +1109,7 @@ enum class LensFacing(val raw: Int) {
  *
  * See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture#FLASH_MODE_AUTO().
  */
-enum class FlashMode(val raw: Int) {
+enum class CameraXFlashMode(val raw: Int) {
   /**
    * Auto flash.
    *
@@ -1085,7 +1138,7 @@ enum class FlashMode(val raw: Int) {
   SCREEN(3);
 
   companion object {
-    fun ofRaw(raw: Int): FlashMode? {
+    fun ofRaw(raw: Int): CameraXFlashMode? {
       return values().firstOrNull { it.raw == raw }
     }
   }
@@ -1167,14 +1220,14 @@ enum class CameraStateErrorCode(val raw: Int) {
    * An error indicating that the camera device could not be opened due to a
    * device policy.
    */
-  DISABLED(0),
+  CAMERA_DISABLED(0),
   /**
    * An error indicating that the camera device was closed due to a fatal
    * error.
    */
-  FATAL_ERROR(1),
+  CAMERA_FATAL_ERROR(1),
   /** An error indicating that the camera device is already in use. */
-  IN_USE(2),
+  CAMERA_IN_USE(2),
   /**
    * An error indicating that the camera could not be opened because "Do Not
    * Disturb" mode is enabled on devices affected by a bug in Android 9 (API
@@ -1229,50 +1282,60 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
     return when (type) {
       129.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          CameraStateType.ofRaw(it.toInt())
+          InfoSupportedHardwareLevel.ofRaw(it.toInt())
         }
       }
       130.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          LiveDataSupportedType.ofRaw(it.toInt())
+          AspectRatio.ofRaw(it.toInt())
         }
       }
       131.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          VideoQuality.ofRaw(it.toInt())
+          CameraStateType.ofRaw(it.toInt())
         }
       }
       132.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          MeteringMode.ofRaw(it.toInt())
+          LiveDataSupportedType.ofRaw(it.toInt())
         }
       }
       133.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          LensFacing.ofRaw(it.toInt())
+          VideoQuality.ofRaw(it.toInt())
         }
       }
       134.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          FlashMode.ofRaw(it.toInt())
+          MeteringMode.ofRaw(it.toInt())
         }
       }
       135.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          ResolutionStrategyFallbackRule.ofRaw(it.toInt())
+          LensFacing.ofRaw(it.toInt())
         }
       }
       136.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          AspectRatioStrategyFallbackRule.ofRaw(it.toInt())
+          CameraXFlashMode.ofRaw(it.toInt())
         }
       }
       137.toByte() -> {
         return (readValue(buffer) as Long?)?.let {
-          CameraStateErrorCode.ofRaw(it.toInt())
+          ResolutionStrategyFallbackRule.ofRaw(it.toInt())
         }
       }
       138.toByte() -> {
+        return (readValue(buffer) as Long?)?.let {
+          AspectRatioStrategyFallbackRule.ofRaw(it.toInt())
+        }
+      }
+      139.toByte() -> {
+        return (readValue(buffer) as Long?)?.let {
+          CameraStateErrorCode.ofRaw(it.toInt())
+        }
+      }
+      140.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           CameraPermissionsErrorData.fromList(it)
         }
@@ -1282,44 +1345,52 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is CameraStateType -> {
+      is InfoSupportedHardwareLevel -> {
         stream.write(129)
         writeValue(stream, value.raw)
       }
-      is LiveDataSupportedType -> {
+      is AspectRatio -> {
         stream.write(130)
         writeValue(stream, value.raw)
       }
-      is VideoQuality -> {
+      is CameraStateType -> {
         stream.write(131)
         writeValue(stream, value.raw)
       }
-      is MeteringMode -> {
+      is LiveDataSupportedType -> {
         stream.write(132)
         writeValue(stream, value.raw)
       }
-      is LensFacing -> {
+      is VideoQuality -> {
         stream.write(133)
         writeValue(stream, value.raw)
       }
-      is FlashMode -> {
+      is MeteringMode -> {
         stream.write(134)
         writeValue(stream, value.raw)
       }
-      is ResolutionStrategyFallbackRule -> {
+      is LensFacing -> {
         stream.write(135)
         writeValue(stream, value.raw)
       }
-      is AspectRatioStrategyFallbackRule -> {
+      is CameraXFlashMode -> {
         stream.write(136)
         writeValue(stream, value.raw)
       }
-      is CameraStateErrorCode -> {
+      is ResolutionStrategyFallbackRule -> {
         stream.write(137)
         writeValue(stream, value.raw)
       }
-      is CameraPermissionsErrorData -> {
+      is AspectRatioStrategyFallbackRule -> {
         stream.write(138)
+        writeValue(stream, value.raw)
+      }
+      is CameraStateErrorCode -> {
+        stream.write(139)
+        writeValue(stream, value.raw)
+      }
+      is CameraPermissionsErrorData -> {
+        stream.write(140)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -5054,10 +5125,10 @@ public class RecordingProxyApiTest {
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(targetRotation: Long?, flashMode: FlashMode?, resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?): androidx.camera.core.ImageCapture
+  abstract fun pigeon_defaultConstructor(targetRotation: Long?, flashMode: CameraXFlashMode?, resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?): androidx.camera.core.ImageCapture
 
   /** Set the flash mode. */
-  abstract fun setFlashMode(pigeon_instance: androidx.camera.core.ImageCapture, flashMode: FlashMode)
+  abstract fun setFlashMode(pigeon_instance: androidx.camera.core.ImageCapture, flashMode: CameraXFlashMode)
 
   /** Captures a new still image for in memory access. */
   abstract fun takePicture(pigeon_instance: androidx.camera.core.ImageCapture, callback: (Result<String>) -> Unit)
@@ -5076,7 +5147,7 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val targetRotationArg = args[1] as Long?
-            val flashModeArg = args[2] as FlashMode?
+            val flashModeArg = args[2] as CameraXFlashMode?
             val resolutionSelectorArg = args[3] as androidx.camera.core.resolutionselector.ResolutionSelector?
             val wrapped: List<Any?> = try {
               api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(targetRotationArg,flashModeArg,resolutionSelectorArg), pigeon_identifierArg)
@@ -5096,7 +5167,7 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.ImageCapture
-            val flashModeArg = args[1] as FlashMode
+            val flashModeArg = args[1] as CameraXFlashMode
             val wrapped: List<Any?> = try {
               api.setFlashMode(pigeon_instanceArg, flashModeArg)
               listOf(null)
@@ -5217,12 +5288,12 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
 
   @NonNull
   @Override
-  public ImageCapture pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable FlashMode? flashMode, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
+  public ImageCapture pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable CameraXFlashMode? flashMode, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
     return ImageCapture(targetRotation, flashMode, resolutionSelector);
   }
 
   @Override
-  public Void setFlashMode(ImageCapture, pigeon_instance@NonNull FlashMode flashMode) {
+  public Void setFlashMode(ImageCapture, pigeon_instance@NonNull CameraXFlashMode flashMode) {
     pigeon_instance.setFlashMode(flashMode);
   }
 
@@ -5265,7 +5336,7 @@ public class ImageCaptureProxyApiTest {
   public void pigeon_defaultConstructor() {
     final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
 
-    assertTrue(api.pigeon_defaultConstructor(0, io.flutter.plugins.camerax.FlashMode.AUTO, mock(ResolutionSelector.class)) instanceof ImageCaptureProxyApi.ImageCapture);
+    assertTrue(api.pigeon_defaultConstructor(0, io.flutter.plugins.camerax.CameraXFlashMode.AUTO, mock(ResolutionSelector.class)) instanceof ImageCaptureProxyApi.ImageCapture);
   }
 
   @Test
@@ -5273,7 +5344,7 @@ public class ImageCaptureProxyApiTest {
     final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
 
     final ImageCapture instance = mock(ImageCapture.class);
-    final FlashMode flashMode = io.flutter.plugins.camerax.FlashMode.AUTO;
+    final CameraXFlashMode flashMode = io.flutter.plugins.camerax.CameraXFlashMode.AUTO;
     api.setFlashMode(instance, flashMode);
 
     verify(instance).setFlashMode(flashMode);
@@ -5612,7 +5683,7 @@ abstract class PigeonApiAspectRatioStrategy(open val pigeonRegistrar: CameraXLib
    * Creates a new AspectRatioStrategy instance, configured with the specified
    * preferred aspect ratio and fallback rule.
    */
-  abstract fun pigeon_defaultConstructor(preferredAspectRatio: Long, fallbackRule: AspectRatioStrategyFallbackRule): androidx.camera.core.resolutionselector.AspectRatioStrategy
+  abstract fun pigeon_defaultConstructor(preferredAspectRatio: AspectRatio, fallbackRule: AspectRatioStrategyFallbackRule): androidx.camera.core.resolutionselector.AspectRatioStrategy
 
   /**
    * The pre-defined aspect ratio strategy that selects sizes with RATIO_16_9
@@ -5636,7 +5707,7 @@ abstract class PigeonApiAspectRatioStrategy(open val pigeonRegistrar: CameraXLib
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
-            val preferredAspectRatioArg = args[1] as Long
+            val preferredAspectRatioArg = args[1] as AspectRatio
             val fallbackRuleArg = args[2] as AspectRatioStrategyFallbackRule
             val wrapped: List<Any?> = try {
               api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(preferredAspectRatioArg,fallbackRuleArg), pigeon_identifierArg)
@@ -5747,7 +5818,7 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
 
   @NonNull
   @Override
-  public AspectRatioStrategy pigeon_defaultConstructor(@NonNull Long preferredAspectRatio, @NonNull AspectRatioStrategyFallbackRule fallbackRule) {
+  public AspectRatioStrategy pigeon_defaultConstructor(@NonNull AspectRatio preferredAspectRatio, @NonNull AspectRatioStrategyFallbackRule fallbackRule) {
     return AspectRatioStrategy(preferredAspectRatio, fallbackRule);
   }
 
@@ -5790,7 +5861,7 @@ public class AspectRatioStrategyProxyApiTest {
   public void pigeon_defaultConstructor() {
     final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
-    assertTrue(api.pigeon_defaultConstructor(0, io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO) instanceof AspectRatioStrategyProxyApi.AspectRatioStrategy);
+    assertTrue(api.pigeon_defaultConstructor(io.flutter.plugins.camerax.AspectRatio.RATIO16TO9, io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO) instanceof AspectRatioStrategyProxyApi.AspectRatioStrategy);
   }
 
 }
@@ -6688,9 +6759,9 @@ class CameraStateStateErrorProxyApi extends PigeonApiCameraStateStateError {
   @Override
   public CameraStateErrorCode code(CameraStateStateError pigeon_instance) {
     switch (pigeon_instance.code) {
-      case CameraStateErrorCode.DISABLED: return io.flutter.plugins.camerax.CameraStateErrorCode.DISABLED;
-      case CameraStateErrorCode.FATAL_ERROR: return io.flutter.plugins.camerax.CameraStateErrorCode.FATAL_ERROR;
-      case CameraStateErrorCode.IN_USE: return io.flutter.plugins.camerax.CameraStateErrorCode.IN_USE;
+      case CameraStateErrorCode.CAMERA_DISABLED: return io.flutter.plugins.camerax.CameraStateErrorCode.CAMERA_DISABLED;
+      case CameraStateErrorCode.CAMERA_FATAL_ERROR: return io.flutter.plugins.camerax.CameraStateErrorCode.CAMERA_FATAL_ERROR;
+      case CameraStateErrorCode.CAMERA_IN_USE: return io.flutter.plugins.camerax.CameraStateErrorCode.CAMERA_IN_USE;
       case CameraStateErrorCode.DO_NOT_DISTURB_MODE_ENABLED: return io.flutter.plugins.camerax.CameraStateErrorCode.DO_NOT_DISTURB_MODE_ENABLED;
       case CameraStateErrorCode.MAX_CAMERAS_IN_USE: return io.flutter.plugins.camerax.CameraStateErrorCode.MAX_CAMERAS_IN_USE;
       case CameraStateErrorCode.OTHER_RECOVERABLE_ERROR: return io.flutter.plugins.camerax.CameraStateErrorCode.OTHER_RECOVERABLE_ERROR;
@@ -6727,7 +6798,7 @@ public class CameraStateStateErrorProxyApiTest {
     final PigeonApiCameraStateStateError api = new TestProxyApiRegistrar().getPigeonApiCameraStateStateError();
 
     final CameraStateStateError instance = mock(CameraStateStateError.class);
-    final CameraStateErrorCode value = io.flutter.plugins.camerax.CameraStateErrorCode.DISABLED;
+    final CameraStateErrorCode value = io.flutter.plugins.camerax.CameraStateErrorCode.CAMERA_DISABLED;
     when(instance.getCode()).thenReturn(value);
 
     assertEquals(value, api.code(instance));
@@ -8117,6 +8188,15 @@ public class CameraControlProxyApiTest {
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiFocusMeteringActionBuilder(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
+  /**
+   * Creates a Builder from a `MeteringPoint` with default mode FLAG_AF |
+   * FLAG_AE | FLAG_AWB.
+   */
+  abstract fun pigeon_defaultConstructor(point: androidx.camera.core.MeteringPoint): androidx.camera.core.FocusMeteringAction.Builder
+
+  /** Creates a Builder from a `MeteringPoint` and `MeteringMode`. */
+  abstract fun withMode(point: androidx.camera.core.MeteringPoint, mode: MeteringMode): androidx.camera.core.FocusMeteringAction.Builder
+
   /** Adds another MeteringPoint with default metering mode. */
   abstract fun addPoint(pigeon_instance: androidx.camera.core.FocusMeteringAction.Builder, point: androidx.camera.core.MeteringPoint)
 
@@ -8133,6 +8213,45 @@ abstract class PigeonApiFocusMeteringActionBuilder(open val pigeonRegistrar: Cam
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiFocusMeteringActionBuilder?) {
       val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.FocusMeteringActionBuilder.pigeon_defaultConstructor", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val pointArg = args[1] as androidx.camera.core.MeteringPoint
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(pointArg), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.FocusMeteringActionBuilder.withMode", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val pointArg = args[1] as androidx.camera.core.MeteringPoint
+            val modeArg = args[2] as MeteringMode
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.withMode(pointArg,modeArg), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.FocusMeteringActionBuilder.addPoint", codec)
         if (api != null) {
@@ -8268,6 +8387,18 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
     super(pigeonRegistrar);
   }
 
+  @NonNull
+  @Override
+  public FocusMeteringActionBuilder pigeon_defaultConstructor(@NonNull androidx.camera.core.MeteringPoint point) {
+    return FocusMeteringActionBuilder(point);
+  }
+
+  @NonNull
+  @Override
+  public FocusMeteringActionBuilder withMode(@NonNull androidx.camera.core.MeteringPoint point, @NonNull MeteringMode mode) {
+    return FocusMeteringActionBuilder(point, mode);
+  }
+
   @Override
   public Void addPoint(FocusMeteringActionBuilder, pigeon_instance@NonNull androidx.camera.core.MeteringPoint point) {
     pigeon_instance.addPoint(point);
@@ -8314,6 +8445,20 @@ import org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class FocusMeteringActionBuilderProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+
+    assertTrue(api.pigeon_defaultConstructor(mock(MeteringPoint.class)) instanceof FocusMeteringActionBuilderProxyApi.FocusMeteringActionBuilder);
+  }
+
+  @Test
+  public void withMode() {
+    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+
+    assertTrue(api.withMode(mock(MeteringPoint.class), io.flutter.plugins.camerax.MeteringMode.AE) instanceof FocusMeteringActionBuilderProxyApi.FocusMeteringActionBuilder);
+  }
+
   @Test
   public void addPoint() {
     final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
@@ -9403,7 +9548,7 @@ abstract class PigeonApiCameraCharacteristics(open val pigeonRegistrar: CameraXL
   /**
    * Generally classifies the overall set of the camera device functionality.
    *
-   * Value is Integer.
+   * Value is `InfoSupportedHardwareLeve`.
    *
    * This key is available on all devices.
    */

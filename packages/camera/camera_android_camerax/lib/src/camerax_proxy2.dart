@@ -15,8 +15,6 @@ class CameraXProxy {
     this.newCameraSize = CameraSize.new,
     this.newResolutionInfo = ResolutionInfo.new,
     this.newCameraIntegerRange = CameraIntegerRange.new,
-    this.newMeteringPoint = MeteringPoint.new,
-    this.withSizeMeteringPoint = MeteringPoint.withSize,
     this.newObserver = Observer.new,
     this.newCameraSelector = CameraSelector.new,
     this.newPreview = Preview.new,
@@ -37,6 +35,9 @@ class CameraXProxy {
     this.lowerQualityOrHigherThanFallbackStrategy =
         FallbackStrategy.lowerQualityOrHigherThan,
     this.lowerQualityThanFallbackStrategy = FallbackStrategy.lowerQualityThan,
+    this.newFocusMeteringActionBuilder = FocusMeteringActionBuilder.new,
+    this.withModeFocusMeteringActionBuilder =
+        FocusMeteringActionBuilder.withMode,
     this.newCaptureRequestOptions = CaptureRequestOptions.new,
     this.fromCamera2CameraControl = Camera2CameraControl.from,
     this.createWithOnePreferredSizeResolutionFilter =
@@ -76,19 +77,6 @@ class CameraXProxy {
     required int lower,
     required int upper,
   }) newCameraIntegerRange;
-
-  /// Constructs [MeteringPoint].
-  final MeteringPoint Function({
-    required double x,
-    required double y,
-  }) newMeteringPoint;
-
-  /// Constructs [MeteringPoint].
-  final MeteringPoint Function({
-    required double x,
-    required double y,
-    required double size,
-  }) withSizeMeteringPoint;
 
   /// Constructs [Observer].
   final Observer Function({
@@ -130,7 +118,7 @@ class CameraXProxy {
   /// Constructs [ImageCapture].
   final ImageCapture Function({
     int? targetRotation,
-    FlashMode? flashMode,
+    CameraXFlashMode? flashMode,
     ResolutionSelector? resolutionSelector,
   }) newImageCapture;
 
@@ -149,7 +137,7 @@ class CameraXProxy {
 
   /// Constructs [AspectRatioStrategy].
   final AspectRatioStrategy Function({
-    required int preferredAspectRatio,
+    required AspectRatio preferredAspectRatio,
     required AspectRatioStrategyFallbackRule fallbackRule,
   }) newAspectRatioStrategy;
 
@@ -193,6 +181,16 @@ class CameraXProxy {
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({required VideoQuality quality})
       lowerQualityThanFallbackStrategy;
+
+  /// Constructs [FocusMeteringActionBuilder].
+  final FocusMeteringActionBuilder Function({required MeteringPoint point})
+      newFocusMeteringActionBuilder;
+
+  /// Constructs [FocusMeteringActionBuilder].
+  final FocusMeteringActionBuilder Function({
+    required MeteringPoint point,
+    required MeteringMode mode,
+  }) withModeFocusMeteringActionBuilder;
 
   /// Constructs [CaptureRequestOptions].
   final CaptureRequestOptions Function(
