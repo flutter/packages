@@ -28,7 +28,7 @@ import 'package:pigeon/pigeon.dart';
     fullClassName: 'android.util.Size',
   ),
 )
-class CameraSize {
+abstract class CameraSize {
   CameraSize();
 
   /// The width of the size (in pixels).
@@ -47,7 +47,7 @@ class CameraSize {
     fullClassName: 'androidx.camera.core.ResolutionInfo',
   ),
 )
-class ResolutionInfo {
+abstract class ResolutionInfo {
   ResolutionInfo();
 
   /// Returns the output resolution used for the use case.
@@ -101,10 +101,10 @@ enum LiveDataSupportedType {
 /// See https://developer.android.com/reference/android/util/Range.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.util.Range<Integer>',
+    fullClassName: 'android.util.Range<*>',
   ),
 )
-class CameraIntegerRange {
+abstract class CameraIntegerRange {
   CameraIntegerRange();
 
   /// The lower endpoint.
@@ -190,7 +190,7 @@ abstract class MeteringPoint {
   ///
   /// It is the percentage of the sensor width/height (or crop region
   /// width/height if crop region is set).
-  late double size;
+  double getSize();
 }
 
 enum MeteringMode {
@@ -207,34 +207,12 @@ enum MeteringMode {
   awb,
 }
 
-// /// The types of capture request options this plugin currently supports.
-// ///
-// /// If you need to add another option to support, ensure the following is done
-// /// on the Dart side:
-// ///
-// ///  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
-// ///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
-// ///    to create the expected Map entry of option key index and value to send to
-// ///    the native side.
-// ///
-// /// On the native side, ensure the following is done:
-// ///
-// ///  * Update `CaptureRequestOptionsHostApiImpl#create` to set the correct
-// ///   `CaptureRequest` key with a valid value type for this option.
-// ///
-// /// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
-// /// for the sorts of capture request options that can be supported via CameraX's
-// /// interoperability with Camera2.
-// enum CaptureRequestKeySupportedType {
-//   controlAeLock,
-// }
-
 /// A simple callback that can receive from LiveData.
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/Observer.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.lifecycle.Observer',
+    fullClassName: 'androidx.lifecycle.Observer<*>',
   ),
 )
 abstract class Observer {
@@ -264,12 +242,10 @@ abstract class CameraInfo {
   late ExposureState exposureState;
 
   /// A LiveData of the camera's state.
-  @attached
-  late LiveData cameraState;
+  LiveData getCameraState();
 
   /// A LiveData of ZoomState.
-  @attached
-  late LiveData zoomState;
+  LiveData getZoomState();
 }
 
 /// Direction of lens of a camera.
@@ -446,7 +422,7 @@ abstract class Preview extends UseCase {
 /// See https://developer.android.com/reference/kotlin/androidx/camera/video/VideoCapture.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.camera.video.VideoCapture',
+    fullClassName: 'androidx.camera.video.VideoCapture<*>',
   ),
 )
 abstract class VideoCapture extends UseCase {
@@ -841,7 +817,7 @@ abstract class CameraStateStateError {
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.lifecycle.LiveData',
+    fullClassName: 'androidx.lifecycle.LiveData<*>',
   ),
 )
 abstract class LiveData {
@@ -941,7 +917,7 @@ abstract class QualitySelector {
     fullClassName: 'androidx.camera.video.FallbackStrategy',
   ),
 )
-class FallbackStrategy {
+abstract class FallbackStrategy {
   /// Returns a fallback strategy that will choose the quality that is closest
   /// to and higher than the input quality.
   FallbackStrategy.higherQualityOrLowerThan(VideoQuality quality);
@@ -1063,7 +1039,7 @@ abstract class CaptureRequest {
 /// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.Key.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.hardware.camera2.CaptureRequest.Key',
+    fullClassName: 'android.hardware.camera2.CaptureRequest.Key<*>',
   ),
 )
 abstract class CaptureRequestKey {}
@@ -1118,7 +1094,7 @@ abstract class ResolutionFilter {
 /// See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics.Key.html.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.hardware.camera2.CameraCharacteristics.Key',
+    fullClassName: 'android.hardware.camera2.CameraCharacteristics.Key<*>',
   ),
 )
 abstract class CameraCharacteristicsKey {}
