@@ -608,10 +608,7 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
    * An implementation of [PigeonApiFocusMeteringAction] used to add a new Dart instance of
    * `FocusMeteringAction` to the Dart `InstanceManager`.
    */
-  open fun getPigeonApiFocusMeteringAction(): PigeonApiFocusMeteringAction
-  {
-    return PigeonApiFocusMeteringAction(this)
-  }
+  abstract fun getPigeonApiFocusMeteringAction(): PigeonApiFocusMeteringAction
 
   /**
    * An implementation of [PigeonApiFocusMeteringResult] used to add a new Dart instance of
@@ -673,6 +670,18 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
    */
   abstract fun getPigeonApiCamera2CameraInfo(): PigeonApiCamera2CameraInfo
 
+  /**
+   * An implementation of [PigeonApiMeteringPointFactory] used to add a new Dart instance of
+   * `MeteringPointFactory` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiMeteringPointFactory(): PigeonApiMeteringPointFactory
+
+  /**
+   * An implementation of [PigeonApiDisplayOrientedMeteringPointFactory] used to add a new Dart instance of
+   * `DisplayOrientedMeteringPointFactory` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiDisplayOrientedMeteringPointFactory(): PigeonApiDisplayOrientedMeteringPointFactory
+
   fun setUp() {
     CameraXLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
     PigeonApiCameraSize.setUpMessageHandlers(binaryMessenger, getPigeonApiCameraSize())
@@ -708,6 +717,8 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiResolutionFilter.setUpMessageHandlers(binaryMessenger, getPigeonApiResolutionFilter())
     PigeonApiCameraCharacteristics.setUpMessageHandlers(binaryMessenger, getPigeonApiCameraCharacteristics())
     PigeonApiCamera2CameraInfo.setUpMessageHandlers(binaryMessenger, getPigeonApiCamera2CameraInfo())
+    PigeonApiMeteringPointFactory.setUpMessageHandlers(binaryMessenger, getPigeonApiMeteringPointFactory())
+    PigeonApiDisplayOrientedMeteringPointFactory.setUpMessageHandlers(binaryMessenger, getPigeonApiDisplayOrientedMeteringPointFactory())
   }
   fun tearDown() {
     CameraXLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
@@ -744,6 +755,8 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiResolutionFilter.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiCameraCharacteristics.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiCamera2CameraInfo.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiMeteringPointFactory.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiDisplayOrientedMeteringPointFactory.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibraryPigeonProxyApiRegistrar) : CameraXLibraryPigeonCodec() {
@@ -902,6 +915,12 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
     }
      else if (value is androidx.camera.camera2.interop.Camera2CameraInfo) {
       registrar.getPigeonApiCamera2CameraInfo().pigeon_newInstance(value) { }
+    }
+     else if (value is androidx.camera.core.DisplayOrientedMeteringPointFactory) {
+      registrar.getPigeonApiDisplayOrientedMeteringPointFactory().pigeon_newInstance(value) { }
+    }
+     else if (value is androidx.camera.core.MeteringPointFactory) {
+      registrar.getPigeonApiMeteringPointFactory().pigeon_newInstance(value) { }
     }
 
     when {
@@ -1386,6 +1405,101 @@ abstract class PigeonApiCameraSize(open val pigeonRegistrar: CameraXLibraryPigeo
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import android.util.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraSize}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraSizeProxyApi extends PigeonApiCameraSize {
+  CameraSizeProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public CameraSize pigeon_defaultConstructor() {
+    return CameraSize();
+  }
+
+  @NonNull
+  @Override
+  public Long width(CameraSize pigeon_instance) {
+    return pigeon_instance.getWidth();
+  }
+
+  @NonNull
+  @Override
+  public Long height(CameraSize pigeon_instance) {
+    return pigeon_instance.getHeight();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import android.util.Size
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraSizeProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiCameraSize api = new TestProxyApiRegistrar().getPigeonApiCameraSize();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof CameraSizeProxyApi.CameraSize);
+  }
+
+  @Test
+  public void width() {
+    final PigeonApiCameraSize api = new TestProxyApiRegistrar().getPigeonApiCameraSize();
+
+    final CameraSize instance = mock(CameraSize.class);
+    final Long value = 0;
+    when(instance.getWidth()).thenReturn(value);
+
+    assertEquals(value, api.width(instance));
+  }
+
+  @Test
+  public void height() {
+    final PigeonApiCameraSize api = new TestProxyApiRegistrar().getPigeonApiCameraSize();
+
+    final CameraSize instance = mock(CameraSize.class);
+    final Long value = 0;
+    when(instance.getHeight()).thenReturn(value);
+
+    assertEquals(value, api.height(instance));
+  }
+
+}
+*/
 /**
  * A `ResolutionInfo` allows the application to know the resolution information
  * of a specific use case.
@@ -1459,6 +1573,86 @@ abstract class PigeonApiResolutionInfo(open val pigeonRegistrar: CameraXLibraryP
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ResolutionInfo;
+import android.util.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ResolutionInfo}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ResolutionInfoProxyApi extends PigeonApiResolutionInfo {
+  ResolutionInfoProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ResolutionInfo pigeon_defaultConstructor() {
+    return ResolutionInfo();
+  }
+
+  @NonNull
+  @Override
+  public android.util.Size resolution(ResolutionInfo pigeon_instance) {
+    return pigeon_instance.getResolution();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ResolutionInfo
+import android.util.Size
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ResolutionInfoProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiResolutionInfo api = new TestProxyApiRegistrar().getPigeonApiResolutionInfo();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof ResolutionInfoProxyApi.ResolutionInfo);
+  }
+
+  @Test
+  public void resolution() {
+    final PigeonApiResolutionInfo api = new TestProxyApiRegistrar().getPigeonApiResolutionInfo();
+
+    final ResolutionInfo instance = mock(ResolutionInfo.class);
+    final android.util.Size value = mock(CameraSize.class);
+    when(instance.getResolution()).thenReturn(value);
+
+    assertEquals(value, api.resolution(instance));
+  }
+
+}
+*/
 /**
  * Immutable class for describing the range of two integer values.
  *
@@ -1538,6 +1732,101 @@ abstract class PigeonApiCameraIntegerRange(open val pigeonRegistrar: CameraXLibr
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import android.util.Range<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraIntegerRange}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraIntegerRangeProxyApi extends PigeonApiCameraIntegerRange {
+  CameraIntegerRangeProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public CameraIntegerRange pigeon_defaultConstructor() {
+    return CameraIntegerRange();
+  }
+
+  @NonNull
+  @Override
+  public Long lower(CameraIntegerRange pigeon_instance) {
+    return pigeon_instance.getLower();
+  }
+
+  @NonNull
+  @Override
+  public Long upper(CameraIntegerRange pigeon_instance) {
+    return pigeon_instance.getUpper();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import android.util.Range<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraIntegerRangeProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiCameraIntegerRange api = new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof CameraIntegerRangeProxyApi.CameraIntegerRange);
+  }
+
+  @Test
+  public void lower() {
+    final PigeonApiCameraIntegerRange api = new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
+
+    final CameraIntegerRange instance = mock(CameraIntegerRange.class);
+    final Long value = 0;
+    when(instance.getLower()).thenReturn(value);
+
+    assertEquals(value, api.lower(instance));
+  }
+
+  @Test
+  public void upper() {
+    final PigeonApiCameraIntegerRange api = new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
+
+    final CameraIntegerRange instance = mock(CameraIntegerRange.class);
+    final Long value = 0;
+    when(instance.getUpper()).thenReturn(value);
+
+    assertEquals(value, api.upper(instance));
+  }
+
+}
+*/
 /**
  * VideoRecordEvent is used to report video recording events and status.
  *
@@ -1578,6 +1867,54 @@ open class PigeonApiVideoRecordEvent(open val pigeonRegistrar: CameraXLibraryPig
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.VideoRecordEvent;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link VideoRecordEvent}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoRecordEventProxyApi extends PigeonApiVideoRecordEvent {
+  VideoRecordEventProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.VideoRecordEvent
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class VideoRecordEventProxyApiTest {
+}
+*/
 /**
  * Indicates the start of recording.
  *
@@ -1625,6 +1962,54 @@ open class PigeonApiVideoRecordEventStart(open val pigeonRegistrar: CameraXLibra
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.VideoRecordEvent.Start;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link VideoRecordEventStart}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoRecordEventStartProxyApi extends PigeonApiVideoRecordEventStart {
+  VideoRecordEventStartProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.VideoRecordEvent.Start
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class VideoRecordEventStartProxyApiTest {
+}
+*/
 /**
  * Indicates the finalization of recording.
  *
@@ -1672,6 +2057,54 @@ open class PigeonApiVideoRecordEventFinalize(open val pigeonRegistrar: CameraXLi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.VideoRecordEvent.Finalize;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link VideoRecordEventFinalize}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoRecordEventFinalizeProxyApi extends PigeonApiVideoRecordEventFinalize {
+  VideoRecordEventFinalizeProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.VideoRecordEvent.Finalize
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class VideoRecordEventFinalizeProxyApiTest {
+}
+*/
 /**
  * A MeteringPoint is used to specify a region which can then be converted to
  * sensor coordinate system for focus and metering purpose.
@@ -1680,12 +2113,6 @@ open class PigeonApiVideoRecordEventFinalize(open val pigeonRegistrar: CameraXLi
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiMeteringPoint(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  /** Creates a MeteringPoint by x, y. */
-  abstract fun pigeon_defaultConstructor(x: Double, y: Double): androidx.camera.core.MeteringPoint
-
-  /** Creates a MeteringPoint by x, y, size. */
-  abstract fun withSize(x: Double, y: Double, size: Double): androidx.camera.core.MeteringPoint
-
   /**
    * Size of the MeteringPoint width and height (ranging from 0 to 1).
    *
@@ -1698,47 +2125,6 @@ abstract class PigeonApiMeteringPoint(open val pigeonRegistrar: CameraXLibraryPi
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiMeteringPoint?) {
       val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.MeteringPoint.pigeon_defaultConstructor", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_identifierArg = args[0] as Long
-            val xArg = args[1] as Double
-            val yArg = args[2] as Double
-            val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(xArg,yArg), pigeon_identifierArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.MeteringPoint.withSize", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_identifierArg = args[0] as Long
-            val xArg = args[1] as Double
-            val yArg = args[2] as Double
-            val sizeArg = args[3] as Double
-            val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.withSize(xArg,yArg,sizeArg), pigeon_identifierArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              wrapError(exception)
-            }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.MeteringPoint.getSize", codec)
         if (api != null) {
@@ -1792,6 +2178,71 @@ abstract class PigeonApiMeteringPoint(open val pigeonRegistrar: CameraXLibraryPi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.MeteringPoint;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link MeteringPoint}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class MeteringPointProxyApi extends PigeonApiMeteringPoint {
+  MeteringPointProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Double getSize(MeteringPoint pigeon_instance) {
+    return pigeon_instance.getSize();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.MeteringPoint
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class MeteringPointProxyApiTest {
+  @Test
+  public void getSize() {
+    final PigeonApiMeteringPoint api = new TestProxyApiRegistrar().getPigeonApiMeteringPoint();
+
+    final MeteringPoint instance = mock(MeteringPoint.class);
+    final Double value = 1.0;
+    when(instance.getSize()).thenReturn(value);
+
+    assertEquals(value, api.getSize(instance ));
+  }
+
+}
+*/
 /**
  * A simple callback that can receive from LiveData.
  *
@@ -1871,6 +2322,111 @@ abstract class PigeonApiObserver(open val pigeonRegistrar: CameraXLibraryPigeonP
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.lifecycle.Observer<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Observer}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ObserverProxyApi extends PigeonApiObserver {
+  ObserverProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+  /** Implementation of {@link Observer} that passes arguments of callback methods to Dart. */
+  static class ObserverImpl extends Observer {
+    private final ObserverProxyApi api;
+    ObserverImpl(@NonNull ObserverProxyApi api) {
+      this.api = api;
+    }
+    @Override
+    public void onChanged(@NonNull Any value) {
+      api.getPigeonRegistrar().runOnMainThread(() -> api.onChanged(this, value, reply -> null));
+    }
+  }
+
+  @NonNull
+  @Override
+  public Observer pigeon_defaultConstructor() {
+    return ObserverImpl();
+  }
+
+  @NonNull
+  @Override
+  public LiveDataSupportedType type(Observer pigeon_instance) {
+    switch (pigeon_instance.type) {
+      case LiveDataSupportedType.CAMERA_STATE: return io.flutter.plugins.camerax.LiveDataSupportedType.CAMERA_STATE;
+      case LiveDataSupportedType.ZOOM_STATE: return io.flutter.plugins.camerax.LiveDataSupportedType.ZOOM_STATE;
+      default: return io.flutter.plugins.camerax.LiveDataSupportedType.UNKNOWN;
+    }
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.lifecycle.Observer<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ObserverProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiObserver api = new TestProxyApiRegistrar().getPigeonApiObserver();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof ObserverProxyApi.Observer);
+  }
+
+  @Test
+  public void type() {
+    final PigeonApiObserver api = new TestProxyApiRegistrar().getPigeonApiObserver();
+
+    final Observer instance = mock(Observer.class);
+    final LiveDataSupportedType value = io.flutter.plugins.camerax.LiveDataSupportedType.CAMERA_STATE;
+    when(instance.getType()).thenReturn(value);
+
+    assertEquals(value, api.type(instance));
+  }
+
+  @Test
+  public void onChanged() {
+    final ObserverProxyApi mockApi = mock(ObserverProxyApi.class);
+    when(mockApi.pigeonRegistrar).thenReturn(new TestProxyApiRegistrar());
+
+    final ObserverImpl instance = new ObserverImpl(mockApi);
+    final Any value = -1;
+    instance.onChanged(value);
+
+    verify(mockApi).onChanged(eq(instance), eq(value), any());
+  }
+
+}
+*/
 /**
  * An interface for retrieving camera information.
  *
@@ -1969,6 +2525,126 @@ abstract class PigeonApiCameraInfo(open val pigeonRegistrar: CameraXLibraryPigeo
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.CameraInfo;
+import androidx.camera.core.ExposureState;
+import androidx.lifecycle.LiveData<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraInfo}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraInfoProxyApi extends PigeonApiCameraInfo {
+  CameraInfoProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Long sensorRotationDegrees(CameraInfo pigeon_instance) {
+    return pigeon_instance.getSensorRotationDegrees();
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.ExposureState exposureState(CameraInfo pigeon_instance) {
+    return pigeon_instance.getExposureState();
+  }
+
+  @NonNull
+  @Override
+  public androidx.lifecycle.LiveData<*> getCameraState(CameraInfo pigeon_instance) {
+    return pigeon_instance.getCameraState();
+  }
+
+  @NonNull
+  @Override
+  public androidx.lifecycle.LiveData<*> getZoomState(CameraInfo pigeon_instance) {
+    return pigeon_instance.getZoomState();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.CameraInfo
+import androidx.camera.core.ExposureState
+import androidx.lifecycle.LiveData<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraInfoProxyApiTest {
+  @Test
+  public void sensorRotationDegrees() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final Long value = 0;
+    when(instance.getSensorRotationDegrees()).thenReturn(value);
+
+    assertEquals(value, api.sensorRotationDegrees(instance));
+  }
+
+  @Test
+  public void exposureState() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final androidx.camera.core.ExposureState value = mock(ExposureState.class);
+    when(instance.getExposureState()).thenReturn(value);
+
+    assertEquals(value, api.exposureState(instance));
+  }
+
+  @Test
+  public void getCameraState() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final androidx.lifecycle.LiveData<*> value = mock(LiveData.class);
+    when(instance.getCameraState()).thenReturn(value);
+
+    assertEquals(value, api.getCameraState(instance ));
+  }
+
+  @Test
+  public void getZoomState() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    final androidx.lifecycle.LiveData<*> value = mock(LiveData.class);
+    when(instance.getZoomState()).thenReturn(value);
+
+    assertEquals(value, api.getZoomState(instance ));
+  }
+
+}
+*/
 /**
  * A set of requirements and priorities used to select a camera or return a
  * filtered set of cameras.
@@ -2104,6 +2780,99 @@ abstract class PigeonApiCameraSelector(open val pigeonRegistrar: CameraXLibraryP
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.CameraInfo;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraSelector}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraSelectorProxyApi extends PigeonApiCameraSelector {
+  CameraSelectorProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public CameraSelector pigeon_defaultConstructor(@Nullable LensFacing? requireLensFacing) {
+    return CameraSelector(requireLensFacing);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.CameraSelector defaultBackCamera() {
+    return CameraSelector.getDefaultBackCamera();
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.CameraSelector defaultFrontCamera() {
+    return CameraSelector.getDefaultFrontCamera();
+  }
+
+  @NonNull
+  @Override
+  public List<androidx.camera.core.CameraInfo> filter(CameraSelector, pigeon_instance@NonNull List<androidx.camera.core.CameraInfo> cameraInfos) {
+    return pigeon_instance.filter(cameraInfos);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraInfo
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraSelectorProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiCameraSelector api = new TestProxyApiRegistrar().getPigeonApiCameraSelector();
+
+    assertTrue(api.pigeon_defaultConstructor(io.flutter.plugins.camerax.LensFacing.FRONT) instanceof CameraSelectorProxyApi.CameraSelector);
+  }
+
+  @Test
+  public void filter() {
+    final PigeonApiCameraSelector api = new TestProxyApiRegistrar().getPigeonApiCameraSelector();
+
+    final CameraSelector instance = mock(CameraSelector.class);
+    final List<androidx.camera.core.CameraInfo> cameraInfos = Arrays.asList(mock(CameraInfo.class));
+    final List<androidx.camera.core.CameraInfo> value = Arrays.asList(mock(CameraInfo.class));
+    when(instance.filter(cameraInfos)).thenReturn(value);
+
+    assertEquals(value, api.filter(instance, cameraInfos));
+  }
+
+}
+*/
 /**
  * A singleton which can be used to bind the lifecycle of cameras to any
  * `LifecycleOwner` within an application's process.
@@ -2282,6 +3051,153 @@ abstract class PigeonApiProcessCameraProvider(open val pigeonRegistrar: CameraXL
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.core.UseCase;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.CameraInfo;
+import androidx.camera.core.Camera;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ProcessCameraProvider}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
+  ProcessCameraProviderProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.lifecycle.ProcessCameraProvider getInstance() {
+    return ProcessCameraProvider.getInstance();
+  }
+
+  @NonNull
+  @Override
+  public List<androidx.camera.core.CameraInfo> getAvailableCameraInfos(ProcessCameraProvider pigeon_instance) {
+    return pigeon_instance.getAvailableCameraInfos();
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.Camera bindToLifecycle(ProcessCameraProvider, pigeon_instance@NonNull androidx.camera.core.CameraSelector cameraSelectorIdentifier, @NonNull List<androidx.camera.core.UseCase> useCases) {
+    return pigeon_instance.bindToLifecycle(cameraSelectorIdentifier, useCases);
+  }
+
+  @NonNull
+  @Override
+  public Boolean isBound(ProcessCameraProvider, pigeon_instance@NonNull androidx.camera.core.UseCase useCase) {
+    return pigeon_instance.isBound(useCase);
+  }
+
+  @Override
+  public Void unbind(ProcessCameraProvider, pigeon_instance@NonNull List<androidx.camera.core.UseCase> useCases) {
+    pigeon_instance.unbind(useCases);
+  }
+
+  @Override
+  public Void unbindAll(ProcessCameraProvider pigeon_instance) {
+    pigeon_instance.unbindAll();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.core.UseCase
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraInfo
+import androidx.camera.core.Camera
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ProcessCameraProviderProxyApiTest {
+  @Test
+  public void getAvailableCameraInfos() {
+    final PigeonApiProcessCameraProvider api = new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
+
+    final ProcessCameraProvider instance = mock(ProcessCameraProvider.class);
+    final List<androidx.camera.core.CameraInfo> value = Arrays.asList(mock(CameraInfo.class));
+    when(instance.getAvailableCameraInfos()).thenReturn(value);
+
+    assertEquals(value, api.getAvailableCameraInfos(instance ));
+  }
+
+  @Test
+  public void bindToLifecycle() {
+    final PigeonApiProcessCameraProvider api = new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
+
+    final ProcessCameraProvider instance = mock(ProcessCameraProvider.class);
+    final androidx.camera.core.CameraSelector cameraSelectorIdentifier = mock(CameraSelector.class);
+    final List<androidx.camera.core.UseCase> useCases = Arrays.asList(mock(UseCase.class));
+    final androidx.camera.core.Camera value = mock(Camera.class);
+    when(instance.bindToLifecycle(cameraSelectorIdentifier, useCases)).thenReturn(value);
+
+    assertEquals(value, api.bindToLifecycle(instance, cameraSelectorIdentifier, useCases));
+  }
+
+  @Test
+  public void isBound() {
+    final PigeonApiProcessCameraProvider api = new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
+
+    final ProcessCameraProvider instance = mock(ProcessCameraProvider.class);
+    final androidx.camera.core.UseCase useCase = mock(UseCase.class);
+    final Boolean value = true;
+    when(instance.isBound(useCase)).thenReturn(value);
+
+    assertEquals(value, api.isBound(instance, useCase));
+  }
+
+  @Test
+  public void unbind() {
+    final PigeonApiProcessCameraProvider api = new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
+
+    final ProcessCameraProvider instance = mock(ProcessCameraProvider.class);
+    final List<androidx.camera.core.UseCase> useCases = Arrays.asList(mock(UseCase.class));
+    api.unbind(instance, useCases);
+
+    verify(instance).unbind(useCases);
+  }
+
+  @Test
+  public void unbindAll() {
+    final PigeonApiProcessCameraProvider api = new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
+
+    final ProcessCameraProvider instance = mock(ProcessCameraProvider.class);
+    api.unbindAll(instance );
+
+    verify(instance).unbindAll();
+  }
+
+}
+*/
 /**
  * The use case which all other use cases are built on top of.
  *
@@ -2322,6 +3238,54 @@ open class PigeonApiUseCase(open val pigeonRegistrar: CameraXLibraryPigeonProxyA
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.UseCase;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link UseCase}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class UseCaseProxyApi extends PigeonApiUseCase {
+  UseCaseProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.UseCase
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class UseCaseProxyApiTest {
+}
+*/
 /**
  * The camera interface is used to control the flow of data to use cases,
  * control the camera via the `CameraControl`, and publish the state of the
@@ -2395,6 +3359,92 @@ abstract class PigeonApiCamera(open val pigeonRegistrar: CameraXLibraryPigeonPro
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraControl;
+import androidx.camera.core.CameraInfo;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Camera}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraProxyApi extends PigeonApiCamera {
+  CameraProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.CameraControl cameraControl(Camera pigeon_instance) {
+    return pigeon_instance.getCameraControl();
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.CameraInfo getCameraInfo(Camera pigeon_instance) {
+    return pigeon_instance.getCameraInfo();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraControl
+import androidx.camera.core.CameraInfo
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraProxyApiTest {
+  @Test
+  public void cameraControl() {
+    final PigeonApiCamera api = new TestProxyApiRegistrar().getPigeonApiCamera();
+
+    final Camera instance = mock(Camera.class);
+    final androidx.camera.core.CameraControl value = mock(CameraControl.class);
+    when(instance.getCameraControl()).thenReturn(value);
+
+    assertEquals(value, api.cameraControl(instance));
+  }
+
+  @Test
+  public void getCameraInfo() {
+    final PigeonApiCamera api = new TestProxyApiRegistrar().getPigeonApiCamera();
+
+    final Camera instance = mock(Camera.class);
+    final androidx.camera.core.CameraInfo value = mock(CameraInfo.class);
+    when(instance.getCameraInfo()).thenReturn(value);
+
+    assertEquals(value, api.getCameraInfo(instance ));
+  }
+
+}
+*/
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface SystemServicesHostApi {
   fun requestCameraPermissions(enableAudio: Boolean, callback: (Result<CameraPermissionsErrorData?>) -> Unit)
@@ -2773,6 +3823,136 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.Preview;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.ResolutionInfo;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Preview}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class PreviewProxyApi extends PigeonApiPreview {
+  PreviewProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Preview pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
+    return Preview(targetRotation, resolutionSelector);
+  }
+
+  @NonNull
+  @Override
+  public Long setSurfaceProvider(Preview pigeon_instance) {
+    return pigeon_instance.setSurfaceProvider();
+  }
+
+  @Override
+  public Void releaseSurfaceProvider(Preview pigeon_instance) {
+    pigeon_instance.releaseSurfaceProvider();
+  }
+
+  @Nullable
+  @Override
+  public androidx.camera.core.ResolutionInfo? getResolutionInfo(Preview pigeon_instance) {
+    return pigeon_instance.getResolutionInfo();
+  }
+
+  @Override
+  public Void setTargetRotation(Preview, pigeon_instance@NonNull Long rotation) {
+    pigeon_instance.setTargetRotation(rotation);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.Preview
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.ResolutionInfo
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class PreviewProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    assertTrue(api.pigeon_defaultConstructor(0, mock(ResolutionSelector.class)) instanceof PreviewProxyApi.Preview);
+  }
+
+  @Test
+  public void setSurfaceProvider() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    final Preview instance = mock(Preview.class);
+    final Long value = 0;
+    when(instance.setSurfaceProvider()).thenReturn(value);
+
+    assertEquals(value, api.setSurfaceProvider(instance ));
+  }
+
+  @Test
+  public void releaseSurfaceProvider() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    final Preview instance = mock(Preview.class);
+    api.releaseSurfaceProvider(instance );
+
+    verify(instance).releaseSurfaceProvider();
+  }
+
+  @Test
+  public void getResolutionInfo() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    final Preview instance = mock(Preview.class);
+    final androidx.camera.core.ResolutionInfo value = mock(ResolutionInfo.class);
+    when(instance.getResolutionInfo()).thenReturn(value);
+
+    assertEquals(value, api.getResolutionInfo(instance ));
+  }
+
+  @Test
+  public void setTargetRotation() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    final Preview instance = mock(Preview.class);
+    final Long rotation = 0;
+    api.setTargetRotation(instance, rotation);
+
+    verify(instance).setTargetRotation(rotation);
+  }
+
+}
+*/
 /**
  * A use case that provides camera stream suitable for video application.
  *
@@ -2891,6 +4071,102 @@ abstract class PigeonApiVideoCapture(open val pigeonRegistrar: CameraXLibraryPig
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.VideoCapture<*>;
+import androidx.camera.video.VideoOutput;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link VideoCapture}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoCaptureProxyApi extends PigeonApiVideoCapture {
+  VideoCaptureProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public VideoCapture withOutput(@NonNull androidx.camera.video.VideoOutput videoOutput) {
+    return VideoCapture(videoOutput);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.video.VideoOutput getOutput(VideoCapture pigeon_instance) {
+    return pigeon_instance.getOutput();
+  }
+
+  @Override
+  public Void setTargetRotation(VideoCapture, pigeon_instance@NonNull Long rotation) {
+    pigeon_instance.setTargetRotation(rotation);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.VideoCapture<*>
+import androidx.camera.video.VideoOutput
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class VideoCaptureProxyApiTest {
+  @Test
+  public void withOutput() {
+    final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
+
+    assertTrue(api.withOutput(mock(VideoOutput.class)) instanceof VideoCaptureProxyApi.VideoCapture);
+  }
+
+  @Test
+  public void getOutput() {
+    final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
+
+    final VideoCapture instance = mock(VideoCapture.class);
+    final androidx.camera.video.VideoOutput value = mock(VideoOutput.class);
+    when(instance.getOutput()).thenReturn(value);
+
+    assertEquals(value, api.getOutput(instance ));
+  }
+
+  @Test
+  public void setTargetRotation() {
+    final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
+
+    final VideoCapture instance = mock(VideoCapture.class);
+    final Long rotation = 0;
+    api.setTargetRotation(instance, rotation);
+
+    verify(instance).setTargetRotation(rotation);
+  }
+
+}
+*/
 /**
  * A class that will produce video data from a Surface.
  *
@@ -2931,6 +4207,54 @@ open class PigeonApiVideoOutput(open val pigeonRegistrar: CameraXLibraryPigeonPr
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.VideoOutput;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link VideoOutput}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoOutputProxyApi extends PigeonApiVideoOutput {
+  VideoOutputProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.VideoOutput
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class VideoOutputProxyApiTest {
+}
+*/
 /**
  * An implementation of `VideoOutput` for starting video recordings that are
  * saved to a File, ParcelFileDescriptor, or MediaStore.
@@ -3070,6 +4394,123 @@ abstract class PigeonApiRecorder(open val pigeonRegistrar: CameraXLibraryPigeonP
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.Recorder;
+import androidx.camera.video.QualitySelector;
+import androidx.camera.video.PendingRecording;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Recorder}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class RecorderProxyApi extends PigeonApiRecorder {
+  RecorderProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Recorder pigeon_defaultConstructor(@Nullable Long? aspectRatio, @Nullable Long? targetVideoEncodingBitRate, @Nullable androidx.camera.video.QualitySelector? qualitySelector) {
+    return Recorder(aspectRatio, targetVideoEncodingBitRate, qualitySelector);
+  }
+
+  @NonNull
+  @Override
+  public Long getAspectRatio(Recorder pigeon_instance) {
+    return pigeon_instance.getAspectRatio();
+  }
+
+  @NonNull
+  @Override
+  public Long getTargetVideoEncodingBitRate(Recorder pigeon_instance) {
+    return pigeon_instance.getTargetVideoEncodingBitRate();
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.video.PendingRecording prepareRecording(Recorder, pigeon_instance@NonNull String path) {
+    return pigeon_instance.prepareRecording(path);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.Recorder
+import androidx.camera.video.QualitySelector
+import androidx.camera.video.PendingRecording
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class RecorderProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    assertTrue(api.pigeon_defaultConstructor(0, 0, mock(QualitySelector.class)) instanceof RecorderProxyApi.Recorder);
+  }
+
+  @Test
+  public void getAspectRatio() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final Recorder instance = mock(Recorder.class);
+    final Long value = 0;
+    when(instance.getAspectRatio()).thenReturn(value);
+
+    assertEquals(value, api.getAspectRatio(instance ));
+  }
+
+  @Test
+  public void getTargetVideoEncodingBitRate() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final Recorder instance = mock(Recorder.class);
+    final Long value = 0;
+    when(instance.getTargetVideoEncodingBitRate()).thenReturn(value);
+
+    assertEquals(value, api.getTargetVideoEncodingBitRate(instance ));
+  }
+
+  @Test
+  public void prepareRecording() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final Recorder instance = mock(Recorder.class);
+    final String path = "myString";
+    final androidx.camera.video.PendingRecording value = mock(PendingRecording.class);
+    when(instance.prepareRecording(path)).thenReturn(value);
+
+    assertEquals(value, api.prepareRecording(instance, path));
+  }
+
+}
+*/
 /** Listens for `VideoRecordEvent`s from a `PendingRecording`. */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiVideoRecordEventListener(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
@@ -3143,6 +4584,90 @@ abstract class PigeonApiVideoRecordEventListener(open val pigeonRegistrar: Camer
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.VideoRecordEvent;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link VideoRecordEventListener}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class VideoRecordEventListenerProxyApi extends PigeonApiVideoRecordEventListener {
+  VideoRecordEventListenerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+  /** Implementation of {@link VideoRecordEventListener} that passes arguments of callback methods to Dart. */
+  static class VideoRecordEventListenerImpl extends VideoRecordEventListener {
+    private final VideoRecordEventListenerProxyApi api;
+    VideoRecordEventListenerImpl(@NonNull VideoRecordEventListenerProxyApi api) {
+      this.api = api;
+    }
+    @Override
+    public void onEvent(@NonNull androidx.camera.video.VideoRecordEvent event) {
+      api.getPigeonRegistrar().runOnMainThread(() -> api.onEvent(this, event, reply -> null));
+    }
+  }
+
+  @NonNull
+  @Override
+  public VideoRecordEventListener pigeon_defaultConstructor() {
+    return VideoRecordEventListenerImpl();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.VideoRecordEvent
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class VideoRecordEventListenerProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiVideoRecordEventListener api = new TestProxyApiRegistrar().getPigeonApiVideoRecordEventListener();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof VideoRecordEventListenerProxyApi.VideoRecordEventListenerImpl);
+  }
+
+  @Test
+  public void onEvent() {
+    final VideoRecordEventListenerProxyApi mockApi = mock(VideoRecordEventListenerProxyApi.class);
+    when(mockApi.pigeonRegistrar).thenReturn(new TestProxyApiRegistrar());
+
+    final VideoRecordEventListenerImpl instance = new VideoRecordEventListenerImpl(mockApi);
+    final androidx.camera.video.VideoRecordEvent event = mock(VideoRecordEvent.class);
+    instance.onEvent(event);
+
+    verify(mockApi).onEvent(eq(instance), eq(event), any());
+  }
+
+}
+*/
 /**
  * A recording that can be started at a future time.
  *
@@ -3211,6 +4736,74 @@ abstract class PigeonApiPendingRecording(open val pigeonRegistrar: CameraXLibrar
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.PendingRecording;
+import androidx.camera.video.Recording;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link PendingRecording}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class PendingRecordingProxyApi extends PigeonApiPendingRecording {
+  PendingRecordingProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.video.Recording start(PendingRecording, pigeon_instance@NonNull VideoRecordEventListener listener) {
+    return pigeon_instance.start(listener);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.PendingRecording
+import androidx.camera.video.Recording
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class PendingRecordingProxyApiTest {
+  @Test
+  public void start() {
+    final PigeonApiPendingRecording api = new TestProxyApiRegistrar().getPigeonApiPendingRecording();
+
+    final PendingRecording instance = mock(PendingRecording.class);
+    final VideoRecordEventListener listener = mock(VideoRecordEventListener.class);
+    final androidx.camera.video.Recording value = mock(Recording.class);
+    when(instance.start(listener)).thenReturn(value);
+
+    assertEquals(value, api.start(instance, listener));
+  }
+
+}
+*/
 /**
  * Provides controls for the currently active recording.
  *
@@ -3346,6 +4939,114 @@ abstract class PigeonApiRecording(open val pigeonRegistrar: CameraXLibraryPigeon
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.Recording;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Recording}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class RecordingProxyApi extends PigeonApiRecording {
+  RecordingProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @Override
+  public Void close(Recording pigeon_instance) {
+    pigeon_instance.close();
+  }
+
+  @Override
+  public Void pause(Recording pigeon_instance) {
+    pigeon_instance.pause();
+  }
+
+  @Override
+  public Void resume(Recording pigeon_instance) {
+    pigeon_instance.resume();
+  }
+
+  @Override
+  public Void stop(Recording pigeon_instance) {
+    pigeon_instance.stop();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.Recording
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class RecordingProxyApiTest {
+  @Test
+  public void close() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
+
+    final Recording instance = mock(Recording.class);
+    api.close(instance );
+
+    verify(instance).close();
+  }
+
+  @Test
+  public void pause() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
+
+    final Recording instance = mock(Recording.class);
+    api.pause(instance );
+
+    verify(instance).pause();
+  }
+
+  @Test
+  public void resume() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
+
+    final Recording instance = mock(Recording.class);
+    api.resume(instance );
+
+    verify(instance).resume();
+  }
+
+  @Test
+  public void stop() {
+    final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
+
+    final Recording instance = mock(Recording.class);
+    api.stop(instance );
+
+    verify(instance).stop();
+  }
+
+}
+*/
 /**
  * A use case for taking a picture.
  *
@@ -3490,6 +5191,118 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ImageCapture}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ImageCaptureProxyApi extends PigeonApiImageCapture {
+  ImageCaptureProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ImageCapture pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable FlashMode? flashMode, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
+    return ImageCapture(targetRotation, flashMode, resolutionSelector);
+  }
+
+  @Override
+  public Void setFlashMode(ImageCapture, pigeon_instance@NonNull FlashMode flashMode) {
+    pigeon_instance.setFlashMode(flashMode);
+  }
+
+  @NonNull
+  @Override
+  public String takePicture(ImageCapture pigeon_instance) {
+    return pigeon_instance.takePicture();
+  }
+
+  @Override
+  public Void setTargetRotation(ImageCapture, pigeon_instance@NonNull Long rotation) {
+    pigeon_instance.setTargetRotation(rotation);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ImageCaptureProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    assertTrue(api.pigeon_defaultConstructor(0, io.flutter.plugins.camerax.FlashMode.AUTO, mock(ResolutionSelector.class)) instanceof ImageCaptureProxyApi.ImageCapture);
+  }
+
+  @Test
+  public void setFlashMode() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    final ImageCapture instance = mock(ImageCapture.class);
+    final FlashMode flashMode = io.flutter.plugins.camerax.FlashMode.AUTO;
+    api.setFlashMode(instance, flashMode);
+
+    verify(instance).setFlashMode(flashMode);
+  }
+
+  @Test
+  public void takePicture() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    final ImageCapture instance = mock(ImageCapture.class);
+    final String value = "myString";
+    when(instance.takePicture()).thenReturn(value);
+
+    assertEquals(value, api.takePicture(instance ));
+  }
+
+  @Test
+  public void setTargetRotation() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    final ImageCapture instance = mock(ImageCapture.class);
+    final Long rotation = 0;
+    api.setTargetRotation(instance, rotation);
+
+    verify(instance).setTargetRotation(rotation);
+  }
+
+}
+*/
 /**
  * The resolution strategy defines the resolution selection sequence to select
  * the best size.
@@ -3580,6 +5393,75 @@ abstract class PigeonApiResolutionStrategy(open val pigeonRegistrar: CameraXLibr
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
+import android.util.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ResolutionStrategy}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
+  ResolutionStrategyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ResolutionStrategy pigeon_defaultConstructor(@NonNull android.util.Size boundSize, @NonNull ResolutionStrategyFallbackRule fallbackRule) {
+    return ResolutionStrategy(boundSize, fallbackRule);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.resolutionselector.ResolutionStrategy highestAvailableStrategy() {
+    return ResolutionStrategy.getHighestAvailableStrategy();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.resolutionselector.ResolutionStrategy
+import android.util.Size
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ResolutionStrategyProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiResolutionStrategy api = new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
+
+    assertTrue(api.pigeon_defaultConstructor(mock(CameraSize.class), io.flutter.plugins.camerax.ResolutionStrategyFallbackRule.CLOSEST_HIGHER) instanceof ResolutionStrategyProxyApi.ResolutionStrategy);
+  }
+
+}
+*/
 /**
  * A set of requirements and priorities used to select a resolution for the
  * `UseCase`.
@@ -3651,6 +5533,73 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.resolutionselector.AspectRatioStrategy;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
+import androidx.camera.core.resolutionselector.ResolutionFilter;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ResolutionSelector}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
+  ResolutionSelectorProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ResolutionSelector pigeon_defaultConstructor(@Nullable androidx.camera.core.resolutionselector.AspectRatioStrategy? aspectRatioStrategy, @Nullable androidx.camera.core.resolutionselector.ResolutionStrategy? resolutionStrategy, @Nullable androidx.camera.core.resolutionselector.ResolutionFilter? resolutionFilter) {
+    return ResolutionSelector(aspectRatioStrategy, resolutionStrategy, resolutionFilter);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionStrategy
+import androidx.camera.core.resolutionselector.ResolutionFilter
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ResolutionSelectorProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiResolutionSelector api = new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
+
+    assertTrue(api.pigeon_defaultConstructor(mock(AspectRatioStrategy.class), mock(ResolutionStrategy.class), mock(ResolutionFilter.class)) instanceof ResolutionSelectorProxyApi.ResolutionSelector);
+  }
+
+}
+*/
 /**
  * The aspect ratio strategy defines the sequence of aspect ratios that are
  * used to select the best size for a particular image.
@@ -3773,6 +5722,79 @@ abstract class PigeonApiAspectRatioStrategy(open val pigeonRegistrar: CameraXLib
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.resolutionselector.AspectRatioStrategy;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link AspectRatioStrategy}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
+  AspectRatioStrategyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public AspectRatioStrategy pigeon_defaultConstructor(@NonNull Long preferredAspectRatio, @NonNull AspectRatioStrategyFallbackRule fallbackRule) {
+    return AspectRatioStrategy(preferredAspectRatio, fallbackRule);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.resolutionselector.AspectRatioStrategy ratio_16_9FallbackAutoStrategy() {
+    return AspectRatioStrategy.getRatio_16_9FallbackAutoStrategy();
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.resolutionselector.AspectRatioStrategy ratio_4_3FallbackAutoStrategy() {
+    return AspectRatioStrategy.getRatio_4_3FallbackAutoStrategy();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class AspectRatioStrategyProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
+
+    assertTrue(api.pigeon_defaultConstructor(0, io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO) instanceof AspectRatioStrategyProxyApi.AspectRatioStrategy);
+  }
+
+}
+*/
 /**
  * Represents the different states the camera can be in.
  *
@@ -3784,7 +5806,7 @@ abstract class PigeonApiCameraState(open val pigeonRegistrar: CameraXLibraryPige
   abstract fun type(pigeon_instance: androidx.camera.core.CameraState): CameraStateType
 
   /** Potentially returns an error the camera encountered. */
-  abstract fun error(pigeon_instance: androidx.camera.core.CameraState): androidx.camera.core.CameraState.StateError
+  abstract fun error(pigeon_instance: androidx.camera.core.CameraState): androidx.camera.core.CameraState.StateError?
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of CameraState and attaches it to [pigeon_instanceArg]. */
@@ -3821,6 +5843,97 @@ abstract class PigeonApiCameraState(open val pigeonRegistrar: CameraXLibraryPige
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.CameraState;
+import androidx.camera.core.CameraState.StateError;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraState}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraStateProxyApi extends PigeonApiCameraState {
+  CameraStateProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public CameraStateType type(CameraState pigeon_instance) {
+    switch (pigeon_instance.type) {
+      case CameraStateType.CLOSED: return io.flutter.plugins.camerax.CameraStateType.CLOSED;
+      case CameraStateType.CLOSING: return io.flutter.plugins.camerax.CameraStateType.CLOSING;
+      case CameraStateType.OPEN: return io.flutter.plugins.camerax.CameraStateType.OPEN;
+      case CameraStateType.OPENING: return io.flutter.plugins.camerax.CameraStateType.OPENING;
+      case CameraStateType.PENDING_OPEN: return io.flutter.plugins.camerax.CameraStateType.PENDING_OPEN;
+      default: return io.flutter.plugins.camerax.CameraStateType.UNKNOWN;
+    }
+  }
+
+  @Nullable
+  @Override
+  public androidx.camera.core.CameraState.StateError? error(CameraState pigeon_instance) {
+    return pigeon_instance.getError();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.CameraState
+import androidx.camera.core.CameraState.StateError
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraStateProxyApiTest {
+  @Test
+  public void type() {
+    final PigeonApiCameraState api = new TestProxyApiRegistrar().getPigeonApiCameraState();
+
+    final CameraState instance = mock(CameraState.class);
+    final CameraStateType value = io.flutter.plugins.camerax.CameraStateType.CLOSED;
+    when(instance.getType()).thenReturn(value);
+
+    assertEquals(value, api.type(instance));
+  }
+
+  @Test
+  public void error() {
+    final PigeonApiCameraState api = new TestProxyApiRegistrar().getPigeonApiCameraState();
+
+    final CameraState instance = mock(CameraState.class);
+    final androidx.camera.core.CameraState.StateError value = mock(CameraStateStateError.class);
+    when(instance.getError()).thenReturn(value);
+
+    assertEquals(value, api.error(instance));
+  }
+
+}
+*/
 /**
  * An interface which contains the camera exposure related information.
  *
@@ -3872,6 +5985,90 @@ abstract class PigeonApiExposureState(open val pigeonRegistrar: CameraXLibraryPi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ExposureState;
+import android.util.Range<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ExposureState}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ExposureStateProxyApi extends PigeonApiExposureState {
+  ExposureStateProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public android.util.Range<*> exposureCompensationRange(ExposureState pigeon_instance) {
+    return pigeon_instance.getExposureCompensationRange();
+  }
+
+  @NonNull
+  @Override
+  public Double exposureCompensationStep(ExposureState pigeon_instance) {
+    return pigeon_instance.getExposureCompensationStep();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ExposureState
+import android.util.Range<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ExposureStateProxyApiTest {
+  @Test
+  public void exposureCompensationRange() {
+    final PigeonApiExposureState api = new TestProxyApiRegistrar().getPigeonApiExposureState();
+
+    final ExposureState instance = mock(ExposureState.class);
+    final android.util.Range<*> value = mock(CameraIntegerRange.class);
+    when(instance.getExposureCompensationRange()).thenReturn(value);
+
+    assertEquals(value, api.exposureCompensationRange(instance));
+  }
+
+  @Test
+  public void exposureCompensationStep() {
+    final PigeonApiExposureState api = new TestProxyApiRegistrar().getPigeonApiExposureState();
+
+    final ExposureState instance = mock(ExposureState.class);
+    final Double value = 1.0;
+    when(instance.getExposureCompensationStep()).thenReturn(value);
+
+    assertEquals(value, api.exposureCompensationStep(instance));
+  }
+
+}
+*/
 /**
  * An interface which contains the zoom related information from a camera.
  *
@@ -3920,6 +6117,88 @@ abstract class PigeonApiZoomState(open val pigeonRegistrar: CameraXLibraryPigeon
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ZoomState;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ZoomState}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ZoomStateProxyApi extends PigeonApiZoomState {
+  ZoomStateProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Double minZoomRatio(ZoomState pigeon_instance) {
+    return pigeon_instance.getMinZoomRatio();
+  }
+
+  @NonNull
+  @Override
+  public Double maxZoomRatio(ZoomState pigeon_instance) {
+    return pigeon_instance.getMaxZoomRatio();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ZoomState
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ZoomStateProxyApiTest {
+  @Test
+  public void minZoomRatio() {
+    final PigeonApiZoomState api = new TestProxyApiRegistrar().getPigeonApiZoomState();
+
+    final ZoomState instance = mock(ZoomState.class);
+    final Double value = 1.0;
+    when(instance.getMinZoomRatio()).thenReturn(value);
+
+    assertEquals(value, api.minZoomRatio(instance));
+  }
+
+  @Test
+  public void maxZoomRatio() {
+    final PigeonApiZoomState api = new TestProxyApiRegistrar().getPigeonApiZoomState();
+
+    final ZoomState instance = mock(ZoomState.class);
+    final Double value = 1.0;
+    when(instance.getMaxZoomRatio()).thenReturn(value);
+
+    assertEquals(value, api.maxZoomRatio(instance));
+  }
+
+}
+*/
 /**
  * A use case providing CPU accessible images for an app to perform image
  * analysis on.
@@ -4062,6 +6341,118 @@ abstract class PigeonApiImageAnalysis(open val pigeonRegistrar: CameraXLibraryPi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.ImageAnalysis.Analyzer;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ImageAnalysis}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
+  ImageAnalysisProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ImageAnalysis pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
+    return ImageAnalysis(targetRotation, resolutionSelector);
+  }
+
+  @Override
+  public Void setAnalyzer(ImageAnalysis, pigeon_instance@NonNull androidx.camera.core.ImageAnalysis.Analyzer analyzer) {
+    pigeon_instance.setAnalyzer(analyzer);
+  }
+
+  @Override
+  public Void clearAnalyzer(ImageAnalysis pigeon_instance) {
+    pigeon_instance.clearAnalyzer();
+  }
+
+  @Override
+  public Void setTargetRotation(ImageAnalysis, pigeon_instance@NonNull Long rotation) {
+    pigeon_instance.setTargetRotation(rotation);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.resolutionselector.ResolutionSelector
+import androidx.camera.core.ImageAnalysis.Analyzer
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ImageAnalysisProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
+
+    assertTrue(api.pigeon_defaultConstructor(0, mock(ResolutionSelector.class)) instanceof ImageAnalysisProxyApi.ImageAnalysis);
+  }
+
+  @Test
+  public void setAnalyzer() {
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
+
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    final androidx.camera.core.ImageAnalysis.Analyzer analyzer = mock(Analyzer.class);
+    api.setAnalyzer(instance, analyzer);
+
+    verify(instance).setAnalyzer(analyzer);
+  }
+
+  @Test
+  public void clearAnalyzer() {
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
+
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    api.clearAnalyzer(instance );
+
+    verify(instance).clearAnalyzer();
+  }
+
+  @Test
+  public void setTargetRotation() {
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
+
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    final Long rotation = 0;
+    api.setTargetRotation(instance, rotation);
+
+    verify(instance).setTargetRotation(rotation);
+  }
+
+}
+*/
 /**
  * Interface for analyzing images.
  *
@@ -4140,6 +6531,92 @@ abstract class PigeonApiAnalyzer(open val pigeonRegistrar: CameraXLibraryPigeonP
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ImageAnalysis.Analyzer;
+import androidx.camera.core.ImageProxy;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Analyzer}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class AnalyzerProxyApi extends PigeonApiAnalyzer {
+  AnalyzerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+  /** Implementation of {@link Analyzer} that passes arguments of callback methods to Dart. */
+  static class AnalyzerImpl extends Analyzer {
+    private final AnalyzerProxyApi api;
+    AnalyzerImpl(@NonNull AnalyzerProxyApi api) {
+      this.api = api;
+    }
+    @Override
+    public void analyze(@NonNull androidx.camera.core.ImageProxy image) {
+      api.getPigeonRegistrar().runOnMainThread(() -> api.analyze(this, image, reply -> null));
+    }
+  }
+
+  @NonNull
+  @Override
+  public Analyzer pigeon_defaultConstructor() {
+    return AnalyzerImpl();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ImageAnalysis.Analyzer
+import androidx.camera.core.ImageProxy
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class AnalyzerProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiAnalyzer api = new TestProxyApiRegistrar().getPigeonApiAnalyzer();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof AnalyzerProxyApi.AnalyzerImpl);
+  }
+
+  @Test
+  public void analyze() {
+    final AnalyzerProxyApi mockApi = mock(AnalyzerProxyApi.class);
+    when(mockApi.pigeonRegistrar).thenReturn(new TestProxyApiRegistrar());
+
+    final AnalyzerImpl instance = new AnalyzerImpl(mockApi);
+    final androidx.camera.core.ImageProxy image = mock(ImageProxy.class);
+    instance.analyze(image);
+
+    verify(mockApi).analyze(eq(instance), eq(image), any());
+  }
+
+}
+*/
 /**
  * Error that the camera has encountered.
  *
@@ -4184,6 +6661,80 @@ abstract class PigeonApiCameraStateStateError(open val pigeonRegistrar: CameraXL
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.CameraState.StateError;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraStateStateError}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraStateStateErrorProxyApi extends PigeonApiCameraStateStateError {
+  CameraStateStateErrorProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public CameraStateErrorCode code(CameraStateStateError pigeon_instance) {
+    switch (pigeon_instance.code) {
+      case CameraStateErrorCode.DISABLED: return io.flutter.plugins.camerax.CameraStateErrorCode.DISABLED;
+      case CameraStateErrorCode.FATAL_ERROR: return io.flutter.plugins.camerax.CameraStateErrorCode.FATAL_ERROR;
+      case CameraStateErrorCode.IN_USE: return io.flutter.plugins.camerax.CameraStateErrorCode.IN_USE;
+      case CameraStateErrorCode.DO_NOT_DISTURB_MODE_ENABLED: return io.flutter.plugins.camerax.CameraStateErrorCode.DO_NOT_DISTURB_MODE_ENABLED;
+      case CameraStateErrorCode.MAX_CAMERAS_IN_USE: return io.flutter.plugins.camerax.CameraStateErrorCode.MAX_CAMERAS_IN_USE;
+      case CameraStateErrorCode.OTHER_RECOVERABLE_ERROR: return io.flutter.plugins.camerax.CameraStateErrorCode.OTHER_RECOVERABLE_ERROR;
+      case CameraStateErrorCode.STREAM_CONFIG: return io.flutter.plugins.camerax.CameraStateErrorCode.STREAM_CONFIG;
+      default: return io.flutter.plugins.camerax.CameraStateErrorCode.UNKNOWN;
+    }
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.CameraState.StateError
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraStateStateErrorProxyApiTest {
+  @Test
+  public void code() {
+    final PigeonApiCameraStateStateError api = new TestProxyApiRegistrar().getPigeonApiCameraStateStateError();
+
+    final CameraStateStateError instance = mock(CameraStateStateError.class);
+    final CameraStateErrorCode value = io.flutter.plugins.camerax.CameraStateErrorCode.DISABLED;
+    when(instance.getCode()).thenReturn(value);
+
+    assertEquals(value, api.code(instance));
+  }
+
+}
+*/
 /**
  * LiveData is a data holder class that can be observed within a given
  * lifecycle.
@@ -4302,6 +6853,125 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.lifecycle.LiveData<*>;
+import androidx.lifecycle.Observer<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link LiveData}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class LiveDataProxyApi extends PigeonApiLiveData {
+  LiveDataProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public LiveDataSupportedType type(LiveData pigeon_instance) {
+    switch (pigeon_instance.type) {
+      case LiveDataSupportedType.CAMERA_STATE: return io.flutter.plugins.camerax.LiveDataSupportedType.CAMERA_STATE;
+      case LiveDataSupportedType.ZOOM_STATE: return io.flutter.plugins.camerax.LiveDataSupportedType.ZOOM_STATE;
+      default: return io.flutter.plugins.camerax.LiveDataSupportedType.UNKNOWN;
+    }
+  }
+
+  @Override
+  public Void observe(LiveData, pigeon_instance@NonNull androidx.lifecycle.Observer<*> observer) {
+    pigeon_instance.observe(observer);
+  }
+
+  @Override
+  public Void removeObservers(LiveData pigeon_instance) {
+    pigeon_instance.removeObservers();
+  }
+
+  @Nullable
+  @Override
+  public Any? getValue(LiveData pigeon_instance) {
+    return pigeon_instance.getValue();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.lifecycle.LiveData<*>
+import androidx.lifecycle.Observer<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class LiveDataProxyApiTest {
+  @Test
+  public void type() {
+    final PigeonApiLiveData api = new TestProxyApiRegistrar().getPigeonApiLiveData();
+
+    final LiveData instance = mock(LiveData.class);
+    final LiveDataSupportedType value = io.flutter.plugins.camerax.LiveDataSupportedType.CAMERA_STATE;
+    when(instance.getType()).thenReturn(value);
+
+    assertEquals(value, api.type(instance));
+  }
+
+  @Test
+  public void observe() {
+    final PigeonApiLiveData api = new TestProxyApiRegistrar().getPigeonApiLiveData();
+
+    final LiveData instance = mock(LiveData.class);
+    final androidx.lifecycle.Observer<*> observer = mock(Observer.class);
+    api.observe(instance, observer);
+
+    verify(instance).observe(observer);
+  }
+
+  @Test
+  public void removeObservers() {
+    final PigeonApiLiveData api = new TestProxyApiRegistrar().getPigeonApiLiveData();
+
+    final LiveData instance = mock(LiveData.class);
+    api.removeObservers(instance );
+
+    verify(instance).removeObservers();
+  }
+
+  @Test
+  public void getValue() {
+    final PigeonApiLiveData api = new TestProxyApiRegistrar().getPigeonApiLiveData();
+
+    final LiveData instance = mock(LiveData.class);
+    final Any value = -1;
+    when(instance.getValue()).thenReturn(value);
+
+    assertEquals(value, api.getValue(instance ));
+  }
+
+}
+*/
 /**
  * An image proxy which has a similar interface as `android.media.Image`.
  *
@@ -4402,6 +7072,139 @@ abstract class PigeonApiImageProxy(open val pigeonRegistrar: CameraXLibraryPigeo
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.ImageProxy.PlaneProxy;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ImageProxy}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ImageProxyProxyApi extends PigeonApiImageProxy {
+  ImageProxyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Long format(ImageProxy pigeon_instance) {
+    return pigeon_instance.getFormat();
+  }
+
+  @NonNull
+  @Override
+  public Long width(ImageProxy pigeon_instance) {
+    return pigeon_instance.getWidth();
+  }
+
+  @NonNull
+  @Override
+  public Long height(ImageProxy pigeon_instance) {
+    return pigeon_instance.getHeight();
+  }
+
+  @NonNull
+  @Override
+  public List<androidx.camera.core.ImageProxy.PlaneProxy> getPlanes(ImageProxy pigeon_instance) {
+    return pigeon_instance.getPlanes();
+  }
+
+  @Override
+  public Void close(ImageProxy pigeon_instance) {
+    pigeon_instance.close();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.ImageProxy.PlaneProxy
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ImageProxyProxyApiTest {
+  @Test
+  public void format() {
+    final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
+
+    final ImageProxy instance = mock(ImageProxy.class);
+    final Long value = 0;
+    when(instance.getFormat()).thenReturn(value);
+
+    assertEquals(value, api.format(instance));
+  }
+
+  @Test
+  public void width() {
+    final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
+
+    final ImageProxy instance = mock(ImageProxy.class);
+    final Long value = 0;
+    when(instance.getWidth()).thenReturn(value);
+
+    assertEquals(value, api.width(instance));
+  }
+
+  @Test
+  public void height() {
+    final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
+
+    final ImageProxy instance = mock(ImageProxy.class);
+    final Long value = 0;
+    when(instance.getHeight()).thenReturn(value);
+
+    assertEquals(value, api.height(instance));
+  }
+
+  @Test
+  public void getPlanes() {
+    final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
+
+    final ImageProxy instance = mock(ImageProxy.class);
+    final List<androidx.camera.core.ImageProxy.PlaneProxy> value = Arrays.asList(mock(PlaneProxy.class));
+    when(instance.getPlanes()).thenReturn(value);
+
+    assertEquals(value, api.getPlanes(instance ));
+  }
+
+  @Test
+  public void close() {
+    final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
+
+    final ImageProxy instance = mock(ImageProxy.class);
+    api.close(instance );
+
+    verify(instance).close();
+  }
+
+}
+*/
 /**
  * A plane proxy which has an analogous interface as
  * `android.media.Image.Plane`.
@@ -4455,6 +7258,105 @@ abstract class PigeonApiPlaneProxy(open val pigeonRegistrar: CameraXLibraryPigeo
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.ImageProxy.PlaneProxy;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link PlaneProxy}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class PlaneProxyProxyApi extends PigeonApiPlaneProxy {
+  PlaneProxyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ByteArray buffer(PlaneProxy pigeon_instance) {
+    return pigeon_instance.getBuffer();
+  }
+
+  @NonNull
+  @Override
+  public Long pixelStride(PlaneProxy pigeon_instance) {
+    return pigeon_instance.getPixelStride();
+  }
+
+  @NonNull
+  @Override
+  public Long rowStride(PlaneProxy pigeon_instance) {
+    return pigeon_instance.getRowStride();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.ImageProxy.PlaneProxy
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class PlaneProxyProxyApiTest {
+  @Test
+  public void buffer() {
+    final PigeonApiPlaneProxy api = new TestProxyApiRegistrar().getPigeonApiPlaneProxy();
+
+    final PlaneProxy instance = mock(PlaneProxy.class);
+    final ByteArray value = {0xA1};
+    when(instance.getBuffer()).thenReturn(value);
+
+    assertEquals(value, api.buffer(instance));
+  }
+
+  @Test
+  public void pixelStride() {
+    final PigeonApiPlaneProxy api = new TestProxyApiRegistrar().getPigeonApiPlaneProxy();
+
+    final PlaneProxy instance = mock(PlaneProxy.class);
+    final Long value = 0;
+    when(instance.getPixelStride()).thenReturn(value);
+
+    assertEquals(value, api.pixelStride(instance));
+  }
+
+  @Test
+  public void rowStride() {
+    final PigeonApiPlaneProxy api = new TestProxyApiRegistrar().getPigeonApiPlaneProxy();
+
+    final PlaneProxy instance = mock(PlaneProxy.class);
+    final Long value = 0;
+    when(instance.getRowStride()).thenReturn(value);
+
+    assertEquals(value, api.rowStride(instance));
+  }
+
+}
+*/
 /**
  * Defines a desired quality setting that can be used to configure components
  * with quality setting requirements such as creating a Recorder.
@@ -4570,6 +7472,92 @@ abstract class PigeonApiQualitySelector(open val pigeonRegistrar: CameraXLibrary
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.QualitySelector;
+import androidx.camera.video.FallbackStrategy;
+import androidx.camera.core.CameraInfo;
+import android.util.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link QualitySelector}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class QualitySelectorProxyApi extends PigeonApiQualitySelector {
+  QualitySelectorProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public QualitySelector from(@NonNull VideoQuality quality, @Nullable androidx.camera.video.FallbackStrategy? fallbackStrategy) {
+    return QualitySelector(quality, fallbackStrategy);
+  }
+
+  @NonNull
+  @Override
+  public QualitySelector fromOrderedList(@NonNull List<VideoQuality> qualities, @Nullable androidx.camera.video.FallbackStrategy? fallbackStrategy) {
+    return QualitySelector(qualities, fallbackStrategy);
+  }
+
+  @Nullable
+  @Override
+  public android.util.Size? getResolution(@NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull VideoQuality quality) {
+    return QualitySelector.getResolution(cameraInfo, quality);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.QualitySelector
+import androidx.camera.video.FallbackStrategy
+import androidx.camera.core.CameraInfo
+import android.util.Size
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class QualitySelectorProxyApiTest {
+  @Test
+  public void from() {
+    final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+
+    assertTrue(api.from(io.flutter.plugins.camerax.VideoQuality.SD, mock(FallbackStrategy.class)) instanceof QualitySelectorProxyApi.QualitySelector);
+  }
+
+  @Test
+  public void fromOrderedList() {
+    final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+
+    assertTrue(api.fromOrderedList(Arrays.asList(io.flutter.plugins.camerax.VideoQuality.SD), mock(FallbackStrategy.class)) instanceof QualitySelectorProxyApi.QualitySelector);
+  }
+
+}
+*/
 /**
  * A class represents the strategy that will be adopted when the device does
  * not support all the desired Quality in QualitySelector in order to select
@@ -4719,6 +7707,106 @@ abstract class PigeonApiFallbackStrategy(open val pigeonRegistrar: CameraXLibrar
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.video.FallbackStrategy;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link FallbackStrategy}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class FallbackStrategyProxyApi extends PigeonApiFallbackStrategy {
+  FallbackStrategyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public FallbackStrategy higherQualityOrLowerThan(@NonNull VideoQuality quality) {
+    return FallbackStrategy(quality);
+  }
+
+  @NonNull
+  @Override
+  public FallbackStrategy higherQualityThan(@NonNull VideoQuality quality) {
+    return FallbackStrategy(quality);
+  }
+
+  @NonNull
+  @Override
+  public FallbackStrategy lowerQualityOrHigherThan(@NonNull VideoQuality quality) {
+    return FallbackStrategy(quality);
+  }
+
+  @NonNull
+  @Override
+  public FallbackStrategy lowerQualityThan(@NonNull VideoQuality quality) {
+    return FallbackStrategy(quality);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.video.FallbackStrategy
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class FallbackStrategyProxyApiTest {
+  @Test
+  public void higherQualityOrLowerThan() {
+    final PigeonApiFallbackStrategy api = new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
+
+    assertTrue(api.higherQualityOrLowerThan(io.flutter.plugins.camerax.VideoQuality.SD) instanceof FallbackStrategyProxyApi.FallbackStrategy);
+  }
+
+  @Test
+  public void higherQualityThan() {
+    final PigeonApiFallbackStrategy api = new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
+
+    assertTrue(api.higherQualityThan(io.flutter.plugins.camerax.VideoQuality.SD) instanceof FallbackStrategyProxyApi.FallbackStrategy);
+  }
+
+  @Test
+  public void lowerQualityOrHigherThan() {
+    final PigeonApiFallbackStrategy api = new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
+
+    assertTrue(api.lowerQualityOrHigherThan(io.flutter.plugins.camerax.VideoQuality.SD) instanceof FallbackStrategyProxyApi.FallbackStrategy);
+  }
+
+  @Test
+  public void lowerQualityThan() {
+    final PigeonApiFallbackStrategy api = new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
+
+    assertTrue(api.lowerQualityThan(io.flutter.plugins.camerax.VideoQuality.SD) instanceof FallbackStrategyProxyApi.FallbackStrategy);
+  }
+
+}
+*/
 /**
  * The CameraControl provides various asynchronous operations like zoom, focus
  * and metering which affects output of all UseCases currently bound to that
@@ -4887,6 +7975,141 @@ abstract class PigeonApiCameraControl(open val pigeonRegistrar: CameraXLibraryPi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.CameraControl;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.FocusMeteringResult;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraControl}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraControlProxyApi extends PigeonApiCameraControl {
+  CameraControlProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @Override
+  public Void enableTorch(CameraControl, pigeon_instance@NonNull Boolean torch) {
+    pigeon_instance.enableTorch(torch);
+  }
+
+  @Override
+  public Void setZoomRatio(CameraControl, pigeon_instance@NonNull Double ratio) {
+    pigeon_instance.setZoomRatio(ratio);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.FocusMeteringResult startFocusAndMetering(CameraControl, pigeon_instance@NonNull androidx.camera.core.FocusMeteringAction action) {
+    return pigeon_instance.startFocusAndMetering(action);
+  }
+
+  @Override
+  public Void cancelFocusAndMetering(CameraControl pigeon_instance) {
+    pigeon_instance.cancelFocusAndMetering();
+  }
+
+  @NonNull
+  @Override
+  public Long setExposureCompensationIndex(CameraControl, pigeon_instance@NonNull Long index) {
+    return pigeon_instance.setExposureCompensationIndex(index);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.CameraControl
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.FocusMeteringResult
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraControlProxyApiTest {
+  @Test
+  public void enableTorch() {
+    final PigeonApiCameraControl api = new TestProxyApiRegistrar().getPigeonApiCameraControl();
+
+    final CameraControl instance = mock(CameraControl.class);
+    final Boolean torch = true;
+    api.enableTorch(instance, torch);
+
+    verify(instance).enableTorch(torch);
+  }
+
+  @Test
+  public void setZoomRatio() {
+    final PigeonApiCameraControl api = new TestProxyApiRegistrar().getPigeonApiCameraControl();
+
+    final CameraControl instance = mock(CameraControl.class);
+    final Double ratio = 1.0;
+    api.setZoomRatio(instance, ratio);
+
+    verify(instance).setZoomRatio(ratio);
+  }
+
+  @Test
+  public void startFocusAndMetering() {
+    final PigeonApiCameraControl api = new TestProxyApiRegistrar().getPigeonApiCameraControl();
+
+    final CameraControl instance = mock(CameraControl.class);
+    final androidx.camera.core.FocusMeteringAction action = mock(FocusMeteringAction.class);
+    final androidx.camera.core.FocusMeteringResult value = mock(FocusMeteringResult.class);
+    when(instance.startFocusAndMetering(action)).thenReturn(value);
+
+    assertEquals(value, api.startFocusAndMetering(instance, action));
+  }
+
+  @Test
+  public void cancelFocusAndMetering() {
+    final PigeonApiCameraControl api = new TestProxyApiRegistrar().getPigeonApiCameraControl();
+
+    final CameraControl instance = mock(CameraControl.class);
+    api.cancelFocusAndMetering(instance );
+
+    verify(instance).cancelFocusAndMetering();
+  }
+
+  @Test
+  public void setExposureCompensationIndex() {
+    final PigeonApiCameraControl api = new TestProxyApiRegistrar().getPigeonApiCameraControl();
+
+    final CameraControl instance = mock(CameraControl.class);
+    final Long index = 0;
+    final Long value = 0;
+    when(instance.setExposureCompensationIndex(index)).thenReturn(value);
+
+    assertEquals(value, api.setExposureCompensationIndex(instance, index));
+  }
+
+}
+*/
 /**
  * The builder used to create the `FocusMeteringAction`.
  *
@@ -5020,13 +8243,142 @@ abstract class PigeonApiFocusMeteringActionBuilder(open val pigeonRegistrar: Cam
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.FocusMeteringAction.Builder;
+import androidx.camera.core.MeteringPoint;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link FocusMeteringActionBuilder}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBuilder {
+  FocusMeteringActionBuilderProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @Override
+  public Void addPoint(FocusMeteringActionBuilder, pigeon_instance@NonNull androidx.camera.core.MeteringPoint point) {
+    pigeon_instance.addPoint(point);
+  }
+
+  @Override
+  public Void addPointWithMode(FocusMeteringActionBuilder, pigeon_instance@NonNull androidx.camera.core.MeteringPoint point, @NonNull List<MeteringMode> modes) {
+    pigeon_instance.addPointWithMode(point, modes);
+  }
+
+  @Override
+  public Void disableAutoCancel(FocusMeteringActionBuilder pigeon_instance) {
+    pigeon_instance.disableAutoCancel();
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.FocusMeteringAction build(FocusMeteringActionBuilder pigeon_instance) {
+    return pigeon_instance.build();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.FocusMeteringAction.Builder
+import androidx.camera.core.MeteringPoint
+import androidx.camera.core.FocusMeteringAction
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class FocusMeteringActionBuilderProxyApiTest {
+  @Test
+  public void addPoint() {
+    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+
+    final FocusMeteringActionBuilder instance = mock(FocusMeteringActionBuilder.class);
+    final androidx.camera.core.MeteringPoint point = mock(MeteringPoint.class);
+    api.addPoint(instance, point);
+
+    verify(instance).addPoint(point);
+  }
+
+  @Test
+  public void addPointWithMode() {
+    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+
+    final FocusMeteringActionBuilder instance = mock(FocusMeteringActionBuilder.class);
+    final androidx.camera.core.MeteringPoint point = mock(MeteringPoint.class);
+    final List<MeteringMode> modes = Arrays.asList(io.flutter.plugins.camerax.MeteringMode.AE);
+    api.addPointWithMode(instance, point, modes);
+
+    verify(instance).addPointWithMode(point, modes);
+  }
+
+  @Test
+  public void disableAutoCancel() {
+    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+
+    final FocusMeteringActionBuilder instance = mock(FocusMeteringActionBuilder.class);
+    api.disableAutoCancel(instance );
+
+    verify(instance).disableAutoCancel();
+  }
+
+  @Test
+  public void build() {
+    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+
+    final FocusMeteringActionBuilder instance = mock(FocusMeteringActionBuilder.class);
+    final androidx.camera.core.FocusMeteringAction value = mock(FocusMeteringAction.class);
+    when(instance.build()).thenReturn(value);
+
+    assertEquals(value, api.build(instance ));
+  }
+
+}
+*/
 /**
  * A configuration used to trigger a focus and/or metering action.
  *
  * See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction.
  */
 @Suppress("UNCHECKED_CAST")
-open class PigeonApiFocusMeteringAction(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
+abstract class PigeonApiFocusMeteringAction(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
+  /** All MeteringPoints used for AE regions. */
+  abstract fun meteringPointsAe(pigeon_instance: androidx.camera.core.FocusMeteringAction): List<androidx.camera.core.MeteringPoint>
+
+  /** All MeteringPoints used for AF regions. */
+  abstract fun meteringPointsAf(pigeon_instance: androidx.camera.core.FocusMeteringAction): List<androidx.camera.core.MeteringPoint>
+
+  /** All MeteringPoints used for AWB regions. */
+  abstract fun meteringPointsAwb(pigeon_instance: androidx.camera.core.FocusMeteringAction): List<androidx.camera.core.MeteringPoint>
+
+  /** If auto-cancel is enabled or not. */
+  abstract fun isAutoCancelEnabled(pigeon_instance: androidx.camera.core.FocusMeteringAction): Boolean
+
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of FocusMeteringAction and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: androidx.camera.core.FocusMeteringAction, callback: (Result<Unit>) -> Unit)
@@ -5042,11 +8394,15 @@ open class PigeonApiFocusMeteringAction(open val pigeonRegistrar: CameraXLibrary
       return
     }
     val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val meteringPointsAeArg = meteringPointsAe(pigeon_instanceArg)
+    val meteringPointsAfArg = meteringPointsAf(pigeon_instanceArg)
+    val meteringPointsAwbArg = meteringPointsAwb(pigeon_instanceArg)
+    val isAutoCancelEnabledArg = isAutoCancelEnabled(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.camera_android_camerax.FocusMeteringAction.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
+    channel.send(listOf(pigeon_identifierArg, meteringPointsAeArg, meteringPointsAfArg, meteringPointsAwbArg, isAutoCancelEnabledArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -5060,6 +8416,124 @@ open class PigeonApiFocusMeteringAction(open val pigeonRegistrar: CameraXLibrary
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.MeteringPoint;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link FocusMeteringAction}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class FocusMeteringActionProxyApi extends PigeonApiFocusMeteringAction {
+  FocusMeteringActionProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public List<androidx.camera.core.MeteringPoint> meteringPointsAe(FocusMeteringAction pigeon_instance) {
+    return pigeon_instance.getMeteringPointsAe();
+  }
+
+  @NonNull
+  @Override
+  public List<androidx.camera.core.MeteringPoint> meteringPointsAf(FocusMeteringAction pigeon_instance) {
+    return pigeon_instance.getMeteringPointsAf();
+  }
+
+  @NonNull
+  @Override
+  public List<androidx.camera.core.MeteringPoint> meteringPointsAwb(FocusMeteringAction pigeon_instance) {
+    return pigeon_instance.getMeteringPointsAwb();
+  }
+
+  @NonNull
+  @Override
+  public Boolean isAutoCancelEnabled(FocusMeteringAction pigeon_instance) {
+    return pigeon_instance.getIsAutoCancelEnabled();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.MeteringPoint
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class FocusMeteringActionProxyApiTest {
+  @Test
+  public void meteringPointsAe() {
+    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
+
+    final FocusMeteringAction instance = mock(FocusMeteringAction.class);
+    final List<androidx.camera.core.MeteringPoint> value = Arrays.asList(mock(MeteringPoint.class));
+    when(instance.getMeteringPointsAe()).thenReturn(value);
+
+    assertEquals(value, api.meteringPointsAe(instance));
+  }
+
+  @Test
+  public void meteringPointsAf() {
+    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
+
+    final FocusMeteringAction instance = mock(FocusMeteringAction.class);
+    final List<androidx.camera.core.MeteringPoint> value = Arrays.asList(mock(MeteringPoint.class));
+    when(instance.getMeteringPointsAf()).thenReturn(value);
+
+    assertEquals(value, api.meteringPointsAf(instance));
+  }
+
+  @Test
+  public void meteringPointsAwb() {
+    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
+
+    final FocusMeteringAction instance = mock(FocusMeteringAction.class);
+    final List<androidx.camera.core.MeteringPoint> value = Arrays.asList(mock(MeteringPoint.class));
+    when(instance.getMeteringPointsAwb()).thenReturn(value);
+
+    assertEquals(value, api.meteringPointsAwb(instance));
+  }
+
+  @Test
+  public void isAutoCancelEnabled() {
+    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
+
+    final FocusMeteringAction instance = mock(FocusMeteringAction.class);
+    final Boolean value = true;
+    when(instance.getIsAutoCancelEnabled()).thenReturn(value);
+
+    assertEquals(value, api.isAutoCancelEnabled(instance));
+  }
+
+}
+*/
 /**
  * Result of the `CameraControl.startFocusAndMetering`.
  *
@@ -5104,6 +8578,71 @@ abstract class PigeonApiFocusMeteringResult(open val pigeonRegistrar: CameraXLib
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.FocusMeteringResult;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link FocusMeteringResult}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class FocusMeteringResultProxyApi extends PigeonApiFocusMeteringResult {
+  FocusMeteringResultProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Boolean isFocusSuccessful(FocusMeteringResult pigeon_instance) {
+    return pigeon_instance.getIsFocusSuccessful();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.FocusMeteringResult
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class FocusMeteringResultProxyApiTest {
+  @Test
+  public void isFocusSuccessful() {
+    final PigeonApiFocusMeteringResult api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringResult();
+
+    final FocusMeteringResult instance = mock(FocusMeteringResult.class);
+    final Boolean value = true;
+    when(instance.getIsFocusSuccessful()).thenReturn(value);
+
+    assertEquals(value, api.isFocusSuccessful(instance));
+  }
+
+}
+*/
 /**
  * An immutable package of settings and outputs needed to capture a single
  * image from the camera device.
@@ -5180,6 +8719,62 @@ abstract class PigeonApiCaptureRequest(open val pigeonRegistrar: CameraXLibraryP
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureRequest.Key<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CaptureRequest}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CaptureRequestProxyApi extends PigeonApiCaptureRequest {
+  CaptureRequestProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public android.hardware.camera2.CaptureRequest.Key<*> controlAELock() {
+    return CaptureRequest.getControlAELock();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import android.hardware.camera2.CaptureRequest
+import android.hardware.camera2.CaptureRequest.Key<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CaptureRequestProxyApiTest {
+}
+*/
 /**
  * A Key is used to do capture request field lookups with CaptureRequest.get or
  * to set fields with `CaptureRequest.Builder.set`.
@@ -5221,6 +8816,54 @@ open class PigeonApiCaptureRequestKey(open val pigeonRegistrar: CameraXLibraryPi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import android.hardware.camera2.CaptureRequest.Key<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CaptureRequestKey}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CaptureRequestKeyProxyApi extends PigeonApiCaptureRequestKey {
+  CaptureRequestKeyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import android.hardware.camera2.CaptureRequest.Key<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CaptureRequestKeyProxyApiTest {
+}
+*/
 /**
  * A bundle of Camera2 capture request options.
  *
@@ -5289,6 +8932,69 @@ abstract class PigeonApiCaptureRequestOptions(open val pigeonRegistrar: CameraXL
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.camera2.interop.CaptureRequestOptions;
+import android.hardware.camera2.CaptureRequest.Key<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CaptureRequestOptions}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
+  CaptureRequestOptionsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public CaptureRequestOptions pigeon_defaultConstructor(@NonNull Map<android.hardware.camera2.CaptureRequest.Key<*>, Any?> options) {
+    return CaptureRequestOptions(options);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.camera2.interop.CaptureRequestOptions
+import android.hardware.camera2.CaptureRequest.Key<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CaptureRequestOptionsProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiCaptureRequestOptions api = new TestProxyApiRegistrar().getPigeonApiCaptureRequestOptions();
+
+    assertTrue(api.pigeon_defaultConstructor(new HashMap<String, String>() {{put(mock(CaptureRequestKey.class), -1)}}) instanceof CaptureRequestOptionsProxyApi.CaptureRequestOptions);
+  }
+
+}
+*/
 /**
  * An class that provides ability to interoperate with the
  * 1android.hardware.camera21 APIs.
@@ -5385,6 +9091,87 @@ abstract class PigeonApiCamera2CameraControl(open val pigeonRegistrar: CameraXLi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.camera2.interop.Camera2CameraControl;
+import androidx.camera.core.CameraControl;
+import androidx.camera.camera2.interop.CaptureRequestOptions;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Camera2CameraControl}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class Camera2CameraControlProxyApi extends PigeonApiCamera2CameraControl {
+  Camera2CameraControlProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Camera2CameraControl from(@NonNull androidx.camera.core.CameraControl cameraControl) {
+    return Camera2CameraControl(cameraControl);
+  }
+
+  @Override
+  public Void addCaptureRequestOptions(Camera2CameraControl, pigeon_instance@NonNull androidx.camera.camera2.interop.CaptureRequestOptions bundle) {
+    pigeon_instance.addCaptureRequestOptions(bundle);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.camera2.interop.Camera2CameraControl
+import androidx.camera.core.CameraControl
+import androidx.camera.camera2.interop.CaptureRequestOptions
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class Camera2CameraControlProxyApiTest {
+  @Test
+  public void from() {
+    final PigeonApiCamera2CameraControl api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraControl();
+
+    assertTrue(api.from(mock(CameraControl.class)) instanceof Camera2CameraControlProxyApi.Camera2CameraControl);
+  }
+
+  @Test
+  public void addCaptureRequestOptions() {
+    final PigeonApiCamera2CameraControl api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraControl();
+
+    final Camera2CameraControl instance = mock(Camera2CameraControl.class);
+    final androidx.camera.camera2.interop.CaptureRequestOptions bundle = mock(CaptureRequestOptions.class);
+    api.addCaptureRequestOptions(instance, bundle);
+
+    verify(instance).addCaptureRequestOptions(bundle);
+  }
+
+}
+*/
 /**
  * Applications can filter out unsuitable sizes and sort the resolution list in
  * the preferred order by implementing the resolution filter interface.
@@ -5454,6 +9241,69 @@ abstract class PigeonApiResolutionFilter(open val pigeonRegistrar: CameraXLibrar
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.resolutionselector.ResolutionFilter;
+import android.util.Size;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link ResolutionFilter}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class ResolutionFilterProxyApi extends PigeonApiResolutionFilter {
+  ResolutionFilterProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public ResolutionFilter createWithOnePreferredSize(@NonNull android.util.Size preferredSize) {
+    return ResolutionFilter(preferredSize);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.resolutionselector.ResolutionFilter
+import android.util.Size
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class ResolutionFilterProxyApiTest {
+  @Test
+  public void createWithOnePreferredSize() {
+    final PigeonApiResolutionFilter api = new TestProxyApiRegistrar().getPigeonApiResolutionFilter();
+
+    assertTrue(api.createWithOnePreferredSize(mock(CameraSize.class)) instanceof ResolutionFilterProxyApi.ResolutionFilter);
+  }
+
+}
+*/
 /**
  * A Key is used to do camera characteristics field lookups with
  * `CameraCharacteristics.get`.
@@ -5495,6 +9345,54 @@ open class PigeonApiCameraCharacteristicsKey(open val pigeonRegistrar: CameraXLi
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import android.hardware.camera2.CameraCharacteristics.Key<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraCharacteristicsKey}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraCharacteristicsKeyProxyApi extends PigeonApiCameraCharacteristicsKey {
+  CameraCharacteristicsKeyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import android.hardware.camera2.CameraCharacteristics.Key<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraCharacteristicsKeyProxyApiTest {
+}
+*/
 /**
  * The properties describing a `CameraDevice`.
  *
@@ -5597,6 +9495,68 @@ abstract class PigeonApiCameraCharacteristics(open val pigeonRegistrar: CameraXL
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraCharacteristics.Key<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link CameraCharacteristics}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class CameraCharacteristicsProxyApi extends PigeonApiCameraCharacteristics {
+  CameraCharacteristicsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public android.hardware.camera2.CameraCharacteristics.Key<*> infoSupportedHardwareLevel() {
+    return CameraCharacteristics.getInfoSupportedHardwareLevel();
+  }
+
+  @NonNull
+  @Override
+  public android.hardware.camera2.CameraCharacteristics.Key<*> sensorOrientation() {
+    return CameraCharacteristics.getSensorOrientation();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraCharacteristics.Key<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class CameraCharacteristicsProxyApiTest {
+}
+*/
 /**
  * An interface for retrieving Camera2-related camera information.
  *
@@ -5707,3 +9667,431 @@ abstract class PigeonApiCamera2CameraInfo(open val pigeonRegistrar: CameraXLibra
   }
 
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.camera2.interop.Camera2CameraInfo;
+import androidx.camera.core.CameraInfo;
+import android.hardware.camera2.CameraCharacteristics.Key<*>;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link Camera2CameraInfo}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
+  Camera2CameraInfoProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public Camera2CameraInfo from(@NonNull androidx.camera.core.CameraInfo cameraInfo) {
+    return Camera2CameraInfo(cameraInfo);
+  }
+
+  @NonNull
+  @Override
+  public String getCameraId(Camera2CameraInfo pigeon_instance) {
+    return pigeon_instance.getCameraId();
+  }
+
+  @Nullable
+  @Override
+  public Any? getCameraCharacteristic(Camera2CameraInfo, pigeon_instance@NonNull android.hardware.camera2.CameraCharacteristics.Key<*> key) {
+    return pigeon_instance.getCameraCharacteristic(key);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.camera2.interop.Camera2CameraInfo
+import androidx.camera.core.CameraInfo
+import android.hardware.camera2.CameraCharacteristics.Key<*>
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class Camera2CameraInfoProxyApiTest {
+  @Test
+  public void from() {
+    final PigeonApiCamera2CameraInfo api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
+
+    assertTrue(api.from(mock(CameraInfo.class)) instanceof Camera2CameraInfoProxyApi.Camera2CameraInfo);
+  }
+
+  @Test
+  public void getCameraId() {
+    final PigeonApiCamera2CameraInfo api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
+
+    final Camera2CameraInfo instance = mock(Camera2CameraInfo.class);
+    final String value = "myString";
+    when(instance.getCameraId()).thenReturn(value);
+
+    assertEquals(value, api.getCameraId(instance ));
+  }
+
+  @Test
+  public void getCameraCharacteristic() {
+    final PigeonApiCamera2CameraInfo api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
+
+    final Camera2CameraInfo instance = mock(Camera2CameraInfo.class);
+    final android.hardware.camera2.CameraCharacteristics.Key<*> key = mock(CameraCharacteristicsKey.class);
+    final Any value = -1;
+    when(instance.getCameraCharacteristic(key)).thenReturn(value);
+
+    assertEquals(value, api.getCameraCharacteristic(instance, key));
+  }
+
+}
+*/
+/**
+ * A factory to create a MeteringPoint.
+ *
+ * See https://developer.android.com/reference/androidx/camera/core/MeteringPointFactory.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiMeteringPointFactory(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
+  /** Creates a MeteringPoint by x, y. */
+  abstract fun createPoint(pigeon_instance: androidx.camera.core.MeteringPointFactory, x: Double, y: Double): androidx.camera.core.MeteringPoint
+
+  /** Creates a MeteringPoint by x, y, size. */
+  abstract fun createPointWithSize(pigeon_instance: androidx.camera.core.MeteringPointFactory, x: Double, y: Double, size: Double): androidx.camera.core.MeteringPoint
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiMeteringPointFactory?) {
+      val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.createPoint", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.MeteringPointFactory
+            val xArg = args[1] as Double
+            val yArg = args[2] as Double
+            val wrapped: List<Any?> = try {
+              listOf(api.createPoint(pigeon_instanceArg, xArg, yArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.createPointWithSize", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.MeteringPointFactory
+            val xArg = args[1] as Double
+            val yArg = args[2] as Double
+            val sizeArg = args[3] as Double
+            val wrapped: List<Any?> = try {
+              listOf(api.createPointWithSize(pigeon_instanceArg, xArg, yArg, sizeArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of MeteringPointFactory and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: androidx.camera.core.MeteringPointFactory, callback: (Result<Unit>) -> Unit)
+{
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.MeteringPointFactory;
+import androidx.camera.core.MeteringPoint;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link MeteringPointFactory}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class MeteringPointFactoryProxyApi extends PigeonApiMeteringPointFactory {
+  MeteringPointFactoryProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.MeteringPoint createPoint(MeteringPointFactory, pigeon_instance@NonNull Double x, @NonNull Double y) {
+    return pigeon_instance.createPoint(x, y);
+  }
+
+  @NonNull
+  @Override
+  public androidx.camera.core.MeteringPoint createPointWithSize(MeteringPointFactory, pigeon_instance@NonNull Double x, @NonNull Double y, @NonNull Double size) {
+    return pigeon_instance.createPointWithSize(x, y, size);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.MeteringPointFactory
+import androidx.camera.core.MeteringPoint
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class MeteringPointFactoryProxyApiTest {
+  @Test
+  public void createPoint() {
+    final PigeonApiMeteringPointFactory api = new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
+
+    final MeteringPointFactory instance = mock(MeteringPointFactory.class);
+    final Double x = 1.0;
+    final Double y = 1.0;
+    final androidx.camera.core.MeteringPoint value = mock(MeteringPoint.class);
+    when(instance.createPoint(x, y)).thenReturn(value);
+
+    assertEquals(value, api.createPoint(instance, x, y));
+  }
+
+  @Test
+  public void createPointWithSize() {
+    final PigeonApiMeteringPointFactory api = new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
+
+    final MeteringPointFactory instance = mock(MeteringPointFactory.class);
+    final Double x = 1.0;
+    final Double y = 1.0;
+    final Double size = 1.0;
+    final androidx.camera.core.MeteringPoint value = mock(MeteringPoint.class);
+    when(instance.createPointWithSize(x, y, size)).thenReturn(value);
+
+    assertEquals(value, api.createPointWithSize(instance, x, y, size));
+  }
+
+}
+*/
+/**
+ * A MeteringPointFactory that can convert a View (x, y) into a MeteringPoint
+ * which can then be used to construct a FocusMeteringAction to start a focus
+ * and metering action.
+ *
+ * See https://developer.android.com/reference/androidx/camera/core/DisplayOrientedMeteringPointFactory.
+ */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiDisplayOrientedMeteringPointFactory(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
+  /**
+   * Creates a DisplayOrientedMeteringPointFactory for converting View (x, y)
+   * into a MeteringPoint based on the current display's rotation and
+   * CameraInfo.
+   */
+  abstract fun pigeon_defaultConstructor(cameraInfo: androidx.camera.core.CameraInfo, width: Double, height: Double): androidx.camera.core.DisplayOrientedMeteringPointFactory
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiDisplayOrientedMeteringPointFactory?) {
+      val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.DisplayOrientedMeteringPointFactory.pigeon_defaultConstructor", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val cameraInfoArg = args[1] as androidx.camera.core.CameraInfo
+            val widthArg = args[2] as Double
+            val heightArg = args[3] as Double
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(cameraInfoArg,widthArg,heightArg), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of DisplayOrientedMeteringPointFactory and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: androidx.camera.core.DisplayOrientedMeteringPointFactory, callback: (Result<Unit>) -> Unit)
+{
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.camera_android_camerax.DisplayOrientedMeteringPointFactory.pigeon_newInstance"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_identifierArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+
+  @Suppress("FunctionName")
+  /** An implementation of [PigeonApiMeteringPointFactory] used to access callback methods */
+  fun pigeon_getPigeonApiMeteringPointFactory(): PigeonApiMeteringPointFactory
+  {
+    return pigeonRegistrar.getPigeonApiMeteringPointFactory()
+  }
+
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import androidx.camera.core.DisplayOrientedMeteringPointFactory;
+import androidx.camera.core.CameraInfo;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link DisplayOrientedMeteringPointFactory}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class DisplayOrientedMeteringPointFactoryProxyApi extends PigeonApiDisplayOrientedMeteringPointFactory {
+  DisplayOrientedMeteringPointFactoryProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+
+  @NonNull
+  @Override
+  public DisplayOrientedMeteringPointFactory pigeon_defaultConstructor(@NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull Double width, @NonNull Double height) {
+    return DisplayOrientedMeteringPointFactory(cameraInfo, width, height);
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+import androidx.camera.core.DisplayOrientedMeteringPointFactory
+import androidx.camera.core.CameraInfo
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class DisplayOrientedMeteringPointFactoryProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiDisplayOrientedMeteringPointFactory api = new TestProxyApiRegistrar().getPigeonApiDisplayOrientedMeteringPointFactory();
+
+    assertTrue(api.pigeon_defaultConstructor(mock(CameraInfo.class), 1.0, 1.0) instanceof DisplayOrientedMeteringPointFactoryProxyApi.DisplayOrientedMeteringPointFactory);
+  }
+
+}
+*/

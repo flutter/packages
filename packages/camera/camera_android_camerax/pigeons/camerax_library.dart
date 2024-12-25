@@ -180,12 +180,6 @@ abstract class VideoRecordEventFinalize extends VideoRecordEvent {}
   ),
 )
 abstract class MeteringPoint {
-  /// Creates a MeteringPoint by x, y.
-  MeteringPoint(double x, double y);
-
-  /// Creates a MeteringPoint by x, y, size.
-  MeteringPoint.withSize(double x, double y, double size);
-
   /// Size of the MeteringPoint width and height (ranging from 0 to 1).
   ///
   /// It is the percentage of the sensor width/height (or crop region
@@ -689,7 +683,7 @@ abstract class CameraState {
   late CameraStateType type;
 
   /// Potentially returns an error the camera encountered.
-  late CameraStateStateError error;
+  late CameraStateStateError? error;
 }
 
 /// An interface which contains the camera exposure related information.
@@ -998,7 +992,19 @@ abstract class FocusMeteringActionBuilder {
     fullClassName: 'androidx.camera.core.FocusMeteringAction',
   ),
 )
-abstract class FocusMeteringAction {}
+abstract class FocusMeteringAction {
+  /// All MeteringPoints used for AE regions.
+  late List<MeteringPoint> meteringPointsAe;
+
+  /// All MeteringPoints used for AF regions.
+  late List<MeteringPoint> meteringPointsAf;
+
+  /// All MeteringPoints used for AWB regions.
+  late List<MeteringPoint> meteringPointsAwb;
+
+  /// If auto-cancel is enabled or not.
+  late bool isAutoCancelEnabled;
+}
 
 /// Result of the `CameraControl.startFocusAndMetering`.
 ///
@@ -1143,4 +1149,42 @@ abstract class Camera2CameraInfo {
 
   /// Gets a camera characteristic value.
   Object? getCameraCharacteristic(CameraCharacteristicsKey key);
+}
+
+/// A factory to create a MeteringPoint.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/MeteringPointFactory.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.MeteringPointFactory',
+  ),
+)
+abstract class MeteringPointFactory {
+  /// Creates a MeteringPoint by x, y.
+  MeteringPoint createPoint(double x, double y);
+
+  /// Creates a MeteringPoint by x, y, size.
+  MeteringPoint createPointWithSize(double x, double y, double size);
+}
+
+/// A MeteringPointFactory that can convert a View (x, y) into a MeteringPoint
+/// which can then be used to construct a FocusMeteringAction to start a focus
+/// and metering action.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/DisplayOrientedMeteringPointFactory.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.DisplayOrientedMeteringPointFactory',
+  ),
+)
+abstract class DisplayOrientedMeteringPointFactory
+    extends MeteringPointFactory {
+  /// Creates a DisplayOrientedMeteringPointFactory for converting View (x, y)
+  /// into a MeteringPoint based on the current display's rotation and
+  /// CameraInfo.
+  DisplayOrientedMeteringPointFactory(
+    CameraInfo cameraInfo,
+    double width,
+    double height,
+  );
 }

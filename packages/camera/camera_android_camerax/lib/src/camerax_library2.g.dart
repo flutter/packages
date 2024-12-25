@@ -178,6 +178,8 @@ class PigeonInstanceManager {
     CameraCharacteristicsKey.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     CameraCharacteristics.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Camera2CameraInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    MeteringPointFactory.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    DisplayOrientedMeteringPointFactory.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -428,6 +430,276 @@ class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
        return super.readValueOfType(type, buffer);
    }
  }
+}
+
+/// Handles constructing objects and calling static methods for the Android
+/// Interactive Media Ads native library.
+///
+/// This class provides dependency injection for the implementations of the
+/// platform interface classes. Improving the ease of unit testing and/or
+/// overriding the underlying Android classes.
+///
+/// By default each function calls the default constructor of the class it
+/// intends to return.
+class InteractiveMediaAdsProxy {
+  /// Constructs an [InteractiveMediaAdsProxy].
+  const InteractiveMediaAdsProxy({
+    this.newCameraSize = CameraSize.new,
+    this.newResolutionInfo = ResolutionInfo.new,
+    this.newCameraIntegerRange = CameraIntegerRange.new,
+    this.newObserver = Observer.new,
+    this.newCameraSelector = CameraSelector.new,
+    this.newPreview = Preview.new,
+    this.withOutputVideoCapture = VideoCapture.withOutput,
+    this.newRecorder = Recorder.new,
+    this.newVideoRecordEventListener = VideoRecordEventListener.new,
+    this.newImageCapture = ImageCapture.new,
+    this.newResolutionStrategy = ResolutionStrategy.new,
+    this.newResolutionSelector = ResolutionSelector.new,
+    this.newAspectRatioStrategy = AspectRatioStrategy.new,
+    this.newImageAnalysis = ImageAnalysis.new,
+    this.newAnalyzer = Analyzer.new,
+    this.fromQualitySelector = QualitySelector.from,
+    this.fromOrderedListQualitySelector = QualitySelector.fromOrderedList,
+    this.higherQualityOrLowerThanFallbackStrategy =
+        FallbackStrategy.higherQualityOrLowerThan,
+    this.higherQualityThanFallbackStrategy = FallbackStrategy.higherQualityThan,
+    this.lowerQualityOrHigherThanFallbackStrategy =
+        FallbackStrategy.lowerQualityOrHigherThan,
+    this.lowerQualityThanFallbackStrategy = FallbackStrategy.lowerQualityThan,
+    this.newCaptureRequestOptions = CaptureRequestOptions.new,
+    this.fromCamera2CameraControl = Camera2CameraControl.from,
+    this.createWithOnePreferredSizeResolutionFilter =
+        ResolutionFilter.createWithOnePreferredSize,
+    this.fromCamera2CameraInfo = Camera2CameraInfo.from,
+    this.newDisplayOrientedMeteringPointFactory =
+        DisplayOrientedMeteringPointFactory.new,
+    this.getInstanceProcessCameraProvider = ProcessCameraProvider.getInstance,
+    this.getResolutionQualitySelector = QualitySelector.getResolution,
+    this.defaultBackCameraCameraSelector = _defaultBackCameraCameraSelector,
+    this.defaultFrontCameraCameraSelector = _defaultFrontCameraCameraSelector,
+    this.highestAvailableStrategyResolutionStrategy =
+        _highestAvailableStrategyResolutionStrategy,
+    this.ratio_16_9FallbackAutoStrategyAspectRatioStrategy =
+        _ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
+    this.ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
+        _ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
+    this.controlAELockCaptureRequest = _controlAELockCaptureRequest,
+    this.infoSupportedHardwareLevelCameraCharacteristics =
+        _infoSupportedHardwareLevelCameraCharacteristics,
+    this.sensorOrientationCameraCharacteristics =
+        _sensorOrientationCameraCharacteristics,
+  });
+
+  /// Constructs [CameraSize].
+  final CameraSize Function({
+    required int width,
+    required int height,
+  }) newCameraSize;
+
+  /// Constructs [ResolutionInfo].
+  final ResolutionInfo Function({required CameraSize resolution})
+      newResolutionInfo;
+
+  /// Constructs [CameraIntegerRange].
+  final CameraIntegerRange Function({
+    required int lower,
+    required int upper,
+  }) newCameraIntegerRange;
+
+  /// Constructs [Observer].
+  final Observer Function({
+    required void Function(
+      Observer,
+      Object,
+    ) onChanged,
+    required LiveDataSupportedType type,
+  }) newObserver;
+
+  /// Constructs [CameraSelector].
+  final CameraSelector Function({LensFacing? requireLensFacing})
+      newCameraSelector;
+
+  /// Constructs [Preview].
+  final Preview Function({
+    int? targetRotation,
+    ResolutionSelector? resolutionSelector,
+  }) newPreview;
+
+  /// Constructs [VideoCapture].
+  final VideoCapture Function({required VideoOutput videoOutput})
+      withOutputVideoCapture;
+
+  /// Constructs [Recorder].
+  final Recorder Function({
+    int? aspectRatio,
+    int? targetVideoEncodingBitRate,
+    QualitySelector? qualitySelector,
+  }) newRecorder;
+
+  /// Constructs [VideoRecordEventListener].
+  final VideoRecordEventListener Function(
+      {required void Function(
+        VideoRecordEventListener,
+        VideoRecordEvent,
+      ) onEvent}) newVideoRecordEventListener;
+
+  /// Constructs [ImageCapture].
+  final ImageCapture Function({
+    int? targetRotation,
+    FlashMode? flashMode,
+    ResolutionSelector? resolutionSelector,
+  }) newImageCapture;
+
+  /// Constructs [ResolutionStrategy].
+  final ResolutionStrategy Function({
+    required CameraSize boundSize,
+    required ResolutionStrategyFallbackRule fallbackRule,
+  }) newResolutionStrategy;
+
+  /// Constructs [ResolutionSelector].
+  final ResolutionSelector Function({
+    AspectRatioStrategy? aspectRatioStrategy,
+    ResolutionStrategy? resolutionStrategy,
+    ResolutionFilter? resolutionFilter,
+  }) newResolutionSelector;
+
+  /// Constructs [AspectRatioStrategy].
+  final AspectRatioStrategy Function({
+    required int preferredAspectRatio,
+    required AspectRatioStrategyFallbackRule fallbackRule,
+  }) newAspectRatioStrategy;
+
+  /// Constructs [ImageAnalysis].
+  final ImageAnalysis Function({
+    int? targetRotation,
+    ResolutionSelector? resolutionSelector,
+  }) newImageAnalysis;
+
+  /// Constructs [Analyzer].
+  final Analyzer Function(
+      {required void Function(
+        Analyzer,
+        ImageProxy,
+      ) analyze}) newAnalyzer;
+
+  /// Constructs [QualitySelector].
+  final QualitySelector Function({
+    required VideoQuality quality,
+    FallbackStrategy? fallbackStrategy,
+  }) fromQualitySelector;
+
+  /// Constructs [QualitySelector].
+  final QualitySelector Function({
+    required List<VideoQuality> qualities,
+    FallbackStrategy? fallbackStrategy,
+  }) fromOrderedListQualitySelector;
+
+  /// Constructs [FallbackStrategy].
+  final FallbackStrategy Function({required VideoQuality quality})
+      higherQualityOrLowerThanFallbackStrategy;
+
+  /// Constructs [FallbackStrategy].
+  final FallbackStrategy Function({required VideoQuality quality})
+      higherQualityThanFallbackStrategy;
+
+  /// Constructs [FallbackStrategy].
+  final FallbackStrategy Function({required VideoQuality quality})
+      lowerQualityOrHigherThanFallbackStrategy;
+
+  /// Constructs [FallbackStrategy].
+  final FallbackStrategy Function({required VideoQuality quality})
+      lowerQualityThanFallbackStrategy;
+
+  /// Constructs [CaptureRequestOptions].
+  final CaptureRequestOptions Function(
+          {required Map<CaptureRequestKey, Object?> options})
+      newCaptureRequestOptions;
+
+  /// Constructs [Camera2CameraControl].
+  final Camera2CameraControl Function({required CameraControl cameraControl})
+      fromCamera2CameraControl;
+
+  /// Constructs [ResolutionFilter].
+  final ResolutionFilter Function({required CameraSize preferredSize})
+      createWithOnePreferredSizeResolutionFilter;
+
+  /// Constructs [Camera2CameraInfo].
+  final Camera2CameraInfo Function({required CameraInfo cameraInfo})
+      fromCamera2CameraInfo;
+
+  /// Constructs [DisplayOrientedMeteringPointFactory].
+  final DisplayOrientedMeteringPointFactory Function({
+    required CameraInfo cameraInfo,
+    required double width,
+    required double height,
+  }) newDisplayOrientedMeteringPointFactory;
+
+  /// Calls to [ProcessCameraProvider.getInstance].
+  final Future<ProcessCameraProvider> Function()
+      getInstanceProcessCameraProvider;
+
+  /// Calls to [QualitySelector.getResolution].
+  final Future<CameraSize?> Function(
+    CameraInfo,
+    VideoQuality,
+  ) getResolutionQualitySelector;
+
+  /// Calls to [CameraSelector.defaultBackCamera].
+  final CameraSelector Function() defaultBackCameraCameraSelector;
+
+  /// Calls to [CameraSelector.defaultFrontCamera].
+  final CameraSelector Function() defaultFrontCameraCameraSelector;
+
+  /// Calls to [ResolutionStrategy.highestAvailableStrategy].
+  final ResolutionStrategy Function()
+      highestAvailableStrategyResolutionStrategy;
+
+  /// Calls to [AspectRatioStrategy.ratio_16_9FallbackAutoStrategy].
+  final AspectRatioStrategy Function()
+      ratio_16_9FallbackAutoStrategyAspectRatioStrategy;
+
+  /// Calls to [AspectRatioStrategy.ratio_4_3FallbackAutoStrategy].
+  final AspectRatioStrategy Function()
+      ratio_4_3FallbackAutoStrategyAspectRatioStrategy;
+
+  /// Calls to [CaptureRequest.controlAELock].
+  final CaptureRequestKey Function() controlAELockCaptureRequest;
+
+  /// Calls to [CameraCharacteristics.infoSupportedHardwareLevel].
+  final CameraCharacteristicsKey Function()
+      infoSupportedHardwareLevelCameraCharacteristics;
+
+  /// Calls to [CameraCharacteristics.sensorOrientation].
+  final CameraCharacteristicsKey Function()
+      sensorOrientationCameraCharacteristics;
+
+  static CameraSelector _defaultBackCameraCameraSelector() =>
+      CameraSelector.defaultBackCamera;
+
+  static CameraSelector _defaultFrontCameraCameraSelector() =>
+      CameraSelector.defaultFrontCamera;
+
+  static ResolutionStrategy _highestAvailableStrategyResolutionStrategy() =>
+      ResolutionStrategy.highestAvailableStrategy;
+
+  static AspectRatioStrategy
+      _ratio_16_9FallbackAutoStrategyAspectRatioStrategy() =>
+          AspectRatioStrategy.ratio_16_9FallbackAutoStrategy;
+
+  static AspectRatioStrategy
+      _ratio_4_3FallbackAutoStrategyAspectRatioStrategy() =>
+          AspectRatioStrategy.ratio_4_3FallbackAutoStrategy;
+
+  static CaptureRequestKey _controlAELockCaptureRequest() =>
+      CaptureRequest.controlAELock;
+
+  static CameraCharacteristicsKey
+      _infoSupportedHardwareLevelCameraCharacteristics() =>
+          CameraCharacteristics.infoSupportedHardwareLevel;
+
+  static CameraCharacteristicsKey _sensorOrientationCameraCharacteristics() =>
+      CameraCharacteristics.sensorOrientation;
 }
 
 
@@ -1309,83 +1581,6 @@ class VideoRecordEventFinalize extends VideoRecordEvent {
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/MeteringPoint.
 class MeteringPoint extends PigeonInternalProxyApiBaseClass {
-  /// Creates a MeteringPoint by x, y.
-  MeteringPoint({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    required double x,
-    required double y,
-  }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecMeteringPoint;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    () async {
-      const String pigeonVar_channelName =
-          'dev.flutter.pigeon.camera_android_camerax.MeteringPoint.pigeon_defaultConstructor';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
-          BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
-      );
-      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[pigeonVar_instanceIdentifier, x, y])
-          as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
-    }();
-  }
-
-  /// Creates a MeteringPoint by x, y, size.
-  MeteringPoint.withSize({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    required double x,
-    required double y,
-    required double size,
-  }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecMeteringPoint;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    () async {
-      const String pigeonVar_channelName =
-          'dev.flutter.pigeon.camera_android_camerax.MeteringPoint.withSize';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
-          BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
-      );
-      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[pigeonVar_instanceIdentifier, x, y, size])
-          as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
-    }();
-  }
-
   /// Constructs [MeteringPoint] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -4579,14 +4774,14 @@ class CameraState extends PigeonInternalProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.type,
-    required this.error,
+    this.error,
   });
 
   /// The camera's state.
   final CameraStateType type;
 
   /// Potentially returns an error the camera encountered.
-  final CameraStateStateError error;
+  final CameraStateStateError? error;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -4594,7 +4789,7 @@ class CameraState extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     CameraState Function(
       CameraStateType type,
-      CameraStateStateError error,
+      CameraStateStateError? error,
     )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -4623,17 +4818,15 @@ class CameraState extends PigeonInternalProxyApiBaseClass {
               'Argument for dev.flutter.pigeon.camera_android_camerax.CameraState.pigeon_newInstance was null, expected non-null CameraStateType.');
           final CameraStateStateError? arg_error =
               (args[2] as CameraStateStateError?);
-          assert(arg_error != null,
-              'Argument for dev.flutter.pigeon.camera_android_camerax.CameraState.pigeon_newInstance was null, expected non-null CameraStateStateError.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_type!, arg_error!) ??
+              pigeon_newInstance?.call(arg_type!, arg_error) ??
                   CameraState.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     type: arg_type!,
-                    error: arg_error!,
+                    error: arg_error,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -6567,13 +6760,34 @@ class FocusMeteringAction extends PigeonInternalProxyApiBaseClass {
   FocusMeteringAction.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    required this.meteringPointsAe,
+    required this.meteringPointsAf,
+    required this.meteringPointsAwb,
+    required this.isAutoCancelEnabled,
   });
+
+  /// All MeteringPoints used for AE regions.
+  final List<MeteringPoint> meteringPointsAe;
+
+  /// All MeteringPoints used for AF regions.
+  final List<MeteringPoint> meteringPointsAf;
+
+  /// All MeteringPoints used for AWB regions.
+  final List<MeteringPoint> meteringPointsAwb;
+
+  /// If auto-cancel is enabled or not.
+  final bool isAutoCancelEnabled;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    FocusMeteringAction Function()? pigeon_newInstance,
+    FocusMeteringAction Function(
+      List<MeteringPoint> meteringPointsAe,
+      List<MeteringPoint> meteringPointsAf,
+      List<MeteringPoint> meteringPointsAwb,
+      bool isAutoCancelEnabled,
+    )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -6596,13 +6810,36 @@ class FocusMeteringAction extends PigeonInternalProxyApiBaseClass {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.camera_android_camerax.FocusMeteringAction.pigeon_newInstance was null, expected non-null int.');
+          final List<MeteringPoint>? arg_meteringPointsAe =
+              (args[1] as List<Object?>?)?.cast<MeteringPoint>();
+          assert(arg_meteringPointsAe != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.FocusMeteringAction.pigeon_newInstance was null, expected non-null List<MeteringPoint>.');
+          final List<MeteringPoint>? arg_meteringPointsAf =
+              (args[2] as List<Object?>?)?.cast<MeteringPoint>();
+          assert(arg_meteringPointsAf != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.FocusMeteringAction.pigeon_newInstance was null, expected non-null List<MeteringPoint>.');
+          final List<MeteringPoint>? arg_meteringPointsAwb =
+              (args[3] as List<Object?>?)?.cast<MeteringPoint>();
+          assert(arg_meteringPointsAwb != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.FocusMeteringAction.pigeon_newInstance was null, expected non-null List<MeteringPoint>.');
+          final bool? arg_isAutoCancelEnabled = (args[4] as bool?);
+          assert(arg_isAutoCancelEnabled != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.FocusMeteringAction.pigeon_newInstance was null, expected non-null bool.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(
+                      arg_meteringPointsAe!,
+                      arg_meteringPointsAf!,
+                      arg_meteringPointsAwb!,
+                      arg_isAutoCancelEnabled!) ??
                   FocusMeteringAction.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    meteringPointsAe: arg_meteringPointsAe!,
+                    meteringPointsAf: arg_meteringPointsAf!,
+                    meteringPointsAwb: arg_meteringPointsAwb!,
+                    isAutoCancelEnabled: arg_isAutoCancelEnabled!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -6623,6 +6860,10 @@ class FocusMeteringAction extends PigeonInternalProxyApiBaseClass {
     return FocusMeteringAction.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      meteringPointsAe: meteringPointsAe,
+      meteringPointsAf: meteringPointsAf,
+      meteringPointsAwb: meteringPointsAwb,
+      isAutoCancelEnabled: isAutoCancelEnabled,
     );
   }
 }
@@ -7664,6 +7905,278 @@ class Camera2CameraInfo extends PigeonInternalProxyApiBaseClass {
   @override
   Camera2CameraInfo pigeon_copy() {
     return Camera2CameraInfo.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// A factory to create a MeteringPoint.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/MeteringPointFactory.
+class MeteringPointFactory extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [MeteringPointFactory] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  MeteringPointFactory.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  });
+
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecMeteringPointFactory =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    MeteringPointFactory Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  MeteringPointFactory.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  /// Creates a MeteringPoint by x, y.
+  Future<MeteringPoint> createPoint(
+    double x,
+    double y,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecMeteringPointFactory;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.createPoint';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this, x, y]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as MeteringPoint?)!;
+    }
+  }
+
+  /// Creates a MeteringPoint by x, y, size.
+  Future<MeteringPoint> createPointWithSize(
+    double x,
+    double y,
+    double size,
+  ) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecMeteringPointFactory;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.MeteringPointFactory.createPointWithSize';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, x, y, size]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as MeteringPoint?)!;
+    }
+  }
+
+  @override
+  MeteringPointFactory pigeon_copy() {
+    return MeteringPointFactory.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+    );
+  }
+}
+
+/// A MeteringPointFactory that can convert a View (x, y) into a MeteringPoint
+/// which can then be used to construct a FocusMeteringAction to start a focus
+/// and metering action.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/DisplayOrientedMeteringPointFactory.
+class DisplayOrientedMeteringPointFactory extends MeteringPointFactory {
+  /// Creates a DisplayOrientedMeteringPointFactory for converting View (x, y)
+  /// into a MeteringPoint based on the current display's rotation and
+  /// CameraInfo.
+  DisplayOrientedMeteringPointFactory({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required CameraInfo cameraInfo,
+    required double width,
+    required double height,
+  }) : super.pigeon_detached() {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecDisplayOrientedMeteringPointFactory;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    () async {
+      const String pigeonVar_channelName =
+          'dev.flutter.pigeon.camera_android_camerax.DisplayOrientedMeteringPointFactory.pigeon_defaultConstructor';
+      final BasicMessageChannel<Object?> pigeonVar_channel =
+          BasicMessageChannel<Object?>(
+        pigeonVar_channelName,
+        pigeonChannelCodec,
+        binaryMessenger: pigeonVar_binaryMessenger,
+      );
+      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+          .send(<Object?>[
+        pigeonVar_instanceIdentifier,
+        cameraInfo,
+        width,
+        height
+      ]) as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [DisplayOrientedMeteringPointFactory] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  DisplayOrientedMeteringPointFactory.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+  }) : super.pigeon_detached();
+
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecDisplayOrientedMeteringPointFactory =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    DisplayOrientedMeteringPointFactory Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.camera_android_camerax.DisplayOrientedMeteringPointFactory.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.DisplayOrientedMeteringPointFactory.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.DisplayOrientedMeteringPointFactory.pigeon_newInstance was null, expected non-null int.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call() ??
+                  DisplayOrientedMeteringPointFactory.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  DisplayOrientedMeteringPointFactory pigeon_copy() {
+    return DisplayOrientedMeteringPointFactory.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
