@@ -83,6 +83,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+
+  @override
+  void setVideoPositionUpdatesInterval(Duration interval) {}
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -955,6 +958,42 @@ void main() {
         expect(controller.value.isBuffering, isFalse);
       });
     });
+  });
+  test('updates position at custom intervals', () async {
+    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      _localhostUri,
+      videoPlayerOptions: VideoPlayerOptions(),
+    );
+
+    await controller.initialize();
+
+    // Set a custom interval
+    const Duration customInterval = Duration(milliseconds: 10);
+    controller.setVideoPositionUpdatesInterval(customInterval);
+
+    final List<Duration> positions = <Duration>[];
+    final Completer<void> intervalUpdateCompleter = Completer<void>();
+
+    // Listen for position updates
+    controller.addListener(() {
+      positions.add(controller.value.position);
+      if (positions.length >= 3 && !intervalUpdateCompleter.isCompleted) {
+        intervalUpdateCompleter.complete();
+      }
+    });
+    await controller.play();
+    for (int i = 0; i < 3; i++) {
+      await Future<void>.delayed(customInterval);
+      fakeVideoPlayerPlatform._positions[controller.textureId] =
+          Duration(milliseconds: i * customInterval.inMilliseconds);
+    }
+
+    // Wait for at least 3 position updates
+    await intervalUpdateCompleter.future.timeout(const Duration(seconds: 5));
+
+    // Verify that the intervals between updates are approximately correct
+    expect(positions[1] - positions[0], greaterThanOrEqualTo(customInterval));
+    expect(positions[2] - positions[1], greaterThanOrEqualTo(customInterval));
   });
 
   group('DurationRange', () {
