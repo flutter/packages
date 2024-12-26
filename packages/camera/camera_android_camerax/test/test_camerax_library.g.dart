@@ -54,9 +54,6 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is CameraStateErrorCode) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    }    else if (value is CameraPermissionsErrorData) {
-      buffer.putUint8(140);
-      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -98,8 +95,6 @@ class _PigeonCodec extends StandardMessageCodec {
       case 139: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CameraStateErrorCode.values[value];
-      case 140: 
-        return CameraPermissionsErrorData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

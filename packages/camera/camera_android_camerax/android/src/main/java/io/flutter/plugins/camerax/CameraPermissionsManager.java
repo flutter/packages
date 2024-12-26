@@ -13,7 +13,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-final class CameraPermissionsManager {
+public final class CameraPermissionsManager {
   interface PermissionsRegistry {
     @SuppressWarnings("deprecation")
     void addListener(

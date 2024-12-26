@@ -56,14 +56,9 @@ abstract class ResolutionInfo {
 
 /// Data class containing information
 @ProxyApi()
-class CameraPermissionsErrorData {
-  CameraPermissionsErrorData({
-    required this.errorCode,
-    required this.description,
-  });
-
-  String errorCode;
-  String description;
+abstract class CameraPermissionsErrorData {
+  late String errorCode;
+  late String description;
 }
 
 /// Generally classifies the overall set of the camera device functionality.
@@ -401,20 +396,6 @@ abstract class SystemServicesManager {
   bool isPreviewPreTransformed();
 }
 
-// abstract class SystemServicesHostApi {
-//   @async
-//   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
-//
-//   String getTempFilePath(String prefix, String suffix);
-//
-//   bool isPreviewPreTransformed();
-// }
-//
-// @FlutterApi()
-// abstract class SystemServicesFlutterApi {
-//   void onCameraError(String errorDescription);
-// }
-
 /// Support class to help to determine the media orientation based on the
 /// orientation of the device.
 @ProxyApi()
@@ -433,23 +414,6 @@ abstract class DeviceOrientationManager {
   int getDefaultDisplayRotation();
 
   String getUiOrientation();
-}
-
-@HostApi(dartHostTestHandler: 'TestDeviceOrientationManagerHostApi')
-abstract class DeviceOrientationManagerHostApi {
-  void startListeningForDeviceOrientationChange(
-      bool isFrontFacing, int sensorOrientation);
-
-  void stopListeningForDeviceOrientationChange();
-
-  int getDefaultDisplayRotation();
-
-  String getUiOrientation();
-}
-
-@FlutterApi()
-abstract class DeviceOrientationManagerFlutterApi {
-  void onDeviceOrientationChanged(String orientation);
 }
 
 /// A use case that provides a camera preview stream for displaying on-screen.
