@@ -728,20 +728,36 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// If no [closedCaptionFile] was specified, this will always return an empty
   /// [Caption].
+
   Caption _getCaptionAt(Duration position) {
     if (_closedCaptionFile == null) {
       return Caption.none;
     }
 
     final Duration delayedPosition = position + value.captionOffset;
-    // TODO(johnsonmh): This would be more efficient as a binary search.
-    for (final Caption caption in _closedCaptionFile!.captions) {
-      if (caption.start <= delayedPosition && caption.end >= delayedPosition) {
-        return caption;
+
+    final List<Caption> captions = _closedCaptionFile!.captions;
+
+    int left = 0;
+    int right = captions.length - 1;
+
+    while (left <= right) {
+      final int mid = left + ((right - left) ~/ 2);
+      final Caption midCaption = captions[mid];
+
+      if (midCaption.start <= delayedPosition &&
+          midCaption.end >= delayedPosition) {
+        return midCaption; // Found the matching caption
+      } else if (midCaption.end < delayedPosition) {
+        // Move to the right half
+        left = mid + 1;
+      } else {
+        // Move to the left half
+        right = mid - 1;
       }
     }
 
-    return Caption.none;
+    return Caption.none; // No matching caption found
   }
 
   /// Returns the file containing closed captions for the video, if any.
