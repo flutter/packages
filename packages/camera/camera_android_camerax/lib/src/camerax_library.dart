@@ -122,7 +122,6 @@ class Observer<T> extends camerax.Observer {
   Observer({
     required void Function(Observer<T> instance, T value) onChanged,
   }) : super(
-          type: asSupportedType(T),
           onChanged: (
             camerax.Observer instance,
             Object value,
@@ -132,7 +131,6 @@ class Observer<T> extends camerax.Observer {
         );
 
   Observer.detached({
-    required super.type,
     required super.onChanged,
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
@@ -152,7 +150,6 @@ class Observer<T> extends camerax.Observer {
   @override
   Observer<T> pigeon_copy() {
     return Observer<T>.detached(
-      type: type,
       onChanged: onChanged,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,

@@ -448,7 +448,6 @@ class InteractiveMediaAdsProxy {
   /// Constructs an [InteractiveMediaAdsProxy].
   const InteractiveMediaAdsProxy({
     this.newCameraSize = CameraSize.new,
-    this.newResolutionInfo = ResolutionInfo.new,
     this.newCameraIntegerRange = CameraIntegerRange.new,
     this.newObserver = Observer.new,
     this.newCameraSelector = CameraSelector.new,
@@ -505,10 +504,6 @@ class InteractiveMediaAdsProxy {
     required int height,
   }) newCameraSize;
 
-  /// Constructs [ResolutionInfo].
-  final ResolutionInfo Function({required CameraSize resolution})
-      newResolutionInfo;
-
   /// Constructs [CameraIntegerRange].
   final CameraIntegerRange Function({
     required int lower,
@@ -516,13 +511,11 @@ class InteractiveMediaAdsProxy {
   }) newCameraIntegerRange;
 
   /// Constructs [Observer].
-  final Observer Function({
-    required void Function(
-      Observer,
-      Object,
-    ) onChanged,
-    required LiveDataSupportedType type,
-  }) newObserver;
+  final Observer Function(
+      {required void Function(
+        Observer,
+        Object,
+      ) onChanged}) newObserver;
 
   /// Constructs [CameraSelector].
   final CameraSelector Function({LensFacing? requireLensFacing})
@@ -1152,42 +1145,6 @@ class CameraSize extends PigeonInternalProxyApiBaseClass {
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/ResolutionInfo.
 class ResolutionInfo extends PigeonInternalProxyApiBaseClass {
-  ResolutionInfo({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    required this.resolution,
-  }) {
-    final int pigeonVar_instanceIdentifier =
-        pigeon_instanceManager.addDartCreatedInstance(this);
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecResolutionInfo;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    () async {
-      const String pigeonVar_channelName =
-          'dev.flutter.pigeon.camera_android_camerax.ResolutionInfo.pigeon_defaultConstructor';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
-          BasicMessageChannel<Object?>(
-        pigeonVar_channelName,
-        pigeonChannelCodec,
-        binaryMessenger: pigeonVar_binaryMessenger,
-      );
-      final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[pigeonVar_instanceIdentifier, resolution])
-          as List<Object?>?;
-      if (pigeonVar_replyList == null) {
-        throw _createConnectionError(pigeonVar_channelName);
-      } else if (pigeonVar_replyList.length > 1) {
-        throw PlatformException(
-          code: pigeonVar_replyList[0]! as String,
-          message: pigeonVar_replyList[1] as String?,
-          details: pigeonVar_replyList[2],
-        );
-      } else {
-        return;
-      }
-    }();
-  }
-
   /// Constructs [ResolutionInfo] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -1198,9 +1155,6 @@ class ResolutionInfo extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.resolution,
   });
-
-  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecResolutionInfo =
-      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
   /// Returns the output resolution used for the use case.
   final CameraSize resolution;
@@ -1828,7 +1782,6 @@ class Observer extends PigeonInternalProxyApiBaseClass {
   Observer({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required this.type,
     required this.onChanged,
   }) {
     final int pigeonVar_instanceIdentifier =
@@ -1846,8 +1799,7 @@ class Observer extends PigeonInternalProxyApiBaseClass {
         binaryMessenger: pigeonVar_binaryMessenger,
       );
       final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-              .send(<Object?>[pigeonVar_instanceIdentifier, type])
-          as List<Object?>?;
+          .send(<Object?>[pigeonVar_instanceIdentifier]) as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
       } else if (pigeonVar_replyList.length > 1) {
@@ -1870,15 +1822,11 @@ class Observer extends PigeonInternalProxyApiBaseClass {
   Observer.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required this.type,
     required this.onChanged,
   });
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecObserver =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
-
-  /// The generic type used by this instance.
-  final LiveDataSupportedType type;
 
   /// Called when the data is changed to value.
   ///
@@ -1956,7 +1904,6 @@ class Observer extends PigeonInternalProxyApiBaseClass {
     return Observer.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
-      type: type,
       onChanged: onChanged,
     );
   }
@@ -3301,153 +3248,6 @@ class DeviceOrientationManager extends PigeonInternalProxyApiBaseClass {
   }
 }
 
-
-class DeviceOrientationManagerHostApi {
-  /// Constructor for [DeviceOrientationManagerHostApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
-  /// BinaryMessenger will be used which routes to the host platform.
-  DeviceOrientationManagerHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
-
-  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
-
-  final String pigeonVar_messageChannelSuffix;
-
-  Future<void> startListeningForDeviceOrientationChange(bool isFrontFacing, int sensorOrientation) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManagerHostApi.startListeningForDeviceOrientationChange$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[isFrontFacing, sensorOrientation]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> stopListeningForDeviceOrientationChange() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManagerHostApi.stopListeningForDeviceOrientationChange$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(null) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<int> getDefaultDisplayRotation() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManagerHostApi.getDefaultDisplayRotation$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(null) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as int?)!;
-    }
-  }
-
-  Future<String> getUiOrientation() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManagerHostApi.getUiOrientation$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(null) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as String?)!;
-    }
-  }
-}
-
-abstract class DeviceOrientationManagerFlutterApi {
-  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
-
-  void onDeviceOrientationChanged(String orientation);
-
-  static void setUp(DeviceOrientationManagerFlutterApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-    {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_orientation = (args[0] as String?);
-          assert(arg_orientation != null,
-              'Argument for dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManagerFlutterApi.onDeviceOrientationChanged was null, expected non-null String.');
-          try {
-            api.onDeviceOrientationChanged(arg_orientation!);
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-  }
-}
 /// A use case that provides a camera preview stream for displaying on-screen.
 ///
 /// See https://developer.android.com/reference/kotlin/androidx/camera/core/Preview.

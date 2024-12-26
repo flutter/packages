@@ -48,8 +48,6 @@ abstract class CameraSize {
   ),
 )
 abstract class ResolutionInfo {
-  ResolutionInfo();
-
   /// Returns the output resolution used for the use case.
   late CameraSize resolution;
 }
@@ -245,9 +243,6 @@ enum MeteringMode {
 )
 abstract class Observer {
   Observer();
-
-  /// The generic type used by this instance.
-  late LiveDataSupportedType type;
 
   /// Called when the data is changed to value.
   late void Function(Object value) onChanged;
