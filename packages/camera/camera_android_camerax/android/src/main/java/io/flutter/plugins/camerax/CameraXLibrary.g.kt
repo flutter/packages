@@ -458,6 +458,18 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
   abstract fun getPigeonApiCamera(): PigeonApiCamera
 
   /**
+   * An implementation of [PigeonApiSystemServicesManager] used to add a new Dart instance of
+   * `SystemServicesManager` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiSystemServicesManager(): PigeonApiSystemServicesManager
+
+  /**
+   * An implementation of [PigeonApiDeviceOrientationManager] used to add a new Dart instance of
+   * `DeviceOrientationManager` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiDeviceOrientationManager(): PigeonApiDeviceOrientationManager
+
+  /**
    * An implementation of [PigeonApiPreview] used to add a new Dart instance of
    * `Preview` to the Dart `InstanceManager`.
    */
@@ -693,6 +705,8 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiCameraSelector.setUpMessageHandlers(binaryMessenger, getPigeonApiCameraSelector())
     PigeonApiProcessCameraProvider.setUpMessageHandlers(binaryMessenger, getPigeonApiProcessCameraProvider())
     PigeonApiCamera.setUpMessageHandlers(binaryMessenger, getPigeonApiCamera())
+    PigeonApiSystemServicesManager.setUpMessageHandlers(binaryMessenger, getPigeonApiSystemServicesManager())
+    PigeonApiDeviceOrientationManager.setUpMessageHandlers(binaryMessenger, getPigeonApiDeviceOrientationManager())
     PigeonApiPreview.setUpMessageHandlers(binaryMessenger, getPigeonApiPreview())
     PigeonApiVideoCapture.setUpMessageHandlers(binaryMessenger, getPigeonApiVideoCapture())
     PigeonApiRecorder.setUpMessageHandlers(binaryMessenger, getPigeonApiRecorder())
@@ -731,6 +745,8 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
     PigeonApiCameraSelector.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiProcessCameraProvider.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiCamera.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiSystemServicesManager.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiDeviceOrientationManager.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiPreview.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiVideoCapture.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiRecorder.setUpMessageHandlers(binaryMessenger, null)
@@ -810,6 +826,12 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
     }
      else if (value is androidx.camera.core.Camera) {
       registrar.getPigeonApiCamera().pigeon_newInstance(value) { }
+    }
+     else if (value is SystemServicesManager) {
+      registrar.getPigeonApiSystemServicesManager().pigeon_newInstance(value) { }
+    }
+     else if (value is DeviceOrientationManager) {
+      registrar.getPigeonApiDeviceOrientationManager().pigeon_newInstance(value) { }
     }
      else if (value is androidx.camera.core.Preview) {
       registrar.getPigeonApiPreview().pigeon_newInstance(value) { }
@@ -1257,7 +1279,11 @@ enum class CameraStateErrorCode(val raw: Int) {
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
+/**
+ * Data class containing information
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
 data class CameraPermissionsErrorData (
   val errorCode: String,
   val description: String
@@ -1397,7 +1423,6 @@ private open class CameraXLibraryPigeonCodec : StandardMessageCodec() {
     }
   }
 }
-
 
 /**
  * Immutable class for describing width and height dimensions in pixels.
@@ -3516,28 +3541,47 @@ public class CameraProxyApiTest {
 
 }
 */
-/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface SystemServicesHostApi {
-  fun requestCameraPermissions(enableAudio: Boolean, callback: (Result<CameraPermissionsErrorData?>) -> Unit)
-  fun getTempFilePath(prefix: String, suffix: String): String
-  fun isPreviewPreTransformed(): Boolean
+/** Convenience class for accessing system resources. */
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiSystemServicesManager(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): SystemServicesManager
+
+  abstract fun requestCameraPermissions(pigeon_instance: SystemServicesManager, enableAudio: Boolean, callback: (Result<CameraPermissionsErrorData?>) -> Unit)
+
+  abstract fun getTempFilePath(pigeon_instance: SystemServicesManager, prefix: String, suffix: String): String
+
+  abstract fun isPreviewPreTransformed(pigeon_instance: SystemServicesManager): Boolean
 
   companion object {
-    /** The codec used by SystemServicesHostApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      CameraXLibraryPigeonCodec()
-    }
-    /** Sets up an instance of `SystemServicesHostApi` to handle messages through the `binaryMessenger`. */
-    @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: SystemServicesHostApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiSystemServicesManager?) {
+      val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.SystemServicesHostApi.requestCameraPermissions$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.SystemServicesManager.pigeon_defaultConstructor", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val enableAudioArg = args[0] as Boolean
-            api.requestCameraPermissions(enableAudioArg) { result: Result<CameraPermissionsErrorData?> ->
+            val pigeon_identifierArg = args[0] as Long
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.SystemServicesManager.requestCameraPermissions", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as SystemServicesManager
+            val enableAudioArg = args[1] as Boolean
+            api.requestCameraPermissions(pigeon_instanceArg, enableAudioArg) { result: Result<CameraPermissionsErrorData?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -3552,14 +3596,15 @@ interface SystemServicesHostApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.SystemServicesHostApi.getTempFilePath$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.SystemServicesManager.getTempFilePath", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val prefixArg = args[0] as String
-            val suffixArg = args[1] as String
+            val pigeon_instanceArg = args[0] as SystemServicesManager
+            val prefixArg = args[1] as String
+            val suffixArg = args[2] as String
             val wrapped: List<Any?> = try {
-              listOf(api.getTempFilePath(prefixArg, suffixArg))
+              listOf(api.getTempFilePath(pigeon_instanceArg, prefixArg, suffixArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -3570,11 +3615,13 @@ interface SystemServicesHostApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.SystemServicesHostApi.isPreviewPreTransformed$separatedMessageChannelSuffix", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.SystemServicesManager.isPreviewPreTransformed", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as SystemServicesManager
             val wrapped: List<Any?> = try {
-              listOf(api.isPreviewPreTransformed())
+              listOf(api.isPreviewPreTransformed(pigeon_instanceArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -3586,21 +3633,37 @@ interface SystemServicesHostApi {
       }
     }
   }
-}
-/** Generated class from Pigeon that represents Flutter messages that can be called from Kotlin. */
-class SystemServicesFlutterApi(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") {
-  companion object {
-    /** The codec used by SystemServicesFlutterApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      CameraXLibraryPigeonCodec()
-    }
-  }
-  fun onCameraError(errorDescriptionArg: String, callback: (Result<Unit>) -> Unit)
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of SystemServicesManager and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: SystemServicesManager, callback: (Result<Unit>) -> Unit)
 {
-    val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
-    val channelName = "dev.flutter.pigeon.camera_android_camerax.SystemServicesFlutterApi.onCameraError$separatedMessageChannelSuffix"
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException("Attempting to create a new Dart instance of SystemServicesManager, but the class has a nonnull callback method.")
+  }
+
+  fun onCameraError(pigeon_instanceArg: SystemServicesManager, errorDescriptionArg: String, callback: (Result<Unit>) -> Unit)
+{
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.camera_android_camerax.SystemServicesManager.onCameraError"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(errorDescriptionArg)) {
+    channel.send(listOf(pigeon_instanceArg, errorDescriptionArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -3612,7 +3675,448 @@ class SystemServicesFlutterApi(private val binaryMessenger: BinaryMessenger, pri
       } 
     }
   }
+
 }
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link SystemServicesManager}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
+  SystemServicesManagerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+  /** Implementation of {@link SystemServicesManager} that passes arguments of callback methods to Dart. */
+  static class SystemServicesManagerImpl extends SystemServicesManager {
+    private final SystemServicesManagerProxyApi api;
+    SystemServicesManagerImpl(@NonNull SystemServicesManagerProxyApi api) {
+      this.api = api;
+    }
+    @Override
+    public void onCameraError(@NonNull String errorDescription) {
+      api.getPigeonRegistrar().runOnMainThread(() -> api.onCameraError(this, errorDescription, reply -> null));
+    }
+  }
+
+  @NonNull
+  @Override
+  public SystemServicesManager pigeon_defaultConstructor() {
+    return SystemServicesManagerImpl();
+  }
+
+  @Nullable
+  @Override
+  public CameraPermissionsErrorData? requestCameraPermissions(SystemServicesManager, pigeon_instance@NonNull Boolean enableAudio) {
+    return pigeon_instance.requestCameraPermissions(enableAudio);
+  }
+
+  @NonNull
+  @Override
+  public String getTempFilePath(SystemServicesManager, pigeon_instance@NonNull String prefix, @NonNull String suffix) {
+    return pigeon_instance.getTempFilePath(prefix, suffix);
+  }
+
+  @NonNull
+  @Override
+  public Boolean isPreviewPreTransformed(SystemServicesManager pigeon_instance) {
+    return pigeon_instance.isPreviewPreTransformed();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class SystemServicesManagerProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiSystemServicesManager api = new TestProxyApiRegistrar().getPigeonApiSystemServicesManager();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof SystemServicesManagerProxyApi.SystemServicesManager);
+  }
+
+  @Test
+  public void requestCameraPermissions() {
+    final PigeonApiSystemServicesManager api = new TestProxyApiRegistrar().getPigeonApiSystemServicesManager();
+
+    final SystemServicesManager instance = mock(SystemServicesManager.class);
+    final Boolean enableAudio = true;
+    final CameraPermissionsErrorData value = -1;
+    when(instance.requestCameraPermissions(enableAudio)).thenReturn(value);
+
+    assertEquals(value, api.requestCameraPermissions(instance, enableAudio));
+  }
+
+  @Test
+  public void getTempFilePath() {
+    final PigeonApiSystemServicesManager api = new TestProxyApiRegistrar().getPigeonApiSystemServicesManager();
+
+    final SystemServicesManager instance = mock(SystemServicesManager.class);
+    final String prefix = "myString";
+    final String suffix = "myString";
+    final String value = "myString";
+    when(instance.getTempFilePath(prefix, suffix)).thenReturn(value);
+
+    assertEquals(value, api.getTempFilePath(instance, prefix, suffix));
+  }
+
+  @Test
+  public void isPreviewPreTransformed() {
+    final PigeonApiSystemServicesManager api = new TestProxyApiRegistrar().getPigeonApiSystemServicesManager();
+
+    final SystemServicesManager instance = mock(SystemServicesManager.class);
+    final Boolean value = true;
+    when(instance.isPreviewPreTransformed()).thenReturn(value);
+
+    assertEquals(value, api.isPreviewPreTransformed(instance ));
+  }
+
+  @Test
+  public void onCameraError() {
+    final SystemServicesManagerProxyApi mockApi = mock(SystemServicesManagerProxyApi.class);
+    when(mockApi.pigeonRegistrar).thenReturn(new TestProxyApiRegistrar());
+
+    final SystemServicesManagerImpl instance = new SystemServicesManagerImpl(mockApi);
+    final String errorDescription = "myString";
+    instance.onCameraError(errorDescription);
+
+    verify(mockApi).onCameraError(eq(instance), eq(errorDescription), any());
+  }
+
+}
+*/
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiDeviceOrientationManager(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
+  abstract fun pigeon_defaultConstructor(): DeviceOrientationManager
+
+  abstract fun startListeningForDeviceOrientationChange(pigeon_instance: DeviceOrientationManager, isFrontFacing: Boolean, sensorOrientation: Long)
+
+  abstract fun stopListeningForDeviceOrientationChange(pigeon_instance: DeviceOrientationManager)
+
+  abstract fun getDefaultDisplayRotation(pigeon_instance: DeviceOrientationManager): Long
+
+  abstract fun getUiOrientation(pigeon_instance: DeviceOrientationManager): String
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiDeviceOrientationManager?) {
+      val codec = api?.pigeonRegistrar?.codec ?: CameraXLibraryPigeonCodec()
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManager.pigeon_defaultConstructor", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManager.startListeningForDeviceOrientationChange", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as DeviceOrientationManager
+            val isFrontFacingArg = args[1] as Boolean
+            val sensorOrientationArg = args[2] as Long
+            val wrapped: List<Any?> = try {
+              api.startListeningForDeviceOrientationChange(pigeon_instanceArg, isFrontFacingArg, sensorOrientationArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManager.stopListeningForDeviceOrientationChange", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as DeviceOrientationManager
+            val wrapped: List<Any?> = try {
+              api.stopListeningForDeviceOrientationChange(pigeon_instanceArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManager.getDefaultDisplayRotation", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as DeviceOrientationManager
+            val wrapped: List<Any?> = try {
+              listOf(api.getDefaultDisplayRotation(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManager.getUiOrientation", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as DeviceOrientationManager
+            val wrapped: List<Any?> = try {
+              listOf(api.getUiOrientation(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of DeviceOrientationManager and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(pigeon_instanceArg: DeviceOrientationManager, callback: (Result<Unit>) -> Unit)
+{
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      Result.success(Unit)
+      return
+    }
+    throw IllegalStateException("Attempting to create a new Dart instance of DeviceOrientationManager, but the class has a nonnull callback method.")
+  }
+
+  fun onDeviceOrientationChanged(pigeon_instanceArg: DeviceOrientationManager, orientationArg: String, callback: (Result<Unit>) -> Unit)
+{
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+      return
+    }
+    val binaryMessenger = pigeonRegistrar.binaryMessenger
+    val codec = pigeonRegistrar.codec
+    val channelName = "dev.flutter.pigeon.camera_android_camerax.DeviceOrientationManager.onDeviceOrientationChanged"
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+    channel.send(listOf(pigeon_instanceArg, orientationArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
+        }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      } 
+    }
+  }
+
+}
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+/**
+ * ProxyApi implementation for {@link DeviceOrientationManager}.
+ *
+ * This class may handle instantiating native object instances that are attached to a Dart
+ * instance or handle method calls on the associated native class or an instance of that class.
+ */
+class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientationManager {
+  DeviceOrientationManagerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+    super(pigeonRegistrar);
+  }
+  /** Implementation of {@link DeviceOrientationManager} that passes arguments of callback methods to Dart. */
+  static class DeviceOrientationManagerImpl extends DeviceOrientationManager {
+    private final DeviceOrientationManagerProxyApi api;
+    DeviceOrientationManagerImpl(@NonNull DeviceOrientationManagerProxyApi api) {
+      this.api = api;
+    }
+    @Override
+    public void onDeviceOrientationChanged(@NonNull String orientation) {
+      api.getPigeonRegistrar().runOnMainThread(() -> api.onDeviceOrientationChanged(this, orientation, reply -> null));
+    }
+  }
+
+  @NonNull
+  @Override
+  public DeviceOrientationManager pigeon_defaultConstructor() {
+    return DeviceOrientationManagerImpl();
+  }
+
+  @Override
+  public Void startListeningForDeviceOrientationChange(DeviceOrientationManager, pigeon_instance@NonNull Boolean isFrontFacing, @NonNull Long sensorOrientation) {
+    pigeon_instance.startListeningForDeviceOrientationChange(isFrontFacing, sensorOrientation);
+  }
+
+  @Override
+  public Void stopListeningForDeviceOrientationChange(DeviceOrientationManager pigeon_instance) {
+    pigeon_instance.stopListeningForDeviceOrientationChange();
+  }
+
+  @NonNull
+  @Override
+  public Long getDefaultDisplayRotation(DeviceOrientationManager pigeon_instance) {
+    return pigeon_instance.getDefaultDisplayRotation();
+  }
+
+  @NonNull
+  @Override
+  public String getUiOrientation(DeviceOrientationManager pigeon_instance) {
+    return pigeon_instance.getUiOrientation();
+  }
+
+}
+*/
+
+/*
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax
+
+
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.mockito.Mockito;
+import org.mockito.Mockito.any;
+import java.util.HashMap;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class DeviceOrientationManagerProxyApiTest {
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+
+    assertTrue(api.pigeon_defaultConstructor() instanceof DeviceOrientationManagerProxyApi.DeviceOrientationManager);
+  }
+
+  @Test
+  public void startListeningForDeviceOrientationChange() {
+    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+
+    final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
+    final Boolean isFrontFacing = true;
+    final Long sensorOrientation = 0;
+    api.startListeningForDeviceOrientationChange(instance, isFrontFacing, sensorOrientation);
+
+    verify(instance).startListeningForDeviceOrientationChange(isFrontFacing, sensorOrientation);
+  }
+
+  @Test
+  public void stopListeningForDeviceOrientationChange() {
+    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+
+    final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
+    api.stopListeningForDeviceOrientationChange(instance );
+
+    verify(instance).stopListeningForDeviceOrientationChange();
+  }
+
+  @Test
+  public void getDefaultDisplayRotation() {
+    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+
+    final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
+    final Long value = 0;
+    when(instance.getDefaultDisplayRotation()).thenReturn(value);
+
+    assertEquals(value, api.getDefaultDisplayRotation(instance ));
+  }
+
+  @Test
+  public void getUiOrientation() {
+    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+
+    final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
+    final String value = "myString";
+    when(instance.getUiOrientation()).thenReturn(value);
+
+    assertEquals(value, api.getUiOrientation(instance ));
+  }
+
+  @Test
+  public void onDeviceOrientationChanged() {
+    final DeviceOrientationManagerProxyApi mockApi = mock(DeviceOrientationManagerProxyApi.class);
+    when(mockApi.pigeonRegistrar).thenReturn(new TestProxyApiRegistrar());
+
+    final DeviceOrientationManagerImpl instance = new DeviceOrientationManagerImpl(mockApi);
+    final String orientation = "myString";
+    instance.onDeviceOrientationChanged(orientation);
+
+    verify(mockApi).onDeviceOrientationChanged(eq(instance), eq(orientation), any());
+  }
+
+}
+*/
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface DeviceOrientationManagerHostApi {
   fun startListeningForDeviceOrientationChange(isFrontFacing: Boolean, sensorOrientation: Long)

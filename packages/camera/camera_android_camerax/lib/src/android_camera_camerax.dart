@@ -10,7 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show RotatedBox, Size, Texture, Widget, visibleForTesting;
+    show RotatedBox, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
 import 'camerax_proxy2.dart';
@@ -18,11 +18,31 @@ import 'camerax_proxy2.dart';
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
   /// Constructs an [AndroidCameraCameraX].
-  AndroidCameraCameraX();
+  AndroidCameraCameraX() {
+    systemServicesManager = proxy.newSystemServicesManager(
+      onCameraError: (_, String errorDescription) {
+        cameraErrorStreamController.add(errorDescription);
+      },
+    );
+
+    deviceOrientationManager = proxy.newDeviceOrientationManager(
+      onDeviceOrientationChanged: (_, String orientation) {
+        final DeviceOrientation deviceOrientation =
+            _deserializeDeviceOrientation(
+          orientation,
+        );
+        deviceOrientationChangedStreamController.add(
+          DeviceOrientationChangedEvent(deviceOrientation),
+        );
+      },
+    );
+  }
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AndroidCameraCameraX();
+    PigeonInstanceManager.instance;
+    setUpGenerics();
   }
 
   /// Proxy for creating `JavaObject`s and calling their methods that require
@@ -75,10 +95,26 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  late final SystemServicesManager systemServicesManager;
+
+  late final DeviceOrientationManager deviceOrientationManager;
+
   /// Stream that emits an event when the corresponding video recording is finalized.
   static final StreamController<VideoRecordEvent>
       videoRecordingEventStreamController =
       StreamController<VideoRecordEvent>.broadcast();
+
+  /// Stream that emits the errors caused by camera usage on the native side.
+  static final StreamController<String> cameraErrorStreamController =
+      StreamController<String>.broadcast();
+
+  /// Stream that emits the device orientation whenever it is changed.
+  ///
+  /// Values may start being added to the stream once
+  /// `startListeningForDeviceOrientationChange(...)` is called.
+  static final StreamController<DeviceOrientationChangedEvent>
+      deviceOrientationChangedStreamController =
+      StreamController<DeviceOrientationChangedEvent>.broadcast();
 
   /// Stream queue to pick up finalized viceo recording events in
   /// [stopVideoRecording].
@@ -317,7 +353,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     MediaSettings? mediaSettings,
   ) async {
     // Must obtain proper permissions before attempting to access a camera.
-    await proxy.requestCameraPermissions(mediaSettings?.enableAudio ?? false);
+    await systemServicesManager.requestCameraPermissions(
+      mediaSettings?.enableAudio ?? false,
+    );
 
     // Save CameraSelector that matches cameraDescription.
     final LensFacing cameraSelectorLensDirection =
@@ -327,8 +365,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       requireLensFacing: cameraSelectorLensDirection,
     );
     // Start listening for device orientation changes preceding camera creation.
-    proxy.startListeningForDeviceOrientationChange(
-        cameraIsFrontFacing, cameraDescription.sensorOrientation);
+    unawaited(deviceOrientationManager.startListeningForDeviceOrientationChange(
+      cameraIsFrontFacing,
+      cameraDescription.sensorOrientation,
+    ));
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -377,16 +417,19 @@ class AndroidCameraCameraX extends CameraPlatform {
     // if necessary.
 
     final Camera2CameraInfo camera2CameraInfo =
-        await proxy.fromCamera2CameraInfo(cameraInfo: cameraInfo!);
+        proxy.fromCamera2CameraInfo(cameraInfo: cameraInfo!);
     await Future.wait(<Future<Object>>[
-      SystemServices.isPreviewPreTransformed()
+      systemServicesManager
+          .isPreviewPreTransformed()
           .then((bool value) => isPreviewPreTransformed = value),
-      proxy
-          .getSensorOrientation(camera2CameraInfo)
-          .then((int value) => sensorOrientation = value),
-      proxy
-          .getUiOrientation()
-          .then((DeviceOrientation value) => naturalOrientation ??= value),
+      camera2CameraInfo
+          .getCameraCharacteristic(
+            proxy.sensorOrientationCameraCharacteristics(),
+          )
+          .then((Object? value) => sensorOrientation = value! as int),
+      deviceOrientationManager.getUiOrientation().then((Object? orientation) {
+        return _deserializeDeviceOrientation(orientation! as String);
+      }),
     ]);
     _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
         .listen((DeviceOrientationChangedEvent event) {
@@ -480,10 +523,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   Stream<CameraErrorEvent> onCameraError(int cameraId) {
     return StreamGroup.mergeBroadcast<
         CameraErrorEvent>(<Stream<CameraErrorEvent>>[
-      SystemServices.cameraErrorStreamController.stream
-          .map<CameraErrorEvent>((String errorDescription) {
-        return CameraErrorEvent(cameraId, errorDescription);
-      }),
+      cameraErrorStreamController.stream.map<CameraErrorEvent>(
+        (String errorDescription) {
+          return CameraErrorEvent(cameraId, errorDescription);
+        },
+      ),
       _cameraEvents(cameraId).whereType<CameraErrorEvent>()
     ]);
   }
@@ -800,8 +844,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return DeviceOrientationManager
-        .deviceOrientationChangedStreamController.stream;
+    return deviceOrientationChangedStreamController.stream;
   }
 
   /// Pause the active preview on the current frame for the selected camera.
@@ -928,8 +971,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await imageCapture!
-          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+      await imageCapture!.setTargetRotation(
+        await deviceOrientationManager.getDefaultDisplayRotation(),
+      );
     }
 
     final String picturePath = await imageCapture!.takePicture();
@@ -1057,12 +1101,13 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await videoCapture!
-          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+      await videoCapture!.setTargetRotation(
+        await deviceOrientationManager.getDefaultDisplayRotation(),
+      );
     }
 
     videoOutputPath =
-        await SystemServices.getTempFilePath(videoPrefix, '.temp');
+        await systemServicesManager.getTempFilePath(videoPrefix, '.temp');
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
     recording = await pendingRecording!.start(_videoRecordingEventListener);
@@ -1186,8 +1231,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await imageAnalysis!
-          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+      await imageAnalysis!.setTargetRotation(
+        await deviceOrientationManager.getDefaultDisplayRotation(),
+      );
     }
 
     // Create and set Analyzer that can read image data for image streaming.
@@ -1583,5 +1629,22 @@ class AndroidCameraCameraX extends CameraPlatform {
     final FocusMeteringResult result =
         await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
     return result.isFocusSuccessful;
+  }
+
+  static DeviceOrientation _deserializeDeviceOrientation(String orientation) {
+    switch (orientation) {
+      case 'LANDSCAPE_LEFT':
+        return DeviceOrientation.landscapeLeft;
+      case 'LANDSCAPE_RIGHT':
+        return DeviceOrientation.landscapeRight;
+      case 'PORTRAIT_DOWN':
+        return DeviceOrientation.portraitDown;
+      case 'PORTRAIT_UP':
+        return DeviceOrientation.portraitUp;
+      default:
+        throw ArgumentError(
+          '"$orientation" is not a valid DeviceOrientation value',
+        );
+    }
   }
 }

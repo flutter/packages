@@ -25,6 +25,32 @@ void setUpGenerics() {
   });
 }
 
+// TODO: move rotation logic to dart
+/// Handle onto the raw buffer managed by screen compositor.
+///
+/// See https://developer.android.com/reference/android/view/Surface.html.
+class Surface {
+  /// Rotation constant to signify the natural orientation.
+  ///
+  /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_0.
+  static const int rotation0 = 0;
+
+  /// Rotation constant to signify a 90 degrees rotation.
+  ///
+  /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_90.
+  static const int rotation90 = 1;
+
+  /// Rotation constant to signify a 180 degrees rotation.
+  ///
+  /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_180.
+  static const int rotation180 = 2;
+
+  /// Rotation constant to signify a 270 degrees rotation.
+  ///
+  /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_270.
+  static const int rotation270 = 3;
+}
+
 class CameraInfo extends camerax.CameraInfo {
   CameraInfo.detached({
     required super.sensorRotationDegrees,

@@ -54,6 +54,8 @@ abstract class ResolutionInfo {
   late CameraSize resolution;
 }
 
+/// Data class containing information
+@ProxyApi()
 class CameraPermissionsErrorData {
   CameraPermissionsErrorData({
     required this.errorCode,
@@ -384,8 +386,13 @@ abstract class Camera {
   CameraInfo getCameraInfo();
 }
 
-@HostApi(dartHostTestHandler: 'TestSystemServicesHostApi')
-abstract class SystemServicesHostApi {
+/// Convenience class for accessing system resources.
+@ProxyApi()
+abstract class SystemServicesManager {
+  SystemServicesManager();
+
+  late void Function(String errorDescription) onCameraError;
+
   @async
   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
 
@@ -394,9 +401,38 @@ abstract class SystemServicesHostApi {
   bool isPreviewPreTransformed();
 }
 
-@FlutterApi()
-abstract class SystemServicesFlutterApi {
-  void onCameraError(String errorDescription);
+// abstract class SystemServicesHostApi {
+//   @async
+//   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
+//
+//   String getTempFilePath(String prefix, String suffix);
+//
+//   bool isPreviewPreTransformed();
+// }
+//
+// @FlutterApi()
+// abstract class SystemServicesFlutterApi {
+//   void onCameraError(String errorDescription);
+// }
+
+/// Support class to help to determine the media orientation based on the
+/// orientation of the device.
+@ProxyApi()
+abstract class DeviceOrientationManager {
+  DeviceOrientationManager();
+
+  late void Function(String orientation) onDeviceOrientationChanged;
+
+  void startListeningForDeviceOrientationChange(
+    bool isFrontFacing,
+    int sensorOrientation,
+  );
+
+  void stopListeningForDeviceOrientationChange();
+
+  int getDefaultDisplayRotation();
+
+  String getUiOrientation();
 }
 
 @HostApi(dartHostTestHandler: 'TestDeviceOrientationManagerHostApi')

@@ -17,6 +17,8 @@ class CameraXProxy {
     this.newCameraIntegerRange = CameraIntegerRange.new,
     this.newObserver = Observer.new,
     this.newCameraSelector = CameraSelector.new,
+    this.newSystemServicesManager = SystemServicesManager.new,
+    this.newDeviceOrientationManager = DeviceOrientationManager.new,
     this.newPreview = Preview.new,
     this.withOutputVideoCapture = VideoCapture.withOutput,
     this.newRecorder = Recorder.new,
@@ -64,167 +66,181 @@ class CameraXProxy {
 
   /// Constructs [CameraSize].
   final CameraSize Function({
-    required int width,
-    required int height,
+  required int width,
+  required int height,
   }) newCameraSize;
 
   /// Constructs [ResolutionInfo].
   final ResolutionInfo Function({required CameraSize resolution})
-      newResolutionInfo;
+  newResolutionInfo;
 
   /// Constructs [CameraIntegerRange].
   final CameraIntegerRange Function({
-    required int lower,
-    required int upper,
+  required int lower,
+  required int upper,
   }) newCameraIntegerRange;
 
   /// Constructs [Observer].
   final Observer Function({
-    required void Function(
+  required void Function(
       Observer,
       Object,
-    ) onChanged,
-    required LiveDataSupportedType type,
+      ) onChanged,
+  required LiveDataSupportedType type,
   }) newObserver;
 
   /// Constructs [CameraSelector].
   final CameraSelector Function({LensFacing? requireLensFacing})
-      newCameraSelector;
+  newCameraSelector;
+
+  /// Constructs [SystemServicesManager].
+  final SystemServicesManager Function(
+      {required void Function(
+          SystemServicesManager,
+          String,
+          ) onCameraError}) newSystemServicesManager;
+
+  /// Constructs [DeviceOrientationManager].
+  final DeviceOrientationManager Function(
+      {required void Function(
+          DeviceOrientationManager,
+          String,
+          ) onDeviceOrientationChanged}) newDeviceOrientationManager;
 
   /// Constructs [Preview].
   final Preview Function({
-    int? targetRotation,
-    ResolutionSelector? resolutionSelector,
+  int? targetRotation,
+  ResolutionSelector? resolutionSelector,
   }) newPreview;
 
   /// Constructs [VideoCapture].
   final VideoCapture Function({required VideoOutput videoOutput})
-      withOutputVideoCapture;
+  withOutputVideoCapture;
 
   /// Constructs [Recorder].
   final Recorder Function({
-    int? aspectRatio,
-    int? targetVideoEncodingBitRate,
-    QualitySelector? qualitySelector,
+  int? aspectRatio,
+  int? targetVideoEncodingBitRate,
+  QualitySelector? qualitySelector,
   }) newRecorder;
 
   /// Constructs [VideoRecordEventListener].
   final VideoRecordEventListener Function(
       {required void Function(
-        VideoRecordEventListener,
-        VideoRecordEvent,
-      ) onEvent}) newVideoRecordEventListener;
+          VideoRecordEventListener,
+          VideoRecordEvent,
+          ) onEvent}) newVideoRecordEventListener;
 
   /// Constructs [ImageCapture].
   final ImageCapture Function({
-    int? targetRotation,
-    CameraXFlashMode? flashMode,
-    ResolutionSelector? resolutionSelector,
+  int? targetRotation,
+  CameraXFlashMode? flashMode,
+  ResolutionSelector? resolutionSelector,
   }) newImageCapture;
 
   /// Constructs [ResolutionStrategy].
   final ResolutionStrategy Function({
-    required CameraSize boundSize,
-    required ResolutionStrategyFallbackRule fallbackRule,
+  required CameraSize boundSize,
+  required ResolutionStrategyFallbackRule fallbackRule,
   }) newResolutionStrategy;
 
   /// Constructs [ResolutionSelector].
   final ResolutionSelector Function({
-    AspectRatioStrategy? aspectRatioStrategy,
-    ResolutionStrategy? resolutionStrategy,
-    ResolutionFilter? resolutionFilter,
+  AspectRatioStrategy? aspectRatioStrategy,
+  ResolutionStrategy? resolutionStrategy,
+  ResolutionFilter? resolutionFilter,
   }) newResolutionSelector;
 
   /// Constructs [AspectRatioStrategy].
   final AspectRatioStrategy Function({
-    required AspectRatio preferredAspectRatio,
-    required AspectRatioStrategyFallbackRule fallbackRule,
+  required AspectRatio preferredAspectRatio,
+  required AspectRatioStrategyFallbackRule fallbackRule,
   }) newAspectRatioStrategy;
 
   /// Constructs [ImageAnalysis].
   final ImageAnalysis Function({
-    int? targetRotation,
-    ResolutionSelector? resolutionSelector,
+  int? targetRotation,
+  ResolutionSelector? resolutionSelector,
   }) newImageAnalysis;
 
   /// Constructs [Analyzer].
   final Analyzer Function(
       {required void Function(
-        Analyzer,
-        ImageProxy,
-      ) analyze}) newAnalyzer;
+          Analyzer,
+          ImageProxy,
+          ) analyze}) newAnalyzer;
 
   /// Constructs [QualitySelector].
   final QualitySelector Function({
-    required VideoQuality quality,
-    FallbackStrategy? fallbackStrategy,
+  required VideoQuality quality,
+  FallbackStrategy? fallbackStrategy,
   }) fromQualitySelector;
 
   /// Constructs [QualitySelector].
   final QualitySelector Function({
-    required List<VideoQuality> qualities,
-    FallbackStrategy? fallbackStrategy,
+  required List<VideoQuality> qualities,
+  FallbackStrategy? fallbackStrategy,
   }) fromOrderedListQualitySelector;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({required VideoQuality quality})
-      higherQualityOrLowerThanFallbackStrategy;
+  higherQualityOrLowerThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({required VideoQuality quality})
-      higherQualityThanFallbackStrategy;
+  higherQualityThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({required VideoQuality quality})
-      lowerQualityOrHigherThanFallbackStrategy;
+  lowerQualityOrHigherThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({required VideoQuality quality})
-      lowerQualityThanFallbackStrategy;
+  lowerQualityThanFallbackStrategy;
 
   /// Constructs [FocusMeteringActionBuilder].
   final FocusMeteringActionBuilder Function({required MeteringPoint point})
-      newFocusMeteringActionBuilder;
+  newFocusMeteringActionBuilder;
 
   /// Constructs [FocusMeteringActionBuilder].
   final FocusMeteringActionBuilder Function({
-    required MeteringPoint point,
-    required MeteringMode mode,
+  required MeteringPoint point,
+  required MeteringMode mode,
   }) withModeFocusMeteringActionBuilder;
 
   /// Constructs [CaptureRequestOptions].
   final CaptureRequestOptions Function(
-          {required Map<CaptureRequestKey, Object?> options})
-      newCaptureRequestOptions;
+      {required Map<CaptureRequestKey, Object?> options})
+  newCaptureRequestOptions;
 
   /// Constructs [Camera2CameraControl].
   final Camera2CameraControl Function({required CameraControl cameraControl})
-      fromCamera2CameraControl;
+  fromCamera2CameraControl;
 
   /// Constructs [ResolutionFilter].
   final ResolutionFilter Function({required CameraSize preferredSize})
-      createWithOnePreferredSizeResolutionFilter;
+  createWithOnePreferredSizeResolutionFilter;
 
   /// Constructs [Camera2CameraInfo].
   final Camera2CameraInfo Function({required CameraInfo cameraInfo})
-      fromCamera2CameraInfo;
+  fromCamera2CameraInfo;
 
   /// Constructs [DisplayOrientedMeteringPointFactory].
   final DisplayOrientedMeteringPointFactory Function({
-    required CameraInfo cameraInfo,
-    required double width,
-    required double height,
+  required CameraInfo cameraInfo,
+  required double width,
+  required double height,
   }) newDisplayOrientedMeteringPointFactory;
 
   /// Calls to [ProcessCameraProvider.getInstance].
   final Future<ProcessCameraProvider> Function()
-      getInstanceProcessCameraProvider;
+  getInstanceProcessCameraProvider;
 
   /// Calls to [QualitySelector.getResolution].
   final Future<CameraSize?> Function(
-    CameraInfo,
-    VideoQuality,
-  ) getResolutionQualitySelector;
+      CameraInfo,
+      VideoQuality,
+      ) getResolutionQualitySelector;
 
   /// Calls to [CameraSelector.defaultBackCamera].
   final CameraSelector Function() defaultBackCameraCameraSelector;
@@ -234,26 +250,26 @@ class CameraXProxy {
 
   /// Calls to [ResolutionStrategy.highestAvailableStrategy].
   final ResolutionStrategy Function()
-      highestAvailableStrategyResolutionStrategy;
+  highestAvailableStrategyResolutionStrategy;
 
   /// Calls to [AspectRatioStrategy.ratio_16_9FallbackAutoStrategy].
   final AspectRatioStrategy Function()
-      ratio_16_9FallbackAutoStrategyAspectRatioStrategy;
+  ratio_16_9FallbackAutoStrategyAspectRatioStrategy;
 
   /// Calls to [AspectRatioStrategy.ratio_4_3FallbackAutoStrategy].
   final AspectRatioStrategy Function()
-      ratio_4_3FallbackAutoStrategyAspectRatioStrategy;
+  ratio_4_3FallbackAutoStrategyAspectRatioStrategy;
 
   /// Calls to [CaptureRequest.controlAELock].
   final CaptureRequestKey Function() controlAELockCaptureRequest;
 
   /// Calls to [CameraCharacteristics.infoSupportedHardwareLevel].
   final CameraCharacteristicsKey Function()
-      infoSupportedHardwareLevelCameraCharacteristics;
+  infoSupportedHardwareLevelCameraCharacteristics;
 
   /// Calls to [CameraCharacteristics.sensorOrientation].
   final CameraCharacteristicsKey Function()
-      sensorOrientationCameraCharacteristics;
+  sensorOrientationCameraCharacteristics;
 
   static CameraSelector _defaultBackCameraCameraSelector() =>
       CameraSelector.defaultBackCamera;
@@ -265,19 +281,19 @@ class CameraXProxy {
       ResolutionStrategy.highestAvailableStrategy;
 
   static AspectRatioStrategy
-      _ratio_16_9FallbackAutoStrategyAspectRatioStrategy() =>
-          AspectRatioStrategy.ratio_16_9FallbackAutoStrategy;
+  _ratio_16_9FallbackAutoStrategyAspectRatioStrategy() =>
+      AspectRatioStrategy.ratio_16_9FallbackAutoStrategy;
 
   static AspectRatioStrategy
-      _ratio_4_3FallbackAutoStrategyAspectRatioStrategy() =>
-          AspectRatioStrategy.ratio_4_3FallbackAutoStrategy;
+  _ratio_4_3FallbackAutoStrategyAspectRatioStrategy() =>
+      AspectRatioStrategy.ratio_4_3FallbackAutoStrategy;
 
   static CaptureRequestKey _controlAELockCaptureRequest() =>
       CaptureRequest.controlAELock;
 
   static CameraCharacteristicsKey
-      _infoSupportedHardwareLevelCameraCharacteristics() =>
-          CameraCharacteristics.infoSupportedHardwareLevel;
+  _infoSupportedHardwareLevelCameraCharacteristics() =>
+      CameraCharacteristics.infoSupportedHardwareLevel;
 
   static CameraCharacteristicsKey _sensorOrientationCameraCharacteristics() =>
       CameraCharacteristics.sensorOrientation;
