@@ -21,32 +21,24 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientat
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
-public class DeviceOrientationManager {
-
+public abstract class DeviceOrientationManager {
   interface DeviceOrientationChangeCallback {
-    void onChange(DeviceOrientation newOrientation);
+    void onChange(@NonNull DeviceOrientationManager manager, @NonNull DeviceOrientation newOrientation);
   }
 
   private static final IntentFilter orientationIntentFilter =
       new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED);
 
-  private final Activity activity;
-  private final boolean isFrontFacing;
-  private final int sensorOrientation;
   private final DeviceOrientationChangeCallback deviceOrientationChangeCallback;
   private PlatformChannel.DeviceOrientation lastOrientation;
   private BroadcastReceiver broadcastReceiver;
 
-  DeviceOrientationManager(
-      @NonNull Activity activity,
-      boolean isFrontFacing,
-      int sensorOrientation,
-      DeviceOrientationChangeCallback callback) {
-    this.activity = activity;
-    this.isFrontFacing = isFrontFacing;
-    this.sensorOrientation = sensorOrientation;
+  DeviceOrientationManager(DeviceOrientationChangeCallback callback) {
     this.deviceOrientationChangeCallback = callback;
   }
+
+  @NonNull
+  abstract Context getContext();
 
   /**
    * Starts listening to the device's sensors or UI for orientation updates.
@@ -70,8 +62,8 @@ public class DeviceOrientationManager {
             handleUIOrientationChange();
           }
         };
-    activity.registerReceiver(broadcastReceiver, orientationIntentFilter);
-    broadcastReceiver.onReceive(activity, null);
+    getContext().registerReceiver(broadcastReceiver, orientationIntentFilter);
+    broadcastReceiver.onReceive(getContext(), null);
   }
 
   /** Stops listening for orientation updates. */
@@ -79,7 +71,7 @@ public class DeviceOrientationManager {
     if (broadcastReceiver == null) {
       return;
     }
-    activity.unregisterReceiver(broadcastReceiver);
+    getContext().unregisterReceiver(broadcastReceiver);
     broadcastReceiver = null;
   }
 
@@ -92,7 +84,7 @@ public class DeviceOrientationManager {
   @VisibleForTesting
   void handleUIOrientationChange() {
     PlatformChannel.DeviceOrientation orientation = getUIOrientation();
-    handleOrientationChange(orientation, lastOrientation, deviceOrientationChangeCallback);
+    handleOrientationChange(this, orientation, lastOrientation, deviceOrientationChangeCallback);
     lastOrientation = orientation;
   }
 
@@ -105,11 +97,12 @@ public class DeviceOrientationManager {
    */
   @VisibleForTesting
   static void handleOrientationChange(
+      DeviceOrientationManager manager,
       DeviceOrientation newOrientation,
       DeviceOrientation previousOrientation,
       DeviceOrientationChangeCallback callback) {
     if (!newOrientation.equals(previousOrientation)) {
-      callback.onChange(newOrientation);
+      callback.onChange(manager, newOrientation);
     }
   }
 
@@ -126,7 +119,7 @@ public class DeviceOrientationManager {
   @NonNull
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
-    final int orientation = activity.getResources().getConfiguration().orientation;
+    final int orientation = getContext().getResources().getConfiguration().orientation;
 
     switch (orientation) {
       case Configuration.ORIENTATION_PORTRAIT:
@@ -174,6 +167,6 @@ public class DeviceOrientationManager {
   @SuppressWarnings("deprecation")
   @VisibleForTesting
   Display getDisplay() {
-    return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+    return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
   }
 }

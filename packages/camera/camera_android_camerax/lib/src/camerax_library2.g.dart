@@ -133,7 +133,6 @@ class PigeonInstanceManager {
     _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
     CameraSize.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ResolutionInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    CameraPermissionsErrorData.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     CameraIntegerRange.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoRecordEvent.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     VideoRecordEventStart.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
@@ -818,6 +817,8 @@ enum MeteringMode {
 }
 
 /// Direction of lens of a camera.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraSelector#LENS_FACING_BACK().
 enum LensFacing {
   /// A camera on the device facing the same direction as the device's screen.
   front,
@@ -848,11 +849,6 @@ enum CameraXFlashMode {
   ///
   /// The flash will always be used when taking a picture.
   on,
-  /// Screen flash.
-  ///
-  /// Display screen brightness will be used as alternative to flash when taking
-  /// a picture with front camera.
-  screen,
 }
 
 /// Fallback rule for choosing an alternate size when the specified bound size
@@ -1218,95 +1214,6 @@ class ResolutionInfo extends PigeonInternalProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       resolution: resolution,
-    );
-  }
-}
-
-/// Data class containing information
-class CameraPermissionsErrorData extends PigeonInternalProxyApiBaseClass {
-  /// Constructs [CameraPermissionsErrorData] without creating the associated native object.
-  ///
-  /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInstanceManager].
-  @protected
-  CameraPermissionsErrorData.pigeon_detached({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    required this.errorCode,
-    required this.description,
-  });
-
-  final String errorCode;
-
-  final String description;
-
-  static void pigeon_setUpMessageHandlers({
-    bool pigeon_clearHandlers = false,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-    CameraPermissionsErrorData Function(
-      String errorCode,
-      String description,
-    )? pigeon_newInstance,
-  }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.camera_android_camerax.CameraPermissionsErrorData.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.camera_android_camerax.CameraPermissionsErrorData.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.camera_android_camerax.CameraPermissionsErrorData.pigeon_newInstance was null, expected non-null int.');
-          final String? arg_errorCode = (args[1] as String?);
-          assert(arg_errorCode != null,
-              'Argument for dev.flutter.pigeon.camera_android_camerax.CameraPermissionsErrorData.pigeon_newInstance was null, expected non-null String.');
-          final String? arg_description = (args[2] as String?);
-          assert(arg_description != null,
-              'Argument for dev.flutter.pigeon.camera_android_camerax.CameraPermissionsErrorData.pigeon_newInstance was null, expected non-null String.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_errorCode!, arg_description!) ??
-                  CameraPermissionsErrorData.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    errorCode: arg_errorCode!,
-                    description: arg_description!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-  }
-
-  @override
-  CameraPermissionsErrorData pigeon_copy() {
-    return CameraPermissionsErrorData.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-      errorCode: errorCode,
-      description: description,
     );
   }
 }
@@ -2434,7 +2341,7 @@ class ProcessCameraProvider extends PigeonInternalProxyApiBaseClass {
 
   /// Binds the collection of `UseCase` to a `LifecycleOwner`.
   Future<Camera> bindToLifecycle(
-    CameraSelector cameraSelectorIdentifier,
+    CameraSelector cameraSelector,
     List<UseCase> useCases,
   ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -2449,8 +2356,7 @@ class ProcessCameraProvider extends PigeonInternalProxyApiBaseClass {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-            .send(<Object?>[this, cameraSelectorIdentifier, useCases])
-        as List<Object?>?;
+        .send(<Object?>[this, cameraSelector, useCases]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -2884,8 +2790,7 @@ class SystemServicesManager extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  Future<CameraPermissionsErrorData?> requestCameraPermissions(
-      bool enableAudio) async {
+  Future<void> requestCameraPermissions(bool enableAudio) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecSystemServicesManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -2908,7 +2813,7 @@ class SystemServicesManager extends PigeonInternalProxyApiBaseClass {
         details: pigeonVar_replyList[2],
       );
     } else {
-      return (pigeonVar_replyList[0] as CameraPermissionsErrorData?);
+      return;
     }
   }
 
@@ -3362,7 +3267,8 @@ class Preview extends UseCase {
   /// 2. Sets this method with the created `SurfaceProvider`.
   /// 3. Returns the texture id of the `TextureEntry` that provided the
   /// `SurfaceProducer`.
-  Future<int> setSurfaceProvider() async {
+  Future<int> setSurfaceProvider(
+      SystemServicesManager systemServicesManager) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecPreview;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3374,8 +3280,8 @@ class Preview extends UseCase {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[this, systemServicesManager]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -5758,6 +5664,9 @@ class CameraStateStateError extends PigeonInternalProxyApiBaseClass {
 
 /// LiveData is a data holder class that can be observed within a given
 /// lifecycle.
+///
+/// This is a wrapper around the native class to better support the generic
+/// type. Java has type erasure;
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
 class LiveData extends PigeonInternalProxyApiBaseClass {

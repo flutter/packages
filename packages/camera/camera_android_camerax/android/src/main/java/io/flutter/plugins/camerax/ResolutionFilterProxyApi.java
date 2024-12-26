@@ -4,29 +4,25 @@
 
 package io.flutter.plugins.camerax;
 
-
+import androidx.camera.core.resolutionselector.ResolutionFilter;
+import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
- * ProxyApi implementation for {@link CameraPermissionsErrorData}.
+ * ProxyApi implementation for {@link ResolutionFilter}.
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
-class CameraPermissionsErrorDataProxyApi extends PigeonApiCameraPermissionsErrorData {
-  CameraPermissionsErrorDataProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
+class ResolutionFilterProxyApi extends PigeonApiResolutionFilter {
+  ResolutionFilterProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
 
   @NonNull
   @Override
-  public String errorCode(CameraPermissionsErrorData pigeon_instance) {
-    return pigeon_instance.getErrorCode();
+  public ResolutionFilter createWithOnePreferredSize(@NonNull android.util.Size preferredSize) {
+    return ResolutionFilter(preferredSize);
   }
 
-  @NonNull
-  @Override
-  public String description(CameraPermissionsErrorData pigeon_instance) {
-    return pigeon_instance.getDescription();
-  }
 }

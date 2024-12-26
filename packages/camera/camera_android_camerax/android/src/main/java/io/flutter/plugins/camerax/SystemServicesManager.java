@@ -14,8 +14,8 @@ public abstract class SystemServicesManager {
   @NonNull
   private final CameraPermissionsManager cameraPermissionsManager;
 
-  interface PermissionsResultListener {
-    void onResult(@Nullable CameraPermissionsErrorData data);
+  public interface PermissionsResultListener {
+    void onResult(boolean isSuccessful);
   }
 
   protected SystemServicesManager(@NonNull CameraPermissionsManager cameraPermissionsManager) {
@@ -24,44 +24,28 @@ public abstract class SystemServicesManager {
 
   abstract void onCameraError(@NonNull String description);
 
-  @Nullable
+  @NonNull
   abstract Context getContext();
 
   @Nullable
   abstract CameraPermissionsManager.PermissionsRegistry getPermissionsRegistry();
 
   public void requestCameraPermissions(@NonNull Boolean enableAudio, @NonNull PermissionsResultListener listener) {
-    if (getContext() == null || !(getContext() instanceof Activity)) {
-      throw new IllegalStateException("Activity must be set to request camera permissions.");
+    if (getContext() instanceof Activity) {
+      cameraPermissionsManager.requestPermissions(
+          (Activity) getContext(),
+          getPermissionsRegistry(),
+          enableAudio,
+          (String errorCode, String description) -> listener.onResult(errorCode == null));
     }
 
-    cameraPermissionsManager.requestPermissions(
-        (Activity) getContext(),
-        getPermissionsRegistry(),
-        enableAudio,
-        (String errorCode, String description) -> {
-          if (errorCode == null) {
-            listener.onResult(null);
-          } else {
-            // If permissions are ongoing or denied, error data will be sent to be handled.
-            listener.onResult(new CameraPermissionsErrorData(errorCode, description));
-          }
-        });
+    throw new IllegalStateException("Activity must be set to request camera permissions.");
   }
 
-  // TODO: throwing of cameraxerror should be handled by proxyapi impl
   @NonNull
-  public String getTempFilePath(@NonNull String prefix, @NonNull String suffix) throws CameraXError {
-    if (getContext() == null) {
-      throw new IllegalStateException("Context must be set to create a temporary file.");
-    }
-
-    try {
+  public String getTempFilePath(@NonNull String prefix, @NonNull String suffix) throws IOException {
       final File path = File.createTempFile(prefix, suffix, getContext().getCacheDir());
       return path.toString();
-    } catch (IOException | SecurityException e) {
-      throw new CameraXError("getTempFilePath_failure", "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e, null);
-    }
   }
 
   @NonNull

@@ -58,7 +58,7 @@ public class DeviceOrientationManagerHostApiImpl implements DeviceOrientationMan
             activity,
             isFrontFacing,
             sensorOrientation.intValue(),
-            (DeviceOrientation newOrientation) -> {
+            (DeviceOrientationManager manager, DeviceOrientation newOrientation) -> {
               deviceOrientationManagerFlutterApiImpl.sendDeviceOrientationChangedEvent(
                   serializeDeviceOrientation(newOrientation), reply -> {});
             });

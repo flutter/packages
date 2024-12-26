@@ -352,6 +352,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
+    // TODO(bparrishMines): Failure to get permissions isn't actually handled.
     // Must obtain proper permissions before attempting to access a camera.
     await systemServicesManager.requestCameraPermissions(
       mediaSettings?.enableAudio ?? false,
@@ -385,7 +386,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionSelector: presetResolutionSelector,
       /* use CameraX default target rotation */ targetRotation: null,
     );
-    final int flutterSurfaceTextureId = await preview!.setSurfaceProvider();
+    final int flutterSurfaceTextureId = await preview!.setSurfaceProvider(
+      systemServicesManager,
+    );
 
     // Configure ImageCapture instance.
     imageCapture = proxy.newImageCapture(

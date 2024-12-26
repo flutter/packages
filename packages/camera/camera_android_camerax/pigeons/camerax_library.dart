@@ -52,13 +52,6 @@ abstract class ResolutionInfo {
   late CameraSize resolution;
 }
 
-/// Data class containing information
-@ProxyApi()
-abstract class CameraPermissionsErrorData {
-  late String errorCode;
-  late String description;
-}
-
 /// Generally classifies the overall set of the camera device functionality.
 ///
 /// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3.
@@ -272,6 +265,8 @@ abstract class CameraInfo {
 }
 
 /// Direction of lens of a camera.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraSelector#LENS_FACING_BACK().
 enum LensFacing {
   /// A camera on the device facing the same direction as the device's screen.
   front,
@@ -333,7 +328,7 @@ abstract class ProcessCameraProvider {
 
   /// Binds the collection of `UseCase` to a `LifecycleOwner`.
   Camera bindToLifecycle(
-    CameraSelector cameraSelectorIdentifier,
+    CameraSelector cameraSelector,
     List<UseCase> useCases,
   );
 
@@ -384,7 +379,7 @@ abstract class SystemServicesManager {
   late void Function(String errorDescription) onCameraError;
 
   @async
-  CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
+  void requestCameraPermissions(bool enableAudio);
 
   String getTempFilePath(String prefix, String suffix);
 
@@ -430,7 +425,7 @@ abstract class Preview extends UseCase {
   /// 2. Sets this method with the created `SurfaceProvider`.
   /// 3. Returns the texture id of the `TextureEntry` that provided the
   /// `SurfaceProducer`.
-  int setSurfaceProvider();
+  int setSurfaceProvider(SystemServicesManager systemServicesManager);
 
   /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
   /// created.
@@ -562,12 +557,6 @@ enum CameraXFlashMode {
   ///
   /// The flash will always be used when taking a picture.
   on,
-
-  /// Screen flash.
-  ///
-  /// Display screen brightness will be used as alternative to flash when taking
-  /// a picture with front camera.
-  screen,
 }
 
 /// A use case for taking a picture.
@@ -840,10 +829,13 @@ abstract class CameraStateStateError {
 /// LiveData is a data holder class that can be observed within a given
 /// lifecycle.
 ///
+/// This is a wrapper around the native class to better support the generic
+/// type. Java has type erasure;
+///
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.lifecycle.LiveData<*>',
+    fullClassName: 'io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper',
   ),
 )
 abstract class LiveData {

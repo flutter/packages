@@ -10,16 +10,31 @@ import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.view.TextureRegistry;
 
 public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
+  private final CameraPermissionsManager cameraPermissionsManager = new CameraPermissionsManager();
+
+  @NonNull
+  private final TextureRegistry textureRegistry;
+
+  private final long defaultClearFinalizedWeakReferencesInterval;
+
+  @NonNull
   private Context context;
 
-  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger, @NonNull Context context) {
+  @Nullable
+  private CameraPermissionsManager.PermissionsRegistry permissionsRegistry;
+
+  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger, @NonNull Context context, @NonNull TextureRegistry textureRegistry) {
     super(binaryMessenger);
     this.context = context;
+    this.textureRegistry = textureRegistry;
+    defaultClearFinalizedWeakReferencesInterval = getInstanceManager().getClearFinalizedWeakReferencesInterval();
   }
 
   // Interface for an injectable SDK version checker.
@@ -30,7 +45,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   // Added to be overridden for tests. The test implementation calls `callback` immediately, instead
   // of waiting for the main thread to run it.
-  void runOnMainThread(Runnable runnable) {
+  void runOnMainThread(@NonNull Runnable runnable) {
     if (context instanceof Activity) {
       ((Activity) context).runOnUiThread(runnable);
     } else {
@@ -39,7 +54,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   }
 
   // For logging exceptions received from Host -> Dart message calls.
-  void logError(String tag, Throwable exception) {
+  void logError(@NonNull String tag, @NonNull Throwable exception) {
     Log.e(
         tag,
         exception.getClass().getSimpleName()
@@ -58,6 +73,40 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     this.context = context;
   }
 
+  @Nullable
+  public LifecycleOwner getLifecycleOwner() {
+    if (context instanceof LifecycleOwner) {
+      return (LifecycleOwner) context;
+    } else if (context instanceof Activity) {
+      return new ProxyLifecycleProvider((Activity) context);
+    }
+
+    return null;
+  }
+
+  @NonNull
+  public CameraPermissionsManager getCameraPermissionsManager() {
+    return cameraPermissionsManager;
+  }
+
+  void setPermissionsRegistry(@Nullable CameraPermissionsManager.PermissionsRegistry permissionsRegistry) {
+    this.permissionsRegistry = permissionsRegistry;
+  }
+
+  @Nullable
+  CameraPermissionsManager.PermissionsRegistry getPermissionsRegistry() {
+    return permissionsRegistry;
+  }
+
+  @NonNull
+  TextureRegistry getTextureRegistry() {
+    return textureRegistry;
+  }
+
+  long getDefaultClearFinalizedWeakReferencesInterval() {
+    return defaultClearFinalizedWeakReferencesInterval;
+  }
+
   @NonNull
   @Override
   public PigeonApiCameraSize getPigeonApiCameraSize() {
@@ -68,12 +117,6 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @Override
   public PigeonApiResolutionInfo getPigeonApiResolutionInfo() {
     return new ResolutionInfoProxyApi(this);
-  }
-
-  @NonNull
-  @Override
-  public PigeonApiCameraPermissionsErrorData getPigeonApiCameraPermissionsErrorData() {
-    return new CameraPermissionsErrorDataProxyApi(this);
   }
 
   @NonNull
@@ -97,151 +140,151 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiCameraInfo getPigeonApiCameraInfo() {
-    return null;
+    return new CameraInfoProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCameraSelector getPigeonApiCameraSelector() {
-    return null;
+    return new CameraSelectorProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiProcessCameraProvider getPigeonApiProcessCameraProvider() {
-    return null;
+    return new ProcessCameraProviderProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCamera getPigeonApiCamera() {
-    return null;
+    return new CameraProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiSystemServicesManager getPigeonApiSystemServicesManager() {
-    return null;
+    return new SystemServicesManagerProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiDeviceOrientationManager getPigeonApiDeviceOrientationManager() {
-    return null;
+    return new DeviceOrientationManagerProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiPreview getPigeonApiPreview() {
-    return null;
+    return new PreviewProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiVideoCapture getPigeonApiVideoCapture() {
-    return null;
+    return new VideoCaptureProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiRecorder getPigeonApiRecorder() {
-    return null;
+    return new RecorderProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiVideoRecordEventListener getPigeonApiVideoRecordEventListener() {
-    return null;
+    return new VideoRecordEventListenerProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiPendingRecording getPigeonApiPendingRecording() {
-    return null;
+    return new PendingRecordingProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiRecording getPigeonApiRecording() {
-    return null;
+    return new RecordingProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiImageCapture getPigeonApiImageCapture() {
-    return null;
+    return new ImageCaptureProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiResolutionStrategy getPigeonApiResolutionStrategy() {
-    return null;
+    return new ResolutionStrategyProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiResolutionSelector getPigeonApiResolutionSelector() {
-    return null;
+    return new ResolutionSelectorProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiAspectRatioStrategy getPigeonApiAspectRatioStrategy() {
-    return null;
+    return new AspectRatioStrategyProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCameraState getPigeonApiCameraState() {
-    return null;
+    return new CameraStateProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiExposureState getPigeonApiExposureState() {
-    return null;
+    return new ExposureStateProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiZoomState getPigeonApiZoomState() {
-    return null;
+    return new ZoomStateProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiImageAnalysis getPigeonApiImageAnalysis() {
-    return null;
+    return new ImageAnalysisProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiAnalyzer getPigeonApiAnalyzer() {
-    return null;
+    return new AnalyzerProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCameraStateStateError getPigeonApiCameraStateStateError() {
-    return null;
+    return new CameraStateStateErrorProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiLiveData getPigeonApiLiveData() {
-    return null;
+    return new LiveDataProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiImageProxy getPigeonApiImageProxy() {
-    return null;
+    return new ImageProxyProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiPlaneProxy getPigeonApiPlaneProxy() {
-    return null;
+    return new PlaneProxyProxyApi(this);
   }
 
   @NonNull

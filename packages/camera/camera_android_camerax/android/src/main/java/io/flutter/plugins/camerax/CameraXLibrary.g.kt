@@ -380,12 +380,6 @@ abstract class CameraXLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
   abstract fun getPigeonApiResolutionInfo(): PigeonApiResolutionInfo
 
   /**
-   * An implementation of [PigeonApiCameraPermissionsErrorData] used to add a new Dart instance of
-   * `CameraPermissionsErrorData` to the Dart `InstanceManager`.
-   */
-  abstract fun getPigeonApiCameraPermissionsErrorData(): PigeonApiCameraPermissionsErrorData
-
-  /**
    * An implementation of [PigeonApiCameraIntegerRange] used to add a new Dart instance of
    * `CameraIntegerRange` to the Dart `InstanceManager`.
    */
@@ -801,9 +795,6 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
      else if (value is androidx.camera.core.ResolutionInfo) {
       registrar.getPigeonApiResolutionInfo().pigeon_newInstance(value) { }
     }
-     else if (value is CameraPermissionsErrorData) {
-      registrar.getPigeonApiCameraPermissionsErrorData().pigeon_newInstance(value) { }
-    }
      else if (value is android.util.Range<*>) {
       registrar.getPigeonApiCameraIntegerRange().pigeon_newInstance(value) { }
     }
@@ -894,7 +885,7 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
      else if (value is androidx.camera.core.CameraState.StateError) {
       registrar.getPigeonApiCameraStateStateError().pigeon_newInstance(value) { }
     }
-     else if (value is androidx.lifecycle.LiveData<*>) {
+     else if (value is io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper) {
       registrar.getPigeonApiLiveData().pigeon_newInstance(value) { }
     }
      else if (value is androidx.camera.core.ImageProxy) {
@@ -1109,7 +1100,11 @@ enum class MeteringMode(val raw: Int) {
   }
 }
 
-/** Direction of lens of a camera. */
+/**
+ * Direction of lens of a camera.
+ *
+ * See https://developer.android.com/reference/androidx/camera/core/CameraSelector#LENS_FACING_BACK().
+ */
 enum class LensFacing(val raw: Int) {
   /** A camera on the device facing the same direction as the device's screen. */
   FRONT(0),
@@ -1157,14 +1152,7 @@ enum class CameraXFlashMode(val raw: Int) {
    *
    * The flash will always be used when taking a picture.
    */
-  ON(2),
-  /**
-   * Screen flash.
-   *
-   * Display screen brightness will be used as alternative to flash when taking
-   * a picture with front camera.
-   */
-  SCREEN(3);
+  ON(2);
 
   companion object {
     fun ofRaw(raw: Int): CameraXFlashMode? {
@@ -1488,7 +1476,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraSize}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -1499,7 +1486,7 @@ class CameraSizeProxyApi extends PigeonApiCameraSize {
 
   @NonNull
   @Override
-  public CameraSize pigeon_defaultConstructor() {
+  public CameraSize pigeon_defaultConstructor(@NonNull Long width, @NonNull Long height) {
     return CameraSize();
   }
 
@@ -1629,7 +1616,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ResolutionInfo}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -1677,130 +1663,6 @@ public class ResolutionInfoProxyApiTest {
     when(instance.getResolution()).thenReturn(value);
 
     assertEquals(value, api.resolution(instance));
-  }
-
-}
-*/
-/** Data class containing information */
-@Suppress("UNCHECKED_CAST")
-abstract class PigeonApiCameraPermissionsErrorData(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun errorCode(pigeon_instance: CameraPermissionsErrorData): String
-
-  abstract fun description(pigeon_instance: CameraPermissionsErrorData): String
-
-  @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of CameraPermissionsErrorData and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(pigeon_instanceArg: CameraPermissionsErrorData, callback: (Result<Unit>) -> Unit)
-{
-    if (pigeonRegistrar.ignoreCallsToDart) {
-      callback(
-          Result.failure(
-              CameraXError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-      return
-    }
-    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
-      Result.success(Unit)
-      return
-    }
-    val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val errorCodeArg = errorCode(pigeon_instanceArg)
-    val descriptionArg = description(pigeon_instanceArg)
-    val binaryMessenger = pigeonRegistrar.binaryMessenger
-    val codec = pigeonRegistrar.codec
-    val channelName = "dev.flutter.pigeon.camera_android_camerax.CameraPermissionsErrorData.pigeon_newInstance"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg, errorCodeArg, descriptionArg)) {
-      if (it is List<*>) {
-        if (it.size > 1) {
-          callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
-        } else {
-          callback(Result.success(Unit))
-        }
-      } else {
-        callback(Result.failure(createConnectionError(channelName)))
-      } 
-    }
-  }
-
-}
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-package io.flutter.plugins.camerax;
-
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-/**
- * ProxyApi implementation for {@link CameraPermissionsErrorData}.
- *
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
- */
-class CameraPermissionsErrorDataProxyApi extends PigeonApiCameraPermissionsErrorData {
-  CameraPermissionsErrorDataProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
-    super(pigeonRegistrar);
-  }
-
-  @NonNull
-  @Override
-  public String errorCode(CameraPermissionsErrorData pigeon_instance) {
-    return pigeon_instance.getErrorCode();
-  }
-
-  @NonNull
-  @Override
-  public String description(CameraPermissionsErrorData pigeon_instance) {
-    return pigeon_instance.getDescription();
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-package io.flutter.plugins.camerax
-
-
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.mockito.Mockito;
-import org.mockito.Mockito.any;
-import java.util.HashMap;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-public class CameraPermissionsErrorDataProxyApiTest {
-  @Test
-  public void errorCode() {
-    final PigeonApiCameraPermissionsErrorData api = new TestProxyApiRegistrar().getPigeonApiCameraPermissionsErrorData();
-
-    final CameraPermissionsErrorData instance = mock(CameraPermissionsErrorData.class);
-    final String value = "myString";
-    when(instance.getErrorCode()).thenReturn(value);
-
-    assertEquals(value, api.errorCode(instance));
-  }
-
-  @Test
-  public void description() {
-    final PigeonApiCameraPermissionsErrorData api = new TestProxyApiRegistrar().getPigeonApiCameraPermissionsErrorData();
-
-    final CameraPermissionsErrorData instance = mock(CameraPermissionsErrorData.class);
-    final String value = "myString";
-    when(instance.getDescription()).thenReturn(value);
-
-    assertEquals(value, api.description(instance));
   }
 
 }
@@ -1898,7 +1760,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraIntegerRange}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -1909,7 +1770,7 @@ class CameraIntegerRangeProxyApi extends PigeonApiCameraIntegerRange {
 
   @NonNull
   @Override
-  public CameraIntegerRange pigeon_defaultConstructor() {
+  public CameraIntegerRange pigeon_defaultConstructor(@NonNull Long lower, @NonNull Long upper) {
     return CameraIntegerRange();
   }
 
@@ -2033,7 +1894,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link VideoRecordEvent}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -2128,7 +1988,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link VideoRecordEventStart}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -2223,7 +2082,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link VideoRecordEventFinalize}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -2344,7 +2202,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link MeteringPoint}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -2487,7 +2344,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Observer}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -2574,10 +2430,10 @@ abstract class PigeonApiCameraInfo(open val pigeonRegistrar: CameraXLibraryPigeo
   abstract fun exposureState(pigeon_instance: androidx.camera.core.CameraInfo): androidx.camera.core.ExposureState
 
   /** A LiveData of the camera's state. */
-  abstract fun getCameraState(pigeon_instance: androidx.camera.core.CameraInfo): androidx.lifecycle.LiveData<*>
+  abstract fun getCameraState(pigeon_instance: androidx.camera.core.CameraInfo): io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
 
   /** A LiveData of ZoomState. */
-  abstract fun getZoomState(pigeon_instance: androidx.camera.core.CameraInfo): androidx.lifecycle.LiveData<*>
+  abstract fun getZoomState(pigeon_instance: androidx.camera.core.CameraInfo): io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
 
   companion object {
     @Suppress("LocalVariableName")
@@ -2665,13 +2521,12 @@ package io.flutter.plugins.camerax;
 
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.ExposureState;
-import androidx.lifecycle.LiveData<*>;
+import io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraInfo}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -2694,13 +2549,13 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
 
   @NonNull
   @Override
-  public androidx.lifecycle.LiveData<*> getCameraState(CameraInfo pigeon_instance) {
+  public io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper getCameraState(CameraInfo pigeon_instance) {
     return pigeon_instance.getCameraState();
   }
 
   @NonNull
   @Override
-  public androidx.lifecycle.LiveData<*> getZoomState(CameraInfo pigeon_instance) {
+  public io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper getZoomState(CameraInfo pigeon_instance) {
     return pigeon_instance.getZoomState();
   }
 
@@ -2716,7 +2571,7 @@ package io.flutter.plugins.camerax
 
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.ExposureState
-import androidx.lifecycle.LiveData<*>
+import io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -2756,7 +2611,7 @@ public class CameraInfoProxyApiTest {
     final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
 
     final CameraInfo instance = mock(CameraInfo.class);
-    final androidx.lifecycle.LiveData<*> value = mock(LiveData.class);
+    final io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper value = mock(LiveData.class);
     when(instance.getCameraState()).thenReturn(value);
 
     assertEquals(value, api.getCameraState(instance ));
@@ -2767,7 +2622,7 @@ public class CameraInfoProxyApiTest {
     final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
 
     final CameraInfo instance = mock(CameraInfo.class);
-    final androidx.lifecycle.LiveData<*> value = mock(LiveData.class);
+    final io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper value = mock(LiveData.class);
     when(instance.getZoomState()).thenReturn(value);
 
     assertEquals(value, api.getZoomState(instance ));
@@ -2925,7 +2780,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraSelector}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -3018,7 +2872,7 @@ abstract class PigeonApiProcessCameraProvider(open val pigeonRegistrar: CameraXL
   abstract fun getAvailableCameraInfos(pigeon_instance: androidx.camera.lifecycle.ProcessCameraProvider): List<androidx.camera.core.CameraInfo>
 
   /** Binds the collection of `UseCase` to a `LifecycleOwner`. */
-  abstract fun bindToLifecycle(pigeon_instance: androidx.camera.lifecycle.ProcessCameraProvider, cameraSelectorIdentifier: androidx.camera.core.CameraSelector, useCases: List<androidx.camera.core.UseCase>): androidx.camera.core.Camera
+  abstract fun bindToLifecycle(pigeon_instance: androidx.camera.lifecycle.ProcessCameraProvider, cameraSelector: androidx.camera.core.CameraSelector, useCases: List<androidx.camera.core.UseCase>): androidx.camera.core.Camera
 
   /** Returns true if the `UseCase` is bound to a lifecycle. */
   abstract fun isBound(pigeon_instance: androidx.camera.lifecycle.ProcessCameraProvider, useCase: androidx.camera.core.UseCase): Boolean
@@ -3077,10 +2931,10 @@ abstract class PigeonApiProcessCameraProvider(open val pigeonRegistrar: CameraXL
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.lifecycle.ProcessCameraProvider
-            val cameraSelectorIdentifierArg = args[1] as androidx.camera.core.CameraSelector
+            val cameraSelectorArg = args[1] as androidx.camera.core.CameraSelector
             val useCasesArg = args[2] as List<androidx.camera.core.UseCase>
             val wrapped: List<Any?> = try {
-              listOf(api.bindToLifecycle(pigeon_instanceArg, cameraSelectorIdentifierArg, useCasesArg))
+              listOf(api.bindToLifecycle(pigeon_instanceArg, cameraSelectorArg, useCasesArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -3199,7 +3053,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ProcessCameraProvider}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -3222,8 +3075,8 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
 
   @NonNull
   @Override
-  public androidx.camera.core.Camera bindToLifecycle(ProcessCameraProvider, pigeon_instance@NonNull androidx.camera.core.CameraSelector cameraSelectorIdentifier, @NonNull List<androidx.camera.core.UseCase> useCases) {
-    return pigeon_instance.bindToLifecycle(cameraSelectorIdentifier, useCases);
+  public androidx.camera.core.Camera bindToLifecycle(ProcessCameraProvider, pigeon_instance@NonNull androidx.camera.core.CameraSelector cameraSelector, @NonNull List<androidx.camera.core.UseCase> useCases) {
+    return pigeon_instance.bindToLifecycle(cameraSelector, useCases);
   }
 
   @NonNull
@@ -3285,12 +3138,12 @@ public class ProcessCameraProviderProxyApiTest {
     final PigeonApiProcessCameraProvider api = new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
 
     final ProcessCameraProvider instance = mock(ProcessCameraProvider.class);
-    final androidx.camera.core.CameraSelector cameraSelectorIdentifier = mock(CameraSelector.class);
+    final androidx.camera.core.CameraSelector cameraSelector = mock(CameraSelector.class);
     final List<androidx.camera.core.UseCase> useCases = Arrays.asList(mock(UseCase.class));
     final androidx.camera.core.Camera value = mock(Camera.class);
-    when(instance.bindToLifecycle(cameraSelectorIdentifier, useCases)).thenReturn(value);
+    when(instance.bindToLifecycle(cameraSelector, useCases)).thenReturn(value);
 
-    assertEquals(value, api.bindToLifecycle(instance, cameraSelectorIdentifier, useCases));
+    assertEquals(value, api.bindToLifecycle(instance, cameraSelector, useCases));
   }
 
   @Test
@@ -3382,7 +3235,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link UseCase}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -3505,7 +3357,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Camera}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -3580,7 +3431,7 @@ public class CameraProxyApiTest {
 abstract class PigeonApiSystemServicesManager(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(): SystemServicesManager
 
-  abstract fun requestCameraPermissions(pigeon_instance: SystemServicesManager, enableAudio: Boolean, callback: (Result<CameraPermissionsErrorData?>) -> Unit)
+  abstract fun requestCameraPermissions(pigeon_instance: SystemServicesManager, enableAudio: Boolean, callback: (Result<Unit>) -> Unit)
 
   abstract fun getTempFilePath(pigeon_instance: SystemServicesManager, prefix: String, suffix: String): String
 
@@ -3615,13 +3466,12 @@ abstract class PigeonApiSystemServicesManager(open val pigeonRegistrar: CameraXL
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as SystemServicesManager
             val enableAudioArg = args[1] as Boolean
-            api.requestCameraPermissions(pigeon_instanceArg, enableAudioArg) { result: Result<CameraPermissionsErrorData?> ->
+            api.requestCameraPermissions(pigeon_instanceArg, enableAudioArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
               } else {
-                val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(wrapResult(null))
               }
             }
           }
@@ -3725,7 +3575,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link SystemServicesManager}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -3751,10 +3600,9 @@ class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
     return SystemServicesManagerImpl();
   }
 
-  @Nullable
   @Override
-  public CameraPermissionsErrorData? requestCameraPermissions(SystemServicesManager, pigeon_instance@NonNull Boolean enableAudio) {
-    return pigeon_instance.requestCameraPermissions(enableAudio);
+  public Void requestCameraPermissions(SystemServicesManager, pigeon_instance@NonNull Boolean enableAudio) {
+    pigeon_instance.requestCameraPermissions(enableAudio);
   }
 
   @NonNull
@@ -3805,10 +3653,9 @@ public class SystemServicesManagerProxyApiTest {
 
     final SystemServicesManager instance = mock(SystemServicesManager.class);
     final Boolean enableAudio = true;
-    final CameraPermissionsErrorData value = mock(CameraPermissionsErrorData.class);
-    when(instance.requestCameraPermissions(enableAudio)).thenReturn(value);
+    api.requestCameraPermissions(instance, enableAudio);
 
-    assertEquals(value, api.requestCameraPermissions(instance, enableAudio));
+    verify(instance).requestCameraPermissions(enableAudio);
   }
 
   @Test
@@ -4019,7 +3866,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link DeviceOrientationManager}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -4174,7 +4020,7 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
    * 3. Returns the texture id of the `TextureEntry` that provided the
    * `SurfaceProducer`.
    */
-  abstract fun setSurfaceProvider(pigeon_instance: androidx.camera.core.Preview): Long
+  abstract fun setSurfaceProvider(pigeon_instance: androidx.camera.core.Preview, systemServicesManager: SystemServicesManager): Long
 
   /**
    * Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
@@ -4218,8 +4064,9 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.Preview
+            val systemServicesManagerArg = args[1] as SystemServicesManager
             val wrapped: List<Any?> = try {
-              listOf(api.setSurfaceProvider(pigeon_instanceArg))
+              listOf(api.setSurfaceProvider(pigeon_instanceArg, systemServicesManagerArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -4342,7 +4189,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Preview}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -4359,8 +4205,8 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @NonNull
   @Override
-  public Long setSurfaceProvider(Preview pigeon_instance) {
-    return pigeon_instance.setSurfaceProvider();
+  public Long setSurfaceProvider(Preview, pigeon_instance@NonNull SystemServicesManager systemServicesManager) {
+    return pigeon_instance.setSurfaceProvider(systemServicesManager);
   }
 
   @Override
@@ -4416,10 +4262,11 @@ public class PreviewProxyApiTest {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
+    final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
     final Long value = 0;
-    when(instance.setSurfaceProvider()).thenReturn(value);
+    when(instance.setSurfaceProvider(systemServicesManager)).thenReturn(value);
 
-    assertEquals(value, api.setSurfaceProvider(instance ));
+    assertEquals(value, api.setSurfaceProvider(instance, systemServicesManager));
   }
 
   @Test
@@ -4589,7 +4436,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link VideoCapture}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -4724,7 +4570,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link VideoOutput}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -4913,7 +4758,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Recorder}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -5101,7 +4945,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link VideoRecordEventListener}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -5254,7 +5097,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link PendingRecording}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -5456,7 +5298,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Recording}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -5709,7 +5550,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ImageCapture}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -5911,7 +5751,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ResolutionStrategy}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -6053,7 +5892,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ResolutionSelector}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -6239,7 +6077,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link AspectRatioStrategy}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -6361,7 +6198,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraState}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -6503,7 +6339,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ExposureState}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -6634,7 +6469,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ZoomState}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -6860,7 +6694,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ImageAnalysis}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -7049,7 +6882,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Analyzer}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -7178,7 +7010,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraStateStateError}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -7242,24 +7073,27 @@ public class CameraStateStateErrorProxyApiTest {
  * LiveData is a data holder class that can be observed within a given
  * lifecycle.
  *
+ * This is a wrapper around the native class to better support the generic
+ * type. Java has type erasure;
+ *
  * See https://developer.android.com/reference/androidx/lifecycle/LiveData.
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
   /** The generic type used by this instance. */
-  abstract fun type(pigeon_instance: androidx.lifecycle.LiveData<*>): LiveDataSupportedType
+  abstract fun type(pigeon_instance: io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper): LiveDataSupportedType
 
   /**
    * Adds the given observer to the observers list within the lifespan of the
    * given owner.
    */
-  abstract fun observe(pigeon_instance: androidx.lifecycle.LiveData<*>, observer: androidx.lifecycle.Observer<*>)
+  abstract fun observe(pigeon_instance: io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper, observer: androidx.lifecycle.Observer<*>)
 
   /** Removes all observers that are tied to the given `LifecycleOwner`. */
-  abstract fun removeObservers(pigeon_instance: androidx.lifecycle.LiveData<*>)
+  abstract fun removeObservers(pigeon_instance: io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper)
 
   /** Returns the current value. */
-  abstract fun getValue(pigeon_instance: androidx.lifecycle.LiveData<*>): Any?
+  abstract fun getValue(pigeon_instance: io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper): Any?
 
   companion object {
     @Suppress("LocalVariableName")
@@ -7270,7 +7104,7 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as androidx.lifecycle.LiveData<*>
+            val pigeon_instanceArg = args[0] as io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
             val observerArg = args[1] as androidx.lifecycle.Observer<*>
             val wrapped: List<Any?> = try {
               api.observe(pigeon_instanceArg, observerArg)
@@ -7289,7 +7123,7 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as androidx.lifecycle.LiveData<*>
+            val pigeon_instanceArg = args[0] as io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
             val wrapped: List<Any?> = try {
               api.removeObservers(pigeon_instanceArg)
               listOf(null)
@@ -7307,7 +7141,7 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as androidx.lifecycle.LiveData<*>
+            val pigeon_instanceArg = args[0] as io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
             val wrapped: List<Any?> = try {
               listOf(api.getValue(pigeon_instanceArg))
             } catch (exception: Throwable) {
@@ -7324,7 +7158,7 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of LiveData and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(pigeon_instanceArg: androidx.lifecycle.LiveData<*>, callback: (Result<Unit>) -> Unit)
+  fun pigeon_newInstance(pigeon_instanceArg: io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper, callback: (Result<Unit>) -> Unit)
 {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
@@ -7364,14 +7198,13 @@ abstract class PigeonApiLiveData(open val pigeonRegistrar: CameraXLibraryPigeonP
 
 package io.flutter.plugins.camerax;
 
-import androidx.lifecycle.LiveData<*>;
+import io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper;
 import androidx.lifecycle.Observer<*>;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link LiveData}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -7416,7 +7249,7 @@ class LiveDataProxyApi extends PigeonApiLiveData {
 
 package io.flutter.plugins.camerax
 
-import androidx.lifecycle.LiveData<*>
+import io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper
 import androidx.lifecycle.Observer<*>
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
@@ -7590,7 +7423,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ImageProxy}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -7775,7 +7607,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link PlaneProxy}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -7992,7 +7823,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link QualitySelector}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -8224,7 +8054,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link FallbackStrategy}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -8494,7 +8323,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraControl}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -8810,7 +8638,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link FocusMeteringActionBuilder}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9008,7 +8835,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link FocusMeteringAction}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9169,7 +8995,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link FocusMeteringResult}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9311,7 +9136,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CaptureRequest}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9407,7 +9231,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CaptureRequestKey}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9524,7 +9347,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CaptureRequestOptions}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9684,7 +9506,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Camera2CameraControl}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9833,7 +9654,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ResolutionFilter}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -9936,7 +9756,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraCharacteristicsKey}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -10087,7 +9906,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link CameraCharacteristics}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -10260,7 +10078,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link Camera2CameraInfo}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -10451,7 +10268,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link MeteringPointFactory}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
@@ -10624,7 +10440,6 @@ import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link DisplayOrientedMeteringPointFactory}.
- *
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
