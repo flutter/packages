@@ -9,7 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:web/web.dart' as web;
 
 import '../core/google_adsense.dart';
-import '../js_interop/adsbygoogle.dart';
+import '../core/js_interop/adsbygoogle.dart';
 import '../utils/logging.dart';
 import 'ad_unit_configuration.dart';
 import 'ad_unit_params.dart';
