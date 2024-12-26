@@ -1,3 +1,7 @@
+## 0.8.12+20
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
 ## 0.8.12+19
 
 * Updates androidx.activity:activity to 1.9.3.
