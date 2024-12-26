@@ -378,6 +378,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
+
+  /// The starting durations of each closed caption. Used for binary search.
+  /// to avoid mapping the list of captions each time.
+  List<Duration> _closedCaptionStartingDurations = <Duration>[];
   Timer? _timer;
   bool _isDisposed = false;
   Completer<void>? _creatingCompleter;
@@ -736,25 +740,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     final Duration delayedPosition = position + value.captionOffset;
 
-    final List<Caption> captions = _closedCaptionFile!.captions;
+    final int captionIndex = binarySearch<Duration>(
+        _closedCaptionStartingDurations, delayedPosition);
 
-    int left = 0;
-    int right = captions.length - 1;
+    /// if the captionIndex is -1, then the position is before the first caption.
+    if (captionIndex == -1) {
+      return Caption.none;
+    }
+    final Caption caption = _closedCaptionFile!.captions[captionIndex];
 
-    while (left <= right) {
-      final int mid = left + ((right - left) ~/ 2);
-      final Caption midCaption = captions[mid];
-
-      if (midCaption.start <= delayedPosition &&
-          midCaption.end >= delayedPosition) {
-        return midCaption; // Found the matching caption
-      } else if (midCaption.end < delayedPosition) {
-        // Move to the right half
-        left = mid + 1;
-      } else {
-        // Move to the left half
-        right = mid - 1;
-      }
+    /// Check if the current position is within the caption's start and end time.
+    if (caption.start <= delayedPosition && caption.end >= delayedPosition) {
+      return caption;
     }
 
     return Caption.none; // No matching caption found
@@ -779,6 +776,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {
     _closedCaptionFile = await closedCaptionFile;
+    if (_closedCaptionFile != null) {
+      /// Sort the captions by start time so that we can do a binary search.
+      _closedCaptionFile!.captions.sort((Caption a, Caption b) {
+        return a.start.compareTo(b.start);
+      });
+
+      /// Store the starting durations of each caption to avoid mapping the list on each check
+      _closedCaptionStartingDurations =
+          _closedCaptionFile!.captions.map((Caption e) => e.start).toList();
+    }
     value = value.copyWith(caption: _getCaptionAt(value.position));
   }
 
