@@ -383,6 +383,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Completer<void>? _creatingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
   _VideoAppLifeCycleObserver? _lifeCycleObserver;
+  Duration _positionPeriodicInterval = const Duration(milliseconds: 500);
 
   /// The id of a texture that hasn't been initialized.
   @visibleForTesting
@@ -585,21 +586,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (value.isPlaying) {
       await _videoPlayerPlatform.play(_textureId);
 
-      // Cancel previous timer.
-      _timer?.cancel();
-      _timer = Timer.periodic(
-        const Duration(milliseconds: 500),
-        (Timer timer) async {
-          if (_isDisposed) {
-            return;
-          }
-          final Duration? newPosition = await position;
-          if (newPosition == null) {
-            return;
-          }
-          _updatePosition(newPosition);
-        },
-      );
+      _runTimer();
 
       // This ensures that the correct playback speed is always applied when
       // playing back. This is necessary because we do not set playback speed
@@ -778,6 +765,33 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       caption: _getCaptionAt(position),
       isCompleted: position == value.duration,
     );
+  }
+
+  void _runTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(
+      _positionPeriodicInterval,
+      (Timer timer) async {
+        if (_isDisposed) {
+          return;
+        }
+        final Duration? newPosition = await position;
+        if (newPosition == null) {
+          return;
+        }
+        _updatePosition(newPosition);
+      },
+    );
+  }
+
+  /// Sets the interval at which the [VideoPlayerValue.position] will be updated.
+  void setVideoPositionUpdatesInterval(Duration interval) {
+    _positionPeriodicInterval = interval;
+
+    /// Restart the timer with the new interval if the video is playing
+    if (_timer?.isActive ?? false) {
+      _runTimer();
+    }
   }
 
   @override
