@@ -4,9 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.OptIn;
 import androidx.camera.camera2.interop.Camera2CameraInfo;
+import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraInfo;
-import android.hardware.camera2.CameraCharacteristics.Key<*>;
+
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraCharacteristics.Key;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -15,6 +19,7 @@ import androidx.annotation.Nullable;
  * This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
+@OptIn(markerClass = ExperimentalCamera2Interop.class)
 class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
   Camera2CameraInfoProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
@@ -22,8 +27,8 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
 
   @NonNull
   @Override
-  public Camera2CameraInfo from(@NonNull androidx.camera.core.CameraInfo cameraInfo) {
-    return Camera2CameraInfo(cameraInfo);
+  public Camera2CameraInfo from(@NonNull CameraInfo cameraInfo) {
+    return Camera2CameraInfo.from(cameraInfo);
   }
 
   @NonNull
@@ -34,8 +39,7 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
 
   @Nullable
   @Override
-  public Any? getCameraCharacteristic(Camera2CameraInfo, pigeon_instance@NonNull android.hardware.camera2.CameraCharacteristics.Key<*> key) {
+  public Object getCameraCharacteristic(Camera2CameraInfo pigeon_instance, @NonNull CameraCharacteristics.Key<?> key) {
     return pigeon_instance.getCameraCharacteristic(key);
   }
-
 }

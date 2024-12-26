@@ -1629,9 +1629,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       currentFocusMeteringAction = await actionBuilder.build();
     }
 
-    final FocusMeteringResult result =
+    final FocusMeteringResult? result =
         await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
-    return result.isFocusSuccessful;
+    return result?.isFocusSuccessful ?? false;
   }
 
   static DeviceOrientation _deserializeDeviceOrientation(String orientation) {

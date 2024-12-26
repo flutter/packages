@@ -9,6 +9,8 @@ import androidx.camera.core.MeteringPoint;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.List;
+
 /**
  * ProxyApi implementation for {@link FocusMeteringAction}.
  * This class may handle instantiating native object instances that are attached to a Dart
@@ -21,7 +23,7 @@ class FocusMeteringActionProxyApi extends PigeonApiFocusMeteringAction {
 
   @NonNull
   @Override
-  public List<androidx.camera.core.MeteringPoint> meteringPointsAe(FocusMeteringAction pigeon_instance) {
+  public List<MeteringPoint> meteringPointsAe(FocusMeteringAction pigeon_instance) {
     return pigeon_instance.getMeteringPointsAe();
   }
 
@@ -37,10 +39,8 @@ class FocusMeteringActionProxyApi extends PigeonApiFocusMeteringAction {
     return pigeon_instance.getMeteringPointsAwb();
   }
 
-  @NonNull
   @Override
-  public Boolean isAutoCancelEnabled(FocusMeteringAction pigeon_instance) {
-    return pigeon_instance.getIsAutoCancelEnabled();
+  public boolean isAutoCancelEnabled(FocusMeteringAction pigeon_instance) {
+    return pigeon_instance.isAutoCancelEnabled();
   }
-
 }

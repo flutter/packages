@@ -21,14 +21,13 @@ class MeteringPointFactoryProxyApi extends PigeonApiMeteringPointFactory {
 
   @NonNull
   @Override
-  public androidx.camera.core.MeteringPoint createPoint(MeteringPointFactory, pigeon_instance@NonNull Double x, @NonNull Double y) {
-    return pigeon_instance.createPoint(x, y);
+  public MeteringPoint createPoint(MeteringPointFactory pigeon_instance, double x, double y) {
+    return pigeon_instance.createPoint((float) x, (float) y);
   }
 
   @NonNull
   @Override
-  public androidx.camera.core.MeteringPoint createPointWithSize(MeteringPointFactory, pigeon_instance@NonNull Double x, @NonNull Double y, @NonNull Double size) {
-    return pigeon_instance.createPointWithSize(x, y, size);
+  public MeteringPoint createPointWithSize(MeteringPointFactory pigeon_instance, double x, double y, double size) {
+    return pigeon_instance.createPoint((float) x, (float)  y, (float)  size);
   }
-
 }

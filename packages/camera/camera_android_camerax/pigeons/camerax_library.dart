@@ -212,6 +212,9 @@ abstract class MeteringPoint {
   double getSize();
 }
 
+/// A flag used for indicating metering mode regions.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction#FLAG_AF().
 enum MeteringMode {
   /// A flag used in metering mode indicating the AE (Auto Exposure) region is
   /// enabled.
@@ -975,7 +978,7 @@ abstract class CameraControl {
   /// Starts a focus and metering action configured by the
   /// `FocusMeteringAction`.
   @async
-  FocusMeteringResult startFocusAndMetering(FocusMeteringAction action);
+  FocusMeteringResult? startFocusAndMetering(FocusMeteringAction action);
 
   /// Cancels current FocusMeteringAction and clears AF/AE/AWB regions.
   @async
@@ -983,7 +986,7 @@ abstract class CameraControl {
 
   /// Set the exposure compensation value for the camera.
   @async
-  int setExposureCompensationIndex(int index);
+  int? setExposureCompensationIndex(int index);
 }
 
 /// The builder used to create the `FocusMeteringAction`.
@@ -1006,7 +1009,7 @@ abstract class FocusMeteringActionBuilder {
   void addPoint(MeteringPoint point);
 
   /// Adds another MeteringPoint with specified meteringMode.
-  void addPointWithMode(MeteringPoint point, List<MeteringMode> modes);
+  void addPointWithMode(MeteringPoint point, MeteringMode mode);
 
   /// Disables the auto-cancel.
   void disableAutoCancel();

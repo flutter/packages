@@ -804,6 +804,9 @@ enum VideoQuality {
   highest,
 }
 
+/// A flag used for indicating metering mode regions.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction#FLAG_AF().
 enum MeteringMode {
   /// A flag used in metering mode indicating the AE (Auto Exposure) region is
   /// enabled.
@@ -6655,7 +6658,7 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
 
   /// Starts a focus and metering action configured by the
   /// `FocusMeteringAction`.
-  Future<FocusMeteringResult> startFocusAndMetering(
+  Future<FocusMeteringResult?> startFocusAndMetering(
       FocusMeteringAction action) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecCameraControl;
@@ -6678,13 +6681,8 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as FocusMeteringResult?)!;
+      return (pigeonVar_replyList[0] as FocusMeteringResult?);
     }
   }
 
@@ -6717,7 +6715,7 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
   }
 
   /// Set the exposure compensation value for the camera.
-  Future<int> setExposureCompensationIndex(int index) async {
+  Future<int?> setExposureCompensationIndex(int index) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecCameraControl;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -6739,13 +6737,8 @@ class CameraControl extends PigeonInternalProxyApiBaseClass {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as int?)!;
+      return (pigeonVar_replyList[0] as int?);
     }
   }
 
@@ -6932,7 +6925,7 @@ class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
   /// Adds another MeteringPoint with specified meteringMode.
   Future<void> addPointWithMode(
     MeteringPoint point,
-    List<MeteringMode> modes,
+    MeteringMode mode,
   ) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecFocusMeteringActionBuilder;
@@ -6946,7 +6939,7 @@ class FocusMeteringActionBuilder extends PigeonInternalProxyApiBaseClass {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
-        .send(<Object?>[this, point, modes]) as List<Object?>?;
+        .send(<Object?>[this, point, mode]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

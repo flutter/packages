@@ -1076,6 +1076,11 @@ enum class VideoQuality(val raw: Int) {
   }
 }
 
+/**
+ * A flag used for indicating metering mode regions.
+ *
+ * See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction#FLAG_AF().
+ */
 enum class MeteringMode(val raw: Int) {
   /**
    * A flag used in metering mode indicating the AE (Auto Exposure) region is
@@ -8158,13 +8163,13 @@ abstract class PigeonApiCameraControl(open val pigeonRegistrar: CameraXLibraryPi
    * Starts a focus and metering action configured by the
    * `FocusMeteringAction`.
    */
-  abstract fun startFocusAndMetering(pigeon_instance: androidx.camera.core.CameraControl, action: androidx.camera.core.FocusMeteringAction, callback: (Result<androidx.camera.core.FocusMeteringResult>) -> Unit)
+  abstract fun startFocusAndMetering(pigeon_instance: androidx.camera.core.CameraControl, action: androidx.camera.core.FocusMeteringAction, callback: (Result<androidx.camera.core.FocusMeteringResult?>) -> Unit)
 
   /** Cancels current FocusMeteringAction and clears AF/AE/AWB regions. */
   abstract fun cancelFocusAndMetering(pigeon_instance: androidx.camera.core.CameraControl, callback: (Result<Unit>) -> Unit)
 
   /** Set the exposure compensation value for the camera. */
-  abstract fun setExposureCompensationIndex(pigeon_instance: androidx.camera.core.CameraControl, index: Long, callback: (Result<Long>) -> Unit)
+  abstract fun setExposureCompensationIndex(pigeon_instance: androidx.camera.core.CameraControl, index: Long, callback: (Result<Long?>) -> Unit)
 
   companion object {
     @Suppress("LocalVariableName")
@@ -8217,7 +8222,7 @@ abstract class PigeonApiCameraControl(open val pigeonRegistrar: CameraXLibraryPi
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.CameraControl
             val actionArg = args[1] as androidx.camera.core.FocusMeteringAction
-            api.startFocusAndMetering(pigeon_instanceArg, actionArg) { result: Result<androidx.camera.core.FocusMeteringResult> ->
+            api.startFocusAndMetering(pigeon_instanceArg, actionArg) { result: Result<androidx.camera.core.FocusMeteringResult?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -8257,7 +8262,7 @@ abstract class PigeonApiCameraControl(open val pigeonRegistrar: CameraXLibraryPi
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.CameraControl
             val indexArg = args[1] as Long
-            api.setExposureCompensationIndex(pigeon_instanceArg, indexArg) { result: Result<Long> ->
+            api.setExposureCompensationIndex(pigeon_instanceArg, indexArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -8341,9 +8346,9 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     pigeon_instance.setZoomRatio(ratio);
   }
 
-  @NonNull
+  @Nullable
   @Override
-  public androidx.camera.core.FocusMeteringResult startFocusAndMetering(CameraControl, pigeon_instance@NonNull androidx.camera.core.FocusMeteringAction action) {
+  public androidx.camera.core.FocusMeteringResult? startFocusAndMetering(CameraControl, pigeon_instance@NonNull androidx.camera.core.FocusMeteringAction action) {
     return pigeon_instance.startFocusAndMetering(action);
   }
 
@@ -8352,9 +8357,9 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     pigeon_instance.cancelFocusAndMetering();
   }
 
-  @NonNull
+  @Nullable
   @Override
-  public Long setExposureCompensationIndex(CameraControl, pigeon_instance@NonNull Long index) {
+  public Long? setExposureCompensationIndex(CameraControl, pigeon_instance@NonNull Long index) {
     return pigeon_instance.setExposureCompensationIndex(index);
   }
 
@@ -8461,7 +8466,7 @@ abstract class PigeonApiFocusMeteringActionBuilder(open val pigeonRegistrar: Cam
   abstract fun addPoint(pigeon_instance: androidx.camera.core.FocusMeteringAction.Builder, point: androidx.camera.core.MeteringPoint)
 
   /** Adds another MeteringPoint with specified meteringMode. */
-  abstract fun addPointWithMode(pigeon_instance: androidx.camera.core.FocusMeteringAction.Builder, point: androidx.camera.core.MeteringPoint, modes: List<MeteringMode>)
+  abstract fun addPointWithMode(pigeon_instance: androidx.camera.core.FocusMeteringAction.Builder, point: androidx.camera.core.MeteringPoint, mode: MeteringMode)
 
   /** Disables the auto-cancel. */
   abstract fun disableAutoCancel(pigeon_instance: androidx.camera.core.FocusMeteringAction.Builder)
@@ -8538,9 +8543,9 @@ abstract class PigeonApiFocusMeteringActionBuilder(open val pigeonRegistrar: Cam
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.FocusMeteringAction.Builder
             val pointArg = args[1] as androidx.camera.core.MeteringPoint
-            val modesArg = args[2] as List<MeteringMode>
+            val modeArg = args[2] as MeteringMode
             val wrapped: List<Any?> = try {
-              api.addPointWithMode(pigeon_instanceArg, pointArg, modesArg)
+              api.addPointWithMode(pigeon_instanceArg, pointArg, modeArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -8664,8 +8669,8 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
   }
 
   @Override
-  public Void addPointWithMode(FocusMeteringActionBuilder, pigeon_instance@NonNull androidx.camera.core.MeteringPoint point, @NonNull List<MeteringMode> modes) {
-    pigeon_instance.addPointWithMode(point, modes);
+  public Void addPointWithMode(FocusMeteringActionBuilder, pigeon_instance@NonNull androidx.camera.core.MeteringPoint point, @NonNull MeteringMode mode) {
+    pigeon_instance.addPointWithMode(point, mode);
   }
 
   @Override
@@ -8735,10 +8740,10 @@ public class FocusMeteringActionBuilderProxyApiTest {
 
     final FocusMeteringActionBuilder instance = mock(FocusMeteringActionBuilder.class);
     final androidx.camera.core.MeteringPoint point = mock(MeteringPoint.class);
-    final List<MeteringMode> modes = Arrays.asList(io.flutter.plugins.camerax.MeteringMode.AE);
-    api.addPointWithMode(instance, point, modes);
+    final MeteringMode mode = io.flutter.plugins.camerax.MeteringMode.AE;
+    api.addPointWithMode(instance, point, mode);
 
-    verify(instance).addPointWithMode(point, modes);
+    verify(instance).addPointWithMode(point, mode);
   }
 
   @Test

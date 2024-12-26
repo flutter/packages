@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.camerax;
 
+import android.view.Display;
+
 import androidx.camera.core.DisplayOrientedMeteringPointFactory;
 import androidx.camera.core.CameraInfo;
 import androidx.annotation.NonNull;
@@ -21,8 +23,19 @@ class DisplayOrientedMeteringPointFactoryProxyApi extends PigeonApiDisplayOrient
 
   @NonNull
   @Override
-  public DisplayOrientedMeteringPointFactory pigeon_defaultConstructor(@NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull Double width, @NonNull Double height) {
-    return DisplayOrientedMeteringPointFactory(cameraInfo, width, height);
+  public ProxyApiRegistrar getPigeonRegistrar() {
+    return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
 
+  @NonNull
+  @Override
+  public DisplayOrientedMeteringPointFactory pigeon_defaultConstructor(@NonNull CameraInfo cameraInfo, double width, double height) {
+    final Display display = getPigeonRegistrar().getDisplay();
+
+    if (display != null) {
+      return new DisplayOrientedMeteringPointFactory(display, cameraInfo, (float) width, (float) height);
+    }
+
+    throw new IllegalStateException("A Display could not be retrieved.");
+  }
 }

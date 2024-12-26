@@ -5,7 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraCharacteristics.Key<*>;
+import android.hardware.camera2.CameraCharacteristics.Key;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,14 +21,14 @@ class CameraCharacteristicsProxyApi extends PigeonApiCameraCharacteristics {
 
   @NonNull
   @Override
-  public android.hardware.camera2.CameraCharacteristics.Key<*> infoSupportedHardwareLevel() {
-    return CameraCharacteristics.getInfoSupportedHardwareLevel();
+  public CameraCharacteristics.Key<?> infoSupportedHardwareLevel() {
+    return CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL;
   }
 
   @NonNull
   @Override
-  public android.hardware.camera2.CameraCharacteristics.Key<*> sensorOrientation() {
-    return CameraCharacteristics.getSensorOrientation();
+  public android.hardware.camera2.CameraCharacteristics.Key<?> sensorOrientation() {
+    return CameraCharacteristics.SENSOR_ORIENTATION;
   }
 
 }

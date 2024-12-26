@@ -9,6 +9,8 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.List;
+
 /**
  * ProxyApi implementation for {@link ResolutionFilter}.
  * This class may handle instantiating native object instances that are attached to a Dart
@@ -21,8 +23,20 @@ class ResolutionFilterProxyApi extends PigeonApiResolutionFilter {
 
   @NonNull
   @Override
-  public ResolutionFilter createWithOnePreferredSize(@NonNull android.util.Size preferredSize) {
-    return ResolutionFilter(preferredSize);
-  }
+  public ResolutionFilter createWithOnePreferredSize(@NonNull Size preferredSize) {
+    return new ResolutionFilter() {
+      @Override
+      @NonNull
+      public List<Size> filter(@NonNull List<Size> supportedSizes, int rotationDegrees) {
+        int preferredSizeIndex = supportedSizes.indexOf(preferredSize);
 
+        if (preferredSizeIndex > -1) {
+          supportedSizes.remove(preferredSizeIndex);
+          supportedSizes.add(0, preferredSize);
+        }
+
+        return supportedSizes;
+      }
+    };
+  }
 }

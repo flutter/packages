@@ -9,6 +9,15 @@ import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.FocusMeteringResult;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
+import kotlin.Result;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
 
 /**
  * ProxyApi implementation for {@link CameraControl}.
@@ -20,31 +29,121 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     super(pigeonRegistrar);
   }
 
-  @Override
-  public Void enableTorch(CameraControl, pigeon_instance@NonNull Boolean torch) {
-    pigeon_instance.enableTorch(torch);
-  }
-
-  @Override
-  public Void setZoomRatio(CameraControl, pigeon_instance@NonNull Double ratio) {
-    pigeon_instance.setZoomRatio(ratio);
-  }
-
   @NonNull
   @Override
-  public androidx.camera.core.FocusMeteringResult startFocusAndMetering(CameraControl, pigeon_instance@NonNull androidx.camera.core.FocusMeteringAction action) {
-    return pigeon_instance.startFocusAndMetering(action);
+  public ProxyApiRegistrar getPigeonRegistrar() {
+    return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
 
   @Override
-  public Void cancelFocusAndMetering(CameraControl pigeon_instance) {
-    pigeon_instance.cancelFocusAndMetering();
+  public void enableTorch(@NonNull CameraControl pigeon_instance, boolean torch, @NonNull Function1<? super Result<Unit>, Unit> callback) {
+    final ListenableFuture<Void> enableTorchFuture = pigeon_instance.enableTorch(torch);
+
+    Futures.addCallback(
+        enableTorchFuture,
+        new FutureCallback<>() {
+          public void onSuccess(Void voidResult) {
+            ResultCompat.success(null, callback);
+          }
+
+          public void onFailure(@NonNull Throwable t) {
+            ResultCompat.failure(t, callback);
+          }
+        },
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()));
   }
 
-  @NonNull
   @Override
-  public Long setExposureCompensationIndex(CameraControl, pigeon_instance@NonNull Long index) {
-    return pigeon_instance.setExposureCompensationIndex(index);
+  public void setZoomRatio(@NonNull CameraControl pigeon_instance, double ratio, @NonNull Function1<? super Result<Unit>, Unit> callback) {
+    float ratioAsFloat = (float) ratio;
+    final ListenableFuture<Void> setZoomRatioFuture = pigeon_instance.setZoomRatio(ratioAsFloat);
+
+    Futures.addCallback(
+        setZoomRatioFuture,
+        new FutureCallback<>() {
+          public void onSuccess(Void voidResult) {
+            ResultCompat.success(null, callback);
+          }
+
+          public void onFailure(@NonNull Throwable t) {
+            if (t instanceof CameraControl.OperationCanceledException) {
+              // Operation was canceled due to camera being closed or a new request was submitted, which
+              // is not actionable and should not block a new value from potentially being submitted.
+              ResultCompat.success(null, callback);
+              return;
+            }
+
+            ResultCompat.failure(t, callback);
+          }
+        },
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()));
   }
 
+  @Override
+  public void startFocusAndMetering(@NonNull CameraControl pigeon_instance, @NonNull FocusMeteringAction action, @NonNull Function1<? super Result<FocusMeteringResult>, Unit> callback) {
+    ListenableFuture<FocusMeteringResult> focusMeteringResultFuture =
+        pigeon_instance.startFocusAndMetering(action);
+
+    Futures.addCallback(
+        focusMeteringResultFuture,
+        new FutureCallback<>() {
+          public void onSuccess(FocusMeteringResult focusMeteringResult) {
+            ResultCompat.success(focusMeteringResult, callback);
+          }
+
+          public void onFailure(@NonNull Throwable t) {
+            if (t instanceof CameraControl.OperationCanceledException) {
+              // Operation was canceled due to camera being closed or a new request was submitted, which
+              // is not actionable and should not block a new value from potentially being submitted.
+              ResultCompat.success(null, callback);
+              return;
+            }
+            ResultCompat.failure(t, callback);
+          }
+        },
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()));
+  }
+
+  @Override
+  public void cancelFocusAndMetering(@NonNull CameraControl pigeon_instance, @NonNull Function1<? super Result<Unit>, Unit> callback) {
+    final ListenableFuture<Void> cancelFocusAndMeteringFuture = pigeon_instance.cancelFocusAndMetering();
+
+    Futures.addCallback(
+        cancelFocusAndMeteringFuture,
+        new FutureCallback<>() {
+          public void onSuccess(Void voidResult) {
+            ResultCompat.success(null, callback);
+          }
+
+          public void onFailure(@NonNull Throwable t) {
+            ResultCompat.failure(t, callback);
+          }
+        },
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()));
+  }
+
+  @Override
+  public void setExposureCompensationIndex(@NonNull CameraControl pigeon_instance, long index, @NonNull Function1<? super Result<Long>, Unit> callback) {
+    final ListenableFuture<Integer> setExposureCompensationIndexFuture =
+        pigeon_instance.setExposureCompensationIndex((int) index);
+
+    Futures.addCallback(
+        setExposureCompensationIndexFuture,
+        new FutureCallback<>() {
+          public void onSuccess(Integer integerResult) {
+            ResultCompat.success(integerResult.longValue(), callback);
+          }
+
+          public void onFailure(@NonNull Throwable t) {
+            if (t instanceof CameraControl.OperationCanceledException) {
+              // Operation was canceled due to camera being closed or a new request was submitted, which
+              // is not actionable and should not block a new value from potentially being submitted.
+              ResultCompat.success(null, callback);
+              return;
+            }
+            ResultCompat.failure(t, callback);
+          }
+        },
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()));
+  }
 }

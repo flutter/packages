@@ -5,7 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureRequest.Key<*>;
+import android.hardware.camera2.CaptureRequest.Key;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,8 +21,7 @@ class CaptureRequestProxyApi extends PigeonApiCaptureRequest {
 
   @NonNull
   @Override
-  public android.hardware.camera2.CaptureRequest.Key<*> controlAELock() {
-    return CaptureRequest.getControlAELock();
+  public android.hardware.camera2.CaptureRequest.Key<?> controlAELock() {
+    return CaptureRequest.CONTROL_AE_LOCK;
   }
-
 }

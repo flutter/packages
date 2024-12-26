@@ -4,12 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.core.CameraInfo;
 import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ProxyApi implementation for {@link QualitySelector}.
@@ -23,20 +27,52 @@ class QualitySelectorProxyApi extends PigeonApiQualitySelector {
 
   @NonNull
   @Override
-  public QualitySelector from(@NonNull VideoQuality quality, @Nullable androidx.camera.video.FallbackStrategy? fallbackStrategy) {
-    return QualitySelector(quality, fallbackStrategy);
+  public QualitySelector from(@NonNull VideoQuality quality, @Nullable FallbackStrategy fallbackStrategy) {
+    if (fallbackStrategy == null) {
+      return QualitySelector.from(getNativeQuality(quality));
+    }
+
+    return QualitySelector.from(getNativeQuality(quality), fallbackStrategy);
   }
 
   @NonNull
   @Override
-  public QualitySelector fromOrderedList(@NonNull List<VideoQuality> qualities, @Nullable androidx.camera.video.FallbackStrategy? fallbackStrategy) {
-    return QualitySelector(qualities, fallbackStrategy);
+  public QualitySelector fromOrderedList(@NonNull List<? extends VideoQuality> qualities, @Nullable FallbackStrategy fallbackStrategy) {
+    final List<Quality> nativeQualities = new ArrayList<>();
+    for (final VideoQuality quality : qualities) {
+      nativeQualities.add(getNativeQuality(quality));
+    }
+
+    if (fallbackStrategy == null) {
+      return QualitySelector.fromOrderedList(nativeQualities);
+    }
+
+    return QualitySelector.fromOrderedList(nativeQualities, fallbackStrategy);
   }
 
   @Nullable
   @Override
-  public android.util.Size? getResolution(@NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull VideoQuality quality) {
-    return QualitySelector.getResolution(cameraInfo, quality);
+  public Size getResolution(@NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull VideoQuality quality) {
+    return QualitySelector.getResolution(cameraInfo, getNativeQuality(quality));
   }
 
+  Quality getNativeQuality(VideoQuality quality) {
+    switch (quality) {
+      case SD:
+        return Quality.SD;
+      case HD:
+        return  Quality.HD;
+      case FHD:
+        return  Quality.FHD;
+      case UHD:
+        return  Quality.UHD;
+      case LOWEST:
+        return  Quality.LOWEST;
+      case HIGHEST:
+        return Quality.HIGHEST;
+    }
+
+    throw new IllegalArgumentException(
+        "VideoQuality " + quality + " is unhandled by QualitySelectorProxyApi.");
+  }
 }

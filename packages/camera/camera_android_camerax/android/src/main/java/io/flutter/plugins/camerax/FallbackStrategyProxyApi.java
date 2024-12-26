@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import androidx.camera.video.FallbackStrategy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.video.Quality;
 
 /**
  * ProxyApi implementation for {@link FallbackStrategy}.
@@ -21,25 +22,44 @@ class FallbackStrategyProxyApi extends PigeonApiFallbackStrategy {
   @NonNull
   @Override
   public FallbackStrategy higherQualityOrLowerThan(@NonNull VideoQuality quality) {
-    return FallbackStrategy(quality);
+    return FallbackStrategy.higherQualityOrLowerThan(getNativeQuality(quality));
   }
 
   @NonNull
   @Override
   public FallbackStrategy higherQualityThan(@NonNull VideoQuality quality) {
-    return FallbackStrategy(quality);
+    return FallbackStrategy.higherQualityThan(getNativeQuality(quality));
   }
 
   @NonNull
   @Override
   public FallbackStrategy lowerQualityOrHigherThan(@NonNull VideoQuality quality) {
-    return FallbackStrategy(quality);
+    return FallbackStrategy.lowerQualityOrHigherThan(getNativeQuality(quality));
   }
 
   @NonNull
   @Override
   public FallbackStrategy lowerQualityThan(@NonNull VideoQuality quality) {
-    return FallbackStrategy(quality);
+    return FallbackStrategy.lowerQualityThan(getNativeQuality(quality));
   }
 
+  Quality getNativeQuality(VideoQuality quality) {
+    switch (quality) {
+      case SD:
+        return Quality.SD;
+      case HD:
+        return  Quality.HD;
+      case FHD:
+        return  Quality.FHD;
+      case UHD:
+        return  Quality.UHD;
+      case LOWEST:
+        return  Quality.LOWEST;
+      case HIGHEST:
+        return Quality.HIGHEST;
+    }
+
+    throw new IllegalArgumentException(
+        "VideoQuality " + quality + " is unhandled by FallbackStrategyProxyApi.");
+  }
 }

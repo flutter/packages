@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
@@ -69,6 +71,15 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     return context;
   }
 
+  @Nullable
+  public Activity getActivity() {
+    if (context instanceof Activity) {
+      return (Activity) context;
+    }
+
+    return null;
+  }
+
   public void setContext(@NonNull Context context) {
     this.context = context;
   }
@@ -105,6 +116,17 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   long getDefaultClearFinalizedWeakReferencesInterval() {
     return defaultClearFinalizedWeakReferencesInterval;
+  }
+
+  @Nullable
+  Display getDisplay() {
+    if (sdkIsAtLeast(Build.VERSION_CODES.R)) {
+      return getContext().getDisplay();
+    } else {
+      //noinspection deprecation
+      return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
+          .getDefaultDisplay();
+    }
   }
 
   @NonNull
@@ -290,84 +312,84 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiQualitySelector getPigeonApiQualitySelector() {
-    return null;
+    return new QualitySelectorProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiFallbackStrategy getPigeonApiFallbackStrategy() {
-    return null;
+    return new FallbackStrategyProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCameraControl getPigeonApiCameraControl() {
-    return null;
+    return new CameraControlProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiFocusMeteringActionBuilder getPigeonApiFocusMeteringActionBuilder() {
-    return null;
+    return new FocusMeteringActionBuilderProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiFocusMeteringAction getPigeonApiFocusMeteringAction() {
-    return null;
+    return new FocusMeteringActionProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiFocusMeteringResult getPigeonApiFocusMeteringResult() {
-    return null;
+    return new FocusMeteringResultProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCaptureRequest getPigeonApiCaptureRequest() {
-    return null;
+    return new CaptureRequestProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCaptureRequestOptions getPigeonApiCaptureRequestOptions() {
-    return null;
+    return new CaptureRequestOptionsProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCamera2CameraControl getPigeonApiCamera2CameraControl() {
-    return null;
+    return new Camera2CameraControlProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiResolutionFilter getPigeonApiResolutionFilter() {
-    return null;
+    return new ResolutionFilterProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCameraCharacteristics getPigeonApiCameraCharacteristics() {
-    return null;
+    return new CameraCharacteristicsProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiCamera2CameraInfo getPigeonApiCamera2CameraInfo() {
-    return null;
+    return new Camera2CameraInfoProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiMeteringPointFactory getPigeonApiMeteringPointFactory() {
-    return null;
+    return new MeteringPointFactoryProxyApi(this);
   }
 
   @NonNull
   @Override
   public PigeonApiDisplayOrientedMeteringPointFactory getPigeonApiDisplayOrientedMeteringPointFactory() {
-    return null;
+    return new DisplayOrientedMeteringPointFactoryProxyApi(this);
   }
 }
