@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:collection/collection.dart' as collection;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -379,9 +380,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
 
-  /// The starting durations of each closed caption. Used for binary search.
-  /// to avoid mapping the list of captions each time.
-  List<Duration> _closedCaptionStartingDurations = <Duration>[];
   Timer? _timer;
   bool _isDisposed = false;
   Completer<void>? _creatingCompleter;
@@ -740,8 +738,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     final Duration delayedPosition = position + value.captionOffset;
 
-    final int captionIndex = binarySearch<Duration>(
-        _closedCaptionStartingDurations, delayedPosition);
+    final int captionIndex = collection.binarySearch<Caption>(
+      _closedCaptionFile!.captions,
+      Caption(number: -1, start: delayedPosition, end: Duration.zero, text: ''),
+      compare: (Caption p0, Caption p1) {
+        if (p0.start <= delayedPosition && p0.end >= delayedPosition) {
+          return 0;
+        } else {
+          return p0.start.compareTo(p1.start);
+        }
+      },
+    );
 
     /// if the captionIndex is -1, then the position is before the first caption.
     if (captionIndex == -1) {
@@ -776,16 +783,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {
     _closedCaptionFile = await closedCaptionFile;
-    if (_closedCaptionFile != null) {
-      /// Sort the captions by start time so that we can do a binary search.
-      _closedCaptionFile!.captions.sort((Caption a, Caption b) {
-        return a.start.compareTo(b.start);
-      });
 
-      /// Store the starting durations of each caption to avoid mapping the list on each check
-      _closedCaptionStartingDurations =
-          _closedCaptionFile!.captions.map((Caption e) => e.start).toList();
-    }
+    /// Sort the captions by start time so that we can do a binary search.
+    _closedCaptionFile?.captions.sort((Caption a, Caption b) {
+      return a.start.compareTo(b.start);
+    });
+
     value = value.copyWith(caption: _getCaptionAt(value.position));
   }
 
