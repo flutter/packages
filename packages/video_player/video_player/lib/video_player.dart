@@ -743,23 +743,31 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     final int captionIndex = collection.binarySearch<Caption>(
       _sortedCaptions!,
-      Caption(number: -1, start: delayedPosition, end: Duration.zero, text: ''),
-      compare: (Caption p0, Caption p1) {
-        if (p0.start <= delayedPosition && p0.end >= delayedPosition) {
-          return 0;
+      Caption(
+        number: -1,
+        start: delayedPosition,
+        end: delayedPosition,
+        text: '',
+      ),
+      compare: (Caption candidate, Caption search) {
+        if (search.start < candidate.start) {
+          return 1;
+        } else if (search.start > candidate.end) {
+          return -1;
         } else {
-          return p0.start.compareTo(p1.start);
+          // delayedPosition is within [candidate.start, candidate.end]
+          return 0;
         }
       },
     );
 
-    /// if the captionIndex is -1, then the position is before the first caption.
+    // -1 means not found by the binary search.
     if (captionIndex == -1) {
       return Caption.none;
     }
-    final Caption caption = _closedCaptionFile!.captions[captionIndex];
 
-    /// Check if the current position is within the caption's start and end time.
+    final Caption caption = _sortedCaptions![captionIndex];
+    // check if it really fits within that caption's [start, end].
     if (caption.start <= delayedPosition && caption.end >= delayedPosition) {
       return caption;
     }

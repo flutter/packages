@@ -83,7 +83,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
-  
+
   @override
   List<Caption>? get sortedCaptions => null;
 }
@@ -773,18 +773,23 @@ void main() {
         expect(controller.value.caption.text, 'two');
 
         await controller.seekTo(const Duration(milliseconds: 400));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 401));
         expect(controller.value.caption.text, '');
 
         await controller.seekTo(const Duration(milliseconds: 500));
         expect(controller.value.caption.text, 'three');
 
-        await controller.seekTo(const Duration(milliseconds: 600));
+        await controller.seekTo(const Duration(milliseconds: 601));
         expect(controller.value.caption.text, 'four');
 
-        await controller.seekTo(const Duration(milliseconds: 700));
+        await controller.seekTo(const Duration(milliseconds: 701));
         expect(controller.value.caption.text, 'five');
 
         await controller.seekTo(const Duration(milliseconds: 800));
+        expect(controller.value.caption.text, 'five');
+        await controller.seekTo(const Duration(milliseconds: 801));
         expect(controller.value.caption.text, '');
 
         // Test going back
@@ -822,20 +827,29 @@ void main() {
         expect(controller.value.position, Duration.zero);
         expect(controller.value.caption.text, '');
 
+        await controller.seekTo(const Duration(milliseconds: 99));
+        expect(controller.value.caption.text, 'one');
+
         await controller.seekTo(const Duration(milliseconds: 100));
+        expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 150));
         expect(controller.value.caption.text, '');
 
         await controller.seekTo(const Duration(milliseconds: 200));
-        expect(controller.value.caption.text, 'one');
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 201));
+        expect(controller.value.caption.text, 'two');
 
         await controller.seekTo(const Duration(milliseconds: 400));
-        expect(controller.value.caption.text, 'two');
+        expect(controller.value.caption.text, 'three');
 
         await controller.seekTo(const Duration(milliseconds: 500));
         expect(controller.value.caption.text, 'three');
 
         await controller.seekTo(const Duration(milliseconds: 600));
-        expect(controller.value.caption.text, 'four');
+        expect(controller.value.caption.text, 'five');
 
         await controller.seekTo(const Duration(milliseconds: 700));
         expect(controller.value.caption.text, 'five');
@@ -871,13 +885,13 @@ void main() {
         expect(controller.value.caption.text, 'two');
 
         await controller.seekTo(const Duration(milliseconds: 500));
-        expect(controller.value.caption.text, 'three');
+        expect(controller.value.caption.text, 'two');
 
         await controller.seekTo(const Duration(milliseconds: 600));
-        expect(controller.value.caption.text, 'four');
+        expect(controller.value.caption.text, 'three');
 
         await controller.seekTo(const Duration(milliseconds: 700));
-        expect(controller.value.caption.text, 'five');
+        expect(controller.value.caption.text, 'three');
       });
 
       test('setClosedCaptionFile loads caption file', () async {
