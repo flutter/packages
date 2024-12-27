@@ -772,6 +772,9 @@ void main() {
         await controller.seekTo(const Duration(milliseconds: 300));
         expect(controller.value.caption.text, 'two');
 
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, 'two');
+
         await controller.seekTo(const Duration(milliseconds: 400));
         expect(controller.value.caption.text, 'two');
 
@@ -833,6 +836,9 @@ void main() {
         await controller.seekTo(const Duration(milliseconds: 100));
         expect(controller.value.caption.text, 'one');
 
+        await controller.seekTo(const Duration(milliseconds: 101));
+        expect(controller.value.caption.text, '');
+
         await controller.seekTo(const Duration(milliseconds: 150));
         expect(controller.value.caption.text, '');
 
@@ -878,8 +884,14 @@ void main() {
         await controller.seekTo(const Duration(milliseconds: 200));
         expect(controller.value.caption.text, 'one');
 
+        await controller.seekTo(const Duration(milliseconds: 250));
+        expect(controller.value.caption.text, 'one');
+
         await controller.seekTo(const Duration(milliseconds: 300));
         expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, '');
 
         await controller.seekTo(const Duration(milliseconds: 400));
         expect(controller.value.caption.text, 'two');
