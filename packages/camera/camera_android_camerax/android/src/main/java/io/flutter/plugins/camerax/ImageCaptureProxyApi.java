@@ -49,10 +49,13 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
       switch (flashMode) {
         case AUTO:
           builder.setFlashMode(ImageCapture.FLASH_MODE_AUTO);
+          break;
         case OFF:
           builder.setFlashMode(ImageCapture.FLASH_MODE_OFF);
+          break;
         case ON:
           builder.setFlashMode(ImageCapture.FLASH_MODE_ON);
+          break;
       }
     }
     if (resolutionSelector != null) {

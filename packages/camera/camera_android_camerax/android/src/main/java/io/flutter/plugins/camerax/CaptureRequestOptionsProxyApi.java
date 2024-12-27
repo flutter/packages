@@ -20,6 +20,7 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
     super(pigeonRegistrar);
   }
 
+  @SuppressWarnings("unchecked")
   @ExperimentalCamera2Interop
   @NonNull
   @Override
@@ -35,7 +36,6 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
         continue;
       }
 
-      //noinspection unchecked
       builder.setCaptureRequestOption(
           (CaptureRequest.Key<Object>) option.getKey(), option.getValue());
     }

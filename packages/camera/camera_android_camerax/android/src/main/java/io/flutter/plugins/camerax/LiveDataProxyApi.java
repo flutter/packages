@@ -50,6 +50,7 @@ public class LiveDataProxyApi extends PigeonApiLiveData {
     return pigeon_instance.getGenericType();
   }
 
+  @SuppressWarnings("unchecked")
   @Override
   public void observe(@NonNull LiveDataWrapper pigeon_instance, @NonNull Observer<?> observer) {
     final LifecycleOwner lifecycleOwner = getPigeonRegistrar().getLifecycleOwner();
@@ -57,9 +58,7 @@ public class LiveDataProxyApi extends PigeonApiLiveData {
       throw new IllegalStateException("LifecycleOwner must be set to observe a LiveData instance.");
     }
 
-    //noinspection unchecked
     final LiveData<Object> castedLiveData = (LiveData<Object>) pigeon_instance.getLiveData();
-    //noinspection unchecked
     castedLiveData.observe(lifecycleOwner, (Observer<Object>) observer);
   }
 

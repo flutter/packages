@@ -118,12 +118,12 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     return defaultClearFinalizedWeakReferencesInterval;
   }
 
+  @SuppressWarnings("deprecation")
   @Nullable
   Display getDisplay() {
     if (sdkIsAtLeast(Build.VERSION_CODES.R)) {
       return getContext().getDisplay();
     } else {
-      //noinspection deprecation
       return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
           .getDefaultDisplay();
     }

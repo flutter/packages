@@ -30,12 +30,16 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
       switch (requireLensFacing) {
         case FRONT:
           builder.requireLensFacing(CameraSelector.LENS_FACING_FRONT);
+          break;
         case BACK:
           builder.requireLensFacing(CameraSelector.LENS_FACING_BACK);
+          break;
         case EXTERNAL:
           builder.requireLensFacing(CameraSelector.LENS_FACING_EXTERNAL);
+          break;
         case UNKNOWN:
           builder.requireLensFacing(CameraSelector.LENS_FACING_FRONT);
+          break;
       }
     }
     return builder.build();
@@ -53,12 +57,12 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
     return CameraSelector.DEFAULT_FRONT_CAMERA;
   }
 
+  // List<? extends CameraInfo> is the same as List<CameraInfo>.
+  @SuppressWarnings("unchecked")
   @NonNull
   @Override
   public List<CameraInfo> filter(
       @NonNull CameraSelector pigeon_instance, @NonNull List<? extends CameraInfo> cameraInfos) {
-    // List<? extends CameraInfo> is the same as List<CameraInfo>.
-    //noinspection unchecked
     return pigeon_instance.filter((List<CameraInfo>) cameraInfos);
   }
 }
