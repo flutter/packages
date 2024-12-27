@@ -8,52 +8,41 @@
 #endif
 @import AVFoundation;
 @import XCTest;
+
 #import "CameraTestUtils.h"
-#import "FLTPermissionService.h"
 #import "FLTCameraPermissionManager.h"
+#import "FLTPermissionService.h"
 
 @interface MockPermissionService : NSObject <FLTPermissionService>
-@property (nonatomic, assign) AVAuthorizationStatus cameraAuthorizationStatusStub;
-@property (nonatomic, assign) AVAuthorizationStatus audioAuthorizationStatusStub;
-
-@property (nonatomic, assign) BOOL cameraGrantAccessStub;
-@property (nonatomic, assign) BOOL audioGrantAccessStub;
+@property(nonatomic, copy) AVAuthorizationStatus (^authorizationStatusStub)(AVMediaType mediaType);
+@property(nonatomic, copy) void (^requestAccessStub)(AVMediaType mediaType, void (^handler)(BOOL));
 @end
 
 @implementation MockPermissionService
 - (AVAuthorizationStatus)authorizationStatusForMediaType:(AVMediaType)mediaType {
-  if (mediaType == AVMediaTypeVideo) {
-    return self.cameraAuthorizationStatusStub;
-  } else if (mediaType == AVMediaTypeAudio) {
-    return self.audioAuthorizationStatusStub;
-  }
-  @throw [NSException exceptionWithName:@"UnexpectedMediaType"
-                                 reason:@"Unexpected media type was used"
-                               userInfo:nil];
+  return self.authorizationStatusStub ? self.authorizationStatusStub(mediaType)
+                                      : AVAuthorizationStatusNotDetermined;
 }
 
-- (void)requestAccessForMediaType:(AVMediaType)mediaType
-               completionHandler:(void (^)(BOOL granted))handler {
-  if (mediaType == AVMediaTypeVideo) {
-    handler(self.cameraGrantAccessStub);
-  } else if (mediaType == AVMediaTypeAudio) {
-    handler(self.audioGrantAccessStub);
+- (void)requestAccessForMediaType:(AVMediaType)mediaType completionHandler:(void (^)(BOOL))handler {
+  if (self.requestAccessStub) {
+    self.requestAccessStub(mediaType, handler);
   }
 }
 @end
 
-@interface CameraPermissionTests : XCTestCase
-@property (nonatomic, strong) FLTCameraPermissionManager *permissionManager;
-@property (nonatomic, strong) MockPermissionService *mockService;
+@interface FLTCameraPermissionManagerTests : XCTestCase
+@property(nonatomic, strong) FLTCameraPermissionManager *permissionManager;
+@property(nonatomic, strong) MockPermissionService *mockService;
 @end
 
-@implementation CameraPermissionTests
+@implementation FLTCameraPermissionManagerTests
 
 - (void)setUp {
-    [super setUp];
-    self.mockService = [[MockPermissionService alloc] init];
-    self.permissionManager = [[FLTCameraPermissionManager alloc]
-                              initWithPermissionService:self.mockService];
+  [super setUp];
+  self.mockService = [[MockPermissionService alloc] init];
+  self.permissionManager =
+      [[FLTCameraPermissionManager alloc] initWithPermissionService:self.mockService];
 }
 
 #pragma mark - camera permissions
@@ -63,7 +52,10 @@
       [self expectationWithDescription:
                 @"Must copmlete without error if camera access was previously authorized."];
 
-  self.mockService.cameraAuthorizationStatusStub = AVAuthorizationStatusAuthorized;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
+    return AVAuthorizationStatusAuthorized;
+  };
 
   [self.permissionManager requestCameraPermissionWithCompletionHandler:^(FlutterError *error) {
     if (error == nil) {
@@ -82,8 +74,11 @@
                                   @"Settings to enable camera access."
                           details:nil];
 
-  self.mockService.cameraAuthorizationStatusStub = AVAuthorizationStatusDenied;
-  
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
+    return AVAuthorizationStatusDenied;
+  };
+
   [self.permissionManager requestCameraPermissionWithCompletionHandler:^(FlutterError *error) {
     if ([error isEqual:expectedError]) {
       [expectation fulfill];
@@ -99,7 +94,10 @@
                                                     message:@"Camera access is restricted. "
                                                     details:nil];
 
-  self.mockService.cameraAuthorizationStatusStub = AVAuthorizationStatusRestricted;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
+    return AVAuthorizationStatusRestricted;
+  };
 
   [self.permissionManager requestCameraPermissionWithCompletionHandler:^(FlutterError *error) {
     if ([error isEqual:expectedError]) {
@@ -113,16 +111,22 @@
   XCTestExpectation *grantedExpectation = [self
       expectationWithDescription:@"Must complete without error if user choose to grant access"];
 
-  self.mockService.cameraAuthorizationStatusStub = AVAuthorizationStatusNotDetermined;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
+    return AVAuthorizationStatusNotDetermined;
+  };
 
   // Mimic user choosing "allow" in permission dialog.
-  self.mockService.cameraGrantAccessStub = YES;
+  self.mockService.requestAccessStub = ^(AVMediaType mediaType, void (^handler)(BOOL)) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
+    handler(YES);
+  };
 
   [self.permissionManager requestCameraPermissionWithCompletionHandler:^(FlutterError *error) {
-      if (error == nil) {
-        [grantedExpectation fulfill];
-      }
-    }];
+    if (error == nil) {
+      [grantedExpectation fulfill];
+    }
+  }];
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
@@ -134,16 +138,22 @@
                           message:@"User denied the camera access request."
                           details:nil];
 
-  self.mockService.cameraAuthorizationStatusStub = AVAuthorizationStatusNotDetermined;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
+    return AVAuthorizationStatusNotDetermined;
+  };
 
-  // Mimic user choosing "deny" in permission dialog.
-  self.mockService.cameraGrantAccessStub = NO;
+  // Mimic user choosing "allow" in permission dialog.
+  self.mockService.requestAccessStub = ^(AVMediaType mediaType, void (^handler)(BOOL)) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
+    handler(NO);
+  };
 
   [self.permissionManager requestCameraPermissionWithCompletionHandler:^(FlutterError *error) {
     if ([error isEqual:expectedError]) {
       [expectation fulfill];
     }
-   }];
+  }];
 
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
@@ -155,7 +165,10 @@
       [self expectationWithDescription:
                 @"Must copmlete without error if audio access was previously authorized."];
 
-  self.mockService.audioAuthorizationStatusStub = AVAuthorizationStatusAuthorized;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeAudio);
+    return AVAuthorizationStatusAuthorized;
+  };
 
   [self.permissionManager requestAudioPermissionWithCompletionHandler:^(FlutterError *error) {
     if (error == nil) {
@@ -175,7 +188,10 @@
                                   @"Settings to enable audio access."
                           details:nil];
 
-  self.mockService.audioAuthorizationStatusStub = AVAuthorizationStatusDenied;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeAudio);
+    return AVAuthorizationStatusDenied;
+  };
 
   [self.permissionManager requestAudioPermissionWithCompletionHandler:^(FlutterError *error) {
     if ([error isEqual:expectedError]) {
@@ -192,7 +208,10 @@
                                                     message:@"Audio access is restricted. "
                                                     details:nil];
 
-  self.mockService.audioAuthorizationStatusStub = AVAuthorizationStatusRestricted;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeAudio);
+    return AVAuthorizationStatusRestricted;
+  };
 
   [self.permissionManager requestAudioPermissionWithCompletionHandler:^(FlutterError *error) {
     if ([error isEqual:expectedError]) {
@@ -206,10 +225,16 @@
   XCTestExpectation *grantedExpectation = [self
       expectationWithDescription:@"Must complete without error if user choose to grant access"];
 
-  self.mockService.audioAuthorizationStatusStub = AVAuthorizationStatusNotDetermined;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeAudio);
+    return AVAuthorizationStatusNotDetermined;
+  };
 
   // Mimic user choosing "allow" in permission dialog.
-  self.mockService.audioGrantAccessStub = YES;
+  self.mockService.requestAccessStub = ^(AVMediaType mediaType, void (^handler)(BOOL)) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeAudio);
+    handler(YES);
+  };
 
   [self.permissionManager requestAudioPermissionWithCompletionHandler:^(FlutterError *error) {
     if (error == nil) {
@@ -226,10 +251,16 @@
                                                     message:@"User denied the audio access request."
                                                     details:nil];
 
-  self.mockService.audioAuthorizationStatusStub = AVAuthorizationStatusNotDetermined;
+  self.mockService.authorizationStatusStub = ^AVAuthorizationStatus(AVMediaType mediaType) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeAudio);
+    return AVAuthorizationStatusNotDetermined;
+  };
 
   // Mimic user choosing "deny" in permission dialog.
-  self.mockService.audioGrantAccessStub = NO;
+  self.mockService.requestAccessStub = ^(AVMediaType mediaType, void (^handler)(BOOL)) {
+    XCTAssertEqualObjects(mediaType, AVMediaTypeAudio);
+    handler(NO);
+  };
 
   [self.permissionManager requestAudioPermissionWithCompletionHandler:^(FlutterError *error) {
     if ([error isEqual:expectedError]) {
