@@ -29,7 +29,7 @@ final class PigeonError: Error {
   var localizedDescription: String {
     return
       "PigeonError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-      }
+  }
 }
 
 private func wrapResult(_ result: Any?) -> [Any?] {
@@ -231,7 +231,8 @@ class ExampleHostApiSetup {
       sendMessageModernAsyncChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
-        Task { @MainActor
+        Task {
+          @MainActor
           let result = await api.sendMessageModernAsync(message: messageArg)
           reply(wrapResult(result))
         }
