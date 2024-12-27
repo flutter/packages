@@ -1,7 +1,11 @@
 ## 23.0.0
 
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * [swift] Changes `PigeonError` class to conform to `Sendable`.
+
+## 22.7.1
+
+* [swift] Adds support for platform checks of imports of ProxyApis.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 22.7.0
 
