@@ -83,6 +83,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+  
+  @override
+  List<Caption>? get sortedCaptions => null;
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -797,7 +800,8 @@ void main() {
         );
 
         await controller.initialize();
-        final sortedCaptions = (await controller.closedCaptionFile!).captions;
+
+        final List<Caption> sortedCaptions = controller.sortedCaptions!;
         for (int i = 1; i < sortedCaptions.length; i++) {
           expect(
               sortedCaptions[i - 1].start <= sortedCaptions[i].start, isTrue);

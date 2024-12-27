@@ -379,7 +379,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
+  List<Caption>? _sortedCaptions;
 
+  /// The sorted list of captions from the closed caption file.
+  List<Caption>? get sortedCaptions => _sortedCaptions;
   Timer? _timer;
   bool _isDisposed = false;
   Completer<void>? _creatingCompleter;
@@ -732,14 +735,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [Caption].
 
   Caption _getCaptionAt(Duration position) {
-    if (_closedCaptionFile == null) {
+    if (_closedCaptionFile == null || _sortedCaptions == null) {
       return Caption.none;
     }
 
     final Duration delayedPosition = position + value.captionOffset;
 
     final int captionIndex = collection.binarySearch<Caption>(
-      _closedCaptionFile!.captions,
+      _sortedCaptions!,
       Caption(number: -1, start: delayedPosition, end: Duration.zero, text: ''),
       compare: (Caption p0, Caption p1) {
         if (p0.start <= delayedPosition && p0.end >= delayedPosition) {
@@ -784,8 +787,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ) async {
     _closedCaptionFile = await closedCaptionFile;
 
+    _sortedCaptions = _closedCaptionFile?.captions;
+
     /// Sort the captions by start time so that we can do a binary search.
-    _closedCaptionFile?.captions.sort((Caption a, Caption b) {
+    _sortedCaptions?.sort((Caption a, Caption b) {
       return a.start.compareTo(b.start);
     });
 
