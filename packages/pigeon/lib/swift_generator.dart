@@ -1617,19 +1617,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           });
         } else {
           if (asynchronousType.isModern) {
-            indent.writeln('Task {');
+            indent.writeln('Task { @MainActor');
             indent.inc();
-          }
-          void wrapMainActorRun(void Function() body) {
-            if (asynchronousType.isModern) {
-              return indent.writeScoped(
-                'await MainActor.run {',
-                '}',
-                body,
-              );
-            }
-
-            return body();
           }
 
           void wrapInDo(void Function() body) {
@@ -1645,19 +1634,17 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
               addTrailingNewline: false,
             );
             indent.addScoped(' catch {', '}', () {
-              wrapMainActorRun(() => indent.writeln('reply(wrapError(error))'));
+              indent.writeln('reply(wrapError(error))');
             });
           }
 
           wrapInDo(() {
             if (returnType.isVoid) {
               indent.writeln(call);
-              wrapMainActorRun(() => indent.writeln('reply(wrapResult(nil))'));
+              indent.writeln('reply(wrapResult(nil))');
             } else {
               indent.writeln('let result = $call');
-              wrapMainActorRun(
-                () => indent.writeln('reply(wrapResult(result))'),
-              );
+              indent.writeln('reply(wrapResult(result))');
             }
           });
         }

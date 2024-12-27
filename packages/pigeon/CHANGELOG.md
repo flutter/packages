@@ -1,6 +1,6 @@
-## NEXT
+## 22.7.1
 
-* Added support of modern asynchronous api for Swift (async) and Kotlin (suspend).
+* [swift, kotlin] Added support of modern asynchronous api for Swift (async) and Kotlin (suspend).
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 22.7.0
