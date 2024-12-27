@@ -6,23 +6,18 @@ package io.flutter.plugins.camerax;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-
-import androidx.annotation.VisibleForTesting;
-import androidx.camera.video.FileOutputOptions;
-import androidx.camera.video.Recorder;
-import androidx.camera.video.QualitySelector;
-import androidx.camera.video.PendingRecording;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.video.FileOutputOptions;
+import androidx.camera.video.PendingRecording;
+import androidx.camera.video.Recorder;
 import androidx.core.content.ContextCompat;
-
 import java.io.File;
-import java.util.Objects;
 
 /**
- * ProxyApi implementation for {@link Recorder}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link Recorder}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 class RecorderProxyApi extends PigeonApiRecorder {
   RecorderProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -37,7 +32,10 @@ class RecorderProxyApi extends PigeonApiRecorder {
 
   @NonNull
   @Override
-  public Recorder pigeon_defaultConstructor(@Nullable Long aspectRatio, @Nullable Long targetVideoEncodingBitRate, @Nullable androidx.camera.video.QualitySelector qualitySelector) {
+  public Recorder pigeon_defaultConstructor(
+      @Nullable Long aspectRatio,
+      @Nullable Long targetVideoEncodingBitRate,
+      @Nullable androidx.camera.video.QualitySelector qualitySelector) {
     final Recorder.Builder builder = new Recorder.Builder();
     if (aspectRatio != null) {
       builder.setAspectRatio(aspectRatio.intValue());
@@ -68,8 +66,10 @@ class RecorderProxyApi extends PigeonApiRecorder {
     final FileOutputOptions fileOutputOptions =
         new FileOutputOptions.Builder(temporaryCaptureFile).build();
 
-    final PendingRecording pendingRecording = pigeon_instance.prepareRecording(getPigeonRegistrar().getContext(), fileOutputOptions);
-    if (ContextCompat.checkSelfPermission(getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
+    final PendingRecording pendingRecording =
+        pigeon_instance.prepareRecording(getPigeonRegistrar().getContext(), fileOutputOptions);
+    if (ContextCompat.checkSelfPermission(
+            getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
         == PackageManager.PERMISSION_GRANTED) {
       pendingRecording.withAudioEnabled();
     }

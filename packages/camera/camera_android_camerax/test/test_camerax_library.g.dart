@@ -13,7 +13,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:camera_android_camerax/src/camerax_library2.g.dart';
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -21,37 +20,37 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is InfoSupportedHardwareLevel) {
+    } else if (value is InfoSupportedHardwareLevel) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is AspectRatio) {
+    } else if (value is AspectRatio) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is CameraStateType) {
+    } else if (value is CameraStateType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is LiveDataSupportedType) {
+    } else if (value is LiveDataSupportedType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is VideoQuality) {
+    } else if (value is VideoQuality) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is MeteringMode) {
+    } else if (value is MeteringMode) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is LensFacing) {
+    } else if (value is LensFacing) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    }    else if (value is CameraXFlashMode) {
+    } else if (value is CameraXFlashMode) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    }    else if (value is ResolutionStrategyFallbackRule) {
+    } else if (value is ResolutionStrategyFallbackRule) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    }    else if (value is AspectRatioStrategyFallbackRule) {
+    } else if (value is AspectRatioStrategyFallbackRule) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    }    else if (value is CameraStateErrorCode) {
+    } else if (value is CameraStateErrorCode) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
     } else {
@@ -62,37 +61,41 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : InfoSupportedHardwareLevel.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AspectRatio.values[value];
-      case 131: 
+      case 131:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CameraStateType.values[value];
-      case 132: 
+      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : LiveDataSupportedType.values[value];
-      case 133: 
+      case 133:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : VideoQuality.values[value];
-      case 134: 
+      case 134:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MeteringMode.values[value];
-      case 135: 
+      case 135:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : LensFacing.values[value];
-      case 136: 
+      case 136:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CameraXFlashMode.values[value];
-      case 137: 
+      case 137:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : ResolutionStrategyFallbackRule.values[value];
-      case 138: 
+        return value == null
+            ? null
+            : ResolutionStrategyFallbackRule.values[value];
+      case 138:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : AspectRatioStrategyFallbackRule.values[value];
-      case 139: 
+        return value == null
+            ? null
+            : AspectRatioStrategyFallbackRule.values[value];
+      case 139:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CameraStateErrorCode.values[value];
       default:

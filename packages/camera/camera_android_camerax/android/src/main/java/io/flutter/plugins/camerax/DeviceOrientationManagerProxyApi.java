@@ -5,28 +5,34 @@
 package io.flutter.plugins.camerax;
 
 import android.content.Context;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 
 /**
- * ProxyApi implementation for {@link DeviceOrientationManager}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link DeviceOrientationManager}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientationManager {
   DeviceOrientationManagerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
 
-  /** Implementation of {@link DeviceOrientationManager} that passes arguments of callback methods to Dart. */
+  /**
+   * Implementation of {@link DeviceOrientationManager} that passes arguments of callback methods to
+   * Dart.
+   */
   static class DeviceOrientationManagerImpl extends DeviceOrientationManager {
     private final DeviceOrientationManagerProxyApi api;
 
     DeviceOrientationManagerImpl(@NonNull DeviceOrientationManagerProxyApi api) {
-      super((manager, newOrientation) -> api.getPigeonRegistrar().runOnMainThread(() -> api.onDeviceOrientationChanged(manager, newOrientation.toString(), reply -> null)));
+      super(
+          (manager, newOrientation) ->
+              api.getPigeonRegistrar()
+                  .runOnMainThread(
+                      () ->
+                          api.onDeviceOrientationChanged(
+                              manager, newOrientation.toString(), reply -> null)));
       this.api = api;
     }
 
@@ -50,7 +56,8 @@ class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientationManager
   }
 
   @Override
-  public void startListeningForDeviceOrientationChange(DeviceOrientationManager pigeon_instance, boolean isFrontFacing, long sensorOrientation) {
+  public void startListeningForDeviceOrientationChange(
+      DeviceOrientationManager pigeon_instance, boolean isFrontFacing, long sensorOrientation) {
     pigeon_instance.start();
   }
 

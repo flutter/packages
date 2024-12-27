@@ -5,18 +5,17 @@
 package io.flutter.plugins.camerax;
 
 import android.view.Display;
-
-import androidx.camera.core.DisplayOrientedMeteringPointFactory;
-import androidx.camera.core.CameraInfo;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.core.CameraInfo;
+import androidx.camera.core.DisplayOrientedMeteringPointFactory;
 
 /**
- * ProxyApi implementation for {@link DisplayOrientedMeteringPointFactory}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link DisplayOrientedMeteringPointFactory}. This class may handle
+ * instantiating native object instances that are attached to a Dart instance or handle method calls
+ * on the associated native class or an instance of that class.
  */
-class DisplayOrientedMeteringPointFactoryProxyApi extends PigeonApiDisplayOrientedMeteringPointFactory {
+class DisplayOrientedMeteringPointFactoryProxyApi
+    extends PigeonApiDisplayOrientedMeteringPointFactory {
   DisplayOrientedMeteringPointFactoryProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
@@ -29,11 +28,13 @@ class DisplayOrientedMeteringPointFactoryProxyApi extends PigeonApiDisplayOrient
 
   @NonNull
   @Override
-  public DisplayOrientedMeteringPointFactory pigeon_defaultConstructor(@NonNull CameraInfo cameraInfo, double width, double height) {
+  public DisplayOrientedMeteringPointFactory pigeon_defaultConstructor(
+      @NonNull CameraInfo cameraInfo, double width, double height) {
     final Display display = getPigeonRegistrar().getDisplay();
 
     if (display != null) {
-      return new DisplayOrientedMeteringPointFactory(display, cameraInfo, (float) width, (float) height);
+      return new DisplayOrientedMeteringPointFactory(
+          display, cameraInfo, (float) width, (float) height);
     }
 
     throw new IllegalStateException("A Display could not be retrieved.");

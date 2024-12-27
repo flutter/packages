@@ -4,20 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.camera2.interop.CaptureRequestOptions;
-
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureRequest.Key;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.camera2.interop.CaptureRequestOptions;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
-
 import java.util.Map;
 
 /**
- * ProxyApi implementation for {@link CaptureRequestOptions}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link CaptureRequestOptions}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
   CaptureRequestOptionsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -27,7 +23,8 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
   @ExperimentalCamera2Interop
   @NonNull
   @Override
-  public CaptureRequestOptions pigeon_defaultConstructor(@NonNull Map<CaptureRequest.Key<?>, ?> options) {
+  public CaptureRequestOptions pigeon_defaultConstructor(
+      @NonNull Map<CaptureRequest.Key<?>, ?> options) {
     final CaptureRequestOptions.Builder builder = new CaptureRequestOptions.Builder();
 
     for (final Map.Entry<CaptureRequest.Key<?>, ?> option : options.entrySet()) {
@@ -39,7 +36,8 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
       }
 
       //noinspection unchecked
-      builder.setCaptureRequestOption((CaptureRequest.Key<Object>) option.getKey(), option.getValue());
+      builder.setCaptureRequestOption(
+          (CaptureRequest.Key<Object>) option.getKey(), option.getValue());
     }
 
     return builder.build();

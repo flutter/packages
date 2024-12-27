@@ -4,17 +4,15 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.resolutionselector.ResolutionFilter;
 import android.util.Size;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
+import androidx.camera.core.resolutionselector.ResolutionFilter;
 import java.util.List;
 
 /**
- * ProxyApi implementation for {@link ResolutionFilter}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ResolutionFilter}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 class ResolutionFilterProxyApi extends PigeonApiResolutionFilter {
   ResolutionFilterProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

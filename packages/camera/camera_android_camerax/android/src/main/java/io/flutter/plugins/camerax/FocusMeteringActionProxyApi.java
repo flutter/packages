@@ -4,17 +4,15 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.MeteringPoint;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.List;
 
 /**
- * ProxyApi implementation for {@link FocusMeteringAction}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link FocusMeteringAction}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class FocusMeteringActionProxyApi extends PigeonApiFocusMeteringAction {
   FocusMeteringActionProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -29,13 +27,15 @@ class FocusMeteringActionProxyApi extends PigeonApiFocusMeteringAction {
 
   @NonNull
   @Override
-  public List<androidx.camera.core.MeteringPoint> meteringPointsAf(FocusMeteringAction pigeon_instance) {
+  public List<androidx.camera.core.MeteringPoint> meteringPointsAf(
+      FocusMeteringAction pigeon_instance) {
     return pigeon_instance.getMeteringPointsAf();
   }
 
   @NonNull
   @Override
-  public List<androidx.camera.core.MeteringPoint> meteringPointsAwb(FocusMeteringAction pigeon_instance) {
+  public List<androidx.camera.core.MeteringPoint> meteringPointsAwb(
+      FocusMeteringAction pigeon_instance) {
     return pigeon_instance.getMeteringPointsAwb();
   }
 

@@ -4,27 +4,24 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.core.UseCase;
-import androidx.camera.core.CameraSelector;
-import androidx.camera.core.CameraInfo;
-import androidx.camera.core.Camera;
 import androidx.annotation.NonNull;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraInfo;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.UseCase;
+import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
-
 import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.List;
-
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 /**
- * ProxyApi implementation for {@link ProcessCameraProvider}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ProcessCameraProvider}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
   ProcessCameraProviderProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -38,7 +35,8 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
   }
 
   @Override
-  public void getInstance(@NonNull Function1<? super Result<ProcessCameraProvider>, Unit> callback) {
+  public void getInstance(
+      @NonNull Function1<? super Result<ProcessCameraProvider>, Unit> callback) {
     final ListenableFuture<ProcessCameraProvider> processCameraProviderFuture =
         ProcessCameraProvider.getInstance(getPigeonRegistrar().getContext());
 
@@ -62,10 +60,14 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
 
   @NonNull
   @Override
-  public Camera bindToLifecycle(@NonNull ProcessCameraProvider pigeon_instance, @NonNull CameraSelector cameraSelector, @NonNull List<? extends UseCase> useCases) {
+  public Camera bindToLifecycle(
+      @NonNull ProcessCameraProvider pigeon_instance,
+      @NonNull CameraSelector cameraSelector,
+      @NonNull List<? extends UseCase> useCases) {
     final LifecycleOwner lifecycleOwner = getPigeonRegistrar().getLifecycleOwner();
     if (lifecycleOwner != null) {
-      return pigeon_instance.bindToLifecycle(lifecycleOwner, cameraSelector, useCases.toArray(new UseCase[0]));
+      return pigeon_instance.bindToLifecycle(
+          lifecycleOwner, cameraSelector, useCases.toArray(new UseCase[0]));
     }
 
     throw new IllegalStateException(
@@ -78,7 +80,8 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
   }
 
   @Override
-  public void unbind(ProcessCameraProvider pigeon_instance, @NonNull List<? extends UseCase> useCases) {
+  public void unbind(
+      ProcessCameraProvider pigeon_instance, @NonNull List<? extends UseCase> useCases) {
     pigeon_instance.unbind(useCases.toArray(new UseCase[0]));
   }
 

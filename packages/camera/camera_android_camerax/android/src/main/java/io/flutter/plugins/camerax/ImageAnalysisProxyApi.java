@@ -4,17 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.resolutionselector.ResolutionSelector;
-import androidx.camera.core.ImageAnalysis.Analyzer;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.core.content.ContextCompat;
 
 /**
- * ProxyApi implementation for {@link ImageAnalysis}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ImageAnalysis}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   private long clearFinalizedWeakReferencesIntervalDefaultValue;
@@ -32,7 +31,8 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
 
   @NonNull
   @Override
-  public ImageAnalysis pigeon_defaultConstructor(@Nullable Long targetRotation, @Nullable ResolutionSelector resolutionSelector) {
+  public ImageAnalysis pigeon_defaultConstructor(
+      @Nullable Long targetRotation, @Nullable ResolutionSelector resolutionSelector) {
     final ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
@@ -44,15 +44,24 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   }
 
   @Override
-  public void setAnalyzer(ImageAnalysis pigeon_instance, @NonNull androidx.camera.core.ImageAnalysis.Analyzer analyzer) {
-    getPigeonRegistrar().getInstanceManager().setClearFinalizedWeakReferencesInterval(CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS);
-    pigeon_instance.setAnalyzer(ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()), analyzer);
+  public void setAnalyzer(
+      ImageAnalysis pigeon_instance,
+      @NonNull androidx.camera.core.ImageAnalysis.Analyzer analyzer) {
+    getPigeonRegistrar()
+        .getInstanceManager()
+        .setClearFinalizedWeakReferencesInterval(
+            CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS);
+    pigeon_instance.setAnalyzer(
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()), analyzer);
   }
 
   @Override
   public void clearAnalyzer(ImageAnalysis pigeon_instance) {
     pigeon_instance.clearAnalyzer();
-    getPigeonRegistrar().getInstanceManager().setClearFinalizedWeakReferencesInterval(getPigeonRegistrar().getDefaultClearFinalizedWeakReferencesInterval());
+    getPigeonRegistrar()
+        .getInstanceManager()
+        .setClearFinalizedWeakReferencesInterval(
+            getPigeonRegistrar().getDefaultClearFinalizedWeakReferencesInterval());
   }
 
   @Override

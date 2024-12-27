@@ -4,14 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 
 /**
- * ProxyApi implementation for {@link AspectRatioStrategy}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link AspectRatioStrategy}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
   AspectRatioStrategyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -20,9 +19,11 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
 
   @NonNull
   @Override
-  public AspectRatioStrategy pigeon_defaultConstructor(@NonNull AspectRatio preferredAspectRatio, @NonNull AspectRatioStrategyFallbackRule fallbackRule) {
+  public AspectRatioStrategy pigeon_defaultConstructor(
+      @NonNull AspectRatio preferredAspectRatio,
+      @NonNull AspectRatioStrategyFallbackRule fallbackRule) {
     int nativeAspectRatio = -2;
-    switch(preferredAspectRatio) {
+    switch (preferredAspectRatio) {
       case RATIO16TO9:
         nativeAspectRatio = androidx.camera.core.AspectRatio.RATIO_16_9;
         break;

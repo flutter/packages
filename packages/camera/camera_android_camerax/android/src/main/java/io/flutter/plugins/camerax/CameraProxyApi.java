@@ -4,16 +4,15 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraInfo;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
- * ProxyApi implementation for {@link Camera}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link Camera}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 class CameraProxyApi extends PigeonApiCamera {
   CameraProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

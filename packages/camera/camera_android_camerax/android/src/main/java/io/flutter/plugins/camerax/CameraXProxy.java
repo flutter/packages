@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.app.Activity;
 import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraSelector;
@@ -12,7 +11,6 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.Preview;
 import androidx.camera.video.Recorder;
-import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.ResolutionInfo;
 import java.io.File;
 

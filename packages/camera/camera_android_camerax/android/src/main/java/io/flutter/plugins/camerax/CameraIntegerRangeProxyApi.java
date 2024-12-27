@@ -6,12 +6,11 @@ package io.flutter.plugins.camerax;
 
 import android.util.Range;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
- * ProxyApi implementation for {@link android.util.Range<Integer>}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link android.util.Range<Integer>}. This class may handle
+ * instantiating native object instances that are attached to a Dart instance or handle method calls
+ * on the associated native class or an instance of that class.
  */
 class CameraIntegerRangeProxyApi extends PigeonApiCameraIntegerRange {
   CameraIntegerRangeProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

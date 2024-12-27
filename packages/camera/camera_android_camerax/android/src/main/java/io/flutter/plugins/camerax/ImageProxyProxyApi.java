@@ -4,18 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.core.ImageProxy;
 import androidx.camera.core.ImageProxy.PlaneProxy;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * ProxyApi implementation for {@link ImageProxy}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ImageProxy}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 class ImageProxyProxyApi extends PigeonApiImageProxy {
   ImageProxyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

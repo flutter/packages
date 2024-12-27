@@ -22,7 +22,8 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientat
  */
 public abstract class DeviceOrientationManager {
   interface DeviceOrientationChangeCallback {
-    void onChange(@NonNull DeviceOrientationManager manager, @NonNull DeviceOrientation newOrientation);
+    void onChange(
+        @NonNull DeviceOrientationManager manager, @NonNull DeviceOrientation newOrientation);
   }
 
   private static final IntentFilter orientationIntentFilter =
@@ -166,6 +167,7 @@ public abstract class DeviceOrientationManager {
   @SuppressWarnings("deprecation")
   @VisibleForTesting
   Display getDisplay() {
-    return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+    return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
+        .getDefaultDisplay();
   }
 }

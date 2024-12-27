@@ -8,9 +8,9 @@ import android.util.Size;
 import androidx.annotation.NonNull;
 
 /**
- * ProxyApi implementation for {@link Size}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link Size}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 class CameraSizeProxyApi extends PigeonApiCameraSize {
   CameraSizeProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

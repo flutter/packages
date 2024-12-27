@@ -3,16 +3,13 @@ package io.flutter.plugins.camerax;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.io.File;
 import java.io.IOException;
 
 public abstract class SystemServicesManager {
-  @NonNull
-  private final CameraPermissionsManager cameraPermissionsManager;
+  @NonNull private final CameraPermissionsManager cameraPermissionsManager;
 
   public interface PermissionsResultListener {
     void onResult(boolean isSuccessful);
@@ -30,7 +27,8 @@ public abstract class SystemServicesManager {
   @Nullable
   abstract CameraPermissionsManager.PermissionsRegistry getPermissionsRegistry();
 
-  public void requestCameraPermissions(@NonNull Boolean enableAudio, @NonNull PermissionsResultListener listener) {
+  public void requestCameraPermissions(
+      @NonNull Boolean enableAudio, @NonNull PermissionsResultListener listener) {
     if (getContext() instanceof Activity) {
       cameraPermissionsManager.requestPermissions(
           (Activity) getContext(),
@@ -44,8 +42,8 @@ public abstract class SystemServicesManager {
 
   @NonNull
   public String getTempFilePath(@NonNull String prefix, @NonNull String suffix) throws IOException {
-      final File path = File.createTempFile(prefix, suffix, getContext().getCacheDir());
-      return path.toString();
+    final File path = File.createTempFile(prefix, suffix, getContext().getCacheDir());
+    return path.toString();
   }
 
   @NonNull

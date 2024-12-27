@@ -4,23 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
-import android.app.Activity;
-import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
-import androidx.lifecycle.LifecycleOwner;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.view.TextureRegistry;
 
 /** Platform implementation of the camera_plugin implemented with the CameraX library. */
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private FlutterPluginBinding pluginBinding;
-  @Nullable
-  private ProxyApiRegistrar proxyApiRegistrar;
+  @Nullable private ProxyApiRegistrar proxyApiRegistrar;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -33,7 +26,11 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     pluginBinding = binding;
 
-    proxyApiRegistrar = new ProxyApiRegistrar(binding.getBinaryMessenger(), binding.getApplicationContext(), binding.getTextureRegistry());
+    proxyApiRegistrar =
+        new ProxyApiRegistrar(
+            binding.getBinaryMessenger(),
+            binding.getApplicationContext(),
+            binding.getTextureRegistry());
     proxyApiRegistrar.setUp();
   }
 
@@ -53,7 +50,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   public void onAttachedToActivity(@NonNull ActivityPluginBinding activityPluginBinding) {
     if (proxyApiRegistrar != null) {
       proxyApiRegistrar.setContext(activityPluginBinding.getActivity());
-      proxyApiRegistrar.setPermissionsRegistry(activityPluginBinding::addRequestPermissionsResultListener);
+      proxyApiRegistrar.setPermissionsRegistry(
+          activityPluginBinding::addRequestPermissionsResultListener);
     }
   }
 
@@ -70,7 +68,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
       @NonNull ActivityPluginBinding activityPluginBinding) {
     if (proxyApiRegistrar != null) {
       proxyApiRegistrar.setContext(activityPluginBinding.getActivity());
-      proxyApiRegistrar.setPermissionsRegistry(activityPluginBinding::addRequestPermissionsResultListener);
+      proxyApiRegistrar.setPermissionsRegistry(
+          activityPluginBinding::addRequestPermissionsResultListener);
     }
   }
 

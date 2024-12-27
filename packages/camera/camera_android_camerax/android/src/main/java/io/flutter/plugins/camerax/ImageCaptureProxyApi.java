@@ -4,24 +4,21 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ImageCapture;
-import androidx.camera.core.ImageCaptureException;
-import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import androidx.camera.core.ImageCapture;
+import androidx.camera.core.ImageCaptureException;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
-
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 /**
- * ProxyApi implementation for {@link ImageCapture}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ImageCapture}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 class ImageCaptureProxyApi extends PigeonApiImageCapture {
   static final String TEMPORARY_FILE_NAME = "CAP";
@@ -39,14 +36,17 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
 
   @NonNull
   @Override
-  public ImageCapture pigeon_defaultConstructor(@Nullable Long targetRotation, @Nullable CameraXFlashMode flashMode, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector resolutionSelector) {
+  public ImageCapture pigeon_defaultConstructor(
+      @Nullable Long targetRotation,
+      @Nullable CameraXFlashMode flashMode,
+      @Nullable androidx.camera.core.resolutionselector.ResolutionSelector resolutionSelector) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
     }
     if (flashMode != null) {
       // This sets the requested flash mode, but may fail silently.
-      switch(flashMode) {
+      switch (flashMode) {
         case AUTO:
           builder.setFlashMode(ImageCapture.FLASH_MODE_AUTO);
         case OFF:
@@ -62,9 +62,10 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   }
 
   @Override
-  public void setFlashMode(@NonNull ImageCapture pigeon_instance, @NonNull CameraXFlashMode flashMode) {
+  public void setFlashMode(
+      @NonNull ImageCapture pigeon_instance, @NonNull CameraXFlashMode flashMode) {
     int nativeFlashMode = -1;
-    switch(flashMode) {
+    switch (flashMode) {
       case AUTO:
         nativeFlashMode = ImageCapture.FLASH_MODE_AUTO;
         break;
@@ -77,9 +78,10 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     pigeon_instance.setFlashMode(nativeFlashMode);
   }
 
-
   @Override
-  public void takePicture(@NonNull ImageCapture pigeon_instance, @NonNull Function1<? super Result<String>, Unit> callback) {
+  public void takePicture(
+      @NonNull ImageCapture pigeon_instance,
+      @NonNull Function1<? super Result<String>, Unit> callback) {
     final File outputDir = getPigeonRegistrar().getContext().getCacheDir();
     File temporaryCaptureFile;
     try {
@@ -94,7 +96,8 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     final ImageCapture.OnImageSavedCallback onImageSavedCallback =
         createOnImageSavedCallback(temporaryCaptureFile, callback);
 
-    pigeon_instance.takePicture(outputFileOptions, Executors.newSingleThreadExecutor(), onImageSavedCallback);
+    pigeon_instance.takePicture(
+        outputFileOptions, Executors.newSingleThreadExecutor(), onImageSavedCallback);
   }
 
   @Override
@@ -106,7 +109,8 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     return new ImageCapture.OutputFileOptions.Builder(file).build();
   }
 
-  @NonNull ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
+  @NonNull
+  ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
       @NonNull File file, @NonNull Function1<? super Result<String>, Unit> callback) {
     return new ImageCapture.OnImageSavedCallback() {
       @Override

@@ -4,13 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ResolutionInfo;
 import androidx.annotation.NonNull;
+import androidx.camera.core.ResolutionInfo;
 
 /**
  * ProxyApi implementation for {@link ResolutionInfo}.
  *
- * This class may handle instantiating native object instances that are attached to a Dart
+ * <p>This class may handle instantiating native object instances that are attached to a Dart
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class ResolutionInfoProxyApi extends PigeonApiResolutionInfo {

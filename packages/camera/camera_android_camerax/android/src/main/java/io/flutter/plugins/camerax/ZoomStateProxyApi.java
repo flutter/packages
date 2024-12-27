@@ -4,13 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ZoomState;
 import androidx.annotation.NonNull;
+import androidx.camera.core.ZoomState;
 
 /**
- * ProxyApi implementation for {@link ZoomState}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ZoomState}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 class ZoomStateProxyApi extends PigeonApiZoomState {
   ZoomStateProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

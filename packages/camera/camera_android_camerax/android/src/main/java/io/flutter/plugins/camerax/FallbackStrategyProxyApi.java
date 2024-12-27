@@ -4,15 +4,14 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.video.FallbackStrategy;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
 
 /**
- * ProxyApi implementation for {@link FallbackStrategy}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link FallbackStrategy}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 class FallbackStrategyProxyApi extends PigeonApiFallbackStrategy {
   FallbackStrategyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -48,13 +47,13 @@ class FallbackStrategyProxyApi extends PigeonApiFallbackStrategy {
       case SD:
         return Quality.SD;
       case HD:
-        return  Quality.HD;
+        return Quality.HD;
       case FHD:
-        return  Quality.FHD;
+        return Quality.FHD;
       case UHD:
-        return  Quality.UHD;
+        return Quality.UHD;
       case LOWEST:
-        return  Quality.LOWEST;
+        return Quality.LOWEST;
       case HIGHEST:
         return Quality.HIGHEST;
     }

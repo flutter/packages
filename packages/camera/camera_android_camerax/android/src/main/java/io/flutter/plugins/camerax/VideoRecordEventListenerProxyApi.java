@@ -4,20 +4,22 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.video.VideoRecordEvent;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.video.VideoRecordEvent;
 
 /**
- * ProxyApi implementation for {@link VideoRecordEventListener}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link VideoRecordEventListener}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class VideoRecordEventListenerProxyApi extends PigeonApiVideoRecordEventListener {
   VideoRecordEventListenerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
-  /** Implementation of {@link VideoRecordEventListener} that passes arguments of callback methods to Dart. */
+  /**
+   * Implementation of {@link VideoRecordEventListener} that passes arguments of callback methods to
+   * Dart.
+   */
   static class VideoRecordEventListenerImpl implements VideoRecordEventListener {
     private final VideoRecordEventListenerProxyApi api;
 

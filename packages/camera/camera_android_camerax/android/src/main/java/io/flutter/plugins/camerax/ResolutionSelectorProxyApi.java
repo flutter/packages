@@ -4,17 +4,17 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.resolutionselector.ResolutionSelector;
-import androidx.camera.core.resolutionselector.AspectRatioStrategy;
-import androidx.camera.core.resolutionselector.ResolutionStrategy;
-import androidx.camera.core.resolutionselector.ResolutionFilter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.resolutionselector.AspectRatioStrategy;
+import androidx.camera.core.resolutionselector.ResolutionFilter;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
 
 /**
- * ProxyApi implementation for {@link ResolutionSelector}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ResolutionSelector}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
   ResolutionSelectorProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -23,7 +23,10 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
 
   @NonNull
   @Override
-  public ResolutionSelector pigeon_defaultConstructor(@Nullable AspectRatioStrategy aspectRatioStrategy, @Nullable ResolutionStrategy resolutionStrategy, @Nullable ResolutionFilter resolutionFilter) {
+  public ResolutionSelector pigeon_defaultConstructor(
+      @Nullable AspectRatioStrategy aspectRatioStrategy,
+      @Nullable ResolutionStrategy resolutionStrategy,
+      @Nullable ResolutionFilter resolutionFilter) {
     final ResolutionSelector.Builder builder = new ResolutionSelector.Builder();
     if (aspectRatioStrategy != null) {
       builder.setAspectRatioStrategy(aspectRatioStrategy);

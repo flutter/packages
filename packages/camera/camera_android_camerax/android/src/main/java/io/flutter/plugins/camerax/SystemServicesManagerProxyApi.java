@@ -4,25 +4,24 @@
 
 package io.flutter.plugins.camerax;
 
-
 import android.content.Context;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.io.IOException;
-
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 /**
- * ProxyApi implementation for {@link SystemServicesManager}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link SystemServicesManager}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
-  /** Implementation of {@link SystemServicesManager} that passes arguments of callback methods to Dart. */
+  /**
+   * Implementation of {@link SystemServicesManager} that passes arguments of callback methods to
+   * Dart.
+   */
   static class SystemServicesManagerImpl extends SystemServicesManager {
     private final SystemServicesManagerProxyApi api;
 
@@ -30,9 +29,11 @@ class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
       super(api.getPigeonRegistrar().getCameraPermissionsManager());
       this.api = api;
     }
+
     @Override
     public void onCameraError(@NonNull String errorDescription) {
-      api.getPigeonRegistrar().runOnMainThread(() -> api.onCameraError(this, errorDescription, reply -> null));
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onCameraError(this, errorDescription, reply -> null));
     }
 
     @NonNull
@@ -65,17 +66,27 @@ class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
   }
 
   @Override
-  public void requestCameraPermissions(@NonNull SystemServicesManager pigeon_instance, boolean enableAudio, @NonNull Function1<? super Result<Unit>, Unit> callback) {
-    pigeon_instance.requestCameraPermissions(enableAudio, isSuccessful -> ResultCompat.success(null, callback));
+  public void requestCameraPermissions(
+      @NonNull SystemServicesManager pigeon_instance,
+      boolean enableAudio,
+      @NonNull Function1<? super Result<Unit>, Unit> callback) {
+    pigeon_instance.requestCameraPermissions(
+        enableAudio, isSuccessful -> ResultCompat.success(null, callback));
   }
 
   @NonNull
   @Override
-  public String getTempFilePath(@NonNull SystemServicesManager pigeon_instance, @NonNull String prefix, @NonNull String suffix) {
+  public String getTempFilePath(
+      @NonNull SystemServicesManager pigeon_instance,
+      @NonNull String prefix,
+      @NonNull String suffix) {
     try {
       return pigeon_instance.getTempFilePath(prefix, suffix);
     } catch (IOException e) {
-      throw new CameraXError("getTempFilePath_failure", "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e, null);
+      throw new CameraXError(
+          "getTempFilePath_failure",
+          "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e,
+          null);
     }
   }
 
@@ -83,5 +94,4 @@ class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
   public boolean isPreviewPreTransformed(SystemServicesManager pigeon_instance) {
     return pigeon_instance.isPreviewPreTransformed();
   }
-
 }

@@ -8,12 +8,10 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
-
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.view.TextureRegistry;
 
@@ -21,22 +19,23 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
   private final CameraPermissionsManager cameraPermissionsManager = new CameraPermissionsManager();
 
-  @NonNull
-  private final TextureRegistry textureRegistry;
+  @NonNull private final TextureRegistry textureRegistry;
 
   private final long defaultClearFinalizedWeakReferencesInterval;
 
-  @NonNull
-  private Context context;
+  @NonNull private Context context;
 
-  @Nullable
-  private CameraPermissionsManager.PermissionsRegistry permissionsRegistry;
+  @Nullable private CameraPermissionsManager.PermissionsRegistry permissionsRegistry;
 
-  public ProxyApiRegistrar(@NonNull BinaryMessenger binaryMessenger, @NonNull Context context, @NonNull TextureRegistry textureRegistry) {
+  public ProxyApiRegistrar(
+      @NonNull BinaryMessenger binaryMessenger,
+      @NonNull Context context,
+      @NonNull TextureRegistry textureRegistry) {
     super(binaryMessenger);
     this.context = context;
     this.textureRegistry = textureRegistry;
-    defaultClearFinalizedWeakReferencesInterval = getInstanceManager().getClearFinalizedWeakReferencesInterval();
+    defaultClearFinalizedWeakReferencesInterval =
+        getInstanceManager().getClearFinalizedWeakReferencesInterval();
   }
 
   // Interface for an injectable SDK version checker.
@@ -100,7 +99,8 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     return cameraPermissionsManager;
   }
 
-  void setPermissionsRegistry(@Nullable CameraPermissionsManager.PermissionsRegistry permissionsRegistry) {
+  void setPermissionsRegistry(
+      @Nullable CameraPermissionsManager.PermissionsRegistry permissionsRegistry) {
     this.permissionsRegistry = permissionsRegistry;
   }
 
@@ -389,7 +389,8 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @NonNull
   @Override
-  public PigeonApiDisplayOrientedMeteringPointFactory getPigeonApiDisplayOrientedMeteringPointFactory() {
+  public PigeonApiDisplayOrientedMeteringPointFactory
+      getPigeonApiDisplayOrientedMeteringPointFactory() {
     return new DisplayOrientedMeteringPointFactoryProxyApi(this);
   }
 }

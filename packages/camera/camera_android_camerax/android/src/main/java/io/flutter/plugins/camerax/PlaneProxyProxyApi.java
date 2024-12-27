@@ -4,16 +4,14 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ImageProxy.PlaneProxy;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
+import androidx.camera.core.ImageProxy.PlaneProxy;
 import java.nio.ByteBuffer;
 
 /**
- * ProxyApi implementation for {@link PlaneProxy}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link PlaneProxy}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 class PlaneProxyProxyApi extends PigeonApiPlaneProxy {
   PlaneProxyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -40,5 +38,4 @@ class PlaneProxyProxyApi extends PigeonApiPlaneProxy {
   public long rowStride(PlaneProxy pigeon_instance) {
     return pigeon_instance.getRowStride();
   }
-
 }

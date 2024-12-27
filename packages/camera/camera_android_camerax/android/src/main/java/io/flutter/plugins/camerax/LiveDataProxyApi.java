@@ -4,18 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.CameraState;
-import androidx.camera.core.ZoomState;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
- * ProxyApi implementation for {@link LiveData}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link LiveData}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 public class LiveDataProxyApi extends PigeonApiLiveData {
   public static class LiveDataWrapper {
@@ -79,5 +77,4 @@ public class LiveDataProxyApi extends PigeonApiLiveData {
   public Object getValue(@NonNull LiveDataWrapper pigeon_instance) {
     return pigeon_instance.getLiveData().getValue();
   }
-
 }

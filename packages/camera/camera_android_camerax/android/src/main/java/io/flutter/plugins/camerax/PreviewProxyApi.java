@@ -5,24 +5,20 @@
 package io.flutter.plugins.camerax;
 
 import android.view.Surface;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SurfaceRequest;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
-import androidx.camera.core.ResolutionInfo;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
+import io.flutter.view.TextureRegistry;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-import io.flutter.view.TextureRegistry;
-
 /**
- * ProxyApi implementation for {@link Preview}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link Preview}. This class may handle instantiating native object
+ * instances that are attached to a Dart instance or handle method calls on the associated native
+ * class or an instance of that class.
  */
 class PreviewProxyApi extends PigeonApiPreview {
   // Stores the SurfaceProducer when it is used as a SurfaceProvider for a Preview.
@@ -40,7 +36,8 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @NonNull
   @Override
-  public Preview pigeon_defaultConstructor(@Nullable Long targetRotation, @Nullable ResolutionSelector resolutionSelector) {
+  public Preview pigeon_defaultConstructor(
+      @Nullable Long targetRotation, @Nullable ResolutionSelector resolutionSelector) {
     final Preview.Builder builder = new Preview.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
@@ -52,9 +49,12 @@ class PreviewProxyApi extends PigeonApiPreview {
   }
 
   @Override
-  public long setSurfaceProvider(@NonNull Preview pigeon_instance, @NonNull SystemServicesManager systemServicesManager) {
-    final TextureRegistry.SurfaceProducer surfaceProducer = getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
-    final Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(surfaceProducer, systemServicesManager);
+  public long setSurfaceProvider(
+      @NonNull Preview pigeon_instance, @NonNull SystemServicesManager systemServicesManager) {
+    final TextureRegistry.SurfaceProducer surfaceProducer =
+        getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
+    final Preview.SurfaceProvider surfaceProvider =
+        createSurfaceProvider(surfaceProducer, systemServicesManager);
 
     pigeon_instance.setSurfaceProvider(surfaceProvider);
     surfaceProducers.put(pigeon_instance, surfaceProducer);
@@ -64,7 +64,8 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Override
   public void releaseSurfaceProvider(@NonNull Preview pigeon_instance) {
-    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.remove(pigeon_instance);
+    final TextureRegistry.SurfaceProducer surfaceProducer =
+        surfaceProducers.remove(pigeon_instance);
     if (surfaceProducer != null) {
       surfaceProducer.release();
     }
@@ -81,8 +82,10 @@ class PreviewProxyApi extends PigeonApiPreview {
     pigeon_instance.setTargetRotation((int) rotation);
   }
 
-  @NonNull Preview.SurfaceProvider createSurfaceProvider(
-      @NonNull TextureRegistry.SurfaceProducer surfaceProducer, @NonNull SystemServicesManager systemServicesManager) {
+  @NonNull
+  Preview.SurfaceProvider createSurfaceProvider(
+      @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
+      @NonNull SystemServicesManager systemServicesManager) {
     return request -> {
       // Set callback for surfaceProducer to invalidate Surfaces that it produces when they
       // get destroyed.

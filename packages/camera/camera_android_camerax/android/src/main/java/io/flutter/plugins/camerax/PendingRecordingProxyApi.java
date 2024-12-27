@@ -4,18 +4,15 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.Recording;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.camera.video.VideoRecordEvent;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Consumer;
 
 /**
- * ProxyApi implementation for {@link PendingRecording}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link PendingRecording}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 class PendingRecordingProxyApi extends PigeonApiPendingRecording {
   PendingRecordingProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -30,7 +27,9 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
 
   @NonNull
   @Override
-  public Recording start(PendingRecording pigeon_instance, @NonNull VideoRecordEventListener listener) {
-    return pigeon_instance.start(ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()), listener::onEvent);
+  public Recording start(
+      PendingRecording pigeon_instance, @NonNull VideoRecordEventListener listener) {
+    return pigeon_instance.start(
+        ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()), listener::onEvent);
   }
 }

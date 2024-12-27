@@ -5,14 +5,12 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraCharacteristics.Key;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
- * ProxyApi implementation for {@link CameraCharacteristics}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link CameraCharacteristics}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class CameraCharacteristicsProxyApi extends PigeonApiCameraCharacteristics {
   CameraCharacteristicsProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -30,5 +28,4 @@ class CameraCharacteristicsProxyApi extends PigeonApiCameraCharacteristics {
   public android.hardware.camera2.CameraCharacteristics.Key<?> sensorOrientation() {
     return CameraCharacteristics.SENSOR_ORIENTATION;
   }
-
 }

@@ -4,15 +4,14 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ExposureState;
 import android.util.Range;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.core.ExposureState;
 
 /**
- * ProxyApi implementation for {@link ExposureState}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ExposureState}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 class ExposureStateProxyApi extends PigeonApiExposureState {
   ExposureStateProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

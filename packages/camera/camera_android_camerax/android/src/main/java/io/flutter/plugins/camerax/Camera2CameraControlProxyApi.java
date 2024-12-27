@@ -4,27 +4,24 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.camera.camera2.interop.Camera2CameraControl;
+import androidx.camera.camera2.interop.CaptureRequestOptions;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraControl;
-import androidx.camera.camera2.interop.CaptureRequestOptions;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
 /**
- * ProxyApi implementation for {@link Camera2CameraControl}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link Camera2CameraControl}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
 class Camera2CameraControlProxyApi extends PigeonApiCamera2CameraControl {
@@ -45,7 +42,10 @@ class Camera2CameraControlProxyApi extends PigeonApiCamera2CameraControl {
   }
 
   @Override
-  public void addCaptureRequestOptions(@NonNull Camera2CameraControl pigeon_instance, @NonNull CaptureRequestOptions bundle, @NonNull Function1<? super Result<Unit>, Unit> callback) {
+  public void addCaptureRequestOptions(
+      @NonNull Camera2CameraControl pigeon_instance,
+      @NonNull CaptureRequestOptions bundle,
+      @NonNull Function1<? super Result<Unit>, Unit> callback) {
     final ListenableFuture<Void> addCaptureRequestOptionsFuture =
         pigeon_instance.addCaptureRequestOptions(bundle);
 

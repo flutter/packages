@@ -4,15 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.resolutionselector.ResolutionStrategy;
-import android.util.Size;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
 
 /**
- * ProxyApi implementation for {@link ResolutionStrategy}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link ResolutionStrategy}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
   ResolutionStrategyProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -21,7 +19,8 @@ class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
 
   @NonNull
   @Override
-  public ResolutionStrategy pigeon_defaultConstructor(@NonNull android.util.Size boundSize, @NonNull ResolutionStrategyFallbackRule fallbackRule) {
+  public ResolutionStrategy pigeon_defaultConstructor(
+      @NonNull android.util.Size boundSize, @NonNull ResolutionStrategyFallbackRule fallbackRule) {
     int nativeFallbackRule = -1;
     switch (fallbackRule) {
       case CLOSEST_HIGHER:

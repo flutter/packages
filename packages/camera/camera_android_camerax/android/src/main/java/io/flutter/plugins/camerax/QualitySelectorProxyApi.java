@@ -4,21 +4,19 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.video.Quality;
-import androidx.camera.video.QualitySelector;
-import androidx.camera.video.FallbackStrategy;
-import androidx.camera.core.CameraInfo;
 import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
+import androidx.camera.video.FallbackStrategy;
+import androidx.camera.video.Quality;
+import androidx.camera.video.QualitySelector;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ProxyApi implementation for {@link QualitySelector}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link QualitySelector}. This class may handle instantiating native
+ * object instances that are attached to a Dart instance or handle method calls on the associated
+ * native class or an instance of that class.
  */
 class QualitySelectorProxyApi extends PigeonApiQualitySelector {
   QualitySelectorProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -27,7 +25,8 @@ class QualitySelectorProxyApi extends PigeonApiQualitySelector {
 
   @NonNull
   @Override
-  public QualitySelector from(@NonNull VideoQuality quality, @Nullable FallbackStrategy fallbackStrategy) {
+  public QualitySelector from(
+      @NonNull VideoQuality quality, @Nullable FallbackStrategy fallbackStrategy) {
     if (fallbackStrategy == null) {
       return QualitySelector.from(getNativeQuality(quality));
     }
@@ -37,7 +36,9 @@ class QualitySelectorProxyApi extends PigeonApiQualitySelector {
 
   @NonNull
   @Override
-  public QualitySelector fromOrderedList(@NonNull List<? extends VideoQuality> qualities, @Nullable FallbackStrategy fallbackStrategy) {
+  public QualitySelector fromOrderedList(
+      @NonNull List<? extends VideoQuality> qualities,
+      @Nullable FallbackStrategy fallbackStrategy) {
     final List<Quality> nativeQualities = new ArrayList<>();
     for (final VideoQuality quality : qualities) {
       nativeQualities.add(getNativeQuality(quality));
@@ -52,7 +53,8 @@ class QualitySelectorProxyApi extends PigeonApiQualitySelector {
 
   @Nullable
   @Override
-  public Size getResolution(@NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull VideoQuality quality) {
+  public Size getResolution(
+      @NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull VideoQuality quality) {
     return QualitySelector.getResolution(cameraInfo, getNativeQuality(quality));
   }
 
@@ -61,13 +63,13 @@ class QualitySelectorProxyApi extends PigeonApiQualitySelector {
       case SD:
         return Quality.SD;
       case HD:
-        return  Quality.HD;
+        return Quality.HD;
       case FHD:
-        return  Quality.FHD;
+        return Quality.FHD;
       case UHD:
-        return  Quality.UHD;
+        return Quality.UHD;
       case LOWEST:
-        return  Quality.LOWEST;
+        return Quality.LOWEST;
       case HIGHEST:
         return Quality.HIGHEST;
     }

@@ -838,7 +838,8 @@ abstract class CameraStateStateError {
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper',
+    fullClassName:
+        'io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper',
   ),
 )
 abstract class LiveData {

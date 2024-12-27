@@ -4,14 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.FocusMeteringResult;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.core.FocusMeteringResult;
 
 /**
- * ProxyApi implementation for {@link FocusMeteringResult}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link FocusMeteringResult}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 class FocusMeteringResultProxyApi extends PigeonApiFocusMeteringResult {
   FocusMeteringResultProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

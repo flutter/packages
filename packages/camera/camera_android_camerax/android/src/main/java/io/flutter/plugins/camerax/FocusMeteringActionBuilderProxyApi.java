@@ -4,18 +4,15 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.FocusMeteringAction.Builder;
-import androidx.camera.core.MeteringPoint;
-import androidx.camera.core.FocusMeteringAction;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.MeteringPoint;
 
-import java.util.List;
 
 /**
- * ProxyApi implementation for {@link FocusMeteringAction.Builder}.
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * ProxyApi implementation for {@link FocusMeteringAction.Builder}. This class may handle
+ * instantiating native object instances that are attached to a Dart instance or handle method calls
+ * on the associated native class or an instance of that class.
  */
 class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBuilder {
   FocusMeteringActionBuilderProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
@@ -30,7 +27,8 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
 
   @NonNull
   @Override
-  public FocusMeteringAction.Builder withMode(@NonNull MeteringPoint point, @NonNull MeteringMode mode) {
+  public FocusMeteringAction.Builder withMode(
+      @NonNull MeteringPoint point, @NonNull MeteringMode mode) {
     return new FocusMeteringAction.Builder(point, getNativeMeteringMode(mode));
   }
 
@@ -40,7 +38,10 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
   }
 
   @Override
-  public void addPointWithMode(FocusMeteringAction. Builder pigeon_instance, @NonNull MeteringPoint point, @NonNull MeteringMode mode) {
+  public void addPointWithMode(
+      FocusMeteringAction.Builder pigeon_instance,
+      @NonNull MeteringPoint point,
+      @NonNull MeteringMode mode) {
     pigeon_instance.addPoint(point, getNativeMeteringMode(mode));
   }
 
@@ -51,12 +52,13 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
 
   @NonNull
   @Override
-  public androidx.camera.core.FocusMeteringAction build(FocusMeteringAction.Builder pigeon_instance) {
+  public androidx.camera.core.FocusMeteringAction build(
+      FocusMeteringAction.Builder pigeon_instance) {
     return pigeon_instance.build();
   }
 
   int getNativeMeteringMode(@NonNull MeteringMode mode) {
-    switch(mode) {
+    switch (mode) {
       case AE:
         return FocusMeteringAction.FLAG_AE;
       case AF:
