@@ -83,9 +83,6 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
-
-  @override
-  List<Caption>? get sortedCaptions => null;
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -798,22 +795,6 @@ void main() {
         // Test going back
         await controller.seekTo(const Duration(milliseconds: 300));
         expect(controller.value.caption.text, 'two');
-      });
-
-      test('captions are sorted correctly on initialization', () async {
-        final VideoPlayerController controller =
-            VideoPlayerController.networkUrl(
-          _localhostUri,
-          closedCaptionFile: _loadClosedCaption(),
-        );
-
-        await controller.initialize();
-
-        final List<Caption> sortedCaptions = controller.sortedCaptions!;
-        for (int i = 1; i < sortedCaptions.length; i++) {
-          expect(
-              sortedCaptions[i - 1].start <= sortedCaptions[i].start, isTrue);
-        }
       });
 
       test(

@@ -381,8 +381,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ClosedCaptionFile? _closedCaptionFile;
   List<Caption>? _sortedCaptions;
 
-  /// The sorted list of captions from the closed caption file.
-  List<Caption>? get sortedCaptions => _sortedCaptions;
   Timer? _timer;
   bool _isDisposed = false;
   Completer<void>? _creatingCompleter;
