@@ -5,6 +5,8 @@
 package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraMetadata;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
@@ -39,6 +41,23 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
   @Override
   public Object getCameraCharacteristic(
       Camera2CameraInfo pigeon_instance, @NonNull CameraCharacteristics.Key<?> key) {
-    return pigeon_instance.getCameraCharacteristic(key);
+    final Object result = pigeon_instance.getCameraCharacteristic(key);
+    // TODO: need better solution
+    if (key == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) {
+      switch((Integer) result) {
+        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_3:
+          return InfoSupportedHardwareLevel.LEVEL3;
+        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_EXTERNAL:
+          return InfoSupportedHardwareLevel.EXTERNAL;
+        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_FULL:
+          return InfoSupportedHardwareLevel.FULL;
+        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY:
+          return InfoSupportedHardwareLevel.LEGACY;
+        case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED:
+          return InfoSupportedHardwareLevel.LIMITED;
+      }
+    }
+
+    return result;
   }
 }

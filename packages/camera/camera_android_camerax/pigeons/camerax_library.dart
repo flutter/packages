@@ -1151,7 +1151,7 @@ abstract class CameraCharacteristicsKey {}
 abstract class CameraCharacteristics {
   /// Generally classifies the overall set of the camera device functionality.
   ///
-  /// Value is `InfoSupportedHardwareLeve`.
+  /// Value is `InfoSupportedHardwareLevel`.
   ///
   /// This key is available on all devices.
   @static
