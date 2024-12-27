@@ -284,6 +284,10 @@ class _TypeHelperIterable extends _TypeHelper {
       } else if (const TypeChecker.fromRuntime(Set)
           .isAssignableFromType(parameterElement.type)) {
         iterableCaster = '.toSet()';
+        if (!parameterElement.type.isNullableType &&
+            !parameterElement.hasDefaultValue) {
+          fallBack = '?? const {}';
+        }
       }
 
       return '''

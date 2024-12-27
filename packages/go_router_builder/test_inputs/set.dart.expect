@@ -1,29 +1,29 @@
-RouteBase get $listRoute => GoRouteData.$route(
-      path: '/list-route',
-      factory: $ListRouteExtension._fromState,
+RouteBase get $setRoute => GoRouteData.$route(
+      path: '/set-route',
+      factory: $SetRouteExtension._fromState,
     );
 
-extension $ListRouteExtension on ListRoute {
-  static ListRoute _fromState(GoRouterState state) => ListRoute(
-        ids: state.uri.queryParametersAll['ids']?.map(int.parse).toList() ??
-            const [],
+extension $SetRouteExtension on SetRoute {
+  static SetRoute _fromState(GoRouterState state) => SetRoute(
+        ids: state.uri.queryParametersAll['ids']?.map(int.parse).toSet() ??
+            const {},
         nullableIds: state.uri.queryParametersAll['nullable-ids']
             ?.map(int.parse)
-            .toList(),
+            .toSet(),
         idsWithDefaultValue: state
                 .uri.queryParametersAll['ids-with-default-value']
                 ?.map(int.parse)
-                .toList() ??
-            const <int>[0],
+                .toSet() ??
+            const <int>{0},
       );
 
   String get location => GoRouteData.$location(
-        '/list-route',
+        '/set-route',
         queryParams: {
           'ids': ids.map((e) => e.toString()).toList(),
           if (nullableIds != null)
             'nullable-ids': nullableIds?.map((e) => e.toString()).toList(),
-          if (idsWithDefaultValue != const <int>[0])
+          if (idsWithDefaultValue != const <int>{0})
             'ids-with-default-value':
                 idsWithDefaultValue.map((e) => e.toString()).toList(),
         },
