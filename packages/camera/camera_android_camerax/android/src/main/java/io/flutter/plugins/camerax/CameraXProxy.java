@@ -35,15 +35,6 @@ public class CameraXProxy {
     return new CameraPermissionsManager();
   }
 
-  /** Creates an instance of the {@link DeviceOrientationManager}. */
-  public @NonNull DeviceOrientationManager createDeviceOrientationManager(
-      @NonNull Activity activity,
-      @NonNull Boolean isFrontFacing,
-      int sensorOrientation,
-      @NonNull DeviceOrientationManager.DeviceOrientationChangeCallback callback) {
-    return new DeviceOrientationManager(activity, isFrontFacing, sensorOrientation, callback);
-  }
-
   /** Creates a builder for an instance of the {@link Preview} use case. */
   public @NonNull Preview.Builder createPreviewBuilder() {
     return new Preview.Builder();

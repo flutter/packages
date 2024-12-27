@@ -6,7 +6,6 @@ package io.flutter.plugins.camerax;
 
 import androidx.camera.core.ZoomState;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * ProxyApi implementation for {@link ZoomState}.

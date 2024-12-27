@@ -1590,12 +1590,15 @@ class AndroidCameraCameraX extends CameraPlatform {
         currentFocusMeteringAction = null;
         return true;
       }
+      // Create builder to potentially add more MeteringPoints to.
       final FocusMeteringActionBuilder actionBuilder =
           proxy.withModeFocusMeteringActionBuilder(
         point: newMeteringPoints.first,
         mode: meteringMode,
       );
       unawaited(actionBuilder.disableAutoCancel());
+
+      // Add any additional metering points in order as specified by input lists.
       newMeteringPoints.skip(1).forEach(actionBuilder.addPoint);
       currentFocusMeteringAction = await actionBuilder.build();
     } else {
