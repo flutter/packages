@@ -13,6 +13,8 @@
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/messages.g.h"
+#import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
+#import "./include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -103,7 +105,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
-
+@property(readonly, nonatomic) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 /// Reports the given error message to the Dart side of the plugin.
 ///
 /// Can be called from any thread.
@@ -144,8 +146,9 @@ NSString *const errorMethod = @"error";
       videoCaptureSession:videoCaptureSession
       audioCaptureSession:videoCaptureSession
       captureSessionQueue:captureSessionQueue
-      captureDeviceFactory:^AVCaptureDevice *(void) {
-        return [AVCaptureDevice deviceWithUniqueID:cameraName];
+                captureDeviceFactory:^id<FLTCaptureDeviceControlling> (void) {
+        AVCaptureDevice *device = [AVCaptureDevice deviceWithUniqueID:cameraName];
+        return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:device];
       }
       videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
         return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
@@ -264,6 +267,8 @@ static void selectBestFormatForRequestedFrameRate(
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
+  
+  _deviceOrientationProvider = [[FLTDefaultDeviceOrientationProvider alloc] init];
 
   if (_mediaSettings.framesPerSecond) {
     // The frame rate can be changed only on a locked for configuration device.
@@ -311,7 +316,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
   // Setup video capture input.
-  _captureVideoInput = [AVCaptureDeviceInput deviceInputWithDevice:_captureDevice error:error];
+  _captureVideoInput = [_captureDevice createInput:error];
 
   // Test the return value of the `deviceInputWithDevice` method to see whether an error occurred.
   // Don’t just test to see whether the error pointer was set to point to an error.
@@ -346,8 +351,8 @@ static void selectBestFormatForRequestedFrameRate(
                                                      height:self.previewSize.height]
                 exposureMode:self.exposureMode
                    focusMode:self.focusMode
-      exposurePointSupported:self.captureDevice.exposurePointOfInterestSupported
-         focusPointSupported:self.captureDevice.focusPointOfInterestSupported];
+                                   exposurePointSupported:self.captureDevice.isExposurePointOfInterestSupported
+                                   focusPointSupported:self.captureDevice.isFocusPointOfInterestSupported];
 
   __weak typeof(self) weakSelf = self;
   FLTEnsureToRunOnMainQueue(^{
@@ -1041,7 +1046,7 @@ static void selectBestFormatForRequestedFrameRate(
   [self applyFocusMode:_focusMode onDevice:_captureDevice];
 }
 
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice {
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:
@@ -1178,7 +1183,7 @@ static void selectBestFormatForRequestedFrameRate(
                                    details:nil]);
     return;
   }
-  UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+  UIDeviceOrientation orientation = [_deviceOrientationProvider orientation];
   [_captureDevice lockForConfiguration:nil];
   // A nil point resets to the center.
   [_captureDevice

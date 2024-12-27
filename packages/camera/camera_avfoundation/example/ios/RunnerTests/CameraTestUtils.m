@@ -88,8 +88,8 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
                              videoCaptureSession:videoSessionMock
                              audioCaptureSession:audioSessionMock
                              captureSessionQueue:captureSessionQueue
-                               captureDeviceFactory:captureDeviceFactory ?: ^AVCaptureDevice *(void) {
-                               return captureDeviceMock;
+                               captureDeviceFactory:captureDeviceFactory ?: ^id<FLTCaptureDeviceControlling>(void) {
+    return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDeviceMock];
                              }
                              videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
                                return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
@@ -161,9 +161,8 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
                            videoCaptureSession:captureSession
                            audioCaptureSession:audioSessionMock
                            captureSessionQueue:dispatch_queue_create("capture_session_queue", NULL)
-                          captureDeviceFactory:^AVCaptureDevice *(void) {
-                            return captureDevice;
-                          }
+                          captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
+    return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDevice];                          }
                       videoDimensionsForFormat:videoDimensionsForFormat
                                          error:nil];
 }

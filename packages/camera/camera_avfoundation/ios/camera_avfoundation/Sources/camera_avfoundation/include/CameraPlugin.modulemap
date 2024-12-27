@@ -13,6 +13,8 @@ framework module camera_avfoundation {
     header "FLTThreadSafeEventChannel.h"
     header "FLTPermissionServicing.h"
     header "FLTCameraPermissionManager.h"
+    header "FLTCaptureDeviceControlling.h"
+    header "FLTDeviceOrientationProviding.h"
     header "QueueUtils.h"
   }
 }

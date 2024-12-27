@@ -4,6 +4,7 @@
 
 #import "FLTCam.h"
 #import "FLTSavePhotoDelegate.h"
+#import "FLTCaptureDeviceControlling.h"
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
@@ -11,7 +12,7 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
 
 /// Factory block returning an AVCaptureDevice.
 /// Used in tests to inject a device into FLTCam.
-typedef AVCaptureDevice * (^CaptureDeviceFactory)(void);
+typedef id<FLTCaptureDeviceControlling> (^CaptureDeviceFactory)(void);
 
 @interface FLTImageStreamHandler : NSObject <FlutterStreamHandler>
 
