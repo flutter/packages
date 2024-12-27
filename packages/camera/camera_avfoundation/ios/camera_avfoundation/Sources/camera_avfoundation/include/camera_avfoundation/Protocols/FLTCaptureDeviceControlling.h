@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setExposurePointOfInterest:(CGPoint)point;
 - (float)minExposureTargetBias;
 - (float)maxExposureTargetBias;
-- (void)setExposureTargetBias:(float)bias completionHandler:(void (^ _Nullable)(CMTime))handler;
+- (void)setExposureTargetBias:(float)bias completionHandler:(void (^_Nullable)(CMTime))handler;
 - (BOOL)isExposureModeSupported:(AVCaptureExposureMode)mode;
 
 // Zoom
@@ -61,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (CMTime)activeVideoMaxFrameDuration;
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration;
 
-- (AVCaptureInput *)createInput:(NSError * _Nullable * _Nullable)error;
+- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error;
 
 @end
 

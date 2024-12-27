@@ -7,7 +7,8 @@
 
 @implementation FLTCamMediaSettingsAVWrapper
 
-- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice error:(NSError *_Nullable *_Nullable)outError {
+- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice
+             error:(NSError *_Nullable *_Nullable)outError {
   return [captureDevice lockForConfiguration:outError];
 }
 
@@ -23,11 +24,13 @@
   [videoCaptureSession commitConfiguration];
 }
 
-- (void)setMinFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)setMinFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
   captureDevice.activeVideoMinFrameDuration = duration;
 }
 
-- (void)setMaxFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)setMaxFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
   captureDevice.activeVideoMaxFrameDuration = duration;
 }
 

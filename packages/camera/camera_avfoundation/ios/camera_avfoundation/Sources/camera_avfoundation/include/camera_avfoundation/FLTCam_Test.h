@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #import "FLTCam.h"
-#import "FLTSavePhotoDelegate.h"
 #import "FLTCaptureDeviceControlling.h"
+#import "FLTSavePhotoDelegate.h"
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.

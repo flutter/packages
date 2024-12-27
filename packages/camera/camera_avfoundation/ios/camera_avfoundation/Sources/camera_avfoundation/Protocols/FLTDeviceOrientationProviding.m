@@ -6,7 +6,7 @@
 
 @implementation FLTDefaultDeviceOrientationProvider
 
-- (UIDeviceOrientation)orientation { 
+- (UIDeviceOrientation)orientation {
   return [[UIDevice currentDevice] orientation];
 }
 

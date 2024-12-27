@@ -187,11 +187,10 @@
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(captureSessionQueue, nil, nil,
-                                                                    ^id<FLTCaptureDeviceControlling>(void) {
-                                                                      return
-    [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDeviceMock];
-                                                                    });
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
+      captureSessionQueue, nil, nil, ^id<FLTCaptureDeviceControlling>(void) {
+        return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDeviceMock];
+      });
 
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);

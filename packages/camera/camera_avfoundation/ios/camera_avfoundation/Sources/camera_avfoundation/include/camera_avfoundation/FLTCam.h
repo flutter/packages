@@ -93,7 +93,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param focusMode The focus mode that should be applied to the @captureDevice instance.
 /// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
+              onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
 - (void)pausePreview;
 - (void)resumePreview;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName

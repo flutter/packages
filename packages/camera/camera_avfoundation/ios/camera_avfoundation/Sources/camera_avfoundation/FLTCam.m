@@ -11,10 +11,10 @@
 
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
-#import "./include/camera_avfoundation/QueueUtils.h"
-#import "./include/camera_avfoundation/messages.g.h"
 #import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
 #import "./include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
+#import "./include/camera_avfoundation/QueueUtils.h"
+#import "./include/camera_avfoundation/messages.g.h"
 
 static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
@@ -146,7 +146,7 @@ NSString *const errorMethod = @"error";
       videoCaptureSession:videoCaptureSession
       audioCaptureSession:videoCaptureSession
       captureSessionQueue:captureSessionQueue
-                captureDeviceFactory:^id<FLTCaptureDeviceControlling> (void) {
+      captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
         AVCaptureDevice *device = [AVCaptureDevice deviceWithUniqueID:cameraName];
         return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:device];
       }
@@ -265,7 +265,7 @@ static void selectBestFormatForRequestedFrameRate(
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
-  
+
   _deviceOrientationProvider = [[FLTDefaultDeviceOrientationProvider alloc] init];
 
   if (_mediaSettings.framesPerSecond) {
@@ -349,8 +349,8 @@ static void selectBestFormatForRequestedFrameRate(
                                                      height:self.previewSize.height]
                 exposureMode:self.exposureMode
                    focusMode:self.focusMode
-                                   exposurePointSupported:self.captureDevice.isExposurePointOfInterestSupported
-                                   focusPointSupported:self.captureDevice.isFocusPointOfInterestSupported];
+      exposurePointSupported:self.captureDevice.isExposurePointOfInterestSupported
+         focusPointSupported:self.captureDevice.isFocusPointOfInterestSupported];
 
   __weak typeof(self) weakSelf = self;
   FLTEnsureToRunOnMainQueue(^{
@@ -1043,7 +1043,8 @@ static void selectBestFormatForRequestedFrameRate(
   [self applyFocusMode:_focusMode onDevice:_captureDevice];
 }
 
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
+              onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:
