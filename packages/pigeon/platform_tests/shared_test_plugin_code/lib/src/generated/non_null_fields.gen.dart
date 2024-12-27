@@ -19,7 +19,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -122,7 +123,6 @@ class NonNullFieldSearchReply {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -130,16 +130,16 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is ReplyType) {
+    } else if (value is ReplyType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is NonNullFieldSearchRequest) {
+    } else if (value is NonNullFieldSearchRequest) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is ExtraData) {
+    } else if (value is ExtraData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is NonNullFieldSearchReply) {
+    } else if (value is NonNullFieldSearchReply) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
@@ -150,14 +150,14 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : ReplyType.values[value];
-      case 130: 
+      case 130:
         return NonNullFieldSearchRequest.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return ExtraData.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return NonNullFieldSearchReply.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -169,18 +169,23 @@ class NonNullFieldHostApi {
   /// Constructor for [NonNullFieldHostApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  NonNullFieldHostApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  NonNullFieldHostApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
 
   final String pigeonVar_messageChannelSuffix;
 
-  Future<NonNullFieldSearchReply> search(NonNullFieldSearchRequest nested) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<NonNullFieldSearchReply> search(
+      NonNullFieldSearchRequest nested) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -211,20 +216,29 @@ abstract class NonNullFieldFlutterApi {
 
   NonNullFieldSearchReply search(NonNullFieldSearchRequest request);
 
-  static void setUp(NonNullFieldFlutterApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    NonNullFieldFlutterApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.');
+              'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final NonNullFieldSearchRequest? arg_request = (args[0] as NonNullFieldSearchRequest?);
+          final NonNullFieldSearchRequest? arg_request =
+              (args[0] as NonNullFieldSearchRequest?);
           assert(arg_request != null,
               'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null, expected non-null NonNullFieldSearchRequest.');
           try {
@@ -232,8 +246,9 @@ abstract class NonNullFieldFlutterApi {
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }

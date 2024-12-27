@@ -11,8 +11,7 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-sealed class PlatformEvent {
-}
+sealed class PlatformEvent {}
 
 class IntEvent extends PlatformEvent {
   IntEvent({
@@ -58,17 +57,14 @@ class StringEvent extends PlatformEvent {
 
 class EmptyEvent extends PlatformEvent {
   Object encode() {
-    return <Object?>[
-    ];
+    return <Object?>[];
   }
 
   static EmptyEvent decode(Object result) {
     result as List<Object?>;
-    return EmptyEvent(
-    );
+    return EmptyEvent();
   }
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -77,13 +73,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is IntEvent) {
+    } else if (value is IntEvent) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    }    else if (value is StringEvent) {
+    } else if (value is StringEvent) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is EmptyEvent) {
+    } else if (value is EmptyEvent) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -94,11 +90,11 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         return IntEvent.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return StringEvent.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return EmptyEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -106,16 +102,17 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec =
+    StandardMethodCodec(_PigeonCodec());
 
-Stream<PlatformEvent> streamEvents( {String instanceName = ''}) {
+Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamEventsChannel =
-      EventChannel('dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents', pigeonMethodCodec);
+  const EventChannel streamEventsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents',
+      pigeonMethodCodec);
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
   });
 }
-    

@@ -183,21 +183,27 @@ class EventAllNullableTypes {
       objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
       listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
       mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      recursiveClassList: (result[22] as List<Object?>?)?.cast<EventAllNullableTypes?>(),
+      recursiveClassList:
+          (result[22] as List<Object?>?)?.cast<EventAllNullableTypes?>(),
       map: result[23] as Map<Object?, Object?>?,
-      stringMap: (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      stringMap:
+          (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
       intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[26] as Map<Object?, Object?>?)?.cast<EventEnum?, EventEnum?>(),
-      objectMap: (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
-      listMap: (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
-      mapMap: (result[29] as Map<Object?, Object?>?)?.cast<int?, Map<Object?, Object?>?>(),
-      recursiveClassMap: (result[30] as Map<Object?, Object?>?)?.cast<int?, EventAllNullableTypes?>(),
+      enumMap: (result[26] as Map<Object?, Object?>?)
+          ?.cast<EventEnum?, EventEnum?>(),
+      objectMap:
+          (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
+      listMap:
+          (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+          ?.cast<int?, EventAllNullableTypes?>(),
     );
   }
 }
 
-sealed class PlatformEvent {
-}
+sealed class PlatformEvent {}
 
 class IntEvent extends PlatformEvent {
   IntEvent({
@@ -346,7 +352,6 @@ class ClassEvent extends PlatformEvent {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -354,34 +359,34 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is EventEnum) {
+    } else if (value is EventEnum) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is AnotherEventEnum) {
+    } else if (value is AnotherEventEnum) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is EventAllNullableTypes) {
+    } else if (value is EventAllNullableTypes) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    }    else if (value is IntEvent) {
+    } else if (value is IntEvent) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    }    else if (value is StringEvent) {
+    } else if (value is StringEvent) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    }    else if (value is BoolEvent) {
+    } else if (value is BoolEvent) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is DoubleEvent) {
+    } else if (value is DoubleEvent) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is ObjectsEvent) {
+    } else if (value is ObjectsEvent) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is EnumEvent) {
+    } else if (value is EnumEvent) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is ClassEvent) {
+    } else if (value is ClassEvent) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
@@ -392,27 +397,27 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : EventEnum.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AnotherEventEnum.values[value];
-      case 131: 
+      case 131:
         return EventAllNullableTypes.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return IntEvent.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return StringEvent.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return BoolEvent.decode(readValue(buffer)!);
-      case 135: 
+      case 135:
         return DoubleEvent.decode(readValue(buffer)!);
-      case 136: 
+      case 136:
         return ObjectsEvent.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return EnumEvent.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return ClassEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -420,27 +425,29 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec =
+    StandardMethodCodec(_PigeonCodec());
 
-Stream<int> streamInts( {String instanceName = ''}) {
+Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamIntsChannel =
-      EventChannel('dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts', pigeonMethodCodec);
+  const EventChannel streamIntsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts',
+      pigeonMethodCodec);
   return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
   });
 }
-    
-Stream<PlatformEvent> streamEvents( {String instanceName = ''}) {
+
+Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamEventsChannel =
-      EventChannel('dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents', pigeonMethodCodec);
+  const EventChannel streamEventsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents',
+      pigeonMethodCodec);
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
   });
 }
-    
