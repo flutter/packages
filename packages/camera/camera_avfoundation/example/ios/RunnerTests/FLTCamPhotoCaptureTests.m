@@ -171,7 +171,7 @@
   });
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
-
+//
 - (void)testCaptureToFile_handlesTorchMode {
   XCTestExpectation *pathExpectation =
       [self expectationWithDescription:
@@ -188,8 +188,9 @@
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(captureSessionQueue, nil, nil,
-                                                                    ^AVCaptureDevice *(void) {
-                                                                      return captureDeviceMock;
+                                                                    ^id<FLTCaptureDeviceControlling>(void) {
+                                                                      return
+    [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDeviceMock];
                                                                     });
 
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
