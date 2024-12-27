@@ -44,7 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) void (^setExposurePointOfInterestStub)(CGPoint point);
 @property(nonatomic, assign) float minExposureTargetBias;
 @property(nonatomic, assign) float maxExposureTargetBias;
-@property(nonatomic, copy) void (^setExposureTargetBiasStub)(float bias, void (^_Nullable handler)(CMTime));
+@property(nonatomic, copy) void (^setExposureTargetBiasStub)
+    (float bias, void (^_Nullable handler)(CMTime));
 
 // Zoom
 @property(nonatomic, assign) float maxAvailableVideoZoomFactor;

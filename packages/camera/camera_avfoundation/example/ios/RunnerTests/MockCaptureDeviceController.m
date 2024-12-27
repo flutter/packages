@@ -13,21 +13,21 @@
 @implementation MockCaptureDeviceController
 
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
-    _activeFormat = format;
-    if (self.setActiveFormatStub) {
-        self.setActiveFormatStub(format);
-    }
+  _activeFormat = format;
+  if (self.setActiveFormatStub) {
+    self.setActiveFormatStub(format);
+  }
 }
 
 - (BOOL)isFlashModeSupported:(AVCaptureFlashMode)mode {
-    return self.flashModeSupported;
+  return self.flashModeSupported;
 }
 
 - (void)setTorchMode:(AVCaptureTorchMode)mode {
-    _torchMode = mode;
-    if (self.setTorchModeStub) {
-        self.setTorchModeStub(mode);
-    }
+  _torchMode = mode;
+  if (self.setTorchModeStub) {
+    self.setTorchModeStub(mode);
+  }
 }
 
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode {
@@ -38,91 +38,91 @@
 }
 
 - (void)setFocusMode:(AVCaptureFocusMode)mode {
-    _focusMode = mode;
-    if (self.setFocusModeStub) {
-        self.setFocusModeStub(mode);
-    }
+  _focusMode = mode;
+  if (self.setFocusModeStub) {
+    self.setFocusModeStub(mode);
+  }
 }
 
 - (void)setFocusPointOfInterest:(CGPoint)point {
-    _focusPointOfInterest = point;
-    if (self.setFocusPointOfInterestStub) {
-        self.setFocusPointOfInterestStub(point);
-    }
+  _focusPointOfInterest = point;
+  if (self.setFocusPointOfInterestStub) {
+    self.setFocusPointOfInterestStub(point);
+  }
 }
 
 - (void)setExposureMode:(AVCaptureExposureMode)mode {
-    _exposureMode = mode;
-    if (self.setExposureModeStub) {
-        self.setExposureModeStub(mode);
-    }
+  _exposureMode = mode;
+  if (self.setExposureModeStub) {
+    self.setExposureModeStub(mode);
+  }
 }
 
 - (void)setExposurePointOfInterest:(CGPoint)point {
-    _exposurePointOfInterest = point;
-    if (self.setExposurePointOfInterestStub) {
-        self.setExposurePointOfInterestStub(point);
-    }
+  _exposurePointOfInterest = point;
+  if (self.setExposurePointOfInterestStub) {
+    self.setExposurePointOfInterestStub(point);
+  }
 }
 
 - (void)setExposureTargetBias:(float)bias completionHandler:(void (^)(CMTime))handler {
-    if (self.setExposureTargetBiasStub) {
-        self.setExposureTargetBiasStub(bias, handler);
-    } else if (handler) {
-        handler(kCMTimeZero);
-    }
+  if (self.setExposureTargetBiasStub) {
+    self.setExposureTargetBiasStub(bias, handler);
+  } else if (handler) {
+    handler(kCMTimeZero);
+  }
 }
 
 - (void)setVideoZoomFactor:(float)factor {
-    _videoZoomFactor = factor;
-    if (self.setVideoZoomFactorStub) {
-        self.setVideoZoomFactorStub(factor);
-    }
+  _videoZoomFactor = factor;
+  if (self.setVideoZoomFactorStub) {
+    self.setVideoZoomFactorStub(factor);
+  }
 }
 
 - (BOOL)lockForConfiguration:(NSError **)error {
-    if (self.lockForConfigurationStub) {
-        self.lockForConfigurationStub(error);
-        return !self.shouldFailConfiguration;
+  if (self.lockForConfigurationStub) {
+    self.lockForConfigurationStub(error);
+    return !self.shouldFailConfiguration;
+  }
+  if (self.shouldFailConfiguration) {
+    if (error) {
+      *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
     }
-    if (self.shouldFailConfiguration) {
-        if (error) {
-            *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
-        }
-        return NO;
-    }
-    return YES;
+    return NO;
+  }
+  return YES;
 }
 
 - (void)unlockForConfiguration {
-    if (self.unlockForConfigurationStub) {
-        self.unlockForConfigurationStub();
-    }
+  if (self.unlockForConfigurationStub) {
+    self.unlockForConfigurationStub();
+  }
 }
 
 - (void)setActiveVideoMinFrameDuration:(CMTime)duration {
-    _activeVideoMinFrameDuration = duration;
-    if (self.setActiveVideoMinFrameDurationStub) {
-        self.setActiveVideoMinFrameDurationStub(duration);
-    }
+  _activeVideoMinFrameDuration = duration;
+  if (self.setActiveVideoMinFrameDurationStub) {
+    self.setActiveVideoMinFrameDurationStub(duration);
+  }
 }
 
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration {
-    _activeVideoMaxFrameDuration = duration;
-    if (self.setActiveVideoMaxFrameDurationStub) {
-        self.setActiveVideoMaxFrameDurationStub(duration);
-    }
+  _activeVideoMaxFrameDuration = duration;
+  if (self.setActiveVideoMaxFrameDurationStub) {
+    self.setActiveVideoMaxFrameDurationStub(duration);
+  }
 }
 
 - (BOOL)isExposureModeSupported:(AVCaptureExposureMode)mode {
-    return self.exposureModeSupported;
+  return self.exposureModeSupported;
 }
 
 - (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
-    if (self.createInputStub) {
-        self.createInputStub(error);
-    }
-    return self.inputToReturn;
+  if (self.createInputStub) {
+    self.createInputStub(error);
+  }
+  return self.inputToReturn;
 }
 
 @end

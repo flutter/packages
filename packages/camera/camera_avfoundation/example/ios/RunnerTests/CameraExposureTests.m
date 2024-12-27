@@ -21,7 +21,7 @@
   _camera = [[FLTCam alloc] init];
   _mockDevice = [[MockCaptureDeviceController alloc] init];
   _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
-  
+
   [_camera setValue:_mockDevice forKey:@"captureDevice"];
   [_camera setValue:_mockDeviceOrientationProvider forKey:@"deviceOrientationProvider"];
 }
@@ -31,7 +31,7 @@
   _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
   // Exposure point of interest is supported
   _mockDevice.isExposurePointOfInterestSupported = YES;
-  
+
   // Verify the focus point of interest has been set
   __block CGPoint setPoint = CGPointZero;
   _mockDevice.setExposurePointOfInterestStub = ^(CGPoint point) {
@@ -43,9 +43,9 @@
   // Run test
   XCTestExpectation *completionExpectation = [self expectationWithDescription:@"Completion called"];
   [_camera setExposurePoint:[FCPPlatformPoint makeWithX:1 y:1]
-             withCompletion:^(FlutterError * _Nullable error) {
-              XCTAssertNil(error);
-              [completionExpectation fulfill];
+             withCompletion:^(FlutterError *_Nullable error) {
+               XCTAssertNil(error);
+               [completionExpectation fulfill];
              }];
 
   [self waitForExpectationsWithTimeout:1 handler:nil];
@@ -58,18 +58,19 @@
   _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
   // Exposure point of interest is not supported
   _mockDevice.isExposurePointOfInterestSupported = NO;
-    
+
   XCTestExpectation *expectation = [self expectationWithDescription:@"Completion with error"];
-    
+
   // Run
-  [_camera setExposurePoint:[FCPPlatformPoint makeWithX:1 y:1]
-            withCompletion:^(FlutterError *_Nullable error) {
-                XCTAssertNotNil(error);
-                XCTAssertEqualObjects(error.code, @"setExposurePointFailed");
-                XCTAssertEqualObjects(error.message, @"Device does not have exposure point capabilities");
-                [expectation fulfill];
-            }];
-  
+  [_camera
+      setExposurePoint:[FCPPlatformPoint makeWithX:1 y:1]
+        withCompletion:^(FlutterError *_Nullable error) {
+          XCTAssertNotNil(error);
+          XCTAssertEqualObjects(error.code, @"setExposurePointFailed");
+          XCTAssertEqualObjects(error.message, @"Device does not have exposure point capabilities");
+          [expectation fulfill];
+        }];
+
   // Verify
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }

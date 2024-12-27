@@ -116,7 +116,7 @@
                               (void *)captureSessionQueueSpecific, NULL);
   FLTCam *mockCam = OCMClassMock([FLTCam class]);
   camera.camera = mockCam;
-  
+
   OCMStub([mockCam setDeviceOrientation:UIDeviceOrientationLandscapeLeft])
       .andDo(^(NSInvocation *invocation) {
         if (dispatch_get_specific(captureSessionQueueSpecific)) {
