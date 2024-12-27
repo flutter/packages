@@ -98,11 +98,33 @@ class _FakeClosedCaptionFile extends ClosedCaptionFile {
         start: Duration(milliseconds: 100),
         end: Duration(milliseconds: 200),
       ),
+
       const Caption(
         text: 'two',
         number: 1,
         start: Duration(milliseconds: 300),
         end: Duration(milliseconds: 400),
+      ),
+
+      /// out of order subs to test sorting
+      const Caption(
+        text: 'three',
+        number: 1,
+        start: Duration(milliseconds: 500),
+        end: Duration(milliseconds: 600),
+      ),
+
+      const Caption(
+        text: 'five',
+        number: 0,
+        start: Duration(milliseconds: 700),
+        end: Duration(milliseconds: 800),
+      ),
+      const Caption(
+        text: 'four',
+        number: 0,
+        start: Duration(milliseconds: 600),
+        end: Duration(milliseconds: 700),
       ),
     ];
   }
@@ -727,7 +749,7 @@ void main() {
     });
 
     group('caption', () {
-      test('works when seeking', () async {
+      test('works when seeking, includes all captions', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
           _localhostUri,
@@ -747,20 +769,44 @@ void main() {
         await controller.seekTo(const Duration(milliseconds: 300));
         expect(controller.value.caption.text, 'two');
 
-        await controller.seekTo(const Duration(milliseconds: 301));
-        expect(controller.value.caption.text, 'two');
-
-        await controller.seekTo(const Duration(milliseconds: 500));
+        await controller.seekTo(const Duration(milliseconds: 400));
         expect(controller.value.caption.text, '');
 
-        await controller.seekTo(const Duration(milliseconds: 300));
-        expect(controller.value.caption.text, 'two');
+        await controller.seekTo(const Duration(milliseconds: 500));
+        expect(controller.value.caption.text, 'three');
 
-        await controller.seekTo(const Duration(milliseconds: 301));
+        await controller.seekTo(const Duration(milliseconds: 600));
+        expect(controller.value.caption.text, 'four');
+
+        await controller.seekTo(const Duration(milliseconds: 700));
+        expect(controller.value.caption.text, 'five');
+
+        await controller.seekTo(const Duration(milliseconds: 800));
+        expect(controller.value.caption.text, '');
+
+        // Test going back
+        await controller.seekTo(const Duration(milliseconds: 300));
         expect(controller.value.caption.text, 'two');
       });
 
-      test('works when seeking with captionOffset positive', () async {
+      test('captions are sorted correctly on initialization', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+          closedCaptionFile: _loadClosedCaption(),
+        );
+
+        await controller.initialize();
+        final sortedCaptions = (await controller.closedCaptionFile!).captions;
+        for (int i = 1; i < sortedCaptions.length; i++) {
+          expect(
+              sortedCaptions[i - 1].start <= sortedCaptions[i].start, isTrue);
+        }
+      });
+
+      test(
+          'works when seeking with captionOffset positive, includes all captions',
+          () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
           _localhostUri,
@@ -773,31 +819,30 @@ void main() {
         expect(controller.value.caption.text, '');
 
         await controller.seekTo(const Duration(milliseconds: 100));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 200));
         expect(controller.value.caption.text, 'one');
 
-        await controller.seekTo(const Duration(milliseconds: 101));
-        expect(controller.value.caption.text, '');
-
-        await controller.seekTo(const Duration(milliseconds: 250));
+        await controller.seekTo(const Duration(milliseconds: 400));
         expect(controller.value.caption.text, 'two');
-
-        await controller.seekTo(const Duration(milliseconds: 300));
-        expect(controller.value.caption.text, 'two');
-
-        await controller.seekTo(const Duration(milliseconds: 301));
-        expect(controller.value.caption.text, '');
 
         await controller.seekTo(const Duration(milliseconds: 500));
-        expect(controller.value.caption.text, '');
+        expect(controller.value.caption.text, 'three');
 
-        await controller.seekTo(const Duration(milliseconds: 300));
-        expect(controller.value.caption.text, 'two');
+        await controller.seekTo(const Duration(milliseconds: 600));
+        expect(controller.value.caption.text, 'four');
 
-        await controller.seekTo(const Duration(milliseconds: 301));
+        await controller.seekTo(const Duration(milliseconds: 700));
+        expect(controller.value.caption.text, 'five');
+
+        await controller.seekTo(const Duration(milliseconds: 800));
         expect(controller.value.caption.text, '');
       });
 
-      test('works when seeking with captionOffset negative', () async {
+      test(
+          'works when seeking with captionOffset negative, includes all captions',
+          () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
           _localhostUri,
@@ -815,26 +860,20 @@ void main() {
         await controller.seekTo(const Duration(milliseconds: 200));
         expect(controller.value.caption.text, 'one');
 
-        await controller.seekTo(const Duration(milliseconds: 250));
-        expect(controller.value.caption.text, 'one');
-
         await controller.seekTo(const Duration(milliseconds: 300));
         expect(controller.value.caption.text, 'one');
-
-        await controller.seekTo(const Duration(milliseconds: 301));
-        expect(controller.value.caption.text, '');
 
         await controller.seekTo(const Duration(milliseconds: 400));
         expect(controller.value.caption.text, 'two');
 
         await controller.seekTo(const Duration(milliseconds: 500));
-        expect(controller.value.caption.text, 'two');
+        expect(controller.value.caption.text, 'three');
 
         await controller.seekTo(const Duration(milliseconds: 600));
-        expect(controller.value.caption.text, '');
+        expect(controller.value.caption.text, 'four');
 
-        await controller.seekTo(const Duration(milliseconds: 300));
-        expect(controller.value.caption.text, 'one');
+        await controller.seekTo(const Duration(milliseconds: 700));
+        expect(controller.value.caption.text, 'five');
       });
 
       test('setClosedCaptionFile loads caption file', () async {
