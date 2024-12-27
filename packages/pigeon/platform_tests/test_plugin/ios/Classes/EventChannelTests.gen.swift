@@ -30,7 +30,7 @@ final class EventChannelTestsError: Error {
   var localizedDescription: String {
     return
       "EventChannelTestsError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
-  }
+      }
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -155,6 +155,7 @@ class EventAllNullableTypes {
   var mapMap: [Int64?: [AnyHashable?: Any?]?]?
   var recursiveClassMap: [Int64?: EventAllNullableTypes?]?
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EventAllNullableTypes? {
     let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
@@ -270,6 +271,7 @@ protocol PlatformEvent {
 struct IntEvent: PlatformEvent {
   var value: Int64
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> IntEvent? {
     let value = pigeonVar_list[0] as! Int64
@@ -288,6 +290,7 @@ struct IntEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct StringEvent: PlatformEvent {
   var value: String
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> StringEvent? {
@@ -308,6 +311,7 @@ struct StringEvent: PlatformEvent {
 struct BoolEvent: PlatformEvent {
   var value: Bool
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> BoolEvent? {
     let value = pigeonVar_list[0] as! Bool
@@ -326,6 +330,7 @@ struct BoolEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct DoubleEvent: PlatformEvent {
   var value: Double
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> DoubleEvent? {
@@ -346,6 +351,7 @@ struct DoubleEvent: PlatformEvent {
 struct ObjectsEvent: PlatformEvent {
   var value: Any
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> ObjectsEvent? {
     let value = pigeonVar_list[0]!
@@ -365,6 +371,7 @@ struct ObjectsEvent: PlatformEvent {
 struct EnumEvent: PlatformEvent {
   var value: EventEnum
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EnumEvent? {
     let value = pigeonVar_list[0] as! EventEnum
@@ -383,6 +390,7 @@ struct EnumEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct ClassEvent: PlatformEvent {
   var value: EventAllNullableTypes
+
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> ClassEvent? {
@@ -485,12 +493,11 @@ private class EventChannelTestsPigeonCodecReaderWriter: FlutterStandardReaderWri
 }
 
 class EventChannelTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = EventChannelTestsPigeonCodec(
-    readerWriter: EventChannelTestsPigeonCodecReaderWriter())
+  static let shared = EventChannelTestsPigeonCodec(readerWriter: EventChannelTestsPigeonCodecReaderWriter())
 }
 
-var eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(
-  readerWriter: EventChannelTestsPigeonCodecReaderWriter())
+var eventChannelTestsPigeonMethodCodec = FlutterStandardMethodCodec(readerWriter: EventChannelTestsPigeonCodecReaderWriter());
+
 
 private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
   private let wrapper: PigeonEventChannelWrapper<ReturnType>
@@ -542,35 +549,30 @@ class PigeonEventSink<ReturnType> {
 }
 
 class StreamIntsStreamHandler: PigeonEventChannelWrapper<Int64> {
-  static func register(
-    with messenger: FlutterBinaryMessenger,
-    instanceName: String = "",
-    streamHandler: StreamIntsStreamHandler
-  ) {
+  static func register(with messenger: FlutterBinaryMessenger, 
+                      instanceName: String = "",
+                      streamHandler: StreamIntsStreamHandler) {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
-
+      
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
-  static func register(
-    with messenger: FlutterBinaryMessenger,
-    instanceName: String = "",
-    streamHandler: StreamEventsStreamHandler
-  ) {
+  static func register(with messenger: FlutterBinaryMessenger, 
+                      instanceName: String = "",
+                      streamHandler: StreamEventsStreamHandler) {
     var channelName = "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
+      

@@ -1,4 +1,4 @@
-## NEXT
+## 22.7.1
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * [dart] fixes [160501](https://github.com/flutter/flutter/issues/160501).

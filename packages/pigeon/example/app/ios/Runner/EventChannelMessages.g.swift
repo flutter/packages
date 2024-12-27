@@ -33,6 +33,7 @@ protocol PlatformEvent {
 struct IntEvent: PlatformEvent {
   var data: Int64
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> IntEvent? {
     let data = pigeonVar_list[0] as! Int64
@@ -52,6 +53,7 @@ struct IntEvent: PlatformEvent {
 struct StringEvent: PlatformEvent {
   var data: String
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> StringEvent? {
     let data = pigeonVar_list[0] as! String
@@ -70,13 +72,16 @@ struct StringEvent: PlatformEvent {
 /// Generated class from Pigeon that represents data sent in messages.
 struct EmptyEvent: PlatformEvent {
 
+
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> EmptyEvent? {
 
-    return EmptyEvent()
+    return EmptyEvent(
+    )
   }
   func toList() -> [Any?] {
-    return []
+    return [
+    ]
   }
 }
 
@@ -123,12 +128,11 @@ private class EventChannelMessagesPigeonCodecReaderWriter: FlutterStandardReader
 }
 
 class EventChannelMessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = EventChannelMessagesPigeonCodec(
-    readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
+  static let shared = EventChannelMessagesPigeonCodec(readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
 }
 
-var eventChannelMessagesPigeonMethodCodec = FlutterStandardMethodCodec(
-  readerWriter: EventChannelMessagesPigeonCodecReaderWriter())
+var eventChannelMessagesPigeonMethodCodec = FlutterStandardMethodCodec(readerWriter: EventChannelMessagesPigeonCodecReaderWriter());
+
 
 private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
   private let wrapper: PigeonEventChannelWrapper<ReturnType>
@@ -180,18 +184,16 @@ class PigeonEventSink<ReturnType> {
 }
 
 class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
-  static func register(
-    with messenger: FlutterBinaryMessenger,
-    instanceName: String = "",
-    streamHandler: StreamEventsStreamHandler
-  ) {
+  static func register(with messenger: FlutterBinaryMessenger, 
+                      instanceName: String = "",
+                      streamHandler: StreamEventsStreamHandler) {
     var channelName = "dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents"
     if !instanceName.isEmpty {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
-    let channel = FlutterEventChannel(
-      name: channelName, binaryMessenger: messenger, codec: eventChannelMessagesPigeonMethodCodec)
+    let channel = FlutterEventChannel(name: channelName, binaryMessenger: messenger, codec: eventChannelMessagesPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)
   }
 }
+      
