@@ -231,8 +231,7 @@ class ExampleHostApiSetup {
       sendMessageModernAsyncChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let messageArg = args[0] as! MessageData
-        Task {
-          @MainActor
+        Task { @MainActor in
           let result = await api.sendMessageModernAsync(message: messageArg)
           reply(wrapResult(result))
         }

@@ -1610,7 +1610,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           });
         } else {
           if (asynchronousType.isModern) {
-            indent.writeln('Task { @MainActor');
+            indent.writeln('Task { @MainActor in');
             indent.inc();
           }
 

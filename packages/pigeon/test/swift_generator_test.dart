@@ -707,7 +707,7 @@ void main() {
       contains('func doSomething(arg: Input) async throws -> Output'),
     );
     expect(code, contains('try await api.doSomething(arg: argArg)'));
-    expect(code, contains('Task { @MainActor'));
+    expect(code, contains('Task { @MainActor in'));
     expect(code, contains('reply(wrapResult(result))'));
   });
 
@@ -770,7 +770,7 @@ void main() {
       contains('func doSomething(arg: Input) async -> Output'),
     );
     expect(code, contains('await api.doSomething(arg: argArg)'));
-    expect(code, contains('Task { @MainActor'));
+    expect(code, contains('Task { @MainActor in'));
     expect(code, contains('reply(wrapResult(result))'));
     expect(code, isNot(contains('try')));
     expect(code, isNot(contains('catch')));
