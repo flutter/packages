@@ -1,3 +1,7 @@
+## 0.4.0+5
+
+* Bumps com.squareup.okhttp3, com.google.code.gson, and com.google.truth.
+
 ## 0.4.0+4
 
 * Updates agp to 8.7.2.
