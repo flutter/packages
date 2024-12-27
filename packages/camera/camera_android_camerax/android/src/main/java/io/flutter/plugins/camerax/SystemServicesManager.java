@@ -29,15 +29,15 @@ public abstract class SystemServicesManager {
 
   public void requestCameraPermissions(
       @NonNull Boolean enableAudio, @NonNull PermissionsResultListener listener) {
-    if (getContext() instanceof Activity) {
-      cameraPermissionsManager.requestPermissions(
-          (Activity) getContext(),
-          getPermissionsRegistry(),
-          enableAudio,
-          (String errorCode, String description) -> listener.onResult(errorCode == null));
+    if (!(getContext() instanceof Activity)) {
+      throw new IllegalStateException("Activity must be set to request camera permissions.");
     }
 
-    throw new IllegalStateException("Activity must be set to request camera permissions.");
+    cameraPermissionsManager.requestPermissions(
+        (Activity) getContext(),
+        getPermissionsRegistry(),
+        enableAudio,
+        (String errorCode, String description) -> listener.onResult(errorCode == null));
   }
 
   @NonNull

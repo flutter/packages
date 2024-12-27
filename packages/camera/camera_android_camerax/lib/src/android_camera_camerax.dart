@@ -10,7 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show RotatedBox, Texture, Widget, visibleForTesting;
+    show RotatedBox, Texture, Widget, WidgetsFlutterBinding, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
 import 'camerax_proxy2.dart';
@@ -18,31 +18,11 @@ import 'camerax_proxy2.dart';
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
   /// Constructs an [AndroidCameraCameraX].
-  AndroidCameraCameraX() {
-    systemServicesManager = proxy.newSystemServicesManager(
-      onCameraError: (_, String errorDescription) {
-        cameraErrorStreamController.add(errorDescription);
-      },
-    );
-
-    deviceOrientationManager = proxy.newDeviceOrientationManager(
-      onDeviceOrientationChanged: (_, String orientation) {
-        final DeviceOrientation deviceOrientation =
-            _deserializeDeviceOrientation(
-          orientation,
-        );
-        deviceOrientationChangedStreamController.add(
-          DeviceOrientationChangedEvent(deviceOrientation),
-        );
-      },
-    );
-  }
+  AndroidCameraCameraX();
 
   /// Registers this class as the default instance of [CameraPlatform].
   static void registerWith() {
     CameraPlatform.instance = AndroidCameraCameraX();
-    PigeonInstanceManager.instance;
-    setUpGenerics();
   }
 
   /// Proxy for creating `JavaObject`s and calling their methods that require
@@ -273,6 +253,26 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
+    systemServicesManager = proxy.newSystemServicesManager(
+      onCameraError: (_, String errorDescription) {
+        cameraErrorStreamController.add(errorDescription);
+      },
+    );
+
+    deviceOrientationManager = proxy.newDeviceOrientationManager(
+      onDeviceOrientationChanged: (_, String orientation) {
+        final DeviceOrientation deviceOrientation =
+            _deserializeDeviceOrientation(
+          orientation,
+        );
+        deviceOrientationChangedStreamController.add(
+          DeviceOrientationChangedEvent(deviceOrientation),
+        );
+      },
+    );
+
+    setUpGenerics();
+
     final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
 
     processCameraProvider ??= await proxy.getInstanceProcessCameraProvider();
@@ -430,9 +430,12 @@ class AndroidCameraCameraX extends CameraPlatform {
             proxy.sensorOrientationCameraCharacteristics(),
           )
           .then((Object? value) => sensorOrientation = value! as int),
-      deviceOrientationManager.getUiOrientation().then((Object? orientation) {
-        return _deserializeDeviceOrientation(orientation! as String);
-      }),
+      deviceOrientationManager.getUiOrientation().then(
+        (Object? orientation) {
+          return naturalOrientation ??=
+              _deserializeDeviceOrientation(orientation! as String);
+        },
+      ),
     ]);
     _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
         .listen((DeviceOrientationChangedEvent event) {
