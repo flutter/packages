@@ -933,18 +933,21 @@ void main() {
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
 
-      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost =
+          html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
         ..setAttribute('flt-semantics-identifier', 'test-link-27')
         ..setAttribute('href', '/foobar');
       semanticsHost.append(semanticsAnchor);
-      final html.Element semanticsContainer = html.document.createElement('flt-semantics-container');
+      final html.Element semanticsContainer =
+          html.document.createElement('flt-semantics-container');
       semanticsAnchor.append(semanticsContainer);
-      final html.Element semanticsButton = html.document.createElement('flt-semantics')
-        ..setAttribute('role', 'button')
-        ..textContent = 'My Button Link';
+      final html.Element semanticsButton =
+          html.document.createElement('flt-semantics')
+            ..setAttribute('role', 'button')
+            ..textContent = 'My Button Link';
       semanticsContainer.append(semanticsButton);
 
       expect(pushedRouteNames, isEmpty);
@@ -999,7 +1002,8 @@ void main() {
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
 
-      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost =
+          html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
@@ -1046,17 +1050,20 @@ void main() {
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
 
-      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost =
+          html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')
         ..setAttribute('href', '#');
       semanticsHost.append(semanticsAnchor);
-      final html.Element semanticsContainer = html.document.createElement('flt-semantics-container');
+      final html.Element semanticsContainer =
+          html.document.createElement('flt-semantics-container');
       semanticsAnchor.append(semanticsContainer);
-      final html.Element semanticsButton = html.document.createElement('flt-semantics')
-        ..setAttribute('role', 'button')
-        ..textContent = 'My Button';
+      final html.Element semanticsButton =
+          html.document.createElement('flt-semantics')
+            ..setAttribute('role', 'button')
+            ..textContent = 'My Button';
       semanticsContainer.append(semanticsButton);
 
       expect(pushedRouteNames, isEmpty);
@@ -1102,7 +1109,8 @@ void main() {
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
 
-      final html.Element semanticsHost = html.document.createElement('flt-semantics-host');
+      final html.Element semanticsHost =
+          html.document.createElement('flt-semantics-host');
       html.document.body!.append(semanticsHost);
       final html.Element semanticsAnchor = html.document.createElement('a')
         ..setAttribute('id', 'flt-semantic-node-99')

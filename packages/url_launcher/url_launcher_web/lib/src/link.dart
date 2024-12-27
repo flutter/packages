@@ -160,7 +160,8 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
 final JSAny _useCapture = <String, Object>{'capture': true}.jsify()!;
 
 /// Signature for the function that triggers a link.
-typedef TriggerLinkCallback = void Function(int viewId, html.MouseEvent? mouseEvent);
+typedef TriggerLinkCallback = void Function(
+    int viewId, html.MouseEvent? mouseEvent);
 
 /// Keeps track of the signals required to trigger a link.
 ///
@@ -316,7 +317,8 @@ class LinkViewController extends PlatformViewController {
     String semanticsIdentifier,
   ) {
     final int viewId = params.id;
-    final LinkViewController controller = LinkViewController(viewId, semanticsIdentifier);
+    final LinkViewController controller =
+        LinkViewController(viewId, semanticsIdentifier);
     controller._initialize().then((_) {
       /// Because _initialize is async, it can happen that [LinkViewController.dispose]
       /// may get called before this `then` callback.
@@ -338,11 +340,10 @@ class LinkViewController extends PlatformViewController {
     return _instancesByViewId[viewId]!._element;
   }
 
-  static final LinkTriggerSignals _triggerSignals =
-      LinkTriggerSignals(
-        triggerLink: _triggerLink,
-        staleTimeout: const Duration(milliseconds: 500),
-      );
+  static final LinkTriggerSignals _triggerSignals = LinkTriggerSignals(
+    triggerLink: _triggerLink,
+    staleTimeout: const Duration(milliseconds: 500),
+  );
 
   static final JSFunction _jsGlobalKeydownListener = _onGlobalKeydown.toJS;
   static final JSFunction _jsGlobalClickListener = _onGlobalClick.toJS;
@@ -445,8 +446,8 @@ class LinkViewController extends PlatformViewController {
   }) {
     // We only want to handle clicks that land on *our* links. That could be a
     // platform view link or a semantics link.
-    final int? viewIdFromTarget = _getViewIdFromLink(target) ??
-        _getViewIdFromSemanticsLink(target);
+    final int? viewIdFromTarget =
+        _getViewIdFromLink(target) ?? _getViewIdFromSemanticsLink(target);
 
     if (viewIdFromTarget == null) {
       // The click target was not one of our links, so we don't want to
@@ -596,12 +597,14 @@ class LinkViewController extends PlatformViewController {
       return null;
     }
 
-    final String? semanticsIdentifier = semanticsLink.getAttribute('flt-semantics-identifier');
+    final String? semanticsIdentifier =
+        semanticsLink.getAttribute('flt-semantics-identifier');
     if (semanticsIdentifier == null) {
       return null;
     }
 
-    final LinkViewController? controller = _instancesBySemanticsIdentifier[semanticsIdentifier];
+    final LinkViewController? controller =
+        _instancesBySemanticsIdentifier[semanticsIdentifier];
     if (controller == null) {
       return null;
     }
