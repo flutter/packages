@@ -18,10 +18,6 @@ import java.io.File;
 
 /** Utility class used to create CameraX-related objects primarily for testing purposes. */
 public class CameraXProxy {
-  /**
-   * Converts a {@link ResolutionInfo} instance to a {@link Size} for setting the target resolution
-   * of {@link UseCase}s.
-   */
   public static @NonNull Size sizeFromResolution(@NonNull ResolutionInfo resolutionInfo) {
     return new Size(resolutionInfo.getWidth().intValue(), resolutionInfo.getHeight().intValue());
   }
@@ -38,17 +34,6 @@ public class CameraXProxy {
   /** Creates a builder for an instance of the {@link Preview} use case. */
   public @NonNull Preview.Builder createPreviewBuilder() {
     return new Preview.Builder();
-  }
-
-  /**
-   * Creates an instance of the {@link SystemServicesFlutterApiImpl}.
-   *
-   * <p>Included in this class to utilize the callback methods it provides, e.g. {@code
-   * onCameraError(String)}.
-   */
-  public @NonNull SystemServicesFlutterApiImpl createSystemServicesFlutterApiImpl(
-      @NonNull BinaryMessenger binaryMessenger) {
-    return new SystemServicesFlutterApiImpl(binaryMessenger);
   }
 
   /** Creates an instance of {@link Recorder.Builder}. */
