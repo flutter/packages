@@ -10,8 +10,6 @@
 @import XCTest;
 
 #import "CameraTestUtils.h"
-#import "FLTCameraPermissionManager.h"
-#import "FLTPermissionServicing.h"
 
 @interface MockPermissionService : NSObject <FLTPermissionServicing>
 @property(nonatomic, copy) AVAuthorizationStatus (^authorizationStatusStub)(AVMediaType mediaType);
