@@ -21,6 +21,7 @@ dev_dependencies:
   async: ^2.5.0
   flutter_test:
     sdk: flutter
+  leak_tracker_flutter_testing: any
 
 topics:
   - camera
