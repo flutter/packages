@@ -4,11 +4,11 @@
 
 @import AVFoundation;
 #import "./include/camera_avfoundation/FLTCameraPermissionManager.h"
-#import "./include/camera_avfoundation/FLTPermissionService.h"
+#import "./include/camera_avfoundation/FLTPermissionServicing.h"
 
 @implementation FLTCameraPermissionManager
 
-- (instancetype)initWithPermissionService:(id<FLTPermissionService>)service {
+- (instancetype)initWithPermissionService:(id<FLTPermissionServicing>)service {
   self = [super init];
   if (self) {
     _permissionService = service ?: [[FLTDefaultPermissionService alloc] init];

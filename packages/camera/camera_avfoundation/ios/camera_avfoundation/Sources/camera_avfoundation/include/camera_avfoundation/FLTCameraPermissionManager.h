@@ -5,16 +5,16 @@
 @import Foundation;
 #import <Flutter/Flutter.h>
 
-#import "FLTPermissionService.h"
+#import "FLTPermissionServicing.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void (^FLTCameraPermissionRequestCompletionHandler)(FlutterError *_Nullable);
 
 @interface FLTCameraPermissionManager : NSObject
-@property(nonatomic, strong) id<FLTPermissionService> permissionService;
+@property(nonatomic, strong) id<FLTPermissionServicing> permissionService;
 
-- (instancetype)initWithPermissionService:(id<FLTPermissionService>)service;
+- (instancetype)initWithPermissionService:(id<FLTPermissionServicing>)service;
 
 /// Requests camera access permission.
 ///

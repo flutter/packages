@@ -11,9 +11,9 @@
 
 #import "CameraTestUtils.h"
 #import "FLTCameraPermissionManager.h"
-#import "FLTPermissionService.h"
+#import "FLTPermissionServicing.h"
 
-@interface MockPermissionService : NSObject <FLTPermissionService>
+@interface MockPermissionService : NSObject <FLTPermissionServicing>
 @property(nonatomic, copy) AVAuthorizationStatus (^authorizationStatusStub)(AVMediaType mediaType);
 @property(nonatomic, copy) void (^requestAccessStub)(AVMediaType mediaType, void (^handler)(BOOL));
 @end
@@ -143,7 +143,7 @@
     return AVAuthorizationStatusNotDetermined;
   };
 
-  // Mimic user choosing "allow" in permission dialog.
+  // Mimic user choosing "deny" in permission dialog.
   self.mockService.requestAccessStub = ^(AVMediaType mediaType, void (^handler)(BOOL)) {
     XCTAssertEqualObjects(mediaType, AVMediaTypeVideo);
     handler(NO);

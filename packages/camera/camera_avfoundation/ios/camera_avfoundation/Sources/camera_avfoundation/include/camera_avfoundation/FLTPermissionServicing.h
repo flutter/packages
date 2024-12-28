@@ -7,13 +7,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol FLTPermissionService <NSObject>
+@protocol FLTPermissionServicing <NSObject>
 - (AVAuthorizationStatus)authorizationStatusForMediaType:(AVMediaType)mediaType;
 - (void)requestAccessForMediaType:(AVMediaType)mediaType
                 completionHandler:(void (^)(BOOL granted))handler;
 @end
 
-@interface FLTDefaultPermissionService : NSObject <FLTPermissionService>
+@interface FLTDefaultPermissionService : NSObject <FLTPermissionServicing>
 @end
 
 NS_ASSUME_NONNULL_END

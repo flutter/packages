@@ -54,7 +54,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   _globalEventAPI = globalAPI;
   _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
 
-  id<FLTPermissionService> permissionService = [[FLTDefaultPermissionService alloc] init];
+  id<FLTPermissionServicing> permissionService = [[FLTDefaultPermissionService alloc] init];
   _permissionManager =
       [[FLTCameraPermissionManager alloc] initWithPermissionService:permissionService];
 
