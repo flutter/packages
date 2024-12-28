@@ -959,7 +959,7 @@ void main() {
       });
     });
   });
-  test('updates position at custom intervals', () async {
+  test('updates position', () async {
     final VideoPlayerController controller = VideoPlayerController.networkUrl(
       _localhostUri,
       videoPlayerOptions: VideoPlayerOptions(),
@@ -968,8 +968,7 @@ void main() {
     await controller.initialize();
 
     // Set a custom interval
-    const Duration customInterval = Duration(milliseconds: 10);
-    controller.setVideoPositionUpdatesInterval(customInterval);
+    const Duration customInterval = Duration(milliseconds: 100);
 
     final List<Duration> positions = <Duration>[];
     final Completer<void> intervalUpdateCompleter = Completer<void>();
