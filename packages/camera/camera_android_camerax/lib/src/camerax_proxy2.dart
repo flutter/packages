@@ -1,4 +1,4 @@
-import 'camerax_library2.g.dart';
+import 'camerax_library.dart';
 
 /// Handles constructing objects and calling static methods for the Android
 /// Interactive Media Ads native library.
@@ -12,6 +12,7 @@ import 'camerax_library2.g.dart';
 class CameraXProxy {
   /// Constructs an [CameraXProxy].
   const CameraXProxy({
+    this.setUpGenericsProxy = setUpGenerics,
     this.newCameraSize = CameraSize.new,
     this.newCameraIntegerRange = CameraIntegerRange.new,
     this.newObserver = Observer.new,
@@ -63,6 +64,8 @@ class CameraXProxy {
         _sensorOrientationCameraCharacteristics,
   });
 
+  final void Function() setUpGenericsProxy;
+
   /// Constructs [CameraSize].
   final CameraSize Function({
     required int width,
@@ -76,8 +79,8 @@ class CameraXProxy {
   }) newCameraIntegerRange;
 
   /// Constructs [Observer].
-  final Observer Function({
-    required void Function(Observer, Object) onChanged,
+  final Observer<T> Function<T>({
+    required void Function(Observer<T>, T) onChanged,
   }) newObserver;
 
   /// Constructs [CameraSelector].

@@ -10,7 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show RotatedBox, Texture, Widget, WidgetsFlutterBinding, visibleForTesting;
+    show RotatedBox, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
 import 'camerax_proxy2.dart';
@@ -253,6 +253,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
+    proxy.setUpGenericsProxy();
+
     systemServicesManager = proxy.newSystemServicesManager(
       onCameraError: (_, String errorDescription) {
         cameraErrorStreamController.add(errorDescription);
@@ -270,8 +272,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         );
       },
     );
-
-    setUpGenerics();
 
     final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
 

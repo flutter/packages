@@ -1160,7 +1160,7 @@ abstract class CameraCharacteristics {
   /// Clockwise angle through which the output image needs to be rotated to be
   /// upright on the device screen in its native orientation..
   ///
-  /// Value is Integer.
+  /// Value is int.
   ///
   /// This key is available on all devices.
   @static

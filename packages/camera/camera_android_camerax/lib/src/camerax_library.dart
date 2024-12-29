@@ -4,7 +4,6 @@ export 'camerax_library2.g.dart' hide CameraInfo, LiveData, Observer;
 
 void setUpGenerics() {
   camerax.LiveData.pigeon_setUpMessageHandlers(
-    pigeon_instanceManager: camerax.PigeonInstanceManager.instance,
     pigeon_newInstance: (camerax.LiveDataSupportedType type) {
       switch (type) {
         case camerax.LiveDataSupportedType.cameraState:
@@ -14,6 +13,7 @@ void setUpGenerics() {
       }
     },
   );
+
   camerax.CameraInfo.pigeon_setUpMessageHandlers(pigeon_newInstance: (
     int sensorRotationDegrees,
     camerax.ExposureState exposureState,
@@ -87,17 +87,6 @@ class LiveData<T> extends camerax.LiveData {
     super.pigeon_instanceManager,
   }) : super.pigeon_detached();
 
-  static camerax.LiveDataSupportedType? asSupportedType(Type type) {
-    switch (type) {
-      case camerax.CameraState():
-        return camerax.LiveDataSupportedType.cameraState;
-      case camerax.ZoomState():
-        return camerax.LiveDataSupportedType.zoomState;
-    }
-
-    return null;
-  }
-
   @override
   Future<void> observe(covariant Observer<T> observer) {
     return super.observe(observer);
@@ -135,17 +124,6 @@ class Observer<T> extends camerax.Observer {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
   }) : super.pigeon_detached();
-
-  static camerax.LiveDataSupportedType asSupportedType(Type type) {
-    switch (type) {
-      case camerax.CameraState():
-        return camerax.LiveDataSupportedType.cameraState;
-      case camerax.ZoomState():
-        return camerax.LiveDataSupportedType.zoomState;
-    }
-
-    throw UnsupportedError('Type `$type` is unsupported.');
-  }
 
   @override
   Observer<T> pigeon_copy() {
