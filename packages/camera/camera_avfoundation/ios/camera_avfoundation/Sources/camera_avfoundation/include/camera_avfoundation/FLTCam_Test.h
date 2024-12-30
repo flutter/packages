@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 #import "FLTCam.h"
-#import "Protocols/FLTCaptureDeviceControlling.h"
-#import "Protocols/FLTDeviceOrientationProviding.h"
+#import "FLTCaptureDeviceControlling.h"
+#import "FLTDeviceOrientationProviding.h"
 #import "FLTSavePhotoDelegate.h"
 
 /// Determines the video dimensions (width and height) for a given capture device format.
