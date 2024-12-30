@@ -8,32 +8,119 @@
 #endif
 @import AVFoundation;
 @import XCTest;
-#import <OCMock/OCMock.h>
 #import "CameraTestUtils.h"
+#import "MockAssetWriter.h"
+#import "MockCaptureConnection.h"
+
+@import camera_avfoundation;
+@import AVFoundation;
+
+@interface FakeMediaSettingsAVWrapper : FLTCamMediaSettingsAVWrapper
+@property(readonly, nonatomic) MockAssetWriterInput *inputMock;
+@end
+
+@implementation FakeMediaSettingsAVWrapper
+- (instancetype)initWithInputMock:(MockAssetWriterInput *)inputMock {
+  _inputMock = inputMock;
+  return self;
+}
+
+- (BOOL)lockDevice:(AVCaptureDevice *)captureDevice error:(NSError **)outError {
+  return YES;
+}
+
+- (void)unlockDevice:(AVCaptureDevice *)captureDevice {
+}
+
+- (void)beginConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
+}
+
+- (void)commitConfigurationForSession:(id<FLTCaptureSession>)videoCaptureSession {
+}
+
+- (void)setMinFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice {
+}
+
+- (void)setMaxFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice {
+}
+
+- (id<FLTAssetWriterInput>)assetWriterAudioInputWithOutputSettings:
+    (nullable NSDictionary<NSString *, id> *)outputSettings {
+  return _inputMock;
+}
+
+- (id<FLTAssetWriterInput>)assetWriterVideoInputWithOutputSettings:
+    (nullable NSDictionary<NSString *, id> *)outputSettings {
+  return _inputMock;
+}
+
+- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer {
+}
+
+- (NSDictionary<NSString *, id> *)
+    recommendedVideoSettingsForAssetWriterWithFileType:(AVFileType)fileType
+                                             forOutput:(AVCaptureVideoDataOutput *)output {
+  return @{};
+}
+@end
 
 /// Includes test cases related to sample buffer handling for FLTCam class.
 @interface FLTCamSampleBufferTests : XCTestCase
-
+@property(readonly, nonatomic) dispatch_queue_t captureSessionQueue;
+@property(readonly, nonatomic) FLTCam *camera;
+@property(readonly, nonatomic) MockAssetWriter *writerMock;
+@property(readonly, nonatomic) MockCaptureConnection *connectionMock;
+@property(readonly, nonatomic) MockAssetWriterInput *inputMock;
+@property(readonly, nonatomic) MockPixelBufferAdaptor *adaptorMock;
+@property(readonly, nonatomic) FakeMediaSettingsAVWrapper *mediaSettingsWrapper;
 @end
 
 @implementation FLTCamSampleBufferTests
 
+- (void)setUp {
+  _captureSessionQueue = dispatch_queue_create("testing", NULL);
+  _writerMock = [[MockAssetWriter alloc] init];
+  _connectionMock = [[MockCaptureConnection alloc] init];
+  _inputMock = [[MockAssetWriterInput alloc] init];
+  _adaptorMock = [[MockPixelBufferAdaptor alloc] init];
+  _mediaSettingsWrapper = [[FakeMediaSettingsAVWrapper alloc] initWithInputMock:_inputMock];
+
+  FLTCamConfiguration *configuration = FLTCreateTestConfiguration();
+  configuration.captureSessionQueue = _captureSessionQueue;
+  configuration.mediaSettings =
+      [FCPPlatformMediaSettings makeWithResolutionPreset:FCPPlatformResolutionPresetMedium
+                                         framesPerSecond:nil
+                                            videoBitrate:nil
+                                            audioBitrate:nil
+                                             enableAudio:YES];
+  configuration.mediaSettingsWrapper = _mediaSettingsWrapper;
+
+  __weak typeof(self) weakSelf = self;
+  configuration.assetWriterFactory =
+      ^id<FLTAssetWriter> _Nonnull(NSURL *url, AVFileType fileType, NSError **error) {
+    return weakSelf.writerMock;
+  };
+  configuration.pixelBufferAdaptorFactory = ^id<FLTPixelBufferAdaptor> _Nonnull(
+      id<FLTAssetWriterInput> input, NSDictionary<NSString *, id> *settings) {
+    return weakSelf.adaptorMock;
+  };
+
+  _camera = FLTCreateCamWithConfiguration(configuration);
+}
+
 - (void)testSampleBufferCallbackQueueMustBeCaptureSessionQueue {
-  dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-  XCTAssertEqual(captureSessionQueue, cam.captureVideoOutput.sampleBufferCallbackQueue,
+  XCTAssertEqual(_captureSessionQueue, _camera.captureVideoOutput.sampleBufferCallbackQueue,
                  @"Sample buffer callback queue must be the capture session queue.");
 }
 
 - (void)testCopyPixelBuffer {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("test", NULL));
   CMSampleBufferRef capturedSampleBuffer = FLTCreateTestSampleBuffer();
   CVPixelBufferRef capturedPixelBuffer = CMSampleBufferGetImageBuffer(capturedSampleBuffer);
   // Mimic sample buffer callback when captured a new video sample
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:capturedSampleBuffer
-             fromConnection:OCMClassMock([AVCaptureConnection class])];
-  CVPixelBufferRef deliveriedPixelBuffer = [cam copyPixelBuffer];
+             fromConnection:_connectionMock];
+  CVPixelBufferRef deliveriedPixelBuffer = [_camera copyPixelBuffer];
   XCTAssertEqual(deliveriedPixelBuffer, capturedPixelBuffer,
                  @"FLTCam must deliver the latest captured pixel buffer to copyPixelBuffer API.");
   CFRelease(capturedSampleBuffer);
@@ -41,32 +128,19 @@
 }
 
 - (void)testDidOutputSampleBuffer_mustNotChangeSampleBufferRetainCountAfterPauseResumeRecording {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("test", NULL));
   CMSampleBufferRef sampleBuffer = FLTCreateTestSampleBuffer();
 
-  id writerMock = OCMClassMock([AVAssetWriter class]);
-  OCMStub([writerMock alloc]).andReturn(writerMock);
-  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
-      .andReturn(writerMock);
-  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
-  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
-    status = AVAssetWriterStatusWriting;
-  });
-  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
-    [invocation setReturnValue:&status];
-  });
-
   // Pause then resume the recording.
-  [cam
+  [_camera
       startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
       }
                   messengerForStreaming:nil];
-  [cam pauseVideoRecording];
-  [cam resumeVideoRecording];
+  [_camera pauseVideoRecording];
+  [_camera resumeVideoRecording];
 
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:sampleBuffer
-             fromConnection:OCMClassMock([AVCaptureConnection class])];
+             fromConnection:_connectionMock];
   XCTAssertEqual(CFGetRetainCount(sampleBuffer), 1,
                  @"didOutputSampleBuffer must not change the sample buffer retain count after "
                  @"pause resume recording.");
@@ -74,55 +148,33 @@
 }
 
 - (void)testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
   CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
 
-  id connectionMock = OCMClassMock([AVCaptureConnection class]);
-
-  id writerMock = OCMClassMock([AVAssetWriter class]);
-  OCMStub([writerMock alloc]).andReturn(writerMock);
-  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
-      .andReturn(writerMock);
-  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
-  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
-    status = AVAssetWriterStatusWriting;
-  });
-  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
-    [invocation setReturnValue:&status];
-  });
-
   __block NSArray *writtenSamples = @[];
 
-  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
-  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
-                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
-      .andReturn(adaptorMock);
-  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        writtenSamples = [writtenSamples arrayByAddingObject:@"video"];
-      });
+  _adaptorMock.appendPixelBufferStub = ^BOOL(CVPixelBufferRef buffer, CMTime time) {
+    writtenSamples = [writtenSamples arrayByAddingObject:@"video"];
+    return YES;
+  };
 
-  id inputMock = OCMClassMock([AVAssetWriterInput class]);
-  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
-      .andReturn(inputMock);
-  OCMStub([inputMock isReadyForMoreMediaData]).andReturn(YES);
-  OCMStub([inputMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
+  _inputMock.isReadyForMoreMediaData = YES;
+  _inputMock.appendSampleBufferStub = ^BOOL(CMSampleBufferRef buffer) {
     writtenSamples = [writtenSamples arrayByAddingObject:@"audio"];
-  });
+    return YES;
+  };
 
-  [cam
+  [_camera
       startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
       }
                   messengerForStreaming:nil];
 
-  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
-  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:_connectionMock];
+  [_camera captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:_connectionMock];
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:videoSample
-             fromConnection:connectionMock];
-  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+             fromConnection:_connectionMock];
+  [_camera captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:_connectionMock];
 
   NSArray *expectedSamples = @[ @"video", @"audio" ];
   XCTAssertEqualObjects(writtenSamples, expectedSamples, @"First appended sample must be video.");
@@ -132,67 +184,41 @@
 }
 
 - (void)testDidOutputSampleBufferSampleTimesMustBeNumericAfterPauseResume {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
   CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
 
-  id connectionMock = OCMClassMock([AVCaptureConnection class]);
-
-  id writerMock = OCMClassMock([AVAssetWriter class]);
-  OCMStub([writerMock alloc]).andReturn(writerMock);
-  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
-      .andReturn(writerMock);
-  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
-  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
-    status = AVAssetWriterStatusWriting;
-  });
-  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
-    [invocation setReturnValue:&status];
-  });
-
   __block BOOL videoAppended = NO;
-  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
-  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
-                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
-      .andReturn(adaptorMock);
-  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        CMTime presentationTime;
-        [invocation getArgument:&presentationTime atIndex:3];
-        XCTAssert(CMTIME_IS_NUMERIC(presentationTime));
-        videoAppended = YES;
-      });
+  _adaptorMock.appendPixelBufferStub = ^BOOL(CVPixelBufferRef buffer, CMTime time) {
+    XCTAssert(CMTIME_IS_NUMERIC(time));
+    videoAppended = YES;
+    return YES;
+  };
 
   __block BOOL audioAppended = NO;
-  id inputMock = OCMClassMock([AVAssetWriterInput class]);
-  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
-      .andReturn(inputMock);
-  OCMStub([inputMock isReadyForMoreMediaData]).andReturn(YES);
-  OCMStub([inputMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
-    CMSampleBufferRef sampleBuffer;
-    [invocation getArgument:&sampleBuffer atIndex:2];
-    CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+  _inputMock.isReadyForMoreMediaData = YES;
+  _inputMock.appendSampleBufferStub = ^BOOL(CMSampleBufferRef buffer) {
+    CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(buffer);
     XCTAssert(CMTIME_IS_NUMERIC(sampleTime));
     audioAppended = YES;
-  });
+    return YES;
+  };
 
-  [cam
+  [_camera
       startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
       }
                   messengerForStreaming:nil];
 
-  [cam pauseVideoRecording];
-  [cam resumeVideoRecording];
+  [_camera pauseVideoRecording];
+  [_camera resumeVideoRecording];
 
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:videoSample
-             fromConnection:connectionMock];
-  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
-  [cam captureOutput:cam.captureVideoOutput
+             fromConnection:_connectionMock];
+  [_camera captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:_connectionMock];
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:videoSample
-             fromConnection:connectionMock];
-  [cam captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:connectionMock];
+             fromConnection:_connectionMock];
+  [_camera captureOutput:nil didOutputSampleBuffer:audioSample fromConnection:_connectionMock];
   XCTAssert(videoAppended && audioAppended, @"Video or audio was not appended.");
 
   CFRelease(videoSample);
@@ -200,139 +226,90 @@
 }
 
 - (void)testDidOutputSampleBufferMustNotAppendSampleWhenReadyForMoreMediaDataIsNo {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
 
-  id connectionMock = OCMClassMock([AVCaptureConnection class]);
-
-  id writerMock = OCMClassMock([AVAssetWriter class]);
-  OCMStub([writerMock alloc]).andReturn(writerMock);
-  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
-      .andReturn(writerMock);
-
   __block BOOL sampleAppended = NO;
-  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
-  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
-                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
-      .andReturn(adaptorMock);
-  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        sampleAppended = YES;
-      });
+  _adaptorMock.appendPixelBufferStub = ^BOOL(CVPixelBufferRef buffer, CMTime time) {
+    sampleAppended = YES;
+    return YES;
+  };
 
-  __block BOOL readyForMoreMediaData = NO;
-  id inputMock = OCMClassMock([AVAssetWriterInput class]);
-  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
-      .andReturn(inputMock);
-  OCMStub([inputMock isReadyForMoreMediaData]).andDo(^(NSInvocation *invocation) {
-    [invocation setReturnValue:&readyForMoreMediaData];
-  });
-
-  [cam
+  [_camera
       startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
       }
                   messengerForStreaming:nil];
 
-  readyForMoreMediaData = YES;
+  _inputMock.isReadyForMoreMediaData = YES;
   sampleAppended = NO;
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:videoSample
-             fromConnection:connectionMock];
+             fromConnection:_connectionMock];
   XCTAssertTrue(sampleAppended, @"Sample was not appended.");
 
-  readyForMoreMediaData = NO;
+  _inputMock.isReadyForMoreMediaData = NO;
   sampleAppended = NO;
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:videoSample
-             fromConnection:connectionMock];
+             fromConnection:_connectionMock];
   XCTAssertFalse(sampleAppended, @"Sample cannot be appended when readyForMoreMediaData is NO.");
 
   CFRelease(videoSample);
 }
 
 - (void)testStopVideoRecordingWithCompletionMustCallCompletion {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+  __weak MockAssetWriter *weakWriter = _writerMock;
+  _writerMock.finishWritingStub = ^(void (^param)(void)) {
+    XCTAssert(weakWriter.status == AVAssetWriterStatusWriting,
+              @"Cannot call finishWritingWithCompletionHandler when status is "
+              @"not AVAssetWriterStatusWriting.");
+    void (^handler)(void) = param;
+    handler();
+  };
 
-  id writerMock = OCMClassMock([AVAssetWriter class]);
-  OCMStub([writerMock alloc]).andReturn(writerMock);
-  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
-      .andReturn(writerMock);
-  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
-  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
-    status = AVAssetWriterStatusWriting;
-  });
-  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
-    [invocation setReturnValue:&status];
-  });
-
-  OCMStub([writerMock finishWritingWithCompletionHandler:[OCMArg checkWithBlock:^(id param) {
-                        XCTAssert(status == AVAssetWriterStatusWriting,
-                                  @"Cannot call finishWritingWithCompletionHandler when status is "
-                                  @"not AVAssetWriterStatusWriting.");
-                        void (^handler)(void) = param;
-                        handler();
-                        return YES;
-                      }]]);
-
-  [cam
+  [_camera
       startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
       }
                   messengerForStreaming:nil];
 
   __block BOOL completionCalled = NO;
-  [cam stopVideoRecordingWithCompletion:^(NSString *_Nullable path, FlutterError *_Nullable error) {
-    completionCalled = YES;
-  }];
+  [_camera
+      stopVideoRecordingWithCompletion:^(NSString *_Nullable path, FlutterError *_Nullable error) {
+        completionCalled = YES;
+      }];
   XCTAssert(completionCalled, @"Completion was not called.");
 }
 
 - (void)testStartWritingShouldNotBeCalledBetweenSampleCreationAndAppending {
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
 
-  id connectionMock = OCMClassMock([AVCaptureConnection class]);
-
-  id writerMock = OCMClassMock([AVAssetWriter class]);
-  OCMStub([writerMock alloc]).andReturn(writerMock);
-  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
-      .andReturn(writerMock);
   __block BOOL startWritingCalled = NO;
-  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
+  _writerMock.startWritingStub = ^{
     startWritingCalled = YES;
-  });
+  };
 
   __block BOOL videoAppended = NO;
-  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
-  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
-                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
-      .andReturn(adaptorMock);
-  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        videoAppended = YES;
-      });
+  _adaptorMock.appendPixelBufferStub = ^BOOL(CVPixelBufferRef buffer, CMTime time) {
+    videoAppended = YES;
+    return YES;
+  };
 
-  id inputMock = OCMClassMock([AVAssetWriterInput class]);
-  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
-      .andReturn(inputMock);
-  OCMStub([inputMock isReadyForMoreMediaData]).andReturn(YES);
+  _inputMock.isReadyForMoreMediaData = YES;
 
-  [cam
+  [_camera
       startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
       }
                   messengerForStreaming:nil];
 
   BOOL startWritingCalledBefore = startWritingCalled;
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:videoSample
-             fromConnection:connectionMock];
+             fromConnection:_connectionMock];
   XCTAssert((startWritingCalledBefore && videoAppended) || (startWritingCalled && !videoAppended),
             @"The startWriting was called between sample creation and appending.");
 
-  [cam captureOutput:cam.captureVideoOutput
+  [_camera captureOutput:_camera.captureVideoOutput
       didOutputSampleBuffer:videoSample
-             fromConnection:connectionMock];
+             fromConnection:_connectionMock];
   XCTAssert(videoAppended, @"Video was not appended.");
 
   CFRelease(videoSample);

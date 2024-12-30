@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes OCMock from tests.
 
 ## 0.9.17+5
 
