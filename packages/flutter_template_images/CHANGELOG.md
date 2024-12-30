@@ -1,3 +1,7 @@
+## 5.0.0
+
+* Remove `app_shared` and `skeleton`, which are [no longer used](https://github.com/flutter/flutter/issues/160692).
+
 ## 4.3.0
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
