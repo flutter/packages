@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 #import "../include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
-#import <UIKit/UIKit.h>
 
 @implementation FLTDefaultDeviceOrientationProvider
 
