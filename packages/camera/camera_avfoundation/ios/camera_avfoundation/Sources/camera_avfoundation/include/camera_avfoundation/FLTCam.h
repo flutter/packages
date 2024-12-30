@@ -8,7 +8,7 @@
 
 #import "CameraProperties.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
-#import "FLTCaptureDeviceControlling.h"
+#import "Protocols/FLTCaptureDeviceControlling.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
