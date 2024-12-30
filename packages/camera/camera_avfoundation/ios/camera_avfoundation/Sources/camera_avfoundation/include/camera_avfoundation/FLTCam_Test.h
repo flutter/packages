@@ -4,6 +4,7 @@
 
 #import "FLTCam.h"
 #import "FLTCaptureDeviceControlling.h"
+#import "FLTDeviceOrientationProviding.h"
 #import "FLTSavePhotoDelegate.h"
 
 /// Determines the video dimensions (width and height) for a given capture device format.
@@ -75,6 +76,7 @@ typedef id<FLTCaptureDeviceControlling> (^CaptureDeviceFactory)(void);
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
              videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+            deviceOrientationProvider:(id<FLTDeviceOrientationProviding>)deviceOrientationProvider
                                 error:(NSError **)error;
 
 /// Start streaming images.

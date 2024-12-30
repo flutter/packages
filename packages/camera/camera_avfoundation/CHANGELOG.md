@@ -1,3 +1,7 @@
+## 0.9.17+7
+
+* Introduces new protocols `FLTCaptureDeviceControlling` and `FLTDeviceOrientationProviding`
+
 ## 0.9.17+6
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

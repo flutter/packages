@@ -188,9 +188,11 @@
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      captureSessionQueue, nil, nil, ^id<FLTCaptureDeviceControlling>(void) {
+      captureSessionQueue, nil, nil,
+      ^id<FLTCaptureDeviceControlling>(void) {
         return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDeviceMock];
-      });
+      },
+      nil);
 
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
   id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);

@@ -153,6 +153,7 @@ NSString *const errorMethod = @"error";
       videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
         return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
       }
+      deviceOrientationProvider:[[FLTDefaultDeviceOrientationProvider alloc] init]
       error:error];
 }
 
@@ -217,6 +218,7 @@ static void selectBestFormatForRequestedFrameRate(
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
              videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+            deviceOrientationProvider:(id<FLTDeviceOrientationProviding>)deviceOrientationProvider
                                 error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -266,7 +268,7 @@ static void selectBestFormatForRequestedFrameRate(
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  _deviceOrientationProvider = [[FLTDefaultDeviceOrientationProvider alloc] init];
+  _deviceOrientationProvider = deviceOrientationProvider;
 
   if (_mediaSettings.framesPerSecond) {
     // The frame rate can be changed only on a locked for configuration device.
