@@ -57,9 +57,12 @@
   self.device.torchMode = torchMode;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (BOOL)isFlashModeSupported:(AVCaptureFlashMode)mode {
   return [self.device isFlashModeSupported:mode];
 }
+#pragma clang diagnostic pop
 
 // Focus
 - (BOOL)isFocusPointOfInterestSupported {
