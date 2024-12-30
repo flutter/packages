@@ -1,3 +1,7 @@
+## 0.9.18+1
+
+* Introduces new protocols `FLTCaptureDeviceControlling` and `FLTDeviceOrientationProviding`
+
 ## 0.9.18
 
 * Adds API support query for image streaming.

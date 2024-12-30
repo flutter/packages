@@ -9,6 +9,7 @@
 @import XCTest;
 @import AVFoundation;
 
+#import "CameraTestUtils.h"
 #import "MockCaptureDeviceController.h"
 #import "MockDeviceOrientationProvider.h"
 
@@ -21,12 +22,16 @@
 @implementation CameraFocusTests
 
 - (void)setUp {
-  _camera = [[FLTCam alloc] init];
-  _mockDevice = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDeviceController *mockDevice = [[MockCaptureDeviceController alloc] init];
+  _mockDevice = mockDevice;
   _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
 
-  [_camera setValue:_mockDevice forKey:@"captureDevice"];
-  [_camera setValue:_mockDeviceOrientationProvider forKey:@"deviceOrientationProvider"];
+  _camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
+      nil, nil, nil,
+      ^id<FLTCaptureDeviceControlling>(void) {
+        return mockDevice;
+      },
+      _mockDeviceOrientationProvider);
 }
 
 - (void)testAutoFocusWithContinuousModeSupported_ShouldSetContinuousAutoFocus {
