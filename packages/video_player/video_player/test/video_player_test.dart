@@ -749,6 +749,31 @@ void main() {
     });
 
     group('caption', () {
+      test('makes sure the input captions are unsorted', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+          closedCaptionFile: _loadClosedCaption(),
+        );
+
+        await controller.initialize();
+        final List<Caption> captions =
+            (await controller.closedCaptionFile)!.captions.toList();
+
+        // Check that captions are not in sorted order
+        bool isSorted = true;
+        for (int i = 0; i < captions.length - 1; i++) {
+          if (captions[i].start.compareTo(captions[i + 1].start) > 0) {
+            isSorted = false;
+            break;
+          }
+        }
+
+        expect(isSorted, false, reason: 'Expected captions to be unsorted');
+        expect(captions.map((Caption c) => c.text).toList(),
+            <String>['one', 'two', 'three', 'five', 'four'],
+            reason: 'Captions should be in original unsorted order');
+      });
       test('works when seeking, includes all captions', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
