@@ -2,27 +2,33 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
-import '../foundation/foundation.dart';
-import '../web_kit/web_kit.dart';
+import '../common/web_kit.g.dart';
+import '../webkit_proxy.dart';
 
 /// Handles all cookie operations for the WebView platform.
 class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
   /// Constructs a [WKWebViewCookieManager].
-  WKWebViewCookieManager({WKWebsiteDataStore? websiteDataStore})
-      : websiteDataStore =
-            websiteDataStore ?? WKWebsiteDataStore.defaultDataStore;
+  WKWebViewCookieManager({
+    WKWebsiteDataStore? websiteDataStore,
+    @visibleForTesting WebKitProxy webKitProxy = const WebKitProxy(),
+  })  : _webKitProxy = webKitProxy,
+        websiteDataStore = websiteDataStore ??
+            webKitProxy.defaultDataStoreWKWebsiteDataStore();
 
   /// Manages stored data for [WKWebView]s.
   final WKWebsiteDataStore websiteDataStore;
 
+  final WebKitProxy _webKitProxy;
+
   @override
   Future<bool> clearCookies() async {
     return websiteDataStore.removeDataOfTypes(
-      <WKWebsiteDataType>{WKWebsiteDataType.cookies},
-      DateTime.fromMillisecondsSinceEpoch(0),
+      <WebsiteDataType>[WebsiteDataType.cookies],
+      0,
     );
   }
 
@@ -34,12 +40,12 @@ class WKWebViewCookieManager extends WebViewCookieManagerPlatform {
     }
 
     return websiteDataStore.httpCookieStore.setCookie(
-      NSHttpCookie.withProperties(
-        <NSHttpCookiePropertyKey, Object>{
-          NSHttpCookiePropertyKey.name: cookie.name,
-          NSHttpCookiePropertyKey.value: cookie.value,
-          NSHttpCookiePropertyKey.domain: cookie.domain,
-          NSHttpCookiePropertyKey.path: cookie.path,
+      _webKitProxy.newHTTPCookie(
+        properties: <HttpCookiePropertyKey, Object>{
+          HttpCookiePropertyKey.name: cookie.name,
+          HttpCookiePropertyKey.value: cookie.value,
+          HttpCookiePropertyKey.domain: cookie.domain,
+          HttpCookiePropertyKey.path: cookie.path,
         },
       ),
     );
