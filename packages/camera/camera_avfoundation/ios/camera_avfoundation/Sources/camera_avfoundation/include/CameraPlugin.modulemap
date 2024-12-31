@@ -6,15 +6,14 @@ framework module camera_avfoundation {
 
   explicit module Test {
     header "FLTCaptureDeviceControlling.h"
+    header "FLTPermissionServicing.h"
     header "FLTDeviceOrientationProviding.h"
-    header "FLTCamMediaSettingsAVWrapper.h"
     header "CameraPlugin_Test.h"
     header "CameraProperties.h"
     header "FLTCam.h"
     header "FLTCam_Test.h"
     header "FLTSavePhotoDelegate_Test.h"
     header "FLTThreadSafeEventChannel.h"
-    header "FLTPermissionServicing.h"
     header "FLTCameraPermissionManager.h"
     header "QueueUtils.h"
   }

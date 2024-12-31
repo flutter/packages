@@ -6,11 +6,10 @@
 @import Foundation;
 @import Flutter;
 
-#import "FLTCaptureDeviceControlling.h"
-
 #import "CameraProperties.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "messages.g.h"
+#import "Protocols/FLTCaptureDeviceControlling.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
