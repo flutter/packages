@@ -25,6 +25,7 @@ let package = Package(
       ],
       cSettings: [
         .headerSearchPath("include/camera_avfoundation")
+        .headerSearchPath("include/camera_avfoundation/Protocols")
       ]
     )
   ]
