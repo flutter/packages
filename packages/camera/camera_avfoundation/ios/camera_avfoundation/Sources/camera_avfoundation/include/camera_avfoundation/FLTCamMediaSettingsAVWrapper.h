@@ -5,7 +5,7 @@
 @import AVFoundation;
 @import Foundation;
 
-#import "FLTCaptureDeviceControlling.h"
+#import "Protocols/FLTCaptureDeviceControlling.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
