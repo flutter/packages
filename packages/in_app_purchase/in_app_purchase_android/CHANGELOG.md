@@ -1,3 +1,7 @@
+## 0.3.6+13
+
+* GooglePlayPurchaseParam add possibility set selected offerToken
+
 ## 0.3.6+12
 
 * Updates README to remove contributor-focused documentation.
