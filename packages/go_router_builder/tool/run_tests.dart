@@ -67,21 +67,14 @@ Future<void> main() async {
 Future<Version> _packageVersion() async {
   final PackageConfig packageConfig =
       await loadPackageConfigUri(Isolate.packageConfigSync!);
-
-  print(Platform.script);
-  final String pkgPath = Platform.script.resolve('..').path;
-  print(pkgPath);
-
-  print(p.join(pkgPath, 'pubspec.yaml'));
-
-  final Package? package =
-      packageConfig.packageOf(Uri.file(p.join(pkgPath, 'pubspec.yaml')));
+  final Uri pkgUri = Platform.script.resolve('../pubspec.yaml');
+  final Package? package = packageConfig.packageOf(pkgUri);
   if (package == null) {
-    throw StateError('No package at "$pkgPath"');
+    throw StateError('No package at "$pkgUri"');
   }
   final LanguageVersion? languageVersion = package.languageVersion;
   if (languageVersion == null) {
-    throw StateError('No language version "$pkgPath"');
+    throw StateError('No language version "$pkgUri"');
   }
   return Version.parse('$languageVersion.0');
 }
