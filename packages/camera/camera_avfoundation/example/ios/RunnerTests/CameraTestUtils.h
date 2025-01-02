@@ -20,7 +20,8 @@ extern FLTCam *_Nullable FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
     dispatch_queue_t _Nullable captureSessionQueue,
     FCPPlatformMediaSettings *_Nullable mediaSettings,
     FLTCamMediaSettingsAVWrapper *_Nullable mediaSettingsAVWrapper,
-    CaptureDeviceFactory _Nullable captureDeviceFactory);
+    CaptureDeviceFactory _Nullable captureDeviceFactory,
+    id<FLTDeviceOrientationProviding> _Nullable deviceOrientationProvider);
 
 extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue);
 
