@@ -8,15 +8,6 @@ import XCTest
 
 final class ImageResizeTests: XCTestCase {
 
-  private func createTestImage(size: NSSize) -> NSImage {
-    let image = NSImage(size: size)
-    image.lockFocus()
-    NSColor.black.set()
-    NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
-    image.unlockFocus()
-    return image
-  }
-
   func testNilMaxSize() {
     let originalImage = createTestImage(size: NSSize(width: 1200, height: 800))
 

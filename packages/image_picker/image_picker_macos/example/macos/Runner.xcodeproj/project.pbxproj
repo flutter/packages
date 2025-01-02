@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -27,11 +27,12 @@
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
-		BBE2B8C47A32673657F9E2DC /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B40E0F19CFF2111C7C9F07D /* Pods_Runner.framework */; };
+		7AA9FB252D27461200BBBB29 /* ImageTestUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AA9FB242D27461000BBBB29 /* ImageTestUtils.swift */; };
 		7ABC95832CBD9D810004CBA6 /* ImageCompressTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABC957F2CBD9D810004CBA6 /* ImageCompressTests.swift */; };
 		7ABC95842CBD9D810004CBA6 /* ImageResizeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABC95802CBD9D810004CBA6 /* ImageResizeTests.swift */; };
 		7ABC95852CBD9D810004CBA6 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABC95812CBD9D810004CBA6 /* RunnerTests.swift */; };
 		7ABC95892CBD9D8A0004CBA6 /* RunnerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABC95862CBD9D8A0004CBA6 /* RunnerUITests.swift */; };
+		BBE2B8C47A32673657F9E2DC /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7B40E0F19CFF2111C7C9F07D /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,8 +73,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		103E92CF1EBAAB82E57C06F1 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
-		2E9F2DE12CD9DE067306B460 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneratedPluginRegistrant.swift; sourceTree = "<group>"; };
 		33CC10ED2044A3C60003C045 /* example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +88,7 @@
 		33E51914231749380026EE4D /* Release.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = Release.entitlements; sourceTree = "<group>"; };
 		33E5194F232828860026EE4D /* AppInfo.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AppInfo.xcconfig; sourceTree = "<group>"; };
 		450A6A13EFEFF8F54A1685E1 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		7AA9FB242D27461000BBBB29 /* ImageTestUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTestUtils.swift; sourceTree = "<group>"; };
 		7ABC952B2CB979800004CBA6 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7ABC95492CBAF9680004CBA6 /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7ABC957F2CBD9D810004CBA6 /* ImageCompressTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompressTests.swift; sourceTree = "<group>"; };
@@ -129,16 +129,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0C0105042ACC016BCC44F609 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				6D83DCCDFE2A45D91B8A2673 /* Pods-Runner.debug.xcconfig */,
-				103E92CF1EBAAB82E57C06F1 /* Pods-Runner.release.xcconfig */,
-				CD373636C90085FB713CE436 /* Pods-Runner.profile.xcconfig */,
-			);
-			path = Pods;
-			sourceTree = "<group>";
-		};
 		33BA886A226E78AF003329D5 /* Configs */ = {
 			isa = PBXGroup;
 			children = (
@@ -211,6 +201,7 @@
 		7ABC95822CBD9D810004CBA6 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				7AA9FB242D27461000BBBB29 /* ImageTestUtils.swift */,
 				7ABC957F2CBD9D810004CBA6 /* ImageCompressTests.swift */,
 				7ABC95802CBD9D810004CBA6 /* ImageResizeTests.swift */,
 				7ABC95812CBD9D810004CBA6 /* RunnerTests.swift */,
@@ -241,7 +232,6 @@
 				EA63AF049335E53A5E609A89 /* Pods-Runner.release.xcconfig */,
 				AFE3DE60B5E9D50D0C5C0524 /* Pods-Runner.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -353,7 +343,7 @@
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
@@ -474,6 +464,7 @@
 				7ABC95832CBD9D810004CBA6 /* ImageCompressTests.swift in Sources */,
 				7ABC95842CBD9D810004CBA6 /* ImageResizeTests.swift in Sources */,
 				7ABC95852CBD9D810004CBA6 /* RunnerTests.swift in Sources */,
+				7AA9FB252D27461200BBBB29 /* ImageTestUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -932,7 +923,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};
