@@ -1,6 +1,6 @@
 name: camera_android_camerax_example
 description: Demonstrates how to use the camera_android_camerax plugin.
-publish_to: 'none'
+publish_to: "none"
 
 environment:
   sdk: ^3.1.0
@@ -28,14 +28,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# FOR TESTING ONLY. DO NOT MERGE.
-dependency_overrides:
-  video_player:
-    path: ../../../video_player/video_player
-  video_player_android:
-    path: ../../../video_player/video_player_android
-  video_player_avfoundation:
-    path: ../../../video_player/video_player_avfoundation    
-  video_player_platform_interface:
-    path: ../../../video_player/video_player_platform_interface
