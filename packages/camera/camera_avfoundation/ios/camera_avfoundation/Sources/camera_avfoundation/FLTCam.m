@@ -9,10 +9,10 @@
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
+#import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
+#import "./include/camera_avfoundation/FLTDeviceOrientationProviding.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
-#import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
-#import "./include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/messages.g.h"
 

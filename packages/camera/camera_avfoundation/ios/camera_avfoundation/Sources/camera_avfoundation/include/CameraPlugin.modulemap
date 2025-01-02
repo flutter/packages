@@ -5,8 +5,8 @@ framework module camera_avfoundation {
   module * { export * }
 
   explicit module Test {
-    header "Protocols/FLTCaptureDeviceControlling.h"
-    header "Protocols/FLTDeviceOrientationProviding.h"
+    header "FLTCaptureDeviceControlling.h"
+    header "FLTDeviceOrientationProviding.h"
     header "FLTPermissionServicing.h"
     header "CameraPlugin_Test.h"
     header "CameraProperties.h"

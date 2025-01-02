@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "../include/camera_avfoundation/Protocols/FLTDeviceOrientationProviding.h"
+#import "./include/camera_avfoundation/FLTDeviceOrientationProviding.h"
 
 @implementation FLTDefaultDeviceOrientationProvider
 
