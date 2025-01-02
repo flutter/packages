@@ -1,3 +1,7 @@
+## 2.0.17
+
+* Implement errorBuilder callback
+
 ## 2.0.16
 
 * Adopts code excerpts for README.
