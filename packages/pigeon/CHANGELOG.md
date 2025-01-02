@@ -2,6 +2,10 @@
 
 * [swift] Changes `PigeonError` class to conform to `Sendable`.
 
+## 22.7.2
+
+* Updates README to discuss best practices for using Pigeon-generated code.
+
 ## 22.7.1
 
 * [swift] Adds support for platform checks of imports of ProxyApis.
