@@ -68,7 +68,12 @@ Future<Version> _packageVersion() async {
   final PackageConfig packageConfig =
       await loadPackageConfigUri(Isolate.packageConfigSync!);
 
+  print(Platform.script);
   final String pkgPath = Platform.script.resolve('..').path;
+  print(pkgPath);
+
+  print(p.join(pkgPath, 'pubspec.yaml'));
+
   final Package? package =
       packageConfig.packageOf(Uri.file(p.join(pkgPath, 'pubspec.yaml')));
   if (package == null) {
