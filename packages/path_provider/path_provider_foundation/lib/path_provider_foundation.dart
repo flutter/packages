@@ -2,22 +2,30 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ffi' as ffi;
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:objective_c/objective_c.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'messages.g.dart';
+import 'src/ffi_bindings.dart';
 
 /// The iOS and macOS implementation of [PathProviderPlatform].
 class PathProviderFoundation extends PathProviderPlatform {
   /// Constructor that accepts a testable PathProviderPlatformProvider.
   PathProviderFoundation({
     @visibleForTesting PathProviderPlatformProvider? platform,
-  }) : _platformProvider = platform ?? PathProviderPlatformProvider();
+    @visibleForTesting FoundationFFI? ffiLib,
+    @visibleForTesting NSFileManager Function()? fileManagerProvider,
+  })  : _platformProvider = platform ?? PathProviderPlatformProvider(),
+        _ffiLib = ffiLib ?? _lib,
+        _fileManagerProvider =
+            fileManagerProvider ?? _defaultFileManagerProvider;
 
   final PathProviderPlatformProvider _platformProvider;
-  final PathProviderApi _pathProvider = PathProviderApi();
+  final FoundationFFI _ffiLib;
+  final NSFileManager Function() _fileManagerProvider;
 
   /// Registers this class as the default instance of [PathProviderPlatform]
   static void registerWith() {
@@ -25,14 +33,14 @@ class PathProviderFoundation extends PathProviderPlatform {
   }
 
   @override
-  Future<String?> getTemporaryPath() {
-    return _pathProvider.getDirectoryPath(DirectoryType.temp);
+  Future<String?> getTemporaryPath() async {
+    return _getDirectoryPath(NSSearchPathDirectory.NSCachesDirectory);
   }
 
   @override
   Future<String?> getApplicationSupportPath() async {
     final String? path =
-        await _pathProvider.getDirectoryPath(DirectoryType.applicationSupport);
+        _getDirectoryPath(NSSearchPathDirectory.NSApplicationSupportDirectory);
     if (path != null) {
       // Ensure the directory exists before returning it, for consistency with
       // other platforms.
@@ -42,19 +50,19 @@ class PathProviderFoundation extends PathProviderPlatform {
   }
 
   @override
-  Future<String?> getLibraryPath() {
-    return _pathProvider.getDirectoryPath(DirectoryType.library);
+  Future<String?> getLibraryPath() async {
+    return _getDirectoryPath(NSSearchPathDirectory.NSLibraryDirectory);
   }
 
   @override
-  Future<String?> getApplicationDocumentsPath() {
-    return _pathProvider.getDirectoryPath(DirectoryType.applicationDocuments);
+  Future<String?> getApplicationDocumentsPath() async {
+    return _getDirectoryPath(NSSearchPathDirectory.NSDocumentDirectory);
   }
 
   @override
   Future<String?> getApplicationCachePath() async {
     final String? path =
-        await _pathProvider.getDirectoryPath(DirectoryType.applicationCache);
+        _getDirectoryPath(NSSearchPathDirectory.NSCachesDirectory);
     if (path != null) {
       // Ensure the directory exists before returning it, for consistency with
       // other platforms.
@@ -84,8 +92,8 @@ class PathProviderFoundation extends PathProviderPlatform {
   }
 
   @override
-  Future<String?> getDownloadsPath() {
-    return _pathProvider.getDirectoryPath(DirectoryType.downloads);
+  Future<String?> getDownloadsPath() async {
+    return _getDirectoryPath(NSSearchPathDirectory.NSDownloadsDirectory);
   }
 
   /// Returns the path to the container of the specified App Group.
@@ -95,7 +103,41 @@ class PathProviderFoundation extends PathProviderPlatform {
       throw UnsupportedError(
           'getContainerPath is not supported on this platform');
     }
-    return _pathProvider.getContainerPath(appGroupIdentifier);
+    return _fileManagerProvider()
+        .containerURLForSecurityApplicationGroupIdentifier(
+            NSString(appGroupIdentifier))
+        ?.path
+        ?.toDartString();
+  }
+
+  String? _getDirectoryPath(NSSearchPathDirectory directory) {
+    NSString? path = _getUserDirectory(directory);
+    if (path != null && _platformProvider.isMacOS) {
+      // In a non-sandboxed app, these are shared directories where applications
+      // are expected to use their bundle ID as a subdirectory. (For
+      // non-sandboxed apps, adding the extra path is harmless).
+      // This is not done for iOS, for compatibility with older versions of the
+      // plugin.
+      if (directory == NSSearchPathDirectory.NSApplicationSupportDirectory ||
+          directory == NSSearchPathDirectory.NSCachesDirectory) {
+        final NSString? bundleIdentifier =
+            NSBundle.getMainBundle().bundleIdentifier;
+        if (bundleIdentifier != null) {
+          final NSURL basePathURL = NSURL.fileURLWithPath(path);
+          path =
+              basePathURL.URLByAppendingPathComponent(bundleIdentifier)?.path;
+        }
+      }
+    }
+    return path?.toDartString();
+  }
+
+  /// Returns the user-domain directory of the given type.
+  NSString? _getUserDirectory(NSSearchPathDirectory directory) {
+    final NSArray paths = _ffiLib.NSSearchPathForDirectoriesInDomains(
+        directory, NSSearchPathDomainMask.NSUserDomainMask, true);
+    final ObjCObjectBase? first = paths.firstObject;
+    return first == null ? null : NSString.castFrom(first);
   }
 }
 
@@ -104,4 +146,20 @@ class PathProviderFoundation extends PathProviderPlatform {
 class PathProviderPlatformProvider {
   /// Specifies whether the current platform is iOS.
   bool get isIOS => Platform.isIOS;
+
+  /// Specifies whether the current platform is macOS.
+  bool get isMacOS => Platform.isMacOS;
 }
+
+NSFileManager _defaultFileManagerProvider() =>
+    NSFileManager.getDefaultManager();
+
+final ffi.DynamicLibrary _dylib = () {
+  return ffi.DynamicLibrary.open(
+      '/System/Library/Frameworks/Foundation.framework/Foundation');
+}();
+
+/// The bindings to the native functions in [_dylib].
+final FoundationFFI _lib = () {
+  return FoundationFFI(_dylib);
+}();

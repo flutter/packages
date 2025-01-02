@@ -23,6 +23,9 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  mockito: ^5.4.4
+  objective_c: ^8.0.0
+  path: ^1.8.0
 
 flutter:
   uses-material-design: true
