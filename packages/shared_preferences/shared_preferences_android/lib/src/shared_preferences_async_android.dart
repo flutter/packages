@@ -10,9 +10,9 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages_async.g.dart';
+import 'strings.dart';
 
 const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
-const String _jsonListPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!';
 
 /// The Android implementation of [SharedPreferencesAsyncPlatform].
 ///
@@ -133,7 +133,7 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
-    final String stringValue = '$_jsonListPrefix${jsonEncode(value)}';
+    final String stringValue = '$jsonListPrefix${jsonEncode(value)}';
     return api.setString(key, stringValue, pigeonOptions);
   }
 
@@ -209,22 +209,35 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     final Object? dynamicStringList = await _convertKnownExceptions<dynamic>(
         () async => api.getStringList(key, pigeonOptions));
-    if (dynamicStringList.runtimeType == String) {
-      final String jsonEncodedString =
-          (dynamicStringList! as String).substring(_jsonListPrefix.length);
-      try {
-        final List<String> decodedList =
-            (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
-        return decodedList;
-      } catch (e) {
-        throw TypeError();
-      }
-    } else if (dynamicStringList.runtimeType == List<Object?>) {
-      return (dynamicStringList! as List<Object?>).cast<String>().toList();
-    } else if (dynamicStringList.runtimeType == Null) {
-      return null;
-    } else {
-      throw TypeError();
+    print('-------------------------');
+    print(dynamicStringList.runtimeType);
+    print(dynamicStringList);
+    switch (dynamicStringList.runtimeType) {
+      case const (String):
+        {
+          final String jsonEncodedString =
+              (dynamicStringList! as String).substring(jsonListPrefix.length);
+          try {
+            final List<String> decodedList =
+                (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
+            return decodedList;
+          } catch (e) {
+            throw TypeError();
+          }
+        }
+      case const (List<Object?>):
+        {
+          return (dynamicStringList! as List<Object?>).cast<String>().toList();
+        }
+      case const (Null):
+        {
+          return null;
+        }
+      default:
+        {
+          print(dynamicStringList.runtimeType);
+          throw TypeError();
+        }
     }
   }
 
@@ -271,9 +284,9 @@ base class SharedPreferencesAsyncAndroid
     );
     data.forEach((String? key, Object? value) {
       if (value.runtimeType == String &&
-          (value! as String).startsWith(_jsonListPrefix)) {
+          (value! as String).startsWith(jsonListPrefix)) {
         data[key!] =
-            (jsonDecode((value as String).substring(_jsonListPrefix.length))
+            (jsonDecode((value as String).substring(jsonListPrefix.length))
                     as List<dynamic>)
                 .cast<String>()
                 .toList();

@@ -265,7 +265,7 @@ void main() {
     final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
-    }, throwsA(isA<PlatformException>()));
+    }, throwsA(isA<ArgumentError>()));
   });
 
   test('getAllWithNoPrefix', () async {

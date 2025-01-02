@@ -5,17 +5,12 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages.g.dart';
 import 'shared_preferences_async_android.dart';
-
-const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
-const String _bigIntPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy';
-const String _doublePrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu';
-const String _jsonListPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!';
+import 'strings.dart';
 
 /// The Android implementation of [SharedPreferencesStorePlatform].
 ///
@@ -47,10 +42,9 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
     switch (valueType) {
       case 'String':
         value as String;
-        if (value.startsWith(_listPrefix) ||
-            value.startsWith(_jsonListPrefix) ||
-            value.startsWith(_bigIntPrefix) ||
-            value.startsWith(_doublePrefix)) {
+        if (value.startsWith(listPrefix) ||
+            value.startsWith(jsonListPrefix) ||
+            value.startsWith(doublePrefix)) {
           throw ArgumentError(
               'The string $value cannot be stored as it clashes with special identifier prefixes');
         }
@@ -62,7 +56,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       case 'Double':
         return _api.setDouble(key, value as double);
       case 'StringList':
-        return _api.setString(key, '$_jsonListPrefix${jsonEncode(value)}');
+        return _api.setString(key, '$jsonListPrefix${jsonEncode(value)}');
       case 'LegacyStringListForTesting':
         return _api.setStringList(key, value as List<String>);
     }
@@ -117,9 +111,9 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
         await _api.getAll(filter.prefix, filter.allowList?.toList());
     data.forEach((String? key, Object? value) {
       if (value.runtimeType == String &&
-          (value! as String).startsWith(_jsonListPrefix)) {
+          (value! as String).startsWith(jsonListPrefix)) {
         data[key!] =
-            (jsonDecode((value as String).substring(_jsonListPrefix.length))
+            (jsonDecode((value as String).substring(jsonListPrefix.length))
                     as List<dynamic>)
                 .cast<String>()
                 .toList();
