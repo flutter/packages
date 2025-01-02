@@ -246,8 +246,14 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
   ImageSelectionOptions _imageOptionsToImageSelectionOptions(
     ImageOptions imageOptions,
   ) {
+    final int? imageQuality = imageOptions.imageQuality;
+    if (imageQuality != null && imageQuality < 0) {
+      throw ArgumentError.value(
+          imageQuality, 'imageQuality', 'quality cannot be negative');
+    }
+
     return ImageSelectionOptions(
-      quality: imageOptions.imageQuality ?? 100,
+      quality: imageQuality ?? 100,
       maxSize: MaxSize(
         width: imageOptions.maxWidth,
         height: imageOptions.maxHeight,

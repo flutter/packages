@@ -19,9 +19,6 @@ extension NSImage {
   /// - Parameter quality: The quality of the image (0 to 100).
   /// - Returns: An optional `NSImage` that represents the compressed image.
   func compressed(quality: Int64) throws -> NSImage {
-    assert(quality != 100, "Quality 100 means no compression.")
-    assert(quality >= 0, "Quality can't be negative.")
-
     guard let tiffData = self.tiffRepresentation,
       let bitmapRep = NSBitmapImageRep(data: tiffData)
     else {
