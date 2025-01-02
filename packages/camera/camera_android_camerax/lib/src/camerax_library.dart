@@ -1,15 +1,28 @@
+import 'package:flutter/services.dart';
+
 import 'camerax_library2.g.dart' as camerax;
 
 export 'camerax_library2.g.dart' hide CameraInfo, LiveData, Observer;
 
-void setUpGenerics() {
+void setUpGenerics({
+  BinaryMessenger? pigeonBinaryMessenger,
+  camerax.PigeonInstanceManager? pigeonInstanceManager,
+}) {
   camerax.LiveData.pigeon_setUpMessageHandlers(
     pigeon_newInstance: (camerax.LiveDataSupportedType type) {
       switch (type) {
         case camerax.LiveDataSupportedType.cameraState:
-          return LiveData<camerax.CameraState>.detached(type: type);
+          return LiveData<camerax.CameraState>.detached(
+            type: type,
+            pigeon_binaryMessenger: pigeonBinaryMessenger,
+            pigeon_instanceManager: pigeonInstanceManager,
+          );
         case camerax.LiveDataSupportedType.zoomState:
-          return LiveData<camerax.ZoomState>.detached(type: type);
+          return LiveData<camerax.ZoomState>.detached(
+            type: type,
+            pigeon_binaryMessenger: pigeonBinaryMessenger,
+            pigeon_instanceManager: pigeonInstanceManager,
+          );
       }
     },
   );
@@ -21,11 +34,12 @@ void setUpGenerics() {
     return CameraInfo.detached(
       sensorRotationDegrees: sensorRotationDegrees,
       exposureState: exposureState,
+      pigeon_binaryMessenger: pigeonBinaryMessenger,
+      pigeon_instanceManager: pigeonInstanceManager,
     );
   });
 }
 
-// TODO: move rotation logic to dart
 /// Handle onto the raw buffer managed by screen compositor.
 ///
 /// See https://developer.android.com/reference/android/view/Surface.html.

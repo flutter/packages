@@ -13,9 +13,9 @@ import 'camerax_library.dart';
 ///
 /// By default each function calls the default constructor of the class it
 /// intends to return.
-class MyLibraryProxy {
-  /// Constructs an [MyLibraryProxy].
-  const MyLibraryProxy({
+class CameraXProxy {
+  /// Constructs an [CameraXProxy].
+  const CameraXProxy({
     this.newCameraSize = CameraSize.new,
     this.newCameraIntegerRange = CameraIntegerRange.new,
     this.newObserver = Observer.new,
