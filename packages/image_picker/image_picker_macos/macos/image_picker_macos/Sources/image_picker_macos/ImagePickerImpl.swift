@@ -326,7 +326,7 @@ extension NSItemProvider {
 /// - Parameter quality: Determines if the image should be compressed based on the quality.
 /// - Returns: The image file type (`png` or `jpeg`).
 func imageFileType(quality: Int64?) -> NSBitmapImageRep.FileType {
-  let shouldCompress = shouldCompressImage(quality: quality)
+  let shouldCompress = quality != nil && shouldCompressImage(quality: quality!)
   // TODO(EchoEllet): The picked image can be JPEG even if it can represented as a PNG, should we always store as PNG in case quality is 100 but the image itself is JPEG or other type?
   return shouldCompress ? NSBitmapImageRep.FileType.jpeg : NSBitmapImageRep.FileType.png
 }
