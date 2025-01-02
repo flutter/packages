@@ -332,11 +332,9 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                   ClosedCaption(text: _controller.value.caption.text),
                   if (_controller.value.isPictureInPictureActive) ...<Widget>[
                     Container(color: Colors.white),
-                    // TODO(goderbauer): Make this const when this package requires Flutter 3.8 or later.
-                    // ignore: prefer_const_constructors
-                    Column(
+                    const Column(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const <Widget>[
+                      children: <Widget>[
                         Icon(Icons.picture_in_picture),
                         SizedBox(height: 8),
                         Text('This video is playing in picture-in-picture.'),
