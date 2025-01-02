@@ -1,6 +1,6 @@
 name: camera_android_camerax_example
 description: Demonstrates how to use the camera_android_camerax plugin.
-publish_to: "none"
+publish_to: 'none'
 
 environment:
   sdk: ^3.5.0
@@ -28,3 +28,4 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
