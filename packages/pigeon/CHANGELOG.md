@@ -1,3 +1,7 @@
+## 23.0.0
+
+* [swift] Changes `PigeonError` class to conform to `Sendable`.
+
 ## 22.7.2
 
 * Updates README to discuss best practices for using Pigeon-generated code.
