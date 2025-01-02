@@ -1093,6 +1093,29 @@ void main() {
           'isCompleted: false),');
     });
 
+    group('equals', () {
+      test('identical objects are equal', () {
+        const VideoPlayerValue a = VideoPlayerValue(duration: Duration.zero);
+        const VideoPlayerValue b = VideoPlayerValue(duration: Duration.zero);
+        expect(a, equals(b));
+      });
+
+      test('objects differing in isPictureInPictureActive should not be equal',
+          () {
+        const VideoPlayerValue a = VideoPlayerValue(
+          duration: Duration.zero,
+          // Ignore the default value of isPictureInPictureActive, to ensure test stability in the future.
+          // ignore: avoid_redundant_argument_values
+          isPictureInPictureActive: false,
+        );
+        const VideoPlayerValue b = VideoPlayerValue(
+          duration: Duration.zero,
+          isPictureInPictureActive: true,
+        );
+        expect(a, isNot(equals(b)));
+      });
+    });
+
     group('copyWith()', () {
       test('exact copy', () {
         const VideoPlayerValue original = VideoPlayerValue.uninitialized();
