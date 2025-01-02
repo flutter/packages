@@ -1,3 +1,7 @@
+import 'package:flutter/services.dart';
+
+// ignore_for_file: non_constant_identifier_names
+
 import 'camerax_library.dart';
 
 /// Handles constructing objects and calling static methods for the Android
@@ -9,10 +13,9 @@ import 'camerax_library.dart';
 ///
 /// By default each function calls the default constructor of the class it
 /// intends to return.
-class CameraXProxy {
-  /// Constructs an [CameraXProxy].
-  const CameraXProxy({
-    this.setUpGenericsProxy = setUpGenerics,
+class MyLibraryProxy {
+  /// Constructs an [MyLibraryProxy].
+  const MyLibraryProxy({
     this.newCameraSize = CameraSize.new,
     this.newCameraIntegerRange = CameraIntegerRange.new,
     this.newObserver = Observer.new,
@@ -64,78 +67,105 @@ class CameraXProxy {
         _sensorOrientationCameraCharacteristics,
   });
 
-  final void Function() setUpGenericsProxy;
-
   /// Constructs [CameraSize].
   final CameraSize Function({
     required int width,
     required int height,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newCameraSize;
 
   /// Constructs [CameraIntegerRange].
   final CameraIntegerRange Function({
     required int lower,
     required int upper,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newCameraIntegerRange;
 
   /// Constructs [Observer].
   final Observer<T> Function<T>({
     required void Function(Observer<T>, T) onChanged,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newObserver;
 
   /// Constructs [CameraSelector].
-  final CameraSelector Function({LensFacing? requireLensFacing})
-      newCameraSelector;
+  final CameraSelector Function({
+    LensFacing? requireLensFacing,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newCameraSelector;
 
   /// Constructs [SystemServicesManager].
-  final SystemServicesManager Function(
-      {required void Function(
-        SystemServicesManager,
-        String,
-      ) onCameraError}) newSystemServicesManager;
+  final SystemServicesManager Function({
+    required void Function(
+      SystemServicesManager,
+      String,
+    ) onCameraError,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newSystemServicesManager;
 
   /// Constructs [DeviceOrientationManager].
-  final DeviceOrientationManager Function(
-      {required void Function(
-        DeviceOrientationManager,
-        String,
-      ) onDeviceOrientationChanged}) newDeviceOrientationManager;
+  final DeviceOrientationManager Function({
+    required void Function(
+      DeviceOrientationManager,
+      String,
+    ) onDeviceOrientationChanged,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newDeviceOrientationManager;
 
   /// Constructs [Preview].
   final Preview Function({
     int? targetRotation,
     ResolutionSelector? resolutionSelector,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newPreview;
 
   /// Constructs [VideoCapture].
-  final VideoCapture Function({required VideoOutput videoOutput})
-      withOutputVideoCapture;
+  final VideoCapture Function({
+    required VideoOutput videoOutput,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) withOutputVideoCapture;
 
   /// Constructs [Recorder].
   final Recorder Function({
     int? aspectRatio,
     int? targetVideoEncodingBitRate,
     QualitySelector? qualitySelector,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newRecorder;
 
   /// Constructs [VideoRecordEventListener].
-  final VideoRecordEventListener Function(
-      {required void Function(
-        VideoRecordEventListener,
-        VideoRecordEvent,
-      ) onEvent}) newVideoRecordEventListener;
+  final VideoRecordEventListener Function({
+    required void Function(
+      VideoRecordEventListener,
+      VideoRecordEvent,
+    ) onEvent,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newVideoRecordEventListener;
 
   /// Constructs [ImageCapture].
   final ImageCapture Function({
     int? targetRotation,
     CameraXFlashMode? flashMode,
     ResolutionSelector? resolutionSelector,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newImageCapture;
 
   /// Constructs [ResolutionStrategy].
   final ResolutionStrategy Function({
     required CameraSize boundSize,
     required ResolutionStrategyFallbackRule fallbackRule,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newResolutionStrategy;
 
   /// Constructs [ResolutionSelector].
@@ -143,98 +173,145 @@ class CameraXProxy {
     AspectRatioStrategy? aspectRatioStrategy,
     ResolutionStrategy? resolutionStrategy,
     ResolutionFilter? resolutionFilter,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newResolutionSelector;
 
   /// Constructs [AspectRatioStrategy].
   final AspectRatioStrategy Function({
     required AspectRatio preferredAspectRatio,
     required AspectRatioStrategyFallbackRule fallbackRule,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newAspectRatioStrategy;
 
   /// Constructs [ImageAnalysis].
   final ImageAnalysis Function({
     int? targetRotation,
     ResolutionSelector? resolutionSelector,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newImageAnalysis;
 
   /// Constructs [Analyzer].
-  final Analyzer Function(
-      {required void Function(
-        Analyzer,
-        ImageProxy,
-      ) analyze}) newAnalyzer;
+  final Analyzer Function({
+    required void Function(
+      Analyzer,
+      ImageProxy,
+    ) analyze,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newAnalyzer;
 
   /// Constructs [QualitySelector].
   final QualitySelector Function({
     required VideoQuality quality,
     FallbackStrategy? fallbackStrategy,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) fromQualitySelector;
 
   /// Constructs [QualitySelector].
   final QualitySelector Function({
     required List<VideoQuality> qualities,
     FallbackStrategy? fallbackStrategy,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) fromOrderedListQualitySelector;
 
   /// Constructs [FallbackStrategy].
-  final FallbackStrategy Function({required VideoQuality quality})
-      higherQualityOrLowerThanFallbackStrategy;
+  final FallbackStrategy Function({
+    required VideoQuality quality,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) higherQualityOrLowerThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
-  final FallbackStrategy Function({required VideoQuality quality})
-      higherQualityThanFallbackStrategy;
+  final FallbackStrategy Function({
+    required VideoQuality quality,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) higherQualityThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
-  final FallbackStrategy Function({required VideoQuality quality})
-      lowerQualityOrHigherThanFallbackStrategy;
+  final FallbackStrategy Function({
+    required VideoQuality quality,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) lowerQualityOrHigherThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
-  final FallbackStrategy Function({required VideoQuality quality})
-      lowerQualityThanFallbackStrategy;
+  final FallbackStrategy Function({
+    required VideoQuality quality,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) lowerQualityThanFallbackStrategy;
 
   /// Constructs [FocusMeteringActionBuilder].
-  final FocusMeteringActionBuilder Function({required MeteringPoint point})
-      newFocusMeteringActionBuilder;
+  final FocusMeteringActionBuilder Function({
+    required MeteringPoint point,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newFocusMeteringActionBuilder;
 
   /// Constructs [FocusMeteringActionBuilder].
   final FocusMeteringActionBuilder Function({
     required MeteringPoint point,
     required MeteringMode mode,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) withModeFocusMeteringActionBuilder;
 
   /// Constructs [CaptureRequestOptions].
-  final CaptureRequestOptions Function(
-          {required Map<CaptureRequestKey, Object?> options})
-      newCaptureRequestOptions;
+  final CaptureRequestOptions Function({
+    required Map<CaptureRequestKey, Object?> options,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newCaptureRequestOptions;
 
   /// Constructs [Camera2CameraControl].
-  final Camera2CameraControl Function({required CameraControl cameraControl})
-      fromCamera2CameraControl;
+  final Camera2CameraControl Function({
+    required CameraControl cameraControl,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) fromCamera2CameraControl;
 
   /// Constructs [ResolutionFilter].
-  final ResolutionFilter Function({required CameraSize preferredSize})
-      createWithOnePreferredSizeResolutionFilter;
+  final ResolutionFilter Function({
+    required CameraSize preferredSize,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) createWithOnePreferredSizeResolutionFilter;
 
   /// Constructs [Camera2CameraInfo].
-  final Camera2CameraInfo Function({required CameraInfo cameraInfo})
-      fromCamera2CameraInfo;
+  final Camera2CameraInfo Function({
+    required CameraInfo cameraInfo,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) fromCamera2CameraInfo;
 
   /// Constructs [DisplayOrientedMeteringPointFactory].
   final DisplayOrientedMeteringPointFactory Function({
     required CameraInfo cameraInfo,
     required double width,
     required double height,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
   }) newDisplayOrientedMeteringPointFactory;
 
   /// Calls to [ProcessCameraProvider.getInstance].
-  final Future<ProcessCameraProvider> Function()
-      getInstanceProcessCameraProvider;
+  final Future<ProcessCameraProvider> Function({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) getInstanceProcessCameraProvider;
 
   /// Calls to [QualitySelector.getResolution].
   final Future<CameraSize?> Function(
     CameraInfo,
-    VideoQuality,
-  ) getResolutionQualitySelector;
+    VideoQuality, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) getResolutionQualitySelector;
 
   /// Calls to [CameraSelector.defaultBackCamera].
   final CameraSelector Function() defaultBackCameraCameraSelector;

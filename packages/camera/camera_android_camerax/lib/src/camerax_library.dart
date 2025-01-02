@@ -110,6 +110,8 @@ class LiveData<T> extends camerax.LiveData {
 class Observer<T> extends camerax.Observer {
   Observer({
     required void Function(Observer<T> instance, T value) onChanged,
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
   }) : super(
           onChanged: (
             camerax.Observer instance,
