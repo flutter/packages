@@ -16,6 +16,7 @@ import 'camerax_library.dart';
 class CameraXProxy {
   /// Constructs an [CameraXProxy].
   const CameraXProxy({
+    this.setUpGenericsProxy = setUpGenerics,
     this.newCameraSize = CameraSize.new,
     this.newCameraIntegerRange = CameraIntegerRange.new,
     this.newObserver = Observer.new,
@@ -66,6 +67,11 @@ class CameraXProxy {
     this.sensorOrientationCameraCharacteristics =
         _sensorOrientationCameraCharacteristics,
   });
+
+  final void Function({
+    BinaryMessenger? pigeonBinaryMessenger,
+    PigeonInstanceManager? pigeonInstanceManager,
+  }) setUpGenericsProxy;
 
   /// Constructs [CameraSize].
   final CameraSize Function({
