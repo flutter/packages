@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
-#import "./include/camera_avfoundation/Protocols/FLTCaptureDeviceControlling.h"
+#import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
 
 @implementation FLTCamMediaSettingsAVWrapper
 
