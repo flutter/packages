@@ -1,3 +1,7 @@
+## 0.9.17+8
+
+* Introduces new protocols `FLTEventChannel` and `FLTCameraDeviceDiscovering`
+
 ## 0.9.17+7
 
 * Introduces new protocols `FLTCaptureDeviceControlling` and `FLTDeviceOrientationProviding`
