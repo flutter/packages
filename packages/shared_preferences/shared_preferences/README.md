@@ -55,8 +55,11 @@ In most cases you should use the default option of DataStore Preferences, as it 
 However, in some cases you may need to interact with preferences that were written to SharedPreferences by code you don't control.
 
 To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncAndroidOptions` when using [SharedPreferencesAsync] on Android.
-
-<?code-excerpt "readme_excerpts.dart (Android_Options)"?>
+<?code-excerpt "readme_excerpts.dart (Android_Options1)"?>
+```dart
+import 'package:shared_preferences_android/shared_preferences_android.dart';
+```
+<?code-excerpt "readme_excerpts.dart (Android_Options2)"?>
 ```dart
 const SharedPreferencesAsyncAndroidOptions options =
     SharedPreferencesAsyncAndroidOptions(

@@ -34,10 +34,6 @@ android {
         jvmTarget = '11'
     }
 
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-    }
-
     defaultConfig {
         applicationId "io.flutter.plugins.sharedpreferencesexample"
         minSdkVersion flutter.minSdkVersion
