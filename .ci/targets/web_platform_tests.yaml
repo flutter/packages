@@ -6,9 +6,10 @@ tasks:
     script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps", "--web", "--supporting-target-platforms-only"]
     infra_step: true
-  # - name: build examples
-  #   script: .ci/scripts/tool_runner.sh
-  #   args: ["build-examples", "--wasm"]
+  # Is this needed?
+  - name: build examples
+    script: .ci/scripts/tool_runner.sh
+    args: ["build-examples", "--wasm"]
   - name: drive examples
     script: .ci/scripts/tool_runner.sh
     args: [
