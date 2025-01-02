@@ -9,8 +9,8 @@ import Foundation
 ///
 /// - Parameter quality: The quality level (0-100). A quality less than 100 indicates compression.
 /// - Returns: Whether the image should be compressed.
-func shouldCompressImage(quality: Int64?) -> Bool {
-  return quality != nil && quality != 100
+func shouldCompressImage(quality: Int64) -> Bool {
+  return quality != 100
 }
 
 extension NSImage {
@@ -54,13 +54,10 @@ extension NSImage {
   ///                     If `nil` or if compression is not needed, the original image is returned.
   /// - Returns: The original or compressed `NSImage`.
   func compressedOrOriginal(quality: Int64?) throws -> NSImage {
-    if !shouldCompressImage(quality: quality) {
+    guard let quality = quality else {
       return self
     }
-    assert(
-      quality != nil,
-      "The quality expected to be not nil due to check using \(shouldCompressImage).")
-    guard let quality = quality else {
+    if !shouldCompressImage(quality: quality) {
       return self
     }
     return try compressed(quality: quality)

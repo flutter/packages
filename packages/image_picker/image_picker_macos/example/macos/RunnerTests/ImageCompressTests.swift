@@ -20,8 +20,6 @@ final class ImageCompressTests: XCTestCase {
   func testShouldCompressImage() {
     XCTAssertFalse(shouldCompressImage(quality: 100), "Quality 100 should not compress the image.")
     XCTAssertTrue(shouldCompressImage(quality: 80), "Quality bellow 100 should compress the image.")
-    XCTAssertFalse(
-      shouldCompressImage(quality: nil), "Should not compress the image when the quality is nil.")
   }
 
   func testImageCompression() throws {
