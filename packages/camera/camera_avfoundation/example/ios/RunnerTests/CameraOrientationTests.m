@@ -9,6 +9,7 @@
 @import XCTest;
 @import Flutter;
 
+#import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDeviceController.h"
 #import "MockDeviceOrientationProvider.h"
 
@@ -51,7 +52,7 @@
 @end
 
 @interface MockUIDevice : UIDevice
-@property (nonatomic, assign) UIDeviceOrientation mockOrientation;
+@property(nonatomic, assign) UIDeviceOrientation mockOrientation;
 @end
 
 @implementation MockUIDevice
@@ -68,6 +69,7 @@
 @property(readonly, nonatomic) MockCaptureDeviceController *mockDevice;
 @property(readonly, nonatomic) StubGlobalEventApi *eventAPI;
 @property(readonly, nonatomic) CameraPlugin *cameraPlugin;
+@property(readonly, nonatomic) MockCameraDeviceDiscoverer *deviceDiscoverer;
 @end
 
 @implementation CameraOrientationTests
@@ -78,10 +80,12 @@
   _camera = [[MockCamera alloc] init];
   _eventAPI = [[StubGlobalEventApi alloc] init];
   _mockDevice = mockDevice;
-  
+  _deviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
+
   _cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
-                                              messenger:nil
-                                              globalAPI:_eventAPI];
+                                               messenger:nil
+                                               globalAPI:_eventAPI
+                                        deviceDiscoverer:_deviceDiscoverer];
   _cameraPlugin.camera = _camera;
 }
 
@@ -123,7 +127,8 @@
   StubGlobalEventApi *eventAPI = [[StubGlobalEventApi alloc] init];
   CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                             messenger:nil
-                                                            globalAPI:eventAPI];
+                                                            globalAPI:eventAPI
+                                                     deviceDiscoverer:_deviceDiscoverer];
 
   [self sendOrientation:UIDeviceOrientationFaceDown toCamera:cameraPlugin];
 
@@ -139,8 +144,8 @@
   dispatch_queue_set_specific(plugin.captureSessionQueue, captureSessionQueueSpecific,
                               (void *)captureSessionQueueSpecific, NULL);
   plugin.camera = _camera;
-  
-    _camera.setDeviceOrientationStub = ^(UIDeviceOrientation orientation) {
+
+  _camera.setDeviceOrientationStub = ^(UIDeviceOrientation orientation) {
     if (dispatch_get_specific(captureSessionQueueSpecific)) {
       [queueExpectation fulfill];
     }
@@ -159,7 +164,8 @@
   @autoreleasepool {
     CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                         messenger:nil
-                                                        globalAPI:_eventAPI];
+                                                        globalAPI:_eventAPI
+                                                 deviceDiscoverer:_deviceDiscoverer];
     weakPlugin = plugin;
     plugin.captureSessionQueue = captureSessionQueue;
     plugin.camera = _camera;
@@ -170,14 +176,14 @@
 
   // Sanity check
   XCTAssertNil(weakPlugin, @"Camera must have been deallocated.");
-  
+
   __block BOOL setDeviceOrientationCalled = NO;
   _camera.setDeviceOrientationStub = ^(UIDeviceOrientation orientation) {
     if (orientation == UIDeviceOrientationLandscapeLeft) {
       setDeviceOrientationCalled = YES;
     }
   };
-  
+
   __weak StubGlobalEventApi *weakEventAPI = _eventAPI;
 
   // Must check in captureSessionQueue since orientationChanged dispatches to this queue.

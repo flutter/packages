@@ -9,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTCaptureDeviceControlling <NSObject>
 
+- (NSString *)uniqueID;
+
 // Position/Orientation
 - (AVCaptureDevicePosition)position;
 

@@ -18,6 +18,10 @@
   return self;
 }
 
+- (nonnull NSString *)uniqueID {
+  return self.device.uniqueID;
+}
+
 // Position/Orientation
 - (AVCaptureDevicePosition)position {
   return self.device.position;

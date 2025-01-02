@@ -1215,7 +1215,8 @@ static void selectBestFormatForRequestedFrameRate(
     FlutterEventChannel *eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
              binaryMessenger:messenger];
-    id<FLTEventChannel> eventChannelProtocol = [[FLTDefaultEventChannel alloc] initWithEventChannel:eventChannel];
+    id<FLTEventChannel> eventChannelProtocol =
+        [[FLTDefaultEventChannel alloc] initWithEventChannel:eventChannel];
     FLTThreadSafeEventChannel *threadSafeEventChannel =
         [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannelProtocol];
 

@@ -7,9 +7,9 @@
 @implementation MockEventChannel
 
 - (void)setStreamHandler:(NSObject<FlutterStreamHandler> *)handler {
- if (self.setStreamHandlerStub) {
-   self.setStreamHandlerStub(handler);
- }
+  if (self.setStreamHandlerStub) {
+    self.setStreamHandlerStub(handler);
+  }
 }
 
 @end

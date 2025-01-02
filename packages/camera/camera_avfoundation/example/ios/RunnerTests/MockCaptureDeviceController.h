@@ -11,6 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface MockCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
+
+@property(nonatomic, assign) NSString *uniqueID;
+
 // Position/Orientation
 @property(nonatomic, assign) AVCaptureDevicePosition position;
 

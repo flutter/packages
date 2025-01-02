@@ -1,27 +1,27 @@
 // Copyright 2013 The Flutter Authors. All rights reserved.
- // Use of this source code is governed by a BSD-style license that can be
- // found in the LICENSE file.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
- @import Flutter;
+@import Flutter;
 
 #import "./include/camera_avfoundation/FLTEventChannel.h"
 
- @interface FLTDefaultEventChannel ()
- @property(nonatomic, strong) FlutterEventChannel *channel;
- @end
+@interface FLTDefaultEventChannel ()
+@property(nonatomic, strong) FlutterEventChannel *channel;
+@end
 
- @implementation FLTDefaultEventChannel
+@implementation FLTDefaultEventChannel
 
- - (instancetype)initWithEventChannel:(FlutterEventChannel *)channel {
-   self = [super init];
-   if (self) {
-     _channel = channel;
-   }
-   return self;
- }
+- (instancetype)initWithEventChannel:(FlutterEventChannel *)channel {
+  self = [super init];
+  if (self) {
+    _channel = channel;
+  }
+  return self;
+}
 
- - (void)setStreamHandler:(NSObject<FlutterStreamHandler> *)handler {
-   [self.channel setStreamHandler:handler];
- }
+- (void)setStreamHandler:(NSObject<FlutterStreamHandler> *)handler {
+  [self.channel setStreamHandler:handler];
+}
 
- @end
+@end
