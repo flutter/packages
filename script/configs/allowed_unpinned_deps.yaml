@@ -29,6 +29,8 @@
 - convert
 - crypto
 - dart_style
+- devtools_app_shared
+- devtools_extensions
 - fake_async
 - ffi
 - gcloud
