@@ -2,9 +2,11 @@
 
 This package is only intended for use by web **games**.
 
-Please apply to the beta using [this form]( https://adsense.google.com/start/h5-beta/?src=flutter). Once approved, you may use the package.
+Please apply to the H5 Games Ads beta using [this form][h5-beta-form]. Once
+approved, you may use the package.
 
-Without approval, your code may not behave as expected, and your AdSense account may face policy issues.
+**Without approval, your code may not behave as expected, and your AdSense
+account may face policy issues.**
 
 # google_adsense
 
@@ -13,8 +15,12 @@ Without approval, your code may not behave as expected, and your AdSense account
 This package provides a way to initialize and use AdSense on your Flutter Web app.
 It includes libraries for the following products:
 
-* [H5 Games Ads](https://adsense.google.com/start/h5-games-ads/) (beta)
-* (Experimental) [AdSense Ad Unit](https://support.google.com/adsense/answer/9183549) Widget
+* [H5 Games Ads](https://adsense.google.com/start/h5-games-ads/) (in beta, please
+  apply using [this form][h5-beta-form])
+* [AdSense Ad Unit](https://support.google.com/adsense/answer/9183549) Widget
+  (experimental and invitation-only, not accepting applications now)
+
+[h5-beta-form]: https://adsense.google.com/start/h5-beta/?src=flutter
 
 ## Documentation
 

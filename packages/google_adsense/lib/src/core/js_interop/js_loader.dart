@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe' show JSObjectUnsafeUtilExtension;
 import 'package:web/web.dart' as web;
 
 import '../../utils/logging.dart';
@@ -17,7 +18,14 @@ const String _URL =
 ///
 /// [target] can be used to specify a different injection target than
 /// `window.document.head`, and is normally used for tests.
-Future<void> loadJsSdk(String adClient, web.HTMLElement? target) async {
+///
+/// [dataAttributes] are used to configure the dataset `data-` attributes of the
+/// created script element.
+Future<void> loadJsSdk(
+  String adClient, {
+  web.HTMLElement? target,
+  Map<String, String>? dataAttributes,
+}) async {
   if (_sdkAlreadyLoaded(adClient, target)) {
     debugLog('adsbygoogle.js already injected. Skipping call to loadJsSdk.');
     return;
@@ -46,7 +54,19 @@ Future<void> loadJsSdk(String adClient, web.HTMLElement? target) async {
     script.src = scriptUrl;
   }
 
+  _applyDataAttributes(script, dataAttributes);
+
   (target ?? web.document.head)!.appendChild(script);
+}
+
+// Applies a map of [attributes] to the `dataset` of [element].
+void _applyDataAttributes(
+  web.HTMLElement element,
+  Map<String, String>? attributes,
+) {
+  attributes?.forEach((String key, String value) {
+    element.dataset.setProperty(key.toJS, value.toJS);
+  });
 }
 
 // Whether the script for [adClient] is already injected.
