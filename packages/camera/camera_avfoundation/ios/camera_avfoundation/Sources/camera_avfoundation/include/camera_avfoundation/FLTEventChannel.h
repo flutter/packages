@@ -11,7 +11,7 @@
  @end
 
  /// The default method channel that wraps FlutterMethodChannel
- @interface FLTDefaultEventChannel : NSObject <FLTEventChannelProtocol>
+@interface FLTDefaultEventChannel : NSObject <FLTEventChannel>
  - (instancetype)initWithEventChannel:(FlutterEventChannel *)channel;
  @end
 

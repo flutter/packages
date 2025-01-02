@@ -2,16 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "./include/camera_avfoundation/FLTEventChannel.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
 
 @interface FLTThreadSafeEventChannel ()
-@property(nonatomic, strong) FlutterEventChannel *channel;
+@property(nonatomic, strong) id<FLTEventChannel> channel;
 @end
 
 @implementation FLTThreadSafeEventChannel
 
-- (instancetype)initWithEventChannel:(FlutterEventChannel *)channel {
+- (instancetype)initWithEventChannel:(id<FLTEventChannel>)channel {
   self = [super init];
   if (self) {
     _channel = channel;

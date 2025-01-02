@@ -11,6 +11,7 @@
 
 #import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
 #import "./include/camera_avfoundation/FLTDeviceOrientationProviding.h"
+#import "./include/camera_avfoundation/FLTEventChannel.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
@@ -1214,8 +1215,9 @@ static void selectBestFormatForRequestedFrameRate(
     FlutterEventChannel *eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
              binaryMessenger:messenger];
+    id<FLTEventChannel> eventChannelProtocol = [[FLTDefaultEventChannel alloc] initWithEventChannel:eventChannel];
     FLTThreadSafeEventChannel *threadSafeEventChannel =
-        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannel];
+        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannelProtocol];
 
     _imageStreamHandler = imageStreamHandler;
     __weak typeof(self) weakSelf = self;
