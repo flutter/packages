@@ -336,10 +336,6 @@ func imageFileType(quality: Int64?) -> NSBitmapImageRep.FileType {
 /// - Parameter fileType: The image file type.
 /// - Returns: The image file extension.
 func imageFileExt(fileType: NSBitmapImageRep.FileType) -> String {
-  assert(
-    [NSBitmapImageRep.FileType.png, NSBitmapImageRep.FileType.jpeg].contains(fileType),
-    "Expected the image file type to be either PNG or JPEG."
-  )
   switch fileType {
   case .jpeg: return "jpeg"
   case .png: return "png"
