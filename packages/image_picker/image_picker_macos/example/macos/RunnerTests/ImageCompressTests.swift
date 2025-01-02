@@ -8,15 +8,6 @@ import XCTest
 
 final class ImageCompressTests: XCTestCase {
 
-  private func createTestImage(size: NSSize) -> NSImage {
-    let image = NSImage(size: size)
-    image.lockFocus()
-    NSColor.white.set()
-    NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
-    image.unlockFocus()
-    return image
-  }
-
   func testShouldCompressImage() {
     XCTAssertFalse(shouldCompressImage(quality: 100), "Quality 100 should not compress the image.")
     XCTAssertTrue(shouldCompressImage(quality: 80), "Quality bellow 100 should compress the image.")
