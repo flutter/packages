@@ -53,7 +53,6 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
   ///
   /// The [PHPicker](https://developer.apple.com/documentation/photokit/phpickerviewcontroller)
   /// is **supported on macOS 13.0+**
-  @visibleForTesting
   Future<bool> supportsPHPicker() => _hostApi.supportsPHPicker();
 
   /// Returns `true` if [ImagePickerMacOS] should use [PHPicker](https://developer.apple.com/documentation/photokit/phpickerviewcontroller).
