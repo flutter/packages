@@ -64,7 +64,7 @@ class BillingClient {
   })  : _hostApi = api ?? InAppPurchaseApi(),
         hostCallbackHandler = HostBillingClientCallbackHandler(
             onPurchasesUpdated, alternativeBillingListener) {
-    InAppPurchaseCallbackApi.setup(hostCallbackHandler);
+    InAppPurchaseCallbackApi.setUp(hostCallbackHandler);
   }
 
   /// Interface for calling host-side code.
@@ -190,7 +190,8 @@ class BillingClient {
       String? obfuscatedProfileId,
       String? oldProduct,
       String? purchaseToken,
-      ProrationMode? prorationMode}) async {
+      ProrationMode? prorationMode,
+      ReplacementMode? replacementMode}) async {
     assert((oldProduct == null) == (purchaseToken == null),
         'oldProduct and purchaseToken must both be set, or both be null.');
     return resultWrapperFromPlatform(
@@ -198,6 +199,8 @@ class BillingClient {
       product: product,
       prorationMode: const ProrationModeConverter().toJson(prorationMode ??
           ProrationMode.unknownSubscriptionUpgradeDowngradePolicy),
+      replacementMode: const ReplacementModeConverter()
+          .toJson(replacementMode ?? ReplacementMode.unknownReplacementMode),
       offerToken: offerToken,
       accountId: accountId,
       obfuscatedProfileId: obfuscatedProfileId,
@@ -620,6 +623,76 @@ class ProrationModeConverter implements JsonConverter<ProrationMode, int?> {
 
   @override
   int toJson(ProrationMode object) => _$ProrationModeEnumMap[object]!;
+}
+
+/// Enum representing the replacement mode.
+///
+/// When upgrading or downgrading a subscription, set this mode to provide details
+/// about the replacement that will be applied when the subscription changes.
+///
+/// Wraps [`BillingFlowParams.SubscriptionUpdateParams.ReplacementMode`](https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.SubscriptionUpdateParams.ReplacementMode)
+/// See the linked documentation for an explanation of the different constants.
+@JsonEnum(alwaysCreate: true)
+enum ReplacementMode {
+// WARNING: Changes to this class need to be reflected in our generated code.
+// Run `flutter packages pub run build_runner watch` to rebuild and watch for
+// further changes.
+
+  /// Unknown upgrade or downgrade policy.
+  @JsonValue(0)
+  unknownReplacementMode,
+
+  /// Replacement takes effect immediately, and the remaining time will be prorated
+  /// and credited to the user.
+  ///
+  /// This is the current default behavior.
+  @JsonValue(1)
+  withTimeProration,
+
+  /// Replacement takes effect immediately, and the billing cycle remains the same.
+  ///
+  /// The price for the remaining period will be charged.
+  /// This option is only available for subscription upgrade.
+  @JsonValue(2)
+  chargeProratedPrice,
+
+  /// Replacement takes effect immediately, and the new price will be charged on next
+  /// recurrence time.
+  ///
+  /// The billing cycle stays the same.
+  @JsonValue(3)
+  withoutProration,
+
+  /// Replacement takes effect when the old plan expires, and the new price will
+  /// be charged at the same time.
+  @JsonValue(6)
+  deferred,
+
+  /// Replacement takes effect immediately, and the user is charged full price
+  /// of new plan and is given a full billing cycle of subscription, plus
+  /// remaining prorated time from the old plan.
+  @JsonValue(5)
+  chargeFullPrice,
+}
+
+/// Serializer for [ReplacementMode].
+///
+/// Use these in `@JsonSerializable()` classes by annotating them with
+/// `@ReplacementModeConverter()`.
+class ReplacementModeConverter implements JsonConverter<ReplacementMode, int?> {
+  /// Default const constructor.
+  const ReplacementModeConverter();
+
+  @override
+  ReplacementMode fromJson(int? json) {
+    if (json == null) {
+      return ReplacementMode.unknownReplacementMode;
+    }
+    return $enumDecode(_$ReplacementModeEnumMap, json);
+  }
+
+  @override
+  int toJson(ReplacementMode object) => _$ReplacementModeEnumMap[object]!;
 }
 
 /// Features/capabilities supported by [BillingClient.isFeatureSupported()](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.FeatureType).

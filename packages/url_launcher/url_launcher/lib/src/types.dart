@@ -55,3 +55,15 @@ class WebViewConfiguration {
   /// Not all browsers support this, so it is not guaranteed to be honored.
   final Map<String, String> headers;
 }
+
+/// Additional configuration options for [LaunchMode.inAppBrowserView]
+@immutable
+class BrowserConfiguration {
+  /// Creates a new InAppBrowserConfiguration with given settings.
+  const BrowserConfiguration({this.showTitle = false});
+
+  /// Whether or not to show the webpage title.
+  ///
+  /// May not be supported on all platforms.
+  final bool showTitle;
+}

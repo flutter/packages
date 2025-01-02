@@ -42,7 +42,7 @@ void main() {
       webKitDelegate.setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFinishNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         'https://www.google.com',
       );
 
@@ -64,7 +64,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didStartProvisionalNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         'https://www.google.com',
       );
 
@@ -90,7 +90,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const WKNavigationResponse(
             response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
       );
@@ -117,7 +117,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.decidePolicyForNavigationResponse!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const WKNavigationResponse(
             response: NSHttpUrlResponse(statusCode: 399), forMainFrame: true),
       );
@@ -143,7 +143,7 @@ void main() {
       webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
@@ -182,7 +182,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didFailProvisionalNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
@@ -221,7 +221,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.webViewWebContentProcessDidTerminate!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
       );
 
       expect(callbackError.description, '');
@@ -256,7 +256,7 @@ void main() {
       expect(
         CapturingNavigationDelegate
             .lastCreatedDelegate.decidePolicyForNavigationAction!(
-          WKWebView.detached(),
+          WKWebViewIOS.detached(),
           const WKNavigationAction(
             request: NSUrlRequest(url: 'https://www.google.com'),
             targetFrame: WKFrameInfo(
@@ -295,12 +295,50 @@ void main() {
 
       CapturingNavigationDelegate
               .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
-          WKWebView.detached(),
+          WKWebViewIOS.detached(),
           NSUrlAuthenticationChallenge.detached(
             protectionSpace: NSUrlProtectionSpace.detached(
               host: expectedHost,
               realm: expectedRealm,
               authenticationMethod: NSUrlAuthenticationMethod.httpBasic,
+            ),
+          ),
+          (NSUrlSessionAuthChallengeDisposition disposition,
+              NSUrlCredential? credential) {});
+
+      expect(callbackHost, expectedHost);
+      expect(callbackRealm, expectedRealm);
+    });
+
+    test('onHttpNtlmAuthRequest emits host and realm', () {
+      final WebKitNavigationDelegate iosNavigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
+
+      String? callbackHost;
+      String? callbackRealm;
+
+      iosNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
+        callbackHost = request.host;
+        callbackRealm = request.realm;
+      });
+
+      const String expectedHost = 'expectedHost';
+      const String expectedRealm = 'expectedRealm';
+
+      CapturingNavigationDelegate
+              .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
+          WKWebViewIOS.detached(),
+          NSUrlAuthenticationChallenge.detached(
+            protectionSpace: NSUrlProtectionSpace.detached(
+              host: expectedHost,
+              realm: expectedRealm,
+              authenticationMethod: NSUrlAuthenticationMethod.httpNtlm,
             ),
           ),
           (NSUrlSessionAuthChallengeDisposition disposition,

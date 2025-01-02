@@ -285,6 +285,50 @@ void defineTests() {
     );
 
     testWidgets(
+      'Selectable without onSelectionChanged',
+      (WidgetTester tester) async {
+        const String data = '# abc def ghi\njkl opq';
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Material(
+              child: MarkdownBody(
+                data: data,
+                selectable: true,
+              ),
+            ),
+          ),
+        );
+
+        // Find the positions before character 'd' and 'f'.
+        final Offset dPos = positionInRenderedText(tester, 'abc def ghi', 4);
+        final Offset fPos = positionInRenderedText(tester, 'abc def ghi', 6);
+        // Select from 'd' until 'f'.
+        final TestGesture firstGesture =
+            await tester.startGesture(dPos, kind: PointerDeviceKind.mouse);
+        addTearDown(firstGesture.removePointer);
+        await tester.pump();
+        await firstGesture.moveTo(fPos);
+        await firstGesture.up();
+        await tester.pump();
+
+        // Find the positions before character 'j' and 'o'.
+        final Offset jPos = positionInRenderedText(tester, 'jkl opq', 0);
+        final Offset oPos = positionInRenderedText(tester, 'jkl opq', 4);
+        // Select from 'j' until 'o'.
+        final TestGesture secondGesture =
+            await tester.startGesture(jPos, kind: PointerDeviceKind.mouse);
+        addTearDown(secondGesture.removePointer);
+        await tester.pump();
+        await secondGesture.moveTo(oPos);
+        await secondGesture.up();
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
       'header with line of text and onSelectionChanged callback',
       (WidgetTester tester) async {
         const String data = '# abc def ghi\njkl opq';

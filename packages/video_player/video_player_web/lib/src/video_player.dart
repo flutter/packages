@@ -8,7 +8,6 @@ import 'dart:js_interop';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
-import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 
 import 'duration_utils.dart';
@@ -179,8 +178,13 @@ class VideoPlayer {
 
     // TODO(ditman): Do we need to expose a "muted" API?
     // https://github.com/flutter/flutter/issues/60721
-    _videoElement.muted = !(volume > 0.0);
-    _videoElement.volume = volume;
+
+    // If the volume is set to 0.0, only change muted attribute, but don't adjust the volume.
+    _videoElement.muted = volume == 0.0;
+    // Set the volume only if it's greater than 0.0.
+    if (volume > 0.0) {
+      _videoElement.volume = volume;
+    }
   }
 
   /// Sets the playback `speed`.
@@ -240,11 +244,11 @@ class VideoPlayer {
       _videoElement.controls = true;
       final String controlsList = options.controls.controlsList;
       if (controlsList.isNotEmpty) {
-        _videoElement.controlsList = controlsList.toJS;
+        _videoElement.controlsList = controlsList;
       }
 
       if (!options.controls.allowPictureInPicture) {
-        _videoElement.disablePictureInPicture = true.toJS;
+        _videoElement.disablePictureInPicture = true;
       }
     }
 
@@ -254,7 +258,7 @@ class VideoPlayer {
     }
 
     if (!options.allowRemotePlayback) {
-      _videoElement.disableRemotePlayback = true.toJS;
+      _videoElement.disableRemotePlayback = true;
     }
   }
 

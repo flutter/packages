@@ -1,3 +1,21 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.5.3+1
+
+* Updates Pigeon for non-nullable collection type support.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 0.5.3
+
+* Converts implementation to Swift.
+* Re-adds Swift Package Manager compatibility.
+
+## 0.5.2+1
+
+* Temporarily remove Swift Package Manager compatibility to resolve issues with Cocoapods builds.
+
 ## 0.5.2
 
 * Adds Swift Package Manager compatibility.

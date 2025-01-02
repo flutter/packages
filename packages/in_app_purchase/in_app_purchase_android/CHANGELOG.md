@@ -1,3 +1,66 @@
+## 0.3.6+12
+
+* Updates README to remove contributor-focused documentation.
+
+## 0.3.6+11
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.
+
+## 0.3.6+10
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 0.3.6+9
+
+* Updates Java compatibility version to 11.
+
+## 0.3.6+8
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.3.6+7
+
+* Sets `android.buildFeatures.buildConfig` to true for compatibility with AGP 8.0+.
+
+## 0.3.6+6
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
+## 0.3.6+5
+
+* Bumps com.android.billingclient:billing from 6.1.0 to 6.2.0.
+
+## 0.3.6+4
+
+* Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
+
+## 0.3.6+3
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.3.6+2
+
+* Updates Android Gradle Plugin to 8.5.1.
+
+## 0.3.6+1
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 0.3.6
+
+* Introduces new `ReplacementMode` for Android's billing client as `ProrationMode` is being deprecated.
+
+## 0.3.5+2
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.3.5+1
+
+* Updates example to use `countryCode` instead of deprecated `getCountryCode`.
+
 ## 0.3.5
 
 * Replaces `getCountryCode` with `countryCode`.

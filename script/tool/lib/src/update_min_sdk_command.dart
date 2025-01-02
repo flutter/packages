@@ -45,7 +45,7 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
     _flutterMinVersion = Version.parse(getStringArg(_flutterMinFlag));
     final Version? dartMinVersion = getDartSdkForFlutterSdk(_flutterMinVersion);
     if (dartMinVersion == null) {
-      printError('Dart SDK version for Fluter SDK version '
+      printError('Dart SDK version for Flutter SDK version '
           '$_flutterMinVersion is unknown. '
           'Please update the map for getDartSdkForFlutterSdk with the '
           'corresponding Dart version.');
@@ -87,7 +87,7 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
   /// Returns the given "environment" section's [key] constraint as a range,
   /// if the key is present and has a range.
   VersionRange? _sdkRange(Pubspec pubspec, String key) {
-    final VersionConstraint? constraint = pubspec.environment?[key];
+    final VersionConstraint? constraint = pubspec.environment[key];
     if (constraint is VersionRange) {
       return constraint;
     }

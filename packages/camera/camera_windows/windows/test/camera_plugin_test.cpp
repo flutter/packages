@@ -37,11 +37,11 @@ void MockInitCamera(MockCamera* camera, bool success) {
       .WillOnce(Return(false));
 
   EXPECT_CALL(*camera,
-              AddPendingResult(Eq(PendingResultType::kCreateCamera), _))
+              AddPendingIntResult(Eq(PendingResultType::kCreateCamera), _))
       .Times(1)
       .WillOnce([camera](PendingResultType type,
-                         std::unique_ptr<MethodResult<>> result) {
-        camera->pending_result_ = std::move(result);
+                         std::function<void(ErrorOr<int64_t> reply)> result) {
+        camera->pending_int_result_ = result;
         return true;
       });
 
@@ -52,14 +52,14 @@ void MockInitCamera(MockCamera* camera, bool success) {
       .Times(1)
       .WillOnce([camera, success](flutter::TextureRegistrar* texture_registrar,
                                   flutter::BinaryMessenger* messenger,
-                                  ResolutionPreset resolution_preset,
-                                  const RecordSettings& record_settings) {
-        assert(camera->pending_result_);
+                                  const PlatformMediaSettings& media_settings) {
+        assert(camera->pending_int_result_);
         if (success) {
-          camera->pending_result_->Success(EncodableValue(1));
+          camera->pending_int_result_(1);
           return true;
         } else {
-          camera->pending_result_->Error("camera_error", "InitCamera failed.");
+          camera->pending_int_result_(
+              FlutterError("camera_error", "InitCamera failed."));
           return false;
         }
       });
@@ -72,8 +72,6 @@ TEST(CameraPlugin, AvailableCamerasHandlerSuccessIfNoCameras) {
       std::make_unique<MockBinaryMessenger>();
   std::unique_ptr<MockCameraFactory> camera_factory_ =
       std::make_unique<MockCameraFactory>();
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   MockCameraPlugin plugin(texture_registrar_.get(), messenger_.get(),
                           std::move(camera_factory_));
@@ -87,13 +85,10 @@ TEST(CameraPlugin, AvailableCamerasHandlerSuccessIfNoCameras) {
         return true;
       });
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(*result, SuccessInternal).Times(1);
+  ErrorOr<flutter::EncodableList> result = plugin.GetAvailableCameras();
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("availableCameras",
-                          std::make_unique<EncodableValue>()),
-      std::move(result));
+  EXPECT_FALSE(result.has_error());
+  EXPECT_EQ(result.value().size(), 0);
 }
 
 TEST(CameraPlugin, AvailableCamerasHandlerErrorIfFailsToEnumerateDevices) {
@@ -103,8 +98,6 @@ TEST(CameraPlugin, AvailableCamerasHandlerErrorIfFailsToEnumerateDevices) {
       std::make_unique<MockBinaryMessenger>();
   std::unique_ptr<MockCameraFactory> camera_factory_ =
       std::make_unique<MockCameraFactory>();
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   MockCameraPlugin plugin(texture_registrar_.get(), messenger_.get(),
                           std::move(camera_factory_));
@@ -113,18 +106,12 @@ TEST(CameraPlugin, AvailableCamerasHandlerErrorIfFailsToEnumerateDevices) {
       .Times(1)
       .WillOnce([](IMFActivate*** devices, UINT32* count) { return false; });
 
-  EXPECT_CALL(*result, ErrorInternal).Times(1);
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
+  ErrorOr<flutter::EncodableList> result = plugin.GetAvailableCameras();
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("availableCameras",
-                          std::make_unique<EncodableValue>()),
-      std::move(result));
+  EXPECT_TRUE(result.has_error());
 }
 
 TEST(CameraPlugin, CreateHandlerCallsInitCamera) {
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
   std::unique_ptr<MockTextureRegistrar> texture_registrar_ =
       std::make_unique<MockTextureRegistrar>();
   std::unique_ptr<MockBinaryMessenger> messenger_ =
@@ -142,26 +129,26 @@ TEST(CameraPlugin, CreateHandlerCallsInitCamera) {
 
   EXPECT_CALL(*camera_factory_, CreateCamera(MOCK_DEVICE_ID));
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(*result, SuccessInternal(Pointee(EncodableValue(1))));
-
   CameraPlugin plugin(texture_registrar_.get(), messenger_.get(),
                       std::move(camera_factory_));
-  EncodableMap args = {
-      {EncodableValue("cameraName"), EncodableValue(MOCK_CAMERA_NAME)},
-      {EncodableValue("resolutionPreset"), EncodableValue(nullptr)},
-      {EncodableValue("enableAudio"), EncodableValue(true)},
-  };
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("create",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(result));
+  bool result_called = false;
+  std::function<void(ErrorOr<int64_t>)> create_result =
+      [&result_called](ErrorOr<int64_t> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), 1);
+      };
+
+  plugin.Create(MOCK_CAMERA_NAME,
+                PlatformMediaSettings(PlatformResolutionPreset::kMax, true),
+                std::move(create_result));
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, CreateHandlerErrorOnInvalidDeviceId) {
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
   std::unique_ptr<MockTextureRegistrar> texture_registrar_ =
       std::make_unique<MockTextureRegistrar>();
   std::unique_ptr<MockBinaryMessenger> messenger_ =
@@ -171,25 +158,23 @@ TEST(CameraPlugin, CreateHandlerErrorOnInvalidDeviceId) {
 
   CameraPlugin plugin(texture_registrar_.get(), messenger_.get(),
                       std::move(camera_factory_));
-  EncodableMap args = {
-      {EncodableValue("cameraName"), EncodableValue(MOCK_INVALID_CAMERA_NAME)},
-      {EncodableValue("resolutionPreset"), EncodableValue(nullptr)},
-      {EncodableValue("enableAudio"), EncodableValue(true)},
-  };
 
-  EXPECT_CALL(*result, ErrorInternal).Times(1);
+  bool result_called = false;
+  std::function<void(ErrorOr<int64_t>)> create_result =
+      [&result_called](ErrorOr<int64_t> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("create",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(result));
+  plugin.Create(MOCK_INVALID_CAMERA_NAME,
+                PlatformMediaSettings(PlatformResolutionPreset::kMax, true),
+                std::move(create_result));
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, CreateHandlerErrorOnExistingDeviceId) {
-  std::unique_ptr<MockMethodResult> first_create_result =
-      std::make_unique<MockMethodResult>();
-  std::unique_ptr<MockMethodResult> second_create_result =
-      std::make_unique<MockMethodResult>();
   std::unique_ptr<MockTextureRegistrar> texture_registrar_ =
       std::make_unique<MockTextureRegistrar>();
   std::unique_ptr<MockBinaryMessenger> messenger_ =
@@ -207,37 +192,39 @@ TEST(CameraPlugin, CreateHandlerErrorOnExistingDeviceId) {
 
   EXPECT_CALL(*camera_factory_, CreateCamera(MOCK_DEVICE_ID));
 
-  EXPECT_CALL(*first_create_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*first_create_result,
-              SuccessInternal(Pointee(EncodableValue(1))));
-
   CameraPlugin plugin(texture_registrar_.get(), messenger_.get(),
                       std::move(camera_factory_));
-  EncodableMap args = {
-      {EncodableValue("cameraName"), EncodableValue(MOCK_CAMERA_NAME)},
-      {EncodableValue("resolutionPreset"), EncodableValue(nullptr)},
-      {EncodableValue("enableAudio"), EncodableValue(true)},
-  };
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("create",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(first_create_result));
+  bool first_result_called = false;
+  std::function<void(ErrorOr<int64_t>)> first_create_result =
+      [&first_result_called](ErrorOr<int64_t> reply) {
+        EXPECT_FALSE(first_result_called);  // Ensure only one reply call.
+        first_result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), 1);
+      };
 
-  EXPECT_CALL(*second_create_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*second_create_result, SuccessInternal).Times(0);
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, true);
+  plugin.Create(MOCK_CAMERA_NAME, media_settings,
+                std::move(first_create_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("create",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(second_create_result));
+  EXPECT_TRUE(first_result_called);
+
+  bool second_result_called = false;
+  std::function<void(ErrorOr<int64_t>)> second_create_result =
+      [&second_result_called](ErrorOr<int64_t> reply) {
+        EXPECT_FALSE(second_result_called);  // Ensure only one reply call.
+        second_result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
+
+  plugin.Create(MOCK_CAMERA_NAME, media_settings,
+                std::move(second_create_result));
+
+  EXPECT_TRUE(second_result_called);
 }
 
 TEST(CameraPlugin, CreateHandlerAllowsRetry) {
-  std::unique_ptr<MockMethodResult> first_create_result =
-      std::make_unique<MockMethodResult>();
-  std::unique_ptr<MockMethodResult> second_create_result =
-      std::make_unique<MockMethodResult>();
   std::unique_ptr<MockTextureRegistrar> texture_registrar_ =
       std::make_unique<MockTextureRegistrar>();
   std::unique_ptr<MockBinaryMessenger> messenger_ =
@@ -265,37 +252,40 @@ TEST(CameraPlugin, CreateHandlerAllowsRetry) {
         return second_camera;
       });
 
-  EXPECT_CALL(*first_create_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*first_create_result, SuccessInternal).Times(0);
-
   CameraPlugin plugin(texture_registrar_.get(), messenger_.get(),
                       std::move(camera_factory_));
-  EncodableMap args = {
-      {EncodableValue("cameraName"), EncodableValue(MOCK_CAMERA_NAME)},
-      {EncodableValue("resolutionPreset"), EncodableValue(nullptr)},
-      {EncodableValue("enableAudio"), EncodableValue(true)},
-  };
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("create",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(first_create_result));
+  bool first_result_called = false;
+  std::function<void(ErrorOr<int64_t>)> first_create_result =
+      [&first_result_called](ErrorOr<int64_t> reply) {
+        EXPECT_FALSE(first_result_called);  // Ensure only one reply call.
+        first_result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
 
-  EXPECT_CALL(*second_create_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*second_create_result,
-              SuccessInternal(Pointee(EncodableValue(1))));
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, true);
+  plugin.Create(MOCK_CAMERA_NAME, media_settings,
+                std::move(first_create_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("create",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(second_create_result));
+  EXPECT_TRUE(first_result_called);
+
+  bool second_result_called = false;
+  std::function<void(ErrorOr<int64_t>)> second_create_result =
+      [&second_result_called](ErrorOr<int64_t> reply) {
+        EXPECT_FALSE(second_result_called);  // Ensure only one reply call.
+        second_result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), 1);
+      };
+
+  plugin.Create(MOCK_CAMERA_NAME, media_settings,
+                std::move(second_create_result));
+
+  EXPECT_TRUE(second_result_called);
 }
 
 TEST(CameraPlugin, InitializeHandlerCallStartPreview) {
   int64_t mock_camera_id = 1234;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -314,26 +304,28 @@ TEST(CameraPlugin, InitializeHandlerCallStartPreview) {
       .Times(1)
       .WillOnce(Return(false));
 
-  EXPECT_CALL(*camera, AddPendingResult(Eq(PendingResultType::kInitialize), _))
+  EXPECT_CALL(*camera,
+              AddPendingSizeResult(Eq(PendingResultType::kInitialize), _))
       .Times(1)
-      .WillOnce([cam = camera.get()](PendingResultType type,
-                                     std::unique_ptr<MethodResult<>> result) {
-        cam->pending_result_ = std::move(result);
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(ErrorOr<PlatformSize>)> result) {
+        cam->pending_size_result_ = std::move(result);
         return true;
       });
 
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
+        assert(cam->pending_size_result_);
         return cam->capture_controller_.get();
       });
 
   EXPECT_CALL(*capture_controller, StartPreview())
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
-        return cam->pending_result_->Success();
+        assert(cam->pending_size_result_);
+        return cam->pending_size_result_(PlatformSize(800, 600));
       });
 
   camera->camera_id_ = mock_camera_id;
@@ -346,25 +338,22 @@ TEST(CameraPlugin, InitializeHandlerCallStartPreview) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
+  bool result_called = false;
+  std::function<void(ErrorOr<PlatformSize>)> initialize_result =
+      [&result_called](ErrorOr<PlatformSize> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
-  };
+  plugin.Initialize(mock_camera_id, std::move(initialize_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("initialize",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, InitializeHandlerErrorOnInvalidCameraId) {
   int64_t mock_camera_id = 1234;
   int64_t missing_camera_id = 5678;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -379,7 +368,7 @@ TEST(CameraPlugin, InitializeHandlerErrorOnInvalidCameraId) {
       });
 
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
-  EXPECT_CALL(*camera, AddPendingResult).Times(0);
+  EXPECT_CALL(*camera, AddPendingSizeResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
   EXPECT_CALL(*capture_controller, StartPreview).Times(0);
 
@@ -392,24 +381,21 @@ TEST(CameraPlugin, InitializeHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(0);
+  bool result_called = false;
+  std::function<void(ErrorOr<PlatformSize>)> initialize_result =
+      [&result_called](ErrorOr<PlatformSize> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(missing_camera_id)},
-  };
+  plugin.Initialize(missing_camera_id, std::move(initialize_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("initialize",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
   int64_t mock_camera_id = 1234;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -428,26 +414,28 @@ TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
       .Times(1)
       .WillOnce(Return(false));
 
-  EXPECT_CALL(*camera, AddPendingResult(Eq(PendingResultType::kTakePicture), _))
+  EXPECT_CALL(*camera,
+              AddPendingStringResult(Eq(PendingResultType::kTakePicture), _))
       .Times(1)
-      .WillOnce([cam = camera.get()](PendingResultType type,
-                                     std::unique_ptr<MethodResult<>> result) {
-        cam->pending_result_ = std::move(result);
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(ErrorOr<std::string>)> result) {
+        cam->pending_string_result_ = std::move(result);
         return true;
       });
 
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
+        assert(cam->pending_string_result_);
         return cam->capture_controller_.get();
       });
 
   EXPECT_CALL(*capture_controller, TakePicture(EndsWith(".jpeg")))
       .Times(1)
       .WillOnce([cam = camera.get()](const std::string& file_path) {
-        assert(cam->pending_result_);
-        return cam->pending_result_->Success();
+        assert(cam->pending_string_result_);
+        return cam->pending_string_result_(file_path);
       });
 
   camera->camera_id_ = mock_camera_id;
@@ -460,25 +448,22 @@ TEST(CameraPlugin, TakePictureHandlerCallsTakePictureWithPath) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
+  bool result_called = false;
+  std::function<void(ErrorOr<std::string>)> take_picture_result =
+      [&result_called](ErrorOr<std::string> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
-  };
+  plugin.TakePicture(mock_camera_id, std::move(take_picture_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("takePicture",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, TakePictureHandlerErrorOnInvalidCameraId) {
   int64_t mock_camera_id = 1234;
   int64_t missing_camera_id = 5678;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -493,7 +478,7 @@ TEST(CameraPlugin, TakePictureHandlerErrorOnInvalidCameraId) {
       });
 
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
-  EXPECT_CALL(*camera, AddPendingResult).Times(0);
+  EXPECT_CALL(*camera, AddPendingStringResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
   EXPECT_CALL(*capture_controller, TakePicture).Times(0);
 
@@ -506,25 +491,22 @@ TEST(CameraPlugin, TakePictureHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(0);
+  bool result_called = false;
+  std::function<void(ErrorOr<std::string>)> take_picture_result =
+      [&result_called](ErrorOr<std::string> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(missing_camera_id)},
-  };
+  plugin.TakePicture(missing_camera_id, std::move(take_picture_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("takePicture",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
   int64_t mock_camera_id = 1234;
 
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
-
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
 
@@ -542,99 +524,28 @@ TEST(CameraPlugin, StartVideoRecordingHandlerCallsStartRecordWithPath) {
       .Times(1)
       .WillOnce(Return(false));
 
-  EXPECT_CALL(*camera, AddPendingResult(Eq(PendingResultType::kStartRecord), _))
-      .Times(1)
-      .WillOnce([cam = camera.get()](PendingResultType type,
-                                     std::unique_ptr<MethodResult<>> result) {
-        cam->pending_result_ = std::move(result);
-        return true;
-      });
-
-  EXPECT_CALL(*camera, GetCaptureController)
-      .Times(1)
-      .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
-        return cam->capture_controller_.get();
-      });
-
-  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4"), -1))
-      .Times(1)
-      .WillOnce([cam = camera.get()](const std::string& file_path,
-                                     int64_t max_video_duration_ms) {
-        assert(cam->pending_result_);
-        return cam->pending_result_->Success();
-      });
-
-  camera->camera_id_ = mock_camera_id;
-  camera->capture_controller_ = std::move(capture_controller);
-
-  MockCameraPlugin plugin(std::make_unique<MockTextureRegistrar>().get(),
-                          std::make_unique<MockBinaryMessenger>().get(),
-                          std::make_unique<MockCameraFactory>());
-
-  // Add mocked camera to plugins camera list.
-  plugin.AddCamera(std::move(camera));
-
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
-
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
-  };
-
-  plugin.HandleMethodCall(
-      flutter::MethodCall("startVideoRecording",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
-}
-
-TEST(CameraPlugin,
-     StartVideoRecordingHandlerCallsStartRecordWithPathAndCaptureDuration) {
-  int64_t mock_camera_id = 1234;
-  int32_t mock_video_duration = 100000;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
-
-  std::unique_ptr<MockCamera> camera =
-      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
-
-  std::unique_ptr<MockCaptureController> capture_controller =
-      std::make_unique<MockCaptureController>();
-
-  EXPECT_CALL(*camera, HasCameraId(Eq(mock_camera_id)))
-      .Times(1)
-      .WillOnce([cam = camera.get()](int64_t camera_id) {
-        return cam->camera_id_ == camera_id;
-      });
-
   EXPECT_CALL(*camera,
-              HasPendingResultByType(Eq(PendingResultType::kStartRecord)))
+              AddPendingVoidResult(Eq(PendingResultType::kStartRecord), _))
       .Times(1)
-      .WillOnce(Return(false));
-
-  EXPECT_CALL(*camera, AddPendingResult(Eq(PendingResultType::kStartRecord), _))
-      .Times(1)
-      .WillOnce([cam = camera.get()](PendingResultType type,
-                                     std::unique_ptr<MethodResult<>> result) {
-        cam->pending_result_ = std::move(result);
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(std::optional<FlutterError>)> result) {
+        cam->pending_void_result_ = std::move(result);
         return true;
       });
 
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
+        assert(cam->pending_void_result_);
         return cam->capture_controller_.get();
       });
 
-  EXPECT_CALL(*capture_controller,
-              StartRecord(EndsWith(".mp4"), Eq(mock_video_duration)))
+  EXPECT_CALL(*capture_controller, StartRecord(EndsWith(".mp4")))
       .Times(1)
-      .WillOnce([cam = camera.get()](const std::string& file_path,
-                                     int64_t max_video_duration_ms) {
-        assert(cam->pending_result_);
-        return cam->pending_result_->Success();
+      .WillOnce([cam = camera.get()](const std::string& file_path) {
+        assert(cam->pending_void_result_);
+        return cam->pending_void_result_(std::nullopt);
       });
 
   camera->camera_id_ = mock_camera_id;
@@ -647,26 +558,22 @@ TEST(CameraPlugin,
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
+  bool result_called = false;
+  std::function<void(std::optional<FlutterError>)> start_video_result =
+      [&result_called](std::optional<FlutterError> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply);
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
-      {EncodableValue("maxVideoDuration"), EncodableValue(mock_video_duration)},
-  };
+  plugin.StartVideoRecording(mock_camera_id, std::move(start_video_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("startVideoRecording",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, StartVideoRecordingHandlerErrorOnInvalidCameraId) {
   int64_t mock_camera_id = 1234;
   int64_t missing_camera_id = 5678;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -681,9 +588,9 @@ TEST(CameraPlugin, StartVideoRecordingHandlerErrorOnInvalidCameraId) {
       });
 
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
-  EXPECT_CALL(*camera, AddPendingResult).Times(0);
+  EXPECT_CALL(*camera, AddPendingVoidResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
-  EXPECT_CALL(*capture_controller, StartRecord(_, -1)).Times(0);
+  EXPECT_CALL(*capture_controller, StartRecord(_)).Times(0);
 
   camera->camera_id_ = mock_camera_id;
 
@@ -694,24 +601,22 @@ TEST(CameraPlugin, StartVideoRecordingHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(0);
+  bool result_called = false;
+  std::function<void(std::optional<FlutterError>)> start_video_result =
+      [&result_called](std::optional<FlutterError> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_TRUE(reply);
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(missing_camera_id)},
-  };
+  plugin.StartVideoRecording(missing_camera_id, std::move(start_video_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("startVideoRecording",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, StopVideoRecordingHandlerCallsStopRecord) {
   int64_t mock_camera_id = 1234;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
+  std::string mock_video_path = "path/to/video.mpeg";
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -730,26 +635,28 @@ TEST(CameraPlugin, StopVideoRecordingHandlerCallsStopRecord) {
       .Times(1)
       .WillOnce(Return(false));
 
-  EXPECT_CALL(*camera, AddPendingResult(Eq(PendingResultType::kStopRecord), _))
+  EXPECT_CALL(*camera,
+              AddPendingStringResult(Eq(PendingResultType::kStopRecord), _))
       .Times(1)
-      .WillOnce([cam = camera.get()](PendingResultType type,
-                                     std::unique_ptr<MethodResult<>> result) {
-        cam->pending_result_ = std::move(result);
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(ErrorOr<std::string>)> result) {
+        cam->pending_string_result_ = std::move(result);
         return true;
       });
 
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
+        assert(cam->pending_string_result_);
         return cam->capture_controller_.get();
       });
 
   EXPECT_CALL(*capture_controller, StopRecord)
       .Times(1)
-      .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
-        return cam->pending_result_->Success();
+      .WillOnce([cam = camera.get(), mock_video_path]() {
+        assert(cam->pending_string_result_);
+        return cam->pending_string_result_(mock_video_path);
       });
 
   camera->camera_id_ = mock_camera_id;
@@ -762,25 +669,23 @@ TEST(CameraPlugin, StopVideoRecordingHandlerCallsStopRecord) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
+  bool result_called = false;
+  std::function<void(ErrorOr<std::string>)> stop_recording_result =
+      [&result_called, mock_video_path](ErrorOr<std::string> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), mock_video_path);
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
-  };
+  plugin.StopVideoRecording(mock_camera_id, std::move(stop_recording_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("stopVideoRecording",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, StopVideoRecordingHandlerErrorOnInvalidCameraId) {
   int64_t mock_camera_id = 1234;
   int64_t missing_camera_id = 5678;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -795,7 +700,7 @@ TEST(CameraPlugin, StopVideoRecordingHandlerErrorOnInvalidCameraId) {
       });
 
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
-  EXPECT_CALL(*camera, AddPendingResult).Times(0);
+  EXPECT_CALL(*camera, AddPendingStringResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
   EXPECT_CALL(*capture_controller, StopRecord).Times(0);
 
@@ -808,24 +713,22 @@ TEST(CameraPlugin, StopVideoRecordingHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(0);
+  bool result_called = false;
+  std::function<void(ErrorOr<std::string>)> stop_recording_result =
+      [&result_called](ErrorOr<std::string> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(missing_camera_id)},
-  };
+  plugin.StopVideoRecording(missing_camera_id,
+                            std::move(stop_recording_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("stopVideoRecording",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, ResumePreviewHandlerCallsResumePreview) {
   int64_t mock_camera_id = 1234;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -845,26 +748,27 @@ TEST(CameraPlugin, ResumePreviewHandlerCallsResumePreview) {
       .WillOnce(Return(false));
 
   EXPECT_CALL(*camera,
-              AddPendingResult(Eq(PendingResultType::kResumePreview), _))
+              AddPendingVoidResult(Eq(PendingResultType::kResumePreview), _))
       .Times(1)
-      .WillOnce([cam = camera.get()](PendingResultType type,
-                                     std::unique_ptr<MethodResult<>> result) {
-        cam->pending_result_ = std::move(result);
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(std::optional<FlutterError>)> result) {
+        cam->pending_void_result_ = std::move(result);
         return true;
       });
 
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
+        assert(cam->pending_void_result_);
         return cam->capture_controller_.get();
       });
 
   EXPECT_CALL(*capture_controller, ResumePreview)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
-        return cam->pending_result_->Success();
+        assert(cam->pending_void_result_);
+        return cam->pending_void_result_(std::nullopt);
       });
 
   camera->camera_id_ = mock_camera_id;
@@ -877,25 +781,22 @@ TEST(CameraPlugin, ResumePreviewHandlerCallsResumePreview) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
+  bool result_called = false;
+  std::function<void(std::optional<FlutterError>)> resume_preview_result =
+      [&result_called](std::optional<FlutterError> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply);
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
-  };
+  plugin.ResumePreview(mock_camera_id, std::move(resume_preview_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("resumePreview",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, ResumePreviewHandlerErrorOnInvalidCameraId) {
   int64_t mock_camera_id = 1234;
   int64_t missing_camera_id = 5678;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -910,7 +811,7 @@ TEST(CameraPlugin, ResumePreviewHandlerErrorOnInvalidCameraId) {
       });
 
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
-  EXPECT_CALL(*camera, AddPendingResult).Times(0);
+  EXPECT_CALL(*camera, AddPendingVoidResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
   EXPECT_CALL(*capture_controller, ResumePreview).Times(0);
 
@@ -923,24 +824,21 @@ TEST(CameraPlugin, ResumePreviewHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(0);
+  bool result_called = false;
+  std::function<void(std::optional<FlutterError>)> resume_preview_result =
+      [&result_called](std::optional<FlutterError> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_TRUE(reply);
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(missing_camera_id)},
-  };
+  plugin.ResumePreview(missing_camera_id, std::move(resume_preview_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("resumePreview",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, PausePreviewHandlerCallsPausePreview) {
   int64_t mock_camera_id = 1234;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -960,26 +858,27 @@ TEST(CameraPlugin, PausePreviewHandlerCallsPausePreview) {
       .WillOnce(Return(false));
 
   EXPECT_CALL(*camera,
-              AddPendingResult(Eq(PendingResultType::kPausePreview), _))
+              AddPendingVoidResult(Eq(PendingResultType::kPausePreview), _))
       .Times(1)
-      .WillOnce([cam = camera.get()](PendingResultType type,
-                                     std::unique_ptr<MethodResult<>> result) {
-        cam->pending_result_ = std::move(result);
+      .WillOnce([cam = camera.get()](
+                    PendingResultType type,
+                    std::function<void(std::optional<FlutterError>)> result) {
+        cam->pending_void_result_ = std::move(result);
         return true;
       });
 
   EXPECT_CALL(*camera, GetCaptureController)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
+        assert(cam->pending_void_result_);
         return cam->capture_controller_.get();
       });
 
   EXPECT_CALL(*capture_controller, PausePreview)
       .Times(1)
       .WillOnce([cam = camera.get()]() {
-        assert(cam->pending_result_);
-        return cam->pending_result_->Success();
+        assert(cam->pending_void_result_);
+        return cam->pending_void_result_(std::nullopt);
       });
 
   camera->camera_id_ = mock_camera_id;
@@ -992,25 +891,22 @@ TEST(CameraPlugin, PausePreviewHandlerCallsPausePreview) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(1);
+  bool result_called = false;
+  std::function<void(std::optional<FlutterError>)> pause_preview_result =
+      [&result_called](std::optional<FlutterError> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_FALSE(reply);
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(mock_camera_id)},
-  };
+  plugin.PausePreview(mock_camera_id, std::move(pause_preview_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("pausePreview",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 TEST(CameraPlugin, PausePreviewHandlerErrorOnInvalidCameraId) {
   int64_t mock_camera_id = 1234;
   int64_t missing_camera_id = 5678;
-
-  std::unique_ptr<MockMethodResult> initialize_result =
-      std::make_unique<MockMethodResult>();
 
   std::unique_ptr<MockCamera> camera =
       std::make_unique<MockCamera>(MOCK_DEVICE_ID);
@@ -1025,7 +921,7 @@ TEST(CameraPlugin, PausePreviewHandlerErrorOnInvalidCameraId) {
       });
 
   EXPECT_CALL(*camera, HasPendingResultByType).Times(0);
-  EXPECT_CALL(*camera, AddPendingResult).Times(0);
+  EXPECT_CALL(*camera, AddPendingVoidResult).Times(0);
   EXPECT_CALL(*camera, GetCaptureController).Times(0);
   EXPECT_CALL(*capture_controller, PausePreview).Times(0);
 
@@ -1038,17 +934,17 @@ TEST(CameraPlugin, PausePreviewHandlerErrorOnInvalidCameraId) {
   // Add mocked camera to plugins camera list.
   plugin.AddCamera(std::move(camera));
 
-  EXPECT_CALL(*initialize_result, ErrorInternal).Times(1);
-  EXPECT_CALL(*initialize_result, SuccessInternal).Times(0);
+  bool result_called = false;
+  std::function<void(std::optional<FlutterError>)> pause_preview_result =
+      [&result_called](std::optional<FlutterError> reply) {
+        EXPECT_FALSE(result_called);  // Ensure only one reply call.
+        result_called = true;
+        EXPECT_TRUE(reply);
+      };
 
-  EncodableMap args = {
-      {EncodableValue("cameraId"), EncodableValue(missing_camera_id)},
-  };
+  plugin.PausePreview(missing_camera_id, std::move(pause_preview_result));
 
-  plugin.HandleMethodCall(
-      flutter::MethodCall("pausePreview",
-                          std::make_unique<EncodableValue>(EncodableMap(args))),
-      std::move(initialize_result));
+  EXPECT_TRUE(result_called);
 }
 
 }  // namespace test

@@ -3,5 +3,4 @@ include: ../../../../analysis_options.yaml
 linter:
   rules:
     # This is test code. Do not enforce docs.
-    package_api_docs: false
     public_member_api_docs: false

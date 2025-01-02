@@ -1,3 +1,8 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Update dependency `http: ^1.0.0`
+
 ## 1.0.13
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.

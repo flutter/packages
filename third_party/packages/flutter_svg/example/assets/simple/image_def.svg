@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="100%" height="100%" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <defs>
+        <image id="_Image1" width="38px" height="34px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAAiCAYAAAAzrKu4AAAACXBIWXMAAA7EAAAOxAGVKw4bAAAA/UlEQVRYhe2YsW7DMAxEnxUVddohBbr0/78waZHEgWO5g06xVi5MBh5wkE0PfKC88AZgABKw05lU89QKFHkBShbIG7AHRj17wjWoGZiAKzBn6qT2wJf8IThPsBm4AEfVHhMbBfUDHIB3Z7AbcNL7BFz7q/wU1LdAkxNYEQzAn1hSZvv5M3VSI/VqPSeGerdBDVnFoXPqTg+VrmezW3OzAsyqALMqwKwKMKsCzKoAsyrArAowqwLMqgCzqm1Ja+fSnR7qezaTuw936kbclk/vhfcmhgKsmS3QOLOt6c+KCM5iKQ1sYgs0fnluqDI1sIUa/aDiK8RQSx8LvFRw9w+YoVIODOGLegAAAABJRU5ErkJggg=="/>
+    </defs>
+    <use xlink:href="#_Image1" x="13.07" y="15.079" width="37.917px" height="33.917px" transform="matrix(0.997807,0,0,0.997549,0,0)"/>
+    <g transform="matrix(1,0,0,1,-5.5,5.5)">
+        <rect x="21" y="12" width="33" height="29" style="fill:rgb(235,235,235);"/>
+    </g>
+</svg>

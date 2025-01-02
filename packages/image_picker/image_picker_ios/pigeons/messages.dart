@@ -7,10 +7,12 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'ios/Classes/messages.g.h',
-  objcSourceOut: 'ios/Classes/messages.g.m',
+  objcHeaderOut:
+      'ios/image_picker_ios/Sources/image_picker_ios/include/image_picker_ios/messages.g.h',
+  objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FLT',
+    headerIncludePath: './include/image_picker_ios/messages.g.h',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
@@ -56,7 +58,7 @@ abstract class ImagePickerApi {
       int? imageQuality, bool requestFullMetadata);
   @async
   @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
-  List<String?> pickMultiImage(
+  List<String> pickMultiImage(
       MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit);
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
@@ -65,5 +67,5 @@ abstract class ImagePickerApi {
   /// Selects images and videos and returns their paths.
   @async
   @ObjCSelector('pickMediaWithMediaSelectionOptions:')
-  List<String?> pickMedia(MediaSelectionOptions mediaSelectionOptions);
+  List<String> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 }

@@ -3,8 +3,8 @@ description: "Demonstrates how to use the interactive_media_ads plugin."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ^3.2.3
-  flutter: ">=3.16.6"
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
 
 dependencies:
   flutter:
@@ -13,9 +13,10 @@ dependencies:
     sdk: flutter
   interactive_media_ads:
     path: ../
+  video_player: ^2.8.6
 
 dev_dependencies:
-  espresso: ^0.2.0
+  espresso: ^0.4.0
   flutter_test:
     sdk: flutter
   integration_test:

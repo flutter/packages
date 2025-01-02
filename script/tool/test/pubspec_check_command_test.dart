@@ -1518,7 +1518,7 @@ ${_topicsSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Dart SDK version for Fluter SDK version 2.0.0 is unknown'),
+          contains('Dart SDK version for Flutter SDK version 2.0.0 is unknown'),
         ]),
       );
     });
@@ -1613,7 +1613,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    bad_dependency\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );
@@ -1645,7 +1645,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    bad_dependency\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );
@@ -1674,7 +1674,8 @@ ${_topicsSection()}
         );
       });
 
-      test('passes when a pinned dependency is on the pinned allow list',
+      test(
+          'passes when an exactly-pinned dependency is on the pinned allow list',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir);
@@ -1683,6 +1684,34 @@ ${_topicsSection()}
 ${_headerSection('a_package')}
 ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test(
+          'passes when an explicit-range-pinned dependency is on the pinned allow list',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
 
@@ -1729,7 +1758,7 @@ ${_topicsSection()}
             contains(
                 '  The following unexpected non-local dependencies were found:\n'
                 '    allow_pinned\n'
-                '  Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
                 '  for more information and next steps.'),
           ]),
         );
@@ -1740,6 +1769,7 @@ ${_topicsSection()}
           'build_runner',
           'integration_test',
           'flutter_test',
+          'leak_tracker_flutter_testing',
           'mockito',
           'pigeon',
           'test',

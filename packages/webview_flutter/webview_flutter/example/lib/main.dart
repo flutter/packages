@@ -7,15 +7,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 // #docregion platform_imports
 // Import for Android features.
 import 'package:webview_flutter_android/webview_flutter_android.dart';
-// Import for iOS features.
+// Import for iOS/macOS features.
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 // #enddocregion platform_imports
 
@@ -141,7 +141,6 @@ class _WebViewExampleState extends State<WebViewExample> {
 
     controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -170,6 +169,9 @@ Page resource error:
             debugPrint('allowing navigation to ${request.url}');
             return NavigationDecision.navigate;
           },
+          onHttpError: (HttpResponseError error) {
+            debugPrint('Error occurred on page: ${error.response?.statusCode}');
+          },
           onUrlChange: (UrlChange change) {
             debugPrint('url change to ${change.url}');
           },
@@ -187,6 +189,11 @@ Page resource error:
         },
       )
       ..loadRequest(Uri.parse('https://flutter.dev'));
+
+    // setBackgroundColor is not currently supported on macOS.
+    if (kIsWeb || !Platform.isMacOS) {
+      controller.setBackgroundColor(const Color(0x80000000));
+    }
 
     // #docregion platform_features
     if (controller.platform is AndroidWebViewController) {

@@ -540,7 +540,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           onPressed: cameraController != null &&
                   cameraController.value.isInitialized &&
                   cameraController.value.isRecordingVideo
-              ? (cameraController.value.isRecordingPaused)
+              ? cameraController.value.isRecordingPaused
                   ? onResumeButtonPressed
                   : onPauseButtonPressed
               : null,
@@ -699,7 +699,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           showInSnackBar('Unknown permission error.');
         default:
           _showCameraException(e);
-          break;
       }
     }
 

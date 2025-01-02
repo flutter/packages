@@ -2,10 +2,10 @@ name: url_launcher_android
 description: Android implementation of the url_launcher plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/url_launcher/url_launcher_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+url_launcher%22
-version: 6.3.1
+version: 6.3.14
 environment:
-  sdk: ^3.2.0
-  flutter: ">=3.16.0"
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
 
 flutter:
   plugin:
@@ -24,8 +24,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 5.4.4
-  pigeon: ^10.0.0
+  mockito: ^5.4.4
+  pigeon: ^22.4.1
   plugin_platform_interface: ^2.1.7
   test: ^1.16.3
 

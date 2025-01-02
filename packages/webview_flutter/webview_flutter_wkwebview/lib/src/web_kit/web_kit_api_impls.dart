@@ -301,23 +301,23 @@ class WebKitFlutterApis {
   /// Ensures all the Flutter APIs have been set up to receive calls from native code.
   void ensureSetUp() {
     if (!_hasBeenSetUp) {
-      WKNavigationDelegateFlutterApi.setup(
+      WKNavigationDelegateFlutterApi.setUp(
         navigationDelegate,
         binaryMessenger: _binaryMessenger,
       );
-      WKScriptMessageHandlerFlutterApi.setup(
+      WKScriptMessageHandlerFlutterApi.setUp(
         scriptMessageHandler,
         binaryMessenger: _binaryMessenger,
       );
-      WKUIDelegateFlutterApi.setup(
+      WKUIDelegateFlutterApi.setUp(
         uiDelegate,
         binaryMessenger: _binaryMessenger,
       );
-      WKWebViewConfigurationFlutterApi.setup(
+      WKWebViewConfigurationFlutterApi.setUp(
         webViewConfiguration,
         binaryMessenger: _binaryMessenger,
       );
-      UIScrollViewDelegateFlutterApi.setup(uiScrollViewDelegate,
+      UIScrollViewDelegateFlutterApi.setUp(uiScrollViewDelegate,
           binaryMessenger: _binaryMessenger);
       _hasBeenSetUp = true;
     }

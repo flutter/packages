@@ -9,5 +9,5 @@
 # NOTE: camera_android is semi-excluded via special casing in the repo tools.
 # See create_all_packages_app_command.dart.
 
-# This is a permament entry, as it should never be a direct app dependency.
+# This is a permanent entry, as it should never be a direct app dependency.
 - plugin_platform_interface

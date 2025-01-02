@@ -166,7 +166,7 @@ public class NullFieldsTest {
     assertEquals(list.get(1), "error");
     assertEquals(list.get(2), Arrays.asList(1L, 2L, 3L));
     assertEquals(list.get(3), reply.getRequest());
-    assertEquals(list.get(4), NullFields.NullFieldsSearchReplyType.SUCCESS.ordinal());
+    assertEquals(list.get(4), NullFields.NullFieldsSearchReplyType.SUCCESS);
   }
 
   @Test

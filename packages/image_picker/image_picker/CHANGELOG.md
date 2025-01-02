@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 1.1.2
+
+* Adds comment for the limit parameter.
+
 ## 1.1.1
 
 * Updates documentation to note that Android Photo Picker use is not optional on Android 13+.

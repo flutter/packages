@@ -78,10 +78,6 @@ public class ImagePickerPluginTest {
           .setCamera(Messages.SourceCamera.REAR)
           .build();
 
-  @SuppressWarnings("deprecation")
-  @Mock
-  io.flutter.plugin.common.PluginRegistry.Registrar mockRegistrar;
-
   @Mock ActivityPluginBinding mockActivityBinding;
   @Mock FlutterPluginBinding mockPluginBinding;
 
@@ -97,7 +93,6 @@ public class ImagePickerPluginTest {
   @Before
   public void setUp() {
     mockCloseable = MockitoAnnotations.openMocks(this);
-    when(mockRegistrar.context()).thenReturn(mockApplication);
     when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
     when(mockPluginBinding.getApplicationContext()).thenReturn(mockApplication);
     plugin = new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);
@@ -302,14 +297,6 @@ public class ImagePickerPluginTest {
         GENERAL_OPTIONS_DONT_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
         mockResult);
     verify(mockImagePickerDelegate).setCameraDevice(eq(ImagePickerDelegate.CameraDevice.FRONT));
-  }
-
-  @Test
-  public void onRegister_whenActivityIsNull_shouldNotCrash() {
-    when(mockRegistrar.activity()).thenReturn(null);
-    ImagePickerPlugin.registerWith((mockRegistrar));
-    assertTrue(
-        "No exception thrown when ImagePickerPlugin.registerWith ran with activity = null", true);
   }
 
   @Test

@@ -9,16 +9,19 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class PrimitiveTest : TestCase() {
+class PrimitiveTest {
+
   @Test
   fun testIntPrimitiveHost() {
     val binaryMessenger = mockk<BinaryMessenger>(relaxed = true)
     val api = mockk<PrimitiveHostApi>(relaxed = true)
 
-    val input = 1
+    val input = 1L
 
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt"
     val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
@@ -35,7 +38,7 @@ class PrimitiveTest : TestCase() {
       it?.rewind()
       @Suppress("UNCHECKED_CAST") val wrapped = codec.decodeMessage(it) as List<Any>?
       assertNotNull(wrapped)
-      wrapped?.let { assertEquals(input.toLong(), wrapped[0]) }
+      wrapped?.let { assertEquals(input, wrapped[0]) }
     }
 
     verify { binaryMessenger.setMessageHandler(channelName, handlerSlot.captured) }

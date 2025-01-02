@@ -49,6 +49,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -65,6 +66,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -81,6 +83,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -97,6 +100,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);
@@ -113,6 +117,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString, mode: LaunchMode.inAppWebView),
@@ -130,12 +135,57 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
           await launchUrlString(urlString,
               mode: LaunchMode.externalApplication),
           isTrue);
+    });
+
+    test('in-app browser', () async {
+      const String urlString = 'https://flutter.dev';
+      mock
+        ..setLaunchExpectations(
+          url: urlString,
+          launchMode: PreferredLaunchMode.inAppBrowserView,
+          enableJavaScript: true,
+          enableDomStorage: true,
+          universalLinksOnly: false,
+          headers: <String, String>{},
+          webOnlyWindowName: null,
+          showTitle: false,
+        )
+        ..setResponse(true);
+      expect(
+        await launchUrlString(urlString, mode: LaunchMode.inAppBrowserView),
+        isTrue,
+      );
+    });
+
+    test('in-app browser with title', () async {
+      const String urlString = 'https://flutter.dev';
+      mock
+        ..setLaunchExpectations(
+          url: urlString,
+          launchMode: PreferredLaunchMode.inAppBrowserView,
+          enableJavaScript: true,
+          enableDomStorage: true,
+          universalLinksOnly: false,
+          headers: <String, String>{},
+          webOnlyWindowName: null,
+          showTitle: true,
+        )
+        ..setResponse(true);
+      expect(
+        await launchUrlString(
+          urlString,
+          mode: LaunchMode.inAppBrowserView,
+          browserConfiguration: const BrowserConfiguration(showTitle: true),
+        ),
+        isTrue,
+      );
     });
 
     test('external non-browser only', () async {
@@ -149,6 +199,7 @@ void main() {
           universalLinksOnly: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -168,6 +219,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -189,6 +241,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -210,6 +263,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{'key': 'value'},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(
@@ -239,6 +293,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(emailLaunchUrlString), isTrue);
@@ -257,6 +312,7 @@ void main() {
           universalLinksOnly: false,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       expect(await launchUrlString(urlString), isTrue);

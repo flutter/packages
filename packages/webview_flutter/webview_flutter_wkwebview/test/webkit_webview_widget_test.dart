@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -41,7 +43,8 @@ void main() {
         Builder(builder: (BuildContext context) => widget.build(context)),
       );
 
-      expect(find.byType(UiKitView), findsOneWidget);
+      expect(find.byType(Platform.isMacOS ? AppKitView : UiKitView),
+          findsOneWidget);
       expect(find.byKey(const Key('keyValue')), findsOneWidget);
     });
 
@@ -187,7 +190,7 @@ WebKitWebViewController createTestWebViewController(
         )? observeValue,
         InstanceManager? instanceManager,
       }) {
-        final WKWebView webView = WKWebView.detached(
+        final WKWebView webView = WKWebViewIOS.detached(
           instanceManager: testInstanceManager,
         );
         testInstanceManager.addDartCreatedInstance(webView);

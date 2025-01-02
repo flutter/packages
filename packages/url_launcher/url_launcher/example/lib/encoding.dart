@@ -31,10 +31,6 @@ void main() => runApp(
                 onPressed: _composeMail,
                 child: Text('Compose an email'),
               ),
-              ElevatedButton(
-                onPressed: _composeSms,
-                child: Text('Compose a SMS'),
-              ),
             ],
           ),
         ),
@@ -53,18 +49,4 @@ void _composeMail() {
 
   launchUrl(emailLaunchUri);
 // #enddocregion encode-query-parameters
-}
-
-void _composeSms() {
-// #docregion sms
-  final Uri smsLaunchUri = Uri(
-    scheme: 'sms',
-    path: '0118 999 881 999 119 7253',
-    queryParameters: <String, String>{
-      'body': Uri.encodeComponent('Example Subject & Symbols are allowed!'),
-    },
-  );
-// #enddocregion sms
-
-  launchUrl(smsLaunchUri);
 }

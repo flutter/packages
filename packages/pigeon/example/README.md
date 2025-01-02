@@ -19,6 +19,9 @@ needed for your project.
   cppOptions: CppOptions(namespace: 'pigeon_example'),
   cppHeaderOut: 'windows/runner/messages.g.h',
   cppSourceOut: 'windows/runner/messages.g.cpp',
+  gobjectHeaderOut: 'linux/messages.g.h',
+  gobjectSourceOut: 'linux/messages.g.cc',
+  gobjectOptions: GObjectOptions(),
   kotlinOut:
       'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
   kotlinOptions: KotlinOptions(),
@@ -37,7 +40,7 @@ needed for your project.
 Then make a simple call to run pigeon on the Dart file containing your definitions.
 
 ```sh
-flutter pub run pigeon --input path/to/input.dart
+dart run pigeon --input path/to/input.dart
 ```
 
 ## HostApi Example
@@ -59,7 +62,7 @@ class MessageData {
   String? name;
   String? description;
   Code code;
-  Map<String?, String?> data;
+  Map<String, String> data;
 }
 
 @HostApi()
@@ -100,7 +103,7 @@ Future<int> add(int a, int b) async {
 Future<bool> sendMessage(String messageText) {
   final MessageData message = MessageData(
     code: Code.one,
-    data: <String?, String?>{'header': 'this is a header'},
+    data: <String, String>{'header': 'this is a header'},
     description: 'uri text',
   );
   try {
@@ -115,12 +118,9 @@ Future<bool> sendMessage(String messageText) {
 ### Swift
 
 This is the code that will use the generated Swift code to receive calls from Flutter.
-packages/pigeon/example/app/ios/Runner/AppDelegate.swift
+Unlike other languages, when throwing an error, use `PigeonError` instead of `FlutterError`, as `FlutterError` does not conform to `Swift.Error`.
 <?code-excerpt "ios/Runner/AppDelegate.swift (swift-class)"?>
 ```swift
-// This extension of Error is required to do use FlutterError in any Swift code.
-extension FlutterError: Error {}
-
 private class PigeonApiImplementation: ExampleHostApi {
   func getHostLanguage() throws -> String {
     return "Swift"
@@ -128,14 +128,14 @@ private class PigeonApiImplementation: ExampleHostApi {
 
   func add(_ a: Int64, to b: Int64) throws -> Int64 {
     if a < 0 || b < 0 {
-      throw FlutterError(code: "code", message: "message", details: "details")
+      throw PigeonError(code: "code", message: "message", details: "details")
     }
     return a + b
   }
 
   func sendMessage(message: MessageData, completion: @escaping (Result<Bool, Error>) -> Void) {
     if message.code == Code.one {
-      completion(.failure(FlutterError(code: "code", message: "message", details: "details")))
+      completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
       return
     }
     completion(.success(true))
@@ -185,13 +185,56 @@ class PigeonApiImplementation : public ExampleHostApi {
   }
   void SendMessage(const MessageData& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
-    if (message.code == Code.one) {
+    if (message.code() == Code::kOne) {
       result(FlutterError("code", "message", "details"));
       return;
     }
     result(true);
   }
 };
+```
+
+### GObject
+<?code-excerpt "linux/my_application.cc (vtable)"?>
+```c++
+static PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+handle_get_host_language(gpointer user_data) {
+  return pigeon_example_package_example_host_api_get_host_language_response_new(
+      "C++");
+}
+
+static PigeonExamplePackageExampleHostApiAddResponse* handle_add(
+    int64_t a, int64_t b, gpointer user_data) {
+  if (a < 0 || b < 0) {
+    g_autoptr(FlValue) details = fl_value_new_string("details");
+    return pigeon_example_package_example_host_api_add_response_new_error(
+        "code", "message", details);
+  }
+
+  return pigeon_example_package_example_host_api_add_response_new(a + b);
+}
+
+static void handle_send_message(
+    PigeonExamplePackageMessageData* message,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gpointer user_data) {
+  PigeonExamplePackageCode code =
+      pigeon_example_package_message_data_get_code(message);
+  if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
+    g_autoptr(FlValue) details = fl_value_new_string("details");
+    pigeon_example_package_example_host_api_respond_error_send_message(
+        response_handle, "code", "message", details);
+    return;
+  }
+
+  pigeon_example_package_example_host_api_respond_send_message(response_handle,
+                                                               TRUE);
+}
+
+static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
+    .get_host_language = handle_get_host_language,
+    .add = handle_add,
+    .send_message = handle_send_message};
 ```
 
 ## FlutterApi Example
@@ -238,10 +281,10 @@ private class PigeonFlutterApi {
   }
 
   func callFlutterMethod(
-    aString aStringArg: String?, completion: @escaping (Result<String, Error>) -> Void
+    aString aStringArg: String?, completion: @escaping (Result<String, PigeonError>) -> Void
   ) {
     flutterAPI.flutterMethod(aString: aStringArg) {
-      completion(.success($0))
+      completion($0)
     }
   }
 }
@@ -251,16 +294,15 @@ private class PigeonFlutterApi {
 
 <?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-flutter)"?>
 ```kotlin
-private class PigeonFlutterApi {
-
+private class PigeonFlutterApi(binding: FlutterPlugin.FlutterPluginBinding) {
   var flutterApi: MessageFlutterApi? = null
 
-  constructor(binding: FlutterPlugin.FlutterPluginBinding) {
-    flutterApi = MessageFlutterApi(binding.getBinaryMessenger())
+  init {
+    flutterApi = MessageFlutterApi(binding.binaryMessenger)
   }
 
   fun callFlutterMethod(aString: String, callback: (Result<String>) -> Unit) {
-    flutterApi!!.flutterMethod(aString) { echo -> callback(Result.success(echo)) }
+    flutterApi!!.flutterMethod(aString) { echo -> callback(echo) }
   }
 }
 ```
@@ -269,12 +311,166 @@ private class PigeonFlutterApi {
 
 <?code-excerpt "windows/runner/flutter_window.cpp (cpp-method-flutter)"?>
 ```c++
-void TestPlugin::CallFlutterMethod(
-    String aString, std::function<void(ErrorOr<int64_t> reply)> result) {
-  MessageFlutterApi->FlutterMethod(
-      aString, [result](String echo) { result(echo); },
-      [result](const FlutterError& error) { result(error); });
+class PigeonFlutterApi {
+ public:
+  PigeonFlutterApi(flutter::BinaryMessenger* messenger)
+      : flutterApi_(std::make_unique<MessageFlutterApi>(messenger)) {}
+
+  void CallFlutterMethod(
+      const std::string& a_string,
+      std::function<void(ErrorOr<std::string> reply)> result) {
+    flutterApi_->FlutterMethod(
+        &a_string, [result](const std::string& echo) { result(echo); },
+        [result](const FlutterError& error) { result(error); });
+  }
+
+ private:
+  std::unique_ptr<MessageFlutterApi> flutterApi_;
+};
+```
+
+### GObject
+
+<?code-excerpt "linux/my_application.cc (flutter-method-callback)"?>
+```c++
+static void flutter_method_cb(GObject* object, GAsyncResult* result,
+                              gpointer user_data) {
+  g_autoptr(GError) error = nullptr;
+  g_autoptr(
+      PigeonExamplePackageMessageFlutterApiFlutterMethodResponse) response =
+      pigeon_example_package_message_flutter_api_flutter_method_finish(
+          PIGEON_EXAMPLE_PACKAGE_MESSAGE_FLUTTER_API(object), result, &error);
+  if (response == nullptr) {
+    g_warning("Failed to call Flutter method: %s", error->message);
+    return;
+  }
+
+  g_printerr(
+      "Got result from Flutter method: %s\n",
+      pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value(
+          response));
 }
+```
+
+<?code-excerpt "linux/my_application.cc (flutter-method)"?>
+```c++
+self->flutter_api =
+    pigeon_example_package_message_flutter_api_new(messenger, nullptr);
+pigeon_example_package_message_flutter_api_flutter_method(
+    self->flutter_api, "hello", nullptr, flutter_method_cb, self);
+```
+
+## Event Channel Example
+
+This example gives a basic overview of how to use Pigeon to set up an event channel.
+
+### Dart input
+
+<?code-excerpt "pigeons/event_channel_messages.dart (event-definitions)"?>
+```dart
+@EventChannelApi()
+abstract class EventChannelMethods {
+  PlatformEvent streamEvents();
+}
+```
+
+### Dart
+
+The generated Dart code will include a method that returns a `Stream` when invoked. 
+
+<?code-excerpt "lib/main.dart (main-dart-event)"?>
+```dart
+Stream<String> getEventStream() async* {
+  final Stream<PlatformEvent> events = streamEvents();
+  await for (final PlatformEvent event in events) {
+    switch (event) {
+      case IntEvent():
+        final int intData = event.data;
+        yield '$intData, ';
+      case StringEvent():
+        final String stringData = event.data;
+        yield '$stringData, ';
+    }
+  }
+}
+```
+
+### Swift
+
+Define the stream handler class that will handle the events.
+
+<?code-excerpt "ios/Runner/AppDelegate.swift (swift-class-event)"?>
+```swift
+class EventListener: StreamEventsStreamHandler {
+  var eventSink: PigeonEventSink<PlatformEvent>?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    eventSink = sink
+  }
+
+  func onIntEvent(event: Int64) {
+    if let eventSink = eventSink {
+      eventSink.success(IntEvent(data: event))
+    }
+  }
+
+  func onStringEvent(event: String) {
+    if let eventSink = eventSink {
+      eventSink.success(StringEvent(data: event))
+    }
+  }
+
+  func onEventsDone() {
+    eventSink?.endOfStream()
+    eventSink = nil
+  }
+}
+```
+
+Register the handler with the generated method.
+
+<?code-excerpt "ios/Runner/AppDelegate.swift (swift-init-event)"?>
+```swift
+let eventListener = EventListener()
+StreamEventsStreamHandler.register(
+  with: controller.binaryMessenger, streamHandler: eventListener)
+```
+
+### Kotlin
+
+Define the stream handler class that will handle the events.
+
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-event)"?>
+```kotlin
+class EventListener : StreamEventsStreamHandler() {
+  private var eventSink: PigeonEventSink<PlatformEvent>? = null
+
+  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    eventSink = sink
+  }
+
+  fun onIntEvent(event: Long) {
+    eventSink?.success(IntEvent(data = event))
+  }
+
+  fun onStringEvent(event: String) {
+    eventSink?.success(StringEvent(data = event))
+  }
+
+  fun onEventsDone() {
+    eventSink?.endOfStream()
+    eventSink = null
+  }
+}
+```
+
+
+Register the handler with the generated method.
+
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-init-event)"?>
+```kotlin
+val eventListener = EventListener()
+StreamEventsStreamHandler.register(flutterEngine.dartExecutor.binaryMessenger, eventListener)
 ```
 
 ## Swift / Kotlin Plugin Example

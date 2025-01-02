@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.3.1'
+        classpath 'com.android.tools.build:gradle:8.5.1'
     }
 }
 
@@ -22,10 +22,7 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    // Conditional for compatibility with AGP <4.2.
-    if (project.android.hasProperty("namespace")) {
-        namespace 'io.flutter.plugins.googlemaps'
-    }
+    namespace 'io.flutter.plugins.googlemaps'
     compileSdk 34
 
     defaultConfig {
@@ -35,7 +32,7 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency'
+        disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
     dependencies {
@@ -44,7 +41,7 @@ android {
         implementation 'com.google.maps.android:android-maps-utils:3.6.0'
         androidTestImplementation 'androidx.test:runner:1.2.0'
         androidTestImplementation 'androidx.test:rules:1.4.0'
-        androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+        androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.mockito:mockito-core:5.1.1'
         testImplementation 'androidx.test:core:1.2.0'
@@ -52,8 +49,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     testOptions {
@@ -65,6 +62,11 @@ android {
                outputs.upToDateWhen {false}
                showStandardStreams = true
             }
+            // The org.gradle.jvmargs property that may be set in gradle.properties does not impact
+            // the Java heap size when running the Android unit tests. The following property here
+            // sets the heap size to a size large enough to run the robolectric tests across
+            // multiple SDK levels.
+            jvmArgs "-Xmx1g"
         }
     }
 }

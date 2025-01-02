@@ -30,41 +30,6 @@ public class GoogleMapsPlugin implements FlutterPlugin, ActivityAware {
 
   private static final String VIEW_TYPE = "plugins.flutter.dev/google_maps_android";
 
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull final io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    final Activity activity = registrar.activity();
-    if (activity == null) {
-      // When a background flutter view tries to register the plugin, the registrar has no activity.
-      // We stop the registration process as this plugin is foreground only.
-      return;
-    }
-    if (activity instanceof LifecycleOwner) {
-      registrar
-          .platformViewRegistry()
-          .registerViewFactory(
-              VIEW_TYPE,
-              new GoogleMapFactory(
-                  registrar.messenger(),
-                  registrar.context(),
-                  new LifecycleProvider() {
-                    @Override
-                    public Lifecycle getLifecycle() {
-                      return ((LifecycleOwner) activity).getLifecycle();
-                    }
-                  }));
-    } else {
-      registrar
-          .platformViewRegistry()
-          .registerViewFactory(
-              VIEW_TYPE,
-              new GoogleMapFactory(
-                  registrar.messenger(),
-                  registrar.context(),
-                  new ProxyLifecycleProvider(activity)));
-    }
-  }
-
   public GoogleMapsPlugin() {}
 
   // FlutterPlugin

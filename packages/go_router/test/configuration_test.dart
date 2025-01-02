@@ -1070,15 +1070,17 @@ void main() {
             },
           ).debugKnownRoutes(),
           'Full paths for routes:\n'
-          '  => /a\n'
-          '  =>   /a/b\n'
-          '  =>   /a/c\n'
-          '  => /d\n'
-          '  =>   /d/e\n'
-          '  =>     /d/e/f\n'
-          '  => /g\n'
-          '  =>   /g/h\n'
-          '  =>   /g/i\n',
+          '├─/a (Widget)\n'
+          '│ └─ (ShellRoute)\n'
+          '│   ├─/a/b (Widget)\n'
+          '│   └─/a/c (Widget)\n'
+          '├─/d (Widget)\n'
+          '│ └─/d/e (Widget)\n'
+          '│   └─/d/e/f (Widget)\n'
+          '└─/g (Widget)\n'
+          '  └─ (ShellRoute)\n'
+          '    ├─/g/h (Widget)\n'
+          '    └─/g/i (Widget)\n',
         );
       },
     );

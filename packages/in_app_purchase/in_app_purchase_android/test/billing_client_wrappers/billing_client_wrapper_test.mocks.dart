@@ -3,10 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:in_app_purchase_android/src/messages.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -93,17 +94,30 @@ class _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5
 /// See the documentation for Mockito's code generation for more information.
 class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
   @override
-  _i3.Future<bool> isReady() => (super.noSuchMethod(
+  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
+        Invocation.getter(#pigeonVar_messageChannelSuffix),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+      ) as String);
+
+  @override
+  _i4.Future<bool> isReady() => (super.noSuchMethod(
         Invocation.method(
           #isReady,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<_i2.PlatformBillingResult> startConnection(
+  _i4.Future<_i2.PlatformBillingResult> startConnection(
     int? callbackHandle,
     _i2.PlatformBillingChoiceMode? billingMode,
   ) =>
@@ -115,7 +129,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             billingMode,
           ],
         ),
-        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -126,7 +140,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             ],
           ),
         )),
-        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -137,26 +151,26 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             ],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformBillingResult>);
+      ) as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i3.Future<void> endConnection() => (super.noSuchMethod(
+  _i4.Future<void> endConnection() => (super.noSuchMethod(
         Invocation.method(
           #endConnection,
           [],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<_i2.PlatformBillingConfigResponse> getBillingConfigAsync() =>
+  _i4.Future<_i2.PlatformBillingConfigResponse> getBillingConfigAsync() =>
       (super.noSuchMethod(
         Invocation.method(
           #getBillingConfigAsync,
           [],
         ),
-        returnValue: _i3.Future<_i2.PlatformBillingConfigResponse>.value(
+        returnValue: _i4.Future<_i2.PlatformBillingConfigResponse>.value(
             _FakePlatformBillingConfigResponse_1(
           this,
           Invocation.method(
@@ -165,7 +179,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i2.PlatformBillingConfigResponse>.value(
+            _i4.Future<_i2.PlatformBillingConfigResponse>.value(
                 _FakePlatformBillingConfigResponse_1(
           this,
           Invocation.method(
@@ -173,17 +187,17 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformBillingConfigResponse>);
+      ) as _i4.Future<_i2.PlatformBillingConfigResponse>);
 
   @override
-  _i3.Future<_i2.PlatformBillingResult> launchBillingFlow(
+  _i4.Future<_i2.PlatformBillingResult> launchBillingFlow(
           _i2.PlatformBillingFlowParams? params) =>
       (super.noSuchMethod(
         Invocation.method(
           #launchBillingFlow,
           [params],
         ),
-        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -191,7 +205,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [params],
           ),
         )),
-        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -199,17 +213,17 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [params],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformBillingResult>);
+      ) as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i3.Future<_i2.PlatformBillingResult> acknowledgePurchase(
+  _i4.Future<_i2.PlatformBillingResult> acknowledgePurchase(
           String? purchaseToken) =>
       (super.noSuchMethod(
         Invocation.method(
           #acknowledgePurchase,
           [purchaseToken],
         ),
-        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -217,7 +231,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [purchaseToken],
           ),
         )),
-        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -225,16 +239,16 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [purchaseToken],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformBillingResult>);
+      ) as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i3.Future<_i2.PlatformBillingResult> consumeAsync(String? purchaseToken) =>
+  _i4.Future<_i2.PlatformBillingResult> consumeAsync(String? purchaseToken) =>
       (super.noSuchMethod(
         Invocation.method(
           #consumeAsync,
           [purchaseToken],
         ),
-        returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -242,7 +256,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [purchaseToken],
           ),
         )),
-        returnValueForMissingStub: _i3.Future<_i2.PlatformBillingResult>.value(
+        returnValueForMissingStub: _i4.Future<_i2.PlatformBillingResult>.value(
             _FakePlatformBillingResult_0(
           this,
           Invocation.method(
@@ -250,17 +264,17 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [purchaseToken],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformBillingResult>);
+      ) as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i3.Future<_i2.PlatformPurchasesResponse> queryPurchasesAsync(
+  _i4.Future<_i2.PlatformPurchasesResponse> queryPurchasesAsync(
           _i2.PlatformProductType? productType) =>
       (super.noSuchMethod(
         Invocation.method(
           #queryPurchasesAsync,
           [productType],
         ),
-        returnValue: _i3.Future<_i2.PlatformPurchasesResponse>.value(
+        returnValue: _i4.Future<_i2.PlatformPurchasesResponse>.value(
             _FakePlatformPurchasesResponse_2(
           this,
           Invocation.method(
@@ -269,7 +283,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i2.PlatformPurchasesResponse>.value(
+            _i4.Future<_i2.PlatformPurchasesResponse>.value(
                 _FakePlatformPurchasesResponse_2(
           this,
           Invocation.method(
@@ -277,17 +291,17 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [productType],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformPurchasesResponse>);
+      ) as _i4.Future<_i2.PlatformPurchasesResponse>);
 
   @override
-  _i3.Future<_i2.PlatformPurchaseHistoryResponse> queryPurchaseHistoryAsync(
+  _i4.Future<_i2.PlatformPurchaseHistoryResponse> queryPurchaseHistoryAsync(
           _i2.PlatformProductType? productType) =>
       (super.noSuchMethod(
         Invocation.method(
           #queryPurchaseHistoryAsync,
           [productType],
         ),
-        returnValue: _i3.Future<_i2.PlatformPurchaseHistoryResponse>.value(
+        returnValue: _i4.Future<_i2.PlatformPurchaseHistoryResponse>.value(
             _FakePlatformPurchaseHistoryResponse_3(
           this,
           Invocation.method(
@@ -296,7 +310,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i2.PlatformPurchaseHistoryResponse>.value(
+            _i4.Future<_i2.PlatformPurchaseHistoryResponse>.value(
                 _FakePlatformPurchaseHistoryResponse_3(
           this,
           Invocation.method(
@@ -304,17 +318,17 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [productType],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformPurchaseHistoryResponse>);
+      ) as _i4.Future<_i2.PlatformPurchaseHistoryResponse>);
 
   @override
-  _i3.Future<_i2.PlatformProductDetailsResponse> queryProductDetailsAsync(
-          List<_i2.PlatformQueryProduct?>? products) =>
+  _i4.Future<_i2.PlatformProductDetailsResponse> queryProductDetailsAsync(
+          List<_i2.PlatformQueryProduct>? products) =>
       (super.noSuchMethod(
         Invocation.method(
           #queryProductDetailsAsync,
           [products],
         ),
-        returnValue: _i3.Future<_i2.PlatformProductDetailsResponse>.value(
+        returnValue: _i4.Future<_i2.PlatformProductDetailsResponse>.value(
             _FakePlatformProductDetailsResponse_4(
           this,
           Invocation.method(
@@ -323,7 +337,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i2.PlatformProductDetailsResponse>.value(
+            _i4.Future<_i2.PlatformProductDetailsResponse>.value(
                 _FakePlatformProductDetailsResponse_4(
           this,
           Invocation.method(
@@ -331,26 +345,26 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
             [products],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformProductDetailsResponse>);
+      ) as _i4.Future<_i2.PlatformProductDetailsResponse>);
 
   @override
-  _i3.Future<bool> isFeatureSupported(String? feature) => (super.noSuchMethod(
+  _i4.Future<bool> isFeatureSupported(String? feature) => (super.noSuchMethod(
         Invocation.method(
           #isFeatureSupported,
           [feature],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<_i2.PlatformBillingResult>
+  _i4.Future<_i2.PlatformBillingResult>
       isAlternativeBillingOnlyAvailableAsync() => (super.noSuchMethod(
             Invocation.method(
               #isAlternativeBillingOnlyAvailableAsync,
               [],
             ),
-            returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+            returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
                 _FakePlatformBillingResult_0(
               this,
               Invocation.method(
@@ -359,7 +373,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
               ),
             )),
             returnValueForMissingStub:
-                _i3.Future<_i2.PlatformBillingResult>.value(
+                _i4.Future<_i2.PlatformBillingResult>.value(
                     _FakePlatformBillingResult_0(
               this,
               Invocation.method(
@@ -367,16 +381,16 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 [],
               ),
             )),
-          ) as _i3.Future<_i2.PlatformBillingResult>);
+          ) as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i3.Future<_i2.PlatformBillingResult>
+  _i4.Future<_i2.PlatformBillingResult>
       showAlternativeBillingOnlyInformationDialog() => (super.noSuchMethod(
             Invocation.method(
               #showAlternativeBillingOnlyInformationDialog,
               [],
             ),
-            returnValue: _i3.Future<_i2.PlatformBillingResult>.value(
+            returnValue: _i4.Future<_i2.PlatformBillingResult>.value(
                 _FakePlatformBillingResult_0(
               this,
               Invocation.method(
@@ -385,7 +399,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
               ),
             )),
             returnValueForMissingStub:
-                _i3.Future<_i2.PlatformBillingResult>.value(
+                _i4.Future<_i2.PlatformBillingResult>.value(
                     _FakePlatformBillingResult_0(
               this,
               Invocation.method(
@@ -393,17 +407,17 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 [],
               ),
             )),
-          ) as _i3.Future<_i2.PlatformBillingResult>);
+          ) as _i4.Future<_i2.PlatformBillingResult>);
 
   @override
-  _i3.Future<_i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>
+  _i4.Future<_i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>
       createAlternativeBillingOnlyReportingDetailsAsync() =>
           (super.noSuchMethod(
             Invocation.method(
               #createAlternativeBillingOnlyReportingDetailsAsync,
               [],
             ),
-            returnValue: _i3.Future<
+            returnValue: _i4.Future<
                     _i2
                     .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
                 _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
@@ -413,7 +427,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 [],
               ),
             )),
-            returnValueForMissingStub: _i3.Future<
+            returnValueForMissingStub: _i4.Future<
                     _i2
                     .PlatformAlternativeBillingOnlyReportingDetailsResponse>.value(
                 _FakePlatformAlternativeBillingOnlyReportingDetailsResponse_5(
@@ -423,6 +437,6 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
                 [],
               ),
             )),
-          ) as _i3.Future<
+          ) as _i4.Future<
               _i2.PlatformAlternativeBillingOnlyReportingDetailsResponse>);
 }

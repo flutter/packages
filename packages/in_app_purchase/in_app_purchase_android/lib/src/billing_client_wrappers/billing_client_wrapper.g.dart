@@ -42,6 +42,15 @@ const _$ProrationModeEnumMap = {
   ProrationMode.immediateAndChargeFullPrice: 5,
 };
 
+const _$ReplacementModeEnumMap = {
+  ReplacementMode.unknownReplacementMode: 0,
+  ReplacementMode.withTimeProration: 1,
+  ReplacementMode.chargeProratedPrice: 2,
+  ReplacementMode.withoutProration: 3,
+  ReplacementMode.deferred: 6,
+  ReplacementMode.chargeFullPrice: 5,
+};
+
 const _$BillingClientFeatureEnumMap = {
   BillingClientFeature.inAppItemsOnVR: 'inAppItemsOnVr',
   BillingClientFeature.priceChangeConfirmation: 'priceChangeConfirmation',

@@ -1,6 +1,33 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds support for picture-in-picture.
+
+## 2.6.5
+
+* Bugfix to allow the audio-only HLS (.m3u8) on iOS.
+
+## 2.6.4
+
+* Refactors native code structure.
+
+## 2.6.3
+
+* Fixes VideoPlayerController.initialize() future never resolving with invalid video file.
+* Adds more details to the error message returned by VideoPlayerController.initialize().
+
+## 2.6.2
+
+* Updates Pigeon for non-nullable collection type support.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.6.1
+
+* Adds files to make include directory permanent.
+
 ## 2.6.0
 
-* Adds support for picture-in-picture.
+* Adds Swift Package Manager compatibility.
 
 ## 2.5.7
 

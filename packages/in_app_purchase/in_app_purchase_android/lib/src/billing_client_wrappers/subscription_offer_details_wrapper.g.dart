@@ -25,13 +25,13 @@ SubscriptionOfferDetailsWrapper _$SubscriptionOfferDetailsWrapperFromJson(
 
 PricingPhaseWrapper _$PricingPhaseWrapperFromJson(Map json) =>
     PricingPhaseWrapper(
-      billingCycleCount: json['billingCycleCount'] as int? ?? 0,
+      billingCycleCount: (json['billingCycleCount'] as num?)?.toInt() ?? 0,
       billingPeriod: json['billingPeriod'] as String? ?? '',
       formattedPrice: json['formattedPrice'] as String? ?? '',
-      priceAmountMicros: json['priceAmountMicros'] as int? ?? 0,
+      priceAmountMicros: (json['priceAmountMicros'] as num?)?.toInt() ?? 0,
       priceCurrencyCode: json['priceCurrencyCode'] as String? ?? '',
       recurrenceMode: json['recurrenceMode'] == null
           ? RecurrenceMode.nonRecurring
           : const RecurrenceModeConverter()
-              .fromJson(json['recurrenceMode'] as int?),
+              .fromJson((json['recurrenceMode'] as num?)?.toInt()),
     );

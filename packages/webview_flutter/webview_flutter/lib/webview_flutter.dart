@@ -5,6 +5,8 @@
 export 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart'
     show
         HttpAuthRequest,
+        HttpResponseError,
+        HttpResponseErrorCallback,
         JavaScriptAlertDialogRequest,
         JavaScriptConfirmDialogRequest,
         JavaScriptConsoleMessage,
@@ -28,6 +30,8 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         WebResourceError,
         WebResourceErrorCallback,
         WebResourceErrorType,
+        WebResourceRequest,
+        WebResourceResponse,
         WebViewCookie,
         WebViewCredential,
         WebViewPermissionResourceType,

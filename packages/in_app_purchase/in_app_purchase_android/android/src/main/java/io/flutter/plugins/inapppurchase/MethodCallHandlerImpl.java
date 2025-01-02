@@ -60,6 +60,11 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       com.android.billingclient.api.BillingFlowParams.ProrationMode
           .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 
+  @VisibleForTesting
+  static final int REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
+      com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams.ReplacementMode
+          .UNKNOWN_REPLACEMENT_MODE;
+
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
       "https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/README.md#loading-products-for-sale";
@@ -285,9 +290,20 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       }
     }
 
+    if (params.getProrationMode() != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY
+        && params.getReplacementMode()
+            != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+      throw new FlutterError(
+          "IN_APP_PURCHASE_CONFLICT_PRORATION_MODE_REPLACEMENT_MODE",
+          "launchBillingFlow failed because you provided both prorationMode and replacementMode. You can only provide one of them.",
+          null);
+    }
+
     if (params.getOldProduct() == null
-        && params.getProrationMode()
-            != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        && (params.getProrationMode()
+                != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY
+            || params.getReplacementMode()
+                != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)) {
       throw new FlutterError(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
           "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
@@ -336,9 +352,16 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
         && !params.getOldProduct().isEmpty()
         && params.getPurchaseToken() != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(params.getPurchaseToken());
-      // Set the prorationMode using a helper to minimize impact of deprecation warning suppression.
-      setReplaceProrationMode(
-          subscriptionUpdateParamsBuilder, params.getProrationMode().intValue());
+      if (params.getProrationMode()
+          != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        setReplaceProrationMode(
+            subscriptionUpdateParamsBuilder, params.getProrationMode().intValue());
+      }
+      if (params.getReplacementMode()
+          != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
+        subscriptionUpdateParamsBuilder.setSubscriptionReplacementMode(
+            params.getReplacementMode().intValue());
+      }
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
     return fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build()));
@@ -385,7 +408,8 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
     }
 
     try {
-      // Like in our connect call, consider the billing client responding a "success" here regardless
+      // Like in our connect call, consider the billing client responding a "success" here
+      // regardless
       // of status code.
       QueryPurchasesParams.Builder paramsBuilder = QueryPurchasesParams.newBuilder();
       paramsBuilder.setProductType(toProductTypeString(productType));

@@ -6,306 +6,307 @@ package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 
-import android.graphics.SurfaceTexture;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.PlaybackException;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import io.flutter.plugin.common.EventChannel;
+import android.view.Surface;
+import androidx.media3.common.AudioAttributes;
+import androidx.media3.common.C;
+import androidx.media3.common.PlaybackParameters;
+import androidx.media3.common.Player;
+import androidx.media3.common.VideoSize;
+import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
-import org.mockito.MockitoAnnotations;
-import org.mockito.stubbing.Answer;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 
+/**
+ * Unit tests for {@link VideoPlayer}.
+ *
+ * <p>This test suite <em>narrowly verifies</em> that {@link VideoPlayer} interfaces with the {@link
+ * ExoPlayer} interface <em>exactly</em> as it did when the test suite was created. That is, if the
+ * behavior changes, this test will need to change. However, this suite should catch bugs related to
+ * <em>"this is a safe refactor with no behavior changes"</em>.
+ *
+ * <p>It's hypothetically possible to write better tests using {@link
+ * androidx.media3.test.utils.FakeMediaSource}, but you really need a PhD in the Android media APIs
+ * in order to figure out how to set everything up so the player "works".
+ */
 @RunWith(RobolectricTestRunner.class)
-public class VideoPlayerTest {
-  private ExoPlayer fakeExoPlayer;
-  private EventChannel fakeEventChannel;
-  private TextureRegistry.SurfaceTextureEntry fakeSurfaceTextureEntry;
-  private SurfaceTexture fakeSurfaceTexture;
-  private VideoPlayerOptions fakeVideoPlayerOptions;
-  private QueuingEventSink fakeEventSink;
-  private DefaultHttpDataSource.Factory httpDataSourceFactorySpy;
+public final class VideoPlayerTest {
+  private static final String FAKE_ASSET_URL = "https://flutter.dev/movie.mp4";
+  private FakeVideoAsset fakeVideoAsset;
 
-  @Captor private ArgumentCaptor<HashMap<String, Object>> eventCaptor;
+  @Mock private VideoPlayerCallbacks mockEvents;
+  @Mock private TextureRegistry.SurfaceProducer mockProducer;
+  @Mock private ExoPlayer mockExoPlayer;
+  @Captor private ArgumentCaptor<AudioAttributes> attributesCaptor;
+  @Captor private ArgumentCaptor<TextureRegistry.SurfaceProducer.Callback> callbackCaptor;
+  @Captor private ArgumentCaptor<Player.Listener> listenerCaptor;
+
+  @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
   @Before
-  public void before() {
-    MockitoAnnotations.openMocks(this);
+  public void setUp() {
+    fakeVideoAsset = new FakeVideoAsset(FAKE_ASSET_URL);
+    when(mockProducer.getSurface()).thenReturn(mock(Surface.class));
+  }
 
-    fakeExoPlayer = mock(ExoPlayer.class);
-    fakeEventChannel = mock(EventChannel.class);
-    fakeSurfaceTextureEntry = mock(TextureRegistry.SurfaceTextureEntry.class);
-    fakeSurfaceTexture = mock(SurfaceTexture.class);
-    when(fakeSurfaceTextureEntry.surfaceTexture()).thenReturn(fakeSurfaceTexture);
-    fakeVideoPlayerOptions = mock(VideoPlayerOptions.class);
-    fakeEventSink = mock(QueuingEventSink.class);
-    httpDataSourceFactorySpy = spy(new DefaultHttpDataSource.Factory());
+  private VideoPlayer createVideoPlayer() {
+    return createVideoPlayer(new VideoPlayerOptions());
+  }
+
+  private VideoPlayer createVideoPlayer(VideoPlayerOptions options) {
+    return new VideoPlayer(
+        () -> mockExoPlayer, mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options);
   }
 
   @Test
-  public void videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNull() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
+  public void loadsAndPreparesProvidedMediaEnablesAudioFocusByDefault() {
+    VideoPlayer videoPlayer = createVideoPlayer();
 
-    videoPlayer.buildHttpDataSourceFactory(new HashMap<>());
+    verify(mockExoPlayer).setMediaItem(fakeVideoAsset.getMediaItem());
+    verify(mockExoPlayer).prepare();
+    verify(mockProducer).getSurface();
+    verify(mockExoPlayer).setVideoSurface(any());
 
-    verify(httpDataSourceFactorySpy).setUserAgent("ExoPlayer");
-    verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
-    verify(httpDataSourceFactorySpy, never()).setDefaultRequestProperties(any());
+    verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(true));
+    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+
+    videoPlayer.dispose();
   }
 
   @Test
-  public void
-      videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentSpecified() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Map<String, String> httpHeaders =
-        new HashMap<String, String>() {
-          {
-            put("header", "value");
-            put("User-Agent", "userAgent");
-          }
-        };
+  public void loadsAndPreparesProvidedMediaDisablesAudioFocusWhenMixModeSet() {
+    VideoPlayerOptions options = new VideoPlayerOptions();
+    options.mixWithOthers = true;
 
-    videoPlayer.buildHttpDataSourceFactory(httpHeaders);
+    VideoPlayer videoPlayer = createVideoPlayer(options);
 
-    verify(httpDataSourceFactorySpy).setUserAgent("userAgent");
-    verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
-    verify(httpDataSourceFactorySpy).setDefaultRequestProperties(httpHeaders);
+    verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(false));
+    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+
+    videoPlayer.dispose();
   }
 
   @Test
-  public void
-      videoPlayer_buildsHttpDataSourceFactoryProperlyWhenHttpHeadersNonNullAndUserAgentNotSpecified() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Map<String, String> httpHeaders =
-        new HashMap<String, String>() {
-          {
-            put("header", "value");
-          }
-        };
-
-    videoPlayer.buildHttpDataSourceFactory(httpHeaders);
-
-    verify(httpDataSourceFactorySpy).setUserAgent("ExoPlayer");
-    verify(httpDataSourceFactorySpy).setAllowCrossProtocolRedirects(true);
-    verify(httpDataSourceFactorySpy).setDefaultRequestProperties(httpHeaders);
-  }
-
-  @Test
-  public void sendInitializedSendsExpectedEvent_90RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(90).build();
-
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
-    when(fakeExoPlayer.getDuration()).thenReturn(10L);
-
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
-
-    verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
-
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 200);
-    assertEquals(event.get("height"), 100);
-    assertEquals(event.get("rotationCorrection"), null);
-  }
-
-  @Test
-  public void sendInitializedSendsExpectedEvent_270RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(270).build();
-
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
-    when(fakeExoPlayer.getDuration()).thenReturn(10L);
-
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
-
-    verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
-
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 200);
-    assertEquals(event.get("height"), 100);
-    assertEquals(event.get("rotationCorrection"), null);
-  }
-
-  @Test
-  public void sendInitializedSendsExpectedEvent_0RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(0).build();
-
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
-    when(fakeExoPlayer.getDuration()).thenReturn(10L);
-
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
-
-    verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
-
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 100);
-    assertEquals(event.get("height"), 200);
-    assertEquals(event.get("rotationCorrection"), null);
-  }
-
-  @Test
-  public void sendInitializedSendsExpectedEvent_180RotationDegrees() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-    Format testFormat =
-        new Format.Builder().setWidth(100).setHeight(200).setRotationDegrees(180).build();
-
-    when(fakeExoPlayer.getVideoFormat()).thenReturn(testFormat);
-    when(fakeExoPlayer.getDuration()).thenReturn(10L);
-
-    videoPlayer.isInitialized = true;
-    videoPlayer.sendInitialized();
-
-    verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event = eventCaptor.getValue();
-
-    assertEquals(event.get("event"), "initialized");
-    assertEquals(event.get("duration"), 10L);
-    assertEquals(event.get("width"), 100);
-    assertEquals(event.get("height"), 200);
-    assertEquals(event.get("rotationCorrection"), 180);
-  }
-
-  @Test
-  public void onIsPlayingChangedSendsExpectedEvent() {
-    VideoPlayer videoPlayer =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
-
-    doAnswer(
-            (Answer<Void>)
-                invocation -> {
-                  Map<String, Object> event = new HashMap<>();
-                  event.put("event", "isPlayingStateUpdate");
-                  event.put("isPlaying", (Boolean) invocation.getArguments()[0]);
-                  fakeEventSink.success(event);
-                  return null;
-                })
-        .when(fakeExoPlayer)
-        .setPlayWhenReady(anyBoolean());
+  public void playsAndPausesProvidedMedia() {
+    VideoPlayer videoPlayer = createVideoPlayer();
 
     videoPlayer.play();
-
-    verify(fakeEventSink).success(eventCaptor.capture());
-    HashMap<String, Object> event1 = eventCaptor.getValue();
-
-    assertEquals(event1.get("event"), "isPlayingStateUpdate");
-    assertEquals(event1.get("isPlaying"), true);
+    verify(mockExoPlayer).play();
 
     videoPlayer.pause();
+    verify(mockExoPlayer).pause();
 
-    verify(fakeEventSink, times(2)).success(eventCaptor.capture());
-    HashMap<String, Object> event2 = eventCaptor.getValue();
-
-    assertEquals(event2.get("event"), "isPlayingStateUpdate");
-    assertEquals(event2.get("isPlaying"), false);
+    videoPlayer.dispose();
   }
 
   @Test
-  public void behindLiveWindowErrorResetsPlayerToDefaultPosition() {
-    List<Player.Listener> listeners = new LinkedList<>();
-    doAnswer(invocation -> listeners.add(invocation.getArgument(0)))
-        .when(fakeExoPlayer)
-        .addListener(any());
+  public void sendsBufferingUpdatesOnDemand() {
+    VideoPlayer videoPlayer = createVideoPlayer();
 
-    VideoPlayer unused =
-        new VideoPlayer(
-            fakeExoPlayer,
-            fakeEventChannel,
-            fakeSurfaceTextureEntry,
-            fakeVideoPlayerOptions,
-            fakeEventSink,
-            httpDataSourceFactorySpy);
+    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
+    videoPlayer.sendBufferingUpdate();
+    verify(mockEvents).onBufferingUpdate(10L);
 
-    PlaybackException exception =
-        new PlaybackException(null, null, PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW);
-    listeners.forEach(listener -> listener.onPlayerError(exception));
+    videoPlayer.dispose();
+  }
 
-    verify(fakeExoPlayer).seekToDefaultPosition();
-    verify(fakeExoPlayer).prepare();
+  @Test
+  public void togglesLoopingEnablesAndDisablesRepeatMode() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    videoPlayer.setLooping(true);
+    verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
+
+    videoPlayer.setLooping(false);
+    verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_OFF);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void setVolumeIsClampedBetween0and1() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    videoPlayer.setVolume(-1.0);
+    verify(mockExoPlayer).setVolume(0f);
+
+    videoPlayer.setVolume(2.0);
+    verify(mockExoPlayer).setVolume(1f);
+
+    videoPlayer.setVolume(0.5);
+    verify(mockExoPlayer).setVolume(0.5f);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void setPlaybackSpeedSetsPlaybackParametersWithValue() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    videoPlayer.setPlaybackSpeed(2.5);
+    verify(mockExoPlayer).setPlaybackParameters(new PlaybackParameters(2.5f));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void seekAndGetPosition() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    videoPlayer.seekTo(10);
+    verify(mockExoPlayer).seekTo(10);
+
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(20L);
+    assertEquals(20L, videoPlayer.getPosition());
+  }
+
+  @Test
+  public void onSurfaceProducerDestroyedAndRecreatedReleasesAndThenRecreatesAndResumesPlayer() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    verify(mockExoPlayer, never()).release();
+
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(10L);
+    when(mockExoPlayer.getRepeatMode()).thenReturn(Player.REPEAT_MODE_ALL);
+    when(mockExoPlayer.getVolume()).thenReturn(0.5f);
+    when(mockExoPlayer.getPlaybackParameters()).thenReturn(new PlaybackParameters(2.5f));
+
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+    producerLifecycle.onSurfaceDestroyed();
+
+    verify(mockExoPlayer).release();
+
+    // Create a new mock exo player so that we get a new instance.
+    mockExoPlayer = mock(ExoPlayer.class);
+    simulateSurfaceCreation(producerLifecycle);
+
+    verify(mockExoPlayer).seekTo(10L);
+    verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
+    verify(mockExoPlayer).setVolume(0.5f);
+    verify(mockExoPlayer).setPlaybackParameters(new PlaybackParameters(2.5f));
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void onSurfaceProducerDestroyedDoesNotStopOrPauseVideo() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+    producerLifecycle.onSurfaceDestroyed();
+
+    verify(mockExoPlayer, never()).stop();
+    verify(mockExoPlayer, never()).pause();
+    verify(mockExoPlayer, never()).setPlayWhenReady(anyBoolean());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void onDisposeSurfaceProducerCallbackIsDisconnected() {
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    verify(mockProducer).setCallback(any());
+
+    videoPlayer.dispose();
+    verify(mockProducer).setCallback(null);
+  }
+
+  @Test
+  public void onInitializedCalledWhenVideoPlayerInitiallyCreated() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    // Pretend we have a video, and capture the registered event listener.
+    when(mockExoPlayer.getVideoSize()).thenReturn(new VideoSize(300, 200));
+    verify(mockExoPlayer).addListener(listenerCaptor.capture());
+    Player.Listener listener = listenerCaptor.getValue();
+
+    // Trigger an event that would trigger onInitialized.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockEvents).onInitialized(anyInt(), anyInt(), anyLong(), anyInt());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void onSurfaceCreatedDoesNotSendInitializeEventAgain() {
+    // The VideoPlayer contract assumes that the event "initialized" is sent exactly once
+    // (duplicate events cause an error to be thrown at the shared Dart layer). This test verifies
+    // that the onInitialized event is sent exactly once per player.
+    //
+    // Regression test for https://github.com/flutter/flutter/issues/154602.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    when(mockExoPlayer.getVideoSize()).thenReturn(new VideoSize(300, 200));
+
+    // Capture the lifecycle events so we can simulate onSurfaceCreated/Destroyed.
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+
+    // Trigger destroyed/created.
+    producerLifecycle.onSurfaceDestroyed();
+    simulateSurfaceCreation(producerLifecycle);
+
+    // Initial listener, and the new one from the resume.
+    verify(mockExoPlayer, times(2)).addListener(listenerCaptor.capture());
+    Player.Listener listener = listenerCaptor.getValue();
+
+    // Now trigger that same event, which would happen in the case of a background/resume.
+    listener.onPlaybackStateChanged(Player.STATE_READY);
+
+    // Was not called because it was a result of a background/resume.
+    verify(mockEvents, never()).onInitialized(anyInt(), anyInt(), anyLong(), anyInt());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void onSurfaceCreatedWithoutDestroyDoesNotRecreate() {
+    // Initially create the video player, which creates the initial surface.
+    VideoPlayer videoPlayer = createVideoPlayer();
+    verify(mockProducer).getSurface();
+
+    // Capture the lifecycle events so we can simulate onSurfaceCreated/Destroyed.
+    verify(mockProducer).setCallback(callbackCaptor.capture());
+    TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
+
+    // Calling onSurfaceCreated does not do anything, since the surface was never destroyed.
+    simulateSurfaceCreation(producerLifecycle);
+    verifyNoMoreInteractions(mockProducer);
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void disposeReleasesExoPlayerBeforeTexture() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    videoPlayer.dispose();
+
+    // Regression test for https://github.com/flutter/flutter/issues/156158.
+    // The player must be destroyed before the surface it is writing to.
+    InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
+    inOrder.verify(mockExoPlayer).release();
+    inOrder.verify(mockProducer).release();
+  }
+
+  // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once
+  // available on stable; see https://github.com/flutter/flutter/issues/155131.
+  // This separate method only exists to scope the suppression.
+  @SuppressWarnings({"deprecation", "removal"})
+  void simulateSurfaceCreation(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
+    producerLifecycle.onSurfaceCreated();
   }
 }

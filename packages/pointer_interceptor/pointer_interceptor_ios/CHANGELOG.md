@@ -1,5 +1,10 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.10.1
+
+* Adds Swift Package Manager compatibility.
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
 
 ## 0.10.0+2

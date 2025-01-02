@@ -9,8 +9,8 @@
 
 @interface FIAPRequestHandler () <SKProductsRequestDelegate>
 
-@property(copy, nonatomic) ProductRequestCompletion completion;
-@property(strong, nonatomic) SKRequest *request;
+@property(nonatomic, copy) ProductRequestCompletion completion;
+@property(nonatomic, strong) SKRequest *request;
 
 @end
 

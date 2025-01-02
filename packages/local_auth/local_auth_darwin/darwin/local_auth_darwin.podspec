@@ -14,11 +14,13 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/local_auth' }
   s.documentation_url = 'https://pub.dev/packages/local_auth_darwin'
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
-  s.dependency 'Flutter'
-  s.platform = :ios, '12.0'
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
-  s.resource_bundles = {'local_auth_darwin_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
-end
+  s.source_files = 'local_auth_darwin/Sources/local_auth_darwin/**/*.{h,m}'
+  s.public_header_files = 'local_auth_darwin/Sources/local_auth_darwin/include/**/*.h'
+  s.ios.dependency 'Flutter'
+  s.osx.dependency 'FlutterMacOS'
+  s.ios.deployment_target = '12.0'
+  s.osx.deployment_target = '10.14'
 
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.resource_bundles = {'local_auth_darwin_privacy' => ['local_auth_darwin/Sources/local_auth_darwin/Resources/PrivacyInfo.xcprivacy']}
+end

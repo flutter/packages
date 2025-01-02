@@ -29,7 +29,7 @@ class QuickActionsIos extends QuickActionsPlatform {
   Future<void> initialize(QuickActionHandler handler) async {
     final _QuickActionHandlerApi quickActionsHandlerApi =
         _QuickActionHandlerApi();
-    IOSQuickActionsFlutterApi.setup(quickActionsHandlerApi);
+    IOSQuickActionsFlutterApi.setUp(quickActionsHandlerApi);
     _handler = handler;
   }
 
@@ -47,6 +47,7 @@ class QuickActionsIos extends QuickActionsPlatform {
     return ShortcutItemMessage(
       type: item.type,
       localizedTitle: item.localizedTitle,
+      localizedSubtitle: item.localizedSubtitle,
       icon: item.icon,
     );
   }

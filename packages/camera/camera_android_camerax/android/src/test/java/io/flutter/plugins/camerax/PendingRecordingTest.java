@@ -41,6 +41,7 @@ public class PendingRecordingTest {
   @Mock public RecordingFlutterApiImpl mockRecordingFlutterApi;
   @Mock public Context mockContext;
   @Mock public SystemServicesFlutterApiImpl mockSystemServicesFlutterApi;
+  @Mock public PendingRecordingFlutterApiImpl mockPendingRecordingFlutterApi;
   @Mock public VideoRecordEvent.Finalize event;
   @Mock public Throwable throwable;
 
@@ -80,6 +81,7 @@ public class PendingRecordingTest {
     PendingRecordingHostApiImpl pendingRecordingHostApi =
         new PendingRecordingHostApiImpl(mockBinaryMessenger, testInstanceManager, mockContext);
     pendingRecordingHostApi.systemServicesFlutterApi = mockSystemServicesFlutterApi;
+    pendingRecordingHostApi.pendingRecordingFlutterApi = mockPendingRecordingFlutterApi;
     final String eventMessage = "example failure message";
 
     when(event.hasError()).thenReturn(true);
@@ -89,7 +91,33 @@ public class PendingRecordingTest {
 
     pendingRecordingHostApi.handleVideoRecordEvent(event);
 
+    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEvent(any());
     verify(mockSystemServicesFlutterApi).sendCameraError(eq(eventMessage), any());
+  }
+
+  @Test
+  public void handleVideoRecordEvent_SendsVideoRecordingFinalizedEvent() {
+    PendingRecordingHostApiImpl pendingRecordingHostApi =
+        new PendingRecordingHostApiImpl(mockBinaryMessenger, testInstanceManager, mockContext);
+    pendingRecordingHostApi.pendingRecordingFlutterApi = mockPendingRecordingFlutterApi;
+
+    when(event.hasError()).thenReturn(false);
+
+    pendingRecordingHostApi.handleVideoRecordEvent(event);
+
+    verify(mockPendingRecordingFlutterApi).sendVideoRecordingFinalizedEvent(any());
+  }
+
+  @Test
+  public void handleVideoRecordEvent_SendsVideoRecordingStartedEvent() {
+    PendingRecordingHostApiImpl pendingRecordingHostApi =
+        new PendingRecordingHostApiImpl(mockBinaryMessenger, testInstanceManager, mockContext);
+    pendingRecordingHostApi.pendingRecordingFlutterApi = mockPendingRecordingFlutterApi;
+    VideoRecordEvent.Start mockStartEvent = mock(VideoRecordEvent.Start.class);
+
+    pendingRecordingHostApi.handleVideoRecordEvent(mockStartEvent);
+
+    verify(mockPendingRecordingFlutterApi).sendVideoRecordingStartedEvent(any());
   }
 
   @Test

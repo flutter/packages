@@ -4,8 +4,8 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
@@ -27,7 +27,7 @@ void main() {
     late StreamController<MapEvent<Object?>> events;
     late MarkersController controller;
     late ClusterManagersController clusterManagersController;
-    late gmaps.GMap map;
+    late gmaps.Map map;
 
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
@@ -35,7 +35,7 @@ void main() {
       clusterManagersController = ClusterManagersController(stream: events);
       controller = MarkersController(
           stream: events, clusterManagersController: clusterManagersController);
-      map = gmaps.GMap(createDivElement());
+      map = gmaps.Map(createDivElement());
       clusterManagersController.bindToMap(123, map);
       controller.bindToMap(123, map);
     });
@@ -46,7 +46,7 @@ void main() {
         const Marker(markerId: MarkerId('2')),
       };
 
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers.length, 2);
       expect(controller.markers, contains(const MarkerId('1')));
@@ -61,7 +61,7 @@ void main() {
       final Set<Marker> markers = <Marker>{
         const Marker(markerId: MarkerId('1')),
       };
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       marker = controller.markers[const MarkerId('1')]?.marker;
       expect(marker, isNotNull);
@@ -81,7 +81,7 @@ void main() {
           position: LatLng(42, 54),
         ),
       };
-      controller.changeMarkers(updatedMarkers);
+      await controller.changeMarkers(updatedMarkers);
       expect(controller.markers.length, 1);
 
       marker = controller.markers[const MarkerId('1')]?.marker;
@@ -106,7 +106,7 @@ void main() {
           position: LatLng(42, 54),
         ),
       };
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       marker = controller.markers[const MarkerId('1')]?.marker;
       expect(marker, isNotNull);
@@ -124,7 +124,7 @@ void main() {
           draggable: true,
         ),
       };
-      controller.changeMarkers(updatedMarkers);
+      await controller.changeMarkers(updatedMarkers);
       expect(controller.markers.length, 1);
 
       marker = controller.markers[const MarkerId('1')]?.marker;
@@ -144,7 +144,7 @@ void main() {
         const Marker(markerId: MarkerId('3')),
       };
 
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers.length, 3);
 
@@ -170,7 +170,7 @@ void main() {
         ),
       };
 
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers[const MarkerId('1')]?.infoWindowShown, isFalse);
 
@@ -196,7 +196,7 @@ void main() {
           infoWindow: InfoWindow(title: 'Title', snippet: 'Snippet'),
         ),
       };
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers[const MarkerId('1')]?.infoWindowShown, isFalse);
       expect(controller.markers[const MarkerId('2')]?.infoWindowShown, isFalse);
@@ -212,6 +212,128 @@ void main() {
       expect(controller.markers[const MarkerId('2')]?.infoWindowShown, isTrue);
     });
 
+    testWidgets('markers with custom asset icon work',
+        (WidgetTester tester) async {
+      final Set<Marker> markers = <Marker>{
+        Marker(
+            markerId: const MarkerId('1'),
+            icon: AssetMapBitmap(
+              'assets/red_square.png',
+              imagePixelRatio: 1.0,
+            )),
+      };
+
+      await controller.addMarkers(markers);
+
+      expect(controller.markers.length, 1);
+      final gmaps.Icon? icon =
+          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      expect(icon, isNotNull);
+
+      final String assetUrl = icon!.url;
+      expect(assetUrl, startsWith('assets'));
+
+      final gmaps.Size size = icon.size!;
+      final gmaps.Size scaledSize = icon.scaledSize!;
+
+      // asset size is 48x48 physical pixels
+      expect(size.width, 48);
+      expect(size.height, 48);
+      expect(scaledSize.width, 48);
+      expect(scaledSize.height, 48);
+    });
+
+    testWidgets('markers with custom asset icon and pixelratio work',
+        (WidgetTester tester) async {
+      final Set<Marker> markers = <Marker>{
+        Marker(
+            markerId: const MarkerId('1'),
+            icon: AssetMapBitmap(
+              'assets/red_square.png',
+              imagePixelRatio: 2.0,
+            )),
+      };
+
+      await controller.addMarkers(markers);
+
+      expect(controller.markers.length, 1);
+      final gmaps.Icon? icon =
+          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      expect(icon, isNotNull);
+
+      final String assetUrl = icon!.url;
+      expect(assetUrl, startsWith('assets'));
+
+      final gmaps.Size size = icon.size!;
+      final gmaps.Size scaledSize = icon.scaledSize!;
+
+      // Asset size is 48x48 physical pixels, and with pixel ratio 2.0 it
+      // should be drawn with size 24x24 logical pixels.
+      expect(size.width, 24);
+      expect(size.height, 24);
+      expect(scaledSize.width, 24);
+      expect(scaledSize.height, 24);
+    });
+    testWidgets('markers with custom asset icon with width and height work',
+        (WidgetTester tester) async {
+      final Set<Marker> markers = <Marker>{
+        Marker(
+            markerId: const MarkerId('1'),
+            icon: AssetMapBitmap(
+              'assets/red_square.png',
+              imagePixelRatio: 2.0,
+              width: 64,
+              height: 64,
+            )),
+      };
+
+      await controller.addMarkers(markers);
+
+      expect(controller.markers.length, 1);
+      final gmaps.Icon? icon =
+          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      expect(icon, isNotNull);
+
+      final String assetUrl = icon!.url;
+      expect(assetUrl, startsWith('assets'));
+
+      final gmaps.Size size = icon.size!;
+      final gmaps.Size scaledSize = icon.scaledSize!;
+
+      // Asset size is 48x48 physical pixels,
+      // and scaled to requested 64x64 size.
+      expect(size.width, 64);
+      expect(size.height, 64);
+      expect(scaledSize.width, 64);
+      expect(scaledSize.height, 64);
+    });
+
+    testWidgets('markers with missing asset icon should not set size',
+        (WidgetTester tester) async {
+      final Set<Marker> markers = <Marker>{
+        Marker(
+            markerId: const MarkerId('1'),
+            icon: AssetMapBitmap(
+              'assets/broken_asset_name.png',
+              imagePixelRatio: 2.0,
+            )),
+      };
+
+      await controller.addMarkers(markers);
+
+      expect(controller.markers.length, 1);
+      final gmaps.Icon? icon =
+          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      expect(icon, isNotNull);
+
+      final String assetUrl = icon!.url;
+      expect(assetUrl, startsWith('assets'));
+
+      // For invalid assets, the size and scaledSize should be null.
+      expect(icon.size, null);
+      expect(icon.scaledSize, null);
+    });
+
     // https://github.com/flutter/flutter/issues/66622
     testWidgets('markers with custom bitmap icon work',
         (WidgetTester tester) async {
@@ -219,24 +341,71 @@ void main() {
       final Set<Marker> markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
-          icon: BitmapDescriptor.fromBytes(bytes),
+          icon: BytesMapBitmap(
+            bytes,
+            imagePixelRatio: tester.view.devicePixelRatio,
+          ),
         ),
       };
 
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
       final gmaps.Icon? icon =
           controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
       expect(icon, isNotNull);
 
-      final String blobUrl = icon!.url!;
+      final String blobUrl = icon!.url;
       expect(blobUrl, startsWith('blob:'));
 
       final http.Response response = await http.get(Uri.parse(blobUrl));
       expect(response.bodyBytes, bytes,
           reason:
               'Bytes from the Icon blob must match bytes used to create Marker');
+
+      final gmaps.Size size = icon.size!;
+      final gmaps.Size scaledSize = icon.scaledSize!;
+
+      // Icon size is 16x16 pixels, this should be automatically read from the
+      // bitmap and set to the icon size scaled to 8x8 using the
+      // given imagePixelRatio.
+      final int expectedSize = 16 ~/ tester.view.devicePixelRatio;
+      expect(size.width, expectedSize);
+      expect(size.height, expectedSize);
+      expect(scaledSize.width, expectedSize);
+      expect(scaledSize.height, expectedSize);
+    });
+
+    testWidgets('markers with custom bitmap icon and pixelratio work',
+        (WidgetTester tester) async {
+      final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+      final Set<Marker> markers = <Marker>{
+        Marker(
+          markerId: const MarkerId('1'),
+          icon: BytesMapBitmap(
+            bytes,
+            imagePixelRatio: 1,
+          ),
+        ),
+      };
+
+      await controller.addMarkers(markers);
+
+      expect(controller.markers.length, 1);
+      final gmaps.Icon? icon =
+          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      expect(icon, isNotNull);
+
+      final gmaps.Size size = icon!.size!;
+      final gmaps.Size scaledSize = icon.scaledSize!;
+
+      // Icon size is 16x16 pixels, this should be automatically read from the
+      // bitmap and set to the icon size and should not be changed as
+      // image pixel ratio is set to 1.0.
+      expect(size.width, 16);
+      expect(size.height, 16);
+      expect(scaledSize.width, 16);
+      expect(scaledSize.height, 16);
     });
 
     // https://github.com/flutter/flutter/issues/73789
@@ -246,11 +415,15 @@ void main() {
       final Set<Marker> markers = <Marker>{
         Marker(
           markerId: const MarkerId('1'),
-          icon: BitmapDescriptor.fromBytes(bytes, size: const Size(20, 30)),
+          icon: BytesMapBitmap(
+            bytes,
+            width: 20,
+            height: 30,
+          ),
         ),
       };
 
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
       final gmaps.Icon? icon =
@@ -279,14 +452,17 @@ void main() {
         ),
       };
 
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
       final HTMLElement? content = controller
           .markers[const MarkerId('1')]?.infoWindow?.content as HTMLElement?;
-      expect(content?.innerHTML, contains('title for test'));
+      expect(content, isNotNull);
+
+      final String innerHtml = (content!.innerHTML as JSString).toDart;
+      expect(innerHtml, contains('title for test'));
       expect(
-          content?.innerHTML,
+          innerHtml,
           contains(
             '<a href="https://www.google.com">Go to Google &gt;&gt;&gt;</a>',
           ));
@@ -304,7 +480,7 @@ void main() {
         ),
       };
 
-      controller.addMarkers(markers);
+      await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
       final HTMLElement? content = controller

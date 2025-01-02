@@ -1,24 +1,23 @@
 # camera\_android
 
-The Android implementation of [`camera`][1].
-
-*Note*: [`camera_android_camerax`][3] will become the default implementation of
-`camera` on Android by May 2024, so **we strongly encourage you to opt into it**
-by using [these instructions][4]. If any [limitations][5] of `camera_android_camerax`
-prevent you from using it or if you run into any problems, please report these
-issues under [`flutter/flutter`][5] with `[camerax]` in the title.
+An Android implementation of [`camera`][1] built with the [Camera2 library][4].
 
 ## Usage
 
-This package is [endorsed][2], which means you can simply use `camera`
-normally. This package will be automatically included in your app when you do,
-so you do not need to add it to your `pubspec.yaml`.
+As of `camera: ^0.11.0`, to use this plugin instead of [`camera_android_camerax`][3],
+run
 
-However, if you `import` this package to use any of its APIs directly, you
-should add it to your `pubspec.yaml` as usual.
+```sh
+$ flutter pub add camera_android
+```
+
+## Limitation of testing video recording on emulators
+`MediaRecorder` does not work properly on emulators, as stated in [the documentation][5]. Specifically,
+when recording a video with sound enabled and trying to play it back, the duration won't be correct and
+you will only see the first frame.
 
 [1]: https://pub.dev/packages/camera
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://pub.dev/packages/camera_android_camerax
-[4]: https://pub.dev/packages/camera_android_camerax#usage
-[5]: https://pub.dev/packages/camera_android_camerax#limitations
+[4]: https://developer.android.com/media/camera/camera2
+[5]: https://developer.android.com/reference/android/media/MediaRecorder

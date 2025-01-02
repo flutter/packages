@@ -107,7 +107,6 @@ class _BooksScreenState extends State<BooksScreen>
       case 0:
       default:
         context.go('/books/popular');
-        break;
     }
   }
 }

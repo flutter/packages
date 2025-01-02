@@ -5,7 +5,6 @@
 library google_maps_flutter;
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -17,7 +16,9 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
     show
         ArgumentCallback,
         ArgumentCallbacks,
+        AssetMapBitmap,
         BitmapDescriptor,
+        BytesMapBitmap,
         CameraPosition,
         CameraPositionCallback,
         CameraTargetBounds,
@@ -25,10 +26,19 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         Cap,
         Circle,
         CircleId,
+        Cluster,
+        ClusterManager,
+        ClusterManagerId,
+        Heatmap,
+        HeatmapGradient,
+        HeatmapGradientColor,
+        HeatmapId,
+        HeatmapRadius,
         InfoWindow,
         JointType,
         LatLng,
         LatLngBounds,
+        MapBitmapScaling,
         MapStyleException,
         MapType,
         Marker,
@@ -44,7 +54,8 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         TileOverlay,
         TileOverlayId,
         TileProvider,
-        WebGestureHandling;
+        WebGestureHandling,
+        WeightedLatLng;
 
 part 'src/controller.dart';
 part 'src/google_map.dart';

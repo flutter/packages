@@ -21,7 +21,7 @@
   const double height2x = 250;  // The height of assets/2.0x/multisize.png.
   // Loading assets should get the best available asset for the screen scale when resolution-aware
   // assets are available (and the example app has 1x and 2x for this asset). See
-  // https://docs.flutter.dev/ui/assets/assets-and-images#resolution-aware
+  // https://flutter.dev/to/resolution-aware-images
   if (UIScreen.mainScreen.scale > 1.0) {
     XCTAssertEqualWithAccuracy(image.size.height, height2x, 0.00001);
   } else {

@@ -6,7 +6,7 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_android/src/android_webview.dart' as _i2;
+import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -21,8 +21,19 @@ import 'package:webview_flutter_android/src/android_webview.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeCookieManager_0 extends _i1.SmartFake implements _i2.CookieManager {
-  _FakeCookieManager_0(
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
+  _FakePigeonInstanceManager_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeCookieManager_1 extends _i1.SmartFake implements _i2.CookieManager {
+  _FakeCookieManager_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -38,6 +49,15 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
   MockCookieManager() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
   _i3.Future<void> setCookie(
@@ -83,15 +103,15 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
       ) as _i3.Future<void>);
 
   @override
-  _i2.CookieManager copy() => (super.noSuchMethod(
+  _i2.CookieManager pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #copy,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _FakeCookieManager_0(
+        returnValue: _FakeCookieManager_1(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),

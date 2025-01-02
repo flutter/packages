@@ -33,6 +33,6 @@ need to add a read-only file acces [entitlement][4]:
 ```
 
 [1]: https://pub.dev/packages/image_picker
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://pub.dev/packages/file_selector
-[4]: https://docs.flutter.dev/platform-integration/macos/building#entitlements-and-the-app-sandbox
+[4]: https://flutter.dev/to/macos-entitlements

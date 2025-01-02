@@ -12,6 +12,8 @@ export 'circle_updates.dart';
 export 'cluster.dart';
 export 'cluster_manager.dart';
 export 'cluster_manager_updates.dart';
+export 'heatmap.dart';
+export 'heatmap_updates.dart';
 export 'joint_type.dart';
 export 'location.dart';
 export 'map_configuration.dart';
@@ -34,6 +36,7 @@ export 'ui.dart';
 // Export the utils used by the Widget
 export 'utils/circle.dart';
 export 'utils/cluster_manager.dart';
+export 'utils/heatmap.dart';
 export 'utils/marker.dart';
 export 'utils/polygon.dart';
 export 'utils/polyline.dart';

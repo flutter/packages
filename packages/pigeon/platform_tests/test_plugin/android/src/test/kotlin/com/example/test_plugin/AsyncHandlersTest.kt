@@ -10,10 +10,14 @@ import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
 import java.nio.ByteBuffer
-import junit.framework.TestCase
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
-internal class AsyncHandlersTest : TestCase() {
+internal class AsyncHandlersTest {
+
   @Test
   fun testAsyncHost2Flutter() {
     val binaryMessenger = mockk<BinaryMessenger>()
@@ -56,7 +60,6 @@ internal class AsyncHandlersTest : TestCase() {
     val handlerSlot = slot<BinaryMessenger.BinaryMessageHandler>()
 
     val input = "Test"
-    val output = input
     val channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"
 
     every {
@@ -67,7 +70,7 @@ internal class AsyncHandlersTest : TestCase() {
     every { api.echo(any(), any()) } answers
         {
           val callback = arg<(Result<String>) -> Unit>(1)
-          callback(Result.success(output))
+          callback(Result.success(input))
         }
 
     HostSmallApi.setUp(binaryMessenger, api)
@@ -80,7 +83,7 @@ internal class AsyncHandlersTest : TestCase() {
       it?.rewind()
       @Suppress("UNCHECKED_CAST") val wrapped = codec.decodeMessage(it) as MutableList<Any>?
       assertNotNull(wrapped)
-      wrapped?.let { assertEquals(output, wrapped.first()) }
+      wrapped?.let { assertEquals(input, wrapped.first()) }
     }
 
     verify { binaryMessenger.setMessageHandler(channelName, handlerSlot.captured) }
@@ -88,7 +91,7 @@ internal class AsyncHandlersTest : TestCase() {
   }
 
   @Test
-  fun asyncFlutter2HostVoidVoid() {
+  fun testAsyncFlutter2HostVoidVoid() {
     val binaryMessenger = mockk<BinaryMessenger>()
     val api = mockk<HostSmallApi>()
 

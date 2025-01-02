@@ -5,10 +5,10 @@
 import 'package:flutter/foundation.dart';
 
 import 'ad_error.dart';
-import 'ads_request.dart';
 import 'interactive_media_ads_platform.dart';
 import 'platform_ad_display_container.dart';
 import 'platform_ads_manager.dart';
+import 'platform_ads_request.dart';
 
 /// Object specifying creation parameters for creating a [PlatformAdsLoader].
 ///
@@ -94,7 +94,7 @@ abstract base class PlatformAdsLoader {
   Future<void> contentComplete();
 
   /// Requests ads from a server.
-  Future<void> requestAds(AdsRequest request);
+  Future<void> requestAds(PlatformAdsRequest request);
 }
 
 /// Data when ads are successfully loaded from the ad server through an

@@ -89,11 +89,10 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
       case PreferredLaunchMode.platformDefault:
       // Intentionally treat any new values as platformDefault; see comment in
       // supportsMode.
-      // ignore: no_default_cases
+      // ignore: no_default_cases, unreachable_switch_default
       default:
         // By default, open web URLs in the application.
         inApp = url.startsWith('http:') || url.startsWith('https:');
-        break;
     }
 
     final bool succeeded;

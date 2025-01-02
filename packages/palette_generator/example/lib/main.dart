@@ -275,17 +275,20 @@ class PaletteSwatch extends StatelessWidget {
               fallbackHeight: 20.0,
               color: Color(0xff404040),
             )
-          : Container(
-              decoration: BoxDecoration(
-                  color: color,
-                  border: Border.all(
-                    color: _kPlaceholderColor,
-                    style: colorDistance < 0.2
-                        ? BorderStyle.solid
-                        : BorderStyle.none,
-                  )),
-              width: 34.0,
-              height: 20.0,
+          : Tooltip(
+              message: color!.toRGB(),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: color,
+                    border: Border.all(
+                      color: _kPlaceholderColor,
+                      style: colorDistance < 0.2
+                          ? BorderStyle.solid
+                          : BorderStyle.none,
+                    )),
+                width: 34.0,
+                height: 20.0,
+              ),
             ),
     );
 
@@ -302,5 +305,20 @@ class PaletteSwatch extends StatelessWidget {
       );
     }
     return swatch;
+  }
+}
+
+/// Converts a [Color] into a #RRGGBB string.
+extension on Color {
+  String toRGB() {
+    // In the example all alphas are 255, so no need to show it.
+    return '#${red.toHex()}${green.toHex()}${blue.toHex()}';
+  }
+}
+
+/// Converts an [int] to a uppercase hexadecimal string of at least [minDigits] length.
+extension on int {
+  String toHex([int minDigits = 2]) {
+    return toRadixString(16).toUpperCase().padLeft(minDigits, '0');
   }
 }

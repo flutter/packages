@@ -6,7 +6,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/messages.g.dart',
-  swiftOut: 'ios/Classes/messages.g.swift',
+  swiftOut: 'ios/quick_actions_ios/Sources/quick_actions_ios/messages.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
@@ -15,6 +15,7 @@ class ShortcutItemMessage {
   ShortcutItemMessage(
     this.type,
     this.localizedTitle,
+    this.localizedSubtitle,
     this.icon,
   );
 
@@ -23,6 +24,9 @@ class ShortcutItemMessage {
 
   /// Localized title of the item.
   String localizedTitle;
+
+  /// Localized subtitle of the item.
+  String? localizedSubtitle;
 
   /// Name of native resource to be displayed as the icon for this item.
   String? icon;

@@ -249,6 +249,68 @@ void main() {
       );
     });
 
+    test('throws for an unrecognized test_on type', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: unknown
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=vm'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[
+              contains('Unknown "test_on" value: "unknown"\n'
+                  "If this value needs to be supported for this package's "
+                  'tests, please update the repository tooling to support more '
+                  'test_on modes.'),
+            ],
+          ));
+    });
+
+    test('throws for an valid but complex test_on directive', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: vm && browser
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=vm'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+
+      expect(
+          output,
+          containsAllInOrder(
+            <Matcher>[
+              contains('Unknown "test_on" value: "vm && browser"\n'
+                  "If this value needs to be supported for this package's "
+                  'tests, please update the repository tooling to support more '
+                  'test_on modes.'),
+            ],
+          ));
+    });
+
     test('runs in Chrome when requested for Flutter package', () async {
       final RepositoryPackage package = createFakePackage(
         'a_package',
@@ -265,7 +327,11 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
+              const <String>[
+                'test',
+                '--color',
+                '--platform=chrome',
+              ],
               package.path),
         ]),
       );
@@ -289,7 +355,11 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
+              const <String>[
+                'test',
+                '--color',
+                '--platform=chrome',
+              ],
               plugin.path),
         ]),
       );
@@ -314,7 +384,11 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
+              const <String>[
+                'test',
+                '--color',
+                '--platform=chrome',
+              ],
               plugin.path),
         ]),
       );
@@ -339,7 +413,11 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
+              const <String>[
+                'test',
+                '--color',
+                '--platform=chrome',
+              ],
               plugin.path),
         ]),
       );
@@ -409,7 +487,11 @@ void main() {
         orderedEquals(<ProcessCall>[
           ProcessCall(
               getFlutterCommand(mockPlatform),
-              const <String>['test', '--color', '--platform=chrome', '--web-renderer=html'],
+              const <String>[
+                'test',
+                '--color',
+                '--platform=chrome',
+              ],
               plugin.path),
         ]),
       );
@@ -459,6 +541,30 @@ test_on: vm
       );
     });
 
+    test('does not skip running vm in vm mode', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: vm
+''');
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=vm']);
+
+      expect(
+          output,
+          isNot(containsAllInOrder(<Matcher>[
+            contains('Package has opted out'),
+          ])));
+      expect(
+        processRunner.recordedCalls,
+        isNotEmpty,
+      );
+    });
+
     test('skips running in vm mode if package opts out', () async {
       final RepositoryPackage package = createFakePackage(
         'a_package',
@@ -480,6 +586,30 @@ test_on: browser
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[]),
+      );
+    });
+
+    test('does not skip running browser in browser mode', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+      package.directory.childFile('dart_test.yaml').writeAsStringSync('''
+test_on: browser
+''');
+
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=browser']);
+
+      expect(
+          output,
+          isNot(containsAllInOrder(<Matcher>[
+            contains('Package has opted out'),
+          ])));
+      expect(
+        processRunner.recordedCalls,
+        isNotEmpty,
       );
     });
 

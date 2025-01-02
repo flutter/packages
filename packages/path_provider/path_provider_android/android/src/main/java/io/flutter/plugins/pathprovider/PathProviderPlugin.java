@@ -8,6 +8,7 @@ import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.pathprovider.Messages.PathProviderApi;
@@ -22,9 +23,9 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
 
   public PathProviderPlugin() {}
 
-  private void setup(BinaryMessenger messenger, Context context) {
+  private void setUp(BinaryMessenger messenger, Context context) {
     try {
-      PathProviderApi.setup(messenger, this);
+      PathProviderApi.setUp(messenger, this);
     } catch (Exception ex) {
       Log.e(TAG, "Received exception while setting up PathProviderPlugin", ex);
     }
@@ -32,36 +33,29 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
     this.context = context;
   }
 
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    PathProviderPlugin instance = new PathProviderPlugin();
-    instance.setup(registrar.messenger(), registrar.context());
-  }
-
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-    setup(binding.getBinaryMessenger(), binding.getApplicationContext());
+    setUp(binding.getBinaryMessenger(), binding.getApplicationContext());
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    PathProviderApi.setup(binding.getBinaryMessenger(), null);
+    PathProviderApi.setUp(binding.getBinaryMessenger(), null);
   }
 
   @Override
   public @Nullable String getTemporaryPath() {
-    return getPathProviderTemporaryDirectory();
+    return context.getCacheDir().getPath();
   }
 
   @Override
   public @Nullable String getApplicationSupportPath() {
-    return getApplicationSupportDirectory();
+    return PathUtils.getFilesDir(context);
   }
 
   @Override
   public @Nullable String getApplicationDocumentsPath() {
-    return getPathProviderApplicationDocumentsDirectory();
+    return PathUtils.getDataDirectory(context);
   }
 
   @Override
@@ -71,33 +65,6 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
 
   @Override
   public @Nullable String getExternalStoragePath() {
-    return getPathProviderStorageDirectory();
-  }
-
-  @Override
-  public @NonNull List<String> getExternalCachePaths() {
-    return getPathProviderExternalCacheDirectories();
-  }
-
-  @Override
-  public @NonNull List<String> getExternalStoragePaths(
-      @NonNull Messages.StorageDirectory directory) {
-    return getPathProviderExternalStorageDirectories(directory);
-  }
-
-  private String getPathProviderTemporaryDirectory() {
-    return context.getCacheDir().getPath();
-  }
-
-  private String getApplicationSupportDirectory() {
-    return PathUtils.getFilesDir(context);
-  }
-
-  private String getPathProviderApplicationDocumentsDirectory() {
-    return PathUtils.getDataDirectory(context);
-  }
-
-  private String getPathProviderStorageDirectory() {
     final File dir = context.getExternalFilesDir(null);
     if (dir == null) {
       return null;
@@ -105,19 +72,31 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
     return dir.getAbsolutePath();
   }
 
-  private List<String> getPathProviderExternalCacheDirectories() {
+  @Override
+  public @NonNull List<String> getExternalCachePaths() {
     final List<String> paths = new ArrayList<>();
-
     for (File dir : context.getExternalCacheDirs()) {
       if (dir != null) {
         paths.add(dir.getAbsolutePath());
       }
     }
-
     return paths;
   }
 
-  private String getStorageDirectoryString(@NonNull Messages.StorageDirectory directory) {
+  @Override
+  public @NonNull List<String> getExternalStoragePaths(
+      @NonNull Messages.StorageDirectory directory) {
+    final List<String> paths = new ArrayList<>();
+    for (File dir : context.getExternalFilesDirs(getStorageDirectoryString(directory))) {
+      if (dir != null) {
+        paths.add(dir.getAbsolutePath());
+      }
+    }
+    return paths;
+  }
+
+  @VisibleForTesting
+  String getStorageDirectoryString(@NonNull Messages.StorageDirectory directory) {
     switch (directory) {
       case ROOT:
         return null;
@@ -144,18 +123,5 @@ public class PathProviderPlugin implements FlutterPlugin, PathProviderApi {
       default:
         throw new RuntimeException("Unrecognized directory: " + directory);
     }
-  }
-
-  private List<String> getPathProviderExternalStorageDirectories(
-      @NonNull Messages.StorageDirectory directory) {
-    final List<String> paths = new ArrayList<>();
-
-    for (File dir : context.getExternalFilesDirs(getStorageDirectoryString(directory))) {
-      if (dir != null) {
-        paths.add(dir.getAbsolutePath());
-      }
-    }
-
-    return paths;
   }
 }

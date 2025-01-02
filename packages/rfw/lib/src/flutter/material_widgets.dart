@@ -22,7 +22,7 @@ import 'runtime.dart';
 ///
 ///  * [AboutListTile]
 ///  * [AppBar]
-///  * [ButtonBar]
+///  * `ButtonBar`
 ///  * [Card]
 ///  * [CircularProgressIndicator]
 ///  * [Divider]
@@ -37,6 +37,7 @@ import 'runtime.dart';
 ///  * [Material]
 ///  * [OutlinedButton]
 ///  * [Scaffold]
+///  * [Slider]
 ///  * [TextButton]
 ///  * [VerticalDivider]
 ///  * [OverflowBar]
@@ -56,17 +57,23 @@ import 'runtime.dart';
 /// Some features have changed in the underlying Flutter's material library and are
 /// therefore no longer supported, including:
 ///
-///  * The [ButtonBar] widget in the Flutter's material library is planned to be
-///    deprecated in favor of the [OverflowBar] widget. The [ButtonBar] widget in
+///  * The `ButtonBar` widget in the Flutter's material library is planned to be
+///    deprecated in favor of the [OverflowBar] widget. The `ButtonBar` widget in
 ///    `rfw` package uses the [OverflowBar] widget internally for backward compatibility.
-///    The [ButtonBar] widget in `rfw` package is not deprecated and will continue to
-///    be supported. As a result, the following [ButtonBar] parameters are no longer
+///    The `ButtonBar` widget in `rfw` package is not deprecated and will continue to
+///    be supported. As a result, the following `ButtonBar` parameters are no longer
 ///    supported:
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///    * `buttonMinWidth`
 ///    * `buttonHeight`
 ///    * `buttonAlignedDropdown`
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///    It is recommended to use the [OverflowBar] widget.
 ///
 /// Some features are not supported:
@@ -77,7 +84,7 @@ import 'runtime.dart';
 ///  * Theming in general is not currently supported.
 ///
 ///  * Properties whose values are [Animation]s or based on
-///    [MaterialStateProperty] are not supported.
+///    [WidgetStateProperty] are not supported.
 ///
 ///  * Features related to focus or configuring mouse support are not
 ///    implemented.
@@ -94,7 +101,7 @@ import 'runtime.dart';
 ///
 /// In general, the trend will all of these unsupported features is that this
 /// library doesn't support features that can't be trivially expressed using the
-/// JSON-like structures of RFW. For example, [MaterialStateProperty] is
+/// JSON-like structures of RFW. For example, [WidgetStateProperty] is
 /// designed to be used with code to select the values, which doesn't work well
 /// in the RFW structure.
 LocalWidgetLibrary createMaterialWidgets() => LocalWidgetLibrary(_materialWidgetsDefinitions);
@@ -142,12 +149,12 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
-  // The [ButtonBar] widget in Flutter's material library is planned to be deprecated
-  // in favor of the [OverflowBar] widget. This [ButtonBar] implementation uses the
-  // [OverflowBar] widget internally for backward compatibility. The [ButtonBar]
+  // The `ButtonBar` widget in Flutter's material library is planned to be deprecated
+  // in favor of the [OverflowBar] widget. This `ButtonBar` implementation uses the
+  // [OverflowBar] widget internally for backward compatibility. The `ButtonBar`
   // widget in `rfw` package is not deprecated and will continue to be supported.
   //
-  // The [ButtonBar] widget in Flutter's material library has changed over time.
+  // The `ButtonBar` widget in Flutter's material library has changed over time.
   // The following parameters are no longer supported:
   //  - `buttonMinWidth`
   //  - `buttonHeight`
@@ -496,6 +503,39 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       drawerEnableOpenDragGesture: source.v<bool>(['drawerEnableOpenDragGesture']) ?? true,
       endDrawerEnableOpenDragGesture: source.v<bool>(['endDrawerEnableOpenDragGesture']) ?? true,
       restorationId: source.v<String>(['restorationId']),
+    );
+  },
+
+  'Slider': (BuildContext context, DataSource source) {
+    // not implemented: overlayColor, mouseCursor, semanticFormatterCallback, focusNode, autofocus
+    final min = source.v<double>(['min']) ?? 0.0;
+    final value = source.v<double>(['value']) ?? min;
+    final labelText = source.v<String>(['label']);
+    final label = labelText != null ? '$labelText: ${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
+    return Slider(
+      value: value,
+      secondaryTrackValue: source.v<double>(['secondaryTrackValue']),
+      onChanged: source.handler(['onChanged'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      onChangeStart: source.handler(['onChangeStart'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      onChangeEnd: source.handler(['onChangeEnd'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      min: min,
+      max: source.v<double>(['max']) ?? 1.0,
+      divisions: source.v<int>(['divisions']),
+      label: label,
+      activeColor: ArgumentDecoders.color(source, ['activeColor']),
+      inactiveColor: ArgumentDecoders.color(source, ['inactiveColor']),
+      secondaryActiveColor: ArgumentDecoders.color(source, ['secondaryActiveColor']),
+      thumbColor: ArgumentDecoders.color(source, ['thumbColor']),
+      allowedInteraction: ArgumentDecoders.enumValue<SliderInteraction>(SliderInteraction.values, source, ['allowedInteraction']),
     );
   },
 

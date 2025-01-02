@@ -1,4 +1,9 @@
+<!--#docregion android_manifest-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required permissions for the IMA SDK -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <!--#enddocregion android_manifest-->
     <application
         android:label="interactive_media_ads_example"
         android:name="${applicationName}"

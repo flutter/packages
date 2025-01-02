@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
@@ -43,7 +44,7 @@ class ClusterManagersController extends GeometryController {
     final MarkerClusterer markerClusterer = createMarkerClusterer(
         googleMap,
         (gmaps.MapMouseEvent event, MarkerClustererCluster cluster,
-                gmaps.GMap map) =>
+                gmaps.Map map) =>
             _clusterClicked(
                 clusterManager.clusterManagerId, event, cluster, map));
 
@@ -109,7 +110,7 @@ class ClusterManagersController extends GeometryController {
       ClusterManagerId clusterManagerId,
       gmaps.MapMouseEvent event,
       MarkerClustererCluster markerClustererCluster,
-      gmaps.GMap map) {
+      gmaps.Map map) {
     if (markerClustererCluster.count > 0 &&
         markerClustererCluster.bounds != null) {
       final Cluster cluster =
@@ -127,7 +128,7 @@ class ClusterManagersController extends GeometryController {
 
     final List<MarkerId> markerIds = markerClustererCluster.markers
         .map<MarkerId>((gmaps.Marker marker) =>
-            MarkerId(marker.get('markerId')! as String))
+            MarkerId((marker.get('markerId')! as JSString).toDart))
         .toList();
     return Cluster(
       clusterManagerId,

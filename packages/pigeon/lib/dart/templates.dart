@@ -4,6 +4,20 @@
 
 import '../generator_tools.dart';
 
+/// Name for the generated InstanceManager for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String dartInstanceManagerClassName =
+    '${proxyApiClassNamePrefix}InstanceManager';
+
+/// Name for the generated InstanceManager API for ProxyApis.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String dartInstanceManagerApiClassName =
+    '_${classNamePrefix}InstanceManagerApi';
+
 /// Creates the `InstanceManager` with the passed string values.
 String instanceManagerTemplate({
   required Iterable<String> allProxyApiNames,
@@ -30,9 +44,9 @@ String instanceManagerTemplate({
 /// is added as a weak reference with the same identifier. This prevents a
 /// scenario where the weak referenced instance was released and then later
 /// returned by the host platform.
-class $instanceManagerClassName {
-  /// Constructs a [$instanceManagerClassName].
-  $instanceManagerClassName({required void Function(int) onWeakReferenceRemoved}) {
+class $dartInstanceManagerClassName {
+  /// Constructs a [$dartInstanceManagerClassName].
+  $dartInstanceManagerClassName({required void Function(int) onWeakReferenceRemoved}) {
     this.onWeakReferenceRemoved = (int identifier) {
       _weakInstances.remove(identifier);
       onWeakReferenceRemoved(identifier);
@@ -46,12 +60,12 @@ class $instanceManagerClassName {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
-  /// The default [$instanceManagerClassName] used by ProxyApis.
+  /// The default [$dartInstanceManagerClassName] used by ProxyApis.
   ///
   /// On creation, this manager makes a call to clear the native
   /// InstanceManager. This is to prevent identifier conflicts after a host
   /// restart.
-  static final $instanceManagerClassName instance = _initInstance();
+  static final $dartInstanceManagerClassName instance = _initInstance();
 
   // Expando is used because it doesn't prevent its keys from becoming
   // inaccessible. This allows the manager to efficiently retrieve an identifier
@@ -72,17 +86,17 @@ class $instanceManagerClassName {
   /// or becomes inaccessible.
   late final void Function(int) onWeakReferenceRemoved;
 
-  static $instanceManagerClassName _initInstance() {
+  static $dartInstanceManagerClassName _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
-    final _${instanceManagerClassName}Api api = _${instanceManagerClassName}Api();
-    // Clears the native `$instanceManagerClassName` on the initial use of the Dart one.
+    final $dartInstanceManagerApiClassName api = $dartInstanceManagerApiClassName();
+    // Clears the native `$dartInstanceManagerClassName` on the initial use of the Dart one.
     api.clear();
-    final $instanceManagerClassName instanceManager = $instanceManagerClassName(
+    final $dartInstanceManagerClassName instanceManager = $dartInstanceManagerClassName(
       onWeakReferenceRemoved: (int identifier) {
         api.removeStrongReference(identifier);
       },
     );
-    _${instanceManagerClassName}Api.setUpMessageHandlers(instanceManager: instanceManager);
+    $dartInstanceManagerApiClassName.setUpMessageHandlers(instanceManager: instanceManager);
     ${apiHandlerSetUps.join('\n\t\t')}
     return instanceManager;
   }
@@ -215,113 +229,6 @@ class $instanceManagerClassName {
 ''';
 }
 
-/// Creates the `InstanceManagerApi` with the passed string values.
-String instanceManagerApiTemplate({
-  required String dartPackageName,
-  required String pigeonChannelCodecVarName,
-}) {
-  const String apiName = '${instanceManagerClassName}Api';
-
-  final String removeStrongReferenceName = makeChannelNameWithStrings(
-    apiName: apiName,
-    methodName: 'removeStrongReference',
-    dartPackageName: dartPackageName,
-  );
-
-  final String clearName = makeChannelNameWithStrings(
-    apiName: apiName,
-    methodName: 'clear',
-    dartPackageName: dartPackageName,
-  );
-
-  return '''
-/// Generated API for managing the Dart and native `$instanceManagerClassName`s.
-class _$apiName {
-  /// Constructor for [_$apiName].
-  _$apiName({BinaryMessenger? binaryMessenger})
-      : _binaryMessenger = binaryMessenger;
-
-  final BinaryMessenger? _binaryMessenger;
-  
-  static const MessageCodec<Object?> $pigeonChannelCodecVarName =
-     StandardMessageCodec();
-
-  static void setUpMessageHandlers({
-    BinaryMessenger? binaryMessenger,
-    $instanceManagerClassName? instanceManager,
-  }) {
-    const String channelName =
-        r'$removeStrongReferenceName';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      $pigeonChannelCodecVarName,
-      binaryMessenger: binaryMessenger,
-    );
-    channel.setMessageHandler((Object? message) async {
-      assert(
-        message != null,
-        'Argument for \$channelName was null.',
-      );
-      final int? identifier = message as int?;
-      assert(
-        identifier != null,
-        r'Argument for \$channelName, expected non-null int.',
-      );
-      (instanceManager ?? $instanceManagerClassName.instance).remove(identifier!);
-      return;
-    });
-  }
-
-  Future<void> removeStrongReference(int identifier) async {
-    const String channelName =
-        r'$removeStrongReferenceName';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      $pigeonChannelCodecVarName,
-      binaryMessenger: _binaryMessenger,
-    );
-    final List<Object?>? replyList =
-        await channel.send(identifier) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Clear the native `$instanceManagerClassName`.
-  ///
-  /// This is typically called after a hot restart.
-  Future<void> clear() async {
-    const String channelName =
-        r'$clearName';
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-      channelName,
-      $pigeonChannelCodecVarName,
-      binaryMessenger: _binaryMessenger,
-    );
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw _createConnectionError(channelName);
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-}''';
-}
-
 /// The base class for all ProxyApis.
 ///
 /// All Dart classes generated as a ProxyApi extends this one.
@@ -336,9 +243,9 @@ abstract class $proxyApiBaseClassName {
   /// Construct a [$proxyApiBaseClassName].
   $proxyApiBaseClassName({
     this.$_proxyApiBaseClassMessengerVarName,
-    $instanceManagerClassName? $_proxyApiBaseClassInstanceManagerVarName,
+    $dartInstanceManagerClassName? $_proxyApiBaseClassInstanceManagerVarName,
   }) : $_proxyApiBaseClassInstanceManagerVarName =
-            $_proxyApiBaseClassInstanceManagerVarName ?? $instanceManagerClassName.instance;
+            $_proxyApiBaseClassInstanceManagerVarName ?? $dartInstanceManagerClassName.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -348,13 +255,12 @@ abstract class $proxyApiBaseClassName {
   final BinaryMessenger? $_proxyApiBaseClassMessengerVarName;
 
   /// Maintains instances stored to communicate with native language objects.
-  @protected
-  final $instanceManagerClassName $_proxyApiBaseClassInstanceManagerVarName;
+  final $dartInstanceManagerClassName $_proxyApiBaseClassInstanceManagerVarName;
 
   /// Instantiates and returns a functionally identical object to oneself.
   ///
   /// Outside of tests, this method should only ever be called by
-  /// [$instanceManagerClassName].
+  /// [$dartInstanceManagerClassName].
   ///
   /// Subclasses should always override their parent's implementation of this
   /// method.
@@ -369,13 +275,13 @@ abstract class $proxyApiBaseClassName {
 /// adds support to convert instances to their corresponding identifier from an
 /// `InstanceManager` and vice versa.
 const String proxyApiBaseCodec = '''
-class $_proxyApiCodecName extends StandardMessageCodec {
+class $_proxyApiCodecName extends _PigeonCodec {
  const $_proxyApiCodecName(this.instanceManager);
- final $instanceManagerClassName instanceManager;
+ final $dartInstanceManagerClassName instanceManager;
  @override
  void writeValue(WriteBuffer buffer, Object? value) {
    if (value is $proxyApiBaseClassName) {
-     buffer.putUint8(128);
+     buffer.putUint8($proxyApiCodecInstanceManagerKey);
      writeValue(buffer, instanceManager.getIdentifier(value));
    } else {
      super.writeValue(buffer, value);
@@ -384,7 +290,7 @@ class $_proxyApiCodecName extends StandardMessageCodec {
  @override
  Object? readValueOfType(int type, ReadBuffer buffer) {
    switch (type) {
-     case 128:
+     case $proxyApiCodecInstanceManagerKey:
        return instanceManager
            .getInstanceWithWeakReference(readValue(buffer)! as int);
      default:

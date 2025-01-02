@@ -49,6 +49,32 @@ widget.
 See [issue #102408](https://github.com/flutter/flutter/issues/102408)
 for details on what such an API might look like in go_router.
 
+## Disable browser history tracking when navigating 
+
+To disable browser history tracking when navigating, use the `neglect` method 
+of the `Router` class:
+
+```dart
+ElevatedButton(
+  onPressed: () => Router.neglect(
+    context,
+    () => context.go('/destination'),
+  ),
+  child: ...
+),
+```
+
+To disable browser history tracking for the **entire** application, set the 
+`routerNeglect` property of the `GoRouter` widget to `true`:
+```dart
+final _router = GoRouter(
+  routerNeglect: true,
+  routes: [
+    ...
+  ],
+);
+```
+
 ## Imperative navigation with Navigator
 You can continue using the Navigator to push and pop pages. Pages displayed in
 this way are not deep-linkable and will be replaced if any parent page that is
@@ -86,8 +112,7 @@ screen along with the shell is placed entirely on top of the current screen.
 ![An animation shows pushing a new screen with the different shell as current screen](https://flutter.github.io/assets-for-api-docs/assets/go_router/push_different_shell.gif)
 
 To try out the behavior yourself, see
-[push_with_shell_route.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart).
-
+[push_with_shell_route.dart](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/push_with_shell_route.dart).
 
 ## Returning values
 Waiting for a value to be returned:

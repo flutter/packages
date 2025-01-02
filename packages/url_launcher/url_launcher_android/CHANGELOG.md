@@ -1,3 +1,57 @@
+## 6.3.14
+
+* Bumps androidx.annotation:annotation from 1.9.0 to 1.9.1.
+
+## 6.3.13
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.
+
+## 6.3.12
+
+* Updates Java compatibility version to 11.
+
+## 6.3.11
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 6.3.10
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 6.3.9
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
+## 6.3.8
+
+* Bumps androidx.browser:browser from 1.5.0 to 1.8.0.
+
+## 6.3.7
+
+* Bumps androidx.annotation:annotation from 1.8.0 to 1.8.1.
+
+## 6.3.6
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 6.3.5
+
+* Bumps androidx.core:core from 1.10.1 to 1.13.1.
+
+## 6.3.4
+
+* Updates Android Gradle Plugin to 8.5.1.
+
+## 6.3.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 6.3.2
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.0.
+
 ## 6.3.1
 
 * Updates minSdkVersion to 19.

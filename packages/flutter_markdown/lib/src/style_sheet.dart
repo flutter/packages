@@ -38,6 +38,7 @@ class MarkdownStyleSheet {
     this.tableHead,
     this.tableBody,
     this.tableHeadAlign,
+    this.tablePadding,
     this.tableBorder,
     this.tableColumnWidth,
     this.tableCellsPadding,
@@ -103,7 +104,7 @@ class MarkdownStyleSheet {
       p: theme.textTheme.bodyMedium,
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color ?? theme.cardColor,
+        backgroundColor: theme.cardTheme.color,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
       ),
@@ -134,6 +135,7 @@ class MarkdownStyleSheet {
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
       tableBody: theme.textTheme.bodyMedium,
       tableHeadAlign: TextAlign.center,
+      tablePadding: const EdgeInsets.only(bottom: 4.0),
       tableBorder: TableBorder.all(
         color: theme.dividerColor,
       ),
@@ -173,9 +175,6 @@ class MarkdownStyleSheet {
       p: theme.textTheme.textStyle,
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.textStyle.copyWith(
-        backgroundColor: theme.brightness == Brightness.dark
-            ? CupertinoColors.systemGrey6.darkColor
-            : CupertinoColors.systemGrey6.color,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.textStyle.fontSize! * 0.85,
       ),
@@ -231,6 +230,7 @@ class MarkdownStyleSheet {
       ),
       tableBody: theme.textTheme.textStyle,
       tableHeadAlign: TextAlign.center,
+      tablePadding: const EdgeInsets.only(bottom: 8),
       tableBorder: TableBorder.all(color: CupertinoColors.separator, width: 0),
       tableColumnWidth: const FlexColumnWidth(),
       tableCellsPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -281,7 +281,7 @@ class MarkdownStyleSheet {
       p: theme.textTheme.bodyMedium,
       pPadding: EdgeInsets.zero,
       code: theme.textTheme.bodyMedium!.copyWith(
-        backgroundColor: theme.cardTheme.color ?? theme.cardColor,
+        backgroundColor: theme.cardTheme.color,
         fontFamily: 'monospace',
         fontSize: theme.textTheme.bodyMedium!.fontSize! * 0.85,
       ),
@@ -312,6 +312,7 @@ class MarkdownStyleSheet {
       tableHead: const TextStyle(fontWeight: FontWeight.w600),
       tableBody: theme.textTheme.bodyMedium,
       tableHeadAlign: TextAlign.center,
+      tablePadding: const EdgeInsets.only(bottom: 4.0),
       tableBorder: TableBorder.all(
         color: theme.dividerColor,
       ),
@@ -371,6 +372,7 @@ class MarkdownStyleSheet {
     TextStyle? tableHead,
     TextStyle? tableBody,
     TextAlign? tableHeadAlign,
+    EdgeInsets? tablePadding,
     TableBorder? tableBorder,
     TableColumnWidth? tableColumnWidth,
     EdgeInsets? tableCellsPadding,
@@ -436,6 +438,7 @@ class MarkdownStyleSheet {
       tableHead: tableHead ?? this.tableHead,
       tableBody: tableBody ?? this.tableBody,
       tableHeadAlign: tableHeadAlign ?? this.tableHeadAlign,
+      tablePadding: tablePadding ?? this.tablePadding,
       tableBorder: tableBorder ?? this.tableBorder,
       tableColumnWidth: tableColumnWidth ?? this.tableColumnWidth,
       tableCellsPadding: tableCellsPadding ?? this.tableCellsPadding,
@@ -502,6 +505,7 @@ class MarkdownStyleSheet {
       tableHead: tableHead!.merge(other.tableHead),
       tableBody: tableBody!.merge(other.tableBody),
       tableHeadAlign: other.tableHeadAlign,
+      tablePadding: other.tablePadding,
       tableBorder: other.tableBorder,
       tableColumnWidth: other.tableColumnWidth,
       tableCellsPadding: other.tableCellsPadding,
@@ -619,6 +623,9 @@ class MarkdownStyleSheet {
 
   /// The [TextAlign] to use for `th` elements.
   final TextAlign? tableHeadAlign;
+
+  /// The padding to use for `table` elements.
+  final EdgeInsets? tablePadding;
 
   /// The [TableBorder] to use for `table` elements.
   final TableBorder? tableBorder;
@@ -740,6 +747,7 @@ class MarkdownStyleSheet {
         other.tableHead == tableHead &&
         other.tableBody == tableBody &&
         other.tableHeadAlign == tableHeadAlign &&
+        other.tablePadding == tablePadding &&
         other.tableBorder == tableBorder &&
         other.tableColumnWidth == tableColumnWidth &&
         other.tableCellsPadding == tableCellsPadding &&
@@ -798,6 +806,7 @@ class MarkdownStyleSheet {
       tableHead,
       tableBody,
       tableHeadAlign,
+      tablePadding,
       tableBorder,
       tableColumnWidth,
       tableCellsPadding,

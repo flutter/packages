@@ -87,4 +87,13 @@ class MockTestSystemServicesHostApi extends _i1.Mock
           ),
         ),
       ) as String);
+
+  @override
+  bool isPreviewPreTransformed() => (super.noSuchMethod(
+        Invocation.method(
+          #isPreviewPreTransformed,
+          [],
+        ),
+        returnValue: false,
+      ) as bool);
 }

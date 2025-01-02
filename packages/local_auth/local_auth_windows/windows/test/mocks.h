@@ -19,7 +19,7 @@ using ::testing::_;
 
 class MockUserConsentVerifier : public UserConsentVerifier {
  public:
-  explicit MockUserConsentVerifier(){};
+  explicit MockUserConsentVerifier() {}
   virtual ~MockUserConsentVerifier() = default;
 
   MOCK_METHOD(winrt::Windows::Foundation::IAsyncOperation<

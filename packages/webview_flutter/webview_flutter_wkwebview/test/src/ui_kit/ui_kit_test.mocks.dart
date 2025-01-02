@@ -40,6 +40,7 @@ class MockTestWKWebViewConfigurationHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void createFromWebView(
     int? identifier,
@@ -55,6 +56,7 @@ class MockTestWKWebViewConfigurationHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setAllowsInlineMediaPlayback(
     int? identifier,
@@ -70,6 +72,7 @@ class MockTestWKWebViewConfigurationHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setLimitsNavigationsToAppBoundDomains(
     int? identifier,
@@ -85,6 +88,7 @@ class MockTestWKWebViewConfigurationHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setMediaTypesRequiringUserActionForPlayback(
     int? identifier,
@@ -126,6 +130,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setUIDelegate(
     int? identifier,
@@ -141,6 +146,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setNavigationDelegate(
     int? identifier,
@@ -156,11 +162,13 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   String? getUrl(int? identifier) => (super.noSuchMethod(Invocation.method(
         #getUrl,
         [identifier],
       )) as String?);
+
   @override
   double getEstimatedProgress(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -169,6 +177,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValue: 0.0,
       ) as double);
+
   @override
   void loadRequest(
     int? identifier,
@@ -184,6 +193,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void loadHtmlString(
     int? identifier,
@@ -201,6 +211,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void loadFileUrl(
     int? identifier,
@@ -218,6 +229,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void loadFlutterAsset(
     int? identifier,
@@ -233,6 +245,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   bool canGoBack(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -241,6 +254,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValue: false,
       ) as bool);
+
   @override
   bool canGoForward(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -249,6 +263,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValue: false,
       ) as bool);
+
   @override
   void goBack(int? identifier) => super.noSuchMethod(
         Invocation.method(
@@ -257,6 +272,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void goForward(int? identifier) => super.noSuchMethod(
         Invocation.method(
@@ -265,6 +281,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void reload(int? identifier) => super.noSuchMethod(
         Invocation.method(
@@ -273,11 +290,13 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   String? getTitle(int? identifier) => (super.noSuchMethod(Invocation.method(
         #getTitle,
         [identifier],
       )) as String?);
+
   @override
   void setAllowsBackForwardNavigationGestures(
     int? identifier,
@@ -293,6 +312,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setCustomUserAgent(
     int? identifier,
@@ -308,6 +328,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   _i4.Future<Object?> evaluateJavaScript(
     int? identifier,
@@ -323,6 +344,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValue: _i4.Future<Object?>.value(),
       ) as _i4.Future<Object?>);
+
   @override
   void setInspectable(
     int? identifier,
@@ -338,6 +360,7 @@ class MockTestWKWebViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   String? getCustomUserAgent(int? identifier) =>
       (super.noSuchMethod(Invocation.method(
@@ -370,6 +393,7 @@ class MockTestUIScrollViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   List<double?> getContentOffset(int? identifier) => (super.noSuchMethod(
         Invocation.method(
@@ -378,6 +402,7 @@ class MockTestUIScrollViewHostApi extends _i1.Mock
         ),
         returnValue: <double?>[],
       ) as List<double?>);
+
   @override
   void scrollBy(
     int? identifier,
@@ -395,6 +420,7 @@ class MockTestUIScrollViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setContentOffset(
     int? identifier,
@@ -412,6 +438,7 @@ class MockTestUIScrollViewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setDelegate(
     int? identifier,
@@ -471,6 +498,7 @@ class MockTestUIViewHostApi extends _i1.Mock implements _i2.TestUIViewHostApi {
         ),
         returnValueForMissingStub: null,
       );
+
   @override
   void setOpaque(
     int? identifier,

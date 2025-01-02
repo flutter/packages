@@ -2,189 +2,70 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
-// Print statements are only for illustrative purposes, not recommended for
-// production applications.
-// ignore_for_file: avoid_print
+import 'table_view/table_explorer.dart';
+import 'tree_view/tree_explorer.dart';
 
 void main() {
-  runApp(const TableExampleApp());
+  runApp(const ExampleApp());
 }
 
-/// A sample application that utilizes the TableView API.
-class TableExampleApp extends StatelessWidget {
-  /// Creates an instance of the TableView example app.
-  const TableExampleApp({super.key});
+/// A sample application that utilizes the TableView and TreeView APIs.
+class ExampleApp extends StatelessWidget {
+  /// Creates an instance of the example app.
+  const ExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Table Example',
+      title: '2D Scrolling Examples',
       theme: ThemeData(
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
+        appBarTheme: AppBarTheme(backgroundColor: Colors.purple[50]),
       ),
-      home: const TableExample(),
+      home: const ExampleHome(),
+      routes: <String, WidgetBuilder>{
+        '/table': (BuildContext context) => const TableExplorer(),
+        '/tree': (BuildContext context) => const TreeExplorer(),
+      },
     );
   }
 }
 
-/// The class containing the TableView for the sample application.
-class TableExample extends StatefulWidget {
+/// The home page of the application, which directs to the tree or table
+/// explorer.
+class ExampleHome extends StatelessWidget {
   /// Creates a screen that demonstrates the TableView widget.
-  const TableExample({super.key});
-
-  @override
-  State<TableExample> createState() => _TableExampleState();
-}
-
-class _TableExampleState extends State<TableExample> {
-  late final ScrollController _verticalController = ScrollController();
-  int _rowCount = 20;
+  const ExampleHome({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Table Example'),
+        title: const Text('Tables & Trees'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 50),
-        child: TableView.builder(
-          verticalDetails:
-              ScrollableDetails.vertical(controller: _verticalController),
-          cellBuilder: _buildCell,
-          columnCount: 20,
-          columnBuilder: _buildColumnSpan,
-          rowCount: _rowCount,
-          rowBuilder: _buildRowSpan,
-        ),
-      ),
-      persistentFooterButtons: <Widget>[
-        TextButton(
-          onPressed: () {
-            _verticalController.jumpTo(0);
-          },
-          child: const Text('Jump to Top'),
-        ),
-        TextButton(
-          onPressed: () {
-            _verticalController
-                .jumpTo(_verticalController.position.maxScrollExtent);
-          },
-          child: const Text('Jump to Bottom'),
-        ),
-        TextButton(
-          onPressed: () {
-            setState(() {
-              _rowCount += 10;
-            });
-          },
-          child: const Text('Add 10 Rows'),
-        ),
-      ],
-    );
-  }
-
-  TableViewCell _buildCell(BuildContext context, TableVicinity vicinity) {
-    return TableViewCell(
-      child: Center(
-        child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
+      body: Center(
+        child: Column(children: <Widget>[
+          const Spacer(flex: 3),
+          FilledButton(
+            onPressed: () {
+              // Go to table explorer
+              Navigator.of(context).pushNamed('/table');
+            },
+            child: const Text('TableView Explorer'),
+          ),
+          const Spacer(),
+          FilledButton(
+            onPressed: () {
+              // Go to tree explorer
+              Navigator.of(context).pushNamed('/tree');
+            },
+            child: const Text('TreeView Explorer'),
+          ),
+          const Spacer(flex: 3),
+        ]),
       ),
     );
-  }
-
-  TableSpan _buildColumnSpan(int index) {
-    const TableSpanDecoration decoration = TableSpanDecoration(
-      border: TableSpanBorder(
-        trailing: BorderSide(),
-      ),
-    );
-
-    switch (index % 5) {
-      case 0:
-        return TableSpan(
-          foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(100),
-          onEnter: (_) => print('Entered column $index'),
-          recognizerFactories: <Type, GestureRecognizerFactory>{
-            TapGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap column $index'),
-            ),
-          },
-        );
-      case 1:
-        return TableSpan(
-          foregroundDecoration: decoration,
-          extent: const FractionalTableSpanExtent(0.5),
-          onEnter: (_) => print('Entered column $index'),
-          cursor: SystemMouseCursors.contextMenu,
-        );
-      case 2:
-        return TableSpan(
-          foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(120),
-          onEnter: (_) => print('Entered column $index'),
-        );
-      case 3:
-        return TableSpan(
-          foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(145),
-          onEnter: (_) => print('Entered column $index'),
-        );
-      case 4:
-        return TableSpan(
-          foregroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(200),
-          onEnter: (_) => print('Entered column $index'),
-        );
-    }
-    throw AssertionError(
-        'This should be unreachable, as every index is accounted for in the switch clauses.');
-  }
-
-  TableSpan _buildRowSpan(int index) {
-    final TableSpanDecoration decoration = TableSpanDecoration(
-      color: index.isEven ? Colors.purple[100] : null,
-      border: const TableSpanBorder(
-        trailing: BorderSide(
-          width: 3,
-        ),
-      ),
-    );
-
-    switch (index % 3) {
-      case 0:
-        return TableSpan(
-          backgroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(50),
-          recognizerFactories: <Type, GestureRecognizerFactory>{
-            TapGestureRecognizer:
-                GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap row $index'),
-            ),
-          },
-        );
-      case 1:
-        return TableSpan(
-          backgroundDecoration: decoration,
-          extent: const FixedTableSpanExtent(65),
-          cursor: SystemMouseCursors.click,
-        );
-      case 2:
-        return TableSpan(
-          backgroundDecoration: decoration,
-          extent: const FractionalTableSpanExtent(0.15),
-        );
-    }
-    throw AssertionError(
-        'This should be unreachable, as every index is accounted for in the switch clauses.');
   }
 }

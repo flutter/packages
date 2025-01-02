@@ -14,16 +14,24 @@ void main() {
       (WidgetTester tester) async {
     final Finder smallBody = find.byKey(const Key('smallBody'));
     final Finder body = find.byKey(const Key('body'));
+    final Finder mediumLargeBody = find.byKey(const Key('mediumLargeBody'));
     final Finder largeBody = find.byKey(const Key('largeBody'));
+    final Finder extraLargeBody = find.byKey(const Key('extraLargeBody'));
+
     final Finder smallSBody = find.byKey(const Key('smallSBody'));
     final Finder sBody = find.byKey(const Key('sBody'));
+    final Finder mediumLargeSBody = find.byKey(const Key('mediumLargeSBody'));
     final Finder largeSBody = find.byKey(const Key('largeSBody'));
+    final Finder extraLargeSBody = find.byKey(const Key('extraLargeSBody'));
+
     final Finder bottomNav = find.byKey(const Key('bottomNavigation'));
     final Finder primaryNav = find.byKey(const Key('primaryNavigation'));
     final Finder primaryNav1 = find.byKey(const Key('primaryNavigation1'));
+    final Finder primaryNav2 = find.byKey(const Key('primaryNavigation2'));
+    final Finder primaryNav3 = find.byKey(const Key('primaryNavigation3'));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
-    await tester.pumpWidget(SimulatedLayout.small.app());
+    await tester.pumpWidget(SimulatedLayout.small.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(smallBody, findsOneWidget);
@@ -33,10 +41,10 @@ void main() {
 
     expect(tester.getTopLeft(smallBody), Offset.zero);
     expect(tester.getTopLeft(smallSBody), const Offset(200, 0));
-    expect(tester.getTopLeft(bottomNav), const Offset(0, 720));
+    expect(tester.getTopLeft(bottomNav), const Offset(0, 1920));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-    await tester.pumpWidget(SimulatedLayout.medium.app());
+    await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(smallBody, findsNothing);
@@ -49,23 +57,55 @@ void main() {
     expect(tester.getTopLeft(body), const Offset(88, 0));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
     expect(tester.getTopLeft(primaryNav), Offset.zero);
-    expect(tester.getBottomRight(primaryNav), const Offset(88, 800));
+    expect(tester.getBottomRight(primaryNav), const Offset(88, 2000));
 
-    await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
-    await tester.pumpWidget(SimulatedLayout.large.app());
+    await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
+    await tester.pumpWidget(SimulatedLayout.mediumLarge.scaffold(tester));
     await tester.pumpAndSettle();
 
     expect(body, findsNothing);
-    expect(largeBody, findsOneWidget);
+    expect(mediumLargeBody, findsOneWidget);
     expect(sBody, findsNothing);
-    expect(largeSBody, findsOneWidget);
+    expect(mediumLargeSBody, findsOneWidget);
     expect(primaryNav, findsNothing);
     expect(primaryNav1, findsOneWidget);
 
-    expect(tester.getTopLeft(largeBody), const Offset(208, 0));
-    expect(tester.getTopLeft(largeSBody), const Offset(550, 0));
+    expect(tester.getTopLeft(mediumLargeBody), const Offset(208, 0));
+    expect(tester.getTopLeft(mediumLargeSBody), const Offset(500, 0));
     expect(tester.getTopLeft(primaryNav1), Offset.zero);
-    expect(tester.getBottomRight(primaryNav1), const Offset(208, 800));
+    expect(tester.getBottomRight(primaryNav1), const Offset(208, 2000));
+
+    await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
+    await tester.pumpWidget(SimulatedLayout.large.scaffold(tester));
+    await tester.pumpAndSettle();
+
+    expect(mediumLargeBody, findsNothing);
+    expect(largeBody, findsOneWidget);
+    expect(mediumLargeSBody, findsNothing);
+    expect(largeSBody, findsOneWidget);
+    expect(primaryNav1, findsNothing);
+    expect(primaryNav2, findsOneWidget);
+
+    expect(tester.getTopLeft(largeBody), const Offset(208, 0));
+    expect(tester.getTopLeft(largeSBody), const Offset(600, 0));
+    expect(tester.getTopLeft(primaryNav2), Offset.zero);
+    expect(tester.getBottomRight(primaryNav2), const Offset(208, 2000));
+
+    await tester.binding.setSurfaceSize(SimulatedLayout.extraLarge.size);
+    await tester.pumpWidget(SimulatedLayout.extraLarge.scaffold(tester));
+    await tester.pumpAndSettle();
+
+    expect(largeBody, findsNothing);
+    expect(extraLargeBody, findsOneWidget);
+    expect(largeSBody, findsNothing);
+    expect(extraLargeSBody, findsOneWidget);
+    expect(primaryNav2, findsNothing);
+    expect(primaryNav3, findsOneWidget);
+
+    expect(tester.getTopLeft(extraLargeBody), const Offset(208, 0));
+    expect(tester.getTopLeft(extraLargeSBody), const Offset(800, 0));
+    expect(tester.getTopLeft(primaryNav3), Offset.zero);
+    expect(tester.getBottomRight(primaryNav3), const Offset(208, 2000));
   });
 
   testWidgets('adaptive scaffold animations work correctly',
@@ -74,39 +114,39 @@ void main() {
     final Finder sBody = find.byKey(const Key('sBody'));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
-    await tester.pumpWidget(SimulatedLayout.small.app());
+    await tester.pumpWidget(SimulatedLayout.small.scaffold(tester));
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-    await tester.pumpWidget(SimulatedLayout.medium.app());
+    await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(tester.getTopLeft(b), const Offset(17.6, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(778.2, 736), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(778.2, 1936), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(778.2, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(1178.2, 736), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(1178.2, 1936), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
 
     expect(tester.getTopLeft(b), const Offset(70.4, 0));
     expect(tester.getBottomRight(b),
-        offsetMoreOrLessEquals(const Offset(416.0, 784), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(416.0, 1984), epsilon: 1.0));
     expect(tester.getTopLeft(sBody),
         offsetMoreOrLessEquals(const Offset(416, 0), epsilon: 1.0));
     expect(tester.getBottomRight(sBody),
-        offsetMoreOrLessEquals(const Offset(816, 784), epsilon: 1.0));
+        offsetMoreOrLessEquals(const Offset(816, 1984), epsilon: 1.0));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(tester.getTopLeft(b), const Offset(88.0, 0));
-    expect(tester.getBottomRight(b), const Offset(400, 800));
+    expect(tester.getBottomRight(b), const Offset(400, 2000));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
-    expect(tester.getBottomRight(sBody), const Offset(800, 800));
+    expect(tester.getBottomRight(sBody), const Offset(800, 2000));
   });
 
   testWidgets('adaptive scaffold animations can be disabled',
@@ -115,18 +155,20 @@ void main() {
     final Finder sBody = find.byKey(const Key('sBody'));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.small.size);
-    await tester.pumpWidget(SimulatedLayout.small.app(animations: false));
+    await tester
+        .pumpWidget(SimulatedLayout.small.scaffold(tester, animations: false));
 
     await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-    await tester.pumpWidget(SimulatedLayout.medium.app(animations: false));
+    await tester
+        .pumpWidget(SimulatedLayout.medium.scaffold(tester, animations: false));
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
     expect(tester.getTopLeft(b), const Offset(88.0, 0));
-    expect(tester.getBottomRight(b), const Offset(400, 800));
+    expect(tester.getBottomRight(b), const Offset(400, 2000));
     expect(tester.getTopLeft(sBody), const Offset(400, 0));
-    expect(tester.getBottomRight(sBody), const Offset(800, 800));
+    expect(tester.getBottomRight(sBody), const Offset(800, 2000));
   });
 
   // The goal of this test is to run through each of the navigation elements
@@ -139,7 +181,8 @@ void main() {
     await Future.forEach(SimulatedLayout.values,
         (SimulatedLayout region) async {
       int selectedIndex = 0;
-      final MaterialApp app = region.app(initialIndex: selectedIndex);
+      final MaterialApp app =
+          region.scaffold(tester, initialIndex: selectedIndex);
       await tester.binding.setSurfaceSize(region.size);
       await tester.pumpWidget(app);
       await tester.pumpAndSettle();
@@ -202,12 +245,12 @@ void main() {
     (WidgetTester tester) async {
       await Future.forEach(SimulatedLayout.values,
           (SimulatedLayout region) async {
-        final MaterialApp app = region.app();
+        final MaterialApp app = region.scaffold(tester);
         await tester.binding.setSurfaceSize(region.size);
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
 
-        if (region.size == SimulatedLayout.large.size) {
+        if (region.size == SimulatedLayout.mediumLarge.size) {
           expect(find.text('leading_extended'), findsOneWidget);
           expect(find.text('leading_unextended'), findsNothing);
           expect(find.text('trailing'), findsOneWidget);
@@ -232,7 +275,8 @@ void main() {
       await Future.forEach(SimulatedLayout.values,
           (SimulatedLayout region) async {
         int? selectedIndex;
-        final MaterialApp app = region.app(initialIndex: selectedIndex);
+        final MaterialApp app =
+            region.scaffold(tester, initialIndex: selectedIndex);
         await tester.binding.setSurfaceSize(region.size);
         await tester.pumpWidget(app);
         await tester.pumpAndSettle();
@@ -413,7 +457,7 @@ void main() {
     'when view in medium screen, navigation rail must be visible as per theme data values.',
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
-      await tester.pumpWidget(SimulatedLayout.medium.app());
+      await tester.pumpWidget(SimulatedLayout.medium.scaffold(tester));
       await tester.pumpAndSettle();
 
       final Finder primaryNavigationMedium = find.byKey(
@@ -456,19 +500,19 @@ void main() {
   );
 
   testWidgets(
-    'when view in large screen, navigation rail must be visible as per theme data values.',
+    'when view in mediumLarge screen, navigation rail must be visible as per theme data values.',
     (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
-      await tester.pumpWidget(SimulatedLayout.large.app());
+      await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
+      await tester.pumpWidget(SimulatedLayout.mediumLarge.scaffold(tester));
       await tester.pumpAndSettle();
 
-      final Finder primaryNavigationLarge = find.byKey(
+      final Finder primaryNavigationMediumLarge = find.byKey(
         const Key('primaryNavigation1'),
       );
-      expect(primaryNavigationLarge, findsOneWidget);
+      expect(primaryNavigationMediumLarge, findsOneWidget);
 
       final Finder navigationRailFinder = find.descendant(
-        of: primaryNavigationLarge,
+        of: primaryNavigationMediumLarge,
         matching: find.byType(NavigationRail),
       );
       expect(navigationRailFinder, findsOneWidget);
@@ -618,45 +662,45 @@ void main() {
   // creates a NavigationRail widget as expected with groupAlignment provided,
   // and checks whether the NavigationRail's groupAlignment matches the expected value.
   testWidgets(
-      'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
-      (WidgetTester tester) async {
-    const List<NavigationRailDestination> destinations =
-        <NavigationRailDestination>[
-      NavigationRailDestination(
-        icon: Icon(Icons.home),
-        label: Text('Home'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.account_circle),
-        label: Text('Profile'),
-      ),
-      NavigationRailDestination(
-        icon: Icon(Icons.settings),
-        label: Text('Settings'),
-      ),
-    ];
+    'groupAligment parameter of AdaptiveScaffold.standardNavigationRail works correctly',
+    (WidgetTester tester) async {
+      const List<NavigationRailDestination> destinations =
+          <NavigationRailDestination>[
+        NavigationRailDestination(
+          icon: Icon(Icons.home),
+          label: Text('Home'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.account_circle),
+          label: Text('Profile'),
+        ),
+        NavigationRailDestination(
+          icon: Icon(Icons.settings),
+          label: Text('Settings'),
+        ),
+      ];
 
-    // Align to bottom.
-    const double groupAlignment = 1.0;
+      const double groupAlignment = 1.0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Builder(
-            builder: (BuildContext context) {
-              return AdaptiveScaffold.standardNavigationRail(
-                destinations: destinations,
-                groupAlignment: groupAlignment,
-              );
-            },
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (BuildContext context) {
+                return AdaptiveScaffold.standardNavigationRail(
+                  destinations: destinations,
+                  groupAlignment: groupAlignment,
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
-    final NavigationRail rail =
-        tester.widget<NavigationRail>(find.byType(NavigationRail));
-    expect(rail.groupAlignment, equals(groupAlignment));
-  });
+      );
+      final NavigationRail rail =
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail.groupAlignment, equals(groupAlignment));
+    },
+  );
 
   testWidgets(
     "doesn't override Directionality",
@@ -700,7 +744,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(SimulatedLayout.medium.size);
       await tester.pumpWidget(SimulatedLayout.medium
-          .app(appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
+          .scaffold(tester, appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
       await tester.pumpAndSettle();
 
       final Finder appBar = find.byType(AppBar);
@@ -708,9 +752,9 @@ void main() {
       expect(appBar, findsOneWidget);
       expect(drawer, findsNothing);
 
-      await tester.binding.setSurfaceSize(SimulatedLayout.large.size);
-      await tester.pumpWidget(SimulatedLayout.large
-          .app(appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
+      await tester.binding.setSurfaceSize(SimulatedLayout.mediumLarge.size);
+      await tester.pumpWidget(SimulatedLayout.mediumLarge
+          .scaffold(tester, appBarBreakpoint: AppBarAlwaysOnBreakpoint()));
       expect(drawer, findsNothing);
       await tester.pumpAndSettle();
 
@@ -742,6 +786,81 @@ void main() {
         ),
         throwsA(isA<AssertionError>()),
       );
+    },
+  );
+
+  // Test for navigationRailDestinationBuilder parameter.
+  testWidgets('adaptive scaffold custom navigation rail destination mapping',
+      (WidgetTester tester) async {
+    const List<NavigationDestination> destinations = <NavigationDestination>[
+      NavigationDestination(
+        icon: Icon(Icons.home),
+        label: 'Home',
+      ),
+      NavigationDestination(
+        icon: Icon(Icons.account_circle),
+        label: 'Profile',
+      ),
+    ];
+
+    NavigationRailDestination customMapping(
+        int index, NavigationDestination destination) {
+      return NavigationRailDestination(
+        icon: destination.icon,
+        label: Text('Custom ${destination.label}'),
+      );
+    }
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(size: Size(800, 600)),
+          child: AdaptiveScaffold(
+            destinations: destinations,
+            navigationRailDestinationBuilder: customMapping,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Custom Home'), findsOneWidget);
+    expect(find.text('Custom Profile'), findsOneWidget);
+  });
+
+  // Test for labelType setting through the navigation rail theme.
+  testWidgets(
+    'adaptive scaffold respects NavigationRailLabelType from theme',
+    (WidgetTester tester) async {
+      const List<NavigationDestination> destinations = <NavigationDestination>[
+        NavigationDestination(
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.account_circle),
+          label: 'Profile',
+        ),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            navigationRailTheme: const NavigationRailThemeData(
+              labelType: NavigationRailLabelType.all,
+            ),
+          ),
+          home: MediaQuery(
+            data: const MediaQueryData(size: Size(800, 600)),
+            child: AdaptiveScaffold(
+              destinations: destinations,
+            ),
+          ),
+        ),
+      );
+
+      final NavigationRail rail =
+          tester.widget<NavigationRail>(find.byType(NavigationRail));
+      expect(rail.labelType, NavigationRailLabelType.all);
     },
   );
 }

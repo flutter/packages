@@ -1,3 +1,110 @@
+## 0.6.10+3
+
+* Bumps com.google.guava:guava from 33.3.1-android to 33.4.0-android.
+
+## 0.6.10+2
+
+* Bumps camerax_version from 1.3.4 to 1.4.1.
+
+## 0.6.10+1
+
+* Removes nonnull annotation from MeteringPointHostApiImpl#getDefaultPointSize.
+
+## 0.6.10
+
+* Removes logic that explicitly removes `READ_EXTERNAL_STORAGE` permission that may be implied
+  from `WRITE_EXTERNAL_STORAGE` and updates the README to tell users how to manually
+  remove it from their app's merged manifest if they wish.
+
+## 0.6.9+2
+
+* Updates Java compatibility version to 11.
+
+## 0.6.9+1
+
+* Bumps `com.google.guava:guava` from `33.3.0` to `33.3.1`.
+
+## 0.6.9
+
+* Corrects assumption about automatic preview correction happening on API >= 29 to API > 29,
+  based on the fact that the `ImageReader` Impeller backend is not used for the most part on
+  devices running API 29+.
+
+## 0.6.8+3
+
+* Removes dependency on org.jetbrains.kotlin:kotlin-bom.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.6.8+2
+
+* Marks uses of `Camera2Interop` with `@OptIn` annotation.
+
+## 0.6.8+1
+
+* Re-lands support for Impeller.
+
+## 0.6.8
+
+* Updates Guava version to 33.3.0.
+
+## 0.6.7+2
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.6.7+1
+
+* Updates README to remove references to `maxVideoDuration`, as it was never
+  visible to app-facing clients, nor was it implemented in `camera_android`.
+
+## 0.6.7
+
+* Updates AGP version to 8.5.0.
+
+## 0.6.6
+
+* Adds logic to support building a camera preview with Android `Surface`s not backed by a `SurfaceTexture`
+  to which CameraX cannot not automatically apply the transformation required to achieve the correct rotation.
+* Adds fix for incorrect camera preview rotation on naturally landscape-oriented devices.
+* Updates example app's minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.6.5+6
+
+* Updates Guava version to 33.2.1.
+* Updates CameraX version to 1.3.4.
+
+## 0.6.5+5
+
+* Reverts changes to support Impeller.
+
+## 0.6.5+4
+
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
+## 0.6.5+3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds notes to `README.md` about allowing image streaming in the background and the required
+  `WRITE_EXTERNAL_STORAGE` permission specified in the plugin to allow writing photos and videos to
+  files.
+
+## 0.6.5+2
+
+* Update to latest stable camerax `1.3.3`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 0.6.5+1
+
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+  is the endorsed Android implementation for `camera: ^0.11.0`.
+
+## 0.6.5
+
+* Modifies `stopVideoRecording` to ensure that the method only returns when CameraX reports that the
+  recorded video finishes saving to a file.
+* Modifies `startVideoCapturing` to ensure that the method only returns when CameraX reports that
+  video recording has started.
+* Adds empty implementation for `setDescriptionWhileRecording` and leaves a todo to add this feature.
+
 ## 0.6.4+1
 
 * Adds empty implementation for `prepareForVideoRecording` since this optimization is not used on Android.

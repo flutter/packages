@@ -127,6 +127,7 @@ bool _isTestChange(List<String> pathComponents) {
       pathComponents.contains('androidTest') ||
       pathComponents.contains('RunnerTests') ||
       pathComponents.contains('RunnerUITests') ||
+      pathComponents.contains('Tests') ||
       pathComponents.last == 'dart_test.yaml' ||
       // Pigeon's custom platform tests.
       pathComponents.first == 'platform_tests';
@@ -225,6 +226,7 @@ bool _isExampleBuildFile(List<String> pathComponents) {
       pathComponents.contains('Podfile') ||
       pathComponents.contains('CMakeLists.txt') ||
       pathComponents.contains('.pluginToolsConfig.yaml') ||
+      pathComponents.contains('settings.gradle') ||
       pathComponents.contains('pubspec.yaml');
 }
 

@@ -27,7 +27,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int textureId) {
-    return _api.dispose(TextureMessage(textureId: textureId));
+    return _api.dispose(textureId);
   }
 
   @override
@@ -59,59 +59,45 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       formatHint: formatHint,
     );
 
-    final TextureMessage response = await _api.create(message);
-    return response.textureId;
+    return _api.create(message);
   }
 
   @override
   Future<void> setLooping(int textureId, bool looping) {
-    return _api.setLooping(LoopingMessage(
-      textureId: textureId,
-      isLooping: looping,
-    ));
+    return _api.setLooping(textureId, looping);
   }
 
   @override
   Future<void> play(int textureId) {
-    return _api.play(TextureMessage(textureId: textureId));
+    return _api.play(textureId);
   }
 
   @override
   Future<void> pause(int textureId) {
-    return _api.pause(TextureMessage(textureId: textureId));
+    return _api.pause(textureId);
   }
 
   @override
   Future<void> setVolume(int textureId, double volume) {
-    return _api.setVolume(VolumeMessage(
-      textureId: textureId,
-      volume: volume,
-    ));
+    return _api.setVolume(textureId, volume);
   }
 
   @override
   Future<void> setPlaybackSpeed(int textureId, double speed) {
     assert(speed > 0);
 
-    return _api.setPlaybackSpeed(PlaybackSpeedMessage(
-      textureId: textureId,
-      speed: speed,
-    ));
+    return _api.setPlaybackSpeed(textureId, speed);
   }
 
   @override
   Future<void> seekTo(int textureId, Duration position) {
-    return _api.seekTo(PositionMessage(
-      textureId: textureId,
-      position: position.inMilliseconds,
-    ));
+    return _api.seekTo(textureId, position.inMilliseconds);
   }
 
   @override
   Future<Duration> getPosition(int textureId) async {
-    final PositionMessage response =
-        await _api.position(TextureMessage(textureId: textureId));
-    return Duration(milliseconds: response.position);
+    final int position = await _api.position(textureId);
+    return Duration(milliseconds: position);
   }
 
   @override
@@ -162,8 +148,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) {
-    return _api
-        .setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
+    return _api.setMixWithOthers(mixWithOthers);
   }
 
   EventChannel _eventChannelFor(int textureId) {

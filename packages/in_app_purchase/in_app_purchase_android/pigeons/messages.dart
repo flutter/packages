@@ -70,11 +70,7 @@ class PlatformProductDetails {
   final PlatformProductType productType;
   final String title;
   final PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it (the entries, not the list itself) as
-  // non-nullable.
-  final List<PlatformSubscriptionOfferDetails?>? subscriptionOfferDetails;
+  final List<PlatformSubscriptionOfferDetails>? subscriptionOfferDetails;
 }
 
 /// Pigeon version of ProductDetailsResponseWrapper, which contains the
@@ -86,10 +82,7 @@ class PlatformProductDetailsResponse {
   });
 
   final PlatformBillingResult billingResult;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformProductDetails?> productDetails;
+  final List<PlatformProductDetails> productDetails;
 }
 
 /// Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
@@ -118,6 +111,7 @@ class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
     required this.product,
     required this.prorationMode,
+    required this.replacementMode,
     required this.offerToken,
     required this.accountId,
     required this.obfuscatedProfileId,
@@ -130,6 +124,7 @@ class PlatformBillingFlowParams {
   // to constants on the Java side, but it's deprecated anyway so that will be
   // resolved during the update to the new API.
   final int prorationMode;
+  final int replacementMode;
   final String? offerToken;
   final String? accountId;
   final String? obfuscatedProfileId;
@@ -181,10 +176,7 @@ class PlatformPurchase {
   final int purchaseTime;
   final String purchaseToken;
   final String signature;
-  // TODO(stuartmorgan): Make the type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<String?> products;
+  final List<String> products;
   final bool isAutoRenewing;
   final String originalJson;
   final String developerPayload;
@@ -214,10 +206,7 @@ class PlatformPurchaseHistoryRecord {
   final String originalJson;
   final String purchaseToken;
   final String signature;
-  // TODO(stuartmorgan): Make the type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<String?> products;
+  final List<String> products;
 }
 
 /// Pigeon version of PurchasesHistoryResult, which contains the components of
@@ -229,10 +218,7 @@ class PlatformPurchaseHistoryResponse {
   });
 
   final PlatformBillingResult billingResult;
-  // TODO(stuartmorgan): Make the type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformPurchaseHistoryRecord?> purchases;
+  final List<PlatformPurchaseHistoryRecord> purchases;
 }
 
 /// Pigeon version of PurchasesResultWrapper, which contains the components of
@@ -244,10 +230,7 @@ class PlatformPurchasesResponse {
   });
 
   final PlatformBillingResult billingResult;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformPurchase?> purchases;
+  final List<PlatformPurchase> purchases;
 }
 
 /// Pigeon version of Java ProductDetails.SubscriptionOfferDetails.
@@ -263,18 +246,12 @@ class PlatformSubscriptionOfferDetails {
   final String basePlanId;
   final String? offerId;
   final String offerToken;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<String?> offerTags;
+  final List<String> offerTags;
   // On the native side this is actually a class called PricingPhases,
   // which contains nothing but a List<PricingPhase>. Since this is an
   // internal API, we can always add that indirection later if we need it,
   // so for now this bypasses that unnecessary wrapper.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformPricingPhase?> pricingPhases;
+  final List<PlatformPricingPhase> pricingPhases;
 }
 
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
@@ -287,10 +264,7 @@ class PlatformUserChoiceDetails {
 
   final String? originalExternalTransactionId;
   final String externalTransactionToken;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformUserChoiceProduct?> products;
+  final List<PlatformUserChoiceProduct> products;
 }
 
 /// Pigeon version of UserChoiseDetails.Product.

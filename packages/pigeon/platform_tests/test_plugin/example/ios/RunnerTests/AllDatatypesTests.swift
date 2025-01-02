@@ -11,7 +11,7 @@ class AllDatatypesTests: XCTestCase {
 
   func testAllNull() throws {
     let everything = AllNullableTypes()
-    let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
@@ -28,11 +28,15 @@ class AllDatatypesTests: XCTestCase {
         XCTAssertNil(res!.aNullable4ByteArray)
         XCTAssertNil(res!.aNullable8ByteArray)
         XCTAssertNil(res!.aNullableFloatArray)
-        XCTAssertNil(res!.aNullableList)
-        XCTAssertNil(res!.aNullableMap)
-        XCTAssertNil(res!.nullableNestedList)
-        XCTAssertNil(res!.nullableMapWithAnnotations)
-        XCTAssertNil(res!.nullableMapWithObject)
+        XCTAssertNil(res!.list)
+        XCTAssertNil(res!.boolList)
+        XCTAssertNil(res!.intList)
+        XCTAssertNil(res!.doubleList)
+        XCTAssertNil(res!.stringList)
+        XCTAssertNil(res!.listList)
+        XCTAssertNil(res!.map)
+        XCTAssertNil(res!.stringMap)
+        XCTAssertNil(res!.intMap)
         expectation.fulfill()
       case .failure(_):
         return
@@ -52,15 +56,24 @@ class AllDatatypesTests: XCTestCase {
       aNullable4ByteArray: FlutterStandardTypedData(int32: "1234".data(using: .utf8)!),
       aNullable8ByteArray: FlutterStandardTypedData(int64: "12345678".data(using: .utf8)!),
       aNullableFloatArray: FlutterStandardTypedData(float64: "12345678".data(using: .utf8)!),
-      aNullableList: [1, 2],
-      aNullableMap: ["hello": 1234],
-      nullableNestedList: [[true, false], [true]],
-      nullableMapWithAnnotations: ["hello": "world"],
-      nullableMapWithObject: ["hello": 1234, "goodbye": "world"],
-      aNullableString: "123"
+      aNullableString: "123",
+      list: ["string", 2],
+      stringList: ["string", "another one"],
+      intList: [1, 2],
+      doubleList: [1.1, 2.2],
+      boolList: [true, false],
+      objectList: ["string", 2],
+      listList: [[true], [false]],
+      mapList: [["hello": 1234], ["hello": 1234]],
+      map: ["hello": 1234],
+      stringMap: ["hello": "you"],
+      intMap: [1: 0],
+      objectMap: ["hello": 1234],
+      listMap: [1234: ["string", 2]],
+      mapMap: [1234: ["hello": 1234]]
     )
 
-    let binaryMessenger = EchoBinaryMessenger(codec: FlutterIntegrationCoreApiCodec.shared)
+    let binaryMessenger = EchoBinaryMessenger(codec: CoreTestsPigeonCodec.shared)
     let api = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
     let expectation = XCTestExpectation(description: "callback")
@@ -77,11 +90,36 @@ class AllDatatypesTests: XCTestCase {
         XCTAssertEqual(res!.aNullable4ByteArray, everything.aNullable4ByteArray)
         XCTAssertEqual(res!.aNullable8ByteArray, everything.aNullable8ByteArray)
         XCTAssertEqual(res!.aNullableFloatArray, everything.aNullableFloatArray)
-        XCTAssert(equalsList(res!.aNullableList, everything.aNullableList))
-        XCTAssert(equalsDictionary(res!.aNullableMap, everything.aNullableMap))
-        XCTAssertEqual(res!.nullableNestedList, everything.nullableNestedList)
-        XCTAssertEqual(res!.nullableMapWithAnnotations, everything.nullableMapWithAnnotations)
-        XCTAssert(equalsDictionary(res!.nullableMapWithObject, everything.nullableMapWithObject))
+        XCTAssert(equalsList(res!.list, everything.list))
+        XCTAssert(equalsList(res!.stringList, everything.stringList))
+        XCTAssert(equalsList(res!.intList, everything.intList))
+        XCTAssert(equalsList(res!.doubleList, everything.doubleList))
+        XCTAssert(equalsList(res!.boolList, everything.boolList))
+        XCTAssert(equalsList(res!.objectList, everything.objectList))
+        if res!.listList != nil {
+          for (index, list) in res!.listList!.enumerated() {
+            XCTAssert(equalsList(list, everything.listList![index]))
+          }
+        }
+        if res!.mapList != nil {
+          for (index, map) in res!.mapList!.enumerated() {
+            XCTAssert(equalsDictionary(map, everything.mapList![index]))
+          }
+        }
+        XCTAssert(equalsDictionary(res!.map, everything.map))
+        XCTAssert(equalsDictionary(res!.stringMap, everything.stringMap))
+        XCTAssert(equalsDictionary(res!.intMap, everything.intMap))
+        XCTAssert(equalsDictionary(res!.objectMap, everything.objectMap))
+        if res!.listMap != nil {
+          for (index, list) in res!.listMap! {
+            XCTAssert(equalsList(list, everything.listMap![index]!))
+          }
+        }
+        if res!.mapMap != nil {
+          for (index, map) in res!.mapMap! {
+            XCTAssert(equalsDictionary(map, everything.mapMap![index]!))
+          }
+        }
         expectation.fulfill()
         return
       case .failure(_):

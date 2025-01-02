@@ -19,6 +19,7 @@ import 'benchmark_result.dart';
 import 'browser.dart';
 import 'common.dart';
 import 'compilation_options.dart';
+import 'metrics.dart';
 
 /// The default port number used by the local benchmark server.
 const int defaultBenchmarkServerPort = 9999;
@@ -39,8 +40,6 @@ class BenchmarkServer {
   /// can be different (and typically is) from the production entry point of the
   /// app.
   ///
-  /// If [useCanvasKit] is true, builds the app in CanvasKit mode.
-  ///
   /// [benchmarkServerPort] is the port this benchmark server serves the app on.
   ///
   /// [chromeDebugPort] is the port Chrome uses for DevTool Protocol used to
@@ -48,6 +47,16 @@ class BenchmarkServer {
   ///
   /// If [headless] is true, runs Chrome without UI. In particular, this is
   /// useful in environments (e.g. CI) that doesn't have a display.
+  ///
+  /// If [treeShakeIcons] is false, '--no-tree-shake-icons' will be passed as a
+  /// build argument when building the benchmark app.
+  ///
+  /// [compilationOptions] specify the compiler and renderer to use for the
+  /// benchmark app. This can either use dart2wasm & skwasm or
+  /// dart2js & canvaskit.
+  ///
+  /// [benchmarkPath] specifies the path for the URL that will be loaded upon
+  /// opening the benchmark app in Chrome.
   BenchmarkServer({
     required this.benchmarkAppDirectory,
     required this.entryPoint,
@@ -55,8 +64,8 @@ class BenchmarkServer {
     required this.chromeDebugPort,
     required this.headless,
     required this.treeShakeIcons,
-    this.compilationOptions = const CompilationOptions(),
-    this.initialPage = defaultInitialPage,
+    this.compilationOptions = const CompilationOptions.js(),
+    this.benchmarkPath = defaultInitialPath,
   });
 
   final ProcessManager _processManager = const LocalProcessManager();
@@ -92,13 +101,25 @@ class BenchmarkServer {
   /// When false, '--no-tree-shake-icons' will be passed as a build argument.
   final bool treeShakeIcons;
 
-  /// The initial page to load upon opening the benchmark app in Chrome.
+  /// The initial path for the URL that will be loaded upon opening the
+  /// benchmark app in Chrome.
   ///
-  /// The default value is [defaultInitialPage].
-  final String initialPage;
+  /// This path should contain the path segments, fragment, and/or query
+  /// parameters that are required for the benchmark. This value will be parsed
+  /// by `Uri.parse` and combined with the benchmark URI scheme ('http'), host
+  /// ('localhost'), and port [benchmarkServerPort] to create the URL for
+  /// loading in Chrome. See [_benchmarkAppUrl].
+  ///
+  /// The default value is [defaultInitialPath].
+  final String benchmarkPath;
 
-  String get _benchmarkAppUrl =>
-      'http://localhost:$benchmarkServerPort/$initialPage';
+  String get _benchmarkAppUrl => Uri.parse(benchmarkPath)
+      .replace(
+        scheme: 'http',
+        host: 'localhost',
+        port: benchmarkServerPort,
+      )
+      .toString();
 
   /// Builds and serves the benchmark app, and collects benchmark results.
   Future<BenchmarkResults> run() async {
@@ -119,10 +140,8 @@ class BenchmarkServer {
         'web',
         if (compilationOptions.useWasm) ...<String>[
           '--wasm',
-          '--wasm-opt=debug',
-          '--omit-type-checks',
+          '--no-strip-wasm',
         ],
-        '--web-renderer=${compilationOptions.renderer.name}',
         '--dart-define=FLUTTER_WEB_ENABLE_PROFILING=true',
         if (!treeShakeIcons) '--no-tree-shake-icons',
         '--profile',
@@ -161,10 +180,27 @@ class BenchmarkServer {
     Cascade cascade = Cascade();
 
     // Serves the static files built for the app (html, js, images, fonts, etc)
-    cascade = cascade.add(createStaticHandler(
+    final Handler buildFolderHandler = createStaticHandler(
       path.join(benchmarkAppDirectory.path, 'build', 'web'),
       defaultDocument: 'index.html',
-    ));
+    );
+
+    // We want our page to be crossOriginIsolated. This will allow us to run the
+    // skwasm renderer, which uses a SharedArrayBuffer, which requires the page
+    // to be crossOriginIsolated. But also, even in the non-skwasm case, running
+    // in crossOriginIsolated gives us access to more accurate timers which are
+    // useful for capturing good benchmarking data.
+    // See https://developer.mozilla.org/en-US/docs/Web/API/Performance_API/High_precision_timing#reduced_precision
+    cascade = cascade.add((Request request) async {
+      final Response response = await buildFolderHandler(request);
+      if (response.mimeType == 'text/html') {
+        return response.change(headers: <String, String>{
+          'Cross-Origin-Opener-Policy': 'same-origin',
+          'Cross-Origin-Embedder-Policy': 'require-corp',
+        });
+      }
+      return response;
+    });
 
     // Serves the benchmark server API used by the benchmark app to coordinate
     // the running of benchmarks.
@@ -188,11 +224,11 @@ class BenchmarkServer {
           if (latestPerformanceTrace != null) {
             final BlinkTraceSummary? traceSummary =
                 BlinkTraceSummary.fromJson(latestPerformanceTrace!);
-            profile['totalUiFrame.average'] =
+            profile[totalUiFrameAverage] =
                 traceSummary?.averageTotalUIFrameTime.inMicroseconds;
             profile['scoreKeys'] ??=
                 <dynamic>[]; // using dynamic for consistency with JSON
-            (profile['scoreKeys'] as List<dynamic>).add('totalUiFrame.average');
+            (profile['scoreKeys'] as List<dynamic>).add(totalUiFrameAverage);
             latestPerformanceTrace = null;
           }
           collectedProfiles.add(profile);
@@ -257,9 +293,20 @@ class BenchmarkServer {
       }
     });
 
-    // If all previous handlers returned HTTP 404, this is the last handler
-    // that simply warns about the unrecognized path.
-    cascade = cascade.add((Request request) {
+    // If all previous handlers returned HTTP 404, this handler either serves
+    // the static handler at the default document (for GET requests only) or
+    // warns about the unrecognized path.
+    cascade = cascade.add((Request request) async {
+      if (request.method == 'GET') {
+        final Uri newRequestUri = request.requestedUri.replace(path: '/');
+        final Request newRequest = Request(
+          request.method,
+          newRequestUri,
+          headers: request.headers,
+        );
+        return await buildFolderHandler(newRequest);
+      }
+
       io.stderr.writeln('Unrecognized URL path: ${request.requestedUri.path}');
       return Response.notFound('Not found: ${request.requestedUri.path}');
     });

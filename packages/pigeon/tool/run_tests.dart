@@ -67,6 +67,7 @@ Future<void> _validateGeneratedFiles(
     languagesToValidate = <GeneratorLanguage>{
       GeneratorLanguage.cpp,
       GeneratorLanguage.dart,
+      GeneratorLanguage.gobject,
       GeneratorLanguage.java,
       GeneratorLanguage.kotlin,
       GeneratorLanguage.objc,
@@ -86,7 +87,14 @@ Future<void> _validateGeneratedFiles(
   print('Validating generated files:');
   print('  $generationMessage...');
 
-  final int generateExitCode = await generateExamplePigeons();
+  int generateExitCode = await generateExamplePigeons();
+
+  if (generateExitCode != 0) {
+    print('Generation failed; see above for errors.');
+    exit(generateExitCode);
+  }
+
+  generateExitCode = await generateTestPigeons(baseDir: baseDir);
 
   if (generateExitCode != 0) {
     print('Generation failed; see above for errors.');
@@ -140,6 +148,7 @@ Set<String> _extensionsForLanguage(GeneratorLanguage language) {
   return switch (language) {
     GeneratorLanguage.cpp => <String>{'cc', 'cpp', 'h'},
     GeneratorLanguage.dart => <String>{'dart'},
+    GeneratorLanguage.gobject => <String>{'cc', 'h'},
     GeneratorLanguage.java => <String>{'java'},
     GeneratorLanguage.kotlin => <String>{'kt'},
     GeneratorLanguage.swift => <String>{'swift'},
@@ -177,6 +186,8 @@ Future<void> main(List<String> args) async {
     androidKotlinUnitTests,
     androidJavaIntegrationTests,
     androidKotlinIntegrationTests,
+    linuxUnitTests,
+    linuxIntegrationTests,
   ];
   const List<String> macOSHostTests = <String>[
     iOSObjCUnitTests,
@@ -234,5 +245,5 @@ Future<void> main(List<String> args) async {
     exit(2);
   }
 
-  await runTests(testsToRun);
+  await runTests(testsToRun, ciMode: true, includeOverflow: true);
 }

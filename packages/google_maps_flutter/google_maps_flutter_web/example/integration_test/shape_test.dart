@@ -3,9 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
+import 'package:google_maps/google_maps_visualization.dart' as visualization;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -35,14 +37,18 @@ void main() {
     late gmaps.Circle circle;
 
     setUp(() {
-      circle = gmaps.Circle();
+      circle = gmaps.Circle(gmaps.CircleOptions());
     });
 
     testWidgets('onTap gets called', (WidgetTester tester) async {
       CircleController(circle: circle, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.Event.trigger(circle, 'click', <Object?>[gmaps.MapMouseEvent()]);
+      gmaps.event.trigger(
+        circle,
+        'click',
+        gmaps.MapMouseEvent(),
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -53,7 +59,7 @@ void main() {
       final gmaps.CircleOptions options = gmaps.CircleOptions()
         ..draggable = true;
 
-      expect(circle.draggable, isNull);
+      expect(circle.isDraggableDefined(), isFalse);
 
       controller.update(options);
 
@@ -98,7 +104,11 @@ void main() {
       PolygonController(polygon: polygon, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.Event.trigger(polygon, 'click', <Object?>[gmaps.MapMouseEvent()]);
+      gmaps.event.trigger(
+        polygon,
+        'click',
+        gmaps.MapMouseEvent(),
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -109,7 +119,7 @@ void main() {
       final gmaps.PolygonOptions options = gmaps.PolygonOptions()
         ..draggable = true;
 
-      expect(polygon.draggable, isNull);
+      expect(polygon.isDraggableDefined(), isFalse);
 
       controller.update(options);
 
@@ -158,7 +168,11 @@ void main() {
       );
 
       // Trigger a click event...
-      gmaps.Event.trigger(polyline, 'click', <Object?>[gmaps.MapMouseEvent()]);
+      gmaps.event.trigger(
+        polyline,
+        'click',
+        gmaps.MapMouseEvent(),
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -171,7 +185,7 @@ void main() {
       final gmaps.PolylineOptions options = gmaps.PolylineOptions()
         ..draggable = true;
 
-      expect(polyline.draggable, isNull);
+      expect(polyline.isDraggableDefined(), isFalse);
 
       controller.update(options);
 
@@ -195,6 +209,53 @@ void main() {
           (WidgetTester tester) async {
         final gmaps.PolylineOptions options = gmaps.PolylineOptions()
           ..draggable = true;
+
+        controller.remove();
+
+        expect(() {
+          controller.update(options);
+        }, throwsAssertionError);
+      });
+    });
+  });
+
+  group('HeatmapController', () {
+    late visualization.HeatmapLayer heatmap;
+
+    setUp(() {
+      heatmap = visualization.HeatmapLayer();
+    });
+
+    testWidgets('update', (WidgetTester tester) async {
+      final HeatmapController controller = HeatmapController(heatmap: heatmap);
+      final visualization.HeatmapLayerOptions options =
+          visualization.HeatmapLayerOptions()
+            ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
+
+      expect(heatmap.data, hasLength(0));
+
+      controller.update(options);
+
+      expect(heatmap.data, hasLength(1));
+    });
+
+    group('remove', () {
+      late HeatmapController controller;
+
+      setUp(() {
+        controller = HeatmapController(heatmap: heatmap);
+      });
+
+      testWidgets('drops gmaps instance', (WidgetTester tester) async {
+        controller.remove();
+
+        expect(controller.heatmap, isNull);
+      });
+
+      testWidgets('cannot call update after remove',
+          (WidgetTester tester) async {
+        final visualization.HeatmapLayerOptions options =
+            visualization.HeatmapLayerOptions()..dissipating = true;
 
         controller.remove();
 
