@@ -34,6 +34,9 @@ enum NavigatingType {
   /// Restore the current match list with
   /// [RouteInformationState.baseRouteMatchList].
   restore,
+
+  /// Pop Current route.
+  pop,
 }
 
 /// The data class to be stored in [RouteInformation.state] to be used by
@@ -49,7 +52,9 @@ class RouteInformationState<T> {
     this.completer,
     this.baseRouteMatchList,
     required this.type,
-  })  : assert((type == NavigatingType.go || type == NavigatingType.restore) ==
+  })  : assert((type == NavigatingType.go ||
+                type == NavigatingType.restore ||
+                type == NavigatingType.pop) ==
             (completer == null)),
         assert((type != NavigatingType.go) == (baseRouteMatchList != null));
 
@@ -225,6 +230,17 @@ class GoRouteInformationProvider extends RouteInformationProvider
       ),
     );
     return completer.future;
+  }
+
+  /// Save the pop state to value when remove top-most route.
+  void popSave<T>(String location, {required RouteMatchList base}) {
+    _value = RouteInformation(
+      uri: Uri.parse(location),
+      state: RouteInformationState<T>(
+        baseRouteMatchList: base,
+        type: NavigatingType.pop,
+      ),
+    );
   }
 
   RouteInformation _valueInEngine;

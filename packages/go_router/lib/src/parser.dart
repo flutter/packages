@@ -216,6 +216,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()
             ? newMatchList
             : baseRouteMatchList;
+      case NavigatingType.pop:
+        // Will do nothing.
+        return baseRouteMatchList!;
     }
   }
 
