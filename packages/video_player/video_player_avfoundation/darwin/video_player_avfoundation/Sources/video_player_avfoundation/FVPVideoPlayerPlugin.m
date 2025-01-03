@@ -213,4 +213,70 @@
 #endif
 }
 
+- (nullable NSNumber *)isPictureInPictureSupported:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  if (@available(macOS 10.15, *)) {
+#if TARGET_OS_OSX
+    return @([AVPictureInPictureController isPictureInPictureSupported]);
+#else
+    return @([AVPictureInPictureController isPictureInPictureSupported] &&
+             [self doesInfoPlistSupportPictureInPicture]);
+#endif
+  } else {
+    return FALSE;
+  }
+}
+
+- (void)setAutomaticallyStartsPictureInPicture:
+            (FVPAutomaticallyStartsPictureInPictureMessage *)input
+                                         error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  [player setAutomaticallyStartsPictureInPicture:
+              input.enableStartPictureInPictureAutomaticallyFromInline];
+}
+
+- (void)setPictureInPictureOverlaySettings:(FVPSetPictureInPictureOverlaySettingsMessage *)input
+                                     error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  [player
+      setPictureInPictureOverlaySettings:CGRectMake(input.settings.left, input.settings.top,
+                                                    input.settings.width, input.settings.height)];
+}
+
+- (BOOL)doesInfoPlistSupportPictureInPicture {
+  NSArray *backgroundModes = [NSBundle.mainBundle objectForInfoDictionaryKey:@"UIBackgroundModes"];
+  return
+      [backgroundModes isKindOfClass:[NSArray class]] && [backgroundModes containsObject:@"audio"];
+}
+
+- (void)startPictureInPicture:(FVPStartPictureInPictureMessage *)input
+                        error:(FlutterError **)error {
+#if TARGET_OS_IOS
+  if (![self doesInfoPlistSupportPictureInPicture]) {
+    *error = [FlutterError
+        errorWithCode:@"video_player"
+              message:@"Failed to start picture-in-picture because UIBackgroundModes: audio "
+                      @"is not enabled in Info.plist"
+              details:nil];
+    return;
+  }
+#endif
+
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  [player startOrStopPictureInPicture:YES];
+}
+
+- (void)stopPictureInPicture:(FVPStopPictureInPictureMessage *)input error:(FlutterError **)error {
+  if (![self doesInfoPlistSupportPictureInPicture]) {
+    *error = [FlutterError
+        errorWithCode:@"video_player"
+              message:@"Failed to stop picture-in-picture because UIBackgroundModes: audio "
+                      @"is not enabled in Info.plist"
+              details:nil];
+    return;
+  }
+  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
+  [player startOrStopPictureInPicture:NO];
+}
+
 @end

@@ -13,102 +13,6 @@
 #import "FVPDisplayLink.h"
 #import "messages.g.h"
 
-#if !__has_feature(objc_arc)
-#error Code Requires ARC.
-#endif
-
-@interface FVPFrameUpdater : NSObject
-@property(nonatomic) int64_t textureId;
-@property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
-// The output that this updater is managing.
-@property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
-// The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.
-@property(nonatomic, assign) CMTime lastKnownAvailableTime;
-@end
-
-@implementation FVPFrameUpdater
-- (FVPFrameUpdater *)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry {
-  NSAssert(self, @"super init cannot be nil");
-  if (self == nil) return nil;
-  _registry = registry;
-  _lastKnownAvailableTime = kCMTimeInvalid;
-  return self;
-}
-
-- (void)displayLinkFired {
-  // Only report a new frame if one is actually available.
-  CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-  if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-    _lastKnownAvailableTime = outputItemTime;
-    [_registry textureFrameAvailable:_textureId];
-  }
-}
-@end
-
-@interface FVPDefaultAVFactory : NSObject <FVPAVFactory>
-@end
-
-@implementation FVPDefaultAVFactory
-- (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
-  return [AVPlayer playerWithPlayerItem:playerItem];
-}
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes {
-  return [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
-}
-@end
-
-/// Non-test implementation of the diplay link factory.
-@interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
-@end
-
-@implementation FVPDefaultDisplayLinkFactory
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                    callback:(void (^)(void))callback {
-  return [[FVPDisplayLink alloc] initWithRegistrar:registrar callback:callback];
-}
-
-@end
-
-#pragma mark -
-
-API_AVAILABLE(macos(10.15))
-@interface FVPVideoPlayer () <AVPictureInPictureControllerDelegate>
-@property(readonly, nonatomic) AVPlayerItemVideoOutput *videoOutput;
-@property(nonatomic) AVPictureInPictureController *pictureInPictureController;
-// The plugin registrar, to obtain view information from.
-@property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
-// The CALayer associated with the Flutter view this plugin is associated with, if any.
-@property(nonatomic, readonly) CALayer *flutterViewLayer;
-@property(nonatomic) FlutterEventChannel *eventChannel;
-@property(nonatomic) FlutterEventSink eventSink;
-@property(nonatomic) CGAffineTransform preferredTransform;
-@property(nonatomic, readonly) BOOL disposed;
-@property(nonatomic, readonly) BOOL isPlaying;
-@property(nonatomic) BOOL isLooping;
-@property(nonatomic, readonly) BOOL isInitialized;
-@property(nonatomic) BOOL isPictureInPictureStarted;
-// The updater that drives callbacks to the engine to indicate that a new frame is ready.
-@property(nonatomic) FVPFrameUpdater *frameUpdater;
-// The display link that drives frameUpdater.
-@property(nonatomic) FVPDisplayLink *displayLink;
-// Whether a new frame needs to be provided to the engine regardless of the current play/pause state
-// (e.g., after a seek while paused). If YES, the display link should continue to run until the next
-// frame is successfully provided.
-@property(nonatomic, assign) BOOL waitingForFrame;
-
-- (instancetype)initWithURL:(NSURL *)url
-               frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-                  avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-
-// Tells the player to run its frame updater until it receives a frame, regardless of the
-// play/pause state.
-- (void)expectFrame;
-@end
-
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
 static void *presentationSizeContext = &presentationSizeContext;
@@ -143,6 +47,13 @@ static void *rateContext = &rateContext;
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
 @end
+
+API_AVAILABLE(macos(10.15))
+@interface FVPVideoPlayer () <AVPictureInPictureControllerDelegate>
+@property(nonatomic) AVPictureInPictureController *pipController;
+@property(nonatomic) BOOL pipStarted;
+@end
+
 
 @implementation FVPVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
@@ -235,6 +146,9 @@ static void *rateContext = &rateContext;
   // for issue #1, and restore the correct width and height for issue #2.
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
   [self.flutterViewLayer addSublayer:_playerLayer];
+ 
+  // Configure pip controller
+  [self setupPiPController];
 
   // Configure output.
   _displayLink = displayLink;
@@ -357,180 +271,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   videoComposition.frameDuration = CMTimeMake(1, 30);
 
   return videoComposition;
-}
-
-- (instancetype)initWithURL:(NSURL *)url
-               frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-                  avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSDictionary<NSString *, id> *options = nil;
-  if ([headers count] != 0) {
-    options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
-  }
-  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
-  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item
-                     frameUpdater:frameUpdater
-                      displayLink:(FVPDisplayLink *)displayLink
-                        avFactory:avFactory
-                        registrar:registrar];
-}
-
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                      frameUpdater:(FVPFrameUpdater *)frameUpdater
-                       displayLink:(FVPDisplayLink *)displayLink
-                         avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [super init];
-  NSAssert(self, @"super init cannot be nil");
-
-  _registrar = registrar;
-  _frameUpdater = frameUpdater;
-
-  AVAsset *asset = [item asset];
-  void (^assetCompletionHandler)(void) = ^{
-    if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([tracks count] > 0) {
-        AVAssetTrack *videoTrack = tracks[0];
-        void (^trackCompletionHandler)(void) = ^{
-          if (self->_disposed) return;
-          if ([videoTrack statusOfValueForKey:@"preferredTransform"
-                                        error:nil] == AVKeyValueStatusLoaded) {
-            // Rotate the video by using a videoComposition and the preferredTransform
-            self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
-            // Note:
-            // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
-            // Video composition can only be used with file-based media and is not supported for
-            // use with media served using HTTP Live Streaming.
-            AVMutableVideoComposition *videoComposition =
-                [self getVideoCompositionWithTransform:self->_preferredTransform
-                                             withAsset:asset
-                                        withVideoTrack:videoTrack];
-            item.videoComposition = videoComposition;
-          }
-        };
-        [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
-                                  completionHandler:trackCompletionHandler];
-      }
-    }
-  };
-
-  _player = [avFactory playerWithPlayerItem:item];
-  _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-
-  // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
-  // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
-  // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
-  // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
-  // for issue #1, and restore the correct width and height for issue #2.
-  // It is also used to start picture-in-picture
-  _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-  // picture-in-picture shows a placeholder where the original video was playing.
-  // This is a native overlay that does not scroll with the rest of the Flutter UI.
-  // That is why we need to set the opacity of the overlay.
-  // Setting it to 0 would result in the picture-in-picture not working.
-  // Setting it to 1 would result in the picture-in-picture overlay always showing over other
-  // widget. Setting it to 0.001 makes the placeholder invisible, but still allows the
-  // picture-in-picture.
-  _playerLayer.opacity = 0.001;
-  [self.flutterViewLayer addSublayer:_playerLayer];
-
-  [self setupPiPController];
-
-  // Configure output.
-  _displayLink = displayLink;
-  NSDictionary *pixBuffAttributes = @{
-    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
-  };
-  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
-  frameUpdater.videoOutput = _videoOutput;
-
-  [self addObserversForItem:item player:_player];
-
-  [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
-
-  return self;
-}
-
-/**
- * Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to
- * the controller.
- */
-- (void)setupPiPController {
-  if (@available(macOS 10.15, *)) {
-    if ([AVPictureInPictureController isPictureInPictureSupported]) {
-      self.pictureInPictureController =
-          [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
-      [self setAutomaticallyStartsPictureInPicture:NO];
-      self.pictureInPictureController.delegate = self;
-    }
-  } else {
-    // We don't do anything here because there is no setup required below macOS 10.15.
-  }
-}
-
-- (void)setAutomaticallyStartsPictureInPicture:
-    (BOOL)canStartPictureInPictureAutomaticallyFromInline {
-  if (!self.pictureInPictureController) return;
-#if TARGET_OS_IOS
-  if (@available(iOS 14.2, *)) {
-    self.pictureInPictureController.canStartPictureInPictureAutomaticallyFromInline =
-        canStartPictureInPictureAutomaticallyFromInline;
-  }
-#endif
-}
-
-- (void)setPictureInPictureOverlaySettings:(CGRect)frame {
-  if (_player) {
-    self.playerLayer.frame = frame;
-  }
-}
-
-- (void)startOrStopPictureInPicture:(BOOL)shouldPictureInPictureStart {
-  if (@available(macOS 10.15, *)) {
-    if (![AVPictureInPictureController isPictureInPictureSupported] ||
-        self.isPictureInPictureStarted == shouldPictureInPictureStart) {
-      return;
-    }
-  } else {
-    return;
-  }
-
-  self.isPictureInPictureStarted = shouldPictureInPictureStart;
-  if (self.pictureInPictureController && self.isPictureInPictureStarted &&
-      ![self.pictureInPictureController isPictureInPictureActive]) {
-    if (_eventSink != nil) {
-      // The event is sent here to make sure that the Flutter UI can be updated as soon as possible.
-      _eventSink(@{@"event" : @"startedPictureInPicture"});
-    }
-    [self.pictureInPictureController startPictureInPicture];
-  } else if (self.pictureInPictureController && !self.isPictureInPictureStarted &&
-             [self.pictureInPictureController isPictureInPictureActive]) {
-    [self.pictureInPictureController stopPictureInPicture];
-  }
-}
-
-#pragma mark - AVPictureInPictureControllerDelegate
-
-- (void)pictureInPictureControllerDidStopPictureInPicture:
-    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
-  self.isPictureInPictureStarted = NO;
-  if (_eventSink != nil) {
-    _eventSink(@{@"event" : @"stoppedPictureInPicture"});
-  }
-}
-
-- (void)pictureInPictureControllerDidStartPictureInPicture:
-    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
-  self.isPictureInPictureStarted = YES;
-  if (_eventSink != nil) {
-    _eventSink(@{@"event" : @"startingPictureInPicture"});
-  }
-  [self updatePlayingState];
 }
 
 - (void)observeValueForKeyPath:(NSString *)path
@@ -879,257 +619,82 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [_player removeObserver:self forKeyPath:@"rate"];
 }
 
-@end
-<<<<<<< HEAD:packages/video_player/video_player_avfoundation/darwin/Classes/FVPVideoPlayerPlugin.m
-
-@interface FVPVideoPlayerPlugin ()
-@property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry> *registry;
-@property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
-@property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
-@property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
-@property(nonatomic, strong) id<FVPAVFactory> avFactory;
-@end
-
-@implementation FVPVideoPlayerPlugin
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FVPVideoPlayerPlugin *instance = [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
-  [registrar publish:instance];
-  SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
-}
-
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithAVFactory:[[FVPDefaultAVFactory alloc] init]
-              displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
-                       registrar:registrar];
-}
-
-- (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
-               displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
-                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [super init];
-  NSAssert(self, @"super init cannot be nil");
-  _registry = [registrar textures];
-  _messenger = [registrar messenger];
-  _registrar = registrar;
-  _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
-  _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
-  _playersByTextureId = [NSMutableDictionary dictionaryWithCapacity:1];
-  return self;
-}
-
-- (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self.playersByTextureId.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
-  [self.playersByTextureId removeAllObjects];
-  SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
-}
-
-- (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
-  int64_t textureId = [self.registry registerTexture:player];
-  frameUpdater.textureId = textureId;
-  FlutterEventChannel *eventChannel = [FlutterEventChannel
-      eventChannelWithName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld",
-                                                      textureId]
-           binaryMessenger:_messenger];
-  [eventChannel setStreamHandler:player];
-  player.eventChannel = eventChannel;
-  self.playersByTextureId[@(textureId)] = player;
-
-  // Ensure that the first frame is drawn once available, even if the video isn't played, since
-  // the engine is now expecting the texture to be populated.
-  [player expectFrame];
-
-  return textureId;
-}
-
-- (void)initialize:(FlutterError *__autoreleasing *)error {
-#if TARGET_OS_IOS
-  // Allow audio playback when the Ring/Silent switch is set to silent
-  [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-#endif
-
-  [self.playersByTextureId
-      enumerateKeysAndObjectsUsingBlock:^(NSNumber *textureId, FVPVideoPlayer *player, BOOL *stop) {
-        [self.registry unregisterTexture:textureId.unsignedIntegerValue];
-        [player dispose];
-      }];
-  [self.playersByTextureId removeAllObjects];
-}
-
-- (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
-                                   error:(FlutterError **)error {
-  FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
-  FVPDisplayLink *displayLink =
-      [self.displayLinkFactory displayLinkWithRegistrar:_registrar
-                                               callback:^() {
-                                                 [frameUpdater displayLinkFired];
-                                               }];
-
-  FVPVideoPlayer *player;
-  if (options.asset) {
-    NSString *assetPath;
-    if (options.packageName) {
-      assetPath = [_registrar lookupKeyForAsset:options.asset fromPackage:options.packageName];
-    } else {
-      assetPath = [_registrar lookupKeyForAsset:options.asset];
-    }
-    @try {
-      player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
-                                        frameUpdater:frameUpdater
-                                         displayLink:displayLink
-                                           avFactory:_avFactory
-                                           registrar:self.registrar];
-      return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
-    } @catch (NSException *exception) {
-      *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
-      return nil;
-    }
-  } else if (options.uri) {
-    player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                    frameUpdater:frameUpdater
-                                     displayLink:displayLink
-                                     httpHeaders:options.httpHeaders
-                                       avFactory:_avFactory
-                                       registrar:self.registrar];
-    return @([self onPlayerSetup:player frameUpdater:frameUpdater]);
-  } else {
-    *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
-    return nil;
-  }
-}
-
-- (void)disposePlayer:(NSInteger)textureId error:(FlutterError **)error {
-  NSNumber *playerKey = @(textureId);
-  FVPVideoPlayer *player = self.playersByTextureId[playerKey];
-  [self.registry unregisterTexture:textureId];
-  [self.playersByTextureId removeObjectForKey:playerKey];
-  if (!player.disposed) {
-    [player dispose];
-  }
-}
-
-- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
-  player.isLooping = isLooping;
-}
-
-- (void)setVolume:(double)volume forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
-  [player setVolume:volume];
-}
-
-- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
-  [player setPlaybackSpeed:speed];
-}
-
-- (void)playPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
-  [player play];
-}
-
-- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
-  return @([player position]);
-}
-
-- (void)seekTo:(NSInteger)position
-     forPlayer:(NSInteger)textureId
-    completion:(nonnull void (^)(FlutterError *_Nullable))completion {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
-  [player seekTo:position
-      completionHandler:^(BOOL finished) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-          completion(nil);
-        });
-      }];
-}
-
-- (void)pausePlayer:(NSInteger)textureId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(textureId)];
-  [player pause];
-}
-
-- (void)setMixWithOthers:(BOOL)mixWithOthers
-                   error:(FlutterError *_Nullable __autoreleasing *)error {
-#if TARGET_OS_OSX
-  // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
-#else
-  if (mixWithOthers) {
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
-                                     withOptions:AVAudioSessionCategoryOptionMixWithOthers
-                                           error:nil];
-  } else {
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-  }
-#endif
-}
-
-- (nullable NSNumber *)isPictureInPictureSupported:
-    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+/**
+ * Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to
+ * the controller.
+ */
+- (void)setupPiPController {
   if (@available(macOS 10.15, *)) {
-#if TARGET_OS_OSX
-    return @([AVPictureInPictureController isPictureInPictureSupported]);
-#else
-    return @([AVPictureInPictureController isPictureInPictureSupported] &&
-             [self doesInfoPlistSupportPictureInPicture]);
-#endif
+    if ([AVPictureInPictureController isPictureInPictureSupported]) {
+      self.pipController =
+          [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
+      [self setAutomaticallyStartsPictureInPicture:NO];
+      self.pipController.delegate = self;
+    }
   } else {
-    return FALSE;
+    // We don't do anything here because there is no setup required below macOS 10.15.
   }
 }
 
 - (void)setAutomaticallyStartsPictureInPicture:
-            (FVPAutomaticallyStartsPictureInPictureMessage *)input
-                                         error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setAutomaticallyStartsPictureInPicture:
-              input.enableStartPictureInPictureAutomaticallyFromInline];
-}
-
-- (void)setPictureInPictureOverlaySettings:(FVPSetPictureInPictureOverlaySettingsMessage *)input
-                                     error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player
-      setPictureInPictureOverlaySettings:CGRectMake(input.settings.left, input.settings.top,
-                                                    input.settings.width, input.settings.height)];
-}
-
-- (BOOL)doesInfoPlistSupportPictureInPicture {
-  NSArray *backgroundModes = [NSBundle.mainBundle objectForInfoDictionaryKey:@"UIBackgroundModes"];
-  return
-      [backgroundModes isKindOfClass:[NSArray class]] && [backgroundModes containsObject:@"audio"];
-}
-
-- (void)startPictureInPicture:(FVPStartPictureInPictureMessage *)input
-                        error:(FlutterError **)error {
+    (BOOL)canStartPictureInPictureAutomaticallyFromInline {
+  if (!self.pipController) return;
 #if TARGET_OS_IOS
-  if (![self doesInfoPlistSupportPictureInPicture]) {
-    *error = [FlutterError
-        errorWithCode:@"video_player"
-              message:@"Failed to start picture-in-picture because UIBackgroundModes: audio "
-                      @"is not enabled in Info.plist"
-              details:nil];
-    return;
+  if (@available(iOS 14.2, *)) {
+    self.pipController.canStartPictureInPictureAutomaticallyFromInline =
+        canStartPictureInPictureAutomaticallyFromInline;
   }
 #endif
-
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player startOrStopPictureInPicture:YES];
 }
 
-- (void)stopPictureInPicture:(FVPStopPictureInPictureMessage *)input error:(FlutterError **)error {
-  if (![self doesInfoPlistSupportPictureInPicture]) {
-    *error = [FlutterError
-        errorWithCode:@"video_player"
-              message:@"Failed to stop picture-in-picture because UIBackgroundModes: audio "
-                      @"is not enabled in Info.plist"
-              details:nil];
+- (void)setPictureInPictureOverlaySettings:(CGRect)frame {
+  if (_player) {
+    self.playerLayer.frame = frame;
+  }
+}
+
+- (void)startOrStopPictureInPicture:(BOOL)shouldPictureInPictureStart {
+  if (@available(macOS 10.15, *)) {
+    if (![AVPictureInPictureController isPictureInPictureSupported] ||
+        self.pipStarted == shouldPictureInPictureStart) {
+      return;
+    }
+  } else {
     return;
   }
-  FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player startOrStopPictureInPicture:NO];
+
+  self.pipStarted = shouldPictureInPictureStart;
+  if (self.pipController && self.pipStarted &&
+      ![self.pipController isPictureInPictureActive]) {
+    if (_eventSink != nil) {
+      // The event is sent here to make sure that the Flutter UI can be updated as soon as possible.
+      _eventSink(@{@"event" : @"startedPictureInPicture"});
+    }
+    [self.pipController startPictureInPicture];
+  } else if (self.pipController && !self.pipStarted &&
+             [self.pipController isPictureInPictureActive]) {
+    [self.pipController stopPictureInPicture];
+  }
+}
+
+#pragma mark - AVPictureInPictureControllerDelegate
+
+- (void)pictureInPictureControllerDidStopPictureInPicture:
+    (AVPictureInPictureController *)pipController API_AVAILABLE(macos(10.15)) {
+  self.pipStarted = NO;
+  if (_eventSink != nil) {
+    _eventSink(@{@"event" : @"stoppedPictureInPicture"});
+  }
+}
+
+- (void)pictureInPictureControllerDidStartPictureInPicture:
+    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
+  self.pipStarted = YES;
+  if (_eventSink != nil) {
+    _eventSink(@{@"event" : @"startingPictureInPicture"});
+  }
+  [self updatePlayingState];
 }
 
 @end
-=======
->>>>>>> origin/main:packages/video_player/video_player_avfoundation/darwin/video_player_avfoundation/Sources/video_player_avfoundation/FVPVideoPlayer.m
+
