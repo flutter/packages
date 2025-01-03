@@ -231,16 +231,14 @@
             (FVPAutomaticallyStartsPictureInPictureMessage *)input
                                          error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-    [player setPictureInPictureStarted:
-              input.enableStartPictureInPictureAutomaticallyFromInline];
+  [player setPictureInPictureStarted:input.enableStartPictureInPictureAutomaticallyFromInline];
 }
 
 - (void)setPictureInPictureOverlaySettings:(FVPSetPictureInPictureOverlaySettingsMessage *)input
                                      error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player
-      setPictureInPictureOverlayFrame:CGRectMake(input.settings.left, input.settings.top,
-                                                    input.settings.width, input.settings.height)];
+  [player setPictureInPictureOverlayFrame:CGRectMake(input.settings.left, input.settings.top,
+                                                     input.settings.width, input.settings.height)];
 }
 
 - (BOOL)configuredPictureInPictureBackgroundMode {

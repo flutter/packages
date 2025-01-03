@@ -3,15 +3,14 @@
 // found in the LICENSE file.
 
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
+#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
 #import <GLKit/GLKit.h>
 #import "AVAssetTrackUtils.h"
 #import "FVPDisplayLink.h"
-#import "messages.g.h"
 
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
@@ -53,7 +52,6 @@ API_AVAILABLE(macos(10.15))
 @property(nonatomic) AVPictureInPictureController *pictureInPictureController;
 @property(nonatomic) BOOL pictureInPictureStarted;
 @end
-
 
 @implementation FVPVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
@@ -146,7 +144,7 @@ API_AVAILABLE(macos(10.15))
   // for issue #1, and restore the correct width and height for issue #2.
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
   [self.flutterViewLayer addSublayer:_playerLayer];
- 
+
   // Configure Picture in Picture controller
   [self setUpPictureInPictureController];
 
@@ -619,16 +617,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [_player removeObserver:self forKeyPath:@"rate"];
 }
 
-
-/// Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to
-/// the controller.
+/// Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate
+/// to the controller.
 - (void)setUpPictureInPictureController {
   if (@available(macOS 10.15, *)) {
     if (AVPictureInPictureController.isPictureInPictureSupported) {
       self.pictureInPictureController =
           [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
       [self setAutomaticallyStartPictureInPicture:NO];
-      self.pictureInPictureController.delegate = self;
+      _pictureInPictureController.delegate = self;
     }
   } else {
     // We don't do anything here because there is no setup required below macOS 10.15.
@@ -652,7 +649,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setPictureInPictureStarted:(BOOL)startPictureInPicture {
   if (@available(macOS 10.15, *)) {
-      if (!AVPictureInPictureController.isPictureInPictureSupported ||
+    if (!AVPictureInPictureController.isPictureInPictureSupported ||
         _pictureInPictureStarted == startPictureInPicture) {
       return;
     }
@@ -661,8 +658,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 
   _pictureInPictureStarted = startPictureInPicture;
-  if (_pictureInPictureStarted &&
-      ![self.pictureInPictureController isPictureInPictureActive]) {
+  if (_pictureInPictureStarted && ![self.pictureInPictureController isPictureInPictureActive]) {
     if (_eventSink != nil) {
       // The event is sent here to make sure that the Flutter UI can be updated as soon as possible.
       _eventSink(@{@"event" : @"startedPictureInPicture"});
@@ -694,4 +690,3 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 @end
-

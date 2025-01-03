@@ -21,10 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -41,8 +37,7 @@ public class Messages {
     /** The error details. Must be a datatype supported by the api codec. */
     public final Object details;
 
-    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) 
-    {
+    public FlutterError(@NonNull String code, @Nullable String message, @Nullable Object details) {
       super(message);
       this.code = code;
       this.details = details;
@@ -61,7 +56,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-        "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -130,10 +125,18 @@ public class Messages {
 
     @Override
     public boolean equals(Object o) {
-      if (this == o) { return true; }
-      if (o == null || getClass() != o.getClass()) { return false; }
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
       CreateMessage that = (CreateMessage) o;
-      return Objects.equals(asset, that.asset) && Objects.equals(uri, that.uri) && Objects.equals(packageName, that.packageName) && Objects.equals(formatHint, that.formatHint) && httpHeaders.equals(that.httpHeaders);
+      return Objects.equals(asset, that.asset)
+          && Objects.equals(uri, that.uri)
+          && Objects.equals(packageName, that.packageName)
+          && Objects.equals(formatHint, that.formatHint)
+          && httpHeaders.equals(that.httpHeaders);
     }
 
     @Override
@@ -252,7 +255,7 @@ public class Messages {
 
     void initialize();
 
-    @NonNull 
+    @NonNull
     Long create(@NonNull CreateMessage msg);
 
     void dispose(@NonNull Long textureId);
@@ -265,7 +268,7 @@ public class Messages {
 
     void play(@NonNull Long textureId);
 
-    @NonNull 
+    @NonNull
     Long position(@NonNull Long textureId);
 
     void seekTo(@NonNull Long textureId, @NonNull Long position);
@@ -278,16 +281,27 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
-    /**Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the `binaryMessenger`. */
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable AndroidVideoPlayerApi api) {
+    /**
+     * Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the
+     * `binaryMessenger`.
+     */
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger, @Nullable AndroidVideoPlayerApi api) {
       setUp(binaryMessenger, "", api);
     }
-    static void setUp(@NonNull BinaryMessenger binaryMessenger, @NonNull String messageChannelSuffix, @Nullable AndroidVideoPlayerApi api) {
+
+    static void setUp(
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable AndroidVideoPlayerApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.initialize" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.initialize"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -295,8 +309,7 @@ public class Messages {
                 try {
                   api.initialize();
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -308,7 +321,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.create" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.create"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -318,8 +334,7 @@ public class Messages {
                 try {
                   Long output = api.create(msgArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -331,7 +346,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.dispose" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.dispose"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -341,8 +359,7 @@ public class Messages {
                 try {
                   api.dispose(textureIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -354,7 +371,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setLooping" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setLooping"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -365,8 +385,7 @@ public class Messages {
                 try {
                   api.setLooping(textureIdArg, loopingArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -378,7 +397,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setVolume" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setVolume"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -389,8 +411,7 @@ public class Messages {
                 try {
                   api.setVolume(textureIdArg, volumeArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -402,7 +423,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setPlaybackSpeed" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setPlaybackSpeed"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -413,8 +437,7 @@ public class Messages {
                 try {
                   api.setPlaybackSpeed(textureIdArg, speedArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -426,7 +449,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.play" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.play"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -436,8 +462,7 @@ public class Messages {
                 try {
                   api.play(textureIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -449,7 +474,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.position" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.position"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -459,8 +487,7 @@ public class Messages {
                 try {
                   Long output = api.position(textureIdArg);
                   wrapped.add(0, output);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -472,7 +499,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.seekTo" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.seekTo"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -483,8 +513,7 @@ public class Messages {
                 try {
                   api.seekTo(textureIdArg, positionArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -496,7 +525,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.pause" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.pause"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -506,8 +538,7 @@ public class Messages {
                 try {
                   api.pause(textureIdArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
@@ -519,7 +550,10 @@ public class Messages {
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
-                binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setMixWithOthers" + messageChannelSuffix, getCodec());
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setMixWithOthers"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
@@ -529,8 +563,7 @@ public class Messages {
                 try {
                   api.setMixWithOthers(mixWithOthersArg);
                   wrapped.add(0, null);
-                }
- catch (Throwable exception) {
+                } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
                 reply.reply(wrapped);
