@@ -187,11 +187,15 @@ class GoogleMapController {
 
   /// Starts an animated change of the map camera position.
   ///
+  /// Provide [configuration] to configure the animation
+  /// behaviour.
+  ///
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
-  Future<void> animateCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .animateCamera(cameraUpdate, mapId: mapId);
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {Duration? duration}) {
+    return GoogleMapsFlutterPlatform.instance.animateCameraWithConfiguration(
+        cameraUpdate, CameraUpdateAnimationConfiguration(duration: duration),
+        mapId: mapId);
   }
 
   /// Changes the map camera position.
