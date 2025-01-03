@@ -10,6 +10,7 @@
 
 #import "./include/camera_avfoundation/CameraProperties.h"
 #import "./include/camera_avfoundation/FLTCam.h"
+#import "./include/camera_avfoundation/FLTCameraDeviceDiscovering.h"
 #import "./include/camera_avfoundation/FLTCameraPermissionManager.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
@@ -26,6 +27,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
 @property(nonatomic) FCPCameraGlobalEventApi *globalEventAPI;
 @property(readonly, nonatomic) FLTCameraPermissionManager *permissionManager;
+@property(readonly, nonatomic) id<FLTCameraDeviceDiscovering> deviceDiscoverer;
 @end
 
 @implementation CameraPlugin
@@ -38,21 +40,23 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger {
-  return
-      [self initWithRegistry:registry
-                   messenger:messenger
-                   globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]];
+  return [self initWithRegistry:registry
+                      messenger:messenger
+                      globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
+               deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]];
 }
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI {
+                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI
+                deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = registry;
   _messenger = messenger;
   _globalEventAPI = globalAPI;
   _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
+  _deviceDiscoverer = deviceDiscoverer;
 
   id<FLTPermissionServicing> permissionService = [[FLTDefaultPermissionService alloc] init];
   _permissionManager =
@@ -117,14 +121,13 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     if (@available(iOS 13.0, *)) {
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
     }
-    AVCaptureDeviceDiscoverySession *discoverySession = [AVCaptureDeviceDiscoverySession
-        discoverySessionWithDeviceTypes:discoveryDevices
-                              mediaType:AVMediaTypeVideo
-                               position:AVCaptureDevicePositionUnspecified];
-    NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
+    NSArray<id<FLTCaptureDeviceControlling>> *devices =
+        [self.deviceDiscoverer discoverySessionWithDeviceTypes:discoveryDevices
+                                                     mediaType:AVMediaTypeVideo
+                                                      position:AVCaptureDevicePositionUnspecified];
     NSMutableArray<FCPPlatformCameraDescription *> *reply =
         [[NSMutableArray alloc] initWithCapacity:devices.count];
-    for (AVCaptureDevice *device in devices) {
+    for (id<FLTCaptureDeviceControlling> device in devices) {
       FCPPlatformCameraLensDirection lensFacing;
       switch (device.position) {
         case AVCaptureDevicePositionBack:
