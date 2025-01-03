@@ -50,8 +50,8 @@ static void *rateContext = &rateContext;
 
 API_AVAILABLE(macos(10.15))
 @interface FVPVideoPlayer () <AVPictureInPictureControllerDelegate>
-@property(nonatomic) AVPictureInPictureController *pipController;
-@property(nonatomic) BOOL pipStarted;
+@property(nonatomic) AVPictureInPictureController *pictureInPictureController;
+@property(nonatomic) BOOL pictureInPictureStarted;
 @end
 
 
@@ -147,8 +147,8 @@ API_AVAILABLE(macos(10.15))
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
   [self.flutterViewLayer addSublayer:_playerLayer];
  
-  // Configure pip controller
-  [self setupPiPController];
+  // Configure Picture in Picture controller
+  [self setUpPictureInPictureController];
 
   // Configure output.
   _displayLink = displayLink;
@@ -619,69 +619,66 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [_player removeObserver:self forKeyPath:@"rate"];
 }
 
-/**
- * Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to
- * the controller.
- */
-- (void)setupPiPController {
+
+/// Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate to
+/// the controller.
+- (void)setUpPictureInPictureController {
   if (@available(macOS 10.15, *)) {
-    if ([AVPictureInPictureController isPictureInPictureSupported]) {
-      self.pipController =
+    if (AVPictureInPictureController.isPictureInPictureSupported) {
+      self.pictureInPictureController =
           [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
-      [self setAutomaticallyStartsPictureInPicture:NO];
-      self.pipController.delegate = self;
+      [self setAutomaticallyStartPictureInPicture:NO];
+      self.pictureInPictureController.delegate = self;
     }
   } else {
     // We don't do anything here because there is no setup required below macOS 10.15.
   }
 }
 
-- (void)setAutomaticallyStartsPictureInPicture:
+- (void)setAutomaticallyStartPictureInPicture:
     (BOOL)canStartPictureInPictureAutomaticallyFromInline {
-  if (!self.pipController) return;
+  if (!self.pictureInPictureController) return;
 #if TARGET_OS_IOS
   if (@available(iOS 14.2, *)) {
-    self.pipController.canStartPictureInPictureAutomaticallyFromInline =
+    self.pictureInPictureController.canStartPictureInPictureAutomaticallyFromInline =
         canStartPictureInPictureAutomaticallyFromInline;
   }
 #endif
 }
 
-- (void)setPictureInPictureOverlaySettings:(CGRect)frame {
-  if (_player) {
-    self.playerLayer.frame = frame;
-  }
+- (void)setPictureInPictureOverlayFrame:(CGRect)frame {
+  self.playerLayer.frame = frame;
 }
 
-- (void)startOrStopPictureInPicture:(BOOL)shouldPictureInPictureStart {
+- (void)setPictureInPictureStarted:(BOOL)startPictureInPicture {
   if (@available(macOS 10.15, *)) {
-    if (![AVPictureInPictureController isPictureInPictureSupported] ||
-        self.pipStarted == shouldPictureInPictureStart) {
+      if (!AVPictureInPictureController.isPictureInPictureSupported ||
+        _pictureInPictureStarted == startPictureInPicture) {
       return;
     }
   } else {
     return;
   }
 
-  self.pipStarted = shouldPictureInPictureStart;
-  if (self.pipController && self.pipStarted &&
-      ![self.pipController isPictureInPictureActive]) {
+  _pictureInPictureStarted = startPictureInPicture;
+  if (_pictureInPictureStarted &&
+      ![self.pictureInPictureController isPictureInPictureActive]) {
     if (_eventSink != nil) {
       // The event is sent here to make sure that the Flutter UI can be updated as soon as possible.
       _eventSink(@{@"event" : @"startedPictureInPicture"});
     }
-    [self.pipController startPictureInPicture];
-  } else if (self.pipController && !self.pipStarted &&
-             [self.pipController isPictureInPictureActive]) {
-    [self.pipController stopPictureInPicture];
+    [self.pictureInPictureController startPictureInPicture];
+  } else if (!_pictureInPictureStarted &&
+             [self.pictureInPictureController isPictureInPictureActive]) {
+    [self.pictureInPictureController stopPictureInPicture];
   }
 }
 
 #pragma mark - AVPictureInPictureControllerDelegate
 
 - (void)pictureInPictureControllerDidStopPictureInPicture:
-    (AVPictureInPictureController *)pipController API_AVAILABLE(macos(10.15)) {
-  self.pipStarted = NO;
+    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
+  _pictureInPictureStarted = NO;
   if (_eventSink != nil) {
     _eventSink(@{@"event" : @"stoppedPictureInPicture"});
   }
@@ -689,7 +686,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureControllerDidStartPictureInPicture:
     (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
-  self.pipStarted = YES;
+  _pictureInPictureStarted = YES;
   if (_eventSink != nil) {
     _eventSink(@{@"event" : @"startingPictureInPicture"});
   }
