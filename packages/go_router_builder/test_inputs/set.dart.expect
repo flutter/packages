@@ -1,0 +1,40 @@
+RouteBase get $setRoute => GoRouteData.$route(
+      path: '/set-route',
+      factory: $SetRouteExtension._fromState,
+    );
+
+extension $SetRouteExtension on SetRoute {
+  static SetRoute _fromState(GoRouterState state) => SetRoute(
+        ids: state.uri.queryParametersAll['ids']?.map(int.parse).toSet() ??
+            const {},
+        nullableIds: state.uri.queryParametersAll['nullable-ids']
+            ?.map(int.parse)
+            .toSet(),
+        idsWithDefaultValue: state
+                .uri.queryParametersAll['ids-with-default-value']
+                ?.map(int.parse)
+                .toSet() ??
+            const <int>{0},
+      );
+
+  String get location => GoRouteData.$location(
+        '/set-route',
+        queryParams: {
+          'ids': ids.map((e) => e.toString()).toList(),
+          if (nullableIds != null)
+            'nullable-ids': nullableIds?.map((e) => e.toString()).toList(),
+          if (idsWithDefaultValue != const <int>{0})
+            'ids-with-default-value':
+                idsWithDefaultValue.map((e) => e.toString()).toList(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
