@@ -30,6 +30,10 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+
     defaultConfig {
         applicationId "io.flutter.plugins.sharedpreferencesexample"
         minSdkVersion flutter.minSdkVersion
