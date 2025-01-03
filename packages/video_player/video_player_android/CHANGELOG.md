@@ -1,7 +1,3 @@
-## NEXT
-
-* Adds compatibilty with version 6.3.0 of the platform interface.
-
 ## 2.7.16
 
 * Updates internal Pigeon API to use newer features.
