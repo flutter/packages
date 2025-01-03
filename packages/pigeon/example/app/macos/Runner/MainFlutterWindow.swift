@@ -24,6 +24,10 @@ private class PigeonApiImplementation: ExampleHostApi {
     }
     completion(.success(true))
   }
+
+  func sendMessageModernAsync(message: MessageData) async -> Bool {
+    return true
+  }
 }
 
 class MainFlutterWindow: NSWindow {

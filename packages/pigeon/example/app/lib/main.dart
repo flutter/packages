@@ -86,6 +86,16 @@ class _MyHomePageState extends State<MyHomePage> {
       return Future<bool>(() => true);
     }
   }
+
+  Future<bool> sendMessageModernAsync(String messageText) {
+    final MessageData message = MessageData(
+      code: Code.two,
+      data: <String, String>{'header': 'this is a header'},
+      description: 'uri text',
+    );
+
+    return _api.sendMessageModernAsync(message);
+  }
   // #enddocregion main-dart
 
   // #docregion main-dart-event
@@ -146,7 +156,36 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               )
             else
-              const Text('event channels are not supported on this platform')
+              const Text('event channels are not supported on this platform'),
+            if (Platform.isAndroid || Platform.isIOS)
+              ElevatedButton(
+                onPressed: () async {
+                  final ScaffoldMessengerState scaffoldMessenger =
+                      ScaffoldMessenger.of(context);
+                  scaffoldMessenger.hideCurrentSnackBar();
+
+                  try {
+                    final bool result = await sendMessageModernAsync('test');
+
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          result.toString(),
+                        ),
+                      ),
+                    );
+                  } catch (e) {
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          e.toString(),
+                        ),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Send message modern async'),
+              )
           ],
         ),
       ),

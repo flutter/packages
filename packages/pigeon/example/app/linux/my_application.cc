@@ -56,10 +56,28 @@ static void handle_send_message(
                                                                TRUE);
 }
 
+static void handle_send_message_modern_async(
+    PigeonExamplePackageMessageData* message,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gpointer user_data) {
+  PigeonExamplePackageCode code =
+      pigeon_example_package_message_data_get_code(message);
+  if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
+    g_autoptr(FlValue) details = fl_value_new_string("details");
+    pigeon_example_package_example_host_api_respond_error_send_message_modern_async(
+        response_handle, "code", "message", details);
+    return;
+  }
+
+  pigeon_example_package_example_host_api_respond_send_message_modern_async(
+      response_handle, TRUE);
+}
+
 static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
     .get_host_language = handle_get_host_language,
     .add = handle_add,
-    .send_message = handle_send_message};
+    .send_message = handle_send_message,
+    .send_message_modern_async = handle_send_message_modern_async};
 // #enddocregion vtable
 
 // #docregion flutter-method-callback

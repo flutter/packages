@@ -754,7 +754,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
@@ -792,6 +792,71 @@ void main() {
     expect(code, contains('reply.reply(wrapResult(data))'));
   });
 
+  test('gen one modern async Host Api', () {
+    final Root root = Root(apis: <Api>[
+      AstHostApi(name: 'Api', methods: <Method>[
+        Method(
+          name: 'doSomething',
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
+                  baseName: 'Input',
+                  associatedClass: emptyClass,
+                  isNullable: false,
+                ),
+                name: 'arg')
+          ],
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            associatedClass: emptyClass,
+            isNullable: false,
+          ),
+          asynchronousType: const ModernAsynchronous(
+            swiftOptions: SwiftModernAsynchronousOptions(throws: true),
+          ),
+        )
+      ])
+    ], classes: <Class>[
+      Class(name: 'Input', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'input')
+      ]),
+      Class(name: 'Output', fields: <NamedType>[
+        NamedType(
+            type: const TypeDeclaration(
+              baseName: 'String',
+              isNullable: true,
+            ),
+            name: 'output')
+      ])
+    ], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('interface Api'));
+    expect(
+      code,
+      contains('suspend fun doSomething(arg: Input): Output'),
+    );
+    expect(code, contains('coroutineScope.launch {'));
+    expect(code, contains('coroutineScope: CoroutineScope'));
+    expect(code, contains('api.doSomething(argArg)'));
+    expect(code, contains('withContext(Dispatchers.Main) {'));
+    expect(code, contains('reply.reply(wrapped)'));
+  });
+
   test('gen one async Flutter Api', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
@@ -813,7 +878,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
@@ -1239,7 +1304,7 @@ void main() {
                 baseName: 'int',
                 isNullable: true,
               ),
-              isAsynchronous: true,
+              asynchronousType: AsynchronousType.callback,
               parameters: <Parameter>[])
         ])
       ],
@@ -1487,7 +1552,7 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          isAsynchronous: true,
+          asynchronousType: AsynchronousType.callback,
         )
       ])
     ], classes: <Class>[
