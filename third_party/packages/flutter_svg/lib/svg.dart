@@ -16,6 +16,14 @@ export 'src/cache.dart';
 export 'src/default_theme.dart';
 export 'src/loaders.dart';
 
+/// Builder function to create an error widget. This builder is called when
+/// the image failed loading.
+typedef SvgErrorWidgetBuilder = Widget Function(
+  BuildContext context,
+  Object error,
+  StackTrace stackTrace,
+);
+
 /// Instance for [Svg]'s utility methods, which can produce a [DrawableRoot]
 /// or [PictureInfo] from [String] or [Uint8List].
 final Svg svg = Svg._();
@@ -86,6 +94,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.errorBuilder,
     @Deprecated(
         'No code should use this parameter. It never was implemented properly. '
         'The SVG theme must be set on the bytesLoader.')
@@ -184,6 +193,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.errorBuilder,
     SvgTheme? theme,
     ui.ColorFilter? colorFilter,
     @Deprecated('Use colorFilter instead.') ui.Color? color,
@@ -248,6 +258,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.errorBuilder,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
     SvgTheme? theme,
     http.Client? httpClient,
@@ -306,6 +317,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.errorBuilder,
     SvgTheme? theme,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
   })  : bytesLoader = SvgFileLoader(file, theme: theme),
@@ -355,6 +367,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.errorBuilder,
     SvgTheme? theme,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
   })  : bytesLoader = SvgBytesLoader(bytes, theme: theme),
@@ -404,6 +417,7 @@ class SvgPicture extends StatelessWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.errorBuilder,
     SvgTheme? theme,
     @Deprecated('This no longer does anything.') bool cacheColorFilter = false,
   })  : bytesLoader = SvgStringLoader(string, theme: theme),
@@ -487,6 +501,9 @@ class SvgPicture extends StatelessWidget {
   /// Defaults to [Clip.hardEdge], and must not be null.
   final Clip clipBehavior;
 
+  /// Widget displayed while the target image failed loading.
+  final SvgErrorWidgetBuilder? errorBuilder;
+
   /// The color filter, if any, to apply to this widget.
   final ColorFilter? colorFilter;
 
@@ -501,6 +518,7 @@ class SvgPicture extends StatelessWidget {
       semanticsLabel: semanticsLabel,
       excludeFromSemantics: excludeFromSemantics,
       clipBehavior: clipBehavior,
+      errorBuilder: errorBuilder,
       colorFilter: colorFilter,
       placeholderBuilder: placeholderBuilder,
       clipViewbox: !allowDrawingOutsideViewBox,
