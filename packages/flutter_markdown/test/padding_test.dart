@@ -17,6 +17,8 @@ void defineTests() {
       (WidgetTester tester) async {
         const double paddingX = 10.0;
 
+        addTearDown(imageCache.clear);
+
         await tester.pumpWidget(
           boilerplate(
             Markdown(
