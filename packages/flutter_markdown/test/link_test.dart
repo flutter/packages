@@ -142,6 +142,7 @@ void defineTests() {
     testWidgets(
       'multiple inline links with same content should not throw an exception',
       (WidgetTester tester) async {
+        addTearDown(imageCache.clear);
         //Arange
         final Widget toBePumped = boilerplate(
           Column(
@@ -1025,6 +1026,7 @@ void defineTests() {
       // Example 525 from GFM.
       'inline image link text',
       (WidgetTester tester) async {
+        addTearDown(imageCache.clear);
         const String data = '[![moon](moon.jpg)](/uri)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
@@ -1129,6 +1131,7 @@ void defineTests() {
       // Example 528 from GFM.
       'links cannot be nested in image linksinline image link text',
       (WidgetTester tester) async {
+        addTearDown(imageCache.clear);
         const String data = '![[[foo](uri1)](uri2)](uri3)';
         MarkdownLink? linkTapResults;
         await tester.pumpWidget(
