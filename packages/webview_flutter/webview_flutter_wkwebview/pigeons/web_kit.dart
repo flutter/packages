@@ -480,6 +480,12 @@ abstract class UIScrollViewHostApi {
   @ObjCSelector('scrollByForScrollViewWithIdentifier:x:y:')
   void scrollBy(int identifier, double x, double y);
 
+  @ObjCSelector('verticalScrollBarEnabledForScrollViewWithIdentifier:isEnabled:')
+  void verticalScrollBarEnabled(int identifier, bool enabled);
+
+  @ObjCSelector('horizontalScrollBarEnabledForScrollViewWithIdentifier:isEnabled:')
+  void horizontalScrollBarEnabled(int identifier, bool enabled);
+
   @ObjCSelector('setContentOffsetForScrollViewWithIdentifier:toX:y:')
   void setContentOffset(int identifier, double x, double y);
 
