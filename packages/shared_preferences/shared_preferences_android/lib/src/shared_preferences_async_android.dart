@@ -211,29 +211,21 @@ base class SharedPreferencesAsyncAndroid
         () async => api.getStringList(key, pigeonOptions));
     switch (dynamicStringList.runtimeType) {
       case const (String):
-        {
-          final String jsonEncodedString =
-              (dynamicStringList! as String).substring(jsonListPrefix.length);
-          try {
-            final List<String> decodedList =
-                (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
-            return decodedList;
-          } catch (e) {
-            throw TypeError();
-          }
-        }
-      case const (List<Object?>):
-        {
-          return (dynamicStringList! as List<Object?>).cast<String>().toList();
-        }
-      case const (Null):
-        {
-          return null;
-        }
-      default:
-        {
+        final String jsonEncodedString =
+            (dynamicStringList! as String).substring(jsonListPrefix.length);
+        try {
+          final List<String> decodedList =
+              (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
+          return decodedList;
+        } catch (e) {
           throw TypeError();
         }
+      case const (List<Object?>):
+        return (dynamicStringList! as List<Object?>).cast<String>().toList();
+      case const (Null):
+        return null;
+      default:
+        throw TypeError();
     }
   }
 
