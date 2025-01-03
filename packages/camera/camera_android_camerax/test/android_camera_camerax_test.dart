@@ -25,7 +25,9 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<AspectRatioStrategy>(),
   MockSpec<Camera>(),
   MockSpec<CameraInfo>(),
+  MockSpec<CameraCharacteristicsKey>(),
   MockSpec<CameraControl>(),
+  MockSpec<CameraSize>(),
   MockSpec<Camera2CameraControl>(),
   MockSpec<Camera2CameraInfo>(),
   MockSpec<CameraImageData>(),
@@ -260,6 +262,16 @@ void main() {
 
         return mockBackCameraSelector;
       },
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return MockSystemServicesManager();
+      },
     );
 
     // Mock calls to native platform
@@ -322,6 +334,8 @@ void main() {
     final MockLiveCameraState mockLiveCameraState = MockLiveCameraState();
     final MockSystemServicesManager mockSystemServicesManager =
         MockSystemServicesManager();
+    final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
+        MockCameraCharacteristicsKey();
 
     bool cameraPermissionsRequested = false;
     bool startedListeningForDeviceOrientationChanges = false;
@@ -430,7 +444,18 @@ void main() {
     }) {
       return MockQualitySelector();
     });
-    when(mockProxy.newObserver).thenReturn(Observer.detached);
+    when(mockProxy.newObserver).thenReturn(<T>({
+      required void Function(Observer<T>, T) onChanged,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      return Observer<T>.detached(
+        onChanged: onChanged,
+        pigeon_instanceManager: PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      );
+    });
     when(mockProxy.newSystemServicesManager).thenReturn(({
       required void Function(
         SystemServicesManager,
@@ -439,12 +464,13 @@ void main() {
       BinaryMessenger? pigeon_binaryMessenger,
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
-      final MockSystemServicesManager manager = MockSystemServicesManager();
-      when(manager.requestCameraPermissions(any)).thenAnswer((_) {
-        cameraPermissionsRequested = true;
-        return Future<void>.value();
-      });
-      return manager;
+      when(mockSystemServicesManager.requestCameraPermissions(any)).thenAnswer(
+        (_) {
+          cameraPermissionsRequested = true;
+          return Future<void>.value();
+        },
+      );
+      return mockSystemServicesManager;
     });
     when(mockProxy.newDeviceOrientationManager).thenReturn(({
       required void Function(
@@ -487,7 +513,22 @@ void main() {
       BinaryMessenger? pigeon_binaryMessenger,
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
-      return MockCamera2CameraInfo();
+      final MockCamera2CameraInfo camera2cameraInfo = MockCamera2CameraInfo();
+      when(
+        camera2cameraInfo.getCameraCharacteristic(mockCameraCharacteristicsKey),
+      ).thenAnswer((_) async => testSensorOrientation);
+      return camera2cameraInfo;
+    });
+    when(mockProxy.newCameraSize).thenReturn(({
+      required int width,
+      required int height,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      return MockCameraSize();
+    });
+    when(mockProxy.sensorOrientationCameraCharacteristics).thenReturn(() {
+      return mockCameraCharacteristicsKey;
     });
 
     // Tell plugin to create mock/detached objects and stub method calls for the

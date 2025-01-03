@@ -75,9 +75,22 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
-  late final SystemServicesManager systemServicesManager;
+  late final SystemServicesManager systemServicesManager = proxy
+      .newSystemServicesManager(onCameraError: (_, String errorDescription) {
+    cameraErrorStreamController.add(errorDescription);
+  });
 
-  late final DeviceOrientationManager deviceOrientationManager;
+  late final DeviceOrientationManager deviceOrientationManager =
+      proxy.newDeviceOrientationManager(
+    onDeviceOrientationChanged: (_, String orientation) {
+      final DeviceOrientation deviceOrientation = _deserializeDeviceOrientation(
+        orientation,
+      );
+      deviceOrientationChangedStreamController.add(
+        DeviceOrientationChangedEvent(deviceOrientation),
+      );
+    },
+  );
 
   /// Stream that emits an event when the corresponding video recording is finalized.
   static final StreamController<VideoRecordEvent>
@@ -254,24 +267,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     proxy.setUpGenericsProxy();
-
-    systemServicesManager = proxy.newSystemServicesManager(
-      onCameraError: (_, String errorDescription) {
-        cameraErrorStreamController.add(errorDescription);
-      },
-    );
-
-    deviceOrientationManager = proxy.newDeviceOrientationManager(
-      onDeviceOrientationChanged: (_, String orientation) {
-        final DeviceOrientation deviceOrientation =
-            _deserializeDeviceOrientation(
-          orientation,
-        );
-        deviceOrientationChangedStreamController.add(
-          DeviceOrientationChangedEvent(deviceOrientation),
-        );
-      },
-    );
 
     final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
 
@@ -1375,8 +1370,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
     }
 
-    // TODO: move to proxy
-    return Observer<CameraState>(
+    return proxy.newObserver<CameraState>(
       onChanged: (_, CameraState value) => onChanged(value),
     );
   }
@@ -1455,7 +1449,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     resolutionStrategy = proxy.newResolutionStrategy(
-      boundSize: CameraSize(width: boundSize.width, height: boundSize.height),
+      boundSize: proxy.newCameraSize(
+        width: boundSize.width,
+        height: boundSize.height,
+      ),
       fallbackRule: fallbackRule,
     );
     final ResolutionFilter resolutionFilter = proxy
