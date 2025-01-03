@@ -21,9 +21,7 @@
   NSMutableArray<id<FLTCaptureDeviceControlling>> *deviceControllers = [NSMutableArray array];
 
   for (AVCaptureDevice *device in devices) {
-    FLTDefaultCaptureDeviceController *controller =
-        [[FLTDefaultCaptureDeviceController alloc] initWithDevice:device];
-    [deviceControllers addObject:controller];
+    [deviceControllers addObject:(id<FLTCaptureDeviceControlling>)device];
   }
 
   return deviceControllers;

@@ -7,6 +7,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol FLTCaptureInput <NSObject>
+@property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *ports;
+@end
+
 @protocol FLTCaptureDeviceControlling <NSObject>
 
 - (NSString *)uniqueID;
@@ -67,8 +71,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface FLTDefaultCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
-- (instancetype)initWithDevice:(AVCaptureDevice *)device;
+@interface AVCaptureDevice (FLTCaptureDeviceControlling) <FLTCaptureDeviceControlling>
+@end
+
+@interface AVCaptureInput (FLTCaptureInput) <FLTCaptureInput>
 @end
 
 NS_ASSUME_NONNULL_END

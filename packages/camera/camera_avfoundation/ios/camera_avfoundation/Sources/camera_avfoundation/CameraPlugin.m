@@ -28,6 +28,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic) FCPCameraGlobalEventApi *globalEventAPI;
 @property(readonly, nonatomic) FLTCameraPermissionManager *permissionManager;
 @property(readonly, nonatomic) id<FLTCameraDeviceDiscovering> deviceDiscoverer;
+@property(readonly, nonatomic) CaptureNamedDeviceFactory captureDeviceFactory;
+@property(readonly, nonatomic) CaptureSessionFactory captureSessionFactory;
 @end
 
 @implementation CameraPlugin
@@ -43,13 +45,21 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   return [self initWithRegistry:registry
                       messenger:messenger
                       globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
-               deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]];
+               deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]
+                  deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+                    return [AVCaptureDevice deviceWithUniqueID:name];
+                  }
+          captureSessionFactory:^id<FLTCaptureSession> (void){
+            return [[AVCaptureSession alloc] init];
+          }];
 }
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI
-                deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer {
+                deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
+                   deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
+           captureSessionFactory:(CaptureSessionFactory)captureSessionFactory {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = registry;
@@ -57,6 +67,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   _globalEventAPI = globalAPI;
   _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
   _deviceDiscoverer = deviceDiscoverer;
+  _captureDeviceFactory = deviceFactory;
+  _captureSessionFactory = captureSessionFactory;
 
   id<FLTPermissionServicing> permissionService = [[FLTDefaultPermissionService alloc] init];
   _permissionManager =
@@ -479,14 +491,19 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                                                            FlutterError *_Nullable))completion {
   FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper =
       [[FLTCamMediaSettingsAVWrapper alloc] init];
+  
+  FLTCamConfiguration *camConfiguration = [[FLTCamConfiguration alloc] initWithMediaSettings:settings
+                                                                        mediaSettingsWrapper:mediaSettingsAVWrapper
+                                                                        captureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull{
+                                                                          return self.captureDeviceFactory(name);
+                                                                        }
+                                                                       captureSessionFactory:_captureSessionFactory
+                                                                         captureSessionQueue:_captureSessionQueue
+                                                                    ];
 
   NSError *error;
-  FLTCam *cam = [[FLTCam alloc] initWithCameraName:name
-                                     mediaSettings:settings
-                            mediaSettingsAVWrapper:mediaSettingsAVWrapper
-                                       orientation:[[UIDevice currentDevice] orientation]
-                               captureSessionQueue:self.captureSessionQueue
-                                             error:&error];
+  FLTCam *cam = [[FLTCam alloc] initWithConfiguration:camConfiguration
+                                                error:&error];
 
   if (error) {
     completion(nil, FlutterErrorFromNSError(error));

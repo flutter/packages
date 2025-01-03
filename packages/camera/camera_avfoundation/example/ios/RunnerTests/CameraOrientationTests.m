@@ -11,6 +11,7 @@
 
 #import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDeviceController.h"
+#import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
 
 @interface StubGlobalEventApi : FCPCameraGlobalEventApi
@@ -85,7 +86,14 @@
   _cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                messenger:nil
                                                globalAPI:_eventAPI
-                                        deviceDiscoverer:_deviceDiscoverer];
+                                        deviceDiscoverer:_deviceDiscoverer
+                                           deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+                                              return mockDevice;
+                                            }
+                                   captureSessionFactory:^id<FLTCaptureSession> _Nonnull{
+    return [[MockCaptureSession alloc] init];
+  }
+  ];
   _cameraPlugin.camera = _camera;
 }
 
@@ -124,15 +132,9 @@
 }
 
 - (void)testOrientationNotificationsNotCalledForFaceDown {
-  StubGlobalEventApi *eventAPI = [[StubGlobalEventApi alloc] init];
-  CameraPlugin *cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
-                                                            messenger:nil
-                                                            globalAPI:eventAPI
-                                                     deviceDiscoverer:_deviceDiscoverer];
+  [self sendOrientation:UIDeviceOrientationFaceDown toCamera:_cameraPlugin];
 
-  [self sendOrientation:UIDeviceOrientationFaceDown toCamera:cameraPlugin];
-
-  XCTAssertFalse(eventAPI.called);
+  XCTAssertFalse(_eventAPI.called);
 }
 
 - (void)testOrientationUpdateMustBeOnCaptureSessionQueue {
@@ -160,12 +162,20 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
 
   __weak CameraPlugin *weakPlugin;
+  __weak MockCaptureDeviceController *weakDevice = _mockDevice;
 
   @autoreleasepool {
     CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                         messenger:nil
                                                         globalAPI:_eventAPI
-                                                 deviceDiscoverer:_deviceDiscoverer];
+                                                 deviceDiscoverer:_deviceDiscoverer
+                                                    deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+                                                       return weakDevice;
+                                                     }
+                                            captureSessionFactory:^id<FLTCaptureSession> _Nonnull{
+             return [[MockCaptureSession alloc] init];
+           }
+    ];
     weakPlugin = plugin;
     plugin.captureSessionQueue = captureSessionQueue;
     plugin.camera = _camera;

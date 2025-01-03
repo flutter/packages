@@ -7,8 +7,10 @@
 @import Flutter;
 
 #import "CameraProperties.h"
+#import "FLTCamConfiguration.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTCaptureDeviceControlling.h"
+#import "FLTDeviceOrientationProviding.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -32,20 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) CGFloat minimumAvailableZoomFactor;
 @property(assign, nonatomic) CGFloat maximumAvailableZoomFactor;
 
-/// Initializes an `FLTCam` instance.
-/// @param cameraName a name used to uniquely identify the camera.
-/// @param mediaSettings the media settings configuration parameters
-/// @param mediaSettingsAVWrapper AVFoundation wrapper to perform media settings related operations
-/// (for dependency injection in unit tests).
-/// @param orientation the orientation of camera
-/// @param captureSessionQueue the queue on which camera's capture session operations happen.
+/// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                       orientation:(UIDeviceOrientation)orientation
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error;
+- (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration
+                                error:(NSError **)error;
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.
 - (void)reportInitializationState;

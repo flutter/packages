@@ -126,3 +126,7 @@
 }
 
 @end
+
+@implementation MockCaptureInput
+@synthesize ports;
+@end

@@ -10,9 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setStreamHandler:(nullable NSObject<FlutterStreamHandler> *)handler;
 @end
 
-/// The default method channel that wraps FlutterMethodChannel
-@interface FLTDefaultEventChannel : NSObject <FLTEventChannel>
-- (instancetype)initWithEventChannel:(FlutterEventChannel *)channel;
+@interface FlutterEventChannel (FLTEventChannel) <FLTEventChannel>
 @end
 
 NS_ASSUME_NONNULL_END

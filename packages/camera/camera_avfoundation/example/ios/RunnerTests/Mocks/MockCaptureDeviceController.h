@@ -73,9 +73,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) void (^setActiveVideoMaxFrameDurationStub)(CMTime duration);
 
 // Input Creation
-@property(nonatomic, strong) AVCaptureInput *inputToReturn;
+@property(nonatomic, strong) id<FLTCaptureInput> inputToReturn;
 @property(nonatomic, copy) void (^createInputStub)(NSError **error);
 
+@end
+
+@interface MockCaptureInput : NSObject <FLTCaptureInput>
+@property(nonatomic, strong) NSArray<AVCaptureInputPort *> *ports;
 @end
 
 NS_ASSUME_NONNULL_END

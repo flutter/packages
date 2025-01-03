@@ -11,6 +11,7 @@
 
 #import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDeviceController.h"
+#import "MockCaptureSession.h"
 
 @interface AvailableCamerasTest : XCTestCase
 @property(nonatomic, strong) MockCameraDeviceDiscoverer *mockDeviceDiscoverer;
@@ -26,7 +27,13 @@
   self.cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
                                                    messenger:nil
                                                    globalAPI:nil
-                                            deviceDiscoverer:_mockDeviceDiscoverer];
+                                            deviceDiscoverer:_mockDeviceDiscoverer
+                                               deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+                                                  return [[MockCaptureDeviceController alloc] init];
+                                                }
+  captureSessionFactory:^id<FLTCaptureSession> {
+    return [[MockCaptureSession alloc] init];
+  }];
 }
 
 - (void)testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone {
