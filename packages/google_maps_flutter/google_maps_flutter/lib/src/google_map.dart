@@ -128,8 +128,11 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-    this.cloudMapId,
-  });
+    this.markerType = MarkerType.marker,
+    String? mapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+    String? cloudMapId,
+  }) : mapId = mapId ?? cloudMapId;
 
   /// Callback method for when the map is ready to be used.
   ///
@@ -319,7 +322,21 @@ class GoogleMap extends StatefulWidget {
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  final String? cloudMapId;
+  final String? mapId;
+
+  /// Indicates whether map uses [AdvancedMarker]s or [Marker]s.
+  ///
+  /// [AdvancedMarker] and [Marker]s classes might not be related to each other
+  /// in the platform implementation. It's important to set the correct
+  /// [MarkerType] so that the platform implementation can handle the markers:
+  /// * If [MarkerType.advancedMarker] is used, all markers must be of type
+  /// [AdvancedMarker].
+  /// * If [MarkerType.marker] is used, markers cannot be of type
+  /// [AdvancedMarker].
+  ///
+  /// While some features work with either type, using the incorrect type
+  /// may result in unexpected behavior.
+  final MarkerType markerType;
 
   /// Creates a [State] for this [GoogleMap].
   @override
@@ -615,7 +632,8 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
-    cloudMapId: map.cloudMapId,
+    markerType: map.markerType,
+    mapId: map.mapId,
     // A null style in the widget means no style, which is expressed as '' in
     // the configuration to distinguish from no change (null).
     style: map.style ?? '',

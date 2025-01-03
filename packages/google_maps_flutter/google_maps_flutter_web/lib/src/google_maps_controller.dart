@@ -37,11 +37,57 @@ class GoogleMapController {
     _heatmapsController = HeatmapsController();
     _polygonsController = PolygonsController(stream: _streamController);
     _polylinesController = PolylinesController(stream: _streamController);
-    _clusterManagersController =
-        ClusterManagersController(stream: _streamController);
-    _markersController = MarkersController(
-        stream: _streamController,
-        clusterManagersController: _clusterManagersController!);
+
+    // Check if all markers are of the same type. Mixing marker types is not
+    // allowed.
+    final Set<Type> markerTypes =
+        _markers.map((Marker e) => e.runtimeType).toSet();
+    if (markerTypes.isNotEmpty) {
+      assert(markerTypes.length == 1, 'All markers must be of the same type.');
+
+      switch (mapConfiguration.markerType) {
+        case null:
+        case MarkerType.marker:
+          assert(
+            markerTypes.first == Marker,
+            'All markers must be of type Marker because '
+            'mapConfiguration.markerType is MarkerType.legacy',
+          );
+        case MarkerType.advancedMarker:
+          assert(
+            markerTypes.first == AdvancedMarker,
+            'All markers must be of type AdvancedMarker because '
+            'mapConfiguration.markerType is MarkerType.advanced',
+          );
+      }
+    }
+
+    // Advanced and legacy markers are handled differently so markers controller
+    // and cluster manager need be initialized with the correct marker type.
+    _clusterManagersController = switch (mapConfiguration.markerType) {
+      null ||
+      MarkerType.marker =>
+        ClusterManagersController<gmaps.Marker>(stream: _streamController),
+      MarkerType.advancedMarker =>
+        ClusterManagersController<gmaps.AdvancedMarkerElement>(
+            stream: _streamController),
+    };
+    _markersController = switch (mapConfiguration.markerType) {
+      null ||
+      MarkerType.marker =>
+        MarkersController<gmaps.Marker, gmaps.MarkerOptions>(
+          stream: _streamController,
+          clusterManagersController: _clusterManagersController!
+              as ClusterManagersController<gmaps.Marker>,
+        ),
+      MarkerType.advancedMarker => MarkersController<
+            gmaps.AdvancedMarkerElement, gmaps.AdvancedMarkerElementOptions>(
+          stream: _streamController,
+          clusterManagersController: _clusterManagersController!
+              as ClusterManagersController<gmaps.AdvancedMarkerElement>,
+        ),
+    };
+
     _tileOverlaysController = TileOverlaysController();
     _updateStylesFromConfiguration(mapConfiguration);
 
@@ -128,8 +174,8 @@ class GoogleMapController {
   HeatmapsController? _heatmapsController;
   PolygonsController? _polygonsController;
   PolylinesController? _polylinesController;
-  MarkersController? _markersController;
-  ClusterManagersController? _clusterManagersController;
+  MarkersController<dynamic, dynamic>? _markersController;
+  ClusterManagersController<dynamic>? _clusterManagersController;
   TileOverlaysController? _tileOverlaysController;
 
   // Keeps track if _attachGeometryControllers has been called or not.
@@ -140,7 +186,7 @@ class GoogleMapController {
 
   /// The ClusterManagersController of this Map. Only for integration testing.
   @visibleForTesting
-  ClusterManagersController? get clusterManagersController =>
+  ClusterManagersController<dynamic>? get clusterManagersController =>
       _clusterManagersController;
 
   /// Overrides certain properties to install mocks defined during testing.
@@ -148,12 +194,12 @@ class GoogleMapController {
   void debugSetOverrides({
     DebugCreateMapFunction? createMap,
     DebugSetOptionsFunction? setOptions,
-    MarkersController? markers,
+    MarkersController<dynamic, dynamic>? markers,
     CirclesController? circles,
     HeatmapsController? heatmaps,
     PolygonsController? polygons,
     PolylinesController? polylines,
-    ClusterManagersController? clusterManagers,
+    ClusterManagersController<dynamic>? clusterManagers,
     TileOverlaysController? tileOverlays,
   }) {
     _overrideCreateMap = createMap;
@@ -405,7 +451,7 @@ class GoogleMapController {
         await Future<gmaps.LatLngBounds?>.value(_googleMap!.bounds) ??
             _nullGmapsLatLngBounds;
 
-    return gmLatLngBoundsTolatLngBounds(bounds);
+    return gmLatLngBoundsToLatLngBounds(bounds);
   }
 
   /// Returns the [ScreenCoordinate] for a given viewport [LatLng].
@@ -543,6 +589,13 @@ class GoogleMapController {
   /// Returns true if the [InfoWindow] of the marker identified by [MarkerId] is shown.
   bool isInfoWindowShown(MarkerId markerId) {
     return _markersController?.isInfoWindowShown(markerId) ?? false;
+  }
+
+  /// Returns true if this map supports [AdvancedMarker]s.
+  bool isAdvancedMarkersAvailable() {
+    assert(_googleMap != null, 'Cannot get map capabilities of a null map.');
+
+    return _googleMap!.mapCapabilities.isAdvancedMarkersAvailable ?? false;
   }
 
   // Cleanup
