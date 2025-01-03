@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/video_player_avfoundation/FVPVideoPlayer.h"
-#import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
+#import "video_player_avfoundation/FVPVideoPlayer.h"
+#import "video_player_avfoundation/FVPVideoPlayer_Test.h"
 
 #import <AVFoundation/AVFoundation.h>
 #import <AVKit/AVKit.h>
 #import <GLKit/GLKit.h>
-#import "AVAssetTrackUtils.h"
-#import "FVPDisplayLink.h"
+
+#import "video_player_avfoundation/AVAssetTrackUtils.h"
+#import "video_player_avfoundation/FVPDisplayLink.h"
 
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
