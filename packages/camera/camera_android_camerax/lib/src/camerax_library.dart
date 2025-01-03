@@ -126,7 +126,8 @@ class Observer<T> extends camerax.Observer {
     required void Function(Observer<T> instance, T value) onChanged,
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  }) : super(
+  })  : _genericOnChanged = onChanged,
+        super(
           onChanged: (
             camerax.Observer instance,
             Object value,
@@ -136,15 +137,25 @@ class Observer<T> extends camerax.Observer {
         );
 
   Observer.detached({
-    required super.onChanged,
+    required void Function(Observer<T> instance, T value) onChanged,
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  }) : super.pigeon_detached();
+  })  : _genericOnChanged = onChanged,
+        super.pigeon_detached(
+          onChanged: (
+            camerax.Observer instance,
+            Object value,
+          ) {
+            onChanged(instance as Observer<T>, value as T);
+          },
+        );
+
+  final void Function(Observer<T> instance, T value) _genericOnChanged;
 
   @override
   Observer<T> pigeon_copy() {
     return Observer<T>.detached(
-      onChanged: onChanged,
+      onChanged: _genericOnChanged,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
