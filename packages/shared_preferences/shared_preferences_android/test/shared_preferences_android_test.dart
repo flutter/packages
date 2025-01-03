@@ -291,8 +291,6 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
     filteredItems.forEach((String? key, Object? value) {
       if (value.runtimeType == String &&
           (value! as String).startsWith(jsonListPrefix)) {
-        print('------');
-        print(value);
         filteredItems[key!] =
             (jsonDecode((value as String).substring(jsonListPrefix.length))
                     as List<dynamic>)

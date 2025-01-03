@@ -1,6 +1,6 @@
 ## 3.0.0
 
-* Updates un-supported type errors to `ArgumentError`.
+* Updates non-supported type errors to `ArgumentError`.
 
 ## 2.5.4
 

@@ -209,9 +209,6 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     final Object? dynamicStringList = await _convertKnownExceptions<dynamic>(
         () async => api.getStringList(key, pigeonOptions));
-    print('-------------------------');
-    print(dynamicStringList.runtimeType);
-    print(dynamicStringList);
     switch (dynamicStringList.runtimeType) {
       case const (String):
         {
@@ -235,7 +232,6 @@ base class SharedPreferencesAsyncAndroid
         }
       default:
         {
-          print(dynamicStringList.runtimeType);
           throw TypeError();
         }
     }
