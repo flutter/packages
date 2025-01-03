@@ -83,6 +83,25 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+
+  @override
+  Future<bool> isPictureInPictureSupported() async => true;
+
+  @override
+  Future<void> setAutomaticallyStartsPictureInPicture({
+    required bool enableStartPictureInPictureAutomaticallyFromInline,
+  }) async {}
+
+  @override
+  Future<void> setPictureInPictureOverlaySettings({
+    required PictureInPictureOverlaySettings settings,
+  }) async {}
+
+  @override
+  Future<void> startPictureInPicture() async {}
+
+  @override
+  Future<void> stopPictureInPicture() async {}
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -1067,10 +1086,34 @@ void main() {
           'isPlaying: true, '
           'isLooping: true, '
           'isBuffering: true, '
+          'isPictureInPictureActive: false, '
           'volume: 0.5, '
           'playbackSpeed: 1.5, '
           'errorDescription: null, '
           'isCompleted: false),');
+    });
+
+    group('equals', () {
+      test('identical objects are equal', () {
+        const VideoPlayerValue a = VideoPlayerValue(duration: Duration.zero);
+        const VideoPlayerValue b = VideoPlayerValue(duration: Duration.zero);
+        expect(a, equals(b));
+      });
+
+      test('objects differing in isPictureInPictureActive should not be equal',
+          () {
+        const VideoPlayerValue a = VideoPlayerValue(
+          duration: Duration.zero,
+          // Ignore the default value of isPictureInPictureActive, to ensure test stability in the future.
+          // ignore: avoid_redundant_argument_values
+          isPictureInPictureActive: false,
+        );
+        const VideoPlayerValue b = VideoPlayerValue(
+          duration: Duration.zero,
+          isPictureInPictureActive: true,
+        );
+        expect(a, isNot(equals(b)));
+      });
     });
 
     group('copyWith()', () {

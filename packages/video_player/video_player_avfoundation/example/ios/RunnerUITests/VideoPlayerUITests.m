@@ -5,6 +5,7 @@
 @import os.log;
 @import XCTest;
 @import CoreGraphics;
+@import AVKit;
 
 @interface VideoPlayerUITests : XCTestCase
 @property(nonatomic, strong) XCUIApplication *app;
@@ -30,6 +31,34 @@
   XCUIElement *playButton = app.staticTexts[@"Play"];
   XCTAssertTrue([playButton waitForExistenceWithTimeout:30.0]);
   [playButton tap];
+
+  if ([AVPictureInPictureController isPictureInPictureSupported]) {
+    XCUIElement *pipSupportedText = app.staticTexts[@"Picture-in-picture is supported"];
+    XCTAssertTrue([pipSupportedText waitForExistenceWithTimeout:30.0]);
+
+    XCUIElement *pipPrepareButton = app.buttons[@"Set picture-in-picture overlay rect"];
+    XCTAssertTrue([pipPrepareButton waitForExistenceWithTimeout:30.0]);
+    [pipPrepareButton tap];
+
+    XCUIElement *pipStartButton = app.buttons[@"Start picture-in-picture"];
+    XCTAssertTrue([pipStartButton waitForExistenceWithTimeout:30.0]);
+    [pipStartButton tap];
+
+    XCUIElement *pipUIView = app.otherElements[@"PIPUIView"];
+    XCTAssertTrue([pipUIView waitForExistenceWithTimeout:30.0]);
+
+    XCUIElement *pipStopButton = app.buttons[@"Stop picture-in-picture"];
+    XCTAssertTrue([pipStopButton waitForExistenceWithTimeout:30.0]);
+    [pipStopButton tap];
+
+    XCTAssertTrue([pipStartButton waitForExistenceWithTimeout:30.0]);
+
+    XCTAssertFalse([pipStopButton exists]);
+    XCTAssertFalse([pipUIView exists]);
+  } else {
+    XCTAssertTrue(
+        [app.staticTexts[@"Picture-in-picture is not supported"] waitForExistenceWithTimeout:30.0]);
+  }
 
   NSPredicate *find1xButton = [NSPredicate predicateWithFormat:@"label CONTAINS '1.0x'"];
   XCUIElement *playbackSpeed1x = [app.staticTexts elementMatchingPredicate:find1xButton];

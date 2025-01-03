@@ -140,3 +140,25 @@ and so on.
 To learn about playback speed limitations, see the [`setPlaybackSpeed` method documentation](https://pub.dev/documentation/video_player/latest/video_player/VideoPlayerController/setPlaybackSpeed.html).
 
 Furthermore, see the example app for an example playback speed implementation.
+
+### Picture-in-Picture
+
+#### iOS
+To enable picture-in-picture functionality, you need to add the **Background Modes** capabilities for **Audio, AirPlay, and Picture in Picture** as described in [Configuring your app for media playback > Configure the background modes](https://developer.apple.com/documentation/AVFoundation/configuring-your-app-for-media-playback#Configure-the-background-modes). Resulting in a new string entry `audio` in the array value of the entry `UIBackgroundModes` in your `Info.plist` file, which is located in `<project root>/ios/Runner/Info.plist`:
+
+```xml
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+    </array>
+```
+
+> [!IMPORTANT]  
+> Failing to add the `audio` **Background Modes** capability will result in a silent failure to start picture-in-picture playback.
+
+Example:
+![The example app running in iOS with picture-in-picture enabled](https://github.com/flutter/plugins/blob/main/packages/video_player/video_player/doc/demo_pip_iphone.gif?raw=true)
+
+#### Android
+
+On Android, picture-in-picture mode is implemented at the application level rather than the video element level, so this plugin does not implement picture-in-picture mode on Android.
