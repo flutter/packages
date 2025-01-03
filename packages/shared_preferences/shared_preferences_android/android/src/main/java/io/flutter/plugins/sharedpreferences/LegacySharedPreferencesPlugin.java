@@ -19,24 +19,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /** LegacySharedPreferencesPlugin */
 public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
   private static final String TAG = "SharedPreferencesPlugin";
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
+  private static final String JSON_LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!";
   private static final String LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
-  private static final String BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy";
   private static final String DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu";
 
   private SharedPreferences preferences;
-  private SharedPreferencesListEncoder listEncoder;
+  private final SharedPreferencesListEncoder listEncoder;
 
   public LegacySharedPreferencesPlugin() {
     this(new ListEncoder());
@@ -73,13 +73,6 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
 
   @Override
   public @NonNull Boolean setString(@NonNull String key, @NonNull String value) {
-    // TODO (tarrinneal): Move this string prefix checking logic to dart code and make it an Argument Error.
-    if (value.startsWith(LIST_IDENTIFIER)
-        || value.startsWith(BIG_INTEGER_PREFIX)
-        || value.startsWith(DOUBLE_PREFIX)) {
-      throw new RuntimeException(
-          "StorageError: This string cannot be stored as it clashes with special identifier prefixes");
-    }
     return preferences.edit().putString(key, value).commit();
   }
 
@@ -99,6 +92,7 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
     return preferences.edit().remove(key).commit();
   }
 
+  // Deprecated, for testing purposes only.
   @Override
   public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value)
       throws RuntimeException {
@@ -131,14 +125,13 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
   // Optionally filtered also to only those items in the optional [allowList].
-  @SuppressWarnings("unchecked")
   private @NonNull Map<String, Object> getAllPrefs(
       @NonNull String prefix, @Nullable Set<String> allowList) throws RuntimeException {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
       if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
-        filteredPrefs.put(key, transformPref(key, allPrefs.get(key)));
+        filteredPrefs.put(key, transformPref(key, Objects.requireNonNull(allPrefs.get(key))));
       }
     }
 
@@ -148,32 +141,14 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   private Object transformPref(@NonNull String key, @NonNull Object value) {
     if (value instanceof String) {
       String stringValue = (String) value;
-      if (stringValue.startsWith(LIST_IDENTIFIER)) {
+      if (stringValue.startsWith(JSON_LIST_IDENTIFIER)) {
+        return value;
+      } else if (stringValue.startsWith(LIST_IDENTIFIER)) {
         return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
-      } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
-        // TODO (tarrinneal): Remove all BigInt code.
-        // https://github.com/flutter/flutter/issues/124420
-        String encoded = stringValue.substring(BIG_INTEGER_PREFIX.length());
-        return new BigInteger(encoded, Character.MAX_RADIX);
       } else if (stringValue.startsWith(DOUBLE_PREFIX)) {
         String doubleStr = stringValue.substring(DOUBLE_PREFIX.length());
         return Double.valueOf(doubleStr);
       }
-    } else if (value instanceof Set) {
-      // TODO (tarrinneal): Remove Set code.
-      // https://github.com/flutter/flutter/issues/124420
-
-      // This only happens for previous usage of setStringSet. The app expects a list.
-      @SuppressWarnings("unchecked")
-      List<String> listValue = new ArrayList<>((Set<String>) value);
-      // Let's migrate the value too while we are at it.
-      preferences
-          .edit()
-          .remove(key)
-          .putString(key, LIST_IDENTIFIER + listEncoder.encode(listValue))
-          .apply();
-
-      return listValue;
     }
     return value;
   }

@@ -83,7 +83,10 @@ void main() {
           getPreferences(useDataStore);
 
       await preferences.setStringList(listKey, testList, emptyOptions);
-      expect(await preferences.getStringList(listKey, emptyOptions), testList);
+      final List<String>? response =
+          await preferences.getStringList(listKey, emptyOptions);
+
+      expect(response, testList);
     });
 
     test('getPreferences with $backend', () async {
@@ -292,9 +295,9 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<List<String>?> getStringList(
+  Future<Object?> getStringList(
       String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] as List<String>?;
+    return items[key];
   }
 
   @override
