@@ -2296,6 +2296,127 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
           ) as _i2.CameraCharacteristicsKey Function());
 }
 
+/// A class which mocks [DeviceOrientationManager].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDeviceOrientationManager extends _i1.Mock
+    implements _i2.DeviceOrientationManager {
+  @override
+  void Function(
+    _i2.DeviceOrientationManager,
+    String,
+  ) get onDeviceOrientationChanged => (super.noSuchMethod(
+        Invocation.getter(#onDeviceOrientationChanged),
+        returnValue: (
+          _i2.DeviceOrientationManager pigeon_instance,
+          String orientation,
+        ) {},
+        returnValueForMissingStub: (
+          _i2.DeviceOrientationManager pigeon_instance,
+          String orientation,
+        ) {},
+      ) as void Function(
+        _i2.DeviceOrientationManager,
+        String,
+      ));
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+        returnValueForMissingStub: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i5.Future<void> startListeningForDeviceOrientationChange(
+    bool? isFrontFacing,
+    int? sensorOrientation,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #startListeningForDeviceOrientationChange,
+          [
+            isFrontFacing,
+            sensorOrientation,
+          ],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> stopListeningForDeviceOrientationChange() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #stopListeningForDeviceOrientationChange,
+          [],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<int> getDefaultDisplayRotation() => (super.noSuchMethod(
+        Invocation.method(
+          #getDefaultDisplayRotation,
+          [],
+        ),
+        returnValue: _i5.Future<int>.value(0),
+        returnValueForMissingStub: _i5.Future<int>.value(0),
+      ) as _i5.Future<int>);
+
+  @override
+  _i5.Future<String> getUiOrientation() => (super.noSuchMethod(
+        Invocation.method(
+          #getUiOrientation,
+          [],
+        ),
+        returnValue: _i5.Future<String>.value(_i6.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getUiOrientation,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i5.Future<String>.value(_i6.dummyValue<String>(
+          this,
+          Invocation.method(
+            #getUiOrientation,
+            [],
+          ),
+        )),
+      ) as _i5.Future<String>);
+
+  @override
+  _i2.DeviceOrientationManager pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeDeviceOrientationManager_17(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeDeviceOrientationManager_17(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.DeviceOrientationManager);
+}
+
 /// A class which mocks [ExposureState].
 ///
 /// See the documentation for Mockito's code generation for more information.
