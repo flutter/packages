@@ -278,11 +278,9 @@ class WikilinkBuilder extends MarkdownElementBuilder {
   Widget visitElementAfter(md.Element element, _) {
     final TapGestureRecognizer recognizer = TapGestureRecognizer()
       ..onTap = () {};
-    return _TapGestureRecognizerDisposer(
-      recognizer: recognizer,
-      child: Text.rich(
-        TextSpan(text: element.textContent, recognizer: recognizer),
-      ),
+    addTearDown(recognizer.dispose);
+    return Text.rich(
+      TextSpan(text: element.textContent, recognizer: recognizer),
     );
   }
 }
@@ -463,33 +461,5 @@ class CustomTagBlockSyntax extends md.BlockSyntax {
     final md.Element element = md.Element.empty('custom');
     element.attributes['content'] = content;
     return element;
-  }
-}
-
-class _TapGestureRecognizerDisposer extends StatefulWidget {
-  const _TapGestureRecognizerDisposer({
-    required this.child,
-    required this.recognizer,
-  });
-
-  final Widget child;
-  final TapGestureRecognizer recognizer;
-
-  @override
-  State<_TapGestureRecognizerDisposer> createState() =>
-      __TapGestureRecognizerDisposerState();
-}
-
-class __TapGestureRecognizerDisposerState
-    extends State<_TapGestureRecognizerDisposer> {
-  @override
-  void dispose() {
-    widget.recognizer.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.child;
   }
 }
