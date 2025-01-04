@@ -217,10 +217,10 @@
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   if (@available(macOS 10.15, *)) {
 #if TARGET_OS_OSX
-    return @([AVPictureInPictureController isPictureInPictureSupported]);
+    return @(AVPictureInPictureController.isPictureInPictureSupported);
 #else
-    return @(AVPictureInPictureController.isPictureInPictureSupported &&
-             [self configuredPictureInPictureBackgroundMode]);
+    return @((BOOL) (AVPictureInPictureController.isPictureInPictureSupported &&
+             [self configuredPictureInPictureBackgroundMode]));
 #endif
   } else {
     return @NO;
