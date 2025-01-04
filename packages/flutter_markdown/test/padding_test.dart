@@ -17,8 +17,6 @@ void defineTests() {
       (WidgetTester tester) async {
         const double paddingX = 10.0;
 
-        addTearDown(imageCache.clear);
-
         await tester.pumpWidget(
           boilerplate(
             Markdown(
@@ -52,6 +50,7 @@ void defineTests() {
           paddings[3].padding.along(Axis.horizontal) == paddingX * 4 * 2,
           true,
         );
+        imageCache.clear();
       },
     );
   });

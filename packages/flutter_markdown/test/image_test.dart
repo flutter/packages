@@ -92,7 +92,6 @@ void defineTests() {
     testWidgets(
       'local files should be files on non-web',
       (WidgetTester tester) async {
-        addTearDown(imageCache.clear);
         const String data = '![alt](http.png)';
         await tester.pumpWidget(
           boilerplate(
@@ -132,7 +131,6 @@ void defineTests() {
       'should work with resources',
       (WidgetTester tester) async {
         TestWidgetsFlutterBinding.ensureInitialized();
-        addTearDown(imageCache.clear);
         const String data = '![alt](resource:assets/logo.png)';
         await tester.pumpWidget(
           boilerplate(
@@ -197,7 +195,6 @@ void defineTests() {
     testWidgets(
       'should show properly next to text',
       (WidgetTester tester) async {
-        addTearDown(imageCache.clear);
         const String data = 'Hello ![alt](img#50x50)';
         await tester.pumpWidget(
           boilerplate(
@@ -415,7 +412,6 @@ void defineTests() {
     testWidgets(
       'custom image builder',
       (WidgetTester tester) async {
-        addTearDown(imageCache.clear);
         const String data = '![alt](https://img.png)';
         Widget builder(Uri uri, String? title, String? alt) =>
             Image.asset('assets/logo.png');
@@ -459,6 +455,7 @@ void defineTests() {
             find.byType(Container),
             matchesGoldenFile(
                 'assets/images/golden/image_test/custom_builder_asset_logo.png'));
+        imageCache.clear();
       },
       skip: kIsWeb, // Goldens are platform-specific.
     );
