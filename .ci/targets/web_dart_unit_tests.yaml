@@ -8,5 +8,6 @@ tasks:
       "dart-test",
       "--platform=chrome",
       "--wasm", ## DO NOT MERGE!!
-      "--exclude=script/configs/dart_unit_tests_exceptions.yaml"
+      "--exclude=script/configs/dart_unit_tests_exceptions.yaml",
+      "--exclude=script/configs/dart_unit_tests_wasm_exceptions.yaml" ## DO NOT MERGE!!
     ]
