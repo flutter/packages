@@ -245,6 +245,38 @@ targets:
           "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
         }
 
+  # Wasm unit tests in master
+  - name: Linux_web web_dart_unit_test_wasm_shard_1 master
+    bringup: true
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      add_recipes_cq: "true"
+      target_file: web_dart_unit_tests_wasm.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 0 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 2"
+        }
+
+  - name: Linux_web web_dart_unit_test_wasm_shard_2 master
+    bringup: true
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_dart_unit_tests_wasm.yaml
+      channel: master
+      version_file: flutter_master.version
+      package_sharding: "--shardIndex 1 --shardCount 2"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 2"
+        }
+
   - name: Linux analyze master
     recipe: packages/packages
     timeout: 30
@@ -846,6 +878,7 @@ targets:
           "CHANNEL": "stable"
         }
 
+  # JS integration tests in master
   - name: Linux_web web_platform_tests_shard_1 master
     recipe: packages/packages
     timeout: 60
@@ -888,6 +921,53 @@ targets:
           "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
         }
 
+  # Wasm integration tests in master
+  - name: Linux_web web_platform_tests_wasm_shard_1 master
+    bringup: true
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests_wasm.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 0 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 0 --shardCount 3"
+        }
+
+  - name: Linux_web web_platform_tests_wasm_shard_2 master
+    bringup: true
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests_wasm.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 1 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 1 --shardCount 3"
+        }
+
+  - name: Linux_web web_platform_tests_wasm_shard_3 master
+    bringup: true
+    recipe: packages/packages
+    timeout: 60
+    properties:
+      target_file: web_platform_tests_wasm.yaml
+      version_file: flutter_master.version
+      channel: master
+      package_sharding: "--shardIndex 2 --shardCount 3"
+      env_variables: >-
+        {
+          "CHANNEL": "master",
+          "PACKAGE_SHARDING": "--shardIndex 2 --shardCount 3"
+        }
+
+  # JS integration tests in stable
   - name: Linux_web web_platform_tests_shard_1 stable
     recipe: packages/packages
     timeout: 60

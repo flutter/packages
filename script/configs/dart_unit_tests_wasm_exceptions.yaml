@@ -1,6 +1,8 @@
+# Packages that are excluded from dart unit tests (compiled to Wasm)
+# 
 # This list should be kept as short as possible, and things should remain here
-# only as long as necessary, since in general the goal is for all of the latest
-# versions of packages to be mutually compatible, and compilable with Wasm.
+# only as long as necessary, since in general all web packages should work with
+# Wasm.
 #
 # This is only used for the rare case where a package fails in Wasm, but works
 # in JS mode.
