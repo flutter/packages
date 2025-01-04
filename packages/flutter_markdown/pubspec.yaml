@@ -20,6 +20,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  leak_tracker_flutter_testing: any
   mockito: ^5.4.4
   standard_message_codec: ^0.0.1+3
 
