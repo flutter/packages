@@ -5,6 +5,7 @@
 import 'package:file_selector_macos/file_selector_macos.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 
 import 'src/messages.g.dart';
@@ -46,8 +47,6 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
   ///
   /// Supports picking an image, multi-image, video, media, and multiple media.
   bool useMacOSPHPicker = false;
-
-  // TODO(EchoEllet): avoid using @visibleForTesting per https://github.com/flutter/flutter/blob/master/docs/contributing/Style-guide-for-Flutter-repo.md#avoid-using-visiblefortesting
 
   /// Return `true` if the current macOS version supports [useMacOSPHPicker].
   ///
@@ -144,6 +143,8 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
             _imageOptionsToImageSelectionOptions(options),
             GeneralOptions(limit: 1),
           ))
+              .getSuccessOrThrow()
+              .filePaths
               .firstOrNull;
           if (imagePath == null) {
             return null;
@@ -183,7 +184,10 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
       case ImageSource.gallery:
         if (await shouldUsePHPicker()) {
           final String? videoPath =
-              (await _hostApi.pickVideos(GeneralOptions(limit: 1))).firstOrNull;
+              (await _hostApi.pickVideos(GeneralOptions(limit: 1)))
+                  .getSuccessOrThrow()
+                  .filePaths
+                  .firstOrNull;
           if (videoPath == null) {
             return null;
           }
@@ -228,12 +232,14 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     MultiImagePickerOptions options = const MultiImagePickerOptions(),
   }) async {
     if (await shouldUsePHPicker()) {
-      final List<String> images = await _hostApi.pickImages(
+      final List<String> images = (await _hostApi.pickImages(
         _imageOptionsToImageSelectionOptions(options.imageOptions),
         GeneralOptions(
           limit: options.limit ?? 0,
         ),
-      );
+      ))
+          .getSuccessOrThrow()
+          .filePaths;
       return images.map((String imagePath) => XFile(imagePath)).toList();
     }
     const XTypeGroup typeGroup =
@@ -267,7 +273,7 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
   @override
   Future<List<XFile>> getMedia({required MediaOptions options}) async {
     if (await shouldUsePHPicker()) {
-      final List<String> images = await _hostApi.pickMedia(
+      final List<String> images = (await _hostApi.pickMedia(
         MediaSelectionOptions(
           imageSelectionOptions:
               _imageOptionsToImageSelectionOptions(options.imageOptions),
@@ -275,7 +281,9 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
         GeneralOptions(
           limit: options.limit ?? (options.allowMultiple ? 0 : 1),
         ),
-      );
+      ))
+          .getSuccessOrThrow()
+          .filePaths;
       return images.map((String mediaPath) => XFile(mediaPath)).toList();
     }
     const XTypeGroup typeGroup = XTypeGroup(
@@ -295,5 +303,49 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
       ];
     }
     return files;
+  }
+}
+
+extension _ImagePickerResultExt on ImagePickerResult {
+  /// Returns the result as an [ImagePickerSuccessResult], or throws a [PlatformException]
+  /// if the result is an [ImagePickerErrorResult].
+  ImagePickerSuccessResult getSuccessOrThrow() {
+    final ImagePickerResult result = this;
+    return switch (result) {
+      ImagePickerSuccessResult() => result,
+      ImagePickerErrorResult() => () {
+          final String errorMessage = switch (result.error) {
+            ImagePickerError.phpickerUnsupported =>
+              'PHPicker is only supported on macOS 13.0 or newer.',
+            ImagePickerError.windowNotFound =>
+              'No active window to present the picker.',
+            ImagePickerError.invalidImageSelection =>
+              'One of the selected items is not an image.',
+            ImagePickerError.invalidVideoSelection =>
+              'One of the selected items is not a video.',
+            ImagePickerError.imageLoadFailed =>
+              'An error occurred while loading the image.',
+            ImagePickerError.videoLoadFailed =>
+              'An error occurred while loading the video.',
+            ImagePickerError.imageConversionFailed =>
+              'Failed to convert the NSImage to TIFF data.',
+            ImagePickerError.imageSaveFailed =>
+              'Error saving the NSImage data to a file.',
+            ImagePickerError.imageCompressionFailed =>
+              'Error while compressing the Data of the NSImage.',
+            ImagePickerError.multiVideoSelectionUnsupported =>
+              'The multi-video selection is not supported.',
+          };
+          // TODO(EchoEllet): Replace PlatformException with a plugin-specific exception.
+          //  This is currently implemented to maintain compatibility with the existing behavior
+          //  of other implementations of `image_picker`. For more details, refer to:
+          //  https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
+          throw PlatformException(
+            code: result.error.name,
+            message: errorMessage,
+            details: result.platformErrorMessage,
+          );
+        }(),
+    };
   }
 }

@@ -56,29 +56,87 @@ class MediaSelectionOptions {
   ImageSelectionOptions imageSelectionOptions;
 }
 
+/// Possible error conditions for [ImagePickerApi] calls.
+enum ImagePickerError {
+  /// The current macOS version doesn't support [PHPickerViewController](https://developer.apple.com/documentation/photosui/phpickerviewcontroller)
+  /// which is supported on macOS 13+.
+  phpickerUnsupported,
+
+  /// Could not show the picker due to the missing window.
+  windowNotFound,
+
+  /// When a `PHPickerResult` can't load `NSImage`. This error should not be reached
+  /// as the filter in the `PHPickerConfiguration` is set to accept only images.
+  invalidImageSelection,
+
+  /// When a `PHPickerResult` is not a video. This error should not be reached
+  /// as the filter in the `PHPickerConfiguration` is set to accept only videos.
+  invalidVideoSelection,
+
+  /// Could not load the image object as `NSImage`.
+  imageLoadFailed,
+
+  /// Could not load the video data representation.
+  videoLoadFailed,
+
+  /// The image tiff representation could not be loaded from the `NSImage`.
+  imageConversionFailed,
+
+  /// The loaded `Data` from the `NSImage` could not be written as a file.
+  imageSaveFailed,
+
+  /// The image could not be compressed or the `NSImage` could not be created
+  /// from the compressed `Data`.
+  imageCompressionFailed,
+
+  /// The multi-video selection is not supported as it's not supported in
+  /// the app-facing package (`pickVideos` is missing).
+  /// The multi-video selection is supported when using `pickMedia` instead.
+  multiVideoSelectionUnsupported;
+}
+
+sealed class ImagePickerResult {}
+
+class ImagePickerSuccessResult extends ImagePickerResult {
+  ImagePickerSuccessResult(this.filePaths);
+
+  /// The temporary file paths as a result of picking the images and/or videos.
+  final List<String> filePaths;
+}
+
+class ImagePickerErrorResult extends ImagePickerResult {
+  ImagePickerErrorResult(this.error, {this.platformErrorMessage});
+
+  /// Potential error conditions for [ImagePickerApi] calls.
+  final ImagePickerError error;
+
+  /// Additional error message from the platform side.
+  final String? platformErrorMessage;
+}
+
 @HostApi(dartHostTestHandler: 'TestHostImagePickerApi')
 abstract class ImagePickerApi {
+  /// Returns whether [PHPickerViewController](https://developer.apple.com/documentation/photosui/phpickerviewcontroller)
+  /// is supported on the current macOS version.
   bool supportsPHPicker();
 
   // TODO(EchoEllet): Should ImagePickerApi be more similar to image_picker_ios or image_picker_android messages.dart?
   //  `pickImage()` and `pickMultiImage()` vs `pickImages()` with `limit` and `allowMultiple`.
   //  Currently it's closer to the image_picker_android messages.dart but without allowMultiple
 
-  // Return file paths
-
   @async
-  List<String> pickImages(
+  ImagePickerResult pickImages(
     ImageSelectionOptions options,
     GeneralOptions generalOptions,
   );
 
   /// Currently, multi-video selection is unimplemented.
   @async
-  List<String> pickVideos(
+  ImagePickerResult pickVideos(
     GeneralOptions generalOptions,
   );
   @async
-  List<String> pickMedia(
+  ImagePickerResult pickMedia(
     MediaSelectionOptions options,
     GeneralOptions generalOptions,
   );

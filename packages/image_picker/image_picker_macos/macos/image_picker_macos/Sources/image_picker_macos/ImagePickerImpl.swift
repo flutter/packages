@@ -29,16 +29,10 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
 
   func pickImages(
     options: ImageSelectionOptions, generalOptions: GeneralOptions,
-    completion: @escaping (Result<[String], any Error>) -> Void
+    completion: @escaping (Result<any ImagePickerResult, any Error>) -> Void
   ) {
     guard #available(macOS 13.0, *) else {
-      completion(
-        .failure(
-          PigeonError(
-            code: "UNSUPPORTED_PHPICKER",
-            message:
-              "PHPicker is only supported on macOS 13.0 or newer. Use `supportsPHPicker()` to check.",
-            details: nil)))
+      completion(.success(ImagePickerErrorResult(error: .phpickerUnsupported)))
       return
     }
 
@@ -57,34 +51,21 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
     showPHPicker(
       picker,
       noActiveWindow: {
-        completion(
-          .failure(
-            PigeonError(
-              code: "WINDOW_NOT_FOUND", message: "No active window to present the picker.",
-              details: nil)))
+        completion(.success(ImagePickerErrorResult(error: .windowNotFound)))
       })
   }
 
   func pickVideos(
-    generalOptions: GeneralOptions, completion: @escaping (Result<[String], any Error>) -> Void
+    generalOptions: GeneralOptions,
+    completion: @escaping (Result<any ImagePickerResult, any Error>) -> Void
   ) {
     guard #available(macOS 13.0, *) else {
-      completion(
-        .failure(
-          PigeonError(
-            code: "UNSUPPORTED_PHPICKER",
-            message:
-              "PHPicker is only supported on macOS 13.0 or newer. Use `supportsPHPicker()` to check.",
-            details: nil)))
+      completion(.success(ImagePickerErrorResult(error: .phpickerUnsupported)))
       return
     }
 
     if generalOptions.limit != nil && generalOptions.limit != 1 {
-      completion(
-        .failure(
-          PigeonError(
-            code: "UNIMPLEMENTED", message: "Multi-video selection is not implemented", details: nil
-          )))
+      completion(.success(ImagePickerErrorResult(error: .multiVideoSelectionUnsupported)))
       return
     }
 
@@ -99,26 +80,16 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
     showPHPicker(
       picker,
       noActiveWindow: {
-        completion(
-          .failure(
-            PigeonError(
-              code: "WINDOW_NOT_FOUND", message: "No active window to present the picker.",
-              details: nil)))
+        completion(.success(ImagePickerErrorResult(error: .windowNotFound)))
       })
   }
 
   func pickMedia(
     options: MediaSelectionOptions, generalOptions: GeneralOptions,
-    completion: @escaping (Result<[String], any Error>) -> Void
+    completion: @escaping (Result<any ImagePickerResult, any Error>) -> Void
   ) {
     guard #available(macOS 13.0, *) else {
-      completion(
-        .failure(
-          PigeonError(
-            code: "UNSUPPORTED_PHPICKER",
-            message:
-              "PHPicker is only supported on macOS 13.0 or newer. Use `supportsPHPicker()` to check.",
-            details: nil)))
+      completion(.success(ImagePickerErrorResult(error: .phpickerUnsupported)))
       return
     }
 
@@ -133,11 +104,7 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
     showPHPicker(
       picker,
       noActiveWindow: {
-        completion(
-          .failure(
-            PigeonError(
-              code: "WINDOW_NOT_FOUND", message: "No active window to present the picker.",
-              details: nil)))
+        completion(.success(ImagePickerErrorResult(error: .windowNotFound)))
       })
   }
 
@@ -154,11 +121,12 @@ class ImagePickerImpl: NSObject, ImagePickerApi {
 }
 
 class PickImagesDelegate: PHPickerViewControllerDelegate {
-  private let completion: ((Result<[String], any Error>) -> Void)
+  private let completion: ((Result<any ImagePickerResult, any Error>) -> Void)
   private let options: ImageSelectionOptions
 
   init(
-    completion: @escaping ((Result<[String], any Error>) -> Void), options: ImageSelectionOptions
+    completion: @escaping ((Result<any ImagePickerResult, any Error>) -> Void),
+    options: ImageSelectionOptions
   ) {
     self.completion = completion
     self.options = options
@@ -169,7 +137,7 @@ class PickImagesDelegate: PHPickerViewControllerDelegate {
     picker.dismiss(nil)
 
     if results.isEmpty {
-      completion(.success([]))
+      completion(.success(ImagePickerSuccessResult(filePaths: [])))
       return
     }
 
@@ -179,11 +147,7 @@ class PickImagesDelegate: PHPickerViewControllerDelegate {
       for result in results {
         let itemProvider = result.itemProvider
         guard itemProvider.canLoadObject(ofClass: NSImage.self) else {
-          completion(
-            .failure(
-              PigeonError(
-                code: "INVALID_SELECTION", message: "One of the selected items is not an image",
-                details: nil)))
+          completion(.success(ImagePickerErrorResult(error: .invalidImageSelection)))
           return
         }
 
@@ -194,16 +158,16 @@ class PickImagesDelegate: PHPickerViewControllerDelegate {
         else { return }
         savedFilePaths.append(tempImagePath)
       }
-      completion(.success(savedFilePaths))
+      completion(.success(ImagePickerSuccessResult(filePaths: savedFilePaths)))
     }
   }
 }
 
 // Currently, multi-video selection is unimplemented.
 class PickVideosDelegate: PHPickerViewControllerDelegate {
-  private let completion: ((Result<[String], any Error>) -> Void)
+  private let completion: ((Result<any ImagePickerResult, any Error>) -> Void)
 
-  init(completion: @escaping ((Result<[String], any Error>) -> Void)) {
+  init(completion: @escaping ((Result<any ImagePickerResult, any Error>) -> Void)) {
     self.completion = completion
   }
 
@@ -212,16 +176,13 @@ class PickVideosDelegate: PHPickerViewControllerDelegate {
     picker.dismiss(nil)
 
     guard let itemProvider = results.first?.itemProvider else {
-      completion(.success([]))
+      completion(.success(ImagePickerSuccessResult(filePaths: [])))
       return
     }
 
     let canLoadVideo = itemProvider.hasItemConformingToTypeIdentifier(UTType.movie.identifier)
     if !canLoadVideo {
-      completion(
-        .failure(
-          PigeonError(
-            code: "INVALID_SELECTION", message: "The selected item is not a video", details: nil)))
+      completion(.success(ImagePickerErrorResult(error: .invalidVideoSelection)))
       return
     }
 
@@ -231,18 +192,20 @@ class PickVideosDelegate: PHPickerViewControllerDelegate {
           .processAndSave(itemProvider: itemProvider)
       else { return }
 
-      completion(.success([tempVideoPath]))
+      completion(.success(ImagePickerSuccessResult(filePaths: [tempVideoPath])))
     }
 
   }
 }
 
 class PickMediaDelegate: PHPickerViewControllerDelegate {
-  private let completion: ((Result<[String], any Error>) -> Void)
+  private let completion: ((Result<any ImagePickerResult, any Error>) -> Void)
   private let options: MediaSelectionOptions
 
-  init(completion: @escaping (Result<[String], any Error>) -> Void, options: MediaSelectionOptions)
-  {
+  init(
+    completion: @escaping (Result<any ImagePickerResult, any Error>) -> Void,
+    options: MediaSelectionOptions
+  ) {
     self.completion = completion
     self.options = options
   }
@@ -252,7 +215,7 @@ class PickMediaDelegate: PHPickerViewControllerDelegate {
     picker.dismiss(nil)
 
     if results.isEmpty {
-      completion(.success([]))
+      completion(.success(ImagePickerSuccessResult(filePaths: [])))
       return
     }
 
@@ -282,7 +245,7 @@ class PickMediaDelegate: PHPickerViewControllerDelegate {
         }
       }
 
-      completion(.success(savedFilePaths))
+      completion(.success(ImagePickerSuccessResult(filePaths: savedFilePaths)))
     }
   }
 
@@ -370,11 +333,13 @@ func generateTempImageFilePath(imageFileType: NSBitmapImageRep.FileType) -> URL 
 
 /// Shared image handling between `PickImageDelegate` and `PickMediaDelegate`.
 class PickImageHandler {
-  let completion: ((Result<[String], any Error>) -> Void)
+  let completion: ((Result<any ImagePickerResult, any Error>) -> Void)
   let options: ImageSelectionOptions
 
-  init(completion: @escaping (Result<[String], any Error>) -> Void, options: ImageSelectionOptions)
-  {
+  init(
+    completion: @escaping (Result<any ImagePickerResult, any Error>) -> Void,
+    options: ImageSelectionOptions
+  ) {
     self.completion = completion
     self.options = options
   }
@@ -391,10 +356,9 @@ class PickImageHandler {
       return tempImagePath
     } catch {
       completion(
-        .failure(
-          PigeonError(
-            code: "IMAGE_LOAD_FAILED",
-            message: "Error loading image: \(error.localizedDescription)", details: nil)))
+        .success(
+          ImagePickerErrorResult(
+            error: .imageLoadFailed, platformErrorMessage: error.localizedDescription)))
       return nil
     }
   }
@@ -409,11 +373,7 @@ class PickImageHandler {
       let bitmapRep = NSBitmapImageRep(data: tiffData),
       let imageData = bitmapRep.representation(using: imageFileType, properties: [:])
     else {
-      completion(
-        .failure(
-          PigeonError(
-            code: "IMAGE_CONVERSION_FAILED", message: "Failed to convert NSImage to TIFF data.",
-            details: nil)))
+      completion(.success(ImagePickerErrorResult(error: .imageConversionFailed)))
       return nil
     }
 
@@ -424,10 +384,9 @@ class PickImageHandler {
       return filePath.pathString()
     } catch {
       completion(
-        .failure(
-          PigeonError(
-            code: "IMAGE_SAVE_FAILED", message: "Error saving image to file: \(error)", details: nil
-          )))
+        .success(
+          ImagePickerErrorResult(
+            error: .imageSaveFailed, platformErrorMessage: error.localizedDescription)))
       return nil
     }
   }
@@ -437,15 +396,21 @@ class PickImageHandler {
   /// Returns `nil` if an error occurs, and handles.
   private func processImage(_ image: NSImage) -> NSImage? {
     do {
-      let processedImage = try image.resizedOrOriginal(maxSize: options.maxSize)
-        .compressedOrOriginal(quality: options.quality)
-      return processedImage
+      let resizedOrOriginalImage = image.resizedOrOriginal(maxSize: options.maxSize)
+      let compressedOrOriginalImage = try resizedOrOriginalImage.compressedOrOriginal(
+        quality: options.quality)
+      return compressedOrOriginalImage
+    } catch ImageCompressingError.conversionFailed {
+      completion(
+        .success(
+          ImagePickerErrorResult(
+            error: .imageConversionFailed)))
+      return nil
     } catch {
       completion(
-        .failure(
-          PigeonError(
-            code: "IMAGE_PROCESSING_FAILED",
-            message: "Error processing image: \(error.localizedDescription)", details: nil)))
+        .success(
+          ImagePickerErrorResult(
+            error: .imageCompressionFailed, platformErrorMessage: error.localizedDescription)))
       return nil
     }
   }
@@ -453,9 +418,9 @@ class PickImageHandler {
 
 /// Shared image handling between `PickVideosDelegate` and `PickMediaDelegate`.
 class PickVideoHandler {
-  let completion: ((Result<[String], any Error>) -> Void)
+  let completion: ((Result<any ImagePickerResult, any Error>) -> Void)
 
-  init(completion: @escaping (Result<[String], any Error>) -> Void) {
+  init(completion: @escaping (Result<any ImagePickerResult, any Error>) -> Void) {
     self.completion = completion
   }
 
@@ -476,10 +441,9 @@ class PickVideoHandler {
       return tempVideoPath
     } catch {
       completion(
-        .failure(
-          PigeonError(
-            code: "VIDEO_LOAD_FAILED",
-            message: "Error loading a video: \(error.localizedDescription)", details: nil)))
+        .success(
+          ImagePickerErrorResult(
+            error: .videoLoadFailed, platformErrorMessage: error.localizedDescription)))
       return nil
     }
   }

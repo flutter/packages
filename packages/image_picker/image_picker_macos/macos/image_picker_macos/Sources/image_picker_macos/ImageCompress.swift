@@ -13,6 +13,15 @@ func shouldCompressImage(quality: Int64) -> Bool {
   return quality != 100
 }
 
+enum ImageCompressingError: Error {
+  /// Failed to convert the `NSImage` to TIFF data.
+  case conversionFailed
+  /// Failed to compress the image.
+  case compressionFailed
+  /// Failed to create `NSImage` from the compressed data.
+  case creationFailed
+}
+
 extension NSImage {
   /// Compresses the image to the specified quality.
   ///
@@ -22,10 +31,7 @@ extension NSImage {
     guard let tiffData = self.tiffRepresentation,
       let bitmapRep = NSBitmapImageRep(data: tiffData)
     else {
-      // TODO(EchoEllet): Is there a convention for the error code? ImageConversionError or IMAGE_CONVERSION_ERROR or image-conversion-error. Update all codes.
-      throw PigeonError(
-        code: "ImageConversionError", message: "Failed to convert NSImage to TIFF data.",
-        details: nil)
+      throw ImageCompressingError.conversionFailed
     }
 
     // Convert quality from 0-100 to 0.0-1.0
@@ -35,14 +41,11 @@ extension NSImage {
       let compressedData = bitmapRep.representation(
         using: .jpeg, properties: [.compressionFactor: compressionQuality])
     else {
-      throw PigeonError(
-        code: "CompressionError", message: "Failed to compress image.", details: nil)
+      throw ImageCompressingError.compressionFailed
     }
 
     guard let compressedImage = NSImage(data: compressedData) else {
-      throw PigeonError(
-        code: "ImageCreationError", message: "Failed to create NSImage from compressed data.",
-        details: nil)
+      throw ImageCompressingError.creationFailed
     }
 
     return compressedImage

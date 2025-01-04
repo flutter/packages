@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_macos/image_picker_macos.dart';
 import 'package:image_picker_macos/src/messages.g.dart';
@@ -42,17 +43,23 @@ void main() {
 
     when(mockImagePickerApi.supportsPHPicker()).thenAnswer((_) => false);
 
-    when(mockImagePickerApi.pickImages(any, any))
-        .thenAnswer((_) async => <String>[]);
+    when(mockImagePickerApi.pickImages(any, any)).thenAnswer(
+        (_) async => ImagePickerSuccessResult(filePaths: <String>[]));
 
-    when(mockImagePickerApi.pickVideos(any))
-        .thenAnswer((_) async => <String>[]);
+    when(mockImagePickerApi.pickVideos(any)).thenAnswer(
+        (_) async => ImagePickerSuccessResult(filePaths: <String>[]));
 
-    when(mockImagePickerApi.pickMedia(any, any))
-        .thenAnswer((_) async => <String>[]);
+    when(mockImagePickerApi.pickMedia(any, any)).thenAnswer(
+        (_) async => ImagePickerSuccessResult(filePaths: <String>[]));
 
     ImagePickerMacOS.fileSelector = mockFileSelectorPlatform;
     TestHostImagePickerApi.setUp(mockImagePickerApi);
+  });
+
+  setUpAll(() {
+    // Mockito cannot generate a dummy value of type ImagePickerResult
+    provideDummy<ImagePickerResult>(
+        ImagePickerSuccessResult(filePaths: <String>[]));
   });
 
   void testWithPHPicker({
@@ -364,7 +371,7 @@ void main() {
               any,
               any,
             )).thenAnswer((_) async {
-              return filePaths;
+              return ImagePickerSuccessResult(filePaths: filePaths);
             });
             expect(
               (await plugin.pickImage(source: ImageSource.gallery))?.path,
@@ -390,7 +397,7 @@ void main() {
               any,
               any,
             )).thenAnswer((_) async {
-              return filePaths;
+              return ImagePickerSuccessResult(filePaths: filePaths);
             });
             expect(
               (await plugin.getMultiImageWithOptions())
@@ -463,6 +470,57 @@ void main() {
           },
         );
       },
+    );
+
+    void testThrowsPlatformExceptionForPHPicker({
+      required String methodName,
+      required Future<void> Function() underTest,
+    }) =>
+        test(
+          '$methodName throws $PlatformException for PHPicker on platform API error',
+          () {
+            testWithPHPicker(
+                enabled: true,
+                body: () async {
+                  for (final ImagePickerError error
+                      in ImagePickerError.values) {
+                    const String platformErrorMessage =
+                        'Example Platform Error Message';
+                    when(mockImagePickerApi.pickImages(any, any))
+                        .thenAnswer((_) async => ImagePickerErrorResult(
+                              error: error,
+                              platformErrorMessage: platformErrorMessage,
+                            ));
+                    await expectLater(
+                      () => underTest(),
+                      throwsA(
+                        isA<PlatformException>()
+                            .having(
+                              (PlatformException e) => e.code,
+                              'code',
+                              equals(error.name),
+                            )
+                            .having(
+                              (PlatformException e) => e.details,
+                              'details',
+                              equals(platformErrorMessage),
+                            ),
+                      ),
+                    );
+                    verify(mockImagePickerApi.pickImages(any, any)).called(1);
+                  }
+                });
+          },
+        );
+
+    testThrowsPlatformExceptionForPHPicker(
+      methodName: 'getImageFromSource',
+      underTest: () => plugin.getImageFromSource(source: ImageSource.gallery),
+    );
+
+    testThrowsPlatformExceptionForPHPicker(
+      methodName: 'getMultiImageWithOptions',
+      underTest: () => plugin.getMultiImageWithOptions(),
     );
   });
 
@@ -583,7 +641,7 @@ void main() {
             when(mockImagePickerApi.pickVideos(
               any,
             )).thenAnswer((_) async {
-              return filePaths;
+              return ImagePickerSuccessResult(filePaths: filePaths);
             });
             expect(
               (await plugin.getVideo(source: ImageSource.gallery))?.path,
@@ -591,6 +649,42 @@ void main() {
             );
           },
         );
+      },
+    );
+
+    test(
+      'getVideo throws $PlatformException for PHPicker on platform API error',
+      () {
+        testWithPHPicker(
+            enabled: true,
+            body: () async {
+              for (final ImagePickerError error in ImagePickerError.values) {
+                const String platformErrorMessage =
+                    'Example Platform Error Message';
+                when(mockImagePickerApi.pickVideos(any))
+                    .thenAnswer((_) async => ImagePickerErrorResult(
+                          error: error,
+                          platformErrorMessage: platformErrorMessage,
+                        ));
+                await expectLater(
+                  () => plugin.getVideo(source: ImageSource.gallery),
+                  throwsA(
+                    isA<PlatformException>()
+                        .having(
+                          (PlatformException e) => e.code,
+                          'code',
+                          equals(error.name),
+                        )
+                        .having(
+                          (PlatformException e) => e.details,
+                          'details',
+                          equals(platformErrorMessage),
+                        ),
+                  ),
+                );
+                verify(mockImagePickerApi.pickVideos(any)).called(1);
+              }
+            });
       },
     );
   });
@@ -731,7 +825,7 @@ void main() {
               any,
               any,
             )).thenAnswer((_) async {
-              return filePaths;
+              return ImagePickerSuccessResult(filePaths: filePaths);
             });
             expect(
               (await plugin.getMedia(
@@ -803,6 +897,44 @@ void main() {
             ));
           },
         );
+      },
+    );
+
+    test(
+      'getMedia throws $PlatformException for PHPicker on platform API error',
+      () {
+        testWithPHPicker(
+            enabled: true,
+            body: () async {
+              for (final ImagePickerError error in ImagePickerError.values) {
+                const String platformErrorMessage =
+                    'Example Platform Error Message';
+                when(mockImagePickerApi.pickMedia(any, any))
+                    .thenAnswer((_) async => ImagePickerErrorResult(
+                          error: error,
+                          platformErrorMessage: platformErrorMessage,
+                        ));
+                await expectLater(
+                  () => plugin.getMedia(
+                    options: const MediaOptions(allowMultiple: true),
+                  ),
+                  throwsA(
+                    isA<PlatformException>()
+                        .having(
+                          (PlatformException e) => e.code,
+                          'code',
+                          equals(error.name),
+                        )
+                        .having(
+                          (PlatformException e) => e.details,
+                          'details',
+                          equals(platformErrorMessage),
+                        ),
+                  ),
+                );
+                verify(mockImagePickerApi.pickMedia(any, any)).called(1);
+              }
+            });
       },
     );
   });
