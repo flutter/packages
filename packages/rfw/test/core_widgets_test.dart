@@ -16,6 +16,7 @@ void main() {
   testWidgets('Core widgets', (WidgetTester tester) async {
     final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(
@@ -248,6 +249,7 @@ void main() {
   testWidgets('More core widgets', (WidgetTester tester) async {
     final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(
