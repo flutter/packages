@@ -23,7 +23,7 @@ enum ApiLocation {
   flutter,
 }
 
-/// Represents the type of asynchronous api will be used.
+/// {@macro pigeon_lib.async_type}
 sealed class AsynchronousType {
   /// Constructor for [AsynchronousType].
   const AsynchronousType();
@@ -37,31 +37,31 @@ sealed class AsynchronousType {
   /// Returns true if the [AsynchronousType] is [CallbackAsynchronous].
   bool get isCallback => this is CallbackAsynchronous;
 
-  /// Returns true if the [AsynchronousType] is [ModernAsynchronous].
-  bool get isModern => this is ModernAsynchronous;
+  /// Returns true if the [AsynchronousType] is [AwaitAsynchronous].
+  bool get isAwait => this is AwaitAsynchronous;
 
   /// Returns true if the [AsynchronousType] is [NoAsynchronous].
   bool get isNone => this is NoAsynchronous;
 }
 
-/// Represents a callback asynchronous api will be used.
+/// {@macro pigeon_lib.callback_async_type}
 class CallbackAsynchronous extends AsynchronousType {
   /// Constructor for [CallbackAsynchronous].
   const CallbackAsynchronous();
 }
 
-/// Represents a modern asynchronous api will be used.
+/// Represents an await-style asynchronous api will be used.
 ///
 /// * Swift - async.
 /// * Kotlin - suspend.
-class ModernAsynchronous extends AsynchronousType {
-  /// Constructor for [ModernAsynchronous].
-  const ModernAsynchronous({
+class AwaitAsynchronous extends AsynchronousType {
+  /// Constructor for [AwaitAsynchronous].
+  const AwaitAsynchronous({
     required this.swiftOptions,
   });
 
   /// {@macro ast.swift_modern_asynchronous_options}
-  final SwiftModernAsynchronousOptions swiftOptions;
+  final SwiftAwaitAsynchronousOptions swiftOptions;
 }
 
 /// Represents a no asynchronous api will be used.
@@ -73,9 +73,9 @@ class NoAsynchronous extends AsynchronousType {
 /// {@template ast.swift_modern_asynchronous_options}
 /// Options for Swift modern asynchronous.
 /// {@endtemplate}
-class SwiftModernAsynchronousOptions {
-  /// Constructor for [SwiftModernAsynchronousOptions].
-  const SwiftModernAsynchronousOptions({
+class SwiftAwaitAsynchronousOptions {
+  /// Constructor for [SwiftAwaitAsynchronousOptions].
+  const SwiftAwaitAsynchronousOptions({
     required this.throws,
   });
 

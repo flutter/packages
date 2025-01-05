@@ -37,19 +37,67 @@ import 'kotlin_generator.dart';
 import 'objc_generator.dart';
 import 'swift_generator.dart';
 
-class _Asynchronous {
-  const _Asynchronous();
+/// {@macro pigeon_lib.async}
+class Async {
+  /// Constructor for [Async].
+  const Async({
+    this.type,
+  });
+
+  /// The type of asynchronous api will be used.
+  ///
+  /// [AsyncType.callback] is used by default.
+  final AsyncType? type;
 }
 
-/// Metadata to annotate a Api method as asynchronous
-const Object async = _Asynchronous();
+/// {@template pigeon_lib.async_type}
+/// Represents the type of asynchronous api will be used.
+/// {@endtemplate}
+sealed class AsyncType {
+  const AsyncType();
 
-/// {@macro pigeon_lib.modern_async}
-class ModernAsync {
-  /// Constructor for [ModernAsync].
-  const ModernAsync({
-    this.isSwiftThrows,
-  });
+  /// {@macro pigeon_lib.callback_async_type}
+  const factory AsyncType.callback() = _CallbackAsyncType;
+
+  /// {@macro pigeon_lib.await_async_type}
+  const factory AsyncType.await({bool? isSwiftThrows}) = _AwaitAsyncType;
+}
+
+/// {@template pigeon_lib.callback_async_type}
+/// Represents a callback asynchronous api will be used.
+/// {@endtemplate}
+class _CallbackAsyncType extends AsyncType {
+  /// Constructor for [_CallbackAsyncType].
+  const _CallbackAsyncType();
+}
+
+/// {@template pigeon_lib.await_async_type}
+/// Provides an await-style asynchronous Api (only Swift and Kotlin).
+///
+/// Example:
+///
+///```dart
+///@HostApi()
+///abstract class ExampleHostApi {
+///  @Async(type: AsyncType.await())
+///  bool sendMessage(MessageData message);
+///}
+///```
+/// Swift(iOS 13.0+):
+///
+/// ```swift
+/// func sendMessage(message: MessageData) async throws -> Bool
+/// ```
+///
+/// Kotlin (`ExampleHostApi.setUp` will require `CoroutineScope`):
+///
+/// ```kotlin
+/// suspend fun sendMessage(message: MessageData) : Boolean
+/// ```
+/// {@endtemplate}
+class _AwaitAsyncType extends AsyncType {
+  /// Constructor for [_AwaitAsyncType].
+  const _AwaitAsyncType({this.isSwiftThrows});
 
   /// Whether the method throws in Swift.
   ///
@@ -69,33 +117,10 @@ class ModernAsync {
   final bool? isSwiftThrows;
 }
 
-/// {@template pigeon_lib.modern_async}
-/// Provides a modern asynchronous Api (only Swift and Kotlin).
-///
-/// Example:
-///
-///```dart
-///@HostApi()
-///abstract class ExampleHostApi {
-///  @modernAsync
-///  bool sendMessage(MessageData message);
-///}
-///```
-/// Swift(iOS 13.0+):
-///
-/// ```swift
-/// func sendMessage(message: MessageData) async -> Bool
-/// ```
-///
-/// Kotlin (`ExampleHostApi.setUp` will require `CoroutineScope`):
-///
-/// ```kotlin
-/// suspend fun sendMessage(message: MessageData) : Boolean
-/// ```
+/// {@template pigeon_lib.async}
+/// Metadata to annotate a Api method as asynchronous
 /// {@endtemplate}
-///
-/// You could configure more using [ModernAsync].
-const Object modernAsync = ModernAsync();
+const Object async = Async();
 
 class _Attached {
   const _Attached();
@@ -2358,38 +2383,39 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       }
     }
   }
-}
 
-AsynchronousType _parseAsynchronousType(
-    dart_ast.NodeList<dart_ast.Annotation> metadata) {
-  if (_hasMetadata(metadata, 'async')) {
+  AsynchronousType _parseAsynchronousType(
+    dart_ast.NodeList<dart_ast.Annotation> metadata,
+  ) {
+    if (_hasMetadata(metadata, 'async')) {
+      return AsynchronousType.callback;
+    }
+
+    final dart_ast.Annotation? meta = _findMetadata(metadata, 'Async');
+
+    if (meta == null) {
+      return AsynchronousType.none;
+    }
+
+    final dart_ast.Expression? type = meta.arguments?.arguments.firstOrNull;
+
+    if (type is! dart_ast.NamedExpression) {
+      return AsynchronousType.callback;
+    }
+
+    if (type.expression.toSource().contains('AsyncType.await')) {
+      final Map<String, Object> options =
+          _expressionToMap(type.expression) as Map<String, Object>;
+
+      return AwaitAsynchronous(
+        swiftOptions: SwiftAwaitAsynchronousOptions(
+          throws: options['isSwiftThrows'] as bool? ?? true,
+        ),
+      );
+    }
+
     return const CallbackAsynchronous();
   }
-
-  if (_hasMetadata(metadata, 'modernAsync')) {
-    return const ModernAsynchronous(
-        swiftOptions: SwiftModernAsynchronousOptions(throws: true));
-  }
-
-  final dart_ast.Annotation? meta = _findMetadata(metadata, 'ModernAsync');
-
-  if (meta == null) {
-    return AsynchronousType.none;
-  }
-
-  return ModernAsynchronous(
-    swiftOptions: SwiftModernAsynchronousOptions(
-      throws: meta.arguments?.arguments
-              .whereType<dart_ast.NamedExpression>()
-              .where((dart_ast.NamedExpression element) =>
-                  element.name.label.name == 'isSwiftThrows')
-              .map((dart_ast.NamedExpression element) => element.expression)
-              .whereType<dart_ast.BooleanLiteral>()
-              .firstOrNull
-              ?.value ??
-          true,
-    ),
-  );
 }
 
 int? _calculateLineNumberNullable(String contents, int? offset) {

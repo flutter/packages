@@ -1,6 +1,9 @@
-## 22.7.1
+## 22.8.0
 
 * [swift, kotlin] Added support of modern asynchronous api for Swift (async) and Kotlin (suspend).
+
+## 22.7.1
+
 * [swift] Adds support for platform checks of imports of ProxyApis.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 

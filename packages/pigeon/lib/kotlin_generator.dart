@@ -157,7 +157,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.writeln('import java.io.ByteArrayOutputStream');
     indent.writeln('import java.nio.ByteBuffer');
     if (root.apis.any((Api api) => api.methods.any((Method it) =>
-        it.asynchronousType.isModern && it.location == ApiLocation.host))) {
+        it.asynchronousType.isAwait && it.location == ApiLocation.host))) {
       indent.writeln('import kotlinx.coroutines.launch');
       indent.writeln('import kotlinx.coroutines.CoroutineScope');
       indent.writeln('import kotlinx.coroutines.Dispatchers');
@@ -645,7 +645,7 @@ if (wrapped == null) {
             '/** Sets up an instance of `$apiName` to handle messages through the `binaryMessenger`. */');
         indent.writeln('@JvmOverloads');
         final String coroutineScope =
-            api.methods.any((Method method) => method.asynchronousType.isModern)
+            api.methods.any((Method method) => method.asynchronousType.isAwait)
                 ? ', coroutineScope: CoroutineScope'
                 : '';
         indent.write(
@@ -1210,7 +1210,7 @@ if (wrapped == null) {
 
     final String openKeyword = isOpen ? 'open ' : '';
     final String abstractKeyword = isAbstract ? 'abstract ' : '';
-    final String suspendKeyword = asynchronousType.isModern ? 'suspend ' : '';
+    final String suspendKeyword = asynchronousType.isAwait ? 'suspend ' : '';
 
     if (asynchronousType.isCallback) {
       argSignature.add('callback: (Result<$resultType>) -> Unit');
@@ -1300,7 +1300,7 @@ if (wrapped == null) {
               });
             });
           } else {
-            if (asynchronousType.isModern) {
+            if (asynchronousType.isAwait) {
               indent.writeln('coroutineScope.launch {');
               indent.inc();
             }
@@ -1316,18 +1316,18 @@ if (wrapped == null) {
             indent.addScoped('{', '}', () {
               indent.writeln('wrapError(exception)');
             });
-            if (asynchronousType.isModern) {
+            if (asynchronousType.isAwait) {
               indent.writeln('withContext(Dispatchers.Main) {');
               indent.inc();
             }
             indent.writeln('reply.reply(wrapped)');
-            if (asynchronousType.isModern) {
+            if (asynchronousType.isAwait) {
               indent.dec();
               indent.writeln('}');
             }
           }
         });
-        if (asynchronousType.isModern) {
+        if (asynchronousType.isAwait) {
           indent.dec();
           indent.writeln('}');
         }

@@ -812,8 +812,8 @@ void main() {
             associatedClass: emptyClass,
             isNullable: false,
           ),
-          asynchronousType: const ModernAsynchronous(
-            swiftOptions: SwiftModernAsynchronousOptions(throws: true),
+          asynchronousType: const AwaitAsynchronous(
+            swiftOptions: SwiftAwaitAsynchronousOptions(throws: true),
           ),
         )
       ])

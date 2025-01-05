@@ -1568,14 +1568,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         }
         final bool throws = switch (asynchronousType) {
           CallbackAsynchronous() => false,
-          ModernAsynchronous(
-            :final SwiftModernAsynchronousOptions swiftOptions
+          AwaitAsynchronous(
+            :final SwiftAwaitAsynchronousOptions swiftOptions
           ) =>
             swiftOptions.throws,
           NoAsynchronous() => true,
         };
         final String tryStatement = throws ? 'try ' : '';
-        final String awaitKeyword = asynchronousType.isModern ? 'await ' : '';
+        final String awaitKeyword = asynchronousType.isAwait ? 'await ' : '';
         late final String call;
         if (onCreateCall == null) {
           // Empty parens are not required when calling a method whose only
@@ -1609,7 +1609,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
             });
           });
         } else {
-          if (asynchronousType.isModern) {
+          if (asynchronousType.isAwait) {
             indent.writeln('Task { @MainActor in');
             indent.inc();
           }
@@ -1643,7 +1643,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         }
       });
 
-      if (asynchronousType.isModern) {
+      if (asynchronousType.isAwait) {
         indent.dec();
         indent.writeln('}');
       }
@@ -2787,10 +2787,10 @@ String _getMethodSignature({
       return 'func ${components.name}($parameterSignature, completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
     }
   } else {
-    final String asyncKeyword = (asynchronousType.isModern) ? ' async' : '';
+    final String asyncKeyword = (asynchronousType.isAwait) ? ' async' : '';
     final String throwsKeyword = switch (asynchronousType) {
       CallbackAsynchronous() => '',
-      ModernAsynchronous(:final SwiftModernAsynchronousOptions swiftOptions) =>
+      AwaitAsynchronous(:final SwiftAwaitAsynchronousOptions swiftOptions) =>
         swiftOptions.throws ? ' throws' : '',
       NoAsynchronous() => ' throws',
     };

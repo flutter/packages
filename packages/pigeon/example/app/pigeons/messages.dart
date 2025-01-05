@@ -53,7 +53,7 @@ abstract class ExampleHostApi {
   @async
   bool sendMessage(MessageData message);
 
-  @ModernAsync(isSwiftThrows: false)
+  @Async(type: AsyncType.await(isSwiftThrows: false))
   bool sendMessageModernAsync(MessageData message);
 }
 // #enddocregion host-definitions
