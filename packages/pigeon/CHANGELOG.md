@@ -1,3 +1,7 @@
+## 22.7.2
+
+* Updates README to discuss best practices for using Pigeon-generated code.
+
 ## 22.7.1
 
 * [swift, kotlin] Added support of modern asynchronous api for Swift (async) and Kotlin (suspend).
