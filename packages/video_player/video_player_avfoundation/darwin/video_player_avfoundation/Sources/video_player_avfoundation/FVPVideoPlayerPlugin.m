@@ -231,7 +231,7 @@
             (FVPAutomaticallyStartsPictureInPictureMessage *)input
                                          error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setPictureInPictureStarted:input.enableStartPictureInPictureAutomaticallyFromInline];
+  [player setAutomaticallyStartPictureInPicture:input.enableStartPictureInPictureAutomaticallyFromInline];
 }
 
 - (void)setPictureInPictureOverlaySettings:(FVPSetPictureInPictureOverlaySettingsMessage *)input
@@ -261,7 +261,7 @@
 #endif
 
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setPictureInPictureStarted:YES];
+  player.pictureInPictureStarted = YES;
 }
 
 - (void)stopPictureInPicture:(FVPStopPictureInPictureMessage *)input error:(FlutterError **)error {
@@ -274,7 +274,7 @@
     return;
   }
   FVPVideoPlayer *player = self.playersByTextureId[@(input.textureId)];
-  [player setPictureInPictureStarted:NO];
+  player.pictureInPictureStarted = NO;
 }
 
 @end

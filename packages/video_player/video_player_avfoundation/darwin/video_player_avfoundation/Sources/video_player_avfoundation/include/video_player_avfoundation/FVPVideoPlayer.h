@@ -83,8 +83,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// play/pause state.
 - (void)expectFrame;
 
+- (void)setAutomaticallyStartPictureInPicture:(BOOL)automaticallyStartPictureInPicture;
 - (void)setPictureInPictureOverlayFrame:(CGRect)frame;
-- (void)setPictureInPictureStarted:(BOOL)startPip;
+- (void)setPictureInPictureStarted:(BOOL)startPictureInPicture;
 @end
 
 NS_ASSUME_NONNULL_END
