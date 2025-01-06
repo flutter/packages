@@ -5,6 +5,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
@@ -41,14 +42,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   Future<bool> setValue(String valueType, String key, Object value) async {
     switch (valueType) {
       case 'String':
-        value as String;
-        if (value.startsWith(listPrefix) ||
-            value.startsWith(jsonListPrefix) ||
-            value.startsWith(doublePrefix)) {
-          throw ArgumentError(
-              'The string $value cannot be stored as it clashes with special identifier prefixes');
-        }
-        return _api.setString(key, value);
+        return _api.setString(key, value as String);
       case 'Bool':
         return _api.setBool(key, value as bool);
       case 'Int':
@@ -57,11 +51,13 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
         return _api.setDouble(key, value as double);
       case 'StringList':
         return _api.setString(key, '$jsonListPrefix${jsonEncode(value)}');
-      case 'LegacyStringListForTesting':
+      case 'PlatformEncodedStringListForTesting':
         return _api.setStringList(key, value as List<String>);
     }
-    throw ArgumentError(
-        'value: $value of type: $valueType" is not of a supported type.');
+    // TODO(tarrinneal): change to ArgumentError across all platforms.
+    throw PlatformException(
+        code: 'InvalidOperation',
+        message: '"$valueType" is not a supported type.');
   }
 
   @override

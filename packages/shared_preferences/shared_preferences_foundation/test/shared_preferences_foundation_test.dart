@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_foundation/src/shared_preferences_foundation.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
@@ -264,7 +265,7 @@ void main() {
     final SharedPreferencesFoundation plugin = SharedPreferencesFoundation();
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
-    }, throwsA(isA<ArgumentError>()));
+    }, throwsA(isA<PlatformException>()));
   });
 
   test('getAllWithNoPrefix', () async {

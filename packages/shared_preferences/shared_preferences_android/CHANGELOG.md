@@ -1,7 +1,5 @@
-## 3.0.0
+## 2.4.1
 
-* Updates non-supported type errors to `ArgumentError`.
-* Removes support for reading `BigInt` and `Set<String>`.
 * Moves `List<String>` encoding to dart `JSON` package.
 
 ## 2.4.0

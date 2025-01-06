@@ -113,11 +113,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   pickerViewController.presentationController.delegate = self;
   self.callContext = context;
 
-  if (context.requestFullMetadata) {
-    [self checkPhotoAuthorizationWithPHPicker:pickerViewController];
-  } else {
-    [self showPhotoLibraryWithPHPicker:pickerViewController];
-  }
+  [self showPhotoLibraryWithPHPicker:pickerViewController];
 }
 
 - (void)launchUIImagePickerWithSource:(nonnull FLTSourceSpecification *)source
@@ -381,40 +377,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     }
     case PHAuthorizationStatusAuthorized:
       [self showPhotoLibraryWithImagePicker:imagePickerController];
-      break;
-    case PHAuthorizationStatusDenied:
-    case PHAuthorizationStatusRestricted:
-    default:
-      [self errorNoPhotoAccess:status];
-      break;
-  }
-}
-
-- (void)checkPhotoAuthorizationWithPHPicker:(PHPickerViewController *)pickerViewController
-    API_AVAILABLE(ios(14)) {
-  PHAccessLevel requestedAccessLevel = PHAccessLevelReadWrite;
-  PHAuthorizationStatus status =
-      [PHPhotoLibrary authorizationStatusForAccessLevel:requestedAccessLevel];
-  switch (status) {
-    case PHAuthorizationStatusNotDetermined: {
-      [PHPhotoLibrary
-          requestAuthorizationForAccessLevel:requestedAccessLevel
-                                     handler:^(PHAuthorizationStatus status) {
-                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                         if (status == PHAuthorizationStatusAuthorized) {
-                                           [self showPhotoLibraryWithPHPicker:pickerViewController];
-                                         } else if (status == PHAuthorizationStatusLimited) {
-                                           [self showPhotoLibraryWithPHPicker:pickerViewController];
-                                         } else {
-                                           [self errorNoPhotoAccess:status];
-                                         }
-                                       });
-                                     }];
-      break;
-    }
-    case PHAuthorizationStatusAuthorized:
-    case PHAuthorizationStatusLimited:
-      [self showPhotoLibraryWithPHPicker:pickerViewController];
       break;
     case PHAuthorizationStatusDenied:
     case PHAuthorizationStatusRestricted:

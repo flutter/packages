@@ -1,7 +1,3 @@
-## 3.0.0
-
-* Updates non-supported type errors to `ArgumentError`.
-
 ## 2.5.4
 
 * Updates Pigeon to fix lint error.

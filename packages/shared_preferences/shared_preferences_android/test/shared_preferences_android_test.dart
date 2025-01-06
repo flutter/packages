@@ -229,7 +229,7 @@ void main() {
   test('setValue with unsupported type', () async {
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
-    }, throwsA(isA<ArgumentError>()));
+    }, throwsA(isA<PlatformException>()));
   });
 
   test('getAllWithNoPrefix', () async {

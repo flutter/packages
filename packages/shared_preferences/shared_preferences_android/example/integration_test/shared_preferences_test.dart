@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
@@ -482,7 +483,7 @@ void main() {
       ];
       for (final String prefix in specialPrefixes) {
         expect(preferences.setValue('String', key, prefix + value),
-            throwsA(isA<ArgumentError>()));
+            throwsA(isA<PlatformException>()));
         final Map<String, Object> values =
             await preferences.getAllWithParameters(
           GetAllParameters(
@@ -494,7 +495,7 @@ void main() {
     });
 
     testWidgets(
-        'old list encoding with getPreferences can be re-added with new encoding without data loss',
+        'Platform list encoding with getPreferences can be re-added with new encoding without data loss',
         (WidgetTester _) async {
       await preferences.clearWithParameters(
         ClearParameters(
@@ -505,8 +506,8 @@ void main() {
       await preferences.setValue('Bool', 'Bool', allTestValues['Bool']!);
       await preferences.setValue('Int', 'Int', allTestValues['Int']!);
       await preferences.setValue('Double', 'Double', allTestValues['Double']!);
-      await preferences.setValue('LegacyStringListForTesting', 'StringList',
-          allTestValues['StringList']!);
+      await preferences.setValue('PlatformEncodedStringListForTesting',
+          'StringList', allTestValues['StringList']!);
       Map<String, Object> prefs = await preferences.getAllWithParameters(
         GetAllParameters(
           filter: PreferencesFilter(prefix: ''),
@@ -789,7 +790,7 @@ void main() {
       });
 
       testWidgets(
-          'list encoding updates to new encoding process without data loss with $backend',
+          'platform list encoding updates to JSON encoding process without data loss with $backend',
           (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
             getOptions(useDataStore: useDataStore, fileName: 'notDefault');
@@ -806,7 +807,7 @@ void main() {
       });
 
       testWidgets(
-          'old list encoding still functions with getPreferences with $backend',
+          'platform list encoding still functions with getPreferences with $backend',
           (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
             getOptions(useDataStore: useDataStore, fileName: 'notDefault');
@@ -828,7 +829,7 @@ void main() {
       });
 
       testWidgets(
-          'old list encoding with getPreferences can be re-added with new encoding without data loss with $backend',
+          'platform list encoding with getPreferences can be re-added with new encoding without data loss with $backend',
           (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
             getOptions(useDataStore: useDataStore, fileName: 'notDefault');

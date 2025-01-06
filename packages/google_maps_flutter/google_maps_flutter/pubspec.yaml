@@ -29,6 +29,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  leak_tracker_flutter_testing: any
   plugin_platform_interface: ^2.1.7
   stream_transform: ^2.0.0
 

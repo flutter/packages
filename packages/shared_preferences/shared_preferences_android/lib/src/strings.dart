@@ -10,3 +10,6 @@ const String listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
 
 /// String prefix for doubles that are encoded as strings on the platform.
 const String doublePrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu';
+
+/// String prefix for big ints that are encoded as strings on the platform.
+const String bigIntPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy';
