@@ -799,10 +799,10 @@ void main() {
         await clearPreferences(preferences, options);
         await preferences.setStringListLegacyForTesting(
             listKey, testList, options);
-        final List<String>? oldSystemList =
+        final List<String>? platformEncodedList =
             await preferences.getStringList(listKey, options);
-        expect(oldSystemList, testList);
-        await preferences.setStringList(listKey, oldSystemList!, options);
+        expect(platformEncodedList, testList);
+        await preferences.setStringList(listKey, platformEncodedList!, options);
         expect(await preferences.getStringList(listKey, options), testList);
       });
 

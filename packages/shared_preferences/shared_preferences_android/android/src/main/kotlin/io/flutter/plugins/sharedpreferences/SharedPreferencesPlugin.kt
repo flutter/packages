@@ -30,6 +30,8 @@ import kotlinx.coroutines.runBlocking
 
 const val TAG = "SharedPreferencesPlugin"
 const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
+// All identifiers must match the LegacySharedPreferencesPlugin.java file, as well as the
+// strings.dart file.
 const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
 const val JSON_LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
@@ -411,10 +413,13 @@ internal fun preferencesFilter(key: String, value: Any?, allowList: Set<String>?
 /** Transforms preferences that are stored as Strings back to original type. */
 internal fun transformPref(value: Any?, listEncoder: SharedPreferencesListEncoder): Any? {
   if (value is String) {
-    if (value.startsWith(JSON_LIST_PREFIX)) {
-      return value
-    } else if (value.startsWith(LIST_PREFIX)) {
-      return listEncoder.decode(value.substring(LIST_PREFIX.length))
+    if (value.startsWith(LIST_PREFIX)) {
+      // The newer JSON-encoded lists use an extended prefix to distinguish them.
+      if (value.startsWith(JSON_LIST_PREFIX)) {
+        return value
+      } else {
+        return listEncoder.decode(value.substring(LIST_PREFIX.length))
+      }
     } else if (value.startsWith(DOUBLE_PREFIX)) {
       return value.substring(DOUBLE_PREFIX.length).toDouble()
     }

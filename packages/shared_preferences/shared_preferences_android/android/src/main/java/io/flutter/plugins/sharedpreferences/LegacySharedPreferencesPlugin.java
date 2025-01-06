@@ -32,6 +32,7 @@ import java.util.Set;
 public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
   private static final String TAG = "SharedPreferencesPlugin";
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
+  // All identifiers must match the SharedPreferencesPlugin.kt file, as well as the strings.dart file.
   private static final String JSON_LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!";
   private static final String LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
   private static final String BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy";
@@ -102,6 +103,7 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   }
 
   // Deprecated, for testing purposes only.
+  @Deprecated
   @Override
   public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value)
       throws RuntimeException {
@@ -150,10 +152,14 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   private Object transformPref(@NonNull String key, @NonNull Object value) {
     if (value instanceof String) {
       String stringValue = (String) value;
-      if (stringValue.startsWith(JSON_LIST_IDENTIFIER)) {
-        return value;
-      } else if (stringValue.startsWith(LIST_IDENTIFIER)) {
-        return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
+
+      if (value.startsWith(LIST_PREFIX)) {
+        // The newer JSON-encoded lists use an extended prefix to distinguish them.
+        if (value.startsWith(JSON_LIST_PREFIX)) {
+          return value;
+        } else {
+          return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
+        }
       } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
         // TODO (tarrinneal): Remove all BigInt code.
         // https://github.com/flutter/flutter/issues/124420

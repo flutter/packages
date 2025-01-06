@@ -190,12 +190,38 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Adds property to shared preferences data set of type List<String>.
-  ///
-  /// Deprecated, this is only here for testing purposes.
-  Future<void> setStringList(String key, List<String> value,
-      SharedPreferencesPigeonOptions options) async {
+  Future<void> setStringList(
+      String key, String value, SharedPreferencesPigeonOptions options) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setStringList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[key, value, options]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Adds property to shared preferences data set of type List<String>.
+  ///
+  /// Deprecated, this is only here for testing purposes.
+  Future<void> setDeprecatedStringList(String key, List<String> value,
+      SharedPreferencesPigeonOptions options) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDeprecatedStringList$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,

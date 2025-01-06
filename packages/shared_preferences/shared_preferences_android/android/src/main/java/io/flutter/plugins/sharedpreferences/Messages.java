@@ -94,13 +94,16 @@ public class Messages {
     /** Adds property to shared preferences data set of type double. */
     @NonNull
     Boolean setDouble(@NonNull String key, @NonNull Double value);
+    /** Adds property to shared preferences data set of type List<String>. */
+    @NonNull
+    Boolean setStringList(@NonNull String key, @NonNull String value);
     /**
      * Adds property to shared preferences data set of type List<String>.
      *
      * <p>Deprecated, this is only here for testing purposes.
      */
     @NonNull
-    Boolean setStringList(@NonNull String key, @NonNull List<String> value);
+    Boolean setDeprecatedStringList(@NonNull String key, @NonNull List<String> value);
     /** Removes all properties from shared preferences data set with matching prefix. */
     @NonNull
     Boolean clear(@NonNull String prefix, @Nullable List<String> allowList);
@@ -280,9 +283,37 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 String keyArg = (String) args.get(0);
-                List<String> valueArg = (List<String>) args.get(1);
+                String valueArg = (String) args.get(1);
                 try {
                   Boolean output = api.setStringList(keyArg, valueArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDeprecatedStringList"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String keyArg = (String) args.get(0);
+                List<String> valueArg = (List<String>) args.get(1);
+                try {
+                  Boolean output = api.setDeprecatedStringList(keyArg, valueArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

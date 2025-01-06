@@ -94,12 +94,18 @@ interface SharedPreferencesAsyncApi {
   fun setInt(key: String, value: Long, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type double. */
   fun setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions)
+  /** Adds property to shared preferences data set of type List<String>. */
+  fun setStringList(key: String, value: String, options: SharedPreferencesPigeonOptions)
   /**
    * Adds property to shared preferences data set of type List<String>.
    *
    * Deprecated, this is only here for testing purposes.
    */
-  fun setStringList(key: String, value: List<String>, options: SharedPreferencesPigeonOptions)
+  fun setDeprecatedStringList(
+      key: String,
+      value: List<String>,
+      options: SharedPreferencesPigeonOptions
+  )
   /** Gets individual String value stored with [key], if any. */
   fun getString(key: String, options: SharedPreferencesPigeonOptions): String?
   /** Gets individual void value stored with [key], if any. */
@@ -252,11 +258,38 @@ interface SharedPreferencesAsyncApi {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val keyArg = args[0] as String
-            val valueArg = args[1] as List<String>
+            val valueArg = args[1] as String
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
             val wrapped: List<Any?> =
                 try {
                   api.setStringList(keyArg, valueArg, optionsArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setDeprecatedStringList$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val keyArg = args[0] as String
+            val valueArg = args[1] as List<String>
+            val optionsArg = args[2] as SharedPreferencesPigeonOptions
+            val wrapped: List<Any?> =
+                try {
+                  api.setDeprecatedStringList(keyArg, valueArg, optionsArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)

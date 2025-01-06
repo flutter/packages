@@ -4,10 +4,13 @@
 
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:convert';
+
 import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages_async.g.dart';
+import 'package:shared_preferences_android/src/strings.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
@@ -329,7 +332,14 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<bool> setStringList(String key, List<String?> value,
+  Future<bool> setStringList(
+      String key, String value, SharedPreferencesPigeonOptions options) async {
+    items[key] = '$jsonListPrefix${jsonEncode(value)}';
+    return true;
+  }
+
+  @override
+  Future<bool> setDeprecatedStringList(String key, List<String> value,
       SharedPreferencesPigeonOptions options) async {
     items[key] = value;
     return true;

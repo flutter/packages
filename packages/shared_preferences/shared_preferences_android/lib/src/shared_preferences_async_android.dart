@@ -137,8 +137,8 @@ base class SharedPreferencesAsyncAndroid
     return api.setString(key, stringValue, pigeonOptions);
   }
 
-  /// Adds a `List<String>` to preferences using the no longer used system to test
-  /// moving from the old system to the new one.
+  /// Adds a `List<String>` to preferences using platform encoding to test
+  /// moving from platform encoding to json encoding.
   @visibleForTesting
   Future<void> setStringListLegacyForTesting(
     String key,
@@ -148,7 +148,7 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
-    return api.setStringList(key, value, pigeonOptions);
+    return api.setDeprecatedStringList(key, value, pigeonOptions);
   }
 
   @override
