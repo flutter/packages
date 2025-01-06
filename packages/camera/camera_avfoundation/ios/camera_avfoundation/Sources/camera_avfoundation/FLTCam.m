@@ -268,7 +268,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
   // Setup video capture input.
-  _captureVideoInput = [_captureDevice createInput:error];
+  _captureVideoInput = [AVCaptureDeviceInput deviceInputWithDevice:_captureDevice error:error];
 
   // Test the return value of the `deviceInputWithDevice` method to see whether an error occurred.
   // Don’t just test to see whether the error pointer was set to point to an error.

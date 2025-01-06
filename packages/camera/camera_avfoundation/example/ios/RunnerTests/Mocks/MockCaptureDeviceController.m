@@ -118,15 +118,4 @@
   return self.exposureModeSupported;
 }
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
-  if (self.createInputStub) {
-    self.createInputStub(error);
-  }
-  return self.inputToReturn;
-}
-
-@end
-
-@implementation MockCaptureInput
-@synthesize ports;
 @end

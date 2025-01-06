@@ -11,7 +11,8 @@
          mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
          captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
         captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
-          captureSessionQueue:(dispatch_queue_t)captureSessionQueue {
+          captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+    captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory {
   self = [super init];
   if (self) {
     _mediaSettings = mediaSettings;

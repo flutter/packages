@@ -19,7 +19,6 @@
 
 - (void)testFixForCaptureSessionQueueNullPointerCrashDueToRaceCondition {
   MockCaptureDeviceController *captureDevice = [[MockCaptureDeviceController alloc] init];
-  captureDevice.inputToReturn = [[MockCaptureInput alloc] init];
 
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
                                                       messenger:nil

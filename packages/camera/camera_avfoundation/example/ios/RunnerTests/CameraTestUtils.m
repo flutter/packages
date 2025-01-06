@@ -89,7 +89,6 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
   OCMStub([captureDeviceMock activeFormat]).andDo(^(NSInvocation *invocation) {
     [invocation setReturnValue:&format];
   });
-  OCMStub([captureDeviceMock createInput:(NSError * __autoreleasing *)[OCMArg anyPointer]]).andReturn(inputMock);
   
   FLTCamConfiguration *configuration = [[FLTCamConfiguration alloc] initWithMediaSettings:mediaSettings
                                                                      mediaSettingsWrapper:mediaSettingsAVWrapper

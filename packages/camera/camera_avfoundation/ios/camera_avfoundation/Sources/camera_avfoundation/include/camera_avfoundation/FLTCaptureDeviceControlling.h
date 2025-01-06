@@ -7,12 +7,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol FLTCaptureInput <NSObject>
-@property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *ports;
-@end
-
 @protocol FLTCaptureDeviceControlling <NSObject>
 
+// Device
 - (NSString *)uniqueID;
 
 // Position/Orientation
@@ -67,14 +64,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (CMTime)activeVideoMaxFrameDuration;
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration;
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error;
+@end
 
+@protocol FLTCaptureDeviceInputFactory <NSObject>
++ (nullable AVCaptureInput*)deviceInputWithDevice:(id<FLTCaptureDeviceControlling>)device
+                                            error:(NSError **)error;
 @end
 
 @interface AVCaptureDevice (FLTCaptureDeviceControlling) <FLTCaptureDeviceControlling>
 @end
 
-@interface AVCaptureInput (FLTCaptureInput) <FLTCaptureInput>
+@interface AVCaptureDeviceInput (FLTCaptureDeviceInputFactory) <FLTCaptureDeviceInputFactory>
 @end
 
 NS_ASSUME_NONNULL_END
