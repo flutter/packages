@@ -52,7 +52,7 @@ public class BillingClientFactoryImplTest {
 
   @Test
   public void playBillingOnly() {
-    // No logic to verify just ensure creation works.
+    //  No logic to verifyjust ensure creation works.
     BillingClient client =
         factory.createBillingClient(
             context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null);
@@ -100,7 +100,7 @@ public class BillingClientFactoryImplTest {
 
   @Test
   public void pendingPurchasesForPrepaidPlans() {
-    // No logic to verify just ensure creation works.
+    // No logic to verify, just ensure creation works.
     Messages.PendingPurchasesParams params =
         new Messages.PendingPurchasesParams.Builder().setEnablePrepaidPlans(true).build();
     BillingClient client =
