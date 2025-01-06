@@ -108,8 +108,9 @@ void main() {
           verify(mockApi.startConnection(any, any, captureAny));
       expect(
           result.captured.single,
-          isA<PendingPurchasesParams>().having(
-              (PendingPurchasesParams params) => params.enablePrepaidPlans,
+          isA<PlatformPendingPurchasesParams>().having(
+              (PlatformPendingPurchasesParams params) =>
+                  params.enablePrepaidPlans,
               'enablePrepaidPlans',
               true));
     });

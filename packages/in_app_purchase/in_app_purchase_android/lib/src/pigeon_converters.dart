@@ -271,9 +271,9 @@ InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
 }
 
 /// Converts a [PendingPurchasesParamsWrapper] to its Pigeon equivalent.
-PendingPurchasesParams pendingPurchasesParamsFromWrapper(
+PlatformPendingPurchasesParams pendingPurchasesParamsFromWrapper(
     PendingPurchasesParamsWrapper params) {
-  return PendingPurchasesParams(
+  return PlatformPendingPurchasesParams(
     enablePrepaidPlans: params.enablePrepaidPlans,
   );
 }

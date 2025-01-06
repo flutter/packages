@@ -307,9 +307,9 @@ class PlatformInstallmentPlanDetails {
   final int subsequentCommitmentPaymentsCount;
 }
 
-/// Pigeon version of PendingPurchaseParamsWrapper.
-class PendingPurchasesParams {
-  PendingPurchasesParams({
+/// Pigeon version of Java PendingPurchasesParams.
+class PlatformPendingPurchasesParams {
+  PlatformPendingPurchasesParams({
     required this.enablePrepaidPlans,
   });
 
@@ -360,7 +360,7 @@ abstract class InAppPurchaseApi {
   PlatformBillingResult startConnection(
       int callbackHandle,
       PlatformBillingChoiceMode billingMode,
-      PendingPurchasesParams pendingPurchasesParams);
+      PlatformPendingPurchasesParams pendingPurchasesParams);
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();

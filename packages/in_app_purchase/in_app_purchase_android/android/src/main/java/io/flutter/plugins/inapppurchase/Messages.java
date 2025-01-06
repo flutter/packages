@@ -2983,7 +2983,7 @@ public class Messages {
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
-  public static final class PendingPurchasesParams {
+  public static final class PlatformPendingPurchasesParams {
     private @NonNull Boolean enablePrepaidPlans;
 
     public @NonNull Boolean getEnablePrepaidPlans() {
@@ -2998,7 +2998,7 @@ public class Messages {
     }
 
     /** Constructor is non-public to enforce null safety; use Builder. */
-    PendingPurchasesParams() {}
+    PlatformPendingPurchasesParams() {}
 
     @Override
     public boolean equals(Object o) {
@@ -3008,7 +3008,7 @@ public class Messages {
       if (o == null || getClass() != o.getClass()) {
         return false;
       }
-      PendingPurchasesParams that = (PendingPurchasesParams) o;
+      PlatformPendingPurchasesParams that = (PlatformPendingPurchasesParams) o;
       return enablePrepaidPlans.equals(that.enablePrepaidPlans);
     }
 
@@ -3027,8 +3027,8 @@ public class Messages {
         return this;
       }
 
-      public @NonNull PendingPurchasesParams build() {
-        PendingPurchasesParams pigeonReturn = new PendingPurchasesParams();
+      public @NonNull PlatformPendingPurchasesParams build() {
+        PlatformPendingPurchasesParams pigeonReturn = new PlatformPendingPurchasesParams();
         pigeonReturn.setEnablePrepaidPlans(enablePrepaidPlans);
         return pigeonReturn;
       }
@@ -3041,8 +3041,9 @@ public class Messages {
       return toListResult;
     }
 
-    static @NonNull PendingPurchasesParams fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      PendingPurchasesParams pigeonResult = new PendingPurchasesParams();
+    static @NonNull PlatformPendingPurchasesParams fromList(
+        @NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformPendingPurchasesParams pigeonResult = new PlatformPendingPurchasesParams();
       Object enablePrepaidPlans = pigeonVar_list.get(0);
       pigeonResult.setEnablePrepaidPlans((Boolean) enablePrepaidPlans);
       return pigeonResult;
@@ -3122,7 +3123,7 @@ public class Messages {
         case (byte) 151:
           return PlatformInstallmentPlanDetails.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 152:
-          return PendingPurchasesParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPendingPurchasesParams.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -3200,9 +3201,9 @@ public class Messages {
       } else if (value instanceof PlatformInstallmentPlanDetails) {
         stream.write(151);
         writeValue(stream, ((PlatformInstallmentPlanDetails) value).toList());
-      } else if (value instanceof PendingPurchasesParams) {
+      } else if (value instanceof PlatformPendingPurchasesParams) {
         stream.write(152);
-        writeValue(stream, ((PendingPurchasesParams) value).toList());
+        writeValue(stream, ((PlatformPendingPurchasesParams) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -3242,7 +3243,7 @@ public class Messages {
     void startConnection(
         @NonNull Long callbackHandle,
         @NonNull PlatformBillingChoiceMode billingMode,
-        @NonNull PendingPurchasesParams pendingPurchasesParams,
+        @NonNull PlatformPendingPurchasesParams pendingPurchasesParams,
         @NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#endConnection(BillingClientStateListener). */
     void endConnection();
@@ -3347,8 +3348,8 @@ public class Messages {
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 Long callbackHandleArg = (Long) args.get(0);
                 PlatformBillingChoiceMode billingModeArg = (PlatformBillingChoiceMode) args.get(1);
-                PendingPurchasesParams pendingPurchasesParamsArg =
-                    (PendingPurchasesParams) args.get(2);
+                PlatformPendingPurchasesParams pendingPurchasesParamsArg =
+                    (PlatformPendingPurchasesParams) args.get(2);
                 Result<PlatformBillingResult> resultCallback =
                     new Result<PlatformBillingResult>() {
                       public void success(PlatformBillingResult result) {

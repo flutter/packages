@@ -106,8 +106,9 @@ void main() {
       expect(result.captured[1], PlatformBillingChoiceMode.playBillingOnly);
       expect(
           result.captured[2],
-          isA<PendingPurchasesParams>().having(
-              (PendingPurchasesParams params) => params.enablePrepaidPlans,
+          isA<PlatformPendingPurchasesParams>().having(
+              (PlatformPendingPurchasesParams params) =>
+                  params.enablePrepaidPlans,
               'enablePrepaidPlans',
               false));
     });
@@ -165,8 +166,9 @@ void main() {
 
       expect(
           verify(mockApi.startConnection(any, any, captureAny)).captured.first,
-          isA<PendingPurchasesParams>().having(
-              (PendingPurchasesParams params) => params.enablePrepaidPlans,
+          isA<PlatformPendingPurchasesParams>().having(
+              (PlatformPendingPurchasesParams params) =>
+                  params.enablePrepaidPlans,
               'enablePrepaidPlans',
               true));
     });

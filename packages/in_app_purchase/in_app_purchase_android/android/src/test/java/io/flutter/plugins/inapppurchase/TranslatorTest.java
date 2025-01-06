@@ -243,8 +243,10 @@ public class TranslatorTest {
     assertEquals(expected.getOfferToken(), serialized.getOfferToken());
     assertSerialized(expected.getPricingPhases(), serialized.getPricingPhases());
 
-    ProductDetails.InstallmentPlanDetails expectedInstallmentPlanDetails = expected.getInstallmentPlanDetails();
-    Messages.PlatformInstallmentPlanDetails serializedInstallmentPlanDetails = serialized.getInstallmentPlanDetails();
+    ProductDetails.InstallmentPlanDetails expectedInstallmentPlanDetails =
+        expected.getInstallmentPlanDetails();
+    Messages.PlatformInstallmentPlanDetails serializedInstallmentPlanDetails =
+        serialized.getInstallmentPlanDetails();
     assertEquals(expectedInstallmentPlanDetails == null, serializedInstallmentPlanDetails == null);
     if (expectedInstallmentPlanDetails != null && serializedInstallmentPlanDetails != null) {
       assertSerialized(expectedInstallmentPlanDetails, serializedInstallmentPlanDetails);

@@ -11,6 +11,7 @@ import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
@@ -350,6 +351,17 @@ import java.util.Locale;
         .setBillingResult(fromBillingResult(result))
         .setExternalTransactionToken(details == null ? "" : details.getExternalTransactionToken())
         .build();
+  }
+
+  static @NonNull PendingPurchasesParams toPendingPurchasesParams(
+      @Nullable Messages.PlatformPendingPurchasesParams platformPendingPurchasesParams) {
+    PendingPurchasesParams.Builder pendingPurchasesBuilder =
+        PendingPurchasesParams.newBuilder().enableOneTimeProducts();
+    if (platformPendingPurchasesParams != null
+        && platformPendingPurchasesParams.getEnablePrepaidPlans()) {
+      pendingPurchasesBuilder.enablePrepaidPlans();
+    }
+    return pendingPurchasesBuilder.build();
   }
 
   /**

@@ -423,7 +423,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   public void startConnection(
       @NonNull Long handle,
       @NonNull PlatformBillingChoiceMode billingMode,
-      @NonNull Messages.PendingPurchasesParams pendingPurchasesParams,
+      @NonNull Messages.PlatformPendingPurchasesParams pendingPurchasesParams,
       @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =

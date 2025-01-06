@@ -105,7 +105,7 @@ class BillingClient {
         switch (pendingPurchasesParams) {
           final PendingPurchasesParamsWrapper params =>
             pendingPurchasesParamsFromWrapper(params),
-          null => PendingPurchasesParams(enablePrepaidPlans: false)
+          null => PlatformPendingPurchasesParams(enablePrepaidPlans: false)
         },
       ),
     );
