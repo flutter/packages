@@ -746,7 +746,8 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     listener = ImageStreamListener(
       (ImageInfo image, bool synchronousCall) {
         cacheCompleter.removeListener(listener);
-        _images[imageId] = image.image;
+        _images[imageId] = image.image.clone();
+        image.dispose();
         completer.complete();
       },
       onError: (Object exception, StackTrace? stackTrace) {
