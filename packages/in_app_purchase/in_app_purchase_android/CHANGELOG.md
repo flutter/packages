@@ -6,7 +6,7 @@
   * Removes the deprecated `BillingClientWrapper.enablePendingPurchases` method.
   * Bumps `minSdk` to 21.
 * Adds `installmentPlanDetails` to `SubscriptionOfferDetailsWrapper`.
-* Adds APIs to support pending transactions for subscription prepaid plans (`PendingPurchaseParams`).
+* Adds APIs to support pending transactions for subscription prepaid plans (`PendingPurchasesParams`).
 
 ## 0.3.6+13
 
