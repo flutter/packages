@@ -52,7 +52,7 @@ public class BillingClientFactoryImplTest {
 
   @Test
   public void playBillingOnly() {
-    //  No logic to verifyjust ensure creation works.
+    // No logic to verify, just ensure creation works.
     BillingClient client =
         factory.createBillingClient(
             context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null);
@@ -61,7 +61,7 @@ public class BillingClientFactoryImplTest {
 
   @Test
   public void alternativeBillingOnly() {
-    // No logic to verify just ensure creation works.
+    // No logic to verify, just ensure creation works.
     BillingClient client =
         factory.createBillingClient(
             context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null);
