@@ -167,6 +167,8 @@ class PricingPhaseWrapper {
 }
 
 /// Represents additional details of an installment subscription plan.
+///
+/// This wraps [`com.android.billingclient.api.ProductDetails.InstallmentPlanDetails`](https://developer.android.com/reference/com/android/billingclient/api/ProductDetails.InstallmentPlanDetails).
 @JsonSerializable()
 @immutable
 class InstallmentPlanDetailsWrapper {

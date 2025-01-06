@@ -174,6 +174,8 @@ class PurchaseWrapper {
 @immutable
 
 /// Represents a pending change/update to the existing purchase.
+///
+/// This wraps [`com.android.billingclient.api.Purchase.PendingPurchaseUpdate`](https://developer.android.com/reference/com/android/billingclient/api/Purchase.PendingPurchaseUpdate).
 class PendingPurchaseUpdateWrapper {
   /// Creates a pending purchase wrapper update wrapper with the given purchase details.
   const PendingPurchaseUpdateWrapper({
