@@ -300,7 +300,10 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   @override
   Future<Object?> getStringList(
       String key, SharedPreferencesPigeonOptions options) async {
-    return items[key];
+    return (jsonDecode((items[key]! as String).substring(jsonListPrefix.length))
+            as List<dynamic>)
+        .cast<String>()
+        .toList();
   }
 
   @override
