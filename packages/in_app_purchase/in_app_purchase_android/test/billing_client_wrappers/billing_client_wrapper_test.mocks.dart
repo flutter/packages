@@ -120,7 +120,7 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
   _i4.Future<_i2.PlatformBillingResult> startConnection(
     int? callbackHandle,
     _i2.PlatformBillingChoiceMode? billingMode,
-    _i2.PendingPurchasesParams? pendingPurchasesParams,
+    _i2.PlatformPendingPurchasesParams? pendingPurchasesParams,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
