@@ -6,8 +6,11 @@ import 'package:shared_preferences_platform_interface/types.dart';
 
 import '../shared_preferences.dart';
 
-/// A tool to migrate from the legacy SharedPreferences system to
+/// Migrates preferences from the legacy SharedPreferences system to
 /// SharedPreferencesAsync.
+///
+/// This method can be run multiple times without worry of overwriting transferred data,
+/// as long as the [migrationCompletedKey] is not altered manually.
 ///
 /// [legacySharedPreferencesInstance] should be an instance of [SharedPreferences]
 /// that has been instantiated the same way it has been used throughout your app.
@@ -18,16 +21,15 @@ import '../shared_preferences.dart';
 /// that is set up the way you intend to use the new system going forward.
 /// This tool will allow for future use of [SharedPreferencesAsync] and [SharedPreferencesWithCache].
 ///
-/// The [migrationCompletedKey] is a key that will be used to check if the migration
-/// has run before, to avoid overwriting new data going forward. Make sure that
-/// there will not be any collisions with preferences you are or will be setting
-/// going forward, or there may be data loss.
-Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsync(
+/// The [migrationCompletedKey] is a key that is stored in the target preferences
+/// which is used to check if the migration has run before, to avoid overwriting
+/// new data going forward. Make sure that there will not be any collisions with
+/// preferences you are or will be setting going forward, or there may be data loss.
+Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
   SharedPreferences legacySharedPreferencesInstance,
   SharedPreferencesOptions sharedPreferencesAsyncOptions,
-  String migrationCompletedKey, {
-  bool clearLegacyPreferences = false,
-}) async {
+  String migrationCompletedKey,
+) async {
   final SharedPreferencesAsync sharedPreferencesAsyncInstance =
       SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
 
@@ -35,9 +37,8 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsync(
     return;
   }
 
-  Set<String> keys = legacySharedPreferencesInstance.getKeys();
   await legacySharedPreferencesInstance.reload();
-  keys = legacySharedPreferencesInstance.getKeys();
+  final Set<String> keys = legacySharedPreferencesInstance.getKeys();
 
   for (final String key in keys) {
     final Object? value = legacySharedPreferencesInstance.get(key);
@@ -57,7 +58,7 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsync(
         try {
           await sharedPreferencesAsyncInstance.setStringList(
               key, (value! as List<Object?>).cast<String>());
-        } catch (_) {} // Pass over Lists containing non-String values.
+        } on TypeError catch (_) {} // Pass over Lists containing non-String values.
     }
   }
 

@@ -1,6 +1,6 @@
-## 2.3.6
+## 2.4.0
 
-* Adds clarifying comment about allowList handling with an updated prefix.
+* Adds clarifying comment about `allowList` handling with an updated prefix.
 * Adds migration tool to move from legacy `SharedPreferences` to `SharedPreferencesAsync`.
 
 ## 2.3.5
