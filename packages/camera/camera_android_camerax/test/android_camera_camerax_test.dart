@@ -50,8 +50,7 @@ import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException, Uint8List;
-import 'package:flutter/widgets.dart'
-    show BuildContext, Size, Texture, Widget;
+import 'package:flutter/widgets.dart' show BuildContext, Size, Texture, Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -920,9 +919,7 @@ void main() {
     expect(camera.recorder!.qualitySelector, isNull);
   });
 
-  test(
-      'createCamera sets sensor and device orientations needed to correct preview rotation as expected',
-      () async {
+  test('createCamera sets sensor orientation as expected', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 270;
@@ -965,17 +962,7 @@ void main() {
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
 
-    const DeviceOrientationChangedEvent testEvent =
-        DeviceOrientationChangedEvent(testCurrentOrientation);
-
-    DeviceOrientationManager.deviceOrientationChangedStreamController
-        .add(testEvent);
-
-    // Wait for currentDeviceOrientation to update.
-    await Future<void>.value();
-
     expect(camera.sensorOrientation, testSensorOrientation);
-    expect(camera.currentDeviceOrientation, testCurrentOrientation);
   });
 
   test(

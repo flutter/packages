@@ -241,10 +241,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late int sensorOrientation;
 
-  /// The current orientation of the device.
-  @visibleForTesting
-  DeviceOrientation? currentDeviceOrientation;
-
   /// Subscription for listening to changes in device orientation.
   StreamSubscription<DeviceOrientationChangedEvent>?
       _subscriptionForDeviceOrientationChanges;
