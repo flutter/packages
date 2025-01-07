@@ -1,3 +1,8 @@
+## 2.7.17
+
+* Replaces deprecated Android embedder APIs (`onSurfaceCreated` -> `onSurfaceAvailable`).
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 2.7.16
 
 * Updates internal Pigeon API to use newer features.
