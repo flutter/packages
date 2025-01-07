@@ -496,6 +496,19 @@ void main() {
         throwsUnimplementedError,
       );
     });
+
+    test(
+        'Default implementation of supportsImageStreaming() should return false',
+        () {
+      // Arrange
+      final ExtendsCameraPlatform cameraPlatform = ExtendsCameraPlatform();
+
+      // Act & Assert
+      expect(
+        cameraPlatform.supportsImageStreaming(),
+        false,
+      );
+    });
   });
 
   group('exports', () {

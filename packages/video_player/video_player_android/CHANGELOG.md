@@ -1,3 +1,8 @@
+## NEXT
+
+* Suppresses deprecation and removal warnings for
+  `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
+
 ## 2.7.17
 
 * Replaces deprecated Android embedder APIs (`onSurfaceCreated` -> `onSurfaceAvailable`).
