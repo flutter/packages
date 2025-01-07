@@ -94,6 +94,9 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
+  // TODO(bparrishMines): Replace with onSurfaceCleanup once available on stable. See
+  // https://github.com/flutter/flutter/issues/161256.
+  @SuppressWarnings({"deprecation", "removal"})
   public void onSurfaceDestroyed() {
     // Intentionally do not call pause/stop here, because the surface has already been released
     // at this point (see https://github.com/flutter/flutter/issues/156451).
