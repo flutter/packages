@@ -152,8 +152,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       VideoViewOptions(
         playerId: textureId,
         // Texture view was the only supported view type before
-        // buildViewWithOptions was introduced. We pass it here to maintain
-        // backwards compatibility.
+        // buildViewWithOptions was introduced.
         viewType: VideoViewType.textureView,
       ),
     );
