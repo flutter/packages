@@ -10,8 +10,8 @@
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
+#import "./include/video_player_avfoundation/FVPTextureBasedVideoPlayer.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayerTextureApproach.h"
 // Relative path is needed for messages.g.h. See
 // https://github.com/flutter/packages/pull/6675/#discussion_r1591210702
 #import "./include/video_player_avfoundation/messages.g.h"
@@ -93,10 +93,10 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
   BOOL usesTextureApproach =
-      frameUpdater != nil && [player isKindOfClass:[FVPVideoPlayerTextureApproach class]];
+      frameUpdater != nil && [player isKindOfClass:[FVPTextureBasedVideoPlayer class]];
   int64_t playerId;
   if (usesTextureApproach) {
-    playerId = [self.registry registerTexture:(FVPVideoPlayerTextureApproach *)player];
+    playerId = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
     frameUpdater.textureId = playerId;
   } else {
     @synchronized(self) {
@@ -115,7 +115,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
   if (usesTextureApproach) {
     // Ensure that the first frame is drawn once available, even if the video isn't played, since
     // the engine is now expecting the texture to be populated.
-    [(FVPVideoPlayerTextureApproach *)player expectFrame];
+    [(FVPTextureBasedVideoPlayer *)player expectFrame];
   }
 
   return playerId;
@@ -158,11 +158,11 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
     }
     @try {
       if (usesTextureApproach) {
-        player = [[FVPVideoPlayerTextureApproach alloc] initWithAsset:assetPath
-                                                         frameUpdater:frameUpdater
-                                                          displayLink:displayLink
-                                                            avFactory:_avFactory
-                                                            registrar:self.registrar];
+        player = [[FVPTextureBasedVideoPlayer alloc] initWithAsset:assetPath
+                                                      frameUpdater:frameUpdater
+                                                       displayLink:displayLink
+                                                         avFactory:_avFactory
+                                                         registrar:self.registrar];
       } else {
         player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
                                              avFactory:_avFactory
@@ -175,12 +175,12 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
     }
   } else if (options.uri) {
     if (usesTextureApproach) {
-      player = [[FVPVideoPlayerTextureApproach alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                                     frameUpdater:frameUpdater
-                                                      displayLink:displayLink
-                                                      httpHeaders:options.httpHeaders
-                                                        avFactory:_avFactory
-                                                        registrar:self.registrar];
+      player = [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
+                                                  frameUpdater:frameUpdater
+                                                   displayLink:displayLink
+                                                   httpHeaders:options.httpHeaders
+                                                     avFactory:_avFactory
+                                                     registrar:self.registrar];
     } else {
       player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                        httpHeaders:options.httpHeaders
@@ -197,7 +197,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
 - (void)disposePlayer:(NSInteger)playerId error:(FlutterError **)error {
   NSNumber *playerKey = @(playerId);
   FVPVideoPlayer *player = self.playersById[playerKey];
-  if ([player isKindOfClass:[FVPVideoPlayerTextureApproach class]]) {
+  if ([player isKindOfClass:[FVPTextureBasedVideoPlayer class]]) {
     [self.registry unregisterTexture:playerId];
   }
   [self.playersById removeObjectForKey:playerKey];

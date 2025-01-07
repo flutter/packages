@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FVPVideoPlayerTextureApproach_Test.h"
+#import "FVPTextureBasedVideoPlayer_Test.h"
 
-@interface FVPVideoPlayerTextureApproach ()
+@interface FVPTextureBasedVideoPlayer ()
 // The CALayer associated with the Flutter view this plugin is associated with, if any.
 @property(nonatomic, readonly) CALayer *flutterViewLayer;
 // The updater that drives callbacks to the engine to indicate that a new frame is ready.
@@ -17,7 +17,7 @@
 @property(nonatomic, assign) BOOL waitingForFrame;
 @end
 
-@implementation FVPVideoPlayerTextureApproach
+@implementation FVPTextureBasedVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(FVPDisplayLink *)displayLink

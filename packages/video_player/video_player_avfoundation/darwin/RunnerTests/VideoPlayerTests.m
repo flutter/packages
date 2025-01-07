@@ -9,7 +9,7 @@
 #import <OCMock/OCMock.h>
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
 #import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
-#import <video_player_avfoundation/FVPVideoPlayerTextureApproach_Test.h>
+#import <video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h>
 #import <video_player_avfoundation/FVPVideoPlayer_Test.h>
 
 #if TARGET_OS_IOS
@@ -190,8 +190,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
-  FVPVideoPlayerTextureApproach *player =
-      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersById[textureId];
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[textureId];
   XCTAssertNotNil(player);
 
   XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");
@@ -281,8 +281,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // Seeking to a new position should start the display link temporarily.
   OCMVerify([mockDisplayLink setRunning:YES]);
 
-  FVPVideoPlayerTextureApproach *player =
-      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersById[textureId];
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[textureId];
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
@@ -347,8 +347,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       .ignoringNonObjectArgs()
       .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
-  FVPVideoPlayerTextureApproach *player =
-      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersById[textureId];
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[textureId];
   [player copyPixelBuffer];
   // Since a frame was found, and the video is paused, the display link should be paused again.
   OCMVerify([mockDisplayLink setRunning:NO]);
@@ -399,8 +399,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
   OCMVerify([mockDisplayLink setRunning:YES]);
 
-  FVPVideoPlayerTextureApproach *player =
-      (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersById[textureId];
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[textureId];
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
@@ -828,8 +828,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
     XCTAssertNil(error);
     XCTAssertNotNil(textureId);
 
-    FVPVideoPlayerTextureApproach *player =
-        (FVPVideoPlayerTextureApproach *)videoPlayerPlugin.playersById[textureId];
+    FVPTextureBasedVideoPlayer *player =
+        (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[textureId];
     XCTAssertNotNil(player);
     weakPlayer = player;
 
