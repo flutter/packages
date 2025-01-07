@@ -84,16 +84,16 @@
   _deviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
 
   _cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
-                                               messenger:nil
-                                               globalAPI:_eventAPI
-                                        deviceDiscoverer:_deviceDiscoverer
-                                           deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-                                              return mockDevice;
-                                            }
-                                   captureSessionFactory:^id<FLTCaptureSession> _Nonnull{
-    return [[MockCaptureSession alloc] init];
-  }
-  ];
+      messenger:nil
+      globalAPI:_eventAPI
+      deviceDiscoverer:_deviceDiscoverer
+      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        return mockDevice;
+      }
+      captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
+        return [[MockCaptureSession alloc] init];
+      }
+      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
   _cameraPlugin.camera = _camera;
 }
 
@@ -166,16 +166,16 @@
 
   @autoreleasepool {
     CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil
-                                                        messenger:nil
-                                                        globalAPI:_eventAPI
-                                                 deviceDiscoverer:_deviceDiscoverer
-                                                    deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-                                                       return weakDevice;
-                                                     }
-                                            captureSessionFactory:^id<FLTCaptureSession> _Nonnull{
-             return [[MockCaptureSession alloc] init];
-           }
-    ];
+        messenger:nil
+        globalAPI:_eventAPI
+        deviceDiscoverer:_deviceDiscoverer
+        deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+          return weakDevice;
+        }
+        captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
+          return [[MockCaptureSession alloc] init];
+        }
+        captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
     weakPlugin = plugin;
     plugin.captureSessionQueue = captureSessionQueue;
     plugin.camera = _camera;

@@ -36,8 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
-- (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration
-                                error:(NSError **)error;
+- (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.
 - (void)reportInitializationState;

@@ -25,15 +25,16 @@
 
   self.mockDeviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
   self.cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
-                                                   messenger:nil
-                                                   globalAPI:nil
-                                            deviceDiscoverer:_mockDeviceDiscoverer
-                                               deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-                                                  return [[MockCaptureDeviceController alloc] init];
-                                                }
-  captureSessionFactory:^id<FLTCaptureSession> {
-    return [[MockCaptureSession alloc] init];
-  }];
+      messenger:nil
+      globalAPI:nil
+      deviceDiscoverer:_mockDeviceDiscoverer
+      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        return [[MockCaptureDeviceController alloc] init];
+      }
+      captureSessionFactory:^id<FLTCaptureSession> {
+        return [[MockCaptureSession alloc] init];
+      }
+      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
 }
 
 - (void)testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone {

@@ -119,3 +119,32 @@
 }
 
 @end
+
+@implementation MockCaptureInput
+@synthesize ports;
+@end
+
+@implementation MockCaptureDeviceInputFactory
+
+- (nonnull instancetype)init {
+  self = [super init];
+  if (self) {
+    _mockDeviceInput = [[MockCaptureInput alloc] init];
+  }
+  return self;
+}
+
+- (nonnull instancetype)initWithMockDeviceInput:(nonnull id<FLTCaptureInput>)mockDeviceInput {
+  self = [super init];
+  if (self) {
+    _mockDeviceInput = mockDeviceInput;
+  }
+  return self;
+}
+
+- (id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDeviceControlling>)device
+                                       error:(NSError **)error {
+  return _mockDeviceInput;
+}
+
+@end

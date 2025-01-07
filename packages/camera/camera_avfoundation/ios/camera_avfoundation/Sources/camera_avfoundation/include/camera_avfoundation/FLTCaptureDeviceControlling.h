@@ -66,15 +66,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@protocol FLTCaptureInput <NSObject>
+@property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *ports;
+@end
+
 @protocol FLTCaptureDeviceInputFactory <NSObject>
-+ (nullable AVCaptureInput*)deviceInputWithDevice:(id<FLTCaptureDeviceControlling>)device
-                                            error:(NSError **)error;
+- (nullable id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDeviceControlling>)device
+                                                error:(NSError **)error;
 @end
 
 @interface AVCaptureDevice (FLTCaptureDeviceControlling) <FLTCaptureDeviceControlling>
 @end
 
-@interface AVCaptureDeviceInput (FLTCaptureDeviceInputFactory) <FLTCaptureDeviceInputFactory>
+@interface AVCaptureInput (FLTCaptureInput) <FLTCaptureInput>
+@end
+
+@interface FLTDefaultCaptureDeviceInputFactory : NSObject <FLTCaptureDeviceInputFactory>
 @end
 
 NS_ASSUME_NONNULL_END

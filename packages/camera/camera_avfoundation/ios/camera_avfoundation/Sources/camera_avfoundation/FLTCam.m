@@ -60,7 +60,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) id<FLTCaptureSession> videoCaptureSession;
 @property(readonly, nonatomic) id<FLTCaptureSession> audioCaptureSession;
 
-@property(readonly, nonatomic) AVCaptureInput *captureVideoInput;
+@property(readonly, nonatomic) id<FLTCaptureInput> captureVideoInput;
 /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
 /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
 @property(readwrite, nonatomic) CVPixelBufferRef latestPixelBuffer;
@@ -106,6 +106,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
+@property(readonly, nonatomic) id<FLTCaptureDeviceInputFactory> captureDeviceInputFactory;
 @property(readonly, nonatomic) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 /// Reports the given error message to the Dart side of the plugin.
 ///
@@ -171,7 +172,7 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (instancetype)initWithConfiguration:(nonnull FLTCamConfiguration *)configuration
-                                        error:(NSError **)error {
+                                error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _mediaSettings = configuration.mediaSettings;
@@ -185,6 +186,7 @@ static void selectBestFormatForRequestedFrameRate(
   _audioCaptureSession = configuration.audioCaptureSession;
   _captureDeviceFactory = configuration.captureDeviceFactory;
   _captureDevice = _captureDeviceFactory();
+  _captureDeviceInputFactory = configuration.captureDeviceInputFactory;
   _videoDimensionsForFormat = configuration.videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FCPPlatformFlashModeAuto : FCPPlatformFlashModeOff;
   _exposureMode = FCPPlatformExposureModeAuto;
@@ -268,7 +270,8 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
   // Setup video capture input.
-  _captureVideoInput = [AVCaptureDeviceInput deviceInputWithDevice:_captureDevice error:error];
+  _captureVideoInput = [_captureDeviceInputFactory deviceInputWithDevice:_captureDevice
+                                                                   error:error];
 
   // Test the return value of the `deviceInputWithDevice` method to see whether an error occurred.
   // Don’t just test to see whether the error pointer was set to point to an error.
@@ -1166,7 +1169,8 @@ static void selectBestFormatForRequestedFrameRate(
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
              binaryMessenger:messenger];
-    FLTThreadSafeEventChannel *threadSafeEventChannel = [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannel];
+    FLTThreadSafeEventChannel *threadSafeEventChannel =
+        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannel];
 
     _imageStreamHandler = imageStreamHandler;
     __weak typeof(self) weakSelf = self;
@@ -1334,8 +1338,8 @@ static void selectBestFormatForRequestedFrameRate(
   // Create a device input with the device and add it to the session.
   // Setup the audio input.
   AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-  AVCaptureDeviceInput *audioInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice
-                                                                           error:&error];
+  id<FLTCaptureInput> audioInput = [_captureDeviceInputFactory deviceInputWithDevice:audioDevice
+                                                                               error:&error];
   if (error) {
     [self reportErrorMessage:error.description];
   }

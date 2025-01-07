@@ -22,20 +22,22 @@ typedef id<FLTCaptureDeviceControlling> _Nonnull (^CaptureNamedDeviceFactory)(NS
 @property(nonatomic, strong) dispatch_queue_t captureSessionQueue;
 
 /// An internal camera object that manages camera's state and performs camera operations.
-@property(nonatomic, strong) FLTCam * _Nullable camera;
+@property(nonatomic, strong) FLTCam *_Nullable camera;
 
 /// Inject @p FlutterTextureRegistry and @p FlutterBinaryMessenger for unit testing.
-- (nonnull instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> * _Nullable)registry
-                       messenger:(NSObject<FlutterBinaryMessenger> * _Nullable)messenger;
+- (nonnull instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *_Nullable)registry
+                               messenger:(NSObject<FlutterBinaryMessenger> *_Nullable)messenger;
 
 /// Inject @p FlutterTextureRegistry, @p FlutterBinaryMessenger, and Pigeon callback handler for
 /// unit testing.
-- (nonnull instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> * _Nullable)registry
-                       messenger:(NSObject<FlutterBinaryMessenger> * _Nullable)messenger
-                       globalAPI:(FCPCameraGlobalEventApi * _Nullable)globalAPI
-                deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
-                   deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
-           captureSessionFactory:(CaptureSessionFactory)captureSessionFactory NS_DESIGNATED_INITIALIZER;
+- (nonnull instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *_Nullable)registry
+                               messenger:(NSObject<FlutterBinaryMessenger> *_Nullable)messenger
+                               globalAPI:(FCPCameraGlobalEventApi *_Nullable)globalAPI
+                        deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
+                           deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
+                   captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
+               captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory
+    NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.
 - (nonnull instancetype)init NS_UNAVAILABLE;
@@ -52,7 +54,8 @@ typedef id<FLTCaptureDeviceControlling> _Nonnull (^CaptureNamedDeviceFactory)(NS
 /// @param completion the callback to inform the Dart side of the plugin of creation.
 - (void)createCameraOnSessionQueueWithName:(NSString *_Nullable)name
                                   settings:(FCPPlatformMediaSettings *)settings
-                                completion:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+                                completion:(void (^)(NSNumber *_Nullable,
+                                                     FlutterError *_Nullable))completion;
 @end
 
 NS_ASSUME_NONNULL_END

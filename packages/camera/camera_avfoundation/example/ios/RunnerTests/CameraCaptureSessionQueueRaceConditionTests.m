@@ -21,16 +21,16 @@
   MockCaptureDeviceController *captureDevice = [[MockCaptureDeviceController alloc] init];
 
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
-                                                      messenger:nil
-                                                      globalAPI:nil
-                                               deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
-                                                  deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-                                                    return captureDevice;
-  }
-                                          captureSessionFactory:^id<FLTCaptureSession> {
-    return [[MockCaptureSession alloc] init];
-  }
-  ];
+      messenger:nil
+      globalAPI:nil
+      deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
+      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        return captureDevice;
+      }
+      captureSessionFactory:^id<FLTCaptureSession> {
+        return [[MockCaptureSession alloc] init];
+      }
+      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
 
   XCTestExpectation *disposeExpectation =
       [self expectationWithDescription:@"dispose's result block must be called"];

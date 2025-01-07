@@ -30,7 +30,8 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
                  mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
-                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue;
+                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+            captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory;
 
 @property(nonatomic, strong) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 @property(nonatomic, strong) dispatch_queue_t captureSessionQueue;
@@ -42,6 +43,7 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
 @property(nonatomic, assign) UIDeviceOrientation orientation;
 @property(nonatomic, strong) id<FLTCaptureSession> videoCaptureSession;
 @property(nonatomic, strong) id<FLTCaptureSession> audioCaptureSession;
+@property(nonatomic, strong) id<FLTCaptureDeviceInputFactory> captureDeviceInputFactory;
 
 @end
 

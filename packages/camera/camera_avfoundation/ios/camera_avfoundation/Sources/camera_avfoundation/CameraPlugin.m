@@ -30,6 +30,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) id<FLTCameraDeviceDiscovering> deviceDiscoverer;
 @property(readonly, nonatomic) CaptureNamedDeviceFactory captureDeviceFactory;
 @property(readonly, nonatomic) CaptureSessionFactory captureSessionFactory;
+@property(readonly, nonatomic) id<FLTCaptureDeviceInputFactory> captureDeviceInputFactory;
 @end
 
 @implementation CameraPlugin
@@ -43,15 +44,16 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger {
   return [self initWithRegistry:registry
-                      messenger:messenger
-                      globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
-               deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]
-                  deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-                    return [AVCaptureDevice deviceWithUniqueID:name];
-                  }
-          captureSessionFactory:^id<FLTCaptureSession> (void){
-            return [[AVCaptureSession alloc] init];
-          }];
+      messenger:messenger
+      globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
+      deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]
+      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        return [AVCaptureDevice deviceWithUniqueID:name];
+      }
+      captureSessionFactory:^id<FLTCaptureSession>(void) {
+        return [[AVCaptureSession alloc] init];
+      }
+      captureDeviceInputFactory:[[FLTDefaultCaptureDeviceInputFactory alloc] init]];
 }
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
@@ -59,7 +61,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI
                 deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
                    deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
-           captureSessionFactory:(CaptureSessionFactory)captureSessionFactory {
+           captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
+       captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = registry;
@@ -69,6 +72,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   _deviceDiscoverer = deviceDiscoverer;
   _captureDeviceFactory = deviceFactory;
   _captureSessionFactory = captureSessionFactory;
+  _captureDeviceInputFactory = captureDeviceInputFactory;
 
   id<FLTPermissionServicing> permissionService = [[FLTDefaultPermissionService alloc] init];
   _permissionManager =
@@ -491,19 +495,19 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                                                            FlutterError *_Nullable))completion {
   FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper =
       [[FLTCamMediaSettingsAVWrapper alloc] init];
-  
-  FLTCamConfiguration *camConfiguration = [[FLTCamConfiguration alloc] initWithMediaSettings:settings
-                                                                        mediaSettingsWrapper:mediaSettingsAVWrapper
-                                                                        captureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull{
-                                                                          return self.captureDeviceFactory(name);
-                                                                        }
-                                                                       captureSessionFactory:_captureSessionFactory
-                                                                         captureSessionQueue:_captureSessionQueue
-                                                                    ];
+
+  FLTCamConfiguration *camConfiguration =
+      [[FLTCamConfiguration alloc] initWithMediaSettings:settings
+                                    mediaSettingsWrapper:mediaSettingsAVWrapper
+                                    captureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull {
+                                      return self.captureDeviceFactory(name);
+                                    }
+                                   captureSessionFactory:_captureSessionFactory
+                                     captureSessionQueue:_captureSessionQueue
+                               captureDeviceInputFactory:_captureDeviceInputFactory];
 
   NSError *error;
-  FLTCam *cam = [[FLTCam alloc] initWithConfiguration:camConfiguration
-                                                error:&error];
+  FLTCam *cam = [[FLTCam alloc] initWithConfiguration:camConfiguration error:&error];
 
   if (error) {
     completion(nil, FlutterErrorFromNSError(error));

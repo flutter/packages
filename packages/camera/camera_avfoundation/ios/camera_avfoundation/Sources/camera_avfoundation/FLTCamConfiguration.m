@@ -6,13 +6,12 @@
 
 @implementation FLTCamConfiguration
 
-- (instancetype)
-        initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-         mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
-         captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
-        captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
-          captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-    captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory {
+- (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
+                 mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
+                 captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+                captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
+                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
+            captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory {
   self = [super init];
   if (self) {
     _mediaSettings = mediaSettings;
@@ -26,6 +25,7 @@
     _videoDimensionsForFormat = ^CMVideoDimensions(AVCaptureDeviceFormat *format) {
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
     };
+    _captureDeviceInputFactory = captureDeviceInputFactory;
   }
   return self;
 }

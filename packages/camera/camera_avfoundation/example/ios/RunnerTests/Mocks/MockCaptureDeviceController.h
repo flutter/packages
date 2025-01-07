@@ -74,4 +74,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface MockCaptureInput : NSObject <FLTCaptureInput>
+@property(nonatomic, strong) NSArray<AVCaptureInputPort *> *ports;
+@end
+
+@interface MockCaptureDeviceInputFactory : NSObject <FLTCaptureDeviceInputFactory>
+- (nonnull instancetype)initWithMockDeviceInput:(id<FLTCaptureInput>)mockDeviceInput;
+@property(nonatomic, strong) id<FLTCaptureInput> mockDeviceInput;
+@end
+
 NS_ASSUME_NONNULL_END
