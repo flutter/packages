@@ -19,7 +19,7 @@
 #if TARGET_OS_IOS
 @interface FVPNativeVideoView : NSObject <FlutterPlatformView>
 #else
-@interface FVPNativeVideoView : NSWindow
+@interface FVPNativeVideoView : NSView
 #endif
 /// Initializes a new instance of a native view.
 /// It creates a video view instance and sets the provided AVPlayer instance to it.
