@@ -39,6 +39,7 @@
 
 #pragma mark -
 
+// TODO(stuartmorgan): Decouple IDs for platform views and texture views.
 /// The next non-texture player ID, initialized to a high number to avoid collisions with
 /// texture IDs (which are generated separately).
 static int64_t nextNonTexturePlayerId = INT_MAX;
