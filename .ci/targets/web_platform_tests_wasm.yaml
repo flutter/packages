@@ -11,6 +11,8 @@ tasks:
     args: [
       "drive-examples",
       "--web",
+      "--wasm",
       "--run-chromedriver",
       "--exclude=script/configs/exclude_integration_web.yaml",
+      "--exclude=script/configs/exclude_integration_web_wasm.yaml"
     ]

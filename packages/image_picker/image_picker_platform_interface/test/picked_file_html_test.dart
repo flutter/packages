@@ -6,15 +6,18 @@
 library;
 
 import 'dart:convert';
-import 'dart:html' as html;
+import 'dart:js_interop';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
+import 'package:web/web.dart' as web;
 
 const String expectedStringContents = 'Hello, world!';
-final List<int> bytes = utf8.encode(expectedStringContents);
-final html.File textFile = html.File(<List<int>>[bytes], 'hello.txt');
-final String textFileUrl = html.Url.createObjectUrl(textFile);
+final Uint8List bytes = utf8.encode(expectedStringContents);
+final web.File textFile =
+    web.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
+final String textFileUrl = web.URL.createObjectURL(textFile);
 
 void main() {
   group('Create with an objectUrl', () {
