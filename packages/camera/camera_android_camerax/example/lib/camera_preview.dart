@@ -48,9 +48,21 @@ class CameraPreview extends StatelessWidget {
       return child;
     }
 
+  // This is used in the platform side to register the view.
+  const String viewType = '<platform-view-type>';
+  // Pass parameters to the platform side.
+  final Map<String, dynamic> creationParams = <String, dynamic>{};
+
+  final Widget w = AndroidView(
+    viewType: viewType,
+    layoutDirection: TextDirection.ltr,
+    creationParams: creationParams,
+    creationParamsCodec: const StandardMessageCodec(),
+  );
+
     return RotatedBox(
       quarterTurns: _getQuarterTurns(),
-      child: child,
+      child: w,
     );
   }
 
