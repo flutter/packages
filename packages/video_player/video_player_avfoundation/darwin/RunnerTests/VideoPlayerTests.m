@@ -226,8 +226,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypePlatformView]];
+           viewType:FVPPlatformVideoViewTypePlatformView];
   FlutterError *createError;
   [videoPlayerPlugin createWithOptions:create error:&createError];
 
