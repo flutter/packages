@@ -518,7 +518,7 @@ class VideoViewOptions {
   final VideoViewType viewType;
 }
 
-/// [VideoViewOptions] contains creation options for a video player.
+/// [VideoCreationOptions] contains creation options for a video player.
 @immutable
 class VideoCreationOptions {
   /// Constructs an instance of [VideoCreationOptions].
