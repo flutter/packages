@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// We only support platform views on iOS as of now. Ifdefs are used to avoid compilation errors.
+// Platform views are only supported on iOS as of now. Ifdefs are used to avoid compilation errors.
 
 #import <TargetConditionals.h>
 
