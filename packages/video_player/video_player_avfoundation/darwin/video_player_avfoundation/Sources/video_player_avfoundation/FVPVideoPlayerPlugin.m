@@ -59,7 +59,9 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
   // We only support platform views on iOS as of now.
   FVPNativeVideoViewFactory *factory =
       [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
-                                               playersById:instance.playersById];
+                                        playerByIdProvider:^FVPVideoPlayer *(NSNumber *playerId) {
+                                          return instance->_playersById[playerId];
+                                        }];
   [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
 #endif
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
