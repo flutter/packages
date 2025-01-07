@@ -41,7 +41,7 @@
 
 /// The next non-texture player ID, initialized to a high number to avoid collisions with
 /// texture IDs (which are generated separately).
-static int64_t nextNonTexturePlayerId = 1000000;
+static int64_t nextNonTexturePlayerId = INT_MAX;
 
 @interface FVPVideoPlayerPlugin ()
 @property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry> *registry;
@@ -100,7 +100,7 @@ static int64_t nextNonTexturePlayerId = 1000000;
     frameUpdater.textureId = playerId;
   } else {
     @synchronized(self) {
-      playerId = nextNonTexturePlayerId++;
+      playerId = nextNonTexturePlayerId--;
     }
   }
 
