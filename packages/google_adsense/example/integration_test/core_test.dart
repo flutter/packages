@@ -11,7 +11,7 @@ import 'package:google_adsense/google_adsense.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:web/web.dart' as web;
 
-import 'adsense_test_js_interop.dart';
+import 'js_interop_mocks/adsense_test_js_interop.dart';
 
 const String testClient = 'test_client';
 const String testScriptUrl =
@@ -33,7 +33,6 @@ void main() async {
   group('adSense.initialize', () {
     testWidgets('adds AdSense script tag.', (WidgetTester _) async {
       final web.HTMLElement target = web.HTMLDivElement();
-      // Given
 
       await adSense.initialize(testClient, jsLoaderTarget: target);
 
@@ -44,6 +43,39 @@ void main() async {
       expect(injected!.src, testScriptUrl);
       expect(injected.crossOrigin, 'anonymous');
       expect(injected.async, true);
+    });
+
+    testWidgets('sets AdSenseCodeParameters in script tag.',
+        (WidgetTester _) async {
+      final web.HTMLElement target = web.HTMLDivElement();
+
+      await adSense.initialize(testClient,
+          jsLoaderTarget: target,
+          adSenseCodeParameters: AdSenseCodeParameters(
+            adHost: 'test-adHost',
+            admobInterstitialSlot: 'test-admobInterstitialSlot',
+            admobRewardedSlot: 'test-admobRewardedSlot',
+            adChannel: 'test-adChannel',
+            adbreakTest: 'test-adbreakTest',
+            tagForChildDirectedTreatment: 'test-tagForChildDirectedTreatment',
+            tagForUnderAgeOfConsent: 'test-tagForUnderAgeOfConsent',
+            adFrequencyHint: 'test-adFrequencyHint',
+          ));
+
+      final web.HTMLScriptElement injected =
+          target.lastElementChild! as web.HTMLScriptElement;
+
+      expect(injected.dataset['adHost'], 'test-adHost');
+      expect(injected.dataset['admobInterstitialSlot'],
+          'test-admobInterstitialSlot');
+      expect(injected.dataset['admobRewardedSlot'], 'test-admobRewardedSlot');
+      expect(injected.dataset['adChannel'], 'test-adChannel');
+      expect(injected.dataset['adbreakTest'], 'test-adbreakTest');
+      expect(injected.dataset['tagForChildDirectedTreatment'],
+          'test-tagForChildDirectedTreatment');
+      expect(injected.dataset['tagForUnderAgeOfConsent'],
+          'test-tagForUnderAgeOfConsent');
+      expect(injected.dataset['adFrequencyHint'], 'test-adFrequencyHint');
     });
 
     testWidgets('Skips initialization if script is already present.',
@@ -64,7 +96,7 @@ void main() async {
       final web.HTMLElement target = web.HTMLDivElement();
 
       // Write an empty noop object
-      mockAdsByGoogle(() {});
+      mockAdsByGoogle((_) {});
 
       await adSense.initialize(testClient, jsLoaderTarget: target);
 

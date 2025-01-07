@@ -1,3 +1,8 @@
+## 0.3.20+3
+
+* Fixes `finishTransaction` not completing.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.3.20+2
 
 * Fixes price not being displayed correctly.
