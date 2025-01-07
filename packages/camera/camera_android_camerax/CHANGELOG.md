@@ -1,3 +1,7 @@
+## 0.6.12
+
+* Removes logic added to correct the rotation of the camera preview, since it is no longer required.
+
 ## 0.6.11
 
 * Replaces deprecated Android embedder APIs (`onSurfaceCreated` -> `onSurfaceAvailable`).
