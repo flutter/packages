@@ -44,13 +44,13 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
                   packageName:(nullable NSString *)packageName
                    formatHint:(nullable NSString *)formatHint
                   httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
-                     viewType:(nullable FVPPlatformVideoViewTypeBox *)viewType;
+                     viewType:(FVPPlatformVideoViewType)viewType;
 @property(nonatomic, copy, nullable) NSString *asset;
 @property(nonatomic, copy, nullable) NSString *uri;
 @property(nonatomic, copy, nullable) NSString *packageName;
 @property(nonatomic, copy, nullable) NSString *formatHint;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
-@property(nonatomic, strong, nullable) FVPPlatformVideoViewTypeBox *viewType;
+@property(nonatomic, assign) FVPPlatformVideoViewType viewType;
 @end
 
 /// The codec used by all APIs.

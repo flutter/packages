@@ -64,7 +64,7 @@ class CreationOptions {
     this.packageName,
     this.formatHint,
     required this.httpHeaders,
-    this.viewType,
+    required this.viewType,
   });
 
   String? asset;
@@ -77,7 +77,7 @@ class CreationOptions {
 
   Map<String, String> httpHeaders;
 
-  PlatformVideoViewType? viewType;
+  PlatformVideoViewType viewType;
 
   Object encode() {
     return <Object?>[
@@ -99,7 +99,7 @@ class CreationOptions {
       formatHint: result[3] as String?,
       httpHeaders:
           (result[4] as Map<Object?, Object?>?)!.cast<String, String>(),
-      viewType: result[5] as PlatformVideoViewType?,
+      viewType: result[5]! as PlatformVideoViewType,
     );
   }
 }

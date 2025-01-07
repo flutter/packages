@@ -34,13 +34,17 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreationOptions {
-  CreationOptions({required this.httpHeaders});
+  CreationOptions({
+    required this.httpHeaders,
+    required this.viewType,
+  });
+
   String? asset;
   String? uri;
   String? packageName;
   String? formatHint;
   Map<String, String> httpHeaders;
-  PlatformVideoViewType? viewType;
+  PlatformVideoViewType viewType;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')

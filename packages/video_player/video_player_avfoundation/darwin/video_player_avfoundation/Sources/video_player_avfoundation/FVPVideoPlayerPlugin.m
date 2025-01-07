@@ -137,7 +137,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
 
 - (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
                                    error:(FlutterError **)error {
-  BOOL usesTextureApproach = options.viewType.value == FVPPlatformVideoViewTypeTextureView;
+  BOOL usesTextureApproach = options.viewType == FVPPlatformVideoViewTypeTextureView;
   FVPFrameUpdater *frameUpdater;
   FVPDisplayLink *displayLink;
   if (usesTextureApproach) {

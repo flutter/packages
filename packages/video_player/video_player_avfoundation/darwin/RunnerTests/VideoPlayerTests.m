@@ -186,8 +186,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
@@ -263,8 +262,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -332,8 +330,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -385,8 +382,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -450,8 +446,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -480,8 +475,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
@@ -514,8 +508,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(textureId);
@@ -641,8 +634,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *textureId = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
@@ -681,8 +673,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         packageName:nil
          formatHint:nil
         httpHeaders:@{}
-           viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                        initWithValue:FVPPlatformVideoViewTypeTextureView]];
+           viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *textureId = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
@@ -711,8 +702,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                             packageName:nil
                              formatHint:nil
                             httpHeaders:@{}
-                               viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                                            initWithValue:FVPPlatformVideoViewTypeTextureView]];
+                               viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
 
   FVPVideoPlayer *player = videoPlayerPlugin.playersById[textureId];
@@ -778,8 +768,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
           packageName:nil
            formatHint:nil
           httpHeaders:@{}
-             viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                          initWithValue:FVPPlatformVideoViewTypeTextureView]];
+             viewType:FVPPlatformVideoViewTypeTextureView];
     NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(textureId);
@@ -834,8 +823,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
           packageName:nil
            formatHint:nil
           httpHeaders:@{}
-             viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                          initWithValue:FVPPlatformVideoViewTypeTextureView]];
+             viewType:FVPPlatformVideoViewTypeTextureView];
     NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(textureId);
@@ -915,8 +903,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                             packageName:nil
                              formatHint:nil
                             httpHeaders:@{}
-                               viewType:[[FVPPlatformVideoViewTypeBox alloc]
-                                            initWithValue:FVPPlatformVideoViewTypeTextureView]];
+                               viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
   FVPVideoPlayer *player = videoPlayerPlugin.playersById[textureId];
   XCTAssertNotNil(player);
