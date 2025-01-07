@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'constants.dart';
@@ -134,20 +135,23 @@ _FQDNReadResult _readFQDN(
 
   final List<String> parts = <String>[];
   final int prevOffset = offset;
+  final List<int> offsetsToVisit = <int>[offset];
+  int highestOffsetRead = offset;
+
+  while (offsetsToVisit.isNotEmpty) {
+  offset = offsetsToVisit.removeLast();
+
   while (true) {
     // At least one byte is required.
     checkLength(offset + 1);
-
     // Check for compressed.
     if (data[offset] & 0xc0 == 0xc0) {
       // At least two bytes are required for a compressed FQDN.
       checkLength(offset + 2);
 
       // A compressed FQDN has a new offset in the lower 14 bits.
-      final _FQDNReadResult result = _readFQDN(
-          data, byteData, byteData.getUint16(offset) & ~0xc000, length);
-      parts.addAll(result.fqdnParts);
-      offset += 2;
+      offsetsToVisit.add(byteData.getUint16(offset) & ~0xc000);
+      highestOffsetRead = max(highestOffsetRead, offset + 2);
       break;
     } else {
       // A normal FQDN part has a length and a UTF-8 encoded name
@@ -163,12 +167,15 @@ _FQDNReadResult _readFQDN(
         // we should continue decoding even if it isn't to avoid dropping the
         // rest of the data, which might still be useful.
         parts.add(utf8.decode(partBytes, allowMalformed: true));
+        highestOffsetRead = max(highestOffsetRead, offset);
       } else {
+        highestOffsetRead = max(highestOffsetRead, offset);
         break;
       }
     }
+    }
   }
-  return _FQDNReadResult(parts, offset - prevOffset);
+  return _FQDNReadResult(parts, highestOffsetRead - prevOffset);
 }
 
 /// Decode an mDNS query packet.
