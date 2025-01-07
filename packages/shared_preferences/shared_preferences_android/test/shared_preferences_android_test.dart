@@ -344,7 +344,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
 
   @override
   Future<bool> setStringList(String key, String value) async {
-    items[key] = '$jsonListPrefix${jsonEncode(value)}';
+    items[key] = value;
     return true;
   }
 
