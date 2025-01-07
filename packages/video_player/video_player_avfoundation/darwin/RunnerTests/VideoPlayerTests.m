@@ -279,10 +279,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   // Seeking to a new position should start the display link temporarily.
   OCMVerify([mockDisplayLink setRunning:YES]);
-
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[textureId];
-  XCTAssertEqual([player position], 1234);
+  // Wait for the player's position to update, it shouldn't take long.
+  XCTestExpectation *positionExpectation =
+      [self expectationForPredicate:[NSPredicate predicateWithFormat:@"position == 1234"]
+                evaluatedWithObject:player
+                            handler:nil];
+  [self waitForExpectations:@[ positionExpectation ] timeout:3.0];
 
   // Simulate a buffer being available.
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
