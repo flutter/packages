@@ -83,10 +83,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
         surfaceProducer.setCallback(
             new TextureRegistry.SurfaceProducer.Callback() {
               @Override
-              // TODO(matanlurey): Replace with onSurfaceAvailable once available on stable;
-              // https://github.com/flutter/flutter/issues/155131.
-              @SuppressWarnings({"deprecation", "removal"})
-              public void onSurfaceCreated() {
+              public void onSurfaceAvailable() {
                 // Do nothing. The Preview.SurfaceProvider will handle this whenever a new
                 // Surface is needed.
               }
