@@ -101,9 +101,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
     playerId = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
     frameUpdater.textureId = playerId;
   } else {
-    @synchronized(self) {
-      playerId = nextNonTexturePlayerId--;
-    }
+    playerId = nextNonTexturePlayerId--;
   }
 
   FlutterEventChannel *eventChannel = [FlutterEventChannel
