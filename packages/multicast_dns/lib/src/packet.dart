@@ -139,40 +139,40 @@ _FQDNReadResult _readFQDN(
   int highestOffsetRead = offset;
 
   while (offsetsToVisit.isNotEmpty) {
-  offset = offsetsToVisit.removeLast();
+    offset = offsetsToVisit.removeLast();
 
-  while (true) {
-    // At least one byte is required.
-    checkLength(offset + 1);
-    // Check for compressed.
-    if (data[offset] & 0xc0 == 0xc0) {
-      // At least two bytes are required for a compressed FQDN.
-      checkLength(offset + 2);
+    while (true) {
+      // At least one byte is required.
+      checkLength(offset + 1);
+      // Check for compressed.
+      if (data[offset] & 0xc0 == 0xc0) {
+        // At least two bytes are required for a compressed FQDN.
+        checkLength(offset + 2);
 
-      // A compressed FQDN has a new offset in the lower 14 bits.
-      offsetsToVisit.add(byteData.getUint16(offset) & ~0xc000);
-      highestOffsetRead = max(highestOffsetRead, offset + 2);
-      break;
-    } else {
-      // A normal FQDN part has a length and a UTF-8 encoded name
-      // part. If the length is 0 this is the end of the FQDN.
-      final int partLength = data[offset];
-      offset++;
-      if (partLength > 0) {
-        checkLength(offset + partLength);
-        final Uint8List partBytes =
-            Uint8List.view(data.buffer, offset, partLength);
-        offset += partLength;
-        // According to the RFC, this is supposed to be utf-8 encoded, but
-        // we should continue decoding even if it isn't to avoid dropping the
-        // rest of the data, which might still be useful.
-        parts.add(utf8.decode(partBytes, allowMalformed: true));
-        highestOffsetRead = max(highestOffsetRead, offset);
-      } else {
-        highestOffsetRead = max(highestOffsetRead, offset);
+        // A compressed FQDN has a new offset in the lower 14 bits.
+        offsetsToVisit.add(byteData.getUint16(offset) & ~0xc000);
+        highestOffsetRead = max(highestOffsetRead, offset + 2);
         break;
+      } else {
+        // A normal FQDN part has a length and a UTF-8 encoded name
+        // part. If the length is 0 this is the end of the FQDN.
+        final int partLength = data[offset];
+        offset++;
+        if (partLength > 0) {
+          checkLength(offset + partLength);
+          final Uint8List partBytes =
+              Uint8List.view(data.buffer, offset, partLength);
+          offset += partLength;
+          // According to the RFC, this is supposed to be utf-8 encoded, but
+          // we should continue decoding even if it isn't to avoid dropping the
+          // rest of the data, which might still be useful.
+          parts.add(utf8.decode(partBytes, allowMalformed: true));
+          highestOffsetRead = max(highestOffsetRead, offset);
+        } else {
+          highestOffsetRead = max(highestOffsetRead, offset);
+          break;
+        }
       }
-    }
     }
   }
   return _FQDNReadResult(parts, highestOffsetRead - prevOffset);
