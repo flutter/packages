@@ -930,8 +930,6 @@ void main() {
     const bool enableAudio = true;
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
     const DeviceOrientation testUiOrientation = DeviceOrientation.portraitDown;
-    const DeviceOrientation testCurrentOrientation =
-        DeviceOrientation.portraitUp;
 
     // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
