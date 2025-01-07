@@ -1,3 +1,8 @@
+## 0.6.11
+
+* Replaces deprecated Android embedder APIs (`onSurfaceCreated` -> `onSurfaceAvailable`).
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.6.10+3
 
 * Bumps com.google.guava:guava from 33.3.1-android to 33.4.0-android.

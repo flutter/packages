@@ -47,6 +47,7 @@
 - mime
 - mockito
 - path
+- package_config
 - platform
 - pub_semver
 - shelf
