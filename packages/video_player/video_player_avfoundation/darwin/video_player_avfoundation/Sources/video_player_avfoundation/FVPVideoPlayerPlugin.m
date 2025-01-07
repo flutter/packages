@@ -94,10 +94,10 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
-  BOOL usesTextureApproach =
+  BOOL textureBased =
       frameUpdater != nil && [player isKindOfClass:[FVPTextureBasedVideoPlayer class]];
   int64_t playerId;
-  if (usesTextureApproach) {
+  if (textureBased) {
     playerId = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
     frameUpdater.textureId = playerId;
   } else {
@@ -114,7 +114,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
   player.eventChannel = eventChannel;
   self.playersById[@(playerId)] = player;
 
-  if (usesTextureApproach) {
+  if (textureBased) {
     // Ensure that the first frame is drawn once available, even if the video isn't played, since
     // the engine is now expecting the texture to be populated.
     [(FVPTextureBasedVideoPlayer *)player expectFrame];
@@ -139,10 +139,10 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
 
 - (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
                                    error:(FlutterError **)error {
-  BOOL usesTextureApproach = options.viewType == FVPPlatformVideoViewTypeTextureView;
+  BOOL textureBased = options.viewType == FVPPlatformVideoViewTypeTextureView;
   FVPFrameUpdater *frameUpdater;
   FVPDisplayLink *displayLink;
-  if (usesTextureApproach) {
+  if (textureBased) {
     frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
     displayLink = [self.displayLinkFactory displayLinkWithRegistrar:_registrar
                                                            callback:^() {
@@ -159,7 +159,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
       assetPath = [_registrar lookupKeyForAsset:options.asset];
     }
     @try {
-      if (usesTextureApproach) {
+      if (textureBased) {
         player = [[FVPTextureBasedVideoPlayer alloc] initWithAsset:assetPath
                                                       frameUpdater:frameUpdater
                                                        displayLink:displayLink
@@ -176,7 +176,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
       return nil;
     }
   } else if (options.uri) {
-    if (usesTextureApproach) {
+    if (textureBased) {
       player = [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                                   frameUpdater:frameUpdater
                                                    displayLink:displayLink
