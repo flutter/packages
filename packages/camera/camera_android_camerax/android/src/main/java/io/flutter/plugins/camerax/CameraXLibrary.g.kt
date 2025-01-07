@@ -4013,7 +4013,9 @@ public class DeviceOrientationManagerProxyApiTest {
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(targetRotation: Long?, resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?): androidx.camera.core.Preview
+  abstract fun pigeon_defaultConstructor(resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?, targetRotation: Long?): androidx.camera.core.Preview
+
+  abstract fun resolutionSelector(pigeon_instance: androidx.camera.core.Preview): androidx.camera.core.resolutionselector.ResolutionSelector?
 
   /**
    * Sets a SurfaceProvider to provide a Surface for Preview.
@@ -4049,10 +4051,10 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
-            val targetRotationArg = args[1] as Long?
-            val resolutionSelectorArg = args[2] as androidx.camera.core.resolutionselector.ResolutionSelector?
+            val resolutionSelectorArg = args[1] as androidx.camera.core.resolutionselector.ResolutionSelector?
+            val targetRotationArg = args[2] as Long?
             val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(targetRotationArg,resolutionSelectorArg), pigeon_identifierArg)
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionSelectorArg,targetRotationArg), pigeon_identifierArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -4153,11 +4155,12 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
       return
     }
     val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val resolutionSelectorArg = resolutionSelector(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.camera_android_camerax.Preview.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
+    channel.send(listOf(pigeon_identifierArg, resolutionSelectorArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -4204,8 +4207,14 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @NonNull
   @Override
-  public Preview pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
-    return Preview(targetRotation, resolutionSelector);
+  public Preview pigeon_defaultConstructor(@Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector, @Nullable Long? targetRotation) {
+    return Preview(targetRotation);
+  }
+
+  @Nullable
+  @Override
+  public androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector(Preview pigeon_instance) {
+    return pigeon_instance.getResolutionSelector();
   }
 
   @NonNull
@@ -4259,7 +4268,18 @@ public class PreviewProxyApiTest {
   public void pigeon_defaultConstructor() {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
-    assertTrue(api.pigeon_defaultConstructor(0, mock(ResolutionSelector.class)) instanceof PreviewProxyApi.Preview);
+    assertTrue(api.pigeon_defaultConstructor(0) instanceof PreviewProxyApi.Preview);
+  }
+
+  @Test
+  public void resolutionSelector() {
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+
+    final Preview instance = mock(Preview.class);
+    final androidx.camera.core.resolutionselector.ResolutionSelector value = mock(ResolutionSelector.class);
+    when(instance.getResolutionSelector()).thenReturn(value);
+
+    assertEquals(value, api.resolutionSelector(instance));
   }
 
   @Test
@@ -5403,7 +5423,9 @@ public class RecordingProxyApiTest {
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(targetRotation: Long?, flashMode: CameraXFlashMode?, resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?): androidx.camera.core.ImageCapture
+  abstract fun pigeon_defaultConstructor(resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?, targetRotation: Long?, flashMode: CameraXFlashMode?): androidx.camera.core.ImageCapture
+
+  abstract fun resolutionSelector(pigeon_instance: androidx.camera.core.ImageCapture): androidx.camera.core.resolutionselector.ResolutionSelector?
 
   /** Set the flash mode. */
   abstract fun setFlashMode(pigeon_instance: androidx.camera.core.ImageCapture, flashMode: CameraXFlashMode)
@@ -5424,11 +5446,11 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
-            val targetRotationArg = args[1] as Long?
-            val flashModeArg = args[2] as CameraXFlashMode?
-            val resolutionSelectorArg = args[3] as androidx.camera.core.resolutionselector.ResolutionSelector?
+            val resolutionSelectorArg = args[1] as androidx.camera.core.resolutionselector.ResolutionSelector?
+            val targetRotationArg = args[2] as Long?
+            val flashModeArg = args[3] as CameraXFlashMode?
             val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(targetRotationArg,flashModeArg,resolutionSelectorArg), pigeon_identifierArg)
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionSelectorArg,targetRotationArg,flashModeArg), pigeon_identifierArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -5515,11 +5537,12 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
       return
     }
     val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val resolutionSelectorArg = resolutionSelector(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.camera_android_camerax.ImageCapture.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
+    channel.send(listOf(pigeon_identifierArg, resolutionSelectorArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -5565,8 +5588,14 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
 
   @NonNull
   @Override
-  public ImageCapture pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable CameraXFlashMode? flashMode, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
-    return ImageCapture(targetRotation, flashMode, resolutionSelector);
+  public ImageCapture pigeon_defaultConstructor(@Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector, @Nullable Long? targetRotation, @Nullable CameraXFlashMode? flashMode) {
+    return ImageCapture(targetRotation, flashMode);
+  }
+
+  @Nullable
+  @Override
+  public androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector(ImageCapture pigeon_instance) {
+    return pigeon_instance.getResolutionSelector();
   }
 
   @Override
@@ -5613,7 +5642,18 @@ public class ImageCaptureProxyApiTest {
   public void pigeon_defaultConstructor() {
     final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
 
-    assertTrue(api.pigeon_defaultConstructor(0, io.flutter.plugins.camerax.CameraXFlashMode.AUTO, mock(ResolutionSelector.class)) instanceof ImageCaptureProxyApi.ImageCapture);
+    assertTrue(api.pigeon_defaultConstructor(0, io.flutter.plugins.camerax.CameraXFlashMode.AUTO) instanceof ImageCaptureProxyApi.ImageCapture);
+  }
+
+  @Test
+  public void resolutionSelector() {
+    final PigeonApiImageCapture api = new TestProxyApiRegistrar().getPigeonApiImageCapture();
+
+    final ImageCapture instance = mock(ImageCapture.class);
+    final androidx.camera.core.resolutionselector.ResolutionSelector value = mock(ResolutionSelector.class);
+    when(instance.getResolutionSelector()).thenReturn(value);
+
+    assertEquals(value, api.resolutionSelector(instance));
   }
 
   @Test
@@ -5817,7 +5857,9 @@ public class ResolutionStrategyProxyApiTest {
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(aspectRatioStrategy: androidx.camera.core.resolutionselector.AspectRatioStrategy?, resolutionStrategy: androidx.camera.core.resolutionselector.ResolutionStrategy?, resolutionFilter: androidx.camera.core.resolutionselector.ResolutionFilter?): androidx.camera.core.resolutionselector.ResolutionSelector
+  abstract fun pigeon_defaultConstructor(resolutionStrategy: androidx.camera.core.resolutionselector.ResolutionStrategy?, aspectRatioStrategy: androidx.camera.core.resolutionselector.AspectRatioStrategy?, resolutionFilter: androidx.camera.core.resolutionselector.ResolutionFilter?): androidx.camera.core.resolutionselector.ResolutionSelector
+
+  abstract fun resolutionStrategy(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): androidx.camera.core.resolutionselector.ResolutionStrategy?
 
   companion object {
     @Suppress("LocalVariableName")
@@ -5829,11 +5871,11 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
-            val aspectRatioStrategyArg = args[1] as androidx.camera.core.resolutionselector.AspectRatioStrategy?
-            val resolutionStrategyArg = args[2] as androidx.camera.core.resolutionselector.ResolutionStrategy?
+            val resolutionStrategyArg = args[1] as androidx.camera.core.resolutionselector.ResolutionStrategy?
+            val aspectRatioStrategyArg = args[2] as androidx.camera.core.resolutionselector.AspectRatioStrategy?
             val resolutionFilterArg = args[3] as androidx.camera.core.resolutionselector.ResolutionFilter?
             val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(aspectRatioStrategyArg,resolutionStrategyArg,resolutionFilterArg), pigeon_identifierArg)
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionStrategyArg,aspectRatioStrategyArg,resolutionFilterArg), pigeon_identifierArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -5862,11 +5904,12 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
       return
     }
     val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val resolutionStrategyArg = resolutionStrategy(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.camera_android_camerax.ResolutionSelector.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
+    channel.send(listOf(pigeon_identifierArg, resolutionStrategyArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -5890,8 +5933,8 @@ package io.flutter.plugins.camerax;
 
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
-import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import androidx.camera.core.resolutionselector.ResolutionFilter;
+import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -5907,8 +5950,14 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
 
   @NonNull
   @Override
-  public ResolutionSelector pigeon_defaultConstructor(@Nullable androidx.camera.core.resolutionselector.AspectRatioStrategy? aspectRatioStrategy, @Nullable androidx.camera.core.resolutionselector.ResolutionStrategy? resolutionStrategy, @Nullable androidx.camera.core.resolutionselector.ResolutionFilter? resolutionFilter) {
-    return ResolutionSelector(aspectRatioStrategy, resolutionStrategy, resolutionFilter);
+  public ResolutionSelector pigeon_defaultConstructor(@Nullable androidx.camera.core.resolutionselector.ResolutionStrategy? resolutionStrategy, @Nullable androidx.camera.core.resolutionselector.AspectRatioStrategy? aspectRatioStrategy, @Nullable androidx.camera.core.resolutionselector.ResolutionFilter? resolutionFilter) {
+    return ResolutionSelector(aspectRatioStrategy, resolutionFilter);
+  }
+
+  @Nullable
+  @Override
+  public androidx.camera.core.resolutionselector.ResolutionStrategy? resolutionStrategy(ResolutionSelector pigeon_instance) {
+    return pigeon_instance.getResolutionStrategy();
   }
 
 }
@@ -5923,8 +5972,8 @@ package io.flutter.plugins.camerax
 
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.AspectRatioStrategy
-import androidx.camera.core.resolutionselector.ResolutionStrategy
 import androidx.camera.core.resolutionselector.ResolutionFilter
+import androidx.camera.core.resolutionselector.ResolutionStrategy
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -5941,7 +5990,18 @@ public class ResolutionSelectorProxyApiTest {
   public void pigeon_defaultConstructor() {
     final PigeonApiResolutionSelector api = new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
 
-    assertTrue(api.pigeon_defaultConstructor(mock(AspectRatioStrategy.class), mock(ResolutionStrategy.class), mock(ResolutionFilter.class)) instanceof ResolutionSelectorProxyApi.ResolutionSelector);
+    assertTrue(api.pigeon_defaultConstructor(mock(AspectRatioStrategy.class), mock(ResolutionFilter.class)) instanceof ResolutionSelectorProxyApi.ResolutionSelector);
+  }
+
+  @Test
+  public void resolutionStrategy() {
+    final PigeonApiResolutionSelector api = new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
+
+    final ResolutionSelector instance = mock(ResolutionSelector.class);
+    final androidx.camera.core.resolutionselector.ResolutionStrategy value = mock(ResolutionStrategy.class);
+    when(instance.getResolutionStrategy()).thenReturn(value);
+
+    assertEquals(value, api.resolutionStrategy(instance));
   }
 
 }
@@ -6549,7 +6609,9 @@ public class ZoomStateProxyApiTest {
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiImageAnalysis(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
-  abstract fun pigeon_defaultConstructor(targetRotation: Long?, resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?): androidx.camera.core.ImageAnalysis
+  abstract fun pigeon_defaultConstructor(resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?, targetRotation: Long?): androidx.camera.core.ImageAnalysis
+
+  abstract fun resolutionSelector(pigeon_instance: androidx.camera.core.ImageAnalysis): androidx.camera.core.resolutionselector.ResolutionSelector?
 
   /** Sets an analyzer to receive and analyze images. */
   abstract fun setAnalyzer(pigeon_instance: androidx.camera.core.ImageAnalysis, analyzer: androidx.camera.core.ImageAnalysis.Analyzer)
@@ -6570,10 +6632,10 @@ abstract class PigeonApiImageAnalysis(open val pigeonRegistrar: CameraXLibraryPi
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
-            val targetRotationArg = args[1] as Long?
-            val resolutionSelectorArg = args[2] as androidx.camera.core.resolutionselector.ResolutionSelector?
+            val resolutionSelectorArg = args[1] as androidx.camera.core.resolutionselector.ResolutionSelector?
+            val targetRotationArg = args[2] as Long?
             val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(targetRotationArg,resolutionSelectorArg), pigeon_identifierArg)
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionSelectorArg,targetRotationArg), pigeon_identifierArg)
               listOf(null)
             } catch (exception: Throwable) {
               wrapError(exception)
@@ -6658,11 +6720,12 @@ abstract class PigeonApiImageAnalysis(open val pigeonRegistrar: CameraXLibraryPi
       return
     }
     val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val resolutionSelectorArg = resolutionSelector(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.camera_android_camerax.ImageAnalysis.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
+    channel.send(listOf(pigeon_identifierArg, resolutionSelectorArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -6709,8 +6772,14 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
 
   @NonNull
   @Override
-  public ImageAnalysis pigeon_defaultConstructor(@Nullable Long? targetRotation, @Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector) {
-    return ImageAnalysis(targetRotation, resolutionSelector);
+  public ImageAnalysis pigeon_defaultConstructor(@Nullable androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector, @Nullable Long? targetRotation) {
+    return ImageAnalysis(targetRotation);
+  }
+
+  @Nullable
+  @Override
+  public androidx.camera.core.resolutionselector.ResolutionSelector? resolutionSelector(ImageAnalysis pigeon_instance) {
+    return pigeon_instance.getResolutionSelector();
   }
 
   @Override
@@ -6757,7 +6826,18 @@ public class ImageAnalysisProxyApiTest {
   public void pigeon_defaultConstructor() {
     final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
-    assertTrue(api.pigeon_defaultConstructor(0, mock(ResolutionSelector.class)) instanceof ImageAnalysisProxyApi.ImageAnalysis);
+    assertTrue(api.pigeon_defaultConstructor(0) instanceof ImageAnalysisProxyApi.ImageAnalysis);
+  }
+
+  @Test
+  public void resolutionSelector() {
+    final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
+
+    final ImageAnalysis instance = mock(ImageAnalysis.class);
+    final androidx.camera.core.resolutionselector.ResolutionSelector value = mock(ResolutionSelector.class);
+    when(instance.getResolutionSelector()).thenReturn(value);
+
+    assertEquals(value, api.resolutionSelector(instance));
   }
 
   @Test

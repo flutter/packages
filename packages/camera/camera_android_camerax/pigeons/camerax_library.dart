@@ -10,7 +10,6 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     copyrightHeader: 'pigeons/copyright.txt',
     dartOut: 'lib/src/camerax_library2.g.dart',
-    dartTestOut: 'test/test_camerax_library.g.dart',
     kotlinOut:
         'android/src/main/java/io/flutter/plugins/camerax/CameraXLibrary.g.kt',
     kotlinOptions: KotlinOptions(
@@ -418,7 +417,9 @@ abstract class DeviceOrientationManager {
   ),
 )
 abstract class Preview extends UseCase {
-  Preview(int? targetRotation, ResolutionSelector? resolutionSelector);
+  Preview(int? targetRotation);
+
+  late final ResolutionSelector? resolutionSelector;
 
   /// Sets a SurfaceProvider to provide a Surface for Preview.
   ///
@@ -571,11 +572,9 @@ enum CameraXFlashMode {
   ),
 )
 abstract class ImageCapture extends UseCase {
-  ImageCapture(
-    int? targetRotation,
-    CameraXFlashMode? flashMode,
-    ResolutionSelector? resolutionSelector,
-  );
+  ImageCapture(int? targetRotation, CameraXFlashMode? flashMode);
+
+  late final ResolutionSelector? resolutionSelector;
 
   /// Set the flash mode.
   void setFlashMode(CameraXFlashMode flashMode);
@@ -645,9 +644,10 @@ abstract class ResolutionStrategy {
 abstract class ResolutionSelector {
   ResolutionSelector(
     AspectRatioStrategy? aspectRatioStrategy,
-    ResolutionStrategy? resolutionStrategy,
     ResolutionFilter? resolutionFilter,
   );
+
+  late final ResolutionStrategy? resolutionStrategy;
 }
 
 /// Fallback rule for choosing the aspect ratio when the preferred aspect ratio
@@ -753,7 +753,9 @@ abstract class ZoomState {
   ),
 )
 abstract class ImageAnalysis extends UseCase {
-  ImageAnalysis(int? targetRotation, ResolutionSelector? resolutionSelector);
+  ImageAnalysis(int? targetRotation);
+
+  late final ResolutionSelector? resolutionSelector;
 
   /// Sets an analyzer to receive and analyze images.
   void setAnalyzer(Analyzer analyzer);

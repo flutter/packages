@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -20,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -30,7 +28,6 @@ List<Object?> wrapResponse(
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -113,10 +110,9 @@ class PigeonInstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>>
-      _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
-      <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
+      <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -126,8 +122,7 @@ class PigeonInstanceManager {
 
   static PigeonInstanceManager _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
-    final _PigeonInternalInstanceManagerApi api =
-        _PigeonInternalInstanceManagerApi();
+    final _PigeonInternalInstanceManagerApi api = _PigeonInternalInstanceManagerApi();
     // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
     final PigeonInstanceManager instanceManager = PigeonInstanceManager(
@@ -135,109 +130,58 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
-    CameraSize.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ResolutionInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraIntegerRange.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoRecordEvent.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoRecordEventStart.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoRecordEventFinalize.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    MeteringPoint.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Observer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraSelector.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ProcessCameraProvider.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    UseCase.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    CameraSize.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ResolutionInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraIntegerRange.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoRecordEvent.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoRecordEventStart.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoRecordEventFinalize.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    MeteringPoint.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Observer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraSelector.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ProcessCameraProvider.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    UseCase.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     Camera.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    SystemServicesManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    DeviceOrientationManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Preview.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoCapture.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoOutput.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Recorder.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    VideoRecordEventListener.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    PendingRecording.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Recording.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ImageCapture.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ResolutionStrategy.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ResolutionSelector.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AspectRatioStrategy.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraState.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ExposureState.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ZoomState.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ImageAnalysis.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Analyzer.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraStateStateError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    LiveData.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ImageProxy.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    PlaneProxy.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    QualitySelector.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FallbackStrategy.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraControl.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FocusMeteringActionBuilder.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FocusMeteringAction.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FocusMeteringResult.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CaptureRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CaptureRequestKey.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CaptureRequestOptions.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Camera2CameraControl.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ResolutionFilter.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraCharacteristicsKey.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CameraCharacteristics.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Camera2CameraInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    MeteringPointFactory.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    DisplayOrientedMeteringPointFactory.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    SystemServicesManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    DeviceOrientationManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Preview.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoCapture.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoOutput.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Recorder.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    VideoRecordEventListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    PendingRecording.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Recording.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ImageCapture.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ResolutionStrategy.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ResolutionSelector.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AspectRatioStrategy.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraState.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ExposureState.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ZoomState.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ImageAnalysis.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Analyzer.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraStateStateError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    LiveData.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ImageProxy.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    PlaneProxy.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    QualitySelector.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FallbackStrategy.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraControl.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FocusMeteringActionBuilder.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FocusMeteringAction.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FocusMeteringResult.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CaptureRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CaptureRequestKey.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CaptureRequestOptions.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Camera2CameraControl.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ResolutionFilter.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraCharacteristicsKey.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CameraCharacteristics.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Camera2CameraInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    MeteringPointFactory.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    DisplayOrientedMeteringPointFactory.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -301,20 +245,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(
-      int identifier) {
-    final PigeonInternalProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
+    final PigeonInternalProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonInternalProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonInternalProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonInternalProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -338,20 +277,17 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(PigeonInternalProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(PigeonInternalProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -475,28 +411,27 @@ class _PigeonInternalInstanceManagerApi {
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
-  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonInternalProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonInternalProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
 
 /// Handles constructing objects and calling static methods for the Android
@@ -669,8 +604,8 @@ class MyLibraryProxy {
   /// Constructs [ResolutionSelector].
   final ResolutionSelector Function({
     AspectRatioStrategy? aspectRatioStrategy,
-    ResolutionStrategy? resolutionStrategy,
     ResolutionFilter? resolutionFilter,
+    ResolutionStrategy? resolutionStrategy,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) newResolutionSelector;
@@ -868,6 +803,7 @@ class MyLibraryProxy {
       CameraCharacteristics.sensorOrientation;
 }
 
+
 /// Generally classifies the overall set of the camera device functionality.
 ///
 /// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3.
@@ -875,17 +811,13 @@ enum InfoSupportedHardwareLevel {
   /// This camera device is capable of YUV reprocessing and RAW data capture, in
   /// addition to FULL-level capabilities.
   level3,
-
   /// This camera device is backed by an external camera connected to this
   /// Android device.
   external,
-
   /// This camera device is capable of supporting advanced imaging applications.
   full,
-
   /// This camera device is running in backward compatibility mode.
   legacy,
-
   /// This camera device does not have enough capabilities to qualify as a FULL
   /// device or better.
   limited,
@@ -897,10 +829,8 @@ enum InfoSupportedHardwareLevel {
 enum AspectRatio {
   /// 16:9 standard aspect ratio.
   ratio16To9,
-
   /// 4:3 standard aspect ratio.
   ratio4To3,
-
   /// The aspect ratio representing no preference for aspect ratio.
   ratioDefault,
 }
@@ -911,20 +841,15 @@ enum AspectRatio {
 enum CameraStateType {
   /// Represents a state where the camera device is closed.
   closed,
-
   /// Represents a state where the camera device is currently closing.
   closing,
-
   /// Represents a state where the camera device is open.
   open,
-
   /// Represents a state where the camera device is currently opening.
   opening,
-
   /// Represents a state where the camera is waiting for a signal to attempt to
   /// open the camera device.
   pendingOpen,
-
   /// This value is not recognized by this wrapper.
   unknown,
 }
@@ -944,19 +869,14 @@ enum LiveDataSupportedType {
 enum VideoQuality {
   /// Standard Definition (SD) 480p video quality.
   SD,
-
   /// High Definition (HD) 720p video quality.
   HD,
-
   /// Full High Definition (FHD) 1080p video quality.
   FHD,
-
   /// Ultra High Definition (UHD) 2160p video quality.
   UHD,
-
   /// The lowest video quality supported by the video frame producer.
   lowest,
-
   /// The highest video quality supported by the video frame producer.
   highest,
 }
@@ -968,11 +888,9 @@ enum MeteringMode {
   /// A flag used in metering mode indicating the AE (Auto Exposure) region is
   /// enabled.
   ae,
-
   /// A flag used in metering mode indicating the AF (Auto Focus) region is
   /// enabled.
   af,
-
   /// A flag used in metering mode indicating the AWB (Auto White Balance)
   /// region is enabled.
   awb,
@@ -984,15 +902,12 @@ enum MeteringMode {
 enum LensFacing {
   /// A camera on the device facing the same direction as the device's screen.
   front,
-
   /// A camera on the device facing the opposite direction as the device's
   /// screen.
   back,
-
   /// An external camera that has no fixed facing relative to the device's
   /// screen.
   external,
-
   /// A camera on the devices that its lens facing is resolved.
   unknown,
 }
@@ -1006,12 +921,10 @@ enum CameraXFlashMode {
   /// The flash will be used according to the camera system's determination when
   /// taking a picture.
   auto,
-
   /// No flash.
   ///
   /// The flash will never be used when taking a picture.
   off,
-
   /// Always flash.
   ///
   /// The flash will always be used when taking a picture.
@@ -1026,19 +939,15 @@ enum ResolutionStrategyFallbackRule {
   /// When the specified bound size is unavailable, CameraX falls back to the
   /// closest higher resolution size.
   closestHigher,
-
   /// When the specified bound size is unavailable, CameraX falls back to select
   /// the closest higher resolution size.
   closestHigherThenLower,
-
   /// When the specified bound size is unavailable, CameraX falls back to the
   /// closest lower resolution size.
   closestLower,
-
   /// When the specified bound size is unavailable, CameraX falls back to select
   /// the closest lower resolution size.
   closestLowerThenHigher,
-
   /// CameraX doesn't select an alternate size when the specified bound size is
   /// unavailable.
   none,
@@ -1053,7 +962,6 @@ enum AspectRatioStrategyFallbackRule {
   /// the closest field of view (FOV) of the camera sensor, from the remaining
   /// options.
   auto,
-
   /// CameraX doesn't fall back to select sizes of any other aspect ratio when
   /// this fallback rule is used.
   none,
@@ -1066,34 +974,28 @@ enum CameraStateErrorCode {
   /// An error indicating that the camera device could not be opened due to a
   /// device policy.
   cameraDisabled,
-
   /// An error indicating that the camera device was closed due to a fatal
   /// error.
   cameraFatalError,
-
   /// An error indicating that the camera device is already in use.
   cameraInUse,
-
   /// An error indicating that the camera could not be opened because "Do Not
   /// Disturb" mode is enabled on devices affected by a bug in Android 9 (API
   /// level 28).
   doNotDisturbModeEnabled,
-
   /// An error indicating that the limit number of open cameras has been
   /// reached, and more cameras cannot be opened until other instances are
   /// closed.
   maxCamerasInUse,
-
   /// An error indicating that the camera device has encountered a recoverable
   /// error.
   otherRecoverableError,
-
   /// An error indicating that configuring the camera has failed.
   streamConfig,
-
   /// The value is not recognized by this wrapper.
   unknown,
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -1102,37 +1004,37 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is InfoSupportedHardwareLevel) {
+    }    else if (value is InfoSupportedHardwareLevel) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is AspectRatio) {
+    }    else if (value is AspectRatio) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is CameraStateType) {
+    }    else if (value is CameraStateType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is LiveDataSupportedType) {
+    }    else if (value is LiveDataSupportedType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is VideoQuality) {
+    }    else if (value is VideoQuality) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is MeteringMode) {
+    }    else if (value is MeteringMode) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    } else if (value is LensFacing) {
+    }    else if (value is LensFacing) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    } else if (value is CameraXFlashMode) {
+    }    else if (value is CameraXFlashMode) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    } else if (value is ResolutionStrategyFallbackRule) {
+    }    else if (value is ResolutionStrategyFallbackRule) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    } else if (value is AspectRatioStrategyFallbackRule) {
+    }    else if (value is AspectRatioStrategyFallbackRule) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    } else if (value is CameraStateErrorCode) {
+    }    else if (value is CameraStateErrorCode) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
     } else {
@@ -1143,41 +1045,37 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : InfoSupportedHardwareLevel.values[value];
-      case 130:
+      case 130: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AspectRatio.values[value];
-      case 131:
+      case 131: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CameraStateType.values[value];
-      case 132:
+      case 132: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : LiveDataSupportedType.values[value];
-      case 133:
+      case 133: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : VideoQuality.values[value];
-      case 134:
+      case 134: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MeteringMode.values[value];
-      case 135:
+      case 135: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : LensFacing.values[value];
-      case 136:
+      case 136: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CameraXFlashMode.values[value];
-      case 137:
+      case 137: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : ResolutionStrategyFallbackRule.values[value];
-      case 138:
+        return value == null ? null : ResolutionStrategyFallbackRule.values[value];
+      case 138: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : AspectRatioStrategyFallbackRule.values[value];
-      case 139:
+        return value == null ? null : AspectRatioStrategyFallbackRule.values[value];
+      case 139: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : CameraStateErrorCode.values[value];
       default:
@@ -1185,7 +1083,6 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
-
 /// Immutable class for describing width and height dimensions in pixels.
 ///
 /// See https://developer.android.com/reference/android/util/Size.html.
@@ -3343,8 +3240,8 @@ class Preview extends UseCase {
   Preview({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionSelector,
     int? targetRotation,
-    ResolutionSelector? resolutionSelector,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -3363,8 +3260,8 @@ class Preview extends UseCase {
       final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
           .send(<Object?>[
         pigeonVar_instanceIdentifier,
-        targetRotation,
-        resolutionSelector
+        resolutionSelector,
+        targetRotation
       ]) as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -3388,16 +3285,20 @@ class Preview extends UseCase {
   Preview.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionSelector,
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecPreview =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
+  final ResolutionSelector? resolutionSelector;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    Preview Function()? pigeon_newInstance,
+    Preview Function(ResolutionSelector? resolutionSelector)?
+        pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -3420,13 +3321,16 @@ class Preview extends UseCase {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.camera_android_camerax.Preview.pigeon_newInstance was null, expected non-null int.');
+          final ResolutionSelector? arg_resolutionSelector =
+              (args[1] as ResolutionSelector?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_resolutionSelector) ??
                   Preview.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    resolutionSelector: arg_resolutionSelector,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -3573,6 +3477,7 @@ class Preview extends UseCase {
     return Preview.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      resolutionSelector: resolutionSelector,
     );
   }
 }
@@ -4478,9 +4383,9 @@ class ImageCapture extends UseCase {
   ImageCapture({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionSelector,
     int? targetRotation,
     CameraXFlashMode? flashMode,
-    ResolutionSelector? resolutionSelector,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -4499,9 +4404,9 @@ class ImageCapture extends UseCase {
       final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
           .send(<Object?>[
         pigeonVar_instanceIdentifier,
+        resolutionSelector,
         targetRotation,
-        flashMode,
-        resolutionSelector
+        flashMode
       ]) as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -4525,16 +4430,20 @@ class ImageCapture extends UseCase {
   ImageCapture.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionSelector,
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecImageCapture =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
+  final ResolutionSelector? resolutionSelector;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    ImageCapture Function()? pigeon_newInstance,
+    ImageCapture Function(ResolutionSelector? resolutionSelector)?
+        pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -4557,13 +4466,16 @@ class ImageCapture extends UseCase {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.camera_android_camerax.ImageCapture.pigeon_newInstance was null, expected non-null int.');
+          final ResolutionSelector? arg_resolutionSelector =
+              (args[1] as ResolutionSelector?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_resolutionSelector) ??
                   ImageCapture.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    resolutionSelector: arg_resolutionSelector,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -4673,6 +4585,7 @@ class ImageCapture extends UseCase {
     return ImageCapture.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      resolutionSelector: resolutionSelector,
     );
   }
 }
@@ -4837,8 +4750,8 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
   ResolutionSelector({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionStrategy,
     AspectRatioStrategy? aspectRatioStrategy,
-    ResolutionStrategy? resolutionStrategy,
     ResolutionFilter? resolutionFilter,
   }) {
     final int pigeonVar_instanceIdentifier =
@@ -4858,8 +4771,8 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_channel.send(<Object?>[
         pigeonVar_instanceIdentifier,
-        aspectRatioStrategy,
         resolutionStrategy,
+        aspectRatioStrategy,
         resolutionFilter
       ]) as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -4884,17 +4797,21 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
   ResolutionSelector.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionStrategy,
   });
 
   late final _PigeonInternalProxyApiBaseCodec
       _pigeonVar_codecResolutionSelector =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
+  final ResolutionStrategy? resolutionStrategy;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    ResolutionSelector Function()? pigeon_newInstance,
+    ResolutionSelector Function(ResolutionStrategy? resolutionStrategy)?
+        pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -4917,13 +4834,16 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.camera_android_camerax.ResolutionSelector.pigeon_newInstance was null, expected non-null int.');
+          final ResolutionStrategy? arg_resolutionStrategy =
+              (args[1] as ResolutionStrategy?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_resolutionStrategy) ??
                   ResolutionSelector.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    resolutionStrategy: arg_resolutionStrategy,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -4944,6 +4864,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     return ResolutionSelector.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      resolutionStrategy: resolutionStrategy,
     );
   }
 }
@@ -5436,8 +5357,8 @@ class ImageAnalysis extends UseCase {
   ImageAnalysis({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionSelector,
     int? targetRotation,
-    ResolutionSelector? resolutionSelector,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -5456,8 +5377,8 @@ class ImageAnalysis extends UseCase {
       final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
           .send(<Object?>[
         pigeonVar_instanceIdentifier,
-        targetRotation,
-        resolutionSelector
+        resolutionSelector,
+        targetRotation
       ]) as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -5481,16 +5402,20 @@ class ImageAnalysis extends UseCase {
   ImageAnalysis.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionSelector,
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecImageAnalysis =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
+  final ResolutionSelector? resolutionSelector;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    ImageAnalysis Function()? pigeon_newInstance,
+    ImageAnalysis Function(ResolutionSelector? resolutionSelector)?
+        pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -5513,13 +5438,16 @@ class ImageAnalysis extends UseCase {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.camera_android_camerax.ImageAnalysis.pigeon_newInstance was null, expected non-null int.');
+          final ResolutionSelector? arg_resolutionSelector =
+              (args[1] as ResolutionSelector?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_resolutionSelector) ??
                   ImageAnalysis.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    resolutionSelector: arg_resolutionSelector,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -5624,6 +5552,7 @@ class ImageAnalysis extends UseCase {
     return ImageAnalysis.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      resolutionSelector: resolutionSelector,
     );
   }
 }
@@ -8637,3 +8566,4 @@ class DisplayOrientedMeteringPointFactory extends MeteringPointFactory {
     );
   }
 }
+
