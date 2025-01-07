@@ -231,29 +231,30 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.asset,
           asset: dataSource,
           package: package,
-          viewType: viewType,
         );
       case DataSourceType.network:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.network,
           uri: dataSource,
-          viewType: viewType,
         );
       case DataSourceType.file:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.file,
           uri: dataSource,
-          viewType: viewType,
         );
       case DataSourceType.contentUri:
         dataSourceDescription = DataSource(
           sourceType: DataSourceType.contentUri,
           uri: dataSource,
-          viewType: viewType,
         );
     }
 
-    _textureId = (await _platform.create(dataSourceDescription)) ??
+    final VideoCreationOptions creationOptions = VideoCreationOptions(
+      dataSource: dataSourceDescription,
+      viewType: viewType,
+    );
+
+    _textureId = (await _platform.createWithOptions(creationOptions)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();

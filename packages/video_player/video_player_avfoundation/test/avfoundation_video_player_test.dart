@@ -188,23 +188,121 @@ void main() {
       expect(textureId, 3);
     });
 
-    test('create with texture view', () async {
-      final int? textureId = await player.create(DataSource(
-        sourceType: DataSourceType.file,
-        uri: 'someUri',
-        // Texture view is a default view type.
-      ));
+    test('createWithOptions with asset', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.asset,
+            asset: 'someAsset',
+            package: 'somePackage',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.asset, 'someAsset');
+      expect(log.creationOptions?.packageName, 'somePackage');
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with incorrect asset throws exception', () async {
+      try {
+        await player.createWithOptions(
+          VideoCreationOptions(
+            dataSource: DataSource(
+              sourceType: DataSourceType.asset,
+              asset: '/path/to/incorrect_asset',
+            ),
+            viewType: VideoViewType.textureView,
+          ),
+        );
+        fail('should throw PlatformException');
+      } catch (e) {
+        expect(e, isException);
+      }
+    });
+
+    test('createWithOptions with network', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            formatHint: VideoFormat.dash,
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.asset, null);
+      expect(log.creationOptions?.uri, 'someUri');
+      expect(log.creationOptions?.packageName, null);
+      expect(log.creationOptions?.formatHint, 'dash');
+      expect(log.creationOptions?.httpHeaders, <String, String>{});
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with network (some headers)', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.asset, null);
+      expect(log.creationOptions?.uri, 'someUri');
+      expect(log.creationOptions?.packageName, null);
+      expect(log.creationOptions?.formatHint, null);
+      expect(log.creationOptions?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with file', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.uri, 'someUri');
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with texture view', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
       expect(log.log.last, 'create');
       expect(log.creationOptions?.viewType, PlatformVideoViewType.textureView);
       expect(textureId, 3);
     });
 
-    test('create with platform view', () async {
-      final int? playerId = await player.create(DataSource(
-        sourceType: DataSourceType.file,
-        uri: 'someUri',
-        viewType: VideoViewType.platformView,
-      ));
+    test('createWithOptions with platform view', () async {
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.platformView,
+        ),
+      );
       expect(log.log.last, 'create');
       expect(log.creationOptions?.viewType, PlatformVideoViewType.platformView);
       expect(playerId, 3);

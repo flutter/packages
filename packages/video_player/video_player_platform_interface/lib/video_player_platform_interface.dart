@@ -49,9 +49,16 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Creates an instance of a video player and returns its playerId.
-  /// If view type is [VideoViewType.textureView], the playerId is also the texture id.
+  @Deprecated('Use createWithOptions() instead.')
   Future<int?> create(DataSource dataSource) {
     throw UnimplementedError('create() has not been implemented.');
+  }
+
+  /// Creates an instance of a video player based on creation options
+  /// and returns its playerId. If view type is [VideoViewType.textureView],
+  /// the playerId is also the texture id.
+  Future<int?> createWithOptions(VideoCreationOptions options) {
+    return create(options.dataSource);
   }
 
   /// Returns a Stream of [VideoEventType]s.
@@ -143,7 +150,6 @@ class DataSource {
     this.asset,
     this.package,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
   });
 
   /// The way in which the video was originally loaded.
@@ -173,9 +179,6 @@ class DataSource {
   /// The package that the asset was loaded from. Only set for
   /// [DataSourceType.asset] videos.
   final String? package;
-
-  /// The type of view to be used for displaying the video player.
-  final VideoViewType viewType;
 }
 
 /// The way in which the video was originally loaded.
@@ -512,5 +515,21 @@ class VideoViewOptions {
   final int playerId;
 
   /// The type of the video view.
+  final VideoViewType viewType;
+}
+
+/// [VideoViewOptions] contains creation options for a video player.
+@immutable
+class VideoCreationOptions {
+  /// Constructs an instance of [VideoCreationOptions].
+  const VideoCreationOptions({
+    required this.dataSource,
+    required this.viewType,
+  });
+
+  /// The data source used to create the player.
+  final DataSource dataSource;
+
+  /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
 }

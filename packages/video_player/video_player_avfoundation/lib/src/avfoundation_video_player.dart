@@ -33,6 +33,20 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<int?> create(DataSource dataSource) async {
+    return createWithOptions(
+      VideoCreationOptions(
+        dataSource: dataSource,
+        // Texture view was the only supported view type before
+        // createWithOptions was introduced.
+        viewType: VideoViewType.textureView,
+      ),
+    );
+  }
+
+  @override
+  Future<int?> createWithOptions(VideoCreationOptions options) {
+    final DataSource dataSource = options.dataSource;
+
     String? asset;
     String? packageName;
     String? uri;
@@ -51,16 +65,16 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
-    final CreationOptions options = CreationOptions(
+    final CreationOptions pigeonCreationOptions = CreationOptions(
       asset: asset,
       packageName: packageName,
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
-      viewType: _platformVideoViewTypeFromVideoViewType(dataSource.viewType),
+      viewType: _platformVideoViewTypeFromVideoViewType(options.viewType),
     );
 
-    return _api.create(options);
+    return _api.create(pigeonCreationOptions);
   }
 
   @override
