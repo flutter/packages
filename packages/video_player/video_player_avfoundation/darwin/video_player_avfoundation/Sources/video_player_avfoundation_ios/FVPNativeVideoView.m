@@ -34,10 +34,4 @@
 - (FVPPlayerView *)view {
   return _view;
 }
-
-- (void)dealloc {
-  [_view setPlayer:nil];
-  _view = nil;
-}
-
 @end
