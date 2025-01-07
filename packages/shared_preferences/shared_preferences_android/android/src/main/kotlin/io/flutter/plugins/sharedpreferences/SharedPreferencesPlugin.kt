@@ -106,8 +106,14 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
     }
   }
 
-  /** Adds property to data store of type List<String>. */
-  override fun setStringList(
+  /** Adds property to data store of type List<String> as encoded String. */
+  override fun setStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
+    return runBlocking { dataStoreSetString(key, value) }
+  }
+
+  /** Deprecated, for testing purposes only. Adds property to data store of type List<String>. */
+  @Deprecated("This is just for testing, use `setStringList`")
+  override fun setDeprecatedStringList(
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
@@ -195,6 +201,8 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): Any? {
     val stringValue = getString(key, options)
     stringValue?.let {
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that are encoded on the platform.
       if (stringValue.startsWith(JSON_LIST_PREFIX)) {
         return stringValue
       }
@@ -288,7 +296,13 @@ class SharedPreferencesBackend(
   }
 
   /** Adds property to data store of type List<String>. */
-  override fun setStringList(
+  override fun setStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
+    return createSharedPreferences(options).edit().putString(key, value).apply()
+  }
+
+  /** Adds property to data store of type List<String>. */
+  @Deprecated("This is just for testing, use `setStringList`")
+  override fun setDeprecatedStringList(
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
@@ -414,7 +428,8 @@ internal fun preferencesFilter(key: String, value: Any?, allowList: Set<String>?
 internal fun transformPref(value: Any?, listEncoder: SharedPreferencesListEncoder): Any? {
   if (value is String) {
     if (value.startsWith(LIST_PREFIX)) {
-      // The newer JSON-encoded lists use an extended prefix to distinguish them.
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that are encoded on the platform.
       if (value.startsWith(JSON_LIST_PREFIX)) {
         return value
       } else {

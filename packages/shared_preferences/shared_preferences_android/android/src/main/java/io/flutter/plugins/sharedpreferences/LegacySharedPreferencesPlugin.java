@@ -102,10 +102,16 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
     return preferences.edit().remove(key).commit();
   }
 
+  @Override
+  public @NonNull Boolean setStringList(@NonNull String key, @NonNull String value)
+      throws RuntimeException {
+    return preferences.edit().putString(key, value).commit();
+  }
+
   // Deprecated, for testing purposes only.
   @Deprecated
   @Override
-  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value)
+  public @NonNull Boolean setDeprecatedStringList(@NonNull String key, @NonNull List<String> value)
       throws RuntimeException {
     return preferences.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value)).commit();
   }
@@ -152,10 +158,10 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   private Object transformPref(@NonNull String key, @NonNull Object value) {
     if (value instanceof String) {
       String stringValue = (String) value;
-
-      if (value.startsWith(LIST_PREFIX)) {
-        // The newer JSON-encoded lists use an extended prefix to distinguish them.
-        if (value.startsWith(JSON_LIST_PREFIX)) {
+      if (stringValue.startsWith(LIST_IDENTIFIER)) {
+        // The JSON-encoded lists use an extended prefix to distinguish them from
+        // lists that are encoded on the platform.
+        if (stringValue.startsWith(JSON_LIST_IDENTIFIER)) {
           return value;
         } else {
           return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
