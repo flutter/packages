@@ -8,8 +8,8 @@
 
 #import <OCMock/OCMock.h>
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
-#import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
 #import <video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h>
+#import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
 #import <video_player_avfoundation/FVPVideoPlayer_Test.h>
 
 #if TARGET_OS_IOS
@@ -126,7 +126,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 #pragma mark -
 
-/** Test implementation of FVPDisplayLinkFactory that returns a provided display link nstance.  */
+/** Test implementation of FVPDisplayLinkFactory that returns a provided display link instance.  */
 @interface StubFVPDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
 
 /** This display link to return. */
