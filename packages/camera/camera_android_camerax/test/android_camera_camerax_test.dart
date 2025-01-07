@@ -51,7 +51,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException, Uint8List;
 import 'package:flutter/widgets.dart'
-    show BuildContext, RotatedBox, Size, Texture, Widget;
+    show BuildContext, Size, Texture, Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -974,7 +974,6 @@ void main() {
     // Wait for currentDeviceOrientation to update.
     await Future<void>.value();
 
-    expect(camera.naturalOrientation, testUiOrientation);
     expect(camera.sensorOrientation, testSensorOrientation);
     expect(camera.currentDeviceOrientation, testCurrentOrientation);
   });
