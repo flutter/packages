@@ -1,7 +1,11 @@
 ## 14.7.0
 
 - Adds `popUntil` method to pop multiple routes from a predicate.
+
+## 14.6.3
+
 - Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+- Updates readme.
 
 ## 14.6.2
 
