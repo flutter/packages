@@ -24,9 +24,4 @@
 /// Initializes a new instance of a native view.
 /// It creates a video view instance and sets the provided AVPlayer instance to it.
 - (instancetype)initWithPlayer:(AVPlayer *)player;
-
-#if TARGET_OS_IOS
-/// Returns the native UIView that displays the video content.
-- (UIView *)view;
-#endif
 @end
