@@ -69,3 +69,9 @@ The project follows the same priority system as flutter framework.
 [P3](https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-asc+label%3Ateam-go_router+label%3AP3+)
 
 [Package PRs](https://github.com/flutter/packages/pulls?q=is%3Apr+is%3Aopen+label%3A%22p%3A+go_router%22%2C%22p%3A+go_router_builder%22)
+
+## Roadmap
+
+This package has entered a maintenance phase.  The Flutter team's primary focus will be on
+addressing bug fixes and ensuring stability.  While active feature development is not currently
+planned, we welcome and encourage community contributions to expand the package's functionality.

@@ -53,6 +53,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element anchor = _findSingleAnchor();
       expect(anchor.getAttribute('href'), uri.toString());
@@ -70,6 +71,7 @@ void main() {
         )),
       ));
       await tester.pumpAndSettle();
+      await tester.pump();
 
       // Check that the same anchor has been updated.
       expect(anchor.getAttribute('href'), uri2.toString());
@@ -87,16 +89,13 @@ void main() {
         )),
       ));
       await tester.pumpAndSettle();
+      await tester.pump();
 
       // Check that internal route properly prepares using the default
       // [UrlStrategy]
       expect(anchor.getAttribute('href'),
           ui_web.urlStrategy?.prepareExternalUrl(uri3.toString()));
       expect(anchor.getAttribute('target'), '_self');
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('sizes itself correctly', (WidgetTester tester) async {
@@ -121,6 +120,7 @@ void main() {
         ),
       ));
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final Size containerSize = tester.getSize(find.byKey(containerKey));
       // The Stack widget inserted by the `WebLinkDelegate` shouldn't loosen the
@@ -129,10 +129,6 @@ void main() {
       // `ConstrainedBox` widget.
       expect(containerSize.width, 100.0);
       expect(containerSize.height, 100.0);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     // See: https://github.com/flutter/plugins/pull/3522#discussion_r574703724
@@ -149,13 +145,10 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element anchor = _findSingleAnchor();
       expect(anchor.hasAttribute('href'), false);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('can be created and disposed', (WidgetTester tester) async {
@@ -180,16 +173,13 @@ void main() {
       );
 
       await tester.pumpAndSettle();
+      await tester.pump();
 
       await tester.scrollUntilVisible(
         find.text('#${itemCount - 1}'),
         800,
         maxScrolls: 1000,
       );
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
   });
 
@@ -227,6 +217,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -241,10 +232,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isTrue);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('keydown to navigate to internal link',
@@ -267,6 +254,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -281,10 +269,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('click to navigate to external link',
@@ -304,6 +288,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -319,10 +304,6 @@ void main() {
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('keydown to navigate to external link',
@@ -342,6 +323,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -356,10 +338,6 @@ void main() {
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, <String>['https://flutter.dev']);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('click on mismatched link', (WidgetTester tester) async {
@@ -433,10 +411,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar2']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isTrue);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('trigger signals are reset after a delay',
@@ -498,10 +472,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event3.defaultPrevented, isTrue);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('ignores clicks on non-Flutter link',
@@ -538,10 +508,6 @@ void main() {
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('handles cmd+click correctly', (WidgetTester tester) async {
@@ -577,10 +543,6 @@ void main() {
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('ignores keydown when it is a modifier key',
@@ -624,10 +586,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event2.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
   });
 
@@ -679,10 +637,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isTrue);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('keydown to navigate to internal link',
@@ -719,10 +673,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('click to navigate to external link',
@@ -757,10 +707,6 @@ void main() {
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('keydown to navigate to external link',
@@ -794,10 +740,6 @@ void main() {
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, <String>['https://flutter.dev']);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
   });
 
@@ -969,10 +911,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event2.defaultPrevented, isTrue);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('handles clicks on semantic link with text',
@@ -1021,10 +959,6 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isTrue);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
@@ -1077,10 +1011,6 @@ void main() {
       expect(pushedRouteNames, <String>[]);
       expect(testPlugin.launches, isEmpty);
       expect(event1.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
@@ -1129,34 +1059,17 @@ void main() {
       expect(pushedRouteNames, <String>[]);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isFalse);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
   });
 }
 
 List<html.Element> _findAllAnchors() {
   final List<html.Element> foundAnchors = <html.Element>[];
-  html.NodeList anchors = html.document.querySelectorAll('a');
+  final html.NodeList anchors = html.document.querySelectorAll('a');
   for (int i = 0; i < anchors.length; i++) {
     final html.Element anchor = anchors.item(i)! as html.Element;
     if (anchor.hasProperty(linkViewIdProperty.toJS).toDart) {
       foundAnchors.add(anchor);
-    }
-  }
-
-  // Search inside the shadow DOM as well.
-  final html.ShadowRoot? shadowRoot =
-      html.document.querySelector('flt-glass-pane')?.shadowRoot;
-  if (shadowRoot != null) {
-    anchors = shadowRoot.querySelectorAll('a');
-    for (int i = 0; i < anchors.length; i++) {
-      final html.Element anchor = anchors.item(i)! as html.Element;
-      if (anchor.hasProperty(linkViewIdProperty.toJS).toDart) {
-        foundAnchors.add(anchor);
-      }
     }
   }
 
@@ -1167,25 +1080,34 @@ html.Element _findSingleAnchor() {
   return _findAllAnchors().single;
 }
 
-html.MouseEvent _simulateClick(html.Element target, {bool? metaKey}) {
+html.MouseEvent _simulateClick(html.Element target, {bool metaKey = false}) {
+  // // Stop the browser from navigating away from the test suite.
+  // target.addEventListener(
+  //     'click',
+  //     (html.Event e) {
+  //       e.preventDefault();
+  //     }.toJS);
   final html.MouseEvent mouseEvent = html.MouseEvent(
     'click',
-    html.MouseEventInit()
-      ..bubbles = true
-      ..cancelable = true
-      ..metaKey = metaKey ?? false,
+    html.MouseEventInit(
+      bubbles: true,
+      cancelable: true,
+      metaKey: metaKey,
+    ),
   );
   LinkViewController.handleGlobalClick(event: mouseEvent, target: target);
   return mouseEvent;
 }
 
-html.KeyboardEvent _simulateKeydown(html.Element target, {bool? metaKey}) {
+html.KeyboardEvent _simulateKeydown(html.Element target, {bool metaKey = false}) {
   final html.KeyboardEvent keydownEvent = html.KeyboardEvent(
     'keydown',
-    html.KeyboardEventInit()
-      ..bubbles = true
-      ..cancelable = true
-      ..metaKey = metaKey ?? false,
+    html.KeyboardEventInit(
+      bubbles: true,
+      cancelable: true,
+      metaKey: metaKey,
+      // code: 'Space',
+    )
   );
   LinkViewController.handleGlobalKeydown(event: keydownEvent);
   return keydownEvent;
