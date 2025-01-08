@@ -374,6 +374,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -433,6 +434,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -494,6 +496,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -529,6 +532,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -565,6 +569,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -623,6 +628,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -659,6 +665,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -692,6 +699,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -726,6 +734,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
@@ -874,6 +883,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element semanticsHost =
           html.document.createElement('flt-semantics-host');
@@ -939,6 +949,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element semanticsHost =
           html.document.createElement('flt-semantics-host');
@@ -983,6 +994,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element semanticsHost =
           html.document.createElement('flt-semantics-host');
@@ -1038,6 +1050,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element semanticsHost =
           html.document.createElement('flt-semantics-host');
