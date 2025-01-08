@@ -68,6 +68,7 @@ void defineTests() {
         final ScrollController controller = ScrollController(
           initialScrollOffset: 209.0,
         );
+        addTearDown(controller.dispose);
 
         await tester.pumpWidget(
           boilerplate(
