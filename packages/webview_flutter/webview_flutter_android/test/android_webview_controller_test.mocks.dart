@@ -820,16 +820,6 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i8.Future<void>);
 
   @override
-  _i8.Future<void> setCacheMode(_i2.CacheMode? mode) => (super.noSuchMethod(
-        Invocation.method(
-          #setCacheMode,
-          [mode],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-
-  @override
   _i8.Future<void> setOnShowFileSelector(
           _i8.Future<List<String>> Function(_i7.FileSelectorParams)?
               onShowFileSelector) =>
@@ -2693,16 +2683,6 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
         Invocation.method(
           #setGeolocationEnabled,
           [enabled],
-        ),
-        returnValue: _i8.Future<void>.value(),
-        returnValueForMissingStub: _i8.Future<void>.value(),
-      ) as _i8.Future<void>);
-
-  @override
-  _i8.Future<void> setCacheMode(_i2.CacheMode? mode) => (super.noSuchMethod(
-        Invocation.method(
-          #setCacheMode,
-          [mode],
         ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),

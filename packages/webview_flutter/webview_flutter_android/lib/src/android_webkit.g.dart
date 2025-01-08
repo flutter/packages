@@ -503,32 +503,6 @@ enum ConsoleMessageLevel {
   unknown,
 }
 
-/// Describes the way the cache is used.
-///
-/// See https://developer.android.com/reference/android/webkit/WebSettings#setCacheMode(int).
-enum CacheMode {
-  /// Normal cache usage mode.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_DEFAULT
-  loadDefault,
-
-  /// Use cached resources when they are available, even if they have expired.
-  /// Otherwise load resources from the network.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ELSE_NETWORK
-  loadCacheElseNetwork,
-
-  /// Don't use the cache, load from the network.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ELSE_NETWORK
-  loadNoCache,
-
-  /// Don't use the network, load from the cache.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ONLY
-  loadCacheOnly,
-}
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -541,9 +515,6 @@ class _PigeonCodec extends StandardMessageCodec {
       writeValue(buffer, value.index);
     } else if (value is ConsoleMessageLevel) {
       buffer.putUint8(130);
-      writeValue(buffer, value.index);
-    } else if (value is CacheMode) {
-      buffer.putUint8(131);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -559,9 +530,6 @@ class _PigeonCodec extends StandardMessageCodec {
       case 130:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : ConsoleMessageLevel.values[value];
-      case 131:
-        final int? value = readValue(buffer) as int?;
-        return value == null ? null : CacheMode.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2690,34 +2658,6 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
     );
     final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
         .send(<Object?>[this, enabled]) as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Overrides the way the cache is used.
-  Future<void> setCacheMode(CacheMode mode) async {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _pigeonVar_codecWebSettings;
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_android.WebSettings.setCacheMode';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[this, mode]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

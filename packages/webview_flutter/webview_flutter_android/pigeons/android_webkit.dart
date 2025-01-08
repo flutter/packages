@@ -80,32 +80,6 @@ enum ConsoleMessageLevel {
   unknown,
 }
 
-/// Describes the way the cache is used.
-///
-/// See https://developer.android.com/reference/android/webkit/WebSettings#setCacheMode(int).
-enum CacheMode {
-  /// Normal cache usage mode.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_DEFAULT
-  loadDefault,
-
-  /// Use cached resources when they are available, even if they have expired.
-  /// Otherwise load resources from the network.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ELSE_NETWORK
-  loadCacheElseNetwork,
-
-  /// Don't use the cache, load from the network.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ELSE_NETWORK
-  loadNoCache,
-
-  /// Don't use the network, load from the cache.
-  ///
-  /// See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ONLY
-  loadCacheOnly;
-}
-
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -385,9 +359,6 @@ abstract class WebSettings {
 
   /// Sets whether Geolocation is enabled within WebView.
   void setGeolocationEnabled(bool enabled);
-
-  /// Overrides the way the cache is used.
-  void setCacheMode(CacheMode mode);
 
   /// Sets the text zoom of the page in percent.
   void setTextZoom(int textZoom);

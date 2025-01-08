@@ -571,7 +571,6 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
         value is String ||
         value is FileChooserMode ||
         value is ConsoleMessageLevel ||
-        value is CacheMode ||
         value == null) {
       super.writeValue(stream, value)
       return
@@ -727,45 +726,6 @@ enum class ConsoleMessageLevel(val raw: Int) {
   }
 }
 
-/**
- * Describes the way the cache is used.
- *
- * See https://developer.android.com/reference/android/webkit/WebSettings#setCacheMode(int).
- */
-enum class CacheMode(val raw: Int) {
-  /**
-   * Normal cache usage mode.
-   *
-   * See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_DEFAULT
-   */
-  LOAD_DEFAULT(0),
-  /**
-   * Use cached resources when they are available, even if they have expired. Otherwise load
-   * resources from the network.
-   *
-   * See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ELSE_NETWORK
-   */
-  LOAD_CACHE_ELSE_NETWORK(1),
-  /**
-   * Don't use the cache, load from the network.
-   *
-   * See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ELSE_NETWORK
-   */
-  LOAD_NO_CACHE(2),
-  /**
-   * Don't use the network, load from the cache.
-   *
-   * See https://developer.android.com/reference/android/webkit/WebSettings#LOAD_CACHE_ONLY
-   */
-  LOAD_CACHE_ONLY(3);
-
-  companion object {
-    fun ofRaw(raw: Int): CacheMode? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
 private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -774,9 +734,6 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as Long?)?.let { ConsoleMessageLevel.ofRaw(it.toInt()) }
-      }
-      131.toByte() -> {
-        return (readValue(buffer) as Long?)?.let { CacheMode.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -790,10 +747,6 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
       }
       is ConsoleMessageLevel -> {
         stream.write(130)
-        writeValue(stream, value.raw)
-      }
-      is CacheMode -> {
-        stream.write(131)
         writeValue(stream, value.raw)
       }
       else -> super.writeValue(stream, value)
@@ -2157,9 +2110,6 @@ abstract class PigeonApiWebSettings(
   /** Sets whether Geolocation is enabled within WebView. */
   abstract fun setGeolocationEnabled(pigeon_instance: android.webkit.WebSettings, enabled: Boolean)
 
-  /** Overrides the way the cache is used. */
-  abstract fun setCacheMode(pigeon_instance: android.webkit.WebSettings, mode: CacheMode)
-
   /** Sets the text zoom of the page in percent. */
   abstract fun setTextZoom(pigeon_instance: android.webkit.WebSettings, textZoom: Long)
 
@@ -2496,30 +2446,6 @@ abstract class PigeonApiWebSettings(
             val wrapped: List<Any?> =
                 try {
                   api.setGeolocationEnabled(pigeon_instanceArg, enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setCacheMode",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as android.webkit.WebSettings
-            val modeArg = args[1] as CacheMode
-            val wrapped: List<Any?> =
-                try {
-                  api.setCacheMode(pigeon_instanceArg, modeArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)

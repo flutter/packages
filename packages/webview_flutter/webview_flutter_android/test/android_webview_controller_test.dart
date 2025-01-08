@@ -1558,24 +1558,6 @@ void main() {
     verify(mockSettings.setGeolocationEnabled(false)).called(1);
   });
 
-  test('setCacheMode', () async {
-    final MockWebView mockWebView = MockWebView();
-    final MockWebSettings mockSettings = MockWebSettings();
-    final AndroidWebViewController controller = createControllerWithMocks(
-      mockWebView: mockWebView,
-      mockSettings: mockSettings,
-    );
-
-    clearInteractions(mockWebView);
-
-    const android_webview.CacheMode value =
-        android_webview.CacheMode.loadCacheElseNetwork;
-    await controller.setCacheMode(value);
-
-    verify(mockWebView.settings).called(1);
-    verify(mockSettings.setCacheMode(value)).called(1);
-  });
-
   test('setTextZoom', () async {
     final MockWebView mockWebView = MockWebView();
     final MockWebSettings mockSettings = MockWebSettings();

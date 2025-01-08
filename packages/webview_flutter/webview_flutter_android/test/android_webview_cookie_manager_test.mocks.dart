@@ -525,16 +525,6 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
-  _i5.Future<void> setCacheMode(_i2.CacheMode? mode) => (super.noSuchMethod(
-        Invocation.method(
-          #setCacheMode,
-          [mode],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
   _i5.Future<void> setOnShowFileSelector(
           _i5.Future<List<String>> Function(_i6.FileSelectorParams)?
               onShowFileSelector) =>

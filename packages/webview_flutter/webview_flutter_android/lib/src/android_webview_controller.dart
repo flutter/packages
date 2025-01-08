@@ -17,8 +17,6 @@ import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
 
-export 'android_webkit.g.dart' show CacheMode;
-
 /// Object specifying creation parameters for creating a [AndroidWebViewController].
 ///
 /// When adding additional fields make sure they can be null or have a default
@@ -612,13 +610,6 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The default is true.
   Future<void> setGeolocationEnabled(bool enabled) =>
       _webView.settings.setGeolocationEnabled(enabled);
-
-  /// Allows the client to override the way the cache is used
-  /// by specifying one of [android_webview.CacheMode] values.
-  ///
-  /// The default is [android_webview.CacheMode.loadDefault].
-  Future<void> setCacheMode(android_webview.CacheMode mode) =>
-      _webView.settings.setCacheMode(mode);
 
   /// Sets the callback that is invoked when the client should show a file
   /// selector.
