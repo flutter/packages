@@ -25,9 +25,9 @@ dependencies:
   flutter:
     sdk: flutter
   html: ^0.15.0
-  video_player_android: ^2.7.16
-  video_player_avfoundation: ^2.7.0
-  video_player_platform_interface: ^6.3.0
+  video_player_android: ^2.7.17
+  video_player_avfoundation: ^2.6.5
+  video_player_platform_interface: ^6.2.3
   video_player_web: ^2.3.3
 
 dev_dependencies:
