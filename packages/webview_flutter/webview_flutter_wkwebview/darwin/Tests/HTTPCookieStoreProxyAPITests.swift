@@ -12,7 +12,7 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKHTTPCookieStore(registrar)
 
-    var instance: TestCookieStore? = TestCookieStore.customInit()
+    let instance: TestCookieStore? = TestCookieStore.customInit()
     let cookie = HTTPCookie(properties: [
       .name: "foo", .value: "bar", .domain: "http://google.com", .path: "/anything",
     ])!
@@ -30,11 +30,6 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
 
     wait(for: [expect], timeout: 1.0)
     XCTAssertEqual(instance!.setCookieArg, cookie)
-
-    // Ensure instance is deallocated on main thread.
-    DispatchQueue.main.async {
-      instance = nil
-    }
   }
 }
 
