@@ -128,7 +128,7 @@ public class PreviewTest {
     TextureRegistry.SurfaceProducer.Callback callback = callbackCaptor.getValue();
 
     // Verify callback's onSurfaceDestroyed invalidates SurfaceRequest.
-    callback.onSurfaceDestroyed();
+    simulateSurfaceDestruction(callback);
     verify(mockSurfaceRequest).invalidate();
 
     reset(mockSurfaceRequest);
@@ -261,5 +261,13 @@ public class PreviewTest {
     hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
 
     verify(mockPreview).setTargetRotation(targetRotation);
+  }
+
+  // TODO(bparrishMines): Replace with inline calls to onSurfaceCleanup once available on stable;
+  // see https://github.com/flutter/flutter/issues/16125. This separate method only exists to scope
+  // the suppression.
+  @SuppressWarnings({"deprecation", "removal"})
+  void simulateSurfaceDestruction(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
+    producerLifecycle.onSurfaceDestroyed();
   }
 }

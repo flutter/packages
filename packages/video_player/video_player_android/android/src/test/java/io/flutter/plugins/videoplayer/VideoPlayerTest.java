@@ -184,7 +184,7 @@ public final class VideoPlayerTest {
     when(mockExoPlayer.getPlaybackParameters()).thenReturn(new PlaybackParameters(2.5f));
 
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
-    producerLifecycle.onSurfaceDestroyed();
+    simulateSurfaceDestruction(producerLifecycle);
 
     verify(mockExoPlayer).release();
 
@@ -206,7 +206,7 @@ public final class VideoPlayerTest {
 
     verify(mockProducer).setCallback(callbackCaptor.capture());
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
-    producerLifecycle.onSurfaceDestroyed();
+    simulateSurfaceDestruction(producerLifecycle);
 
     verify(mockExoPlayer, never()).stop();
     verify(mockExoPlayer, never()).pause();
@@ -256,7 +256,7 @@ public final class VideoPlayerTest {
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
 
     // Trigger destroyed/available.
-    producerLifecycle.onSurfaceDestroyed();
+    simulateSurfaceDestruction(producerLifecycle);
     producerLifecycle.onSurfaceAvailable();
 
     // Initial listener, and the new one from the resume.
@@ -300,5 +300,13 @@ public final class VideoPlayerTest {
     InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
     inOrder.verify(mockExoPlayer).release();
     inOrder.verify(mockProducer).release();
+  }
+
+  // TODO(bparrishMines): Replace with inline calls to onSurfaceCleanup once available on stable;
+  // see https://github.com/flutter/flutter/issues/16125. This separate method only exists to scope
+  // the suppression.
+  @SuppressWarnings({"deprecation", "removal"})
+  void simulateSurfaceDestruction(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
+    producerLifecycle.onSurfaceDestroyed();
   }
 }
