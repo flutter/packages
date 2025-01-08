@@ -850,7 +850,7 @@ void main() {
         MediaQuery(
           data: mediaQueryData,
           child: SvgPicture.file(
-            File(''),
+            File('nosuchfile'),
             errorBuilder: (
               BuildContext context,
               Object error,
