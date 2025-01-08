@@ -18,7 +18,7 @@ import WebKit
 /// changes to the class that are not backwards compatible will only be made with a major version
 /// change of the plugin. Native code other than this external API does not follow breaking change
 /// conventions, so app or plugin clients should not use any other native APIs.
-@objc(WebViewFlutterWKWebViewExternalAPI)
+@objc(FWFWebViewFlutterWKWebViewExternalAPI)
 public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
   /// Retrieves the `WKWebView` that is associated with `identifier`.
   ///
