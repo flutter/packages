@@ -1112,16 +1112,16 @@ html.MouseEvent _simulateClick(html.Element target, {bool metaKey = false}) {
   return mouseEvent;
 }
 
-html.KeyboardEvent _simulateKeydown(html.Element target, {bool metaKey = false}) {
+html.KeyboardEvent _simulateKeydown(html.Element target,
+    {bool metaKey = false}) {
   final html.KeyboardEvent keydownEvent = html.KeyboardEvent(
-    'keydown',
-    html.KeyboardEventInit(
-      bubbles: true,
-      cancelable: true,
-      metaKey: metaKey,
-      // code: 'Space',
-    )
-  );
+      'keydown',
+      html.KeyboardEventInit(
+        bubbles: true,
+        cancelable: true,
+        metaKey: metaKey,
+        // code: 'Space',
+      ));
   LinkViewController.handleGlobalKeydown(event: keydownEvent);
   return keydownEvent;
 }
