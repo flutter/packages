@@ -3,7 +3,7 @@ description: Demonstrates how to use the video_player plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
   flutter: ">=3.22.0"
 
 dependencies:
@@ -31,7 +31,6 @@ flutter:
   assets:
     - assets/flutter-mark-square-64.png
     - assets/Butterfly-209.mp4
-
 
 # FOR TESTING ONLY. DO NOT MERGE.
 dependency_overrides:
