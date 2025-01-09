@@ -1,10 +1,12 @@
-name: pathproviderexample
+name: path_provider_linux_example
 description: Demonstrates how to use the path_provider_linux plugin.
 publish_to: "none"
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
   flutter: ">=3.22.0"
+
+resolution: workspace
 
 dependencies:
   flutter:

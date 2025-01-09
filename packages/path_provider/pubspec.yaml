@@ -1,0 +1,18 @@
+name: path_provider_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - path_provider
+  - path_provider/example
+  - path_provider_android
+  - path_provider_android/example
+  - path_provider_foundation
+  - path_provider_foundation/example
+  - path_provider_linux
+  - path_provider_linux/example
+  - path_provider_platform_interface
+  - path_provider_windows
+  - path_provider_windows/example
