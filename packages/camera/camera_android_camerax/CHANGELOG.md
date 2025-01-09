@@ -1,7 +1,8 @@
-## NEXT
+## 0.6.12
 
 * Suppresses deprecation and removal warnings for
   `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
+* Removes logic added to correct the rotation of the camera preview, since it is no longer required.
 
 ## 0.6.11
 
