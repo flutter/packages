@@ -10,7 +10,7 @@
 @import Flutter;
 
 #import "MockCameraDeviceDiscoverer.h"
-#import "MockCaptureDeviceController.h"
+#import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
 
@@ -46,7 +46,7 @@
   }
 }
 
-- (void)setCaptureDevice:(id<FLTCaptureDeviceControlling>)device {
+- (void)setCaptureDevice:(id<FLTCaptureDevice>)device {
   self.captureDevice = device;
 }
 
@@ -67,7 +67,7 @@
 
 @interface CameraOrientationTests : XCTestCase
 @property(readonly, nonatomic) MockCamera *camera;
-@property(readonly, nonatomic) MockCaptureDeviceController *mockDevice;
+@property(readonly, nonatomic) MockCaptureDevice *mockDevice;
 @property(readonly, nonatomic) StubGlobalEventApi *eventAPI;
 @property(readonly, nonatomic) CameraPlugin *cameraPlugin;
 @property(readonly, nonatomic) MockCameraDeviceDiscoverer *deviceDiscoverer;
@@ -77,7 +77,7 @@
 
 - (void)setUp {
   [super setUp];
-  MockCaptureDeviceController *mockDevice = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *mockDevice = [[MockCaptureDevice alloc] init];
   _camera = [[MockCamera alloc] init];
   _eventAPI = [[StubGlobalEventApi alloc] init];
   _mockDevice = mockDevice;
@@ -87,7 +87,7 @@
       messenger:nil
       globalAPI:_eventAPI
       deviceDiscoverer:_deviceDiscoverer
-      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
         return mockDevice;
       }
       captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
@@ -162,14 +162,14 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
 
   __weak CameraPlugin *weakPlugin;
-  __weak MockCaptureDeviceController *weakDevice = _mockDevice;
+  __weak MockCaptureDevice *weakDevice = _mockDevice;
 
   @autoreleasepool {
     CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil
         messenger:nil
         globalAPI:_eventAPI
         deviceDiscoverer:_deviceDiscoverer
-        deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+        deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
           return weakDevice;
         }
         captureSessionFactory:^id<FLTCaptureSession> _Nonnull {

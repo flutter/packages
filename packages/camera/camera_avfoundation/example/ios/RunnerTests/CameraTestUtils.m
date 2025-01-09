@@ -8,7 +8,7 @@
 @import AVFoundation;
 @import camera_avfoundation;
 
-#import "MockCaptureDeviceController.h"
+#import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
 
@@ -77,7 +77,7 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
     frameRateRangeMock2
   ]);
 
-  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDeviceControlling));
+  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDevice));
   OCMStub([captureDeviceMock lockForConfiguration:[OCMArg setTo:nil]]).andReturn(YES);
   OCMStub([captureDeviceMock formats]).andReturn((@[
     captureDeviceFormatMock1, captureDeviceFormatMock2
@@ -93,7 +93,7 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
 
   FLTCamConfiguration *configuration = [[FLTCamConfiguration alloc] initWithMediaSettings:mediaSettings
                                                                      mediaSettingsWrapper:mediaSettingsAVWrapper
-                                                                     captureDeviceFactory:captureDeviceFactory ?: ^id<FLTCaptureDeviceControlling>(void) {
+                                                                     captureDeviceFactory:captureDeviceFactory ?: ^id<FLTCaptureDevice>(void) {
                                                                         return captureDeviceMock;
                                                                       }
                                                                     captureSessionFactory:^id<FLTCaptureSession> _Nonnull{
@@ -149,12 +149,12 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(id<FLTCaptureSession> captureSession
   OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDeviceControlling));
+  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDevice));
 
   FLTCamConfiguration *configuration = [[FLTCamConfiguration alloc]
       initWithMediaSettings:FCPGetDefaultMediaSettings(resolutionPreset)
       mediaSettingsWrapper:[[FLTCamMediaSettingsAVWrapper alloc] init]
-      captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
+      captureDeviceFactory:^id<FLTCaptureDevice>(void) {
         return captureDeviceMock;
       }
       captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
@@ -184,7 +184,7 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
   FLTCamConfiguration *configuration = [[FLTCamConfiguration alloc]
       initWithMediaSettings:FCPGetDefaultMediaSettings(resolutionPreset)
       mediaSettingsWrapper:[[FLTCamMediaSettingsAVWrapper alloc] init]
-      captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
+      captureDeviceFactory:^id<FLTCaptureDevice>(void) {
         return captureDevice;
       }
       captureSessionFactory:^id<FLTCaptureSession> _Nonnull {

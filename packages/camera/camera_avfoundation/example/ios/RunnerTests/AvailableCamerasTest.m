@@ -10,7 +10,7 @@
 @import AVFoundation;
 
 #import "MockCameraDeviceDiscoverer.h"
-#import "MockCaptureDeviceController.h"
+#import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
 
 @interface AvailableCamerasTest : XCTestCase
@@ -28,8 +28,8 @@
       messenger:nil
       globalAPI:nil
       deviceDiscoverer:_mockDeviceDiscoverer
-      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
-        return [[MockCaptureDeviceController alloc] init];
+      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+        return [[MockCaptureDevice alloc] init];
       }
       captureSessionFactory:^id<FLTCaptureSession> {
         return [[MockCaptureSession alloc] init];
@@ -41,19 +41,19 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 13 Cameras:
-  MockCaptureDeviceController *wideAngleCamera = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *wideAngleCamera = [[MockCaptureDevice alloc] init];
   wideAngleCamera.uniqueID = @"0";
   wideAngleCamera.position = AVCaptureDevicePositionBack;
 
-  MockCaptureDeviceController *frontFacingCamera = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *frontFacingCamera = [[MockCaptureDevice alloc] init];
   frontFacingCamera.uniqueID = @"1";
   frontFacingCamera.position = AVCaptureDevicePositionFront;
 
-  MockCaptureDeviceController *ultraWideCamera = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *ultraWideCamera = [[MockCaptureDevice alloc] init];
   ultraWideCamera.uniqueID = @"2";
   ultraWideCamera.position = AVCaptureDevicePositionBack;
 
-  MockCaptureDeviceController *telephotoCamera = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *telephotoCamera = [[MockCaptureDevice alloc] init];
   telephotoCamera.uniqueID = @"3";
   telephotoCamera.position = AVCaptureDevicePositionBack;
 
@@ -70,7 +70,7 @@
     [cameras addObject:ultraWideCamera];
   }
 
-  _mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDeviceControlling>> *_Nullable(
+  _mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
       NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
       AVCaptureDevicePosition position) {
     XCTAssertEqualObjects(deviceTypes, requiredTypes);
@@ -100,11 +100,11 @@
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 8 Cameras:
-  MockCaptureDeviceController *wideAngleCamera = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *wideAngleCamera = [[MockCaptureDevice alloc] init];
   wideAngleCamera.uniqueID = @"0";
   wideAngleCamera.position = AVCaptureDevicePositionBack;
 
-  MockCaptureDeviceController *frontFacingCamera = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *frontFacingCamera = [[MockCaptureDevice alloc] init];
   frontFacingCamera.uniqueID = @"1";
   frontFacingCamera.position = AVCaptureDevicePositionFront;
 
@@ -118,7 +118,7 @@
   NSMutableArray *cameras = [NSMutableArray array];
   [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera ]];
 
-  _mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDeviceControlling>> *_Nullable(
+  _mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
       NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
       AVCaptureDevicePosition position) {
     XCTAssertEqualObjects(deviceTypes, requiredTypes);

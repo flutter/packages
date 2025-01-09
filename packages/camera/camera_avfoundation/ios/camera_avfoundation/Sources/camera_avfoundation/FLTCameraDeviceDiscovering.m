@@ -8,7 +8,7 @@
 
 @implementation FLTDefaultCameraDeviceDiscoverer
 
-- (NSArray<id<FLTCaptureDeviceControlling>> *)
+- (NSArray<id<FLTCaptureDevice>> *)
     discoverySessionWithDeviceTypes:(NSArray<AVCaptureDeviceType> *)deviceTypes
                           mediaType:(AVMediaType)mediaType
                            position:(AVCaptureDevicePosition)position {
@@ -18,10 +18,10 @@
                                                               position:position];
 
   NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
-  NSMutableArray<id<FLTCaptureDeviceControlling>> *deviceControllers = [NSMutableArray array];
+  NSMutableArray<id<FLTCaptureDevice>> *deviceControllers = [NSMutableArray array];
 
   for (AVCaptureDevice *device in devices) {
-    [deviceControllers addObject:(id<FLTCaptureDeviceControlling>)device];
+    [deviceControllers addObject:(id<FLTCaptureDevice>)device];
   }
 
   return deviceControllers;

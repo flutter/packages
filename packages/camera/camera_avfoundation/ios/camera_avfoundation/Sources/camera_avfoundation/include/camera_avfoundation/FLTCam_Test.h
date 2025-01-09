@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTCam.h"
-#import "FLTCaptureDeviceControlling.h"
+#import "FLTCaptureDevice.h"
 #import "FLTDeviceOrientationProviding.h"
 #import "FLTSavePhotoDelegate.h"
 

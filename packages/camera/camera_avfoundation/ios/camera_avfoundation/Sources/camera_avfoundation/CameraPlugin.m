@@ -47,7 +47,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       messenger:messenger
       globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
       deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]
-      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
         return [AVCaptureDevice deviceWithUniqueID:name];
       }
       captureSessionFactory:^id<FLTCaptureSession>(void) {
@@ -137,13 +137,13 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     if (@available(iOS 13.0, *)) {
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
     }
-    NSArray<id<FLTCaptureDeviceControlling>> *devices =
+    NSArray<id<FLTCaptureDevice>> *devices =
         [self.deviceDiscoverer discoverySessionWithDeviceTypes:discoveryDevices
                                                      mediaType:AVMediaTypeVideo
                                                       position:AVCaptureDevicePositionUnspecified];
     NSMutableArray<FCPPlatformCameraDescription *> *reply =
         [[NSMutableArray alloc] initWithCapacity:devices.count];
-    for (id<FLTCaptureDeviceControlling> device in devices) {
+    for (id<FLTCaptureDevice> device in devices) {
       FCPPlatformCameraLensDirection lensFacing;
       switch (device.position) {
         case AVCaptureDevicePositionBack:
@@ -499,7 +499,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   FLTCamConfiguration *camConfiguration =
       [[FLTCamConfiguration alloc] initWithMediaSettings:settings
                                     mediaSettingsWrapper:mediaSettingsAVWrapper
-                                    captureDeviceFactory:^id<FLTCaptureDeviceControlling> _Nonnull {
+                                    captureDeviceFactory:^id<FLTCaptureDevice> _Nonnull {
                                       return self.captureDeviceFactory(name);
                                     }
                                    captureSessionFactory:_captureSessionFactory

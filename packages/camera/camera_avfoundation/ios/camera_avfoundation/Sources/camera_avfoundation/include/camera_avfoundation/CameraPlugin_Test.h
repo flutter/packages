@@ -8,12 +8,12 @@
 #import "FLTCam.h"
 #import "FLTCamConfiguration.h"
 #import "FLTCameraDeviceDiscovering.h"
-#import "FLTCaptureDeviceControlling.h"
+#import "FLTCaptureDevice.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef id<FLTCaptureDeviceControlling> _Nonnull (^CaptureNamedDeviceFactory)(NSString *name);
+typedef id<FLTCaptureDevice> _Nonnull (^CaptureNamedDeviceFactory)(NSString *name);
 
 /// APIs exposed for unit testing.
 @interface CameraPlugin ()

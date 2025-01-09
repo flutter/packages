@@ -8,7 +8,7 @@
 
 #import "CameraProperties.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
-#import "FLTCaptureDeviceControlling.h"
+#import "FLTCaptureDevice.h"
 #import "FLTCaptureSession.h"
 #import "FLTDeviceOrientationProviding.h"
 
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Factory block returning an AVCaptureDevice.
 /// Used in tests to inject a device into FLTCam.
-typedef id<FLTCaptureDeviceControlling> _Nonnull (^CaptureDeviceFactory)(void);
+typedef id<FLTCaptureDevice> _Nonnull (^CaptureDeviceFactory)(void);
 
 typedef id<FLTCaptureSession> _Nonnull (^CaptureSessionFactory)(void);
 

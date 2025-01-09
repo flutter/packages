@@ -9,7 +9,7 @@
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
-#import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
+#import "./include/camera_avfoundation/FLTCaptureDevice.h"
 #import "./include/camera_avfoundation/FLTDeviceOrientationProviding.h"
 #import "./include/camera_avfoundation/FLTEventChannel.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
@@ -1001,7 +1001,7 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
-              onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+              onDevice:(id<FLTCaptureDevice>)captureDevice {
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:

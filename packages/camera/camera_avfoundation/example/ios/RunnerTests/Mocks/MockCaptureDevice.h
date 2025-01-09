@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MockCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
+@interface MockCaptureDevice : NSObject <FLTCaptureDevice>
 
 @property(nonatomic, assign) NSString *uniqueID;
 

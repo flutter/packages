@@ -25,7 +25,7 @@
   OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
 
   id captureFormatMock = OCMClassMock([AVCaptureDeviceFormat class]);
-  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDeviceControlling));
+  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDevice));
   OCMStub([captureDeviceMock formats]).andReturn(@[ captureFormatMock ]);
 
   OCMExpect([captureDeviceMock activeFormat]).andReturn(captureFormatMock);

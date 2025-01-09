@@ -9,7 +9,7 @@
 @import XCTest;
 
 #import "MockCameraDeviceDiscoverer.h"
-#import "MockCaptureDeviceController.h"
+#import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
 
 @interface CameraCaptureSessionQueueRaceConditionTests : XCTestCase
@@ -18,13 +18,13 @@
 @implementation CameraCaptureSessionQueueRaceConditionTests
 
 - (void)testFixForCaptureSessionQueueNullPointerCrashDueToRaceCondition {
-  MockCaptureDeviceController *captureDevice = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *captureDevice = [[MockCaptureDevice alloc] init];
 
   CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
       messenger:nil
       globalAPI:nil
       deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
-      deviceFactory:^id<FLTCaptureDeviceControlling>(NSString *name) {
+      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
         return captureDevice;
       }
       captureSessionFactory:^id<FLTCaptureSession> {

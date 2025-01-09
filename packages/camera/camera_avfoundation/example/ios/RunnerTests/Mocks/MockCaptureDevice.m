@@ -8,9 +8,9 @@
 #endif
 @import AVFoundation;
 
-#import "MockCaptureDeviceController.h"
+#import "MockCaptureDevice.h"
 
-@implementation MockCaptureDeviceController
+@implementation MockCaptureDevice
 
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
   _activeFormat = format;
@@ -142,7 +142,7 @@
   return self;
 }
 
-- (id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDeviceControlling>)device
+- (id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDevice>)device
                                        error:(NSError **)error {
   return _mockDeviceInput;
 }

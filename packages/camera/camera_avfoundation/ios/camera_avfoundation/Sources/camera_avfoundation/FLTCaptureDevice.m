@@ -4,11 +4,11 @@
 
 @import Flutter;
 
-#import "FLTCaptureDeviceControlling.h"
+#import "FLTCaptureDevice.h"
 
 @implementation FLTDefaultCaptureDeviceInputFactory
 
-- (AVCaptureInput *)deviceInputWithDevice:(id<FLTCaptureDeviceControlling>)device
+- (AVCaptureInput *)deviceInputWithDevice:(id<FLTCaptureDevice>)device
                                     error:(NSError **)error {
   return [AVCaptureDeviceInput deviceInputWithDevice:device error:error];
 }

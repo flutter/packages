@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol FLTCaptureDeviceControlling <NSObject>
+@protocol FLTCaptureDevice <NSObject>
 
 // Device
 - (NSString *)uniqueID;
@@ -71,11 +71,11 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol FLTCaptureDeviceInputFactory <NSObject>
-- (nullable id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDeviceControlling>)device
+- (nullable id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDevice>)device
                                                 error:(NSError **)error;
 @end
 
-@interface AVCaptureDevice (FLTCaptureDeviceControlling) <FLTCaptureDeviceControlling>
+@interface AVCaptureDevice (FLTCaptureDevice) <FLTCaptureDevice>
 @end
 
 @interface AVCaptureInput (FLTCaptureInput) <FLTCaptureInput>
