@@ -19,11 +19,7 @@ class TableExample extends StatefulWidget {
   State<TableExample> createState() => _TableExampleState();
 }
 
-enum _TableSelection {
-  multiCell,
-  singleCell,
-  disabled,
-}
+enum _TableSelection { multiCell, singleCell, disabled }
 
 class _TableExampleState extends State<TableExample> {
   late final ScrollController _verticalController = ScrollController();
@@ -41,29 +37,30 @@ class _TableExampleState extends State<TableExample> {
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 50.0),
-        child: _selectionMode == _TableSelection.multiCell
-                              ? SelectionArea(
-                                  child: TableView.builder( 
-                                    verticalDetails: ScrollableDetails.vertical(
-                                      controller: _verticalController,
-                                    ),
-                                    cellBuilder: _buildCell,
-                                    columnCount: 20,
-                                    columnBuilder: _buildColumnSpan,
-                                    rowCount: _rowCount,
-                                    rowBuilder: _buildRowSpan,
-                                  ),
-                                )
-                              : TableView.builder(
-                                  verticalDetails: ScrollableDetails.vertical(
-                                    controller: _verticalController,
-                                  ),
-                                  cellBuilder: _buildCell,
-                                  columnCount: 20,
-                                  columnBuilder: _buildColumnSpan,
-                                  rowCount: _rowCount,
-                                  rowBuilder: _buildRowSpan,
-                                ),
+        child:
+            _selectionMode == _TableSelection.multiCell
+                ? SelectionArea(
+                  child: TableView.builder(
+                    verticalDetails: ScrollableDetails.vertical(
+                      controller: _verticalController,
+                    ),
+                    cellBuilder: _buildCell,
+                    columnCount: 20,
+                    columnBuilder: _buildColumnSpan,
+                    rowCount: _rowCount,
+                    rowBuilder: _buildRowSpan,
+                  ),
+                )
+                : TableView.builder(
+                  verticalDetails: ScrollableDetails.vertical(
+                    controller: _verticalController,
+                  ),
+                  cellBuilder: _buildCell,
+                  columnCount: 20,
+                  columnBuilder: _buildColumnSpan,
+                  rowCount: _rowCount,
+                  rowBuilder: _buildRowSpan,
+                ),
       ),
       persistentFooterButtons: <Widget>[
         OverflowBar(
@@ -76,17 +73,20 @@ class _TableExampleState extends State<TableExample> {
                 SegmentedButton<_TableSelection>(
                   segments: const <ButtonSegment<_TableSelection>>[
                     ButtonSegment<_TableSelection>(
-                        value: _TableSelection.multiCell,
-                        label: Text('Multi-Cell'),
-                        icon: Icon(Icons.layers)),
+                      value: _TableSelection.multiCell,
+                      label: Text('Multi-Cell'),
+                      icon: Icon(Icons.layers),
+                    ),
                     ButtonSegment<_TableSelection>(
-                        value: _TableSelection.singleCell,
-                        label: Text('Single-Cell'),
-                        icon: Icon(Icons.crop_square)),
+                      value: _TableSelection.singleCell,
+                      label: Text('Single-Cell'),
+                      icon: Icon(Icons.crop_square),
+                    ),
                     ButtonSegment<_TableSelection>(
-                        value: _TableSelection.disabled,
-                        label: Text('Disabled'),
-                        icon: Icon(Icons.disabled_by_default)),
+                      value: _TableSelection.disabled,
+                      label: Text('Disabled'),
+                      icon: Icon(Icons.disabled_by_default),
+                    ),
                   ],
                   selected: <_TableSelection>{_selectionMode},
                   onSelectionChanged: (Set<_TableSelection> newSelection) {
@@ -140,16 +140,12 @@ class _TableExampleState extends State<TableExample> {
     if (_selectionMode == _TableSelection.singleCell) {
       result = SelectionArea(child: result);
     }
-    return TableViewCell(
-      child: result,
-    );
+    return TableViewCell(child: result);
   }
 
   TableSpan _buildColumnSpan(int index) {
     const TableSpanDecoration decoration = TableSpanDecoration(
-      border: TableSpanBorder(
-        trailing: BorderSide(),
-      ),
+      border: TableSpanBorder(trailing: BorderSide()),
     );
 
     switch (index % 5) {
@@ -161,10 +157,10 @@ class _TableExampleState extends State<TableExample> {
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap column $index'),
-            ),
+                  () => TapGestureRecognizer(),
+                  (TapGestureRecognizer t) =>
+                      t.onTap = () => print('Tap column $index'),
+                ),
           },
         );
       case 1:
@@ -202,11 +198,7 @@ class _TableExampleState extends State<TableExample> {
   TableSpan _buildRowSpan(int index) {
     final TableSpanDecoration decoration = TableSpanDecoration(
       color: index.isEven ? Colors.purple[100] : null,
-      border: const TableSpanBorder(
-        trailing: BorderSide(
-          width: 3,
-        ),
-      ),
+      border: const TableSpanBorder(trailing: BorderSide(width: 3)),
     );
 
     switch (index % 3) {
@@ -217,10 +209,10 @@ class _TableExampleState extends State<TableExample> {
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap row $index'),
-            ),
+                  () => TapGestureRecognizer(),
+                  (TapGestureRecognizer t) =>
+                      t.onTap = () => print('Tap row $index'),
+                ),
           },
         );
       case 1:
