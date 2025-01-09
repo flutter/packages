@@ -1,0 +1,14 @@
+name: quick_actions_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - quick_actions
+  - quick_actions/example
+  - quick_actions_android
+  - quick_actions_android/example
+  - quick_actions_ios
+  - quick_actions_ios/example
+  - quick_actions_platform_interface
