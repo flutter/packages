@@ -34,6 +34,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element anchor = _findSingleAnchor();
       expect(anchor.getAttribute('href'), uri.toString());
@@ -51,6 +52,7 @@ void main() {
         )),
       ));
       await tester.pumpAndSettle();
+      await tester.pump();
 
       // Check that the same anchor has been updated.
       expect(anchor.getAttribute('href'), uri2.toString());
@@ -68,6 +70,7 @@ void main() {
         )),
       ));
       await tester.pumpAndSettle();
+      await tester.pump();
 
       // Check that internal route properly prepares using the default
       // [UrlStrategy]
@@ -102,6 +105,7 @@ void main() {
         ),
       ));
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final Size containerSize = tester.getSize(find.byKey(containerKey));
       // The Stack widget inserted by the `WebLinkDelegate` shouldn't loosen the
@@ -130,6 +134,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       final html.Element anchor = _findSingleAnchor();
       expect(anchor.hasAttribute('href'), false);
@@ -161,6 +166,7 @@ void main() {
       );
 
       await tester.pumpAndSettle();
+      await tester.pump();
 
       await tester.scrollUntilVisible(
         find.text('#${itemCount - 1}'),
@@ -213,6 +219,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(observer.currentRouteName, '/');
       expect(testPlugin.launches, isEmpty);
@@ -227,10 +234,6 @@ void main() {
       // should be no calls to `launchUrl`.
       expect(observer.currentRouteName, '/foobar');
       expect(testPlugin.launches, isEmpty);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('keydown to navigate to internal link',
@@ -258,6 +261,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(observer.currentRouteName, '/');
       expect(testPlugin.launches, isEmpty);
@@ -272,10 +276,6 @@ void main() {
       // should be no calls to `launchUrl`.
       expect(observer.currentRouteName, '/foobar');
       expect(testPlugin.launches, isEmpty);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('click to navigate to external link',
@@ -300,6 +300,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(observer.currentRouteName, '/');
       expect(testPlugin.launches, isEmpty);
@@ -315,10 +316,6 @@ void main() {
       // no calls to `launchUrl`.
       expect(observer.currentRouteName, '/');
       expect(testPlugin.launches, isEmpty);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
 
     testWidgets('keydown to navigate to external link',
@@ -343,6 +340,7 @@ void main() {
       ));
       // Platform view creation happens asynchronously.
       await tester.pumpAndSettle();
+      await tester.pump();
 
       expect(observer.currentRouteName, '/');
       expect(testPlugin.launches, isEmpty);
@@ -357,17 +355,13 @@ void main() {
       // `launchUrl`, and there's no change to the app's route name.
       expect(observer.currentRouteName, '/');
       expect(testPlugin.launches, <String>['https://google.com']);
-
-      // Needed when testing on on Chrome98 headless in CI.
-      // See https://github.com/flutter/flutter/issues/121161
-      await tester.pumpAndSettle();
     });
   });
 }
 
 html.Element _findSingleAnchor() {
   final List<html.Element> foundAnchors = <html.Element>[];
-  html.NodeList anchors = html.document.querySelectorAll('a');
+  final html.NodeList anchors = html.document.querySelectorAll('a');
   for (int i = 0; i < anchors.length; i++) {
     final html.Element anchor = anchors.item(i)! as html.Element;
     if (anchor.hasProperty(linkViewIdProperty.toJS).toDart) {
@@ -375,27 +369,24 @@ html.Element _findSingleAnchor() {
     }
   }
 
-  // Search inside the shadow DOM as well.
-  final html.ShadowRoot? shadowRoot =
-      html.document.querySelector('flt-glass-pane')?.shadowRoot;
-  if (shadowRoot != null) {
-    anchors = shadowRoot.querySelectorAll('a');
-    for (int i = 0; i < anchors.length; i++) {
-      final html.Element anchor = anchors.item(i)! as html.Element;
-      if (anchor.hasProperty(linkViewIdProperty.toJS).toDart) {
-        foundAnchors.add(anchor);
-      }
-    }
-  }
-
   return foundAnchors.single;
 }
 
 void _simulateClick(html.Element target) {
+  // Stop the browser from navigating away from the test suite.
+  target.addEventListener(
+      'click',
+      (html.Event e) {
+        e.preventDefault();
+      }.toJS);
+  // Synthesize a click event.
   target.dispatchEvent(
     html.MouseEvent(
       'click',
-      html.MouseEventInit()..bubbles = true,
+      html.MouseEventInit(
+        bubbles: true,
+        cancelable: true,
+      ),
     ),
   );
 }
@@ -404,7 +395,11 @@ void _simulateKeydown(html.Element target) {
   target.dispatchEvent(
     html.KeyboardEvent(
       'keydown',
-      html.KeyboardEventInit()..bubbles = true,
+      html.KeyboardEventInit(
+        bubbles: true,
+        cancelable: true,
+        code: 'Space',
+      ),
     ),
   );
 }
