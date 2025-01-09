@@ -7,7 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:camera_avfoundation/camera_avfoundation.dart';
-import 'package:camera_example/camera_controller.dart';
+import 'package:camera_avfoundation_example/camera_controller.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';

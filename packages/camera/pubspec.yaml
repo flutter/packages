@@ -1,0 +1,19 @@
+name: camera_workspace
+publish_to: none
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - camera
+  - camera/example
+  - camera_android
+  - camera_android/example
+  - camera_android_camerax
+  - camera_android_camerax/example
+  - camera_avfoundation
+  - camera_avfoundation/example
+  - camera_platform_interface
+  - camera_web
+  - camera_web/example
+  - camera_windows
+  - camera_windows/example
