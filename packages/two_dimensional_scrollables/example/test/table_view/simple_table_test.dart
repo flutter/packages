@@ -55,7 +55,8 @@ void main() {
     expect(position.pixels, 0.0);
   });
 
-  testWidgets('Selection SegmentedButton control works', (WidgetTester tester) async {
+  testWidgets('Selection SegmentedButton control works',
+      (WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: TableExample()));
     await tester.pump();
 
