@@ -1,4 +1,4 @@
-## 3.16.4
+## 3.17.0
 
 * Adds a change listener for the `canGoBack` property. See
   `WebKitWebViewController.setOnCanGoBackChange`.
