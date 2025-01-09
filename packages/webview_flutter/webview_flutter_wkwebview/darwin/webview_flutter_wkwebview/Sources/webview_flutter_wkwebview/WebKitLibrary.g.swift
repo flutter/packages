@@ -2911,6 +2911,18 @@ protocol PigeonApiDelegateUIScrollView {
       throws
   #endif
   #if !os(macOS)
+    /// Whether the scroll view bounces when it reaches the ends of its horizontal
+    /// axis.
+    func setBouncesHorizontally(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+  #endif
+  #if !os(macOS)
+    /// Whether the scroll view bounces when it reaches the ends of its vertical
+    /// axis.
+    func setBouncesVertically(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+  #endif
+  #if !os(macOS)
     /// Whether bouncing always occurs when vertical scrolling reaches the end of
     /// the content.
     ///
@@ -3062,6 +3074,48 @@ final class PigeonApiUIScrollView: PigeonApiProtocolUIScrollView {
         }
       } else {
         setBouncesChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setBouncesHorizontallyChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBouncesHorizontally",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setBouncesHorizontallyChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setBouncesHorizontally(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setBouncesHorizontallyChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setBouncesVerticallyChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBouncesVertically",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setBouncesVerticallyChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setBouncesVertically(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setBouncesVerticallyChannel.setMessageHandler(nil)
       }
     #endif
     #if !os(macOS)

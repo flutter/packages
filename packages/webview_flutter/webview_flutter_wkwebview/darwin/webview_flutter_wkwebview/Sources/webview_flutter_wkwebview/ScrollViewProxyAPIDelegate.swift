@@ -45,6 +45,28 @@ class ScrollViewProxyAPIDelegate: PigeonApiDelegateUIScrollView {
       pigeonInstance.bounces = value
     }
 
+    func setBouncesHorizontally(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
+    ) throws {
+      if #available(iOS 17.4, *) {
+        pigeonInstance.bouncesHorizontally = value
+      } else {
+        throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar).createUnsupportedVersionError(
+          method: "UIScrollView.bouncesHorizontally", versionRequirements: "iOS 17.4")
+      }
+    }
+
+    func setBouncesVertically(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
+    ) throws {
+      if #available(iOS 17.4, *) {
+        pigeonInstance.bouncesVertically = value
+      } else {
+        throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar).createUnsupportedVersionError(
+          method: "UIScrollView.bouncesVertically", versionRequirements: "iOS 17.4")
+      }
+    }
+
     func setAlwaysBounceVertical(
       pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
     ) throws {

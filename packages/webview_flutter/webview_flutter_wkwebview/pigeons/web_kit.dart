@@ -586,6 +586,14 @@ abstract class UIScrollView extends UIView {
   /// Whether the scroll view bounces past the edge of content and back again.
   void setBounces(bool value);
 
+  /// Whether the scroll view bounces when it reaches the ends of its horizontal
+  /// axis.
+  void setBouncesHorizontally(bool value);
+
+  /// Whether the scroll view bounces when it reaches the ends of its vertical
+  /// axis.
+  void setBouncesVertically(bool value);
+
   /// Whether bouncing always occurs when vertical scrolling reaches the end of
   /// the content.
   ///

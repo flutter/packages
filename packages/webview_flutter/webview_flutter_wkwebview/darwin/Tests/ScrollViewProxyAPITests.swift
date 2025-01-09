@@ -70,6 +70,34 @@ class ScrollViewProxyAPITests: XCTestCase {
       XCTAssertEqual(instance.bounces, value)
     }
 
+    @available(iOS 17.4, *)
+    @MainActor
+    func testSetBouncesHorizontally() {
+      let registrar = TestProxyApiRegistrar()
+      let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
+
+      let instance = TestScrollView()
+      let value = true
+      try? api.pigeonDelegate.setBouncesHorizontally(
+        pigeonApi: api, pigeonInstance: instance, value: value)
+
+      XCTAssertEqual(instance.bouncesHorizontally, value)
+    }
+
+    @available(iOS 17.4, *)
+    @MainActor
+    func testSetBouncesVertically() {
+      let registrar = TestProxyApiRegistrar()
+      let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
+
+      let instance = TestScrollView()
+      let value = true
+      try? api.pigeonDelegate.setBouncesVertically(
+        pigeonApi: api, pigeonInstance: instance, value: value)
+
+      XCTAssertEqual(instance.bouncesVertically, value)
+    }
+
     @MainActor
     func testSetAlwaysBounceVertical() {
       let registrar = TestProxyApiRegistrar()
