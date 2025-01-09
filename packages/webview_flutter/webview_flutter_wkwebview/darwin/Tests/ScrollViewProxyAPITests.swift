@@ -70,33 +70,35 @@ class ScrollViewProxyAPITests: XCTestCase {
       XCTAssertEqual(instance.bounces, value)
     }
 
-    @available(iOS 17.4, *)
-    @MainActor
-    func testSetBouncesHorizontally() {
-      let registrar = TestProxyApiRegistrar()
-      let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
+    #if compiler(>=6.0)
+      @available(iOS 17.4, *)
+      @MainActor
+      func testSetBouncesHorizontally() {
+        let registrar = TestProxyApiRegistrar()
+        let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
-      let instance = TestScrollView()
-      let value = true
-      try? api.pigeonDelegate.setBouncesHorizontally(
-        pigeonApi: api, pigeonInstance: instance, value: value)
+        let instance = TestScrollView()
+        let value = true
+        try? api.pigeonDelegate.setBouncesHorizontally(
+          pigeonApi: api, pigeonInstance: instance, value: value)
 
-      XCTAssertEqual(instance.bouncesHorizontally, value)
-    }
+        XCTAssertEqual(instance.bouncesHorizontally, value)
+      }
 
-    @available(iOS 17.4, *)
-    @MainActor
-    func testSetBouncesVertically() {
-      let registrar = TestProxyApiRegistrar()
-      let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
+      @available(iOS 17.4, *)
+      @MainActor
+      func testSetBouncesVertically() {
+        let registrar = TestProxyApiRegistrar()
+        let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
-      let instance = TestScrollView()
-      let value = true
-      try? api.pigeonDelegate.setBouncesVertically(
-        pigeonApi: api, pigeonInstance: instance, value: value)
+        let instance = TestScrollView()
+        let value = true
+        try? api.pigeonDelegate.setBouncesVertically(
+          pigeonApi: api, pigeonInstance: instance, value: value)
 
-      XCTAssertEqual(instance.bouncesVertically, value)
-    }
+        XCTAssertEqual(instance.bouncesVertically, value)
+      }
+    #endif
 
     @MainActor
     func testSetAlwaysBounceVertical() {

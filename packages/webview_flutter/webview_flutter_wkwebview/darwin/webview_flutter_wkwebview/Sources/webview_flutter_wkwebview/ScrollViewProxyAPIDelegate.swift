@@ -49,7 +49,12 @@ class ScrollViewProxyAPIDelegate: PigeonApiDelegateUIScrollView {
       pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
     ) throws {
       if #available(iOS 17.4, *) {
-        pigeonInstance.bouncesHorizontally = value
+        #if compiler(>=6.0)
+          pigeonInstance.bouncesHorizontally = value
+        #else
+          throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar).createUnsupportedVersionError(
+            method: "UIScrollView.bouncesHorizontally", versionRequirements: "compiler>=6.0")
+        #endif
       } else {
         throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar).createUnsupportedVersionError(
           method: "UIScrollView.bouncesHorizontally", versionRequirements: "iOS 17.4")
@@ -60,7 +65,12 @@ class ScrollViewProxyAPIDelegate: PigeonApiDelegateUIScrollView {
       pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
     ) throws {
       if #available(iOS 17.4, *) {
-        pigeonInstance.bouncesVertically = value
+        #if compiler(>=6.0)
+          pigeonInstance.bouncesVertically = value
+        #else
+          throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar).createUnsupportedVersionError(
+            method: "UIScrollView.bouncesVertically", versionRequirements: "compiler>=6.0")
+        #endif
       } else {
         throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar).createUnsupportedVersionError(
           method: "UIScrollView.bouncesVertically", versionRequirements: "iOS 17.4")
