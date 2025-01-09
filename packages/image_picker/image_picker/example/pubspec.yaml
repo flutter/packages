@@ -3,8 +3,10 @@ description: Demonstrates how to use the image_picker plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
   flutter: ">=3.22.0"
+
+resolution: workspace
 
 dependencies:
   flutter:
@@ -18,7 +20,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   image_picker_platform_interface: ^2.10.0
-  mime: ^1.0.4
+  mime: ^2.0.0
   video_player: ^2.7.0
 
 dev_dependencies:

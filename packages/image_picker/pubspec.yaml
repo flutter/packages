@@ -1,0 +1,22 @@
+name: image_picker_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - image_picker
+  - image_picker/example
+  - image_picker_android
+  - image_picker_android/example
+  - image_picker_for_web
+  - image_picker_for_web/example
+  - image_picker_ios
+  - image_picker_ios/example
+  - image_picker_linux
+  - image_picker_linux/example
+  - image_picker_macos
+  - image_picker_macos/example
+  - image_picker_platform_interface
+  - image_picker_windows
+  - image_picker_windows/example
