@@ -1,0 +1,22 @@
+name: file_selector_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - file_selector
+  - file_selector/example
+  - file_selector_android
+  - file_selector_android/example
+  - file_selector_ios
+  - file_selector_ios/example
+  - file_selector_linux
+  - file_selector_linux/example
+  - file_selector_macos
+  - file_selector_macos/example
+  - file_selector_platform_interface
+  - file_selector_web
+  - file_selector_web/example
+  - file_selector_windows
+  - file_selector_windows/example
