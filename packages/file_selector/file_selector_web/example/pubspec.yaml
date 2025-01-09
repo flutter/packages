@@ -1,4 +1,4 @@
-name: file_selector_web_integration_tests
+name: file_selector_web_example
 publish_to: none
 
 environment:

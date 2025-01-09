@@ -1,4 +1,4 @@
-name: google_maps_flutter_web_integration_tests
+name: google_maps_flutter_web_example
 publish_to: none
 
 environment:
