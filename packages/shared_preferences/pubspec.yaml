@@ -1,0 +1,20 @@
+name: shared_preferences_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - shared_preferences
+  - shared_preferences/example
+  - shared_preferences_android
+  - shared_preferences_android/example
+  - shared_preferences_foundation
+  - shared_preferences_foundation/example
+  - shared_preferences_linux
+  - shared_preferences_linux/example
+  - shared_preferences_platform_interface
+  - shared_preferences_web
+  - shared_preferences_web/example
+  - shared_preferences_windows
+  - shared_preferences_windows/example
