@@ -1,0 +1,16 @@
+name: webview_flutter_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - webview_flutter
+  - webview_flutter/example
+  - webview_flutter_android
+  - webview_flutter_android/example
+  - webview_flutter_platform_interface
+  - webview_flutter_web
+  - webview_flutter_web/example
+  - webview_flutter_wkwebview
+  - webview_flutter_wkwebview/example
