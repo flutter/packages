@@ -1,0 +1,16 @@
+name: google_sing_in_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - google_sign_in
+  - google_sign_in/example
+  - google_sign_in_android
+  - google_sign_in_android/example
+  - google_sign_in_ios
+  - google_sign_in_ios/example
+  - google_sign_in_platform_interface
+  - google_sign_in_web
+  - google_sign_in_web/example
