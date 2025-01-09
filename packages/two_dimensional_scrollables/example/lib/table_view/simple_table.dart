@@ -68,11 +68,11 @@ class _TableExampleState extends State<TableExample> {
       persistentFooterButtons: <Widget>[
         OverflowBar(
           alignment: MainAxisAlignment.spaceEvenly,
-          children: [
+          children: <Widget>[
             Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('Selection'),
+              children: <Widget>[
+                const Text('Selection'),
                 SegmentedButton<_TableSelection>(
                   segments: const <ButtonSegment<_TableSelection>>[
                     ButtonSegment<_TableSelection>(
@@ -102,7 +102,7 @@ class _TableExampleState extends State<TableExample> {
             ),
             Row(
               mainAxisSize: MainAxisSize.min,
-              children: [
+              children: <Widget>[
                 TextButton(
                   onPressed: () {
                     _verticalController.jumpTo(0);

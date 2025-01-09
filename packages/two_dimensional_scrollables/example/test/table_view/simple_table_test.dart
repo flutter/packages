@@ -54,4 +54,21 @@ void main() {
     await tester.pump();
     expect(position.pixels, 0.0);
   });
+
+  testWidgets('Selection SegmentedButton control works', (WidgetTester tester) async {
+    await tester.pumpWidget(const MaterialApp(home: TableExample()));
+    await tester.pump();
+
+    // Enable multi-cell selection and verify.
+    await tester.tap(find.textContaining('Multi-Cell'));
+    await tester.pump();
+
+    // Enable single-cell selection and verify.
+    await tester.tap(find.textContaining('Single-Cell'));
+    await tester.pump();
+
+    // Disable selection and verify.
+    await tester.tap(find.text('Disabled'));
+    await tester.pump();
+  });
 }
