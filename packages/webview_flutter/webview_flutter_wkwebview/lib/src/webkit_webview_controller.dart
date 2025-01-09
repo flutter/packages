@@ -152,11 +152,9 @@ class WebKitWebViewController extends PlatformWebViewController {
     );
 
     _webView.addObserver(
-      _webView,
-      keyPath: 'canGoBack',
-      options: <NSKeyValueObservingOptions>{
-        NSKeyValueObservingOptions.newValue,
-      },
+      _webView.nativeWebView,
+      'canGoBack',
+      <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
     );
 
     final WeakReference<WebKitWebViewController> weakThis =
@@ -326,7 +324,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           case 'canGoBack':
             if (controller._onCanGoBackChangeCallback != null) {
               final bool canGoBack =
-                  change[NSKeyValueChangeKey.newValue]! as bool;
+                  change[KeyValueChangeKey.newValue]! as bool;
               controller._onCanGoBackChangeCallback!(canGoBack);
             }
         }

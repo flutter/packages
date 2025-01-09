@@ -1701,21 +1701,23 @@ window.addEventListener("error", function(e) {
     });
 
     test('setOnCanGoBackChange', () async {
-      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+      final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
 
       late final void Function(
-        String keyPath,
-        NSObject object,
-        Map<NSKeyValueChangeKey, Object?> change,
+        NSObject,
+        String? keyPath,
+        NSObject? object,
+        Map<KeyValueChangeKey, Object>? change,
       ) webViewObserveValue;
 
       final WebKitWebViewController controller = createControllerWithMocks(
         createMockWebView: (
-          _, {
+          WKWebViewConfiguration configuration, {
           void Function(
-            String keyPath,
-            NSObject object,
-            Map<NSKeyValueChangeKey, Object?> change,
+            NSObject,
+            String? keyPath,
+            NSObject? object,
+            Map<KeyValueChangeKey, Object>? change,
           )? observeValue,
         }) {
           webViewObserveValue = observeValue!;
@@ -1726,22 +1728,22 @@ window.addEventListener("error", function(e) {
       verify(
         mockWebView.addObserver(
           mockWebView,
-          keyPath: 'canGoBack',
-          options: <NSKeyValueObservingOptions>{
-            NSKeyValueObservingOptions.newValue,
-          },
+          'canGoBack',
+          <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
         ),
       );
 
       late final bool callbackCanGoBack;
 
       await controller.setOnCanGoBackChange(
-          (bool canGoBack) => callbackCanGoBack = canGoBack);
+        (bool canGoBack) => callbackCanGoBack = canGoBack,
+      );
 
       webViewObserveValue(
+        mockWebView,
         'canGoBack',
         mockWebView,
-        <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: true},
+        <KeyValueChangeKey, Object>{KeyValueChangeKey.newValue: true},
       );
 
       expect(callbackCanGoBack, true);

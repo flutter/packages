@@ -1,9 +1,12 @@
+## 3.18.0
+
+* Updates internal API wrapper to use ProxyApis.
+
 ## 3.17.0
 
 * Adds a change listener for the `canGoBack` property. See
   `WebKitWebViewController.setOnCanGoBackChange`.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* Updates internal API wrapper to use ProxyApis.
 
 ## 3.16.3
 
