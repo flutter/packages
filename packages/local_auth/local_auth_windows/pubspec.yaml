@@ -5,8 +5,10 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 1.0.11
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
   flutter: ">=3.22.0"
+
+resolution: workspace
 
 flutter:
   plugin:
@@ -24,7 +26,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^21.0.0
+  pigeon: ^22.4.0
 
 topics:
   - authentication

@@ -1,0 +1,16 @@
+name: local_auth_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - local_auth
+  - local_auth/example
+  - local_auth_android
+  - local_auth_android/example
+  - local_auth_darwin
+  - local_auth_darwin/example
+  - local_auth_platform_interface
+  - local_auth_windows
+  - local_auth_windows/example
