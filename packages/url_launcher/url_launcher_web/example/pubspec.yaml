@@ -1,9 +1,11 @@
-name: regular_integration_tests
+name: url_launcher_web_example
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
   flutter: ">=3.22.0"
+
+resolution: workspace
 
 dependencies:
   flutter:

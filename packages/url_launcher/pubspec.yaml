@@ -1,0 +1,22 @@
+name: url_launcher_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - url_launcher
+  - url_launcher/example
+  - url_launcher_android
+  - url_launcher_android/example
+  - url_launcher_ios
+  - url_launcher_ios/example
+  - url_launcher_linux
+  - url_launcher_linux/example
+  - url_launcher_macos
+  - url_launcher_macos/example
+  - url_launcher_platform_interface
+  - url_launcher_web
+  - url_launcher_web/example
+  - url_launcher_windows
+  - url_launcher_windows/example
