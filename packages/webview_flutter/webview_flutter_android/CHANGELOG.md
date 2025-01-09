@@ -1,6 +1,8 @@
 ## 4.3.0
 
-* Adds WebSettings methods: `AndroidWebViewController.setAllowContentAccess` and `AndroidWebViewController.setGeolocationEnabled`.
+* Adds support for disabling content URL access within WebView and disabling the Geolocation API.
+  See `AndroidWebViewController.setAllowContentAccess` and
+  `AndroidWebViewController.setGeolocationEnabled`.
 
 ## 4.2.0
 
