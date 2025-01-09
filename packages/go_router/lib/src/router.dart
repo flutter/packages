@@ -491,16 +491,17 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///
   /// If the top-most route is a pop up or dialog, this method pops it instead
   /// of any GoRoute under it.
+  ///
+  /// @restore()
+  /// Ensure that the `value` of `routeInformationProvider` is synced
+  ///  with `routerDelegate.currentConfiguration`.
   void pop<T extends Object?>([T? result]) {
     assert(() {
       log('popping ${routerDelegate.currentConfiguration.uri}');
       return true;
     }());
     routerDelegate.pop<T>(result);
-    routeInformationProvider.popSave<T>(
-      routerDelegate.currentConfiguration.uri.toString(),
-      base: routerDelegate.currentConfiguration,
-    );
+    restore(routerDelegate.currentConfiguration);
   }
 
   /// Refresh the route.
