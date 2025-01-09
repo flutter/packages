@@ -27,7 +27,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^22.5.0
+  pigeon: ^22.7.2
 
 topics:
   - html
