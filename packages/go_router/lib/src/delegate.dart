@@ -15,6 +15,13 @@ import 'misc/errors.dart';
 import 'route.dart';
 import 'state.dart';
 
+/// Signature for a predicate function that determines whether a route should be
+/// popped or not.
+typedef PopUntilPredicate = bool Function(
+  GoRouterState,
+  Route<dynamic>,
+);
+
 /// GoRouter implementation of [RouterDelegate].
 class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     with ChangeNotifier {
@@ -123,6 +130,48 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       walker = walker.matches.last;
     }
     return state;
+  }
+
+  /// Pop the Navigator's page stack until the predicate returns `true`.
+  void popUntil(PopUntilPredicate predicate) {
+    while (_popWithPredicate(predicate)) {}
+  }
+
+  /// Methods repetitively called to pop the Navigator's page stack until the
+  /// predicate returns `true` or there is nothing to pop anymore.
+  ///
+  /// - Returns `true` if we should continue popping.
+  /// - Returns `false` if we should stop popping (when the predicate returns
+  ///   `true` or there is no route to pop anymore).
+  bool _popWithPredicate(
+    PopUntilPredicate predicate,
+  ) {
+    NavigatorState? state;
+
+    if (navigatorKey.currentState?.canPop() ?? false) {
+      state = navigatorKey.currentState;
+    }
+    RouteMatchBase walker = currentConfiguration.matches.last;
+    while (walker is ShellRouteMatch) {
+      if (walker.navigatorKey.currentState?.canPop() ?? false) {
+        state = walker.navigatorKey.currentState;
+      }
+      walker = walker.matches.last;
+    }
+    int count = 0; // Only pop 1 page at a time.
+    bool predicateReturnedTrue = false;
+    state?.popUntil((Route<dynamic> route) {
+      if (count == 1 ||
+          (predicateReturnedTrue |= predicate(
+            walker.buildState(_configuration, currentConfiguration),
+            route,
+          ))) {
+        return true;
+      }
+      count++;
+      return false;
+    });
+    return state != null && !predicateReturnedTrue;
   }
 
   bool _handlePopPageWithRouteMatch(

@@ -1,3 +1,7 @@
+## 14.7.0
+
+- Adds `popUntil` method to pop multiple routes from a predicate.
+
 ## 14.6.3
 
 - Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
@@ -19,7 +23,6 @@
 
 - Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
 
-
 ## 14.4.1
 
 - Adds `missing_code_block_language_in_doc_comment` lint.
@@ -38,7 +41,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 
