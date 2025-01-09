@@ -1,0 +1,14 @@
+name: pointer_interceptor_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - pointer_interceptor
+  - pointer_interceptor/example
+  - pointer_interceptor_ios
+  - pointer_interceptor_ios/example
+  - pointer_interceptor_platform_interface
+  - pointer_interceptor_web
+  - pointer_interceptor_web/example
