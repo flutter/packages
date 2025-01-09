@@ -1,0 +1,14 @@
+name: in_app_purchase_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - in_app_purchase
+  - in_app_purchase/example
+  - in_app_purchase_android
+  - in_app_purchase_android/example
+  - in_app_purchase_platform_interface
+  - in_app_purchase_storekit
+  - in_app_purchase_storekit/example
