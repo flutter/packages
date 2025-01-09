@@ -1,4 +1,4 @@
-## NEXT
+## 0.3.4
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
@@ -6,6 +6,8 @@
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * Fixes a bug where collapsing a node in a TreeView with other offscreen nodes would dereference a null value.
+* Updates the simple table sample to demonstrate different types of selection: single-cell
+selection, and multi-cell selection.
 
 ## 0.3.3
 
