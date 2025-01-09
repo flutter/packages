@@ -2,8 +2,10 @@ name: google_maps_flutter_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
   flutter: ">=3.22.0"
+
+resolution: workspace
 
 dependencies:
   flutter:
@@ -27,10 +29,3 @@ dev_dependencies:
 flutter:
   assets:
     - assets/
-
-dependency_overrides:
-  # Override the google_maps_flutter dependency on google_maps_flutter_web.
-  # TODO(ditman): Unwind the circular dependency. This will create problems
-  # if we need to make a breaking change to google_maps_flutter_web.
-  google_maps_flutter_web:
-    path: ../
