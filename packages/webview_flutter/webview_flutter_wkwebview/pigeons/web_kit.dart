@@ -582,6 +582,25 @@ abstract class UIScrollView extends UIView {
 
   /// The delegate of the scroll view.
   void setDelegate(UIScrollViewDelegate? delegate);
+
+  /// Whether the scroll view bounces past the edge of content and back again.
+  void setBounces(bool value);
+
+  /// Whether bouncing always occurs when vertical scrolling reaches the end of
+  /// the content.
+  ///
+  /// If the value of this property is true and `bouncesVertically` is true, the
+  /// scroll view allows vertical dragging even if the content is smaller than
+  /// the bounds of the scroll view.
+  void setAlwaysBounceVertical(bool value);
+
+  /// Whether bouncing always occurs when horizontal scrolling reaches the end
+  /// of the content view.
+  ///
+  /// If the value of this property is true and `bouncesHorizontally` is true,
+  /// the scroll view allows horizontal dragging even if the content is smaller
+  /// than the bounds of the scroll view.
+  void setAlwaysBounceHorizontal(bool value);
 }
 
 /// A collection of properties that you use to initialize a web view..
