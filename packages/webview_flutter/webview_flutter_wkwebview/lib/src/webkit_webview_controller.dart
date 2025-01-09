@@ -151,6 +151,14 @@ class WebKitWebViewController extends PlatformWebViewController {
       <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
     );
 
+    _webView.addObserver(
+      _webView,
+      keyPath: 'canGoBack',
+      options: <NSKeyValueObservingOptions>{
+        NSKeyValueObservingOptions.newValue,
+      },
+    );
+
     final WeakReference<WebKitWebViewController> weakThis =
         WeakReference<WebKitWebViewController>(this);
     _uiDelegate = _webKitParams.webKitProxy.newWKUIDelegate(
@@ -315,6 +323,12 @@ class WebKitWebViewController extends PlatformWebViewController {
               final URL? url = change[KeyValueChangeKey.newValue] as URL?;
               urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
+          case 'canGoBack':
+            if (controller._onCanGoBackChangeCallback != null) {
+              final bool canGoBack =
+                  change[NSKeyValueChangeKey.newValue]! as bool;
+              controller._onCanGoBackChangeCallback!(canGoBack);
+            }
         }
       };
     }),
@@ -330,6 +344,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
+  void Function(bool)? _onCanGoBackChangeCallback;
   void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
@@ -601,6 +616,12 @@ class WebKitWebViewController extends PlatformWebViewController {
     final WKUserContentController controller =
         await _webView.configuration.getUserContentController();
     await controller.addUserScript(userScript);
+  }
+
+  /// Sets the listener for canGoBack changes.
+  Future<void> setOnCanGoBackChange(
+      void Function(bool) onCanGoBackChangeCallback) async {
+    _onCanGoBackChangeCallback = onCanGoBackChangeCallback;
   }
 
   /// Sets a callback that notifies the host application of any log messages
