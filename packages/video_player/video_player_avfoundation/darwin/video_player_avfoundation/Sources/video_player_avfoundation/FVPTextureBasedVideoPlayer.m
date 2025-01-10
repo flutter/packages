@@ -32,8 +32,8 @@
   }
 #endif
   return [self initWithURL:[NSURL fileURLWithPath:path]
-              frameUpdater:(FVPFrameUpdater *)frameUpdater
-               displayLink:(FVPDisplayLink *)displayLink
+              frameUpdater:frameUpdater
+               displayLink:displayLink
                httpHeaders:@{}
                  avFactory:avFactory
                  registrar:registrar];
@@ -52,8 +52,8 @@
   AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
   AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
   return [self initWithPlayerItem:item
-                     frameUpdater:(FVPFrameUpdater *)frameUpdater
-                      displayLink:(FVPDisplayLink *)displayLink
+                     frameUpdater:frameUpdater
+                      displayLink:displayLink
                         avFactory:avFactory
                         registrar:registrar];
 }
