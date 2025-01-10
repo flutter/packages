@@ -1,3 +1,6 @@
+## 2.7.4
+
+- Fixes an issue when navigate to router with invalid params 
 
 ## 2.7.3
 
