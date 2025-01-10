@@ -309,7 +309,7 @@ class _TypeHelperIterable extends _TypeHelper {
               formatIterableType = '?.toSet()';
             }
             convertToNotNull =
-                '?.where((e) => e != null)?.cast<$iterableType>()$formatIterableType${asParameterType}';
+                '?.where((e) => e != null)?.cast<$iterableType>()$formatIterableType$asParameterType';
           }
           entriesTypeDecoder = helper.helperName(iterableType);
         }
