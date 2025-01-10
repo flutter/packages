@@ -8,10 +8,12 @@
 #import "../video_player_avfoundation/include/video_player_avfoundation/FVPVideoPlayer.h"
 #import "../video_player_avfoundation/include/video_player_avfoundation/messages.g.h"
 
-@implementation FVPNativeVideoViewFactory {
-  NSObject<FlutterBinaryMessenger> *_messenger;
-  FVPVideoPlayer * (^_playerByIdProvider)(NSNumber *);
-}
+@interface FVPNativeVideoViewFactory ()
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *messenger;
+@property(nonatomic, copy) FVPVideoPlayer * (^playerByIdProvider)(NSNumber *);
+@end
+
+@implementation FVPNativeVideoViewFactory
 
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                playerByIdProvider:(FVPVideoPlayer * (^)(NSNumber *))playerByIdProvider {
@@ -27,7 +29,7 @@
                                     viewIdentifier:(int64_t)viewId
                                          arguments:(FVPPlatformVideoViewCreationParams *)args {
   NSNumber *playerId = @(args.playerId);
-  FVPVideoPlayer *player = _playerByIdProvider(playerId);
+  FVPVideoPlayer *player = self.playerByIdProvider(playerId);
   return [[FVPNativeVideoView alloc] initWithPlayer:player.player];
 }
 

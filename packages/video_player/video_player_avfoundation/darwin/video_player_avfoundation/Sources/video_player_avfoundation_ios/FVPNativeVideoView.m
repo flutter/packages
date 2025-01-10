@@ -19,19 +19,20 @@
 }
 @end
 
-@implementation FVPNativeVideoView {
-  FVPPlayerView *_view;
-}
+@interface FVPNativeVideoView ()
+@property(nonatomic) FVPPlayerView *playerView;
+@end
 
+@implementation FVPNativeVideoView
 - (instancetype)initWithPlayer:(AVPlayer *)player {
   if (self = [super init]) {
-    _view = [[FVPPlayerView alloc] init];
-    [_view setPlayer:player];
+    _playerView = [[FVPPlayerView alloc] init];
+    [_playerView setPlayer:player];
   }
   return self;
 }
 
 - (FVPPlayerView *)view {
-  return _view;
+  return self.playerView;
 }
 @end
