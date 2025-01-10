@@ -900,6 +900,13 @@ void main() {
       sensorOrientationCameraCharacteristics: () {
         return mockCameraCharacteristicsKey;
       },
+      lowerQualityOrHigherThanFallbackStrategy: ({
+        required VideoQuality quality,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return MockFallbackStrategy();
+      },
     );
 
     when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
