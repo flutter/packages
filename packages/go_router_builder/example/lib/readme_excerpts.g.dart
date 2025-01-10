@@ -46,7 +46,7 @@ extension $HomeRouteExtension on HomeRoute {
 
 extension $FamilyRouteExtension on FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
-        fid: state.pathParameters['fid']!,
+        fid: state.pathParameters['fid'],
       );
 
   String get location => GoRouteData.$location(
@@ -154,7 +154,7 @@ RouteBase get $hotdogRouteWithEverything => GoRouteData.$route(
 extension $HotdogRouteWithEverythingExtension on HotdogRouteWithEverything {
   static HotdogRouteWithEverything _fromState(GoRouterState state) =>
       HotdogRouteWithEverything(
-        _$boolConverter(state.pathParameters['ketchup']!),
+        _$boolConverter(state.pathParameters['ketchup']!.toString())!,
         state.uri.queryParameters['mustard'],
         state.extra as Sauce,
       );

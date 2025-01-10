@@ -740,7 +740,7 @@ const String _convertMapValueHelper = '''
 T? $convertMapValueHelperName<T>(
   String key,
   Map<String, String> map,
-  T Function(String) converter,
+  T? Function(String) converter,
 ) {
   final value = map[key];
   return value == null ? null : converter(value);
@@ -762,6 +762,6 @@ bool $boolConverterHelperName(String value) {
 
 const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
-  T $enumExtensionHelperName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? $enumExtensionHelperName(String value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }''';
