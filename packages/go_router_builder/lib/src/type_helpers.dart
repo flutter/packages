@@ -318,7 +318,6 @@ class _TypeHelperIterable extends _TypeHelper {
       // get correct type for iterable
       String iterableCaster = '';
       String fallBack = '';
-
       if (const TypeChecker.fromRuntime(List)
           .isAssignableFromType(parameterElement.type)) {
         iterableCaster += '?.toList()';
