@@ -12,6 +12,7 @@ import 'shared/data.dart';
 part 'all_types.g.dart';
 
 @TypedGoRoute<AllTypesBaseRoute>(path: '/', routes: <TypedGoRoute<GoRouteData>>[
+  TypedGoRoute<InvalidPageRoute>(path: 'invalid-page'),
   TypedGoRoute<BigIntRoute>(path: 'big-int-route/:requiredBigIntField'),
   TypedGoRoute<BoolRoute>(path: 'bool-route/:requiredBoolField'),
   TypedGoRoute<DateTimeRoute>(path: 'date-time-route/:requiredDateTimeField'),
@@ -36,6 +37,22 @@ class AllTypesBaseRoute extends GoRouteData {
   Widget build(BuildContext context, GoRouterState state) =>
       const BasePage<void>(
         dataTitle: 'Root',
+      );
+}
+
+class InvalidPageRoute extends GoRouteData {
+  InvalidPageRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => InvalidPage(
+        dataTitle: 'InvalidPage',
+        queryParamWithDefaultValue: state.uri.queryParameters,
+      );
+
+  Widget drawerTile(BuildContext context) => ListTile(
+        title: const Text('InvalidPage'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
       );
 }
 
@@ -626,6 +643,25 @@ class IterablePage extends StatelessWidget {
         'enumListField': enumListField,
         'enumSetField': enumSetField,
       }.toString(),
+    );
+  }
+}
+
+class InvalidPage extends StatelessWidget {
+  const InvalidPage({
+    super.key,
+    required this.dataTitle,
+    this.queryParamWithDefaultValue,
+  });
+
+  final String dataTitle;
+  final Map<String, dynamic>? queryParamWithDefaultValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return BasePage<String>(
+      dataTitle: dataTitle,
+      queryParamWithDefaultValue: queryParamWithDefaultValue.toString(),
     );
   }
 }
