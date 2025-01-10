@@ -95,8 +95,7 @@
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player frameUpdater:(FVPFrameUpdater *)frameUpdater {
-  BOOL textureBased =
-      frameUpdater != nil && [player isKindOfClass:[FVPTextureBasedVideoPlayer class]];
+  BOOL textureBased = [player isKindOfClass:[FVPTextureBasedVideoPlayer class]];
   int64_t playerId;
   if (textureBased) {
     playerId = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
