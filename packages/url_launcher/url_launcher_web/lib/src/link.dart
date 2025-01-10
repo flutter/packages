@@ -228,26 +228,28 @@ class LinkTriggerSignals {
     }
   }
 
-  /// Registers a FollowLink signal with the given [viewId].
-  void registerFollowLink({required int viewId}) {
+  /// Acknowledges a FollowLink signal from [viewId].
+  void acknowledgeFollowLink({required int viewId}) {
     _hasFollowLink = true;
     _viewIdFromFollowLink = viewId;
     _didUpdate();
   }
 
-  /// Registers a DOM event signal with the given [viewId] and [mouseEvent].
+  /// Acknowledges an incoming [mouseEvent] from a specific [viewId].
   ///
-  /// The [viewId] is optional because it cannot be determined from some DOM
-  /// events.
+  /// [viewId] is nullable because it cannot be determined for some DOM events.
   ///
-  /// The [mouseEvent] is optional because the signal may be from a keyboard
+  /// [mouseEvent] is nullable because some signals may come from a keyboard
   /// event.
-  void registerDomEvent({
+  ///
+  /// If `mouseEvent` is not null, `viewId` becomes mandatory. If `viewId` is
+  /// not present in this case, a [StateError] is thrown.
+  void acknowledgeMouseEvent({
     required int? viewId,
     required html.MouseEvent? mouseEvent,
   }) {
     if (mouseEvent != null && viewId == null) {
-      throw AssertionError('`viewId` must be provided for mouse events');
+      throw StateError('`viewId` must be provided for mouse events');
     }
     _hasDomEvent = true;
     _viewIdFromDomEvent = viewId;
@@ -427,7 +429,7 @@ class LinkViewController extends PlatformViewController {
 
     // The keydown event is not directly associated with the target Link, so
     // we can't find the `viewId` from the event.
-    _triggerSignals.registerDomEvent(viewId: null, mouseEvent: null);
+    _triggerSignals.acknowledgeMouseEvent(viewId: null, mouseEvent: null);
     _triggerSignals.triggerLinkIfReady();
   }
 
@@ -459,7 +461,7 @@ class LinkViewController extends PlatformViewController {
       return;
     }
 
-    _triggerSignals.registerDomEvent(
+    _triggerSignals.acknowledgeMouseEvent(
       viewId: viewIdFromTarget,
       mouseEvent: event,
     );
@@ -470,7 +472,7 @@ class LinkViewController extends PlatformViewController {
   /// Call this method to indicate that a hit test has been registered for the
   /// given [viewId].
   static void onFollowLink(int viewId) {
-    _triggerSignals.registerFollowLink(viewId: viewId);
+    _triggerSignals.acknowledgeFollowLink(viewId: viewId);
     _triggerSignals.triggerLinkIfReady();
   }
 
