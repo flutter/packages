@@ -90,30 +90,22 @@
 
 - (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler {
   CMTime previousCMTime = self.player.currentTime;
-  CMTime targetCMTime = CMTimeMake(location, 1000);
-  CMTimeValue duration = self.player.currentItem.asset.duration.value;
-  // Without adding tolerance when seeking to duration,
-  // seekToTime will never complete, and this call will hang.
-  // see issue https://github.com/flutter/flutter/issues/124475.
-  CMTime tolerance = location == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
-  [self.player seekToTime:targetCMTime
-          toleranceBefore:tolerance
-           toleranceAfter:tolerance
-        completionHandler:^(BOOL completed) {
-          if (CMTimeCompare(self.player.currentTime, previousCMTime) != 0) {
-            // Ensure that a frame is drawn once available, even if currently paused. In theory a
-            // race is possible here where the new frame has already drawn by the time this code
-            // runs, and the display link stays on indefinitely, but that should be relatively
-            // harmless. This must use the display link rather than just informing the engine that a
-            // new frame is available because the seek completing doesn't guarantee that the pixel
-            // buffer is already available.
-            [self expectFrame];
-          }
+  [super seekTo:location
+      completionHandler:^(BOOL completed) {
+        if (CMTimeCompare(self.player.currentTime, previousCMTime) != 0) {
+          // Ensure that a frame is drawn once available, even if currently paused. In theory a
+          // race is possible here where the new frame has already drawn by the time this code
+          // runs, and the display link stays on indefinitely, but that should be relatively
+          // harmless. This must use the display link rather than just informing the engine that a
+          // new frame is available because the seek completing doesn't guarantee that the pixel
+          // buffer is already available.
+          [self expectFrame];
+        }
 
-          if (completionHandler) {
-            completionHandler(completed);
-          }
-        }];
+        if (completionHandler) {
+          completionHandler(completed);
+        }
+      }];
 }
 
 - (void)expectFrame {
