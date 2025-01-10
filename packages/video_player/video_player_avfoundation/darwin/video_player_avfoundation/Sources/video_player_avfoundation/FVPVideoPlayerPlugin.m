@@ -39,17 +39,14 @@
 
 #pragma mark -
 
-// TODO(stuartmorgan): Decouple IDs for platform views and texture views.
-/// The next non-texture player ID, initialized to a high number to avoid collisions with
-/// texture IDs (which are generated separately).
-static int64_t nextNonTexturePlayerId = INT_MAX;
-
 @interface FVPVideoPlayerPlugin ()
 @property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry> *registry;
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
 @property(nonatomic, strong) id<FVPAVFactory> avFactory;
+// TODO(stuartmorgan): Decouple IDs for platform views and texture views.
+@property(nonatomic, assign) int64_t nextNonTexturePlayerId;
 @end
 
 @implementation FVPVideoPlayerPlugin
@@ -85,6 +82,9 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
   _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
   _playersById = [NSMutableDictionary dictionaryWithCapacity:1];
+  // Initialized to a high number to avoid collisions with texture IDs (which are generated
+  // separately).
+  _nextNonTexturePlayerId = INT_MAX;
   return self;
 }
 
@@ -102,7 +102,7 @@ static int64_t nextNonTexturePlayerId = INT_MAX;
     playerId = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
     frameUpdater.textureId = playerId;
   } else {
-    playerId = nextNonTexturePlayerId--;
+    playerId = self.nextNonTexturePlayerId--;
   }
 
   FlutterEventChannel *eventChannel = [FlutterEventChannel
