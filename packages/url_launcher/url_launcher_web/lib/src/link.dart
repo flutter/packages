@@ -228,23 +228,23 @@ class LinkTriggerSignals {
     }
   }
 
-  /// Acknowledges a FollowLink signal from [viewId].
-  void acknowledgeFollowLink({required int viewId}) {
+  /// Handles a FollowLink signal from [viewId].
+  void onFollowLink({required int viewId}) {
     _hasFollowLink = true;
     _viewIdFromFollowLink = viewId;
     _didUpdate();
   }
 
-  /// Acknowledges an incoming [mouseEvent] from a specific [viewId].
+  /// Handles a [mouseEvent] signal from a specific [viewId].
   ///
-  /// [viewId] is nullable because it cannot be determined for some DOM events.
-  ///
-  /// [mouseEvent] is nullable because some signals may come from a keyboard
-  /// event.
+  /// * [viewId] identifies the view where the Link widget was rendered to. It
+  ///   is nullable because it cannot be determined for some DOM events.
+  /// * [mouseEvent] is the DOM MouseEvent that triggered this signal. It is
+  ///   nullable because some signals may come from a keyboard event.
   ///
   /// If `mouseEvent` is not null, `viewId` becomes mandatory. If `viewId` is
   /// not present in this case, a [StateError] is thrown.
-  void acknowledgeMouseEvent({
+  void onMouseEvent({
     required int? viewId,
     required html.MouseEvent? mouseEvent,
   }) {
@@ -429,7 +429,7 @@ class LinkViewController extends PlatformViewController {
 
     // The keydown event is not directly associated with the target Link, so
     // we can't find the `viewId` from the event.
-    _triggerSignals.acknowledgeMouseEvent(viewId: null, mouseEvent: null);
+    _triggerSignals.onMouseEvent(viewId: null, mouseEvent: null);
     _triggerSignals.triggerLinkIfReady();
   }
 
@@ -461,7 +461,7 @@ class LinkViewController extends PlatformViewController {
       return;
     }
 
-    _triggerSignals.acknowledgeMouseEvent(
+    _triggerSignals.onMouseEvent(
       viewId: viewIdFromTarget,
       mouseEvent: event,
     );
@@ -472,7 +472,7 @@ class LinkViewController extends PlatformViewController {
   /// Call this method to indicate that a hit test has been registered for the
   /// given [viewId].
   static void onFollowLink(int viewId) {
-    _triggerSignals.acknowledgeFollowLink(viewId: viewId);
+    _triggerSignals.onFollowLink(viewId: viewId);
     _triggerSignals.triggerLinkIfReady();
   }
 
