@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Bumps androidx.datastore:datastore-preferences from 1.0.0 to 1.1.1.
+
 ## 2.4.0
 
 * Adds `SharedPreferences` support within `SharedPreferencesAsyncAndroid` API.
