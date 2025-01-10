@@ -6,17 +6,15 @@
 
 import 'package:flutter/material.dart';
 
-// #docregion init
 import 'package:google_adsense/experimental/ad_unit_widget.dart';
+// #docregion init
 import 'package:google_adsense/google_adsense.dart';
 
 void main() async {
-// #docregion init-min
   // Call `initialize` with your Publisher ID (pub-0123456789012345)
   // (See: https://support.google.com/adsense/answer/105516)
   await adSense.initialize('0123456789012345');
 
-  // #enddocregion init-min
   runApp(const MyApp());
 }
 // #enddocregion init
@@ -61,55 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const Text(
-                'Responsive Ad Constrained by width of 150px:',
-              ),
-              Container(
-                constraints: const BoxConstraints(maxWidth: 150),
-                padding: const EdgeInsets.only(bottom: 10),
-                child:
-                    // #docregion adUnit
-                    AdUnitWidget(
-                  configuration: AdUnitConfiguration.displayAdUnit(
-                    // TODO: Replace with your Ad Unit ID
-                    adSlot: '1234567890',
-                    // Remove AdFormat to make ads limited by height
-                    adFormat: AdFormat.AUTO,
-                  ),
-                ),
-                // #enddocregion adUnit
-              ),
-              const Text(
-                'Responsive Ad Constrained by height of 100px and width of 1200px (to keep ad centered):',
-              ),
-              // #docregion constraints
-              Container(
-                constraints:
-                    const BoxConstraints(maxHeight: 100, maxWidth: 1200),
-                padding: const EdgeInsets.only(bottom: 10),
-                child: AdUnitWidget(
-                  configuration: AdUnitConfiguration.displayAdUnit(
-                    // TODO: Replace with your Ad Unit ID
-                    adSlot: '1234567890',
-                    // Do not use adFormat to make ad unit respect height constraint
-                    // adFormat: AdFormat.AUTO,
-                  ),
-                ),
-              ),
-              // #enddocregion constraints
-              const Text(
-                'Fixed 125x125 size Ad:',
-              ),
-              Container(
-                height: 125,
-                width: 125,
-                padding: const EdgeInsets.only(bottom: 10),
-                child: AdUnitWidget(
-                  configuration: AdUnitConfiguration.displayAdUnit(
-                    // TODO: Replace with your Ad Unit ID
-                    adSlot: '1234567890',
-                    isFullWidthResponsive: false,
-                  ),
+              AdUnitWidget(
+                configuration: AdUnitConfiguration.displayAdUnit(
+                  // TODO: Replace with your Ad Unit ID
+                  adSlot: '1234567890',
+                  // Remove AdFormat to make ads limited by height
+                  adFormat: AdFormat.AUTO,
                 ),
               ),
             ],

@@ -187,6 +187,141 @@ void main() {
       );
     });
 
+    group('imports', () {
+      test('add check if every class does not support iOS', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, contains('#if !os(iOS)\nimport MyImport\n#endif'));
+      });
+
+      test('add check if every class does not support macOS', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsMacos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, contains('#if !os(macOS)\nimport MyImport\n#endif'));
+      });
+
+      test('add check if for multiple unsupported platforms', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+                supportsMacos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(
+          code,
+          contains('#if !os(iOS) || !os(macOS)\nimport MyImport\n#endif'),
+        );
+      });
+
+      test('do not add check if at least one class is supported', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+            AstProxyApi(
+              name: 'Api2',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, isNot(contains('#if !os(iOS)\nimport MyImport')));
+      });
+    });
+
     group('inheritance', () {
       test('extends', () {
         final AstProxyApi api2 = AstProxyApi(

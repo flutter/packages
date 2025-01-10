@@ -14,7 +14,7 @@ import 'package:google_adsense/google_adsense.dart' hide adSense;
 import 'package:google_adsense/src/adsense/ad_unit_params.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'adsense_test_js_interop.dart';
+import 'js_interop_mocks/adsense_test_js_interop.dart';
 
 const String testClient = 'test_client';
 const String testSlot = 'test_slot';
@@ -205,7 +205,8 @@ Future<void> pumpAdWidget(Widget adUnit, WidgetTester tester) async {
 
   // This extra pump is needed for the platform view to actually render in the DOM.
   await tester.pump();
-
+  // One more for skwasm.
+  await tester.pump();
   // This extra pump is needed to simulate the async behavior of the adsense JS mock.
   await tester.pumpAndSettle();
 }
