@@ -81,6 +81,30 @@
   return self;
 }
 
+- (void)expectFrame {
+  self.waitingForFrame = YES;
+
+  _displayLink.running = YES;
+}
+
+#pragma mark - Private methods
+
+- (CALayer *)flutterViewLayer {
+#if TARGET_OS_OSX
+  return self.registrar.view.layer;
+#else
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+  // TODO(hellohuanlin): Provide a non-deprecated codepath. See
+  // https://github.com/flutter/flutter/issues/104117
+  UIViewController *root = UIApplication.sharedApplication.keyWindow.rootViewController;
+#pragma clang diagnostic pop
+  return root.view.layer;
+#endif
+}
+
+#pragma mark - Overrides
+
 - (void)updatePlayingState {
   [super updatePlayingState];
   // If the texture is still waiting for an expected frame, the display link needs to keep
@@ -108,11 +132,15 @@
       }];
 }
 
-- (void)expectFrame {
-  self.waitingForFrame = YES;
+- (void)disposeSansEventChannel {
+  [super disposeSansEventChannel];
 
-  _displayLink.running = YES;
+  [self.playerLayer removeFromSuperlayer];
+
+  _displayLink = nil;
 }
+
+#pragma mark - FlutterTexture
 
 - (CVPixelBufferRef)copyPixelBuffer {
   CVPixelBufferRef buffer = NULL;
@@ -145,28 +173,6 @@
   dispatch_async(dispatch_get_main_queue(), ^{
     [self dispose];
   });
-}
-
-- (void)disposeSansEventChannel {
-  [super disposeSansEventChannel];
-
-  [self.playerLayer removeFromSuperlayer];
-
-  _displayLink = nil;
-}
-
-- (CALayer *)flutterViewLayer {
-#if TARGET_OS_OSX
-  return self.registrar.view.layer;
-#else
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO(hellohuanlin): Provide a non-deprecated codepath. See
-  // https://github.com/flutter/flutter/issues/104117
-  UIViewController *root = UIApplication.sharedApplication.keyWindow.rootViewController;
-#pragma clang diagnostic pop
-  return root.view.layer;
-#endif
 }
 
 @end
