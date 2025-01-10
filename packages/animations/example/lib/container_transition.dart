@@ -5,8 +5,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 
-const String _loremIpsumParagraph =
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
+const String _loremIpsumParagraph = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod '
     'tempor incididunt ut labore et dolore magna aliqua. Vulputate dignissim '
     'suspendisse in est. Ut ornare lectus sit amet. Eget nunc lobortis mattis '
     'aliquam faucibus purus in. Hendrerit gravida rutrum quisque non tellus '
@@ -49,8 +48,7 @@ class OpenContainerTransformDemo extends StatefulWidget {
   }
 }
 
-class _OpenContainerTransformDemoState
-    extends State<OpenContainerTransformDemo> {
+class _OpenContainerTransformDemoState extends State<OpenContainerTransformDemo> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   void _showMarkedAsDoneSnackbar(bool? isMarkedAsDone) {
@@ -84,9 +82,8 @@ class _OpenContainerTransformDemoState
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType = index == 0
-                              ? ContainerTransitionType.fade
-                              : ContainerTransitionType.fadeThrough;
+                          _transitionType =
+                              index == 0 ? ContainerTransitionType.fade : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },
@@ -332,17 +329,12 @@ class _ExampleCard extends StatelessWidget {
               right: 16.0,
               bottom: 16.0,
             ),
-            child: Flexible(
-              child: Text(
-                'Lorem ipsum dolor sit amet, consectetur '
-                'adipiscing elit, sed do eiusmod tempor.',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium!
-                    .copyWith(color: Colors.black54),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+            child: Text(
+              'Lorem ipsum dolor sit amet, consectetsssur '
+              'adipiscing elit, sed do eiusmod tempor.',
+              style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black54),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],
