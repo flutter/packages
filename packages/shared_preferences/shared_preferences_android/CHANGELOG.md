@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Bumps gradle-plugin to 2.1.0.
+
 ## 2.4.0
 
 * Adds `SharedPreferences` support within `SharedPreferencesAsyncAndroid` API.

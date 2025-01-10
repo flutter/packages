@@ -1,3 +1,7 @@
+## 4.2.1
+
+* Bumps gradle-plugin to 2.1.0.
+
 ## 4.2.0
 
 * Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.
