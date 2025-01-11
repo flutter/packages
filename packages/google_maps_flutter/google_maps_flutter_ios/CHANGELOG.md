@@ -1,6 +1,6 @@
 ## 2.13.2
 
-* Deprecates zIndex parameter in Marker and replace with zIndexInt.
+* Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
 
 ## 2.13.1
 
