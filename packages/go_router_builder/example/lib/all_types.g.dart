@@ -17,10 +17,6 @@ RouteBase get $allTypesBaseRoute => GoRouteData.$route(
       factory: $AllTypesBaseRouteExtension._fromState,
       routes: [
         GoRouteData.$route(
-          path: 'invalid-page',
-          factory: $InvalidPageRouteExtension._fromState,
-        ),
-        GoRouteData.$route(
           path: 'big-int-route/:requiredBigIntField',
           factory: $BigIntRouteExtension._fromState,
         ),
@@ -81,23 +77,6 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
 
   String get location => GoRouteData.$location(
         '/',
-      );
-
-  void go(BuildContext context) => context.go(location);
-
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  void replace(BuildContext context) => context.replace(location);
-}
-
-extension $InvalidPageRouteExtension on InvalidPageRoute {
-  static InvalidPageRoute _fromState(GoRouterState state) => InvalidPageRoute();
-
-  String get location => GoRouteData.$location(
-        '/invalid-page',
       );
 
   void go(BuildContext context) => context.go(location);
