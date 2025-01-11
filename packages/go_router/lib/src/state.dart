@@ -162,8 +162,9 @@ class GoRouterState {
     // Generate base location using configuration, with optional path and query parameters
     // Then conditionally append fragment if it exists and is not empty
     return _configuration.namedLocation(name,
-            pathParameters: pathParameters, queryParameters: queryParameters) +
-        ((fragment?.isNotEmpty ?? false) ? '#$fragment' : '');
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        fragment: fragment);
   }
 
   @override
