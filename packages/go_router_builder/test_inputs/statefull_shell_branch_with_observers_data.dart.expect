@@ -3,3 +3,4 @@ RouteBase get $statefulShellBranchWithObserversData =>
       initialLocation: StatefulShellBranchWithObserversData.$initialLocation,
       observers: StatefulShellBranchWithObserversData.$observers,
     );
+    
