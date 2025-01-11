@@ -26,6 +26,48 @@ class CreationOptions {
   Map<String, String> httpHeaders;
 }
 
+class AutomaticallyStartsPictureInPictureMessage {
+  AutomaticallyStartsPictureInPictureMessage(
+    this.textureId,
+    this.enableStartPictureInPictureAutomaticallyFromInline,
+  );
+  int textureId;
+  bool enableStartPictureInPictureAutomaticallyFromInline;
+}
+
+class SetPictureInPictureOverlaySettingsMessage {
+  SetPictureInPictureOverlaySettingsMessage(
+    this.textureId,
+    this.settings,
+  );
+  int textureId;
+  PictureInPictureOverlaySettingsMessage? settings;
+}
+
+class PictureInPictureOverlaySettingsMessage {
+  PictureInPictureOverlaySettingsMessage({
+    required this.top,
+    required this.left,
+    required this.width,
+    required this.height,
+  });
+  double top;
+  double left;
+  double width;
+  double height;
+}
+
+class StartPictureInPictureMessage {
+  StartPictureInPictureMessage(this.textureId);
+
+  int textureId;
+}
+
+class StopPictureInPictureMessage {
+  StopPictureInPictureMessage(this.textureId);
+  int textureId;
+}
+
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
@@ -52,4 +94,16 @@ abstract class AVFoundationVideoPlayerApi {
   void pause(int textureId);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
+  @ObjCSelector('isPictureInPictureSupported')
+  bool isPictureInPictureSupported();
+  @ObjCSelector('setPictureInPictureOverlaySettings:')
+  void setPictureInPictureOverlaySettings(
+      SetPictureInPictureOverlaySettingsMessage msg);
+  @ObjCSelector('setAutomaticallyStartsPictureInPicture:')
+  void setAutomaticallyStartsPictureInPicture(
+      AutomaticallyStartsPictureInPictureMessage msg);
+  @ObjCSelector('startPictureInPicture:')
+  void startPictureInPicture(StartPictureInPictureMessage msg);
+  @ObjCSelector('stopPictureInPicture:')
+  void stopPictureInPicture(StopPictureInPictureMessage msg);
 }

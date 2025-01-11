@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/video_player_avfoundation/FVPVideoPlayer.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
+#import "video_player_avfoundation/FVPVideoPlayer.h"
+#import "video_player_avfoundation/FVPVideoPlayer_Test.h"
 
+#import <AVFoundation/AVFoundation.h>
+#import <AVKit/AVKit.h>
 #import <GLKit/GLKit.h>
 
-#import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
+#import "video_player_avfoundation/AVAssetTrackUtils.h"
+#import "video_player_avfoundation/FVPDisplayLink.h"
 
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
@@ -42,6 +45,12 @@ static void *rateContext = &rateContext;
 
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
+@end
+
+API_AVAILABLE(macos(10.15))
+@interface FVPVideoPlayer () <AVPictureInPictureControllerDelegate>
+@property(nonatomic) AVPictureInPictureController *pictureInPictureController;
+@property(nonatomic) BOOL pictureInPictureStarted;
 @end
 
 @implementation FVPVideoPlayer
@@ -135,6 +144,9 @@ static void *rateContext = &rateContext;
   // for issue #1, and restore the correct width and height for issue #2.
   _playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
   [self.flutterViewLayer addSublayer:_playerLayer];
+
+  // Configure Picture in Picture controller
+  [self setUpPictureInPictureController];
 
   // Configure output.
   _displayLink = displayLink;
@@ -603,6 +615,78 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [currentItem removeObserver:self forKeyPath:@"duration"];
   [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
   [_player removeObserver:self forKeyPath:@"rate"];
+}
+
+/// Sets up the picture in picture controller and assigns the AVPictureInPictureControllerDelegate
+/// to the controller.
+- (void)setUpPictureInPictureController {
+  if (@available(macOS 10.15, *)) {
+    if (AVPictureInPictureController.isPictureInPictureSupported) {
+      self.pictureInPictureController =
+          [[AVPictureInPictureController alloc] initWithPlayerLayer:self.playerLayer];
+      [self setAutomaticallyStartPictureInPicture:NO];
+      _pictureInPictureController.delegate = self;
+    }
+  } else {
+    // We don't do anything here because there is no setup required below macOS 10.15.
+  }
+}
+
+- (void)setAutomaticallyStartPictureInPicture:
+    (BOOL)canStartPictureInPictureAutomaticallyFromInline {
+  if (!self.pictureInPictureController) return;
+#if TARGET_OS_IOS
+  if (@available(iOS 14.2, *)) {
+    self.pictureInPictureController.canStartPictureInPictureAutomaticallyFromInline =
+        canStartPictureInPictureAutomaticallyFromInline;
+  }
+#endif
+}
+
+- (void)setPictureInPictureOverlayFrame:(CGRect)frame {
+  self.playerLayer.frame = frame;
+}
+
+- (void)setPictureInPictureStarted:(BOOL)startPictureInPicture {
+  if (@available(macOS 10.15, *)) {
+    if (!AVPictureInPictureController.isPictureInPictureSupported ||
+        _pictureInPictureStarted == startPictureInPicture) {
+      return;
+    }
+  } else {
+    return;
+  }
+
+  _pictureInPictureStarted = startPictureInPicture;
+  if (_pictureInPictureStarted && ![self.pictureInPictureController isPictureInPictureActive]) {
+    if (_eventSink != nil) {
+      // The event is sent here to make sure that the Flutter UI can be updated as soon as possible.
+      _eventSink(@{@"event" : @"startedPictureInPicture"});
+    }
+    [self.pictureInPictureController startPictureInPicture];
+  } else if (!_pictureInPictureStarted &&
+             [self.pictureInPictureController isPictureInPictureActive]) {
+    [self.pictureInPictureController stopPictureInPicture];
+  }
+}
+
+#pragma mark - AVPictureInPictureControllerDelegate
+
+- (void)pictureInPictureControllerDidStopPictureInPicture:
+    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
+  _pictureInPictureStarted = NO;
+  if (_eventSink != nil) {
+    _eventSink(@{@"event" : @"stoppedPictureInPicture"});
+  }
+}
+
+- (void)pictureInPictureControllerDidStartPictureInPicture:
+    (AVPictureInPictureController *)pictureInPictureController API_AVAILABLE(macos(10.15)) {
+  _pictureInPictureStarted = YES;
+  if (_eventSink != nil) {
+    _eventSink(@{@"event" : @"startingPictureInPicture"});
+  }
+  [self updatePlayingState];
 }
 
 @end

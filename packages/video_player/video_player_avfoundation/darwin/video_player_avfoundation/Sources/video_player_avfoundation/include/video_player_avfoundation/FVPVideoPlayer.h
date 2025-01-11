@@ -9,6 +9,7 @@
 #endif
 
 #import <AVFoundation/AVFoundation.h>
+#import <AVKit/AVKit.h>
 
 #import "FVPAVFactory.h"
 #import "FVPDisplayLink.h"
@@ -81,6 +82,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Tells the player to run its frame updater until it receives a frame, regardless of the
 /// play/pause state.
 - (void)expectFrame;
+
+- (void)setAutomaticallyStartPictureInPicture:(BOOL)automaticallyStartPictureInPicture;
+- (void)setPictureInPictureOverlayFrame:(CGRect)frame;
+- (void)setPictureInPictureStarted:(BOOL)startPictureInPicture;
 @end
 
 NS_ASSUME_NONNULL_END
