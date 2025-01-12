@@ -98,6 +98,7 @@ class WebView extends StatefulWidget {
         AutoMediaPlaybackPolicy.require_user_action_for_all_media_types,
     this.allowsInlineMediaPlayback = false,
     this.backgroundColor,
+    this.javaScriptCanOpenWindowsAutomatically = false,
   });
 
   static WebViewPlatform? _platform;
@@ -295,6 +296,12 @@ class WebView extends StatefulWidget {
   /// default [backgroundColor] is `null`.
   final Color? backgroundColor;
 
+  /// Whether JavaScript can open windows automatically.
+  ///
+  /// This affects pop-up windows and window.open() in JavaScript.
+  /// The default value is false.
+  final bool javaScriptCanOpenWindowsAutomatically;
+
   @override
   State<StatefulWidget> createState() => _WebViewState();
 }
@@ -381,6 +388,8 @@ WebSettings _webSettingsFromWidget(WebView widget) {
     allowsInlineMediaPlayback: widget.allowsInlineMediaPlayback,
     userAgent: WebSetting<String?>.of(widget.userAgent),
     zoomEnabled: widget.zoomEnabled,
+    javaScriptCanOpenWindowsAutomatically:
+        widget.javaScriptCanOpenWindowsAutomatically,
   );
 }
 
@@ -402,6 +411,8 @@ WebSettings _clearUnchangedWebSettings(
   bool? debuggingEnabled;
   WebSetting<String?> userAgent = const WebSetting<String?>.absent();
   bool? zoomEnabled;
+  bool? javaScriptCanOpenWindowsAutomatically;
+
   if (currentValue.javascriptMode != newValue.javascriptMode) {
     javascriptMode = newValue.javascriptMode;
   }
@@ -420,6 +431,11 @@ WebSettings _clearUnchangedWebSettings(
   if (currentValue.zoomEnabled != newValue.zoomEnabled) {
     zoomEnabled = newValue.zoomEnabled;
   }
+  if (currentValue.javaScriptCanOpenWindowsAutomatically !=
+      newValue.javaScriptCanOpenWindowsAutomatically) {
+    javaScriptCanOpenWindowsAutomatically =
+        newValue.javaScriptCanOpenWindowsAutomatically;
+  }
 
   return WebSettings(
     javascriptMode: javascriptMode,
@@ -428,6 +444,8 @@ WebSettings _clearUnchangedWebSettings(
     debuggingEnabled: debuggingEnabled,
     userAgent: userAgent,
     zoomEnabled: zoomEnabled,
+    javaScriptCanOpenWindowsAutomatically:
+        javaScriptCanOpenWindowsAutomatically,
   );
 }
 
@@ -778,6 +796,18 @@ class WebViewController {
   /// Scroll position is measured from top.
   Future<int> getScrollY() {
     return _webViewPlatformController.getScrollY();
+  }
+
+  /// Sets whether JavaScript running in the context of a file scheme URL can access
+  /// content from other file scheme URLs.
+  Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) async {
+    if (_settings.javaScriptCanOpenWindowsAutomatically == enabled) {
+      return;
+    }
+    final WebSettings newSettings = _settings.copyWith(
+      javaScriptCanOpenWindowsAutomatically: enabled,
+    );
+    await _updateSettings(newSettings);
   }
 }
 

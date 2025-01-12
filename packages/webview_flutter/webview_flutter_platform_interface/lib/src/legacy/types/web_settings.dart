@@ -85,6 +85,7 @@ class WebSettings {
     this.allowsInlineMediaPlayback,
     this.zoomEnabled,
     required this.userAgent,
+    this.javaScriptCanOpenWindowsAutomatically,
   });
 
   /// The JavaScript execution mode to be used by the webview.
@@ -125,8 +126,13 @@ class WebSettings {
   /// See also: [WebView.gestureNavigationEnabled]
   final bool? gestureNavigationEnabled;
 
+  /// Whether JavaScript can open windows automatically.
+  ///
+  /// This setting affects pop-up windows and window.open() in JavaScript.
+  final bool? javaScriptCanOpenWindowsAutomatically;
+
   @override
   String toString() {
-    return 'WebSettings(javascriptMode: $javascriptMode, hasNavigationDelegate: $hasNavigationDelegate, hasProgressTracking: $hasProgressTracking, debuggingEnabled: $debuggingEnabled, gestureNavigationEnabled: $gestureNavigationEnabled, userAgent: $userAgent, allowsInlineMediaPlayback: $allowsInlineMediaPlayback)';
+    return 'WebSettings(javascriptMode: $javascriptMode, hasNavigationDelegate: $hasNavigationDelegate, hasProgressTracking: $hasProgressTracking, debuggingEnabled: $debuggingEnabled, gestureNavigationEnabled: $gestureNavigationEnabled, userAgent: $userAgent, allowsInlineMediaPlayback: $allowsInlineMediaPlayback, javaScriptCanOpenWindowsAutomatically: $javaScriptCanOpenWindowsAutomatically)';
   }
 }

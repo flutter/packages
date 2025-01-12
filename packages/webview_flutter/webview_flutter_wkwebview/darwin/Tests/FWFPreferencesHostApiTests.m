@@ -45,4 +45,18 @@
   OCMVerify([mockPreferences setJavaScriptEnabled:YES]);
   XCTAssertNil(error);
 }
+
+- (void)testSetJavaScriptCanOpenWindowsAutomatically {
+  FWFPreferencesHostApiImpl *hostAPI = [[FWFPreferencesHostApiImpl alloc]
+      initWithInstanceManager:self.instanceManager];
+  [self.instanceManager addDartCreatedInstance:self.mockPreferences
+                                withIdentifier:0];
+
+  FlutterError *error;
+  [hostAPI setJavaScriptCanOpenWindowsAutomaticallyForPreferencesWithIdentifier:0
+                                                                     isEnabled:YES
+                                                                         error:&error];
+  OCMVerify([self.mockPreferences setJavaScriptCanOpenWindowsAutomatically:YES]);
+  XCTAssertNil(error);
+}
 @end
