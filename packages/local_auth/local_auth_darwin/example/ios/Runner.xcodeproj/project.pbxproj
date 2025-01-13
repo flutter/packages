@@ -236,7 +236,7 @@
 				TargetAttributes = {
 					3398D2CC26163948005A052F = {
 						CreatedOnToolsVersion = 12.4;
-						LastSwiftMigration = 1510;
+						LastSwiftMigration = 1520;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
