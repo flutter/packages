@@ -10,12 +10,13 @@ import '../shared_preferences.dart';
 /// SharedPreferencesAsync.
 ///
 /// This method can be run multiple times without worry of overwriting transferred data,
-/// as long as the [migrationCompletedKey] is not altered manually.
+/// as long as migrationCompletedKey is the same each time, and the value stored
+/// under migrationCompletedKey in the target preferences system is not modified.
 ///
 /// [legacySharedPreferencesInstance] should be an instance of [SharedPreferences]
 /// that has been instantiated the same way it has been used throughout your app.
-/// If you have called [SharedPreferences.setPrefix] that must be done before using
-/// this tool.
+/// If you have called [SharedPreferences.setPrefix] that must be done before
+/// calling this method.
 ///
 /// [sharedPreferencesAsyncOptions] should be an instance of [SharedPreferencesOptions]
 /// that is set up the way you intend to use the new system going forward.
