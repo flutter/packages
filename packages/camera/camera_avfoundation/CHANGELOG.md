@@ -1,3 +1,7 @@
+## 0.9.18
+
+* Adds API support query for image streaming.
+
 ## 0.9.17+7
 
 * Fixes changing global audio session category to be collision free across plugins.
