@@ -1,6 +1,11 @@
-## 0.9.17+6
+## 0.9.17+7
 
 * Fixes changing global audio session category to be collision free across plugins.
+
+## 0.9.17+6
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes OCMock usage from permission tests
 
 ## 0.9.17+5
 

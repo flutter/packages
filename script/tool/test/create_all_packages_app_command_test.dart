@@ -356,7 +356,7 @@ android {
       final Pubspec generatedPubspec = command.app.parsePubspec();
 
       const String dartSdkKey = 'sdk';
-      expect(generatedPubspec.environment?[dartSdkKey].toString(),
+      expect(generatedPubspec.environment[dartSdkKey].toString(),
           existingSdkConstraint);
     });
 

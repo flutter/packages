@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.2.6+1
 
 * Fixes black bars on camera preview [#122966](https://github.com/flutter/flutter/issues/122966).
