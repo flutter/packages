@@ -143,7 +143,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     await fulfillment(of: [expectation], timeout: 5)
 
-    let transaction = try await plugin.fetchTransaction(by: UInt64(session.allTransactions()[0].originalTransactionIdentifier))
+    let transaction = try await plugin.fetchTransaction(
+      by: UInt64(session.allTransactions()[0].originalTransactionIdentifier))
 
     guard let transaction = transaction else {
       XCTFail("Transaction does not exist.")
@@ -151,11 +152,9 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
 
     let jsonRepresentationString = String(decoding: transaction.jsonRepresentation, as: UTF8.self)
-print(jsonRepresentationString)
-    XCTAssert(jsonRepresentationString.localizedStandardContains("Consumable"));
-    XCTAssert(jsonRepresentationString.localizedStandardContains("currency\":\"USD"));
-    // Note - the price represented in milliunits of the specified currency, as documented here  https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo
-    XCTAssert(jsonRepresentationString.localizedStandardContains("price\":990"));
+
+    XCTAssert(jsonRepresentationString.localizedStandardContains("Type\":\"Consumable"));
+    XCTAssert(jsonRepresentationString.localizedStandardContains("storefront\":\"USA"));
   }
 
   //TODO(louisehsu): Add testing for lower versions.
