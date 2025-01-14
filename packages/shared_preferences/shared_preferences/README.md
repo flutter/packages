@@ -50,9 +50,25 @@ latest data stored on the native platform regardless of what process was used to
 
 ### Android platform storage
 
-The [SharedPreferences] API uses the native [Android Shared Preferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
+The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs can use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) or [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) to store data.
+In most cases you should use the default option of DataStore Preferences, as it is the platform-recommended preferences storage system. 
+However, in some cases you may need to interact with preferences that were written to SharedPreferences by code you don't control.
 
-The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) to store data.
+To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncAndroidOptions` when using [SharedPreferencesAsync] on Android.
+<?code-excerpt "readme_excerpts.dart (Android_Options1)"?>
+```dart
+import 'package:shared_preferences_android/shared_preferences_android.dart';
+```
+<?code-excerpt "readme_excerpts.dart (Android_Options2)"?>
+```dart
+const SharedPreferencesAsyncAndroidOptions options =
+    SharedPreferencesAsyncAndroidOptions(
+        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+            fileName: 'the_name_of_a_file'));
+```
+
+The [SharedPreferences] API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
 
 ## Examples
 Here are small examples that show you how to use the API.
@@ -187,7 +203,7 @@ the new prefix otherwise the old preferences will be inaccessible.
 
 | Platform | SharedPreferences | SharedPreferencesAsync/WithCache |
 | :--- | :--- | :--- |
-| Android | SharedPreferences | DataStore Preferences |
+| Android | SharedPreferences | DataStore Preferences or SharedPreferences |
 | iOS | NSUserDefaults | NSUserDefaults |
 | Linux | In the XDG_DATA_HOME directory | In the XDG_DATA_HOME directory |
 | macOS | NSUserDefaults | NSUserDefaults |
