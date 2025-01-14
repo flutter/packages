@@ -1,6 +1,10 @@
-## 2.4.1
+## 2.4.2
 
 * Bumps gradle-plugin to 2.1.0.
+
+## 2.4.1
+
+* Bumps kotlin version to 1.9.10 androidx.datastore:datastore from 1.0.0 to 1.1.1.\
 
 ## 2.4.0
 
