@@ -2,11 +2,7 @@ group 'io.flutter.plugins.sharedpreferences'
 version '1.0-SNAPSHOT'
 
 buildscript {
-<<<<<<< HEAD
     ext.kotlin_version = '2.1.0'
-=======
-    ext.kotlin_version = '1.9.10'
->>>>>>> d1fd6232ec33cd5a25aa762e605c494afced812f
     repositories {
         google()
         mavenCentral()
