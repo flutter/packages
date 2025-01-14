@@ -87,7 +87,7 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
   /// Returns the given "environment" section's [key] constraint as a range,
   /// if the key is present and has a range.
   VersionRange? _sdkRange(Pubspec pubspec, String key) {
-    final VersionConstraint? constraint = pubspec.environment?[key];
+    final VersionConstraint? constraint = pubspec.environment[key];
     if (constraint is VersionRange) {
       return constraint;
     }
