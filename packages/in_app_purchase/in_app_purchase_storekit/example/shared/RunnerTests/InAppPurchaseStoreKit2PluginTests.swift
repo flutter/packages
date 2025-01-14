@@ -60,6 +60,35 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssertEqual(testProductMsg, fetchedProductMsg)
   }
 
+  func testGetTransactions() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let transactionExpectation = self.expectation(
+      description: "Getting transactions should succeed")
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
+
+    plugin.transactions {
+      result in
+      switch result {
+      case .success(let transactions):
+        XCTAssert(transactions.count == 1)
+        transactionExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Getting transactions should NOT fail. Failed with \(error)")
+      }
+    }
+    await fulfillment(of: [transactionExpectation], timeout: 5)
+  }
+
   func testGetDiscountedProducts() async throws {
     let expectation = self.expectation(description: "products successfully fetched")
 
@@ -91,7 +120,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       case .success(let productMessages):
         fetchedProductMsg = productMessages
         expectation.fulfill()
-      case .failure(_):
+      case .failure:
         XCTFail("Products should be successfully fetched")
       }
     }
@@ -139,7 +168,7 @@ print(jsonRepresentationString)
 
     plugin.products(identifiers: ["subscription_silver"]) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("This `products` call should not succeed")
       case .failure(let error):
         expectation.fulfill()
@@ -156,7 +185,7 @@ print(jsonRepresentationString)
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -172,7 +201,7 @@ print(jsonRepresentationString)
     let expectation = self.expectation(description: "products request should fail")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
         XCTAssertEqual(
@@ -191,7 +220,7 @@ print(jsonRepresentationString)
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
         XCTAssertEqual(error.localizedDescription, "Item Unavailable")
@@ -205,7 +234,7 @@ print(jsonRepresentationString)
     let expectation = self.expectation(description: "products request should fail")
     plugin.purchase(id: "invalid_product", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         XCTFail("Purchase should NOT suceed.")
       case .failure(let error):
         let pigeonError = error as! PigeonError
@@ -221,7 +250,7 @@ print(jsonRepresentationString)
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -234,7 +263,7 @@ print(jsonRepresentationString)
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "subscription_discounted", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -247,7 +276,7 @@ print(jsonRepresentationString)
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable_discounted", options: nil) { result in
       switch result {
-      case .success(let purchaseResult):
+      case .success:
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -262,7 +291,7 @@ print(jsonRepresentationString)
 
     plugin.purchase(id: "subscription_silver", options: nil) { result in
       switch result {
-      case .success(_):
+      case .success:
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -278,5 +307,33 @@ print(jsonRepresentationString)
     }
 
     await fulfillment(of: [restoreExpectation, purchaseExpectation], timeout: 5)
+  }
+
+  func testFinishTransaction() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let finishExpectation = self.expectation(description: "Finishing purchase should succeed")
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success(let purchase):
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
+
+    // id should always be 0 as it is the first purchase
+    plugin.finish(id: 0) { result in
+      switch result {
+      case .success():
+        finishExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Finish purchases should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [finishExpectation], timeout: 5)
   }
 }

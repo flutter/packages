@@ -5,5 +5,7 @@
 !CoreTests.gen.swift
 # Keeping this makes it easier to review changes to ProxyApi generation.
 !ProxyApiTests.gen.swift
-# Contains the class declartions for testing ProxyApis.
+
+# Including these makes it easier to review code generation changes.
 !ProxyApiTestClass.swift
+!EventChannelTests.gen.swift

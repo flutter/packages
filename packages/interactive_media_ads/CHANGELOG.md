@@ -1,3 +1,11 @@
+## 0.2.3+4
+
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.
+
+## 0.2.3+3
+
+* Adds internal wrapper for Android native `CompanionAdSlot` and `CompanionAdSlot.ClickListener`.
+
 ## 0.2.3+2
 
 * Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.35.1 to 3.36.0.

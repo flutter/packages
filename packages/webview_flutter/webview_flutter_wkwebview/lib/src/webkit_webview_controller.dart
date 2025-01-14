@@ -160,6 +160,14 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
+    _webView.addObserver(
+      _webView,
+      keyPath: 'canGoBack',
+      options: <NSKeyValueObservingOptions>{
+        NSKeyValueObservingOptions.newValue,
+      },
+    );
+
     final WeakReference<WebKitWebViewController> weakThis =
         WeakReference<WebKitWebViewController>(this);
     _uiDelegate = _webKitParams.webKitProxy.createUIDelegate(
@@ -299,6 +307,12 @@ class WebKitWebViewController extends PlatformWebViewController {
               final NSUrl? url = change[NSKeyValueChangeKey.newValue] as NSUrl?;
               urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
             }
+          case 'canGoBack':
+            if (controller._onCanGoBackChangeCallback != null) {
+              final bool canGoBack =
+                  change[NSKeyValueChangeKey.newValue]! as bool;
+              controller._onCanGoBackChangeCallback!(canGoBack);
+            }
         }
       };
     }),
@@ -315,6 +329,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   bool _zoomEnabled = true;
   WebKitNavigationDelegate? _currentNavigationDelegate;
 
+  void Function(bool)? _onCanGoBackChangeCallback;
   void Function(JavaScriptConsoleMessage)? _onConsoleMessageCallback;
   void Function(PlatformWebViewPermissionRequest)? _onPermissionRequestCallback;
 
@@ -602,6 +617,12 @@ class WebKitWebViewController extends PlatformWebViewController {
         .addUserScript(userScript);
   }
 
+  /// Sets the listener for canGoBack changes.
+  Future<void> setOnCanGoBackChange(
+      void Function(bool) onCanGoBackChangeCallback) async {
+    _onCanGoBackChangeCallback = onCanGoBackChangeCallback;
+  }
+
   /// Sets a callback that notifies the host application of any log messages
   /// written to the JavaScript console.
   ///
@@ -742,12 +763,16 @@ window.addEventListener("error", function(e) {
     _javaScriptChannelParams.keys.forEach(
       _webView.configuration.userContentController.removeScriptMessageHandler,
     );
-
-    _javaScriptChannelParams.remove(removedJavaScriptChannel);
+    final Map<String, WebKitJavaScriptChannelParams> remainingChannelParams =
+        Map<String, WebKitJavaScriptChannelParams>.from(
+      _javaScriptChannelParams,
+    );
+    remainingChannelParams.remove(removedJavaScriptChannel);
+    _javaScriptChannelParams.clear();
 
     await Future.wait(<Future<void>>[
       for (final JavaScriptChannelParams params
-          in _javaScriptChannelParams.values)
+          in remainingChannelParams.values)
         addJavaScriptChannel(params),
       // Zoom is disabled with a WKUserScript, so this adds it back if it was
       // removed above.

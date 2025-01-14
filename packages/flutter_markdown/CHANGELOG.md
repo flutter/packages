@@ -1,6 +1,15 @@
+## 0.7.5
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes some memory leaks.
+
+## 0.7.4+3
+
+* Passes a default error builder to image widgets.
+
 ## 0.7.4+2
 
-* Fixes pub.dev detection of WebAssembly support. 
+* Fixes pub.dev detection of WebAssembly support.
 
 ## 0.7.4+1
 

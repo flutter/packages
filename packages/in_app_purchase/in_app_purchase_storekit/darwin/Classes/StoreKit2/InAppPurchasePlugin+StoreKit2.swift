@@ -139,6 +139,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       let transaction = try await fetchTransaction(by: UInt64(id))
       if let transaction = transaction {
         await transaction.finish()
+        completion(.success(Void()))
       }
     }
   }

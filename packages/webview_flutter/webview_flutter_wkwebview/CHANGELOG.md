@@ -1,3 +1,13 @@
+## 3.17.0
+
+* Adds a change listener for the `canGoBack` property. See
+  `WebKitWebViewController.setOnCanGoBackChange`.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 3.16.3
+
+* Fixes re-registering existing channels while removing Javascript channels.
+
 ## 3.16.2
 
 * Updates README to remove contributor-focused documentation.

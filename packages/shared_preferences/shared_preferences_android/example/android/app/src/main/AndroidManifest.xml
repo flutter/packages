@@ -1,10 +1,10 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="io.flutter.plugins.sharedpreferencesexample">
-   <application
-        android:label="example"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application
+        android:label="shared_preferences_example"
+        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name="io.flutter.embedding.android.FlutterActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

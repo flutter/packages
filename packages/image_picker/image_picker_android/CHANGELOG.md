@@ -1,3 +1,15 @@
+## 0.8.12+20
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
+## 0.8.12+19
+
+* Updates androidx.activity:activity to 1.9.3.
+
+## 0.8.12+18
+
+* Fixes a security issue related to improperly trusting filenames provided by a `ContentProvider`.
+
 ## 0.8.12+17
 
 * Bumps androidx.annotation:annotation from 1.8.2 to 1.9.0.

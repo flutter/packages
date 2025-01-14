@@ -360,6 +360,119 @@ pigeon_example_package_message_flutter_api_flutter_method(
     self->flutter_api, "hello", nullptr, flutter_method_cb, self);
 ```
 
+## Event Channel Example
+
+This example gives a basic overview of how to use Pigeon to set up an event channel.
+
+### Dart input
+
+<?code-excerpt "pigeons/event_channel_messages.dart (event-definitions)"?>
+```dart
+@EventChannelApi()
+abstract class EventChannelMethods {
+  PlatformEvent streamEvents();
+}
+```
+
+### Dart
+
+The generated Dart code will include a method that returns a `Stream` when invoked. 
+
+<?code-excerpt "lib/main.dart (main-dart-event)"?>
+```dart
+Stream<String> getEventStream() async* {
+  final Stream<PlatformEvent> events = streamEvents();
+  await for (final PlatformEvent event in events) {
+    switch (event) {
+      case IntEvent():
+        final int intData = event.data;
+        yield '$intData, ';
+      case StringEvent():
+        final String stringData = event.data;
+        yield '$stringData, ';
+    }
+  }
+}
+```
+
+### Swift
+
+Define the stream handler class that will handle the events.
+
+<?code-excerpt "ios/Runner/AppDelegate.swift (swift-class-event)"?>
+```swift
+class EventListener: StreamEventsStreamHandler {
+  var eventSink: PigeonEventSink<PlatformEvent>?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    eventSink = sink
+  }
+
+  func onIntEvent(event: Int64) {
+    if let eventSink = eventSink {
+      eventSink.success(IntEvent(data: event))
+    }
+  }
+
+  func onStringEvent(event: String) {
+    if let eventSink = eventSink {
+      eventSink.success(StringEvent(data: event))
+    }
+  }
+
+  func onEventsDone() {
+    eventSink?.endOfStream()
+    eventSink = nil
+  }
+}
+```
+
+Register the handler with the generated method.
+
+<?code-excerpt "ios/Runner/AppDelegate.swift (swift-init-event)"?>
+```swift
+let eventListener = EventListener()
+StreamEventsStreamHandler.register(
+  with: controller.binaryMessenger, streamHandler: eventListener)
+```
+
+### Kotlin
+
+Define the stream handler class that will handle the events.
+
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-class-event)"?>
+```kotlin
+class EventListener : StreamEventsStreamHandler() {
+  private var eventSink: PigeonEventSink<PlatformEvent>? = null
+
+  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    eventSink = sink
+  }
+
+  fun onIntEvent(event: Long) {
+    eventSink?.success(IntEvent(data = event))
+  }
+
+  fun onStringEvent(event: String) {
+    eventSink?.success(StringEvent(data = event))
+  }
+
+  fun onEventsDone() {
+    eventSink?.endOfStream()
+    eventSink = null
+  }
+}
+```
+
+
+Register the handler with the generated method.
+
+<?code-excerpt "android/app/src/main/kotlin/dev/flutter/pigeon_example_app/MainActivity.kt (kotlin-init-event)"?>
+```kotlin
+val eventListener = EventListener()
+StreamEventsStreamHandler.register(flutterEngine.dartExecutor.binaryMessenger, eventListener)
+```
+
 ## Swift / Kotlin Plugin Example
 
 A downloadable example of using Pigeon to create a Flutter Plugin with Swift and

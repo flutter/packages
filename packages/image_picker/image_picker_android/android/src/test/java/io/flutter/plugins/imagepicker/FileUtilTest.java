@@ -6,6 +6,8 @@ package io.flutter.plugins.imagepicker;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -130,6 +132,18 @@ public class FileUtilTest {
   }
 
   @Test
+  public void getPathFromUri_sanitizesPathIndirection() {
+    Uri uri = Uri.parse(MockMaliciousContentProvider.PNG_URI);
+    Robolectric.buildContentProvider(MockMaliciousContentProvider.class).create("dummy");
+    shadowContentResolver.registerInputStream(
+        uri, new ByteArrayInputStream("fileStream".getBytes(UTF_8)));
+    String path = fileUtils.getPathFromUri(context, uri);
+    assertNotNull(path);
+    assertTrue(path.endsWith("_bar.png"));
+    assertFalse(path.contains(".."));
+  }
+
+  @Test
   public void FileUtil_getImageName_unknownType() throws IOException {
     Uri uri = MockContentProvider.UNKNOWN_URI;
     Robolectric.buildContentProvider(MockContentProvider.class).create("dummy");
@@ -170,6 +184,58 @@ public class FileUtilTest {
       if (uri.equals(WEBP_URI)) return "image/webp";
       if (uri.equals(NO_EXTENSION_URI)) return "image/png";
       return null;
+    }
+
+    @Nullable
+    @Override
+    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+      return null;
+    }
+
+    @Override
+    public int delete(
+        @NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+      return 0;
+    }
+
+    @Override
+    public int update(
+        @NonNull Uri uri,
+        @Nullable ContentValues values,
+        @Nullable String selection,
+        @Nullable String[] selectionArgs) {
+      return 0;
+    }
+  }
+
+  // Mocks a malicious content provider attempting to use path indirection to modify files outside
+  // of the intended directory.
+  // See https://developer.android.com/privacy-and-security/risks/untrustworthy-contentprovider-provided-filename#don%27t-trust-user-input.
+  private static class MockMaliciousContentProvider extends ContentProvider {
+    public static String PNG_URI = "content://dummy/a.png";
+
+    @Override
+    public boolean onCreate() {
+      return true;
+    }
+
+    @Nullable
+    @Override
+    public Cursor query(
+        @NonNull Uri uri,
+        @Nullable String[] projection,
+        @Nullable String selection,
+        @Nullable String[] selectionArgs,
+        @Nullable String sortOrder) {
+      MatrixCursor cursor = new MatrixCursor(new String[] {MediaStore.MediaColumns.DISPLAY_NAME});
+      cursor.addRow(new Object[] {"foo/../..bar.png"});
+      return cursor;
+    }
+
+    @Nullable
+    @Override
+    public String getType(@NonNull Uri uri) {
+      return "image/png";
     }
 
     @Nullable

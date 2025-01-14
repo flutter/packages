@@ -860,6 +860,72 @@ void main() {
       verifyNoMoreInteractions(mockUserContentController);
     });
 
+    test('removeJavaScriptChannel multiple times', () async {
+      final WebKitProxy webKitProxy = WebKitProxy(
+        createScriptMessageHandler: ({
+          required void Function(
+            WKUserContentController userContentController,
+            WKScriptMessage message,
+          ) didReceiveScriptMessage,
+        }) {
+          return WKScriptMessageHandler.detached(
+            didReceiveScriptMessage: didReceiveScriptMessage,
+          );
+        },
+      );
+
+      final WebKitJavaScriptChannelParams javaScriptChannelParams1 =
+          WebKitJavaScriptChannelParams(
+        name: 'name1',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
+
+      final WebKitJavaScriptChannelParams javaScriptChannelParams2 =
+          WebKitJavaScriptChannelParams(
+        name: 'name2',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
+
+      final MockWKUserContentController mockUserContentController =
+          MockWKUserContentController();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockUserContentController: mockUserContentController,
+      );
+
+      await controller.addJavaScriptChannel(javaScriptChannelParams1);
+      await controller.addJavaScriptChannel(javaScriptChannelParams2);
+      reset(mockUserContentController);
+
+      await controller.removeJavaScriptChannel('name1');
+
+      verify(mockUserContentController.removeAllUserScripts());
+      verify(mockUserContentController.removeScriptMessageHandler('name1'));
+      verify(mockUserContentController.removeScriptMessageHandler('name2'));
+
+      verify(mockUserContentController.addScriptMessageHandler(
+        argThat(isA<WKScriptMessageHandler>()),
+        'name2',
+      ));
+
+      final WKUserScript userScript =
+          verify(mockUserContentController.addUserScript(captureAny))
+              .captured
+              .single as WKUserScript;
+      expect(userScript.source, 'window.name2 = webkit.messageHandlers.name2;');
+      expect(
+        userScript.injectionTime,
+        WKUserScriptInjectionTime.atDocumentStart,
+      );
+
+      await controller.removeJavaScriptChannel('name2');
+      verify(mockUserContentController.removeAllUserScripts());
+      verify(mockUserContentController.removeScriptMessageHandler('name2'));
+      verifyNoMoreInteractions(mockUserContentController);
+    });
+
     test('removeJavaScriptChannel with zoom disabled', () async {
       final WebKitProxy webKitProxy = WebKitProxy(
         createScriptMessageHandler: ({
@@ -1482,6 +1548,53 @@ window.addEventListener("error", function(e) {
         expect(logs[JavaScriptLogLevel.log], 'Log message');
         expect(logs[JavaScriptLogLevel.warning], 'Warning message');
       });
+    });
+
+    test('setOnCanGoBackChange', () async {
+      final MockWKWebViewIOS mockWebView = MockWKWebViewIOS();
+
+      late final void Function(
+        String keyPath,
+        NSObject object,
+        Map<NSKeyValueChangeKey, Object?> change,
+      ) webViewObserveValue;
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (
+          _, {
+          void Function(
+            String keyPath,
+            NSObject object,
+            Map<NSKeyValueChangeKey, Object?> change,
+          )? observeValue,
+        }) {
+          webViewObserveValue = observeValue!;
+          return mockWebView;
+        },
+      );
+
+      verify(
+        mockWebView.addObserver(
+          mockWebView,
+          keyPath: 'canGoBack',
+          options: <NSKeyValueObservingOptions>{
+            NSKeyValueObservingOptions.newValue,
+          },
+        ),
+      );
+
+      late final bool callbackCanGoBack;
+
+      await controller.setOnCanGoBackChange(
+          (bool canGoBack) => callbackCanGoBack = canGoBack);
+
+      webViewObserveValue(
+        'canGoBack',
+        mockWebView,
+        <NSKeyValueChangeKey, Object?>{NSKeyValueChangeKey.newValue: true},
+      );
+
+      expect(callbackCanGoBack, true);
     });
 
     test('setOnScrollPositionChange', () async {

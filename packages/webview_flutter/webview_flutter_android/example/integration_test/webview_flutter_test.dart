@@ -21,6 +21,11 @@ import 'package:webview_flutter_android/src/weak_reference_utils.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
+// `IntegrationTestWidgetsFlutterBinding.watchPerformance` is throwing an
+// exception when called. See https://github.com/flutter/flutter/issues/159500
+// for more info.
+const bool skipFor159500 = true;
+
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -104,7 +109,7 @@ Future<void> main() async {
 
     final int gcIdentifier = await gcCompleter.future;
     expect(gcIdentifier, 0);
-  }, timeout: const Timeout(Duration(seconds: 10)));
+  }, timeout: const Timeout(Duration(seconds: 10)), skip: skipFor159500);
 
   testWidgets(
     'WebView is released by garbage collection',
@@ -170,6 +175,7 @@ Future<void> main() async {
       await expectLater(webViewGCCompleter.future, completes);
     },
     timeout: const Timeout(Duration(seconds: 10)),
+    skip: skipFor159500,
   );
 
   testWidgets('runJavaScriptReturningResult', (WidgetTester tester) async {
