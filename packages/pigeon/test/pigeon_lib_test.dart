@@ -232,6 +232,39 @@ abstract class Api {
     expect(results.errors[0].message, contains('dynamic'));
   });
 
+  test('Only allow one api annotation', () {
+    const String source = '''
+@HostApi()
+@FlutterApi()
+abstract class Api {
+  int foo();
+}
+''';
+    final ParseResults results = parseSource(source);
+    expect(results.errors.length, 1);
+    expect(
+        results.errors[0].message,
+        contains(
+            'API "Api" can only have one API annotation but contains: [@HostApi(), @FlutterApi()]'));
+  });
+
+  test('Only allow one api annotation plus @ConfigurePigeon', () {
+    const String source = '''
+@ConfigurePigeon(PigeonOptions(
+  dartOut: 'stdout',
+  javaOut: 'stdout',
+  dartOptions: DartOptions(),
+))
+@HostApi()
+abstract class Api {
+  void ping();
+}
+
+''';
+    final ParseResults results = parseSource(source);
+    expect(results.errors.length, 0);
+  });
+
   test('enum in classes', () {
     const String code = '''
 enum Enum1 {
@@ -1564,6 +1597,71 @@ abstract class MyClass {
       expect(
         parseResult.errors[0].message,
         contains('Attached fields must not be nullable: MyClass?'),
+      );
+    });
+  });
+
+  group('event channel validation', () {
+    test('methods cannot contain parameters', () {
+      const String code = '''
+@EventChannelApi()
+abstract class EventChannelApi {
+  int streamInts(int event);
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors.length, equals(1));
+      expect(
+        parseResult.errors.single.message,
+        contains(
+            'event channel methods must not be contain parameters, in method "streamInts" in API: "EventChannelApi"'),
+      );
+    });
+  });
+
+  group('sealed inheritance validation', () {
+    test('super class must be sealed', () {
+      const String code = '''
+class DataClass {}
+class ChildClass extends DataClass {
+  ChildClass(this.input);
+  int input;
+}
+
+@EventChannelApi()
+abstract class events {
+  void aMethod(ChildClass param);
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Child class: "ChildClass" must extend a sealed class.'),
+      );
+    });
+
+    test('super class must be sealed', () {
+      const String code = '''
+sealed class DataClass {
+  DataClass(this.input);
+  int input;
+}
+class ChildClass extends DataClass {
+  ChildClass(this.input);
+  int input;
+}
+
+@EventChannelApi()
+abstract class events {
+  void aMethod(ChildClass param);
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains('Sealed class: "DataClass" must not contain fields.'),
       );
     });
   });

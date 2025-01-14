@@ -1508,6 +1508,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const SwiftOptions kotlinOptions = SwiftOptions();
