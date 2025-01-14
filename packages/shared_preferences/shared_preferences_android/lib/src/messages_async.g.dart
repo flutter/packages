@@ -348,7 +348,33 @@ class SharedPreferencesAsyncApi {
   }
 
   /// Gets individual List<String> value stored with [key], if any.
-  Future<Object?> getStringList(
+  Future<List<String>?> getPlatformEncodedStringList(
+      String key, SharedPreferencesPigeonOptions options) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getPlatformEncodedStringList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[key, options]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<String>();
+    }
+  }
+
+  /// Gets individual List<String> value stored with [key], if any.
+  Future<String?> getStringList(
       String key, SharedPreferencesPigeonOptions options) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getStringList$pigeonVar_messageChannelSuffix';
@@ -369,7 +395,7 @@ class SharedPreferencesAsyncApi {
         details: pigeonVar_replyList[2],
       );
     } else {
-      return pigeonVar_replyList[0];
+      return (pigeonVar_replyList[0] as String?);
     }
   }
 

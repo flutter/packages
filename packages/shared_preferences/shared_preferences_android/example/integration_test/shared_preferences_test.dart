@@ -797,7 +797,7 @@ void main() {
         final SharedPreferencesAsyncAndroid preferences =
             getPreferences() as SharedPreferencesAsyncAndroid;
         await clearPreferences(preferences, options);
-        await preferences.setStringListLegacyForTesting(
+        await preferences.setStringListPlatformEncodedForTesting(
             listKey, testList, options);
         final List<String>? platformEncodedList =
             await preferences.getStringList(listKey, options);
@@ -819,7 +819,8 @@ void main() {
           preferences.setBool(boolKey, testBool, options),
           preferences.setInt(intKey, testInt, options),
           preferences.setDouble(doubleKey, testDouble, options),
-          preferences.setStringListLegacyForTesting(listKey, testList, options)
+          preferences.setStringListPlatformEncodedForTesting(
+              listKey, testList, options)
         ]);
 
         final Map<String, Object> prefs = await preferences.getPreferences(
@@ -841,7 +842,8 @@ void main() {
           preferences.setBool(boolKey, testBool, options),
           preferences.setInt(intKey, testInt, options),
           preferences.setDouble(doubleKey, testDouble, options),
-          preferences.setStringListLegacyForTesting(listKey, testList, options)
+          preferences.setStringListPlatformEncodedForTesting(
+              listKey, testList, options)
         ]);
 
         final Map<String, Object> prefs = await preferences.getPreferences(

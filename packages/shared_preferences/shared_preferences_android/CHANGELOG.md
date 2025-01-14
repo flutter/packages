@@ -1,6 +1,6 @@
 ## 2.4.1
 
-* Moves `List<String>` encoding to dart `JSON` package.
+* Migrates `List<String>` value encoding to JSON.
 
 ## 2.4.0
 

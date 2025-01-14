@@ -138,9 +138,9 @@ base class SharedPreferencesAsyncAndroid
   }
 
   /// Adds a `List<String>` to preferences using platform encoding to test
-  /// moving from platform encoding to json encoding.
+  /// moving from platform encoding to JSON encoding.
   @visibleForTesting
-  Future<void> setStringListLegacyForTesting(
+  Future<void> setStringListPlatformEncodedForTesting(
     String key,
     List<String> value,
     SharedPreferencesOptions options,
@@ -207,26 +207,26 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
-    final Object? dynamicStringList = await _convertKnownExceptions<dynamic>(
-        () async => api.getStringList(key, pigeonOptions));
-    switch (dynamicStringList.runtimeType) {
-      case const (String):
-        final String jsonEncodedString =
-            (dynamicStringList! as String).substring(jsonListPrefix.length);
-        try {
-          final List<String> decodedList =
-              (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
-          return decodedList;
-        } catch (e) {
-          throw TypeError();
-        }
-      case const (List<Object?>):
-        return (dynamicStringList! as List<Object?>).cast<String>().toList();
-      case const (Null):
-        return null;
-      default:
+    // Request JSON encoded string list.
+    final String? jsonEncodedStringList =
+        await _convertKnownExceptions<String?>(
+            () async => api.getStringList(key, pigeonOptions));
+    if (jsonEncodedStringList != null) {
+      final String jsonEncodedString =
+          jsonEncodedStringList.substring(jsonListPrefix.length);
+      try {
+        final List<String> decodedList =
+            (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
+        return decodedList;
+      } catch (e) {
         throw TypeError();
+      }
     }
+    // If no JSON encoded string list exists, check for platform encoded value.
+    final List<String>? stringList =
+        await _convertKnownExceptions<List<String>?>(
+            () async => api.getPlatformEncodedStringList(key, pigeonOptions));
+    return stringList?.cast<String>().toList();
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {
@@ -271,13 +271,10 @@ base class SharedPreferencesAsyncAndroid
       pigeonOptions,
     );
     data.forEach((String? key, Object? value) {
-      if (value.runtimeType == String &&
-          (value! as String).startsWith(jsonListPrefix)) {
-        data[key!] =
-            (jsonDecode((value as String).substring(jsonListPrefix.length))
-                    as List<dynamic>)
-                .cast<String>()
-                .toList();
+      if (value is String && value.startsWith(jsonListPrefix)) {
+        data[key!] = (jsonDecode(value.substring(jsonListPrefix.length))
+                as List<dynamic>)
+            .cast<String>();
       }
     });
     return data.cast<String, Object>();

@@ -102,7 +102,14 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Gets individual List<String> value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  Object? getStringList(
+  List<String>? getPlatformEncodedStringList(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
+
+  /// Gets individual List<String> value stored with [key], if any.
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  String? getStringList(
     String key,
     SharedPreferencesPigeonOptions options,
   );

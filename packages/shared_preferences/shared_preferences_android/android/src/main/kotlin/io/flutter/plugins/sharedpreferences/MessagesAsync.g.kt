@@ -115,7 +115,12 @@ interface SharedPreferencesAsyncApi {
   /** Gets individual int value stored with [key], if any. */
   fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long?
   /** Gets individual List<String> value stored with [key], if any. */
-  fun getStringList(key: String, options: SharedPreferencesPigeonOptions): Any?
+  fun getPlatformEncodedStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): List<String>?
+  /** Gets individual List<String> value stored with [key], if any. */
+  fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String?
   /** Removes all properties from shared preferences data set with matching prefix. */
   fun clear(allowList: List<String>?, options: SharedPreferencesPigeonOptions)
   /** Gets all properties from shared preferences data set with matching prefix. */
@@ -391,6 +396,31 @@ interface SharedPreferencesAsyncApi {
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getInt(keyArg, optionsArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.getPlatformEncodedStringList$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val keyArg = args[0] as String
+            val optionsArg = args[1] as SharedPreferencesPigeonOptions
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getPlatformEncodedStringList(keyArg, optionsArg))
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }

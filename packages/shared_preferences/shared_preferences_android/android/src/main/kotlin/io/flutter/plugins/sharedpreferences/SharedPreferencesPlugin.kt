@@ -33,7 +33,7 @@ const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
 // All identifiers must match the LegacySharedPreferencesPlugin.java file, as well as the
 // strings.dart file.
 const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
-const val JSON_LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu!"
+const val JSON_LIST_PREFIX = LIST_PREFIX + "!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 
 private val Context.sharedPreferencesDataStore: DataStore<Preferences> by
@@ -198,16 +198,31 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): Any? {
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
     val stringValue = getString(key, options)
     stringValue?.let {
       // The JSON-encoded lists use an extended prefix to distinguish them from
-      // lists that are encoded on the platform.
+      // lists that using listEncoder.
       if (stringValue.startsWith(JSON_LIST_PREFIX)) {
         return stringValue
       }
-      val value: List<*>? = transformPref(stringValue, listEncoder) as List<*>?
-      return value?.filterIsInstance<String>()
+    }
+    return null
+  }
+
+  /** Gets StringList at [key] from data store. */
+  override fun getPlatformEncodedStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): List<String>? {
+    val stringValue = getString(key, options)
+    stringValue?.let {
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that using listEncoder.
+      if (!stringValue.startsWith(JSON_LIST_PREFIX) && stringValue.startsWith(LIST_PREFIX)) {
+        val value: List<*>? = transformPref(stringValue, listEncoder) as List<*>?
+        return value?.filterIsInstance<String>()
+      }
     }
     return null
   }

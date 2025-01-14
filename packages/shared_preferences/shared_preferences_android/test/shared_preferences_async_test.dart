@@ -298,14 +298,15 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<Object?> getStringList(
+  Future<String?> getStringList(
       String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] == null
-        ? null
-        : (jsonDecode((items[key]! as String).substring(jsonListPrefix.length))
-                as List<dynamic>)
-            .cast<Object?>()
-            .toList();
+    return items[key] as String?;
+  }
+
+  @override
+  Future<List<String>?> getPlatformEncodedStringList(
+      String key, SharedPreferencesPigeonOptions options) async {
+    return items[key] as List<String>?;
   }
 
   @override
