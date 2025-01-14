@@ -1,3 +1,7 @@
+## 0.3.20+3
+
+* Exposes `jsonRepresentation` field for transactions.
+
 ## 0.3.20+2
 
 * Fixes price not being displayed correctly.

@@ -100,6 +100,35 @@ final class InAppPurchase2PluginTests: XCTestCase {
     XCTAssert(fetchedProductMsg?.count == 0)
   }
 
+  func testGetTransactionJsonRepresentation() async throws {
+    let expectation = self.expectation(description: "Purchase request should succeed")
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success(_):
+        expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [expectation], timeout: 5)
+
+    let transaction = try await plugin.fetchTransaction(by: UInt64(session.allTransactions()[0].originalTransactionIdentifier))
+
+    guard let transaction = transaction else {
+      XCTFail("Transaction does not exist.")
+      return
+    }
+
+    let jsonRepresentationString = String(decoding: transaction.jsonRepresentation, as: UTF8.self)
+print(jsonRepresentationString)
+    XCTAssert(jsonRepresentationString.localizedStandardContains("Consumable"));
+    XCTAssert(jsonRepresentationString.localizedStandardContains("currency\":\"USD"));
+    // Note - the price represented in milliunits of the specified currency, as documented here  https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo
+    XCTAssert(jsonRepresentationString.localizedStandardContains("price\":990"));
+  }
+
   //TODO(louisehsu): Add testing for lower versions.
   @available(iOS 17.0, macOS 14.0, *)
   func testGetProductsWithStoreKitError() async throws {
