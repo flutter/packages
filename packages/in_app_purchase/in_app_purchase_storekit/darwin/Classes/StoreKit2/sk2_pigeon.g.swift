@@ -533,7 +533,8 @@ class InAppPurchase2APISetup {
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let canMakePaymentsChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)",
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canMakePaymentsChannel.setMessageHandler { _, reply in
