@@ -39,7 +39,7 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.userContentController)
   }
 
-  @available(iOS 17.0, *)
+  @available(iOS 17.0, macOS 14.0, *)
   @MainActor func testSetWebsiteDataStore() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
@@ -100,7 +100,7 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     #endif
   }
 
-  @available(iOS 14.0, *)
+  @available(iOS 14.0, macOS 11.0, *)
   @MainActor func testSetLimitsNavigationsToAppBoundDomains() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)

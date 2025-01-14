@@ -32,7 +32,7 @@ class UIDelegateProxyAPITests: XCTestCase {
     XCTAssertNil(result)
   }
 
-  @available(iOS 15.0, *)
+  @available(iOS 15.0, macOS 12.0, *)
   @MainActor func testRequestMediaCapturePermission() {
     let api = TestDelegateApi()
     let registrar = TestProxyApiRegistrar()

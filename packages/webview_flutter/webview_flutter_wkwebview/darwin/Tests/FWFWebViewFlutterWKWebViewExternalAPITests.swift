@@ -18,7 +18,14 @@ import XCTest
 class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
   @MainActor func testWebViewForIdentifier() {
     let registry = TestRegistry()
-    WebViewFlutterPlugin.register(with: registry.registrar(forPlugin: "")!)
+
+    #if os(iOS)
+      let registrar = registry.registrar(forPlugin: "")!
+    #elseif os(macOS)
+      let registrar = registry.registrar(forPlugin: "")
+    #endif
+
+    WebViewFlutterPlugin.register(with: registrar)
 
     let plugin = registry.registrar.plugin
 
@@ -36,9 +43,15 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
 class TestRegistry: NSObject, FlutterPluginRegistry {
   let registrar = TestFlutterPluginRegistrar()
 
-  func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar? {
-    return registrar
-  }
+  #if os(iOS)
+    func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar? {
+      return registrar
+    }
+  #elseif os(macOS)
+    func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar {
+      return registrar
+    }
+  #endif
 
   func hasPlugin(_ pluginKey: String) -> Bool {
     return true
@@ -67,34 +80,51 @@ class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
 }
 
 class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
+  var view: NSView?
   var plugin: WebViewFlutterPlugin?
 
-  func messenger() -> FlutterBinaryMessenger {
-    return TestBinaryMessenger()
-  }
+  #if os(iOS)
+    func messenger() -> FlutterBinaryMessenger {
+      return TestBinaryMessenger()
+    }
 
-  func textures() -> FlutterTextureRegistry {
-    return TestFlutterTextureRegistry()
-  }
+    func textures() -> FlutterTextureRegistry {
+      return TestFlutterTextureRegistry()
+    }
+
+    func addApplicationDelegate(_ delegate: FlutterPlugin) {
+
+    }
+  #elseif os(macOS)
+    var messenger: any FlutterBinaryMessenger {
+      return TestBinaryMessenger()
+    }
+
+    var textures: any FlutterTextureRegistry {
+      return TestFlutterTextureRegistry()
+    }
+
+    func addApplicationDelegate(_ delegate: any FlutterAppLifecycleDelegate) {
+
+    }
+  #endif
 
   func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {
   }
 
-  func register(
-    _ factory: FlutterPlatformViewFactory, withId factoryId: String,
-    gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
-  ) {
-  }
+  #if os(iOS)
+    func register(
+      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+    ) {
+    }
+  #endif
 
   func publish(_ value: NSObject) {
     plugin = (value as! WebViewFlutterPlugin)
   }
 
   func addMethodCallDelegate(_ delegate: FlutterPlugin, channel: FlutterMethodChannel) {
-
-  }
-
-  func addApplicationDelegate(_ delegate: FlutterPlugin) {
 
   }
 

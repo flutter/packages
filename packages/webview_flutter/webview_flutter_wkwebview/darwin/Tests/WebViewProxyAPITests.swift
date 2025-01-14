@@ -12,9 +12,19 @@ import XCTest
 #endif
 
 class WebViewProxyAPITests: XCTestCase {
+  #if os(iOS)
+    func webViewProxyAPI(forRegistrar registrar: ProxyAPIRegistrar) -> PigeonApiUIViewWKWebView {
+      return registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    }
+  #elseif os(macOS)
+    func webViewProxyAPI(forRegistrar registrar: ProxyAPIRegistrar) -> PigeonApiNSViewWKWebView {
+      return registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
+    }
+  #endif
+
   @MainActor func testPigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, initialConfiguration: WKWebViewConfiguration())
@@ -23,7 +33,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testConfiguration() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: instance)
@@ -34,7 +44,7 @@ class WebViewProxyAPITests: XCTestCase {
   #if os(iOS)
     @MainActor func testScrollView() {
       let registrar = TestProxyApiRegistrar()
-      let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+      let api = webViewProxyAPI(forRegistrar: registrar)
 
       let instance = TestViewWKWebView()
       let value = try? api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: instance)
@@ -45,7 +55,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testSetUIDelegate() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let delegate = UIDelegateImpl(
@@ -58,7 +68,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testSetNavigationDelegate() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let delegate = NavigationDelegateImpl(
@@ -71,7 +81,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testGetUrl() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance)
@@ -81,7 +91,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testGetEstimatedProgress() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.getEstimatedProgress(
@@ -92,7 +102,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testLoad() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let request = URLRequestWrapper(URLRequest(url: URL(string: "http://google.com")!))
@@ -103,7 +113,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testLoadHtmlString() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let string = "myString"
@@ -116,7 +126,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testLoadFileUrl() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let url = "myDirectory/myFile.txt"
@@ -134,7 +144,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testLoadFlutterAsset() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let key = "assets/www/index.html"
@@ -150,7 +160,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testCanGoBack() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance)
@@ -160,7 +170,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testCanGoForward() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance)
@@ -170,7 +180,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testGoBack() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     try? api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance)
@@ -180,7 +190,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testGoForward() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     try? api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance)
@@ -190,7 +200,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testReload() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     try? api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance)
@@ -200,7 +210,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testGetTitle() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance)
@@ -210,7 +220,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testSetAllowsBackForwardNavigationGestures() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let allow = true
@@ -222,7 +232,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testSetCustomUserAgent() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let userAgent = "myString"
@@ -234,7 +244,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testEvaluateJavaScript() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let javaScriptString = "myString"
@@ -257,7 +267,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testSetInspectable() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let inspectable = true
@@ -270,7 +280,7 @@ class WebViewProxyAPITests: XCTestCase {
 
   @MainActor func testGetCustomUserAgent() {
     let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
+    let api = webViewProxyAPI(forRegistrar: registrar)
 
     let instance = TestViewWKWebView()
     let value = try? api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance)
