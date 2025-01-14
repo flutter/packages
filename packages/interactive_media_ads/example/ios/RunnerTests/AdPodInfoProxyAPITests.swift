@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import GoogleInteractiveMediaAds
 import Flutter
+import GoogleInteractiveMediaAds
 import XCTest
 
 @testable import interactive_media_ads
@@ -74,30 +74,30 @@ class TestAdPodInfo: IMAAdPodInfo {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdPodInfo {
     let instance =
-    TestAdPodInfo.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdPodInfo
+      TestAdPodInfo.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdPodInfo
     return instance
   }
-  
+
   override var adPosition: Int {
     return 5
   }
-  
+
   override var maxDuration: TimeInterval {
     return 2.0
   }
-  
+
   override var podIndex: Int {
     return 3
   }
-  
+
   override var timeOffset: TimeInterval {
     return 6.0
   }
-  
+
   override var totalAds: Int {
     return 7
   }
-  
+
   override var isBumper: Bool {
     return false
   }
