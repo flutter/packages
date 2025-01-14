@@ -29,10 +29,6 @@ The generated files are located:
 
 To update the wrapper, follow the steps below:
 
-##### 1. Ensure the project has been built at least once
-
-Run `flutter build ios --simulator` in `example/`.
-
 ##### 1. Make changes to the respective pigeon file that matches the native SDK
 
 * WebKit Dependency: https://developer.apple.com/documentation/webkit
