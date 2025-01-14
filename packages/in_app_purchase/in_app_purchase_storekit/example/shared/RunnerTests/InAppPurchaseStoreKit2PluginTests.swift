@@ -153,8 +153,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     let jsonRepresentationString = String(decoding: transaction.jsonRepresentation, as: UTF8.self)
 
-    XCTAssert(jsonRepresentationString.localizedStandardContains("Type\":\"Consumable"));
-    XCTAssert(jsonRepresentationString.localizedStandardContains("storefront\":\"USA"));
+    XCTAssert(jsonRepresentationString.localizedStandardContains("Type\":\"Consumable"))
+    XCTAssert(jsonRepresentationString.localizedStandardContains("storefront\":\"USA"))
   }
 
   //TODO(louisehsu): Add testing for lower versions.

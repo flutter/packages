@@ -527,9 +527,14 @@ protocol InAppPurchase2API {
 class InAppPurchase2APISetup {
   static var codec: FlutterStandardMessageCodec { sk2_pigeonPigeonCodec.shared }
   /// Sets up an instance of `InAppPurchase2API` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger,
+    api: InAppPurchase2API?, messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let canMakePaymentsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let canMakePaymentsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       canMakePaymentsChannel.setMessageHandler { _, reply in
         do {
