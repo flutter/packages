@@ -1,3 +1,7 @@
+## 0.2.3+5
+
+* Adds internal wrapper for iOS native `IMAAdPodInfo`.
+
 ## 0.2.3+4
 
 * Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.
