@@ -2165,6 +2165,11 @@ void main() {
     verify(mockCameraControl.setZoomRatio(zoomRatio));
   });
 
+  test('Should report support for image streaming', () async {
+    final AndroidCameraCameraX camera = AndroidCameraCameraX();
+    expect(camera.supportsImageStreaming(), true);
+  });
+
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {

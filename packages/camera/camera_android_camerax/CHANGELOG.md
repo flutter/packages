@@ -1,3 +1,7 @@
+## 0.6.13
+
+* Adds API support query for image streaming.
+
 ## 0.6.12
 
 * Suppresses deprecation and removal warnings for
