@@ -3278,8 +3278,11 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .throw_async_error_from_void = throw_async_error_from_void,
     .throw_async_flutter_error = throw_async_flutter_error,
     .echo_async_all_types = echo_async_all_types,
+    .echo_modern_async_all_types = echo_modern_async_all_types,
     .echo_async_nullable_all_nullable_types =
         echo_async_nullable_all_nullable_types,
+    .echo_modern_async_nullable_all_nullable_types =
+        echo_modern_async_nullable_all_nullable_types,
     .echo_async_nullable_all_nullable_types_without_recursion =
         echo_async_nullable_all_nullable_types_without_recursion,
     .echo_async_nullable_int = echo_async_nullable_int,

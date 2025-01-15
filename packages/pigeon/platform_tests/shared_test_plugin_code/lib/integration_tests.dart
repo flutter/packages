@@ -986,12 +986,34 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
 
     testWidgets(
+        'all datatypes async serialize and deserialize correctly using `await`-style.',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllTypes echoObject =
+          await api.echoModernAsyncAllTypes(genericAllTypes);
+
+      compareAllTypes(echoObject, genericAllTypes);
+    });
+
+    testWidgets(
         'all nullable async datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
       final AllNullableTypes? echoObject = await api
           .echoAsyncNullableAllNullableTypes(recursiveAllNullableTypes);
+
+      compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
+    });
+
+    testWidgets(
+        'all nullable async datatypes serialize and deserialize correctly using `await`-style.',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes? echoObject = await api
+          .echoModernAsyncNullableAllNullableTypes(recursiveAllNullableTypes);
 
       compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
     });
@@ -1004,6 +1026,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAsyncNullableAllNullableTypes(allTypesNull);
+      compareAllNullableTypes(echoNullFilledClass, allTypesNull);
+    });
+
+    testWidgets(
+        'all null datatypes async serialize and deserialize correctly using `await`-style.',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes allTypesNull = AllNullableTypes();
+
+      final AllNullableTypes? echoNullFilledClass =
+          await api.echoModernAsyncNullableAllNullableTypes(allTypesNull);
       compareAllNullableTypes(echoNullFilledClass, allTypesNull);
     });
 
