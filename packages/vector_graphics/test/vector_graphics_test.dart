@@ -442,7 +442,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(await completer.future, isA<PictureInfo>());
+    final PictureInfo picture = await completer.future;
+    addTearDown(picture.picture.dispose);
+    expect(picture, isA<PictureInfo>());
     expect(debugLastLocale, const Locale('fr', 'CH'));
     expect(debugLastTextDirection, TextDirection.rtl);
   });
@@ -475,7 +477,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(await completer.future, isA<PictureInfo>());
+    final PictureInfo picture = await completer.future;
+    addTearDown(picture.picture.dispose);
+    expect(picture, isA<PictureInfo>());
     expect(debugLastLocale, PlatformDispatcher.instance.locale);
     expect(debugLastTextDirection, TextDirection.ltr);
   });
@@ -584,7 +588,7 @@ void main() {
     expect(imageCache.statusForKey(imageKey).live, false);
     expect(imageCache.statusForKey(imageKey).keepAlive, true);
 
-    // A blue square, becuase the image is available now.
+    // A blue square, because the image is available now.
     await expectLater(
       find.byKey(key),
       matchesGoldenFile('vg_with_image_blue.png'),
