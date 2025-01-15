@@ -17,6 +17,8 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.view.TextureRegistry;
 import androidx.camera.view.PreviewView;
 
+import android.util.Log;
+
 /** Platform implementation of the camera_plugin implemented with the CameraX library. */
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private InstanceManager instanceManager;
@@ -146,6 +148,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     pluginBinding = flutterPluginBinding;
+    Log.e("CAMILLE", "hey");
     nativeViewFactory = new NativeViewFactory();
     flutterPluginBinding
         .getPlatformViewRegistry()
@@ -175,32 +178,6 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     // Set permissions registry reference.
     systemServicesHostApiImpl.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
-
-    // Log.e("CAMILLE", "onAttachedToactivity!");
-  //   cameraProviderFuture = ProcessCameraProvider.getInstance(this);
-  //   cameraProviderFuture.addListener(() -> {
-  //       try {
-  //           ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
-  //           bindPreview(cameraProvider);
-  //       } catch (ExecutionException | InterruptedException e) {
-  //           // No errors need to be handled for this Future.
-  //           // This should never be reached.
-  //       }
-  //   }, ContextCompat.getMainExecutor(this));
-  // }
-
-    // void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
-    // Preview preview = new Preview.Builder()
-    //         .build();
-
-    // CameraSelector cameraSelector = new CameraSelector.Builder()
-    //         .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-    //         .build();
-
-    // PreviewView previewView = (PreviewView) nativeViewFactory.getView2().getView();
-    // preview.setSurfaceProvider(previewView.getSurfaceProvider());
-
-    // cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, preview);
 }
 
   @Override

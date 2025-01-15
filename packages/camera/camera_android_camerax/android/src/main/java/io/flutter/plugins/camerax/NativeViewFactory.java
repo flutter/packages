@@ -19,6 +19,7 @@ class NativeViewFactory extends PlatformViewFactory {
 
   @NonNull
   @Override
+  @SuppressWarnings("unchecked")
   public PlatformView create(@NonNull Context context, int id, @Nullable Object args) {
     final Map<String, Object> creationParams = (Map<String, Object>) args;
     view2 =  new NativeView(context, id, creationParams);
