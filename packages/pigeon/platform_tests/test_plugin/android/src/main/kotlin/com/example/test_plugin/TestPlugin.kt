@@ -8,6 +8,10 @@ import android.os.Handler
 import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 
 /** This plugin handles the native side of the integration tests in example/integration_test/. */
 class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
@@ -15,9 +19,11 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
+  private var coroutineScope: CoroutineScope? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
-    HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
+    coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    HostIntegrationCoreApi.setUp(binding.binaryMessenger, this, coroutineScope = coroutineScope!!)
     val testSuffixApiOne = TestPluginWithSuffix()
     testSuffixApiOne.setUp(binding, "suffixOne")
     val testSuffixApiTwo = TestPluginWithSuffix()
@@ -35,6 +41,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
     proxyApiRegistrar?.tearDown()
+    coroutineScope?.cancel()
   }
 
   // HostIntegrationCoreApi
@@ -332,11 +339,21 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(everything))
   }
 
+  override suspend fun echoModernAsyncAllTypes(everything: AllTypes): AllTypes {
+    return everything
+  }
+
   override fun echoAsyncNullableAllNullableTypes(
       everything: AllNullableTypes?,
       callback: (Result<AllNullableTypes?>) -> Unit
   ) {
     callback(Result.success(everything))
+  }
+
+  override suspend fun echoModernAsyncNullableAllNullableTypes(
+      everything: AllNullableTypes?
+  ): AllNullableTypes? {
+    return everything
   }
 
   override fun echoAsyncNullableAllNullableTypesWithoutRecursion(

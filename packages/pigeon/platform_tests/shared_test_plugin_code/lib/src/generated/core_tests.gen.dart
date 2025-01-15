@@ -3072,11 +3072,67 @@ class HostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  Future<AllTypes> echoModernAsyncAllTypes(AllTypes everything) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as AllTypes?)!;
+    }
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   Future<AllNullableTypes?> echoAsyncNullableAllNullableTypes(
       AllNullableTypes? everything) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[everything]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as AllNullableTypes?);
+    }
+  }
+
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  Future<AllNullableTypes?> echoModernAsyncNullableAllNullableTypes(
+      AllNullableTypes? everything) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncNullableAllNullableTypes$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,

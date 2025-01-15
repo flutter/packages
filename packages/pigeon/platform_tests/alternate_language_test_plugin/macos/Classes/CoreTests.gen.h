@@ -625,10 +625,18 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// Returns the passed object, to test async serialization and deserialization.
 - (void)echoAsyncAllTypes:(FLTAllTypes *)everything
                completion:(void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed object, to test async serialization and deserialization using `await`-style.
+- (void)echoModernAsyncAllTypes:(FLTAllTypes *)everything
+                     completion:
+                         (void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion;
 /// Returns the passed object, to test serialization and deserialization.
 - (void)echoAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                                completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                     FlutterError *_Nullable))completion;
+/// Returns the passed object, to test async serialization and deserialization using `await`-style.
+- (void)echoModernAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
+                                     completion:(void (^)(FLTAllNullableTypes *_Nullable,
+                                                          FlutterError *_Nullable))completion;
 /// Returns the passed object, to test serialization and deserialization.
 - (void)echoAsyncNullableAllNullableTypesWithoutRecursion:
             (nullable FLTAllNullableTypesWithoutRecursion *)everything

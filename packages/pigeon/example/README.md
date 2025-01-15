@@ -77,6 +77,9 @@ abstract class ExampleHostApi {
   @async
   bool sendMessage(MessageData message);
 
+  // This annotation generates an await-style asynchronous method,
+  // unlike the callback-based approach used in sendMessage.
+  // In Swift, this method does not throw exceptions (`isSwiftThrows: false`).
   @Async(type: AsyncType.await(isSwiftThrows: false))
   bool sendMessageModernAsync(MessageData message);
 }
@@ -154,6 +157,8 @@ private class PigeonApiImplementation: ExampleHostApi {
     completion(.success(true))
   }
 
+  /// Unlike implementations on other platforms, this function does not throw any exceptions 
+  /// because the `@Async(type: AsyncType.await(isSwiftThrows: false))` annotation was specified.
   func sendMessageModernAsync(message: MessageData) async -> Bool {
     return true
   }

@@ -641,12 +641,30 @@ static void echo_async_all_types(
       response_handle, everything);
 }
 
+static void echo_modern_async_all_types(
+
+    CoreTestsPigeonTestAllTypes* everything,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types(
+      response_handle, everything);
+}
+
 static void echo_async_nullable_all_nullable_types(
 
     CoreTestsPigeonTestAllNullableTypes* everything,
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types(
+      response_handle, everything);
+}
+
+static void echo_modern_async_nullable_all_nullable_types(
+
+    CoreTestsPigeonTestAllNullableTypes* everything,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_nullable_all_nullable_types(
       response_handle, everything);
 }
 

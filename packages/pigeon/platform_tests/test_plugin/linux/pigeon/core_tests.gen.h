@@ -3681,7 +3681,15 @@ typedef struct {
       CoreTestsPigeonTestAllTypes* everything,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
+  void (*echo_modern_async_all_types)(
+      CoreTestsPigeonTestAllTypes* everything,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
   void (*echo_async_nullable_all_nullable_types)(
+      CoreTestsPigeonTestAllNullableTypes* everything,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  void (*echo_modern_async_nullable_all_nullable_types)(
       CoreTestsPigeonTestAllNullableTypes* everything,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
@@ -4489,6 +4497,30 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_a
     const gchar* code, const gchar* message, FlValue* details);
 
 /**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.echoModernAsyncAllTypes.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to HostIntegrationCoreApi.echoModernAsyncAllTypes.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
  * core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types:
  * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
  * @return_value: location to write the value returned by this method.
@@ -4510,6 +4542,31 @@ void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullabl
  * HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_nullable_all_nullable_types(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_nullable_all_nullable_types:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.echoModernAsyncNullableAllNullableTypes.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_nullable_all_nullable_types(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllNullableTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_nullable_all_nullable_types:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.echoModernAsyncNullableAllNullableTypes.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_nullable_all_nullable_types(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 

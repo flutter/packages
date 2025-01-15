@@ -503,6 +503,12 @@ void TestPlugin::EchoAsyncAllTypes(
   result(everything);
 }
 
+void TestPlugin::EchoModernAsyncAllTypes(
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) {
+  result(everything);
+}
+
 void TestPlugin::EchoAsyncInt(
     int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) {
   result(an_int);
@@ -595,6 +601,14 @@ void TestPlugin::EchoAnotherAsyncEnum(
 }
 
 void TestPlugin::EchoAsyncNullableAllNullableTypes(
+    const AllNullableTypes* everything,
+    std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
+        result) {
+  result(everything ? std::optional<AllNullableTypes>(*everything)
+                    : std::nullopt);
+}
+
+void TestPlugin::EchoModernAsyncNullableAllNullableTypes(
     const AllNullableTypes* everything,
     std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
         result) {

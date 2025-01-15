@@ -3114,8 +3114,19 @@ public class CoreTests {
     void throwAsyncFlutterError(@NonNull NullableResult<Object> result);
     /** Returns the passed object, to test async serialization and deserialization. */
     void echoAsyncAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
+    /**
+     * Returns the passed object, to test async serialization and deserialization using
+     * `await`-style.
+     */
+    void echoModernAsyncAllTypes(@NonNull AllTypes everything, @NonNull Result<AllTypes> result);
     /** Returns the passed object, to test serialization and deserialization. */
     void echoAsyncNullableAllNullableTypes(
+        @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result);
+    /**
+     * Returns the passed object, to test async serialization and deserialization using
+     * `await`-style.
+     */
+    void echoModernAsyncNullableAllNullableTypes(
         @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result);
     /** Returns the passed object, to test serialization and deserialization. */
     void echoAsyncNullableAllNullableTypesWithoutRecursion(
@@ -5535,6 +5546,38 @@ public class CoreTests {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypes"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllTypes everythingArg = (AllTypes) args.get(0);
+                Result<AllTypes> resultCallback =
+                    new Result<AllTypes>() {
+                      public void success(AllTypes result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoModernAsyncAllTypes(everythingArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes"
                     + messageChannelSuffix,
                 getCodec());
@@ -5558,6 +5601,38 @@ public class CoreTests {
                     };
 
                 api.echoAsyncNullableAllNullableTypes(everythingArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncNullableAllNullableTypes"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
+                NullableResult<AllNullableTypes> resultCallback =
+                    new NullableResult<AllNullableTypes>() {
+                      public void success(AllNullableTypes result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoModernAsyncNullableAllNullableTypes(everythingArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

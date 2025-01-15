@@ -42,7 +42,11 @@ pigeon methods can be written on the native side as synchronous methods,
 to make it simpler to always reply exactly once.
 
 If asynchronous methods are needed, the `@async` annotation can be used. This will require
-results or errors to be returned via a provided callback. [Example](./example/README.md#HostApi_Example).
+results or errors to be returned via a provided callback. [Example](./example/README.md#HostApi_Example). 
+
+It is possible to specify the type of approach to be applied, such as await-style using the @Async(type: AsyncType.await()) annotation, or callback-style using the @Async(type: AsyncType.callback()) annotation. Additionally, can be defined whether the Swift function will throw an exception by using the @Async(type: AsyncType.await(isSwiftThrows: false)) annotation. [Example](./example/README.md#HostApi_Example).
+
+Currently, `await`-style functionality is only available for Swift (async) and Kotlin (suspend).
 
 ### Error Handling
 

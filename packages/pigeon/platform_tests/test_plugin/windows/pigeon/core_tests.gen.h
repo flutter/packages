@@ -1059,8 +1059,19 @@ class HostIntegrationCoreApi {
   virtual void EchoAsyncAllTypes(
       const AllTypes& everything,
       std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+  // Returns the passed object, to test async serialization and deserialization
+  // using `await`-style.
+  virtual void EchoModernAsyncAllTypes(
+      const AllTypes& everything,
+      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual void EchoAsyncNullableAllNullableTypes(
+      const AllNullableTypes* everything,
+      std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
+          result) = 0;
+  // Returns the passed object, to test async serialization and deserialization
+  // using `await`-style.
+  virtual void EchoModernAsyncNullableAllNullableTypes(
       const AllNullableTypes* everything,
       std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
           result) = 0;

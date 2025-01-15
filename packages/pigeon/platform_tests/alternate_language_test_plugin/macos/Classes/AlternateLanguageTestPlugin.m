@@ -1127,6 +1127,19 @@
       }];
 }
 
+- (void)echoModernAsyncAllTypes:(nonnull FLTAllTypes *)everything
+                     completion:(nonnull void (^)(FLTAllTypes *_Nullable,
+                                                  FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (void)echoModernAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
+                                     completion:
+                                         (nonnull void (^)(FLTAllNullableTypes *_Nullable,
+                                                           FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
 - (FLTUnusedClass *)checkIfUnusedClassGenerated {
   return [[FLTUnusedClass alloc] init];
 }

@@ -723,11 +723,24 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   AllTypes echoAsyncAllTypes(AllTypes everything);
 
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  @Async(type: AsyncType.await(isSwiftThrows: false))
+  @ObjCSelector('echoModernAsyncAllTypes:')
+  @SwiftFunction('echoModernAsyncAllTypes(_:)')
+  AllTypes echoModernAsyncAllTypes(AllTypes everything);
+
   /// Returns the passed object, to test serialization and deserialization.
   @async
   @ObjCSelector('echoAsyncNullableAllNullableTypes:')
   @SwiftFunction('echoAsync(_:)')
   AllNullableTypes? echoAsyncNullableAllNullableTypes(
+      AllNullableTypes? everything);
+
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  @Async(type: AsyncType.await(isSwiftThrows: false))
+  @ObjCSelector('echoModernAsyncNullableAllNullableTypes:')
+  @SwiftFunction('echoModernAsyncNullableAllNullableTypes(_:)')
+  AllNullableTypes? echoModernAsyncNullableAllNullableTypes(
       AllNullableTypes? everything);
 
   /// Returns the passed object, to test serialization and deserialization.
