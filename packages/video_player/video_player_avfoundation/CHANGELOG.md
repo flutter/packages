@@ -1,6 +1,10 @@
 ## 2.7.0
 
 * Adds support for platform views as an optional way of displaying a video.
+
+## 2.6.6
+
+* Fixes changing global audio session category to be collision free across plugins.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.6.5
