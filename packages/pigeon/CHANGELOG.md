@@ -1,3 +1,7 @@
+## 22.7.3
+
+* Adds support for empty data classes.
+
 ## 22.7.2
 
 * Updates README to discuss best practices for using Pigeon-generated code.
@@ -6,7 +10,6 @@
 
 * [swift] Adds support for platform checks of imports of ProxyApis.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* [dart] fixes [160501](https://github.com/flutter/flutter/issues/160501).
 
 ## 22.7.0
 
