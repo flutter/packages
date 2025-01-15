@@ -17,7 +17,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   /// A map that associates player ID with a view type.
   /// This is used to determine which view type to use when building a view.
-  final Map<int, VideoViewType> _playerViewTypes = <int, VideoViewType>{};
+  @visibleForTesting
+  final Map<int, VideoViewType> playerViewTypes = <int, VideoViewType>{};
 
   /// Registers this class as the default instance of [VideoPlayerPlatform].
   static void registerWith() {
@@ -33,7 +34,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int textureId) async {
     await _api.dispose(textureId);
-    _playerViewTypes.remove(textureId);
+    playerViewTypes.remove(textureId);
   }
 
   @override
@@ -80,7 +81,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     );
 
     final int playerId = await _api.create(pigeonCreationOptions);
-    _playerViewTypes[playerId] = options.viewType;
+    playerViewTypes[playerId] = options.viewType;
 
     return playerId;
   }
@@ -178,7 +179,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final VideoViewType? viewType = _playerViewTypes[playerId];
+    final VideoViewType? viewType = playerViewTypes[playerId];
 
     return switch (viewType) {
       // playerId is also the textureId when using texture view.
