@@ -2,7 +2,7 @@
 
 ## 2.3.6
 
-* Fix `setState` returning `Future` on `exemple/main.dart`.
+* Fix `setState` returning `Future` on `example/main.dart`.
 
 ## 2.3.5
 
