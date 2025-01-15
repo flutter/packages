@@ -17,6 +17,7 @@ import io.flutter.plugins.camerax.GeneratedCameraXLibrary.PreviewHostApi;
 import io.flutter.view.TextureRegistry;
 import java.util.Objects;
 import java.util.concurrent.Executors;
+import androidx.camera.view.PreviewView;
 
 public class PreviewHostApiImpl implements PreviewHostApi {
   final BinaryMessenger binaryMessenger;
@@ -25,14 +26,17 @@ public class PreviewHostApiImpl implements PreviewHostApi {
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
   @VisibleForTesting public @Nullable TextureRegistry.SurfaceProducer flutterSurfaceProducer;
+  public NativeViewFactory nativeViewFactory;
 
   public PreviewHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
       @NonNull InstanceManager instanceManager,
-      @NonNull TextureRegistry textureRegistry) {
+      @NonNull TextureRegistry textureRegistry,
+      NativeViewFactory nativeViewFactory) {
     this.binaryMessenger = binaryMessenger;
     this.instanceManager = instanceManager;
     this.textureRegistry = textureRegistry;
+    this.nativeViewFactory = nativeViewFactory;
   }
 
   /** Creates a {@link Preview} with the target rotation and resolution if specified. */
@@ -61,11 +65,14 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   @Override
   public @NonNull Long setSurfaceProvider(@NonNull Long identifier) {
     Preview preview = getPreviewInstance(identifier);
-    flutterSurfaceProducer = textureRegistry.createSurfaceProducer();
-    Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(flutterSurfaceProducer);
-    preview.setSurfaceProvider(surfaceProvider);
+    // flutterSurfaceProducer = textureRegistry.createSurfaceProducer();
+    // Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(flutterSurfaceProducer);
+    // preview.setSurfaceProvider(surfaceProvider);
+    PreviewView previewView = (PreviewView) nativeViewFactory.getView2();
+    preview.setSurfaceProvider(previewView.getSurfaceProvider());
 
-    return flutterSurfaceProducer.id();
+    return 3L;
+    // return flutterSurfaceProducer.id();
   }
 
   /**

@@ -15,6 +15,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.view.TextureRegistry;
+import androidx.camera.view.PreviewView;
 
 /** Platform implementation of the camera_plugin implemented with the CameraX library. */
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
@@ -39,6 +40,8 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   public @Nullable ProcessCameraProviderHostApiImpl processCameraProviderHostApiImpl;
 
   @VisibleForTesting public @Nullable LiveDataHostApiImpl liveDataHostApiImpl;
+
+  public NativeViewFactory nativeViewFactory;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
@@ -83,7 +86,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     GeneratedCameraXLibrary.DeviceOrientationManagerHostApi.setup(
         binaryMessenger, deviceOrientationManagerHostApiImpl);
     GeneratedCameraXLibrary.PreviewHostApi.setup(
-        binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry));
+        binaryMessenger, new PreviewHostApiImpl(binaryMessenger, instanceManager, textureRegistry, nativeViewFactory));
     imageCaptureHostApiImpl =
         new ImageCaptureHostApiImpl(binaryMessenger, instanceManager, context);
     GeneratedCameraXLibrary.ImageCaptureHostApi.setup(binaryMessenger, imageCaptureHostApiImpl);
@@ -143,6 +146,10 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     pluginBinding = flutterPluginBinding;
+    nativeViewFactory = new NativeViewFactory();
+    flutterPluginBinding
+        .getPlatformViewRegistry()
+          .registerViewFactory("<camille-platform-view>", nativeViewFactory);
   }
 
   @Override
@@ -168,7 +175,33 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
     // Set permissions registry reference.
     systemServicesHostApiImpl.setPermissionsRegistry(
         activityPluginBinding::addRequestPermissionsResultListener);
-  }
+
+    // Log.e("CAMILLE", "onAttachedToactivity!");
+  //   cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+  //   cameraProviderFuture.addListener(() -> {
+  //       try {
+  //           ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+  //           bindPreview(cameraProvider);
+  //       } catch (ExecutionException | InterruptedException e) {
+  //           // No errors need to be handled for this Future.
+  //           // This should never be reached.
+  //       }
+  //   }, ContextCompat.getMainExecutor(this));
+  // }
+
+    // void bindPreview(@NonNull ProcessCameraProvider cameraProvider) {
+    // Preview preview = new Preview.Builder()
+    //         .build();
+
+    // CameraSelector cameraSelector = new CameraSelector.Builder()
+    //         .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+    //         .build();
+
+    // PreviewView previewView = (PreviewView) nativeViewFactory.getView2().getView();
+    // preview.setSurfaceProvider(previewView.getSurfaceProvider());
+
+    // cameraProvider.bindToLifecycle((LifecycleOwner)this, cameraSelector, preview);
+}
 
   @Override
   public void onDetachedFromActivityForConfigChanges() {

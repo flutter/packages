@@ -7,11 +7,14 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/services.dart'
-    show DeviceOrientation, PlatformException;
+import 'package:flutter/services.dart';
+    // show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
     show RotatedBox, Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
+import 'package:flutter/foundation.dart';
+// import 'package:flutter/services.dart';
+import 'package:flutter/material.dart' show AndroidView;
 
 import 'analyzer.dart';
 import 'aspect_ratio_strategy.dart';
@@ -865,69 +868,18 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final Widget cameraPreview = Texture(textureId: cameraId);
-    final Map<DeviceOrientation, int> degreesForDeviceOrientation =
-        <DeviceOrientation, int>{
-      DeviceOrientation.portraitUp: 0,
-      DeviceOrientation.landscapeRight: 90,
-      DeviceOrientation.portraitDown: 180,
-      DeviceOrientation.landscapeLeft: 270,
-    };
-    int naturalDeviceOrientationDegrees =
-        degreesForDeviceOrientation[naturalOrientation]!;
+    // This is used in the platform side to register the view.
+    const String viewType = '<camille-platform-view>';
+    // Pass parameters to the platform side.
+    final Map<String, dynamic> creationParams = <String, dynamic>{};
 
-    if (isPreviewPreTransformed) {
-      // If the camera preview is backed by a SurfaceTexture, the transformation
-      // needed to correctly rotate the preview has already been applied.
-      // However, we may need to correct the camera preview rotation if the
-      // device is naturally landscape-oriented.
-      if (naturalOrientation == DeviceOrientation.landscapeLeft ||
-          naturalOrientation == DeviceOrientation.landscapeRight) {
-        final int quarterTurnsToCorrectForLandscape =
-            (-naturalDeviceOrientationDegrees + 360) ~/ 4;
-        return RotatedBox(
-            quarterTurns: quarterTurnsToCorrectForLandscape,
-            child: cameraPreview);
-      }
-      return cameraPreview;
+    return AndroidView(
+      viewType: viewType,
+      layoutDirection: TextDirection.ltr,
+      creationParams: creationParams,
+      creationParamsCodec: const StandardMessageCodec(),
+    );
     }
-
-    // Fix for the rotation of the camera preview not backed by a SurfaceTexture
-    // with respect to the naturalOrientation of the device:
-
-    final int signForCameraDirection = cameraIsFrontFacing ? 1 : -1;
-
-    if (signForCameraDirection == 1 &&
-        (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
-            currentDeviceOrientation == DeviceOrientation.landscapeRight)) {
-      // For front-facing cameras, the image buffer is rotated counterclockwise,
-      // so we determine the rotation needed to correct the camera preview with
-      // respect to the naturalOrientation of the device based on the inverse of
-      // naturalOrientation.
-      naturalDeviceOrientationDegrees += 180;
-    }
-
-    // See https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation
-    // for more context on this formula.
-    final double rotation = (sensorOrientation +
-            naturalDeviceOrientationDegrees * signForCameraDirection +
-            360) %
-        360;
-    int quarterTurnsToCorrectPreview = rotation ~/ 90;
-
-    if (naturalOrientation == DeviceOrientation.landscapeLeft ||
-        naturalOrientation == DeviceOrientation.landscapeRight) {
-      // We may need to correct the camera preview rotation if the device is
-      // naturally landscape-oriented.
-      quarterTurnsToCorrectPreview +=
-          (-naturalDeviceOrientationDegrees + 360) ~/ 4;
-      return RotatedBox(
-          quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
-    }
-
-    return RotatedBox(
-        quarterTurns: quarterTurnsToCorrectPreview, child: cameraPreview);
-  }
 
   /// Captures an image and returns the file where it was saved.
   ///

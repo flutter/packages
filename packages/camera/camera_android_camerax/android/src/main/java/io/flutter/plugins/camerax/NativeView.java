@@ -1,4 +1,4 @@
-package io.flutter.plugins.cameraxexample;
+package io.flutter.plugins.camerax;
 
 import android.content.Context;
 import android.graphics.Color;
