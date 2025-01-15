@@ -55,8 +55,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Creates an instance of a video player based on creation options
-  /// and returns its playerId. If view type is [VideoViewType.textureView],
-  /// the playerId is also the texture id.
+  /// and returns its playerId.
   Future<int?> createWithOptions(VideoCreationOptions options) {
     return create(options.dataSource);
   }
@@ -508,14 +507,10 @@ class VideoViewOptions {
   /// Constructs an instance of [VideoViewOptions].
   const VideoViewOptions({
     required this.playerId,
-    required this.viewType,
   });
 
   /// The identifier of the video player.
   final int playerId;
-
-  /// The type of the video view.
-  final VideoViewType viewType;
 }
 
 /// [VideoCreationOptions] contains creation options for a video player.
