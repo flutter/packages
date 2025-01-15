@@ -10,7 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
     // show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show RotatedBox, Size, Texture, Widget, visibleForTesting;
+    show Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'package:flutter/foundation.dart';
 // import 'package:flutter/services.dart';
@@ -240,25 +240,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late bool cameraIsFrontFacing;
 
-  /// Whether or not the Surface used to create the camera preview is backed
-  /// by a SurfaceTexture.
-  @visibleForTesting
-  late bool isPreviewPreTransformed;
-
-  /// The initial orientation of the device.
-  ///
-  /// The camera preview will use this orientation as the natural orientation
-  /// to correct its rotation with respect to, if necessary.
-  @visibleForTesting
-  DeviceOrientation? naturalOrientation;
-
   /// The camera sensor orientation.
   @visibleForTesting
   late int sensorOrientation;
-
-  /// The current orientation of the device.
-  @visibleForTesting
-  DeviceOrientation? currentDeviceOrientation;
 
   /// Subscription for listening to changes in device orientation.
   StreamSubscription<DeviceOrientationChangedEvent>?
@@ -402,20 +386,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
-    await Future.wait(<Future<Object>>[
-      SystemServices.isPreviewPreTransformed()
-          .then((bool value) => isPreviewPreTransformed = value),
-      proxy
-          .getSensorOrientation(camera2CameraInfo)
-          .then((int value) => sensorOrientation = value),
-      proxy
-          .getUiOrientation()
-          .then((DeviceOrientation value) => naturalOrientation ??= value),
-    ]);
-    _subscriptionForDeviceOrientationChanges = onDeviceOrientationChanged()
-        .listen((DeviceOrientationChangedEvent event) {
-      currentDeviceOrientation = event.orientation;
-    });
+    sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
 
     return flutterSurfaceTextureId;
   }
@@ -1103,6 +1074,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       await recording!.resume();
     }
   }
+
+  @override
+  bool supportsImageStreaming() => true;
 
   /// A new streamed frame is available.
   ///
