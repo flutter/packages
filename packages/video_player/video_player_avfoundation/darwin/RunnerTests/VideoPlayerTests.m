@@ -945,9 +945,10 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                 uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
         packageName:nil
          formatHint:nil
-        httpHeaders:@{}];
+        httpHeaders:@{}
+           viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
-  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersById[textureId];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   [player onListenWithArguments:nil
