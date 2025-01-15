@@ -1,3 +1,7 @@
+## 0.3.20+4
+
+* Exposes `jsonRepresentation` field for transactions.
+
 ## 0.3.20+3
 
 * Fixes `finishTransaction` not completing.
