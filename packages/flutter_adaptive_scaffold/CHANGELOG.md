@@ -1,5 +1,9 @@
 ## 0.3.1
 
+* Add `navigationRailPadding` padding to `AdaptiveScaffold` to allow for specifying custom padding around the navigation rail.
+
+## 0.3.1
+
 * Use improved MediaQuery methods.
 
 ## 0.3.0
