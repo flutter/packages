@@ -4,7 +4,7 @@
 
 ## 2.0.12
 
-* Fix `renderflex overflowed` on `exemple`.
+* Fix `renderflex overflowed` on `example`.
 
 ## 2.0.11
 
