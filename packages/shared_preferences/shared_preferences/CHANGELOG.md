@@ -1,3 +1,9 @@
+
+
+## 2.3.6
+
+* Fix `setState` returning `Future` on `exemple/main.dart`.
+
 ## 2.3.5
 
 * Adds information about Android SharedPreferences support.
