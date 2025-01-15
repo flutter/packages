@@ -15,6 +15,10 @@ import 'messages.g.dart';
 class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   final AVFoundationVideoPlayerApi _api = AVFoundationVideoPlayerApi();
 
+  /// A map that associates player ID with a view type.
+  /// This is used to determine which view type to use when building a view.
+  final Map<int, VideoViewType> _playerViewTypes = <int, VideoViewType>{};
+
   /// Registers this class as the default instance of [VideoPlayerPlatform].
   static void registerWith() {
     VideoPlayerPlatform.instance = AVFoundationVideoPlayer();
@@ -27,8 +31,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   // TODO(FirentisTFW): Rename textureId to playerId everywhere.
   @override
-  Future<void> dispose(int textureId) {
-    return _api.dispose(textureId);
+  Future<void> dispose(int textureId) async {
+    await _api.dispose(textureId);
+    _playerViewTypes.remove(textureId);
   }
 
   @override
@@ -44,7 +49,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> createWithOptions(VideoCreationOptions options) {
+  Future<int?> createWithOptions(VideoCreationOptions options) async {
     final DataSource dataSource = options.dataSource;
 
     String? asset;
@@ -74,7 +79,10 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       viewType: _platformVideoViewTypeFromVideoViewType(options.viewType),
     );
 
-    return _api.create(pigeonCreationOptions);
+    final int playerId = await _api.create(pigeonCreationOptions);
+    _playerViewTypes[playerId] = options.viewType;
+
+    return playerId;
   }
 
   @override
@@ -163,28 +171,29 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildView(int textureId) {
     return buildViewWithOptions(
-      VideoViewOptions(
-        playerId: textureId,
-        // Texture view was the only supported view type before
-        // buildViewWithOptions was introduced.
-        viewType: VideoViewType.textureView,
-      ),
+      VideoViewOptions(playerId: textureId),
     );
   }
 
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
+    final VideoViewType? viewType = _playerViewTypes[playerId];
 
-    return switch (options.viewType) {
+    return switch (viewType) {
+      // playerId is also the textureId when using texture view.
       VideoViewType.textureView => Texture(textureId: playerId),
       VideoViewType.platformView => _buildPlatformView(playerId),
+      null => throw Exception(
+          'Could not find corresponding view type for playerId: $playerId',
+        ),
     };
   }
 
   Widget _buildPlatformView(int playerId) {
     final PlatformVideoViewCreationParams creationParams =
         PlatformVideoViewCreationParams(playerId: playerId);
+
     return IgnorePointer(
       // IgnorePointer so that GestureDetector can be used above the platform view.
       child: UiKitView(
