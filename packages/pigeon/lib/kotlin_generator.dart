@@ -299,6 +299,10 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
+      if (getFieldsInSerializationOrder(classDefinition).isEmpty) {
+        indent.write('@Suppress("UNUSED_PARAMETER")');
+      }
+
       indent
           .write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 

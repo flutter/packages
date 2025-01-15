@@ -52,6 +52,7 @@ data class StringEvent(val data: String) : PlatformEvent() {
 /** Generated class from Pigeon that represents data sent in messages. */
 class EmptyEvent() : PlatformEvent() {
   companion object {
+    @Suppress("UNUSED_PARAMETER")
     fun fromList(pigeonVar_list: List<Any?>): EmptyEvent {
       return EmptyEvent()
     }
