@@ -272,10 +272,44 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     return;
   }
   if (_isPlaying) {
-    [_player play];
+    // Calling play is the same as setting the rate to 1.0 (or to defaultRate depending on iOS
+    // version) so last set playback speed must be set here if any instead.
+    // https://github.com/flutter/flutter/issues/71264
+    // https://github.com/flutter/flutter/issues/73643
+    if (_targetPlaybackSpeed) {
+      [self updateRate];
+    } else {
+      [_player play];
+    }
   } else {
     [_player pause];
   }
+}
+
+/// Synchronizes the player's playback rate with targetPlaybackSpeed, constrained by the playback
+/// rate capabilities of the player's current item.
+- (void)updateRate {
+  // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
+  // these checks.
+  // If status is not AVPlayerItemStatusReadyToPlay then both canPlayFastForward
+  // and canPlaySlowForward are always false and it is unknown whether video can
+  // be played at these speeds, updatePlayingState will be called again when
+  // status changes to AVPlayerItemStatusReadyToPlay.
+  float speed = _targetPlaybackSpeed.floatValue;
+  BOOL readyToPlay = _player.currentItem.status == AVPlayerItemStatusReadyToPlay;
+  if (speed > 2.0 && !_player.currentItem.canPlayFastForward) {
+    if (!readyToPlay) {
+      return;
+    }
+    speed = 2.0;
+  }
+  if (speed < 1.0 && !_player.currentItem.canPlaySlowForward) {
+    if (!readyToPlay) {
+      return;
+    }
+    speed = 1.0;
+  }
+  _player.rate = speed;
 }
 
 - (void)sendFailedToLoadVideoEvent {
@@ -403,27 +437,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setPlaybackSpeed:(double)speed {
-  // See https://developer.apple.com/library/archive/qa/qa1772/_index.html for an explanation of
-  // these checks.
-  if (speed > 2.0 && !_player.currentItem.canPlayFastForward) {
-    if (_eventSink != nil) {
-      _eventSink([FlutterError errorWithCode:@"VideoError"
-                                     message:@"Video cannot be fast-forwarded beyond 2.0x"
-                                     details:nil]);
-    }
-    return;
-  }
-
-  if (speed < 1.0 && !_player.currentItem.canPlaySlowForward) {
-    if (_eventSink != nil) {
-      _eventSink([FlutterError errorWithCode:@"VideoError"
-                                     message:@"Video cannot be slow-forwarded"
-                                     details:nil]);
-    }
-    return;
-  }
-
-  _player.rate = speed;
+  _targetPlaybackSpeed = @(speed);
+  [self updatePlayingState];
 }
 
 - (FlutterError *_Nullable)onCancelWithArguments:(id _Nullable)arguments {

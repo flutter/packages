@@ -79,6 +79,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) FlutterEventSink eventSink;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.
 @property(nonatomic) CGAffineTransform preferredTransform;
+/// The target playback speed requested by the plugin client.
+@property(nonatomic, readonly) NSNumber *targetPlaybackSpeed;
 /// Indicates whether the video player is currently playing.
 @property(nonatomic, readonly) BOOL isPlaying;
 /// Indicates whether the video player has been initialized.
