@@ -593,6 +593,37 @@ void runTests() {
     final String? error = await controller.getStyleError();
     expect(error, isNotNull);
   });
+
+  testWidgets('testMapStateException', (WidgetTester tester) async {
+    final Completer<GoogleMapController> controllerCompleter =
+        Completer<GoogleMapController>();
+
+    await pumpMap(
+      tester,
+      GoogleMap(
+        initialCameraPosition: kInitialCameraPosition,
+        onMapCreated: (GoogleMapController controller) {
+          controllerCompleter.complete(controller);
+        },
+      ),
+    );
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+    final GoogleMapController controller = await controllerCompleter.future;
+
+    final double zoomLevel = await controller.getZoomLevel();
+    expect(zoomLevel > 0, true);
+
+    await tester.pumpWidget(Container());
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    try {
+      await controller.getZoomLevel();
+      fail('expected MapStateException');
+    } on MapStateException catch (e) {
+      expect(e.message.isNotEmpty, true);
+    }
+  });
+  // skip: isAndroid || isWeb || isIOS);
 }
 
 /// Repeatedly checks an asynchronous value against a test condition.
