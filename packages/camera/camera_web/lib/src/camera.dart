@@ -49,7 +49,8 @@ class Camera {
     required CameraService cameraService,
     this.options = const CameraOptions(),
     this.recorderOptions = const (audioBitrate: null, videoBitrate: null),
-  }) : _cameraService = cameraService;
+  })  : _cameraService = cameraService,
+        canUseOffscreenCanvas = cameraService.hasPropertyOffScreenCanvas();
 
   /// The texture id used to register the camera view.
   final int textureId;
@@ -158,6 +159,10 @@ class Camera {
   @visibleForTesting
   final StreamController<VideoRecordedEvent> videoRecorderController =
       StreamController<VideoRecordedEvent>.broadcast();
+
+  /// Used to check if allowed to paint canvas off screen
+  @visibleForTesting
+  bool canUseOffscreenCanvas = false;
 
   /// Initializes the camera stream displayed in the [videoElement].
   /// Registers the camera view with [textureId] under [_getViewType] type.
@@ -637,5 +642,71 @@ class Camera {
       ..width = '100%'
       ..height = '100%'
       ..objectFit = 'cover';
+  }
+
+  final StreamController<CameraImageData> _cameraFrameStreamController =
+      StreamController<CameraImageData>.broadcast();
+
+  // TODO(replace): introduced fps in
+  /// [CameraImageStreamOptions]
+  final int cameraStreamFPS = 60;
+
+  /// Returns a stream of camera frames.
+  ///
+  /// To stop listening to new animation frames close all listening streams.
+  Stream<CameraImageData> cameraFrameStream({
+    CameraImageStreamOptions? options,
+  }) {
+    _cameraFrameStreamController.onListen = () {
+      _triggerAnimationFramesLoop(
+        _addCameraImageDataEvent,
+        fps: cameraStreamFPS,
+      );
+    };
+
+    return _cameraFrameStreamController.stream;
+  }
+
+  /// Triggers animation frames in a loop at a specified FPS
+  /// as long as [animationFrameId] is not cancelled
+  void _triggerAnimationFramesLoop(
+    VoidCallback action, {
+    required int fps,
+  }) {
+    int? animationFrameId;
+    num then = 0, fpsInterval = 1000 / fps;
+
+    int? animate(num timestamp) {
+      // Schedule the next frame
+      animationFrameId = window.requestAnimationFrame(animate.toJS);
+      // Calculate the elapsed time since the last frame
+      final num elapsed = timestamp - then;
+
+      // if we're close to the next frame (by ~8ms), do it.
+      if (fpsInterval - elapsed <= 8) {
+        // Get ready for next frame
+        then = timestamp;
+        // Perform the action task
+        action();
+      }
+      return animationFrameId;
+    }
+
+    // Initialize the animation loop
+    animationFrameId = animate(window.performance.now());
+
+    // Listen for the stream controller cancellation to stop the animation
+    _cameraFrameStreamController.onCancel = () {
+      if (animationFrameId != null) {
+        window.cancelAnimationFrame(animationFrameId!);
+        animationFrameId = null;
+      }
+    };
+  }
+
+  /// Used to trigger add event of camera image data in camera frame stream
+  void _addCameraImageDataEvent() {
+    final CameraImageData image = _cameraService.takeFrame(videoElement);
+    _cameraFrameStreamController.add(image);
   }
 }
