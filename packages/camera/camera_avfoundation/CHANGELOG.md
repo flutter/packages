@@ -1,3 +1,7 @@
+## 0.9.18+1
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
 ## 0.9.18
 
 * Adds API support query for image streaming.
