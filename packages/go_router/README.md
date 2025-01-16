@@ -72,6 +72,7 @@ The project follows the same priority system as flutter framework.
 
 ## Roadmap
 
-This package has entered a maintenance phase.  The Flutter team's primary focus will be on
+This package is considered feature-complete.  The Flutter team's primary focus will be on
 addressing bug fixes and ensuring stability.  While active feature development is not currently
-planned, we welcome and encourage community contributions to expand the package's functionality.
+planned, we still welcome and encourage community contributions to expand the package's
+functionality.
