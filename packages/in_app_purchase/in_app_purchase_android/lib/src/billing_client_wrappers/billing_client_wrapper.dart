@@ -5,15 +5,12 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
 import '../messages.g.dart';
 import '../pigeon_converters.dart';
 import 'billing_config_wrapper.dart';
 import 'pending_purchases_params_wrapper.dart';
-
-part 'billing_client_wrapper.g.dart';
 
 /// Callback triggered by Play in response to purchase activity.
 ///
@@ -378,62 +375,47 @@ typedef OnBillingServiceDisconnected = void Function();
 /// [`BillingClient.BillingResponse`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.BillingResponse).
 /// See the `BillingResponse` docs for more explanation of the different
 /// constants.
-@JsonEnum(alwaysCreate: true)
 enum BillingResponse {
-  // WARNING: Changes to this class need to be reflected in our generated code.
-  // Run `flutter packages pub run build_runner watch` to rebuild and watch for
-  // further changes.
+  // WARNING: Changes to this enum need to be reflected in billingResponseFromPlatform
+  // function in pigeon_converters.dart.
 
   /// The request has reached the maximum timeout before Google Play responds.
-  @JsonValue(-3)
   serviceTimeout,
 
   /// The requested feature is not supported by Play Store on the current device.
-  @JsonValue(-2)
   featureNotSupported,
 
   /// The Play Store service is not connected now - potentially transient state.
-  @JsonValue(-1)
   serviceDisconnected,
 
   /// Success.
-  @JsonValue(0)
   ok,
 
   /// The user pressed back or canceled a dialog.
-  @JsonValue(1)
   userCanceled,
 
   /// The network connection is down.
-  @JsonValue(2)
   serviceUnavailable,
 
   /// The billing API version is not supported for the type requested.
-  @JsonValue(3)
   billingUnavailable,
 
   /// The requested product is not available for purchase.
-  @JsonValue(4)
   itemUnavailable,
 
   /// Invalid arguments provided to the API.
-  @JsonValue(5)
   developerError,
 
   /// Fatal error during the API action.
-  @JsonValue(6)
   error,
 
   /// Failure to purchase since item is already owned.
-  @JsonValue(7)
   itemAlreadyOwned,
 
   /// Failure to consume since item is not owned.
-  @JsonValue(8)
   itemNotOwned,
 
   /// Network connection failure between the device and Play systems.
-  @JsonValue(12)
   networkError,
 }
 
@@ -441,70 +423,15 @@ enum BillingResponse {
 ///
 /// [playBillingOnly] (google Play billing only).
 /// [alternativeBillingOnly] (app provided billing with reporting to Play).
-@JsonEnum(alwaysCreate: true)
 enum BillingChoiceMode {
-  // WARNING: Changes to this class need to be reflected in our generated code.
-  // Run `flutter packages pub run build_runner watch` to rebuild and watch for
-  // further changes.
-  // Values must match what is used in
-  // in_app_purchase_android/android/src/main/java/io/flutter/plugins/inapppurchase/MethodCallHandlerImpl.java
-
   /// Billing through google Play. Default state.
-  @JsonValue(0)
   playBillingOnly,
 
   /// Billing through app provided flow.
-  @JsonValue(1)
   alternativeBillingOnly,
 
   /// Users can choose Play billing or alternative billing.
-  @JsonValue(2)
   userChoiceBilling,
-}
-
-/// Serializer for [BillingChoiceMode].
-///
-/// Use these in `@JsonSerializable()` classes by annotating them with
-/// `@BillingChoiceModeConverter()`.
-class BillingChoiceModeConverter
-    implements JsonConverter<BillingChoiceMode, int?> {
-  /// Default const constructor.
-  const BillingChoiceModeConverter();
-
-  @override
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  BillingChoiceMode fromJson(int? json) {
-    if (json == null) {
-      return BillingChoiceMode.playBillingOnly;
-    }
-    return $enumDecode(_$BillingChoiceModeEnumMap, json);
-  }
-
-  @override
-  int toJson(BillingChoiceMode object) => _$BillingChoiceModeEnumMap[object]!;
-}
-
-/// Serializer for [BillingResponse].
-///
-/// Use these in `@JsonSerializable()` classes by annotating them with
-/// `@BillingResponseConverter()`.
-class BillingResponseConverter implements JsonConverter<BillingResponse, int?> {
-  /// Default const constructor.
-  const BillingResponseConverter();
-
-  @override
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  BillingResponse fromJson(int? json) {
-    if (json == null) {
-      return BillingResponse.error;
-    }
-    return $enumDecode(_$BillingResponseEnumMap, json);
-  }
-
-  @override
-  int toJson(BillingResponse object) => _$BillingResponseEnumMap[object]!;
 }
 
 /// Enum representing potential [ProductDetailsWrapper.productType]s.
@@ -512,41 +439,12 @@ class BillingResponseConverter implements JsonConverter<BillingResponse, int?> {
 /// Wraps
 /// [`BillingClient.ProductType`](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.ProductType)
 /// See the linked documentation for an explanation of the different constants.
-@JsonEnum(alwaysCreate: true)
 enum ProductType {
-  // WARNING: Changes to this class need to be reflected in our generated code.
-  // Run `flutter packages pub run build_runner watch` to rebuild and watch for
-  // further changes.
-
   /// A one time product. Acquired in a single transaction.
-  @JsonValue('inapp')
   inapp,
 
   /// A product requiring a recurring charge over time.
-  @JsonValue('subs')
   subs,
-}
-
-/// Serializer for [ProductType].
-///
-/// Use these in `@JsonSerializable()` classes by annotating them with
-/// `@ProductTypeConverter()`.
-class ProductTypeConverter implements JsonConverter<ProductType, String?> {
-  /// Default const constructor.
-  const ProductTypeConverter();
-
-  @override
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  ProductType fromJson(String? json) {
-    if (json == null) {
-      return ProductType.inapp;
-    }
-    return $enumDecode(_$ProductTypeEnumMap, json);
-  }
-
-  @override
-  String toJson(ProductType object) => _$ProductTypeEnumMap[object]!;
 }
 
 /// Enum representing the replacement mode.
@@ -556,122 +454,55 @@ class ProductTypeConverter implements JsonConverter<ProductType, String?> {
 ///
 /// Wraps [`BillingFlowParams.SubscriptionUpdateParams.ReplacementMode`](https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.SubscriptionUpdateParams.ReplacementMode)
 /// See the linked documentation for an explanation of the different constants.
-@JsonEnum(alwaysCreate: true)
 enum ReplacementMode {
-// WARNING: Changes to this class need to be reflected in our generated code.
-// Run `flutter packages pub run build_runner watch` to rebuild and watch for
-// further changes.
-
   /// Unknown upgrade or downgrade policy.
-  @JsonValue(0)
   unknownReplacementMode,
 
   /// Replacement takes effect immediately, and the remaining time will be prorated
   /// and credited to the user.
   ///
   /// This is the current default behavior.
-  @JsonValue(1)
   withTimeProration,
 
   /// Replacement takes effect immediately, and the billing cycle remains the same.
   ///
   /// The price for the remaining period will be charged.
   /// This option is only available for subscription upgrade.
-  @JsonValue(2)
   chargeProratedPrice,
 
   /// Replacement takes effect immediately, and the new price will be charged on next
   /// recurrence time.
   ///
   /// The billing cycle stays the same.
-  @JsonValue(3)
   withoutProration,
 
   /// Replacement takes effect when the old plan expires, and the new price will
   /// be charged at the same time.
-  @JsonValue(6)
   deferred,
 
   /// Replacement takes effect immediately, and the user is charged full price
   /// of new plan and is given a full billing cycle of subscription, plus
   /// remaining prorated time from the old plan.
-  @JsonValue(5)
   chargeFullPrice,
 }
 
-/// Serializer for [ReplacementMode].
-///
-/// Use these in `@JsonSerializable()` classes by annotating them with
-/// `@ReplacementModeConverter()`.
-class ReplacementModeConverter implements JsonConverter<ReplacementMode, int?> {
-  /// Default const constructor.
-  const ReplacementModeConverter();
-
-  @override
-  ReplacementMode fromJson(int? json) {
-    if (json == null) {
-      return ReplacementMode.unknownReplacementMode;
-    }
-    return $enumDecode(_$ReplacementModeEnumMap, json);
-  }
-
-  @override
-  int toJson(ReplacementMode object) => _$ReplacementModeEnumMap[object]!;
-}
-
 /// Features/capabilities supported by [BillingClient.isFeatureSupported()](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.FeatureType).
-@JsonEnum(alwaysCreate: true)
 enum BillingClientFeature {
-  // WARNING: Changes to this class need to be reflected in our generated code.
-  // Run `flutter packages pub run build_runner watch` to rebuild and watch for
-  // further changes.
-  //
-  // JsonValues need to match constant values defined in https://developer.android.com/reference/com/android/billingclient/api/BillingClient.FeatureType#summary
-
   /// Purchase/query for in-app items on VR.
-  @JsonValue('inAppItemsOnVr')
   inAppItemsOnVR,
 
   /// Launch a price change confirmation flow.
-  @JsonValue('priceChangeConfirmation')
   priceChangeConfirmation,
 
   /// Play billing library support for querying and purchasing with ProductDetails.
-  @JsonValue('fff')
   productDetails,
 
   /// Purchase/query for subscriptions.
-  @JsonValue('subscriptions')
   subscriptions,
 
   /// Purchase/query for subscriptions on VR.
-  @JsonValue('subscriptionsOnVr')
   subscriptionsOnVR,
 
   /// Subscriptions update/replace.
-  @JsonValue('subscriptionsUpdate')
   subscriptionsUpdate
-}
-
-/// Serializer for [BillingClientFeature].
-///
-/// Use these in `@JsonSerializable()` classes by annotating them with
-/// `@BillingClientFeatureConverter()`.
-class BillingClientFeatureConverter
-    implements JsonConverter<BillingClientFeature, String> {
-  /// Default const constructor.
-  const BillingClientFeatureConverter();
-
-  @override
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  BillingClientFeature fromJson(String json) {
-    return $enumDecode<BillingClientFeature, dynamic>(
-        _$BillingClientFeatureEnumMap.cast<BillingClientFeature, dynamic>(),
-        json);
-  }
-
-  @override
-  String toJson(BillingClientFeature object) =>
-      _$BillingClientFeatureEnumMap[object]!;
 }

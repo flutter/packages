@@ -23,7 +23,7 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
 BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
   return BillingResultWrapper(
       responseCode:
-          const BillingResponseConverter().fromJson(result.responseCode),
+          billingResponseFromPlatformResponseCode(result.responseCode),
       debugMessage: result.debugMessage);
 }
 
@@ -101,8 +101,9 @@ PurchasesResultWrapper purchasesResultWrapperFromPlatform(
     purchasesList: response.purchases.map(purchaseWrapperFromPlatform).toList(),
     responseCode: forceOkResponseCode
         ? BillingResponse.ok
-        : const BillingResponseConverter()
-            .fromJson(response.billingResult.responseCode),
+        : billingResponseFromPlatformResponseCode(
+            response.billingResult.responseCode,
+          ),
   );
 }
 
@@ -112,8 +113,9 @@ AlternativeBillingOnlyReportingDetailsWrapper
     alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
         PlatformAlternativeBillingOnlyReportingDetailsResponse response) {
   return AlternativeBillingOnlyReportingDetailsWrapper(
-    responseCode: const BillingResponseConverter()
-        .fromJson(response.billingResult.responseCode),
+    responseCode: billingResponseFromPlatformResponseCode(
+      response.billingResult.responseCode,
+    ),
     debugMessage: response.billingResult.debugMessage,
     externalTransactionToken: response.externalTransactionToken,
   );
@@ -123,8 +125,9 @@ AlternativeBillingOnlyReportingDetailsWrapper
 BillingConfigWrapper billingConfigWrapperFromPlatform(
     PlatformBillingConfigResponse response) {
   return BillingConfigWrapper(
-    responseCode: const BillingResponseConverter()
-        .fromJson(response.billingResult.responseCode),
+    responseCode: billingResponseFromPlatformResponseCode(
+      response.billingResult.responseCode,
+    ),
     debugMessage: response.billingResult.debugMessage,
     countryCode: response.countryCode,
   );
@@ -276,4 +279,25 @@ PlatformPendingPurchasesParams pendingPurchasesParamsFromWrapper(
   return PlatformPendingPurchasesParams(
     enablePrepaidPlans: params.enablePrepaidPlans,
   );
+}
+
+/// Converts https://developer.android.com/reference/com/android/billingclient/api/BillingClient.BillingResponseCode
+/// to its public API enum equivalent.
+BillingResponse billingResponseFromPlatformResponseCode(int responseCode) {
+  return switch (responseCode) {
+    -3 => BillingResponse.serviceTimeout,
+    -2 => BillingResponse.featureNotSupported,
+    -1 => BillingResponse.serviceDisconnected,
+    0 => BillingResponse.ok,
+    1 => BillingResponse.userCanceled,
+    2 => BillingResponse.serviceUnavailable,
+    3 => BillingResponse.billingUnavailable,
+    4 => BillingResponse.itemUnavailable,
+    5 => BillingResponse.developerError,
+    6 => BillingResponse.error,
+    7 => BillingResponse.itemAlreadyOwned,
+    8 => BillingResponse.itemNotOwned,
+    12 => BillingResponse.networkError,
+    _ => BillingResponse.error,
+  };
 }
