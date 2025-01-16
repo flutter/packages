@@ -378,6 +378,7 @@ class SharedPreferencesBackend(
       null
     }
   }
+
   /** Gets double at [key] from data store. */
   override fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double? {
     val preferences = createSharedPreferences(options)
@@ -387,7 +388,6 @@ class SharedPreferencesBackend(
       null
     }
   }
-
   /** Gets String at [key] from data store. */
   override fun getString(key: String, options: SharedPreferencesPigeonOptions): String? {
     val preferences = createSharedPreferences(options)
@@ -399,17 +399,30 @@ class SharedPreferencesBackend(
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): Any? {
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
     val preferences = createSharedPreferences(options)
     if (preferences.contains(key)) {
-      val transformed = transformPref(preferences.getString(key, ""), listEncoder)
-      if (transformed is String) {
-        return transformed
+      val value = preferences.getString(key, "")
+      if (value!!.startsWith(JSON_LIST_PREFIX)) {
+        return value
       }
-      return (transformed as List<*>?)?.filterIsInstance<String>()
-    } else {
-      return null
     }
+    return null
+  }
+
+  override fun getPlatformEncodedStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): List<String>? {
+    val preferences = createSharedPreferences(options)
+    if (preferences.contains(key)) {
+      val value = preferences.getString(key, "")
+      if (value!!.startsWith(LIST_PREFIX) && !value!!.startsWith(JSON_LIST_PREFIX)) {
+        val transformed = transformPref(preferences.getString(key, ""), listEncoder)
+        return (transformed as List<*>?)?.filterIsInstance<String>()
+      }
+    }
+    return null
   }
 
   /** Gets all properties from data store. */
@@ -445,10 +458,10 @@ internal fun transformPref(value: Any?, listEncoder: SharedPreferencesListEncode
     if (value.startsWith(LIST_PREFIX)) {
       // The JSON-encoded lists use an extended prefix to distinguish them from
       // lists that are encoded on the platform.
-      if (value.startsWith(JSON_LIST_PREFIX)) {
-        return value
+      return if (value.startsWith(JSON_LIST_PREFIX)) {
+        value
       } else {
-        return listEncoder.decode(value.substring(LIST_PREFIX.length))
+        listEncoder.decode(value.substring(LIST_PREFIX.length))
       }
     } else if (value.startsWith(DOUBLE_PREFIX)) {
       return value.substring(DOUBLE_PREFIX.length).toDouble()
