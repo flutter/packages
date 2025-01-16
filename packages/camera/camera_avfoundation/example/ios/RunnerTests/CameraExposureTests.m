@@ -39,7 +39,7 @@
 
   // Verify the focus point of interest has been set
   __block CGPoint setPoint = CGPointZero;
-  _mockDevice.setExposurePointOfInterestStub = ^(CGPoint point) {
+  _mockDevice.onSetExposurePointOfInterest = ^(CGPoint point) {
     if (CGPointEqualToPoint(CGPointMake(1, 1), point)) {
       setPoint = point;
     }

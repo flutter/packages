@@ -36,13 +36,13 @@
 
 - (void)testAutoFocusWithContinuousModeSupported_ShouldSetContinuousAutoFocus {
   // AVCaptureFocusModeContinuousAutoFocus and AVCaptureFocusModeContinuousAutoFocus are supported
-  _mockDevice.isFocusModeSupportedStub = ^BOOL(AVCaptureFocusMode mode) {
+  _mockDevice.onIsFocusModeSupported = ^BOOL(AVCaptureFocusMode mode) {
     return mode == AVCaptureFocusModeContinuousAutoFocus || mode == AVCaptureFocusModeAutoFocus;
   };
 
   __block BOOL setFocusModeContinuousAutoFocusCalled = NO;
 
-  _mockDevice.setFocusModeStub = ^(AVCaptureFocusMode mode) {
+  _mockDevice.onSetFocusMode = ^(AVCaptureFocusMode mode) {
     // Don't expect setFocusMode:AVCaptureFocusModeAutoFocus
     if (mode == AVCaptureFocusModeAutoFocus) {
       XCTFail(@"Unexpected call to setFocusMode");
@@ -61,14 +61,14 @@
 - (void)testAutoFocusWithContinuousModeNotSupported_ShouldSetAutoFocus {
   // AVCaptureFocusModeContinuousAutoFocus is not supported
   // AVCaptureFocusModeAutoFocus is supported
-  _mockDevice.isFocusModeSupportedStub = ^BOOL(AVCaptureFocusMode mode) {
+  _mockDevice.onIsFocusModeSupported = ^BOOL(AVCaptureFocusMode mode) {
     return mode == AVCaptureFocusModeAutoFocus;
   };
 
   __block BOOL setFocusModeAutoFocusCalled = NO;
 
   // Don't expect setFocusMode:AVCaptureFocusModeContinuousAutoFocus
-  _mockDevice.setFocusModeStub = ^(AVCaptureFocusMode mode) {
+  _mockDevice.onSetFocusMode = ^(AVCaptureFocusMode mode) {
     if (mode == AVCaptureFocusModeContinuousAutoFocus) {
       XCTFail(@"Unexpected call to setFocusMode");
     } else if (mode == AVCaptureFocusModeAutoFocus) {
@@ -85,12 +85,12 @@
 
 - (void)testAutoFocusWithNoModeSupported_ShouldSetNothing {
   // No modes are supported
-  _mockDevice.isFocusModeSupportedStub = ^BOOL(AVCaptureFocusMode mode) {
+  _mockDevice.onIsFocusModeSupported = ^BOOL(AVCaptureFocusMode mode) {
     return NO;
   };
 
   // Don't expect any setFocus
-  _mockDevice.setFocusModeStub = ^(AVCaptureFocusMode mode) {
+  _mockDevice.onSetFocusMode = ^(AVCaptureFocusMode mode) {
     XCTFail(@"Unexpected call to setFocusMode");
   };
 
@@ -100,14 +100,14 @@
 
 - (void)testLockedFocusWithModeSupported_ShouldSetModeAutoFocus {
   // AVCaptureFocusModeContinuousAutoFocus and AVCaptureFocusModeAutoFocus are supported
-  _mockDevice.isFocusModeSupportedStub = ^BOOL(AVCaptureFocusMode mode) {
+  _mockDevice.onIsFocusModeSupported = ^BOOL(AVCaptureFocusMode mode) {
     return mode == AVCaptureFocusModeContinuousAutoFocus || mode == AVCaptureFocusModeAutoFocus;
   };
 
   __block BOOL setFocusModeAutoFocusCalled = NO;
 
   // Expect only setFocusMode:AVCaptureFocusModeAutoFocus
-  _mockDevice.setFocusModeStub = ^(AVCaptureFocusMode mode) {
+  _mockDevice.onSetFocusMode = ^(AVCaptureFocusMode mode) {
     if (mode == AVCaptureFocusModeContinuousAutoFocus) {
       XCTFail(@"Unexpected call to setFocusMode");
     } else if (mode == AVCaptureFocusModeAutoFocus) {
@@ -122,12 +122,12 @@
 }
 
 - (void)testLockedFocusWithModeNotSupported_ShouldSetNothing {
-  _mockDevice.isFocusModeSupportedStub = ^BOOL(AVCaptureFocusMode mode) {
+  _mockDevice.onIsFocusModeSupported = ^BOOL(AVCaptureFocusMode mode) {
     return mode == AVCaptureFocusModeContinuousAutoFocus;
   };
 
   // Don't expect any setFocus
-  _mockDevice.setFocusModeStub = ^(AVCaptureFocusMode mode) {
+  _mockDevice.onSetFocusMode = ^(AVCaptureFocusMode mode) {
     XCTFail(@"Unexpected call to setFocusMode");
   };
 
@@ -142,7 +142,7 @@
   _mockDevice.focusPointOfInterestSupported = YES;
 
   __block BOOL setFocusPointOfInterestCalled = NO;
-  _mockDevice.setFocusPointOfInterestStub = ^(CGPoint point) {
+  _mockDevice.onSetFocusPointOfInterest = ^(CGPoint point) {
     if (point.x == 1 && point.y == 1) {
       setFocusPointOfInterestCalled = YES;
     }

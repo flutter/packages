@@ -1,3 +1,4 @@
+
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -14,8 +15,8 @@
 
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
   _activeFormat = format;
-  if (self.setActiveFormatStub) {
-    self.setActiveFormatStub(format);
+  if (self.onSetActiveFormat) {
+    self.onSetActiveFormat(format);
   }
 }
 
@@ -25,49 +26,49 @@
 
 - (void)setTorchMode:(AVCaptureTorchMode)mode {
   _torchMode = mode;
-  if (self.setTorchModeStub) {
-    self.setTorchModeStub(mode);
+  if (self.onSetTorchMode) {
+    self.onSetTorchMode(mode);
   }
 }
 
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode {
-  if (self.isFocusModeSupportedStub) {
-    return self.isFocusModeSupportedStub(mode);
+  if (self.onIsFocusModeSupported) {
+    return self.onIsFocusModeSupported(mode);
   }
   return NO;
 }
 
 - (void)setFocusMode:(AVCaptureFocusMode)mode {
   _focusMode = mode;
-  if (self.setFocusModeStub) {
-    self.setFocusModeStub(mode);
+  if (self.onSetFocusMode) {
+    self.onSetFocusMode(mode);
   }
 }
 
 - (void)setFocusPointOfInterest:(CGPoint)point {
   _focusPointOfInterest = point;
-  if (self.setFocusPointOfInterestStub) {
-    self.setFocusPointOfInterestStub(point);
+  if (self.onSetFocusPointOfInterest) {
+    self.onSetFocusPointOfInterest(point);
   }
 }
 
 - (void)setExposureMode:(AVCaptureExposureMode)mode {
   _exposureMode = mode;
-  if (self.setExposureModeStub) {
-    self.setExposureModeStub(mode);
+  if (self.onSetExposureMode) {
+    self.onSetExposureMode(mode);
   }
 }
 
 - (void)setExposurePointOfInterest:(CGPoint)point {
   _exposurePointOfInterest = point;
-  if (self.setExposurePointOfInterestStub) {
-    self.setExposurePointOfInterestStub(point);
+  if (self.onSetExposurePointOfInterest) {
+    self.onSetExposurePointOfInterest(point);
   }
 }
 
 - (void)setExposureTargetBias:(float)bias completionHandler:(void (^)(CMTime))handler {
-  if (self.setExposureTargetBiasStub) {
-    self.setExposureTargetBiasStub(bias, handler);
+  if (self.onSetExposureTargetBias) {
+    self.onSetExposureTargetBias(bias, handler);
   } else if (handler) {
     handler(kCMTimeZero);
   }
@@ -75,14 +76,14 @@
 
 - (void)setVideoZoomFactor:(float)factor {
   _videoZoomFactor = factor;
-  if (self.setVideoZoomFactorStub) {
-    self.setVideoZoomFactorStub(factor);
+  if (self.onSetVideoZoomFactor) {
+    self.onSetVideoZoomFactor(factor);
   }
 }
 
 - (BOOL)lockForConfiguration:(NSError **)error {
-  if (self.lockForConfigurationStub) {
-    self.lockForConfigurationStub(error);
+  if (self.onLockForConfiguration) {
+    self.onLockForConfiguration(error);
     return !self.shouldFailConfiguration;
   }
   if (self.shouldFailConfiguration) {
@@ -95,22 +96,22 @@
 }
 
 - (void)unlockForConfiguration {
-  if (self.unlockForConfigurationStub) {
-    self.unlockForConfigurationStub();
+  if (self.onUnlockForConfiguration) {
+    self.onUnlockForConfiguration();
   }
 }
 
 - (void)setActiveVideoMinFrameDuration:(CMTime)duration {
   _activeVideoMinFrameDuration = duration;
-  if (self.setActiveVideoMinFrameDurationStub) {
-    self.setActiveVideoMinFrameDurationStub(duration);
+  if (self.onSetActiveVideoMinFrameDuration) {
+    self.onSetActiveVideoMinFrameDuration(duration);
   }
 }
 
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration {
   _activeVideoMaxFrameDuration = duration;
-  if (self.setActiveVideoMaxFrameDurationStub) {
-    self.setActiveVideoMaxFrameDurationStub(duration);
+  if (self.onSetActiveVideoMaxFrameDuration) {
+    self.onSetActiveVideoMaxFrameDuration(duration);
   }
 }
 
@@ -119,8 +120,8 @@
 }
 
 - (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
-  if (self.createInputStub) {
-    self.createInputStub(error);
+  if (self.onCreateInput) {
+    self.onCreateInput(error);
   }
   return self.inputToReturn;
 }

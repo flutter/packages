@@ -17,41 +17,61 @@ NS_ASSUME_NONNULL_BEGIN
 // Format/Configuration
 @property(nonatomic, strong) AVCaptureDeviceFormat *activeFormat;
 @property(nonatomic, strong) NSArray<AVCaptureDeviceFormat *> *formats;
-@property(nonatomic, copy) void (^setActiveFormatStub)(AVCaptureDeviceFormat *format);
+/// Overrides the default implementation of setting active format.
+/// @param format The format being set
+@property(nonatomic, copy) void (^onSetActiveFormat)(AVCaptureDeviceFormat *format);
 
 // Flash/Torch
 @property(nonatomic, assign) BOOL hasFlash;
 @property(nonatomic, assign) BOOL hasTorch;
 @property(nonatomic, assign) BOOL isTorchAvailable;
 @property(nonatomic, assign) AVCaptureTorchMode torchMode;
-@property(nonatomic, copy) void (^setTorchModeStub)(AVCaptureTorchMode mode);
+/// Overrides the default implementation of setting torch mode.
+/// @param mode The torch mode being set
+@property(nonatomic, copy) void (^onSetTorchMode)(AVCaptureTorchMode mode);
 @property(nonatomic, assign) BOOL flashModeSupported;
 
 // Focus
 @property(nonatomic, assign) BOOL focusPointOfInterestSupported;
-@property(nonatomic, copy) BOOL (^isFocusModeSupportedStub)(AVCaptureFocusMode mode);
+/// Overrides the default implementation of checking if focus mode is supported.
+/// @param mode The focus mode to check
+/// @return Whether the focus mode is supported
+@property(nonatomic, copy) BOOL (^onIsFocusModeSupported)(AVCaptureFocusMode mode);
 @property(nonatomic, assign) AVCaptureFocusMode focusMode;
-@property(nonatomic, copy) void (^setFocusModeStub)(AVCaptureFocusMode mode);
+/// Overrides the default implementation of setting focus mode.
+/// @param mode The focus mode being set
+@property(nonatomic, copy) void (^onSetFocusMode)(AVCaptureFocusMode mode);
 @property(nonatomic, assign) CGPoint focusPointOfInterest;
-@property(nonatomic, copy) void (^setFocusPointOfInterestStub)(CGPoint point);
+/// Overrides the default implementation of setting focus point of interest.
+/// @param point The focus point being set
+@property(nonatomic, copy) void (^onSetFocusPointOfInterest)(CGPoint point);
 
 // Exposure
 @property(nonatomic, assign) BOOL exposurePointOfInterestSupported;
 @property(nonatomic, assign) AVCaptureExposureMode exposureMode;
 @property(nonatomic, assign) BOOL exposureModeSupported;
-@property(nonatomic, copy) void (^setExposureModeStub)(AVCaptureExposureMode mode);
+/// Overrides the default implementation of setting exposure mode.
+/// @param mode The exposure mode being set
+@property(nonatomic, copy) void (^onSetExposureMode)(AVCaptureExposureMode mode);
 @property(nonatomic, assign) CGPoint exposurePointOfInterest;
-@property(nonatomic, copy) void (^setExposurePointOfInterestStub)(CGPoint point);
+/// Override the default implementation of setting exposure point of interest.
+/// @param point The exposure point being set
+@property(nonatomic, copy) void (^onSetExposurePointOfInterest)(CGPoint point);
 @property(nonatomic, assign) float minExposureTargetBias;
 @property(nonatomic, assign) float maxExposureTargetBias;
-@property(nonatomic, copy) void (^setExposureTargetBiasStub)
+/// Overrides the default implementation of setting exposure target bias.
+/// @param bias The exposure bias being set
+/// @param handler The completion handler to be called
+@property(nonatomic, copy) void (^onSetExposureTargetBias)
     (float bias, void (^_Nullable handler)(CMTime));
 
 // Zoom
 @property(nonatomic, assign) float maxAvailableVideoZoomFactor;
 @property(nonatomic, assign) float minAvailableVideoZoomFactor;
 @property(nonatomic, assign) float videoZoomFactor;
-@property(nonatomic, copy) void (^setVideoZoomFactorStub)(float factor);
+/// Overrides the default implementation of setting video zoom factor.
+/// @param factor The zoom factor being set
+@property(nonatomic, copy) void (^onSetVideoZoomFactor)(float factor);
 
 // Camera Properties
 @property(nonatomic, assign) float lensAperture;
@@ -60,18 +80,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Configuration Lock
 @property(nonatomic, assign) BOOL shouldFailConfiguration;
-@property(nonatomic, copy) void (^lockForConfigurationStub)(NSError **error);
-@property(nonatomic, copy) void (^unlockForConfigurationStub)(void);
+/// Overrides the default implementation of locking device for configuration.
+/// @param error Error pointer to be set if lock fails
+@property(nonatomic, copy) void (^onLockForConfiguration)(NSError **error);
+/// Overrides the default implementation of unlocking device configuration.
+@property(nonatomic, copy) void (^onUnlockForConfiguration)(void);
 
 // Frame Duration
 @property(nonatomic, assign) CMTime activeVideoMinFrameDuration;
 @property(nonatomic, assign) CMTime activeVideoMaxFrameDuration;
-@property(nonatomic, copy) void (^setActiveVideoMinFrameDurationStub)(CMTime duration);
-@property(nonatomic, copy) void (^setActiveVideoMaxFrameDurationStub)(CMTime duration);
+/// Overrides the default implementation of setting minimum frame duration.
+/// @param duration The minimum frame duration being set
+@property(nonatomic, copy) void (^onSetActiveVideoMinFrameDuration)(CMTime duration);
+/// Overrides the default implementation of setting maximum frame duration.
+/// @param duration The maximum frame duration being set
+@property(nonatomic, copy) void (^onSetActiveVideoMaxFrameDuration)(CMTime duration);
 
 // Input Creation
 @property(nonatomic, strong) AVCaptureInput *inputToReturn;
-@property(nonatomic, copy) void (^createInputStub)(NSError **error);
+/// Overrides the default implementation of creating capture input.
+/// @param error Error pointer to be set if creation fails
+@property(nonatomic, copy) void (^onCreateInput)(NSError **error);
 
 @end
 
