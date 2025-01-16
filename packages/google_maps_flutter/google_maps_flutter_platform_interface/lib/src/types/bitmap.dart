@@ -4,6 +4,7 @@
 
 import 'dart:async' show Future;
 import 'dart:typed_data' show Uint8List;
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart'
@@ -52,6 +53,8 @@ const double _naturalPixelRatio = 1.0;
 /// a default marker icon.
 /// Use the [BitmapDescriptor.defaultMarkerWithHue] to create a
 /// [BitmapDescriptor] for a default marker icon with a hue value.
+/// Use the [BitmapDescriptor.pinConfig] to create a custom icon for
+/// [AdvancedMarker].
 abstract class BitmapDescriptor {
   const BitmapDescriptor._();
 
@@ -208,6 +211,9 @@ abstract class BitmapDescriptor {
   /// Creates a BitmapDescriptor that refers to a colorization of the default
   /// marker image. For convenience, there is a predefined set of hue values.
   /// See e.g. [hueYellow].
+  ///
+  /// Doesn't work with [AdvancedMarker]s, [BitmapDescriptor.pinConfig] should
+  /// be used instead.
   static BitmapDescriptor defaultMarkerWithHue(double hue) {
     assert(0.0 <= hue && hue < 360.0);
     return DefaultMarker(hue: hue);
@@ -327,6 +333,28 @@ abstract class BitmapDescriptor {
       width: width,
       height: height,
       bitmapScaling: bitmapScaling,
+    );
+  }
+
+  /// Creates a [BitmapDescriptor] that can be used to customize
+  /// [AdvancedMarker]'s pin.
+  ///
+  /// [backgroundColor] is the color of the pin's background.
+  /// [borderColor] is the color of the pin's border.
+  /// [glyph] is the pin's glyph to be displayed on the pin.
+  ///
+  /// See [PinConfig] for more information on the parameters.
+  ///
+  /// Returns a new [PinConfig] instance.
+  static BitmapDescriptor pinConfig({
+    Color? backgroundColor,
+    Color? borderColor,
+    AdvancedMarkerGlyph? glyph,
+  }) {
+    return PinConfig(
+      backgroundColor: backgroundColor,
+      borderColor: borderColor,
+      glyph: glyph,
     );
   }
 
@@ -953,4 +981,174 @@ class BytesMapBitmap extends MapBitmap {
           if (height != null) 'height': height,
         }
       ];
+}
+
+/// Represents a [BitmapDescriptor] that is created from a pin configuration.
+/// Can only be used with [AdvancedMarker]s.
+///
+/// The [backgroundColor] and [borderColor] are used to define the color of the
+/// standard pin marker.
+///
+/// The [glyph] parameter is used to define the glyph that is displayed on the
+/// pin marker (default glyph is a circle).
+///
+/// The following example demonstrates how to change colors of the default map
+/// pin to white and blue:
+///
+/// ```dart
+/// PinConfig(
+///   backgroundColor: Colors.blue,
+///   borderColor: Colors.white,
+///   glyph: CircleGlyph(color: Colors.blue)
+/// )
+/// ```
+///
+/// The following example demonstrates how to customize a marker pin by showing
+/// a short text on the pin:
+///
+/// ```dart
+/// PinConfig(
+///   backgroundColor: Colors.blue,
+///   glyph: TextGlyph(text: 'Pin', textColor: Colors.white)
+/// )
+/// ```
+///
+/// The following example demonstrates how to customize a marker pin by showing
+/// a custom image on the pin:
+///
+/// ```dart
+/// PinConfig(
+///   glyph: BitmapGlyph(
+///     bitmap: BitmapDescriptor.asset(
+///       ImageConfiguration(size: Size(12, 12)),
+///       'assets/cat.png'
+///    )
+/// )
+/// ```
+///
+class PinConfig extends BitmapDescriptor {
+  /// Constructs a [PinConfig] that is created from a pin configuration.
+  ///
+  /// The [backgroundColor] and [borderColor] are used to define the color of
+  /// the standard pin marker.
+  ///
+  /// The [glyph] parameter is used to define the glyph that is displayed on the
+  /// pin marker.
+  ///
+  /// At least one of the parameters must not be null.
+  const PinConfig({
+    this.backgroundColor,
+    this.borderColor,
+    this.glyph,
+  })  : assert(
+          backgroundColor != null || borderColor != null || glyph != null,
+          'Cannot create PinConfig with all parameters being null.',
+        ),
+        super._();
+
+  /// The type of the MapBitmap object, used for the JSON serialization.
+  static const String type = 'pinConfig';
+
+  /// The background color of the pin.
+  final Color? backgroundColor;
+
+  /// The border color of the pin.
+  final Color? borderColor;
+
+  /// The glyph that is displayed on the pin marker. If null, the default
+  /// circular glyph is used.
+  ///
+  /// Can be one of the following:
+  /// * [CircleGlyph] to define a circular glyph with a custom color.
+  /// * [BitmapGlyph] to define a glyph with a specified bitmap.
+  /// * [TextGlyph] to define a glyph with a specified text and its color.
+  final AdvancedMarkerGlyph? glyph;
+
+  @override
+  Object toJson() => <Object>[
+        type,
+        <String, Object?>{
+          if (backgroundColor != null)
+            'backgroundColor': backgroundColor?.value,
+          if (borderColor != null) 'borderColor': borderColor?.value,
+          if (glyph != null) 'glyph': glyph?.toJson(),
+        }
+      ];
+}
+
+/// Defines a glyph (the element at the center of an [AdvancedMarker] icon).
+sealed class AdvancedMarkerGlyph extends BitmapDescriptor {
+  const AdvancedMarkerGlyph._() : super._();
+}
+
+/// Defines a circular glyph with a given color.
+class CircleGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph instance, using the default circle, but with
+  /// a custom color.
+  const CircleGlyph({
+    required this.color,
+  }) : super._();
+
+  /// Color of the circular icon.
+  final Color color;
+
+  @override
+  Object toJson() => <Object>[
+        'circleGlyph',
+        <String, Object>{
+          'color': color.value,
+        }
+      ];
+}
+
+/// Defines a glyph instance with a specified bitmap.
+class BitmapGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph with the specified [bitmap].
+  ///
+  /// [bitmap] is the image to be displayed in the center of the glyph. Must not
+  /// be an [AdvancedMarkerGlyph].
+  const BitmapGlyph({
+    required this.bitmap,
+  })  : assert(
+          bitmap is! AdvancedMarkerGlyph,
+          'BitmapDescriptor cannot be an AdvancedMarkerGlyph.',
+        ),
+        super._();
+
+  /// Bitmap image to be displayed in the center of the glyph.
+  final BitmapDescriptor bitmap;
+
+  @override
+  Object toJson() => <Object>[
+        'bitmapGlyph',
+        <String, Object>{
+          'bitmap': bitmap.toJson(),
+        }
+      ];
+}
+
+/// Defines a glyph instance with a specified text and color.
+class TextGlyph extends AdvancedMarkerGlyph {
+  /// Constructs a glyph with the specified [text] and [textColor].
+  const TextGlyph({
+    required this.text,
+    this.textColor,
+  }) : super._();
+
+  /// Text to be displayed in the glyph.
+  final String text;
+
+  /// Color of the text.
+  final Color? textColor;
+
+  @override
+  Object toJson() {
+    return <Object>[
+      'textGlyph',
+      <String, Object>{
+        'text': text,
+        if (textColor != null) 'textColor': textColor!.value,
+      }
+    ];
+  }
 }

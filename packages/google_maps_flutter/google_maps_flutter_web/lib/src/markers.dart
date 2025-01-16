@@ -5,26 +5,26 @@
 part of '../google_maps_flutter_web.dart';
 
 /// This class manages a set of [MarkerController]s associated to a [GoogleMapController].
-class MarkersController extends GeometryController {
+class MarkersController<T, O> extends GeometryController {
   /// Initialize the cache. The [StreamController] comes from the [GoogleMapController], and is shared with other controllers.
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
-    required ClusterManagersController clusterManagersController,
+    required ClusterManagersController<T> clusterManagersController,
   })  : _streamController = stream,
         _clusterManagersController = clusterManagersController,
-        _markerIdToController = <MarkerId, MarkerController>{};
+        _markerIdToController = <MarkerId, MarkerController<T, O>>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
-  final Map<MarkerId, MarkerController> _markerIdToController;
+  final Map<MarkerId, MarkerController<T, O>> _markerIdToController;
 
   // The stream over which markers broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
 
-  final ClusterManagersController _clusterManagersController;
+  final ClusterManagersController<T> _clusterManagersController;
 
   /// Returns the cache of [MarkerController]s. Test only.
   @visibleForTesting
-  Map<MarkerId, MarkerController> get markers => _markerIdToController;
+  Map<MarkerId, MarkerController<T, O>> get markers => _markerIdToController;
 
   /// Adds a set of [Marker] objects to the cache.
   ///
@@ -52,23 +52,52 @@ class MarkersController extends GeometryController {
       }
     }
 
-    final gmaps.Marker? currentMarker =
-        _markerIdToController[marker.markerId]?.marker;
+    final T gmMarker;
+    if (marker is AdvancedMarker) {
+      final MarkerController<gmaps.AdvancedMarkerElement,
+              gmaps.AdvancedMarkerElementOptions>? markerController =
+          _markerIdToController[marker.markerId] as MarkerController<
+              gmaps.AdvancedMarkerElement, gmaps.AdvancedMarkerElementOptions>?;
+      final gmaps.AdvancedMarkerElement? currentMarker =
+          markerController?.marker;
+      final gmaps.AdvancedMarkerElementOptions markerOptions =
+          await _markerOptionsFromMarker(marker, currentMarker);
+      final gmaps.AdvancedMarkerElement newGmMarker =
+          gmaps.AdvancedMarkerElement(markerOptions);
+      newGmMarker.setAttribute('id', marker.markerId.value);
 
-    final gmaps.MarkerOptions markerOptions =
-        await _markerOptionsFromMarker(marker, currentMarker);
+      if (marker.clusterManagerId != null) {
+        _clusterManagersController.addItem(
+            marker.clusterManagerId!, newGmMarker as T);
+      } else {
+        newGmMarker.map = googleMap;
+      }
 
-    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
-
-    gmMarker.set('markerId', marker.markerId.value.toJS);
-
-    if (marker.clusterManagerId != null) {
-      _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);
+      gmMarker = newGmMarker as T;
     } else {
-      gmMarker.map = googleMap;
+      final MarkerController<gmaps.Marker, gmaps.MarkerOptions>?
+          markerController = _markerIdToController[marker.markerId]
+              as MarkerController<gmaps.Marker, gmaps.MarkerOptions>?;
+      final gmaps.Marker? currentMarker = markerController?.marker;
+
+      final gmaps.MarkerOptions markerOptions =
+          await _markerOptionsFromMarker<gmaps.Marker, gmaps.MarkerOptions>(
+              marker, currentMarker);
+
+      final gmaps.Marker newGmMarker = gmaps.Marker(markerOptions);
+      newGmMarker.set('markerId', marker.markerId.value.toJS);
+
+      if (marker.clusterManagerId != null) {
+        _clusterManagersController.addItem(
+            marker.clusterManagerId!, newGmMarker as T);
+      } else {
+        newGmMarker.map = googleMap;
+      }
+
+      gmMarker = newGmMarker as T;
     }
 
-    final MarkerController controller = MarkerController(
+    final MarkerController<T, O> controller = MarkerController<T, O>(
       marker: gmMarker,
       clusterManagerId: marker.clusterManagerId,
       infoWindow: gmInfoWindow,
@@ -96,7 +125,7 @@ class MarkersController extends GeometryController {
   }
 
   Future<void> _changeMarker(Marker marker) async {
-    final MarkerController? markerController =
+    final MarkerController<T, O>? markerController =
         _markerIdToController[marker.markerId];
     if (markerController != null) {
       final ClusterManagerId? oldClusterManagerId =
@@ -108,8 +137,7 @@ class MarkersController extends GeometryController {
         _removeMarker(marker.markerId);
         await _addMarker(marker);
       } else {
-        final gmaps.MarkerOptions markerOptions =
-            await _markerOptionsFromMarker(
+        final O markerOptions = await _markerOptionsFromMarker(
           marker,
           markerController.marker,
         );
@@ -129,7 +157,8 @@ class MarkersController extends GeometryController {
   }
 
   void _removeMarker(MarkerId markerId) {
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     if (markerController?.clusterManagerId != null) {
       _clusterManagersController.removeItem(
           markerController!.clusterManagerId!, markerController.marker);
@@ -145,7 +174,8 @@ class MarkersController extends GeometryController {
   /// See also [hideMarkerInfoWindow] and [isInfoWindowShown].
   void showMarkerInfoWindow(MarkerId markerId) {
     _hideAllMarkerInfoWindow();
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     markerController?.showInfoWindow();
   }
 
@@ -153,7 +183,8 @@ class MarkersController extends GeometryController {
   ///
   /// See also [showMarkerInfoWindow] and [isInfoWindowShown].
   void hideMarkerInfoWindow(MarkerId markerId) {
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     markerController?.hideInfoWindow();
   }
 
@@ -161,7 +192,8 @@ class MarkersController extends GeometryController {
   ///
   /// See also [showMarkerInfoWindow] and [hideMarkerInfoWindow].
   bool isInfoWindowShown(MarkerId markerId) {
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     return markerController?.infoWindowShown ?? false;
   }
 
@@ -204,9 +236,9 @@ class MarkersController extends GeometryController {
 
   void _hideAllMarkerInfoWindow() {
     _markerIdToController.values
-        .where((MarkerController? controller) =>
+        .where((MarkerController<T, O>? controller) =>
             controller?.infoWindowShown ?? false)
-        .forEach((MarkerController controller) {
+        .forEach((MarkerController<T, O> controller) {
       controller.hideInfoWindow();
     });
   }

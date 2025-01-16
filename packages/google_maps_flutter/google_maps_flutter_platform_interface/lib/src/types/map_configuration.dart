@@ -35,9 +35,12 @@ class MapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
-    this.cloudMapId,
+    String? mapId,
+    @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+    String? cloudMapId,
     this.style,
-  });
+    this.markerType,
+  }) : mapId = mapId ?? cloudMapId;
 
   /// This setting controls how the API handles gestures on the map. Web only.
   ///
@@ -112,12 +115,28 @@ class MapConfiguration {
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  final String? cloudMapId;
+  final String? mapId;
 
   /// Locally configured JSON style.
   ///
   /// To clear a previously set style, set this to an empty string.
   final String? style;
+
+  /// The type of marker that the map should use.
+  ///
+  /// Advanced and legacy markers could be handled differently by platform
+  /// implementations. This property indicates which type of marker should be
+  /// used.
+  final MarkerType? markerType;
+
+  /// Identifier that's associated with a specific cloud-based map style.
+  ///
+  /// See https://developers.google.com/maps/documentation/get-map-id
+  /// for more details.
+  ///
+  /// Deprecated in favor of [mapId].
+  @Deprecated('cloudMapId is deprecated. Use mapId instead.')
+  String? get cloudMapId => mapId;
 
   /// Returns a new options object containing only the values of this instance
   /// that are different from [other].
@@ -179,8 +198,9 @@ class MapConfiguration {
           trafficEnabled != other.trafficEnabled ? trafficEnabled : null,
       buildingsEnabled:
           buildingsEnabled != other.buildingsEnabled ? buildingsEnabled : null,
-      cloudMapId: cloudMapId != other.cloudMapId ? cloudMapId : null,
+      mapId: mapId != other.mapId ? mapId : null,
       style: style != other.style ? style : null,
+      markerType: markerType != other.markerType ? markerType : null,
     );
   }
 
@@ -212,8 +232,9 @@ class MapConfiguration {
       indoorViewEnabled: diff.indoorViewEnabled ?? indoorViewEnabled,
       trafficEnabled: diff.trafficEnabled ?? trafficEnabled,
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
-      cloudMapId: diff.cloudMapId ?? cloudMapId,
+      mapId: diff.mapId ?? mapId,
       style: diff.style ?? style,
+      markerType: diff.markerType ?? markerType,
     );
   }
 
@@ -239,8 +260,9 @@ class MapConfiguration {
       indoorViewEnabled == null &&
       trafficEnabled == null &&
       buildingsEnabled == null &&
-      cloudMapId == null &&
-      style == null;
+      mapId == null &&
+      style == null &&
+      markerType == null;
 
   @override
   bool operator ==(Object other) {
@@ -271,8 +293,9 @@ class MapConfiguration {
         indoorViewEnabled == other.indoorViewEnabled &&
         trafficEnabled == other.trafficEnabled &&
         buildingsEnabled == other.buildingsEnabled &&
-        cloudMapId == other.cloudMapId &&
-        style == other.style;
+        mapId == other.mapId &&
+        style == other.style &&
+        markerType == other.markerType;
   }
 
   @override
@@ -297,7 +320,18 @@ class MapConfiguration {
         indoorViewEnabled,
         trafficEnabled,
         buildingsEnabled,
-        cloudMapId,
+        mapId,
         style,
+        markerType,
       ]);
+}
+
+/// Indicates the type of marker that the map should use.
+enum MarkerType {
+  /// Represents the default marker type, [Marker]. This marker type is
+  /// deprecated on the web.
+  marker,
+
+  /// Represents the advanced marker type, [AdvancedMarker].
+  advancedMarker,
 }
