@@ -318,6 +318,7 @@ struct SK2TransactionMessage {
   var restoring: Bool
   var receiptData: String? = nil
   var error: SK2ErrorMessage? = nil
+  var jsonRepresentation: String? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2TransactionMessage? {
@@ -331,6 +332,7 @@ struct SK2TransactionMessage {
     let restoring = pigeonVar_list[7] as! Bool
     let receiptData: String? = nilOrValue(pigeonVar_list[8])
     let error: SK2ErrorMessage? = nilOrValue(pigeonVar_list[9])
+    let jsonRepresentation: String? = nilOrValue(pigeonVar_list[10])
 
     return SK2TransactionMessage(
       id: id,
@@ -342,7 +344,8 @@ struct SK2TransactionMessage {
       appAccountToken: appAccountToken,
       restoring: restoring,
       receiptData: receiptData,
-      error: error
+      error: error,
+      jsonRepresentation: jsonRepresentation
     )
   }
   func toList() -> [Any?] {
@@ -357,6 +360,7 @@ struct SK2TransactionMessage {
       restoring,
       receiptData,
       error,
+      jsonRepresentation,
     ]
   }
 }
@@ -524,8 +528,8 @@ class InAppPurchase2APISetup {
   static var codec: FlutterStandardMessageCodec { sk2_pigeonPigeonCodec.shared }
   /// Sets up an instance of `InAppPurchase2API` to handle messages through the `binaryMessenger`.
   static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: InAppPurchase2API?,
-    messageChannelSuffix: String = ""
+    binaryMessenger: FlutterBinaryMessenger,
+    api: InAppPurchase2API?, messageChannelSuffix: String = ""
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     let canMakePaymentsChannel = FlutterBasicMessageChannel(
