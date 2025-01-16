@@ -94,7 +94,7 @@ void main() {
       when(
         () => cameraService.getMediaStreamForOptions(
           any(),
-          cameraId: any(named: 'cameraId'),
+          cameraId: any(),
         ),
       ).thenAnswer(
         (_) async => videoElement.captureStream(),
@@ -375,7 +375,7 @@ void main() {
           ),
         ).thenReturn('user');
 
-        when(() => cameraService.mapFacingModeToLensDirection('user'))
+        when(() => mapFacingModeToLensDirection('user'))
             .thenReturn(CameraLensDirection.front);
 
         // Mock camera service to return an environment facing mode
@@ -386,7 +386,7 @@ void main() {
           ),
         ).thenReturn('environment');
 
-        when(() => cameraService.mapFacingModeToLensDirection('environment'))
+        when(() => mapFacingModeToLensDirection('environment'))
             .thenReturn(CameraLensDirection.back);
 
         final List<CameraDescription> cameras =
@@ -452,7 +452,7 @@ void main() {
           ),
         ).thenReturn('left');
 
-        when(() => cameraService.mapFacingModeToLensDirection('left'))
+        when(() => mapFacingModeToLensDirection('left'))
             .thenReturn(CameraLensDirection.external);
 
         final CameraDescription camera =
@@ -609,14 +609,13 @@ void main() {
               .camerasMetadata[cameraDescription] = cameraMetadata;
 
           when(
-            () => cameraService.mapFacingModeToCameraType('user'),
+            () => mapFacingModeToCameraType('user'),
           ).thenReturn(CameraType.user);
         });
 
         testWidgets('with appropriate options', (WidgetTester tester) async {
           when(
-            () => cameraService
-                .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+            () => mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
           final int cameraId = await CameraPlatform.instance.createCamera(
@@ -643,8 +642,7 @@ void main() {
         testWidgets('with appropriate createCameraWithSettings options',
             (WidgetTester tester) async {
           when(
-            () => cameraService
-                .mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
+            () => mapResolutionPresetToSize(ResolutionPreset.ultraHigh),
           ).thenReturn(ultraHighResolutionSize);
 
           final int cameraId =
@@ -678,7 +676,7 @@ void main() {
             'and enabled audio set to false '
             'when no options are specified', (WidgetTester tester) async {
           when(
-            () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
+            () => mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
           final int cameraId = await CameraPlatform.instance.createCamera(
@@ -707,7 +705,7 @@ void main() {
             'when no options are specified '
             'using createCameraWithSettings', (WidgetTester tester) async {
           when(
-            () => cameraService.mapResolutionPresetToSize(ResolutionPreset.max),
+            () => mapResolutionPresetToSize(ResolutionPreset.max),
           ).thenReturn(maxResolutionSize);
 
           final int cameraId =
@@ -731,40 +729,53 @@ void main() {
               maxResolutionSize.height.toInt());
           expect(camera.options.video.deviceId, cameraMetadata.deviceId);
         });
-      });
 
-      testWidgets(
-          'throws CameraException '
-          'with missingMetadata error '
-          'if there is no metadata '
-          'for the given camera description', (WidgetTester tester) async {
-        expect(
-          () => CameraPlatform.instance.createCamera(
+        testWidgets(
+            'if there is no metadata '
+            'for the given camera description', (WidgetTester tester) async {
+          when(
+            () => mapResolutionPresetToSize(ResolutionPreset.max),
+          ).thenReturn(maxResolutionSize);
+
+          final int cameraId = await CameraPlatform.instance.createCamera(
             const CameraDescription(
               name: 'name',
               lensDirection: CameraLensDirection.back,
               sensorOrientation: 0,
             ),
             ResolutionPreset.ultraHigh,
-          ),
-          throwsA(
-            isA<CameraException>().having(
-              (CameraException e) => e.code,
-              'code',
-              CameraErrorCode.missingMetadata.toString(),
+          );
+          expect(
+            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
+            isA<Camera>().having(
+              (Camera camera) => camera.options,
+              'options',
+              CameraOptions(
+                audio: const AudioConstraints(),
+                video: VideoConstraints(
+                  facingMode: FacingModeConstraint(CameraType.user),
+                  width: VideoSizeConstraint(
+                    ideal: maxResolutionSize.width.toInt(),
+                  ),
+                  height: VideoSizeConstraint(
+                    ideal: maxResolutionSize.height.toInt(),
+                  ),
+                ),
+              ),
             ),
-          ),
-        );
-      });
+          );
+        });
 
-      testWidgets(
-          'throws CameraException '
-          'with missingMetadata error '
-          'if there is no metadata '
-          'for the given camera description '
-          'using createCameraWithSettings', (WidgetTester tester) async {
-        expect(
-          () => CameraPlatform.instance.createCameraWithSettings(
+        testWidgets(
+            'if there is no metadata '
+            'for the given camera description '
+            'using createCameraWithSettings', (WidgetTester tester) async {
+          when(
+            () => mapResolutionPresetToSize(ResolutionPreset.max),
+          ).thenReturn(maxResolutionSize);
+
+          final int cameraId =
+              await CameraPlatform.instance.createCameraWithSettings(
             const CameraDescription(
               name: 'name',
               lensDirection: CameraLensDirection.back,
@@ -777,15 +788,27 @@ void main() {
               audioBitrate: 32000,
               enableAudio: true,
             ),
-          ),
-          throwsA(
-            isA<CameraException>().having(
-              (CameraException e) => e.code,
-              'code',
-              CameraErrorCode.missingMetadata.toString(),
+          );
+          expect(
+            (CameraPlatform.instance as CameraPlugin).cameras[cameraId],
+            isA<Camera>().having(
+              (Camera camera) => camera.options,
+              'options',
+              CameraOptions(
+                audio: const AudioConstraints(),
+                video: VideoConstraints(
+                  facingMode: FacingModeConstraint(CameraType.user),
+                  width: VideoSizeConstraint(
+                    ideal: maxResolutionSize.width.toInt(),
+                  ),
+                  height: VideoSizeConstraint(
+                    ideal: maxResolutionSize.height.toInt(),
+                  ),
+                ),
+              ),
             ),
-          ),
-        );
+          );
+        });
       });
     });
 
@@ -942,7 +965,7 @@ void main() {
       setUp(() {
         registerFallbackValue(DeviceOrientation.portraitUp);
         when(
-          () => cameraService.mapDeviceOrientationToOrientationType(any()),
+          () => mapDeviceOrientationToOrientationType(any()),
         ).thenReturn(OrientationType.portraitPrimary);
       });
 
@@ -967,7 +990,7 @@ void main() {
           'locks the capture orientation '
           'based on the given device orientation', (WidgetTester tester) async {
         when(
-          () => cameraService.mapDeviceOrientationToOrientationType(
+          () => mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeRight,
           ),
         ).thenReturn(OrientationType.landscapeSecondary);
@@ -984,7 +1007,7 @@ void main() {
         );
 
         verify(
-          () => cameraService.mapDeviceOrientationToOrientationType(
+          () => mapDeviceOrientationToOrientationType(
             DeviceOrientation.landscapeRight,
           ),
         ).called(1);
@@ -1047,7 +1070,7 @@ void main() {
     group('unlockCaptureOrientation', () {
       setUp(() {
         when(
-          () => cameraService.mapDeviceOrientationToOrientationType(any()),
+          () => mapDeviceOrientationToOrientationType(any()),
         ).thenReturn(OrientationType.portraitPrimary);
       });
 
@@ -3127,7 +3150,7 @@ void main() {
         testWidgets('emits the initial DeviceOrientationChangedEvent',
             (WidgetTester tester) async {
           when(
-            () => cameraService.mapOrientationTypeToDeviceOrientation(
+            () => mapOrientationTypeToDeviceOrientation(
               OrientationType.portraitPrimary,
             ),
           ).thenReturn(DeviceOrientation.portraitUp);
@@ -3158,13 +3181,13 @@ void main() {
             'when the screen orientation is changed',
             (WidgetTester tester) async {
           when(
-            () => cameraService.mapOrientationTypeToDeviceOrientation(
+            () => mapOrientationTypeToDeviceOrientation(
               OrientationType.landscapePrimary,
             ),
           ).thenReturn(DeviceOrientation.landscapeLeft);
 
           when(
-            () => cameraService.mapOrientationTypeToDeviceOrientation(
+            () => mapOrientationTypeToDeviceOrientation(
               OrientationType.portraitSecondary,
             ),
           ).thenReturn(DeviceOrientation.portraitDown);

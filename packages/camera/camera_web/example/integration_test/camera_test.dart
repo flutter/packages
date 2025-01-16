@@ -893,7 +893,7 @@ void main() {
           return MediaTrackSettings(facingMode: 'environment');
         }.toJS;
 
-        when(() => cameraService.mapFacingModeToLensDirection('environment'))
+        when(() => mapFacingModeToLensDirection('environment'))
             .thenReturn(CameraLensDirection.external);
 
         expect(
