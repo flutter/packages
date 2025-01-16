@@ -625,10 +625,30 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 /// Returns the passed object, to test async serialization and deserialization.
 - (void)echoAsyncAllTypes:(FLTAllTypes *)everything
                completion:(void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed object, to test async serialization and deserialization using `await`-style
+/// and Swift does not throw an exception.
+- (void)echoModernAsyncAllTypes:(FLTAllTypes *)everything
+                     completion:
+                         (void (^)(FLTAllTypes *_Nullable, FlutterError *_Nullable))completion;
+/// Returns the passed object, to test async serialization and deserialization using `await`-style
+/// and Swift can throw an exception.
+- (void)echoModernAsyncAllTypesAndNotThrow:(FLTAllTypes *)everything
+                                completion:(void (^)(FLTAllTypes *_Nullable,
+                                                     FlutterError *_Nullable))completion;
+/// Returns the passed object, to test async serialization and deserialization using `await`-style
+/// and throws an exception.
+- (void)echoModernAsyncAllTypesAndThrow:(FLTAllTypes *)everything
+                             completion:(void (^)(FLTAllTypes *_Nullable,
+                                                  FlutterError *_Nullable))completion;
 /// Returns the passed object, to test serialization and deserialization.
 - (void)echoAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
                                completion:(void (^)(FLTAllNullableTypes *_Nullable,
                                                     FlutterError *_Nullable))completion;
+/// Returns the passed object, to test async serialization and deserialization using `await`-style
+/// and Swift does not throw an exception.
+- (void)echoModernAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
+                                     completion:(void (^)(FLTAllNullableTypes *_Nullable,
+                                                          FlutterError *_Nullable))completion;
 /// Returns the passed object, to test serialization and deserialization.
 - (void)echoAsyncNullableAllNullableTypesWithoutRecursion:
             (nullable FLTAllNullableTypesWithoutRecursion *)everything

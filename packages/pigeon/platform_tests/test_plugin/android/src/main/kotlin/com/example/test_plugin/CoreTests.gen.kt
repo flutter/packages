@@ -15,6 +15,10 @@ import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private fun wrapResult(result: Any?): List<Any?> {
   return listOf(result)
@@ -827,11 +831,33 @@ interface HostIntegrationCoreApi {
   fun throwAsyncFlutterError(callback: (Result<Any?>) -> Unit)
   /** Returns the passed object, to test async serialization and deserialization. */
   fun echoAsyncAllTypes(everything: AllTypes, callback: (Result<AllTypes>) -> Unit)
+  /**
+   * Returns the passed object, to test async serialization and deserialization using `await`-style
+   * and Swift does not throw an exception.
+   */
+  suspend fun echoModernAsyncAllTypes(everything: AllTypes): AllTypes
+  /**
+   * Returns the passed object, to test async serialization and deserialization using `await`-style
+   * and Swift can throw an exception.
+   */
+  suspend fun echoModernAsyncAllTypesAndNotThrow(everything: AllTypes): AllTypes
+  /**
+   * Returns the passed object, to test async serialization and deserialization using `await`-style
+   * and throws an exception.
+   */
+  suspend fun echoModernAsyncAllTypesAndThrow(everything: AllTypes): AllTypes
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAsyncNullableAllNullableTypes(
       everything: AllNullableTypes?,
       callback: (Result<AllNullableTypes?>) -> Unit
   )
+  /**
+   * Returns the passed object, to test async serialization and deserialization using `await`-style
+   * and Swift does not throw an exception.
+   */
+  suspend fun echoModernAsyncNullableAllNullableTypes(
+      everything: AllNullableTypes?
+  ): AllNullableTypes?
   /** Returns the passed object, to test serialization and deserialization. */
   fun echoAsyncNullableAllNullableTypesWithoutRecursion(
       everything: AllNullableTypesWithoutRecursion?,
@@ -1095,7 +1121,8 @@ interface HostIntegrationCoreApi {
     fun setUp(
         binaryMessenger: BinaryMessenger,
         api: HostIntegrationCoreApi?,
-        messageChannelSuffix: String = ""
+        messageChannelSuffix: String = "",
+        coroutineScope: CoroutineScope
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
@@ -2941,6 +2968,78 @@ interface HostIntegrationCoreApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypes$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllTypes
+            coroutineScope.launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.echoModernAsyncAllTypes(everythingArg))
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              withContext(Dispatchers.Main) { reply.reply(wrapped) }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypesAndNotThrow$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllTypes
+            coroutineScope.launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.echoModernAsyncAllTypesAndNotThrow(everythingArg))
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              withContext(Dispatchers.Main) { reply.reply(wrapped) }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypesAndThrow$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllTypes
+            coroutineScope.launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.echoModernAsyncAllTypesAndThrow(everythingArg))
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              withContext(Dispatchers.Main) { reply.reply(wrapped) }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
                 "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypes$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
@@ -2956,6 +3055,30 @@ interface HostIntegrationCoreApi {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
               }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncNullableAllNullableTypes$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllNullableTypes?
+            coroutineScope.launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.echoModernAsyncNullableAllNullableTypes(everythingArg))
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              withContext(Dispatchers.Main) { reply.reply(wrapped) }
             }
           }
         } else {

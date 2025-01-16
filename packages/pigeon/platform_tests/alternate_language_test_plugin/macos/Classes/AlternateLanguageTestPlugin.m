@@ -1127,6 +1127,31 @@
       }];
 }
 
+- (void)echoModernAsyncAllTypes:(nonnull FLTAllTypes *)everything
+                     completion:(nonnull void (^)(FLTAllTypes *_Nullable,
+                                                  FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (void)echoModernAsyncAllTypesAndNotThrow:(FLTAllTypes *)everything
+                                completion:(void (^)(FLTAllTypes *_Nullable,
+                                                     FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (void)echoModernAsyncAllTypesAndThrow:(FLTAllTypes *)everything
+                             completion:(void (^)(FLTAllTypes *_Nullable,
+                                                  FlutterError *_Nullable))completion {
+  completion(nil, [FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
+}
+
+- (void)echoModernAsyncNullableAllNullableTypes:(nullable FLTAllNullableTypes *)everything
+                                     completion:
+                                         (nonnull void (^)(FLTAllNullableTypes *_Nullable,
+                                                           FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
 - (FLTUnusedClass *)checkIfUnusedClassGenerated {
   return [[FLTUnusedClass alloc] init];
 }

@@ -23,6 +23,66 @@ enum ApiLocation {
   flutter,
 }
 
+/// {@macro pigeon_lib.async_type}
+sealed class AsynchronousType {
+  /// Constructor for [AsynchronousType].
+  const AsynchronousType();
+
+  /// No asynchronous.
+  static const NoAsynchronous none = NoAsynchronous();
+
+  /// Callback asynchronous.
+  static const CallbackAsynchronous callback = CallbackAsynchronous();
+
+  /// Returns true if the [AsynchronousType] is [CallbackAsynchronous].
+  bool get isCallback => this is CallbackAsynchronous;
+
+  /// Returns true if the [AsynchronousType] is [AwaitAsynchronous].
+  bool get isAwait => this is AwaitAsynchronous;
+
+  /// Returns true if the [AsynchronousType] is [NoAsynchronous].
+  bool get isNone => this is NoAsynchronous;
+}
+
+/// {@macro pigeon_lib.callback_async_type}
+class CallbackAsynchronous extends AsynchronousType {
+  /// Constructor for [CallbackAsynchronous].
+  const CallbackAsynchronous();
+}
+
+/// Represents an await-style asynchronous api will be used.
+///
+/// * Swift - async.
+/// * Kotlin - suspend.
+class AwaitAsynchronous extends AsynchronousType {
+  /// Constructor for [AwaitAsynchronous].
+  const AwaitAsynchronous({
+    required this.swiftOptions,
+  });
+
+  /// {@macro ast.swift_modern_asynchronous_options}
+  final SwiftAwaitAsynchronousOptions swiftOptions;
+}
+
+/// Represents a no asynchronous api will be used.
+class NoAsynchronous extends AsynchronousType {
+  /// Constructor for [NoAsynchronous].
+  const NoAsynchronous();
+}
+
+/// {@template ast.swift_modern_asynchronous_options}
+/// Options for Swift modern asynchronous.
+/// {@endtemplate}
+class SwiftAwaitAsynchronousOptions {
+  /// Constructor for [SwiftAwaitAsynchronousOptions].
+  const SwiftAwaitAsynchronousOptions({
+    required this.throws,
+  });
+
+  /// Whether the function throws an exception or not.
+  final bool throws;
+}
+
 /// Superclass for all AST nodes.
 class Node {}
 
@@ -35,13 +95,13 @@ class Method extends Node {
     required this.parameters,
     required this.location,
     this.isRequired = true,
-    this.isAsynchronous = false,
     this.isStatic = false,
     this.offset,
     this.objcSelector = '',
     this.swiftFunction = '',
     this.taskQueueType = TaskQueueType.serial,
     this.documentationComments = const <String>[],
+    this.asynchronousType = AsynchronousType.none,
   });
 
   /// The name of the method.
@@ -52,9 +112,6 @@ class Method extends Node {
 
   /// The parameters passed into the [Method].
   List<Parameter> parameters;
-
-  /// Whether the receiver of this method is expected to return synchronously or not.
-  bool isAsynchronous;
 
   /// The offset in the source file where the field appears.
   int? offset;
@@ -87,13 +144,19 @@ class Method extends Node {
   /// Whether this is a static method of a ProxyApi.
   bool isStatic;
 
+  /// Whether this method is asynchronous and how it should be implemented.
+  AsynchronousType asynchronousType;
+
+  /// Whether this method is asynchronous.
+  bool get isAsynchronous => !asynchronousType.isNone;
+
   @override
   String toString() {
     final String objcSelectorStr =
         objcSelector.isEmpty ? '' : ' objcSelector:$objcSelector';
     final String swiftFunctionStr =
         swiftFunction.isEmpty ? '' : ' swiftFunction:$swiftFunction';
-    return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
+    return '(Method name:$name returnType:$returnType parameters:$parameters asynchronousType:$asynchronousType$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
   }
 }
 

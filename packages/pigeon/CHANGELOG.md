@@ -1,3 +1,7 @@
+## 22.8.0
+
+* [swift, kotlin] Added support of swift concurrency and kotlin coroutines.
+
 ## 22.7.2
 
 * Updates README to discuss best practices for using Pigeon-generated code.

@@ -59,6 +59,24 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
+  func echoModernAsyncAllTypes(_ everything: AllTypes) async -> AllTypes {
+    return everything
+  }
+
+  func echoModernAsyncAllTypesAndNotThrow(_ everything: AllTypes) async throws -> AllTypes {
+    return everything
+  }
+
+  func echoModernAsyncAllTypesAndThrow(_ everything: AllTypes) async throws -> AllTypes {
+    throw PigeonError(code: "code", message: "message", details: "details")
+  }
+
+  func echoModernAsyncNullableAllNullableTypes(_ everything: AllNullableTypes?) async
+    -> AllNullableTypes?
+  {
+    return everything
+  }
+
   func throwError() throws -> Any? {
     throw PigeonError(code: "code", message: "message", details: "details")
   }

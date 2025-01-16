@@ -24,6 +24,16 @@ private class PigeonApiImplementation: ExampleHostApi {
     }
     completion(.success(true))
   }
+
+  /// Unlike implementations on other platforms, this function does not throw any exceptions
+  /// because the `@Async(type: AsyncType.await(isSwiftThrows: false))` annotation was specified.
+  func sendMessageModernAsync(message: MessageData) async -> Bool {
+    return true
+  }
+
+  func sendMessageModernAsyncThrows(message: MessageData) async throws -> Bool {
+    throw PigeonError(code: "code", message: "message", details: "details")
+  }
 }
 
 class MainFlutterWindow: NSWindow {

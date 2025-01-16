@@ -290,6 +290,11 @@ public class Messages {
 
     void sendMessage(@NonNull MessageData message, @NonNull Result<Boolean> result);
 
+    void sendMessageModernAsync(@NonNull MessageData message, @NonNull Result<Boolean> result);
+
+    void sendMessageModernAsyncThrows(
+        @NonNull MessageData message, @NonNull Result<Boolean> result);
+
     /** The codec used by ExampleHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
@@ -380,6 +385,70 @@ public class Messages {
                     };
 
                 api.sendMessage(messageArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessageModernAsync"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                MessageData messageArg = (MessageData) args.get(0);
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.sendMessageModernAsync(messageArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessageModernAsyncThrows"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                MessageData messageArg = (MessageData) args.get(0);
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.sendMessageModernAsyncThrows(messageArg, resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

@@ -2819,6 +2819,93 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift does not throw an exception.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.echoModernAsyncAllTypes",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoModernAsyncAllTypes:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoModernAsyncAllTypes:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api echoModernAsyncAllTypes:arg_everything
+                          completion:^(FLTAllTypes *_Nullable output,
+                                       FlutterError *_Nullable error) {
+                            callback(wrapResult(output, error));
+                          }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift can throw an exception.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:
+                                      @"%@%@",
+                                      @"dev.flutter.pigeon.pigeon_integration_tests."
+                                      @"HostIntegrationCoreApi.echoModernAsyncAllTypesAndNotThrow",
+                                      messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoModernAsyncAllTypesAndNotThrow:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoModernAsyncAllTypesAndNotThrow:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api echoModernAsyncAllTypesAndNotThrow:arg_everything
+                                     completion:^(FLTAllTypes *_Nullable output,
+                                                  FlutterError *_Nullable error) {
+                                       callback(wrapResult(output, error));
+                                     }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and throws an exception.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString stringWithFormat:@"%@%@",
+                                          @"dev.flutter.pigeon.pigeon_integration_tests."
+                                          @"HostIntegrationCoreApi.echoModernAsyncAllTypesAndThrow",
+                                          messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoModernAsyncAllTypesAndThrow:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoModernAsyncAllTypesAndThrow:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api echoModernAsyncAllTypesAndThrow:arg_everything
+                                  completion:^(FLTAllTypes *_Nullable output,
+                                               FlutterError *_Nullable error) {
+                                    callback(wrapResult(output, error));
+                                  }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   /// Returns the passed object, to test serialization and deserialization.
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
@@ -2842,6 +2929,37 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                                  FlutterError *_Nullable error) {
                                       callback(wrapResult(output, error));
                                     }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift does not throw an exception.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:
+                                @"%@%@",
+                                @"dev.flutter.pigeon.pigeon_integration_tests."
+                                @"HostIntegrationCoreApi.echoModernAsyncNullableAllNullableTypes",
+                                messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoModernAsyncNullableAllNullableTypes:
+                                                                               completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoModernAsyncNullableAllNullableTypes:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api echoModernAsyncNullableAllNullableTypes:arg_everything
+                                          completion:^(FLTAllNullableTypes *_Nullable output,
+                                                       FlutterError *_Nullable error) {
+                                            callback(wrapResult(output, error));
+                                          }];
       }];
     } else {
       [channel setMessageHandler:nil];

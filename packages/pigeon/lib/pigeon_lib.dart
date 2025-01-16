@@ -37,9 +37,90 @@ import 'kotlin_generator.dart';
 import 'objc_generator.dart';
 import 'swift_generator.dart';
 
-class _Asynchronous {
-  const _Asynchronous();
+/// {@macro pigeon_lib.async}
+class Async {
+  /// Constructor for [Async].
+  const Async({
+    this.type,
+  });
+
+  /// The type of asynchronous api will be used.
+  ///
+  /// [AsyncType.callback] is used by default.
+  final AsyncType? type;
 }
+
+/// {@template pigeon_lib.async_type}
+/// Represents the type of asynchronous api will be used.
+/// {@endtemplate}
+sealed class AsyncType {
+  const AsyncType();
+
+  /// {@macro pigeon_lib.callback_async_type}
+  const factory AsyncType.callback() = _CallbackAsyncType;
+
+  /// {@macro pigeon_lib.await_async_type}
+  const factory AsyncType.await({bool? isSwiftThrows}) = _AwaitAsyncType;
+}
+
+/// {@template pigeon_lib.callback_async_type}
+/// Represents a callback asynchronous api will be used.
+/// {@endtemplate}
+class _CallbackAsyncType extends AsyncType {
+  /// Constructor for [_CallbackAsyncType].
+  const _CallbackAsyncType();
+}
+
+/// {@template pigeon_lib.await_async_type}
+/// Provides an await-style asynchronous Api (only Swift and Kotlin).
+///
+/// Example:
+///
+///```dart
+///@HostApi()
+///abstract class ExampleHostApi {
+///  @Async(type: AsyncType.await())
+///  bool sendMessage(MessageData message);
+///}
+///```
+/// Swift(iOS 13.0+):
+///
+/// ```swift
+/// func sendMessage(message: MessageData) async throws -> Bool
+/// ```
+///
+/// Kotlin (`ExampleHostApi.setUp` will require `CoroutineScope`):
+///
+/// ```kotlin
+/// suspend fun sendMessage(message: MessageData) : Boolean
+/// ```
+/// {@endtemplate}
+class _AwaitAsyncType extends AsyncType {
+  /// Constructor for [_AwaitAsyncType].
+  const _AwaitAsyncType({this.isSwiftThrows});
+
+  /// Whether the method throws in Swift.
+  ///
+  /// If `true`:
+  ///
+  /// ```swift
+  /// func sendMessage(message: MessageData) async throws -> Bool
+  /// ```
+  ///
+  /// If `false`:
+  ///
+  /// ```swift
+  /// func sendMessage(message: MessageData) async -> Bool
+  /// ```
+  ///
+  /// The default value is `true`.
+  final bool? isSwiftThrows;
+}
+
+/// {@template pigeon_lib.async}
+/// Metadata to annotate a Api method as asynchronous
+/// {@endtemplate}
+const Object async = Async();
 
 class _Attached {
   const _Attached();
@@ -48,9 +129,6 @@ class _Attached {
 class _Static {
   const _Static();
 }
-
-/// Metadata to annotate a Api method as asynchronous
-const Object async = _Asynchronous();
 
 /// Metadata to annotate the field of a ProxyApi as an Attached Field.
 ///
@@ -2002,7 +2080,9 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final dart_ast.FormalParameterList parameters = node.parameters!;
     final List<Parameter> arguments =
         parameters.parameters.map(formalParameterToPigeonParameter).toList();
-    final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
+
+    final AsynchronousType asynchronousType =
+        _parseAsynchronousType(node.metadata);
     final bool isStatic = _hasMetadata(node.metadata, 'static');
     final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
             ?.arguments
@@ -2050,13 +2130,13 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             AstFlutterApi() => ApiLocation.flutter,
             AstEventChannelApi() => ApiLocation.host,
           },
-          isAsynchronous: isAsynchronous,
           objcSelector: objcSelector,
           swiftFunction: swiftFunction,
           offset: node.offset,
           taskQueueType: taskQueueType,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
+          asynchronousType: asynchronousType,
         ),
       );
     } else if (_currentClass != null) {
@@ -2244,6 +2324,8 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       final TaskQueueType taskQueueType =
           _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
               TaskQueueType.serial;
+      final AsynchronousType asynchronousType =
+          _parseAsynchronousType(node.metadata);
 
       // Methods without named return types aren't supported.
       final dart_ast.TypeAnnotation returnType = type.returnType!;
@@ -2262,7 +2344,7 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           isRequired: type.question == null,
           isStatic: isStatic,
           parameters: parameters,
-          isAsynchronous: _hasMetadata(node.metadata, 'async'),
+          asynchronousType: asynchronousType,
           swiftFunction: swiftFunction,
           offset: node.offset,
           taskQueueType: taskQueueType,
@@ -2300,6 +2382,39 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             );
       }
     }
+  }
+
+  AsynchronousType _parseAsynchronousType(
+    dart_ast.NodeList<dart_ast.Annotation> metadata,
+  ) {
+    if (_hasMetadata(metadata, 'async')) {
+      return AsynchronousType.callback;
+    }
+
+    final dart_ast.Annotation? meta = _findMetadata(metadata, 'Async');
+
+    if (meta == null) {
+      return AsynchronousType.none;
+    }
+
+    final dart_ast.Expression? type = meta.arguments?.arguments.firstOrNull;
+
+    if (type is! dart_ast.NamedExpression) {
+      return AsynchronousType.callback;
+    }
+
+    if (type.expression.toSource().contains('AsyncType.await')) {
+      final Map<String, Object> options =
+          _expressionToMap(type.expression) as Map<String, Object>;
+
+      return AwaitAsynchronous(
+        swiftOptions: SwiftAwaitAsynchronousOptions(
+          throws: options['isSwiftThrows'] as bool? ?? true,
+        ),
+      );
+    }
+
+    return const CallbackAsynchronous();
   }
 }
 
