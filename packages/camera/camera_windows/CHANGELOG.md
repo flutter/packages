@@ -1,4 +1,4 @@
-## 0.2.6+2
+## 0.2.7
 
 * Restores support for streaming frames.
 * Fixes compile errors under strict standards mode.
