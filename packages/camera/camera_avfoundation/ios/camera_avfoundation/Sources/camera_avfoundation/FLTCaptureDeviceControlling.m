@@ -65,8 +65,8 @@
 #pragma clang diagnostic pop
 
 // Focus
-- (BOOL)isFocusPointOfInterestSupported {
-  return self.device.isFocusPointOfInterestSupported;
+- (BOOL)focusPointOfInterestSupported {
+  return self.device.focusPointOfInterestSupported;
 }
 
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode {
@@ -82,8 +82,8 @@
 }
 
 // Exposure
-- (BOOL)isExposurePointOfInterestSupported {
-  return self.device.isExposurePointOfInterestSupported;
+- (BOOL)exposurePointOfInterestSupported {
+  return self.device.exposurePointOfInterestSupported;
 }
 
 - (void)setExposureMode:(AVCaptureExposureMode)exposureMode {

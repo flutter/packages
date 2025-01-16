@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "MockCaptureDeviceController.h"
+
 @import camera_avfoundation;
 #if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
 @import camera_avfoundation.Test;
 #endif
 @import AVFoundation;
-
-#import "MockCaptureDeviceController.h"
 
 @implementation MockCaptureDeviceController
 

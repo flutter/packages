@@ -7,6 +7,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A protocol which is a direct passthrough to AVCaptureDevice.
+/// It exists to allow replacing AVCaptureDevice in tests.
 @protocol FLTCaptureDeviceControlling <NSObject>
 
 // Position/Orientation
@@ -26,13 +28,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isFlashModeSupported:(AVCaptureFlashMode)mode;
 
 // Focus
-- (BOOL)isFocusPointOfInterestSupported;
+- (BOOL)focusPointOfInterestSupported;
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode;
 - (void)setFocusMode:(AVCaptureFocusMode)focusMode;
 - (void)setFocusPointOfInterest:(CGPoint)point;
 
 // Exposure
-- (BOOL)isExposurePointOfInterestSupported;
+- (BOOL)exposurePointOfInterestSupported;
 - (void)setExposureMode:(AVCaptureExposureMode)exposureMode;
 - (void)setExposurePointOfInterest:(CGPoint)point;
 - (float)minExposureTargetBias;
@@ -65,8 +67,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/// A default implementation of FLTCaptureDeviceControlling protocol which
+///  wraps an instance of AVCaptureDevice.
 @interface FLTDefaultCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
+
+/// Initializes the controller with the given device.
 - (instancetype)initWithDevice:(AVCaptureDevice *)device;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -35,7 +35,7 @@
   // UI is currently in landscape left orientation
   _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
   // Exposure point of interest is supported
-  _mockDevice.isExposurePointOfInterestSupported = YES;
+  _mockDevice.exposurePointOfInterestSupported = YES;
 
   // Verify the focus point of interest has been set
   __block CGPoint setPoint = CGPointZero;
@@ -62,7 +62,7 @@
   // UI is currently in landscape left orientation
   _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
   // Exposure point of interest is not supported
-  _mockDevice.isExposurePointOfInterestSupported = NO;
+  _mockDevice.exposurePointOfInterestSupported = NO;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Completion with error"];
 
