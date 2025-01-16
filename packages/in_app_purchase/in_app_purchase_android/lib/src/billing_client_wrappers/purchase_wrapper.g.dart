@@ -24,6 +24,19 @@ PurchaseWrapper _$PurchaseWrapperFromJson(Map json) => PurchaseWrapper(
           .fromJson((json['purchaseState'] as num?)?.toInt()),
       obfuscatedAccountId: json['obfuscatedAccountId'] as String?,
       obfuscatedProfileId: json['obfuscatedProfileId'] as String?,
+      pendingPurchaseUpdate: json['pendingPurchaseUpdate'] == null
+          ? null
+          : PendingPurchaseUpdateWrapper.fromJson(
+              Map<String, dynamic>.from(json['pendingPurchaseUpdate'] as Map)),
+    );
+
+PendingPurchaseUpdateWrapper _$PendingPurchaseUpdateWrapperFromJson(Map json) =>
+    PendingPurchaseUpdateWrapper(
+      purchaseToken: json['purchaseToken'] as String? ?? '',
+      products: (json['products'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
     );
 
 PurchaseHistoryRecordWrapper _$PurchaseHistoryRecordWrapperFromJson(Map json) =>

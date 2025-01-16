@@ -11,6 +11,7 @@ import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingConfig;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
@@ -22,6 +23,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyR
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformOneTimePurchaseOfferDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPendingPurchaseUpdate;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPricingPhase;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetails;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
@@ -146,6 +148,8 @@ import java.util.Locale;
         .setOfferTags(subscriptionOfferDetails.getOfferTags())
         .setOfferToken(subscriptionOfferDetails.getOfferToken())
         .setPricingPhases(fromPricingPhases(subscriptionOfferDetails.getPricingPhases()))
+        .setInstallmentPlanDetails(
+            fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
         .build();
   }
 
@@ -167,6 +171,20 @@ import java.util.Locale;
         .setBillingCycleCount((long) pricingPhase.getBillingCycleCount())
         .setBillingPeriod(pricingPhase.getBillingPeriod())
         .setRecurrenceMode(toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()))
+        .build();
+  }
+
+  static @Nullable Messages.PlatformInstallmentPlanDetails fromInstallmentPlanDetails(
+      @Nullable ProductDetails.InstallmentPlanDetails installmentPlanDetails) {
+    if (installmentPlanDetails == null) {
+      return null;
+    }
+
+    return new Messages.PlatformInstallmentPlanDetails.Builder()
+        .setCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount())
+        .setSubsequentCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount())
         .build();
   }
 
@@ -217,7 +235,25 @@ import java.util.Locale;
               .setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId())
               .build());
     }
+
+    Purchase.PendingPurchaseUpdate pendingPurchaseUpdate = purchase.getPendingPurchaseUpdate();
+    if (pendingPurchaseUpdate != null) {
+      builder.setPendingPurchaseUpdate(fromPendingPurchaseUpdate(pendingPurchaseUpdate));
+    }
+
     return builder.build();
+  }
+
+  static @Nullable PlatformPendingPurchaseUpdate fromPendingPurchaseUpdate(
+      @Nullable Purchase.PendingPurchaseUpdate pendingPurchaseUpdate) {
+    if (pendingPurchaseUpdate == null) {
+      return null;
+    }
+
+    return new Messages.PlatformPendingPurchaseUpdate.Builder()
+        .setPurchaseToken(pendingPurchaseUpdate.getPurchaseToken())
+        .setProducts(pendingPurchaseUpdate.getProducts())
+        .build();
   }
 
   static @NonNull PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
@@ -315,6 +351,17 @@ import java.util.Locale;
         .setBillingResult(fromBillingResult(result))
         .setExternalTransactionToken(details == null ? "" : details.getExternalTransactionToken())
         .build();
+  }
+
+  static @NonNull PendingPurchasesParams toPendingPurchasesParams(
+      @Nullable Messages.PlatformPendingPurchasesParams platformPendingPurchasesParams) {
+    PendingPurchasesParams.Builder pendingPurchasesBuilder =
+        PendingPurchasesParams.newBuilder().enableOneTimeProducts();
+    if (platformPendingPurchasesParams != null
+        && platformPendingPurchasesParams.getEnablePrepaidPlans()) {
+      pendingPurchasesBuilder.enablePrepaidPlans();
+    }
+    return pendingPurchasesBuilder.build();
   }
 
   /**
