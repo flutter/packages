@@ -3,11 +3,11 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:camera_windows/src/messages.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -37,17 +37,30 @@ class _FakePlatformSize_0 extends _i1.SmartFake implements _i2.PlatformSize {
 /// See the documentation for Mockito's code generation for more information.
 class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
   @override
-  _i3.Future<List<String?>> getAvailableCameras() => (super.noSuchMethod(
+  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
+        Invocation.getter(#pigeonVar_messageChannelSuffix),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+      ) as String);
+
+  @override
+  _i4.Future<List<String>> getAvailableCameras() => (super.noSuchMethod(
         Invocation.method(
           #getAvailableCameras,
           [],
         ),
-        returnValue: _i3.Future<List<String?>>.value(<String?>[]),
-        returnValueForMissingStub: _i3.Future<List<String?>>.value(<String?>[]),
-      ) as _i3.Future<List<String?>>);
+        returnValue: _i4.Future<List<String>>.value(<String>[]),
+        returnValueForMissingStub: _i4.Future<List<String>>.value(<String>[]),
+      ) as _i4.Future<List<String>>);
 
   @override
-  _i3.Future<int> create(
+  _i4.Future<int> create(
     String? cameraName,
     _i2.PlatformMediaSettings? settings,
   ) =>
@@ -59,17 +72,17 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
             settings,
           ],
         ),
-        returnValue: _i3.Future<int>.value(0),
-        returnValueForMissingStub: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
+        returnValue: _i4.Future<int>.value(0),
+        returnValueForMissingStub: _i4.Future<int>.value(0),
+      ) as _i4.Future<int>);
 
   @override
-  _i3.Future<_i2.PlatformSize> initialize(int? cameraId) => (super.noSuchMethod(
+  _i4.Future<_i2.PlatformSize> initialize(int? cameraId) => (super.noSuchMethod(
         Invocation.method(
           #initialize,
           [cameraId],
         ),
-        returnValue: _i3.Future<_i2.PlatformSize>.value(_FakePlatformSize_0(
+        returnValue: _i4.Future<_i2.PlatformSize>.value(_FakePlatformSize_0(
           this,
           Invocation.method(
             #initialize,
@@ -77,32 +90,32 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i2.PlatformSize>.value(_FakePlatformSize_0(
+            _i4.Future<_i2.PlatformSize>.value(_FakePlatformSize_0(
           this,
           Invocation.method(
             #initialize,
             [cameraId],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformSize>);
+      ) as _i4.Future<_i2.PlatformSize>);
 
   @override
-  _i3.Future<void> dispose(int? cameraId) => (super.noSuchMethod(
+  _i4.Future<void> dispose(int? cameraId) => (super.noSuchMethod(
         Invocation.method(
           #dispose,
           [cameraId],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<String> takePicture(int? cameraId) => (super.noSuchMethod(
+  _i4.Future<String> takePicture(int? cameraId) => (super.noSuchMethod(
         Invocation.method(
           #takePicture,
           [cameraId],
         ),
-        returnValue: _i3.Future<String>.value(_i4.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i3.dummyValue<String>(
           this,
           Invocation.method(
             #takePicture,
@@ -110,32 +123,32 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<String>.value(_i4.dummyValue<String>(
+            _i4.Future<String>.value(_i3.dummyValue<String>(
           this,
           Invocation.method(
             #takePicture,
             [cameraId],
           ),
         )),
-      ) as _i3.Future<String>);
+      ) as _i4.Future<String>);
 
   @override
-  _i3.Future<void> startVideoRecording(int? cameraId) => (super.noSuchMethod(
+  _i4.Future<void> startVideoRecording(int? cameraId) => (super.noSuchMethod(
         Invocation.method(
           #startVideoRecording,
           [cameraId],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<String> stopVideoRecording(int? cameraId) => (super.noSuchMethod(
+  _i4.Future<String> stopVideoRecording(int? cameraId) => (super.noSuchMethod(
         Invocation.method(
           #stopVideoRecording,
           [cameraId],
         ),
-        returnValue: _i3.Future<String>.value(_i4.dummyValue<String>(
+        returnValue: _i4.Future<String>.value(_i3.dummyValue<String>(
           this,
           Invocation.method(
             #stopVideoRecording,
@@ -143,32 +156,52 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<String>.value(_i4.dummyValue<String>(
+            _i4.Future<String>.value(_i3.dummyValue<String>(
           this,
           Invocation.method(
             #stopVideoRecording,
             [cameraId],
           ),
         )),
-      ) as _i3.Future<String>);
+      ) as _i4.Future<String>);
 
   @override
-  _i3.Future<void> pausePreview(int? cameraId) => (super.noSuchMethod(
+  _i4.Future<void> startImageStream(int? cameraId) => (super.noSuchMethod(
+        Invocation.method(
+          #startImageStream,
+          [cameraId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> stopImageStream(int? cameraId) => (super.noSuchMethod(
+        Invocation.method(
+          #stopImageStream,
+          [cameraId],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> pausePreview(int? cameraId) => (super.noSuchMethod(
         Invocation.method(
           #pausePreview,
           [cameraId],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> resumePreview(int? cameraId) => (super.noSuchMethod(
+  _i4.Future<void> resumePreview(int? cameraId) => (super.noSuchMethod(
         Invocation.method(
           #resumePreview,
           [cameraId],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 }

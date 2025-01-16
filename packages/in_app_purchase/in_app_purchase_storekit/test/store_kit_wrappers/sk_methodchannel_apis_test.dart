@@ -304,6 +304,11 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   void showPriceConsentIfNeeded() {
     showPriceConsent = true;
   }
+
+  @override
+  bool supportsStoreKit2() {
+    return true;
+  }
 }
 
 class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {}

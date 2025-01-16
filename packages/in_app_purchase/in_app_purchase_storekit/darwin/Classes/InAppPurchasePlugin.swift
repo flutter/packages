@@ -253,16 +253,25 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     let pendingTransactions = getPaymentQueueHandler().getUnfinishedTransactions()
 
     for transaction in pendingTransactions {
-      // If the user cancels the purchase dialog we won't have a transactionIdentifier.
-      // So if it is null AND a transaction in the pendingTransactions list has
-      // also a null transactionIdentifier we check for equal product identifiers.
-      if transaction.transactionIdentifier == transactionIdentifier
-        || (transactionIdentifier == nil
-          && transaction.transactionIdentifier == nil
-          && transaction.payment.productIdentifier == productIdentifier)
-      {
-        getPaymentQueueHandler().finish(transaction)
+      // finishTransaction() cannot be called on a Transaction with a current purchasing state
+      // https://developer.apple.com/documentation/storekit/skpaymentqueue/1506003-finishtransaction
+      guard transaction.transactionState != SKPaymentTransactionState.purchasing else {
+        continue
       }
+
+      // If the user cancels the purchase dialog we won't have a transactionIdentifier.
+      // So if transactionIdentifier is null AND a transaction in the pendingTransactions list
+      // also has a null transactionIdentifier, we check for equal product identifiers.
+      // TODO(louisehsu): See if we can check for SKErrorPaymentCancelled instead.
+      let matchesTransactionIdentifier = transaction.transactionIdentifier == transactionIdentifier
+      let isCancelledTransaction =
+        transactionIdentifier == nil && transaction.transactionIdentifier == nil
+        && transaction.payment.productIdentifier == productIdentifier
+
+      guard matchesTransactionIdentifier || isCancelledTransaction else {
+        continue
+      }
+      getPaymentQueueHandler().finish(transaction)
     }
   }
 
@@ -409,6 +418,15 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
 
   public func updatedDownloads() {
     NSLog("Received an updatedDownloads callback, but downloads are not supported.")
+  }
+
+  public func supportsStoreKit2WithError(_ error: AutoreleasingUnsafeMutablePointer<FlutterError?>)
+    -> NSNumber?
+  {
+    if #available(iOS 15.0, macOS 12.0, *) {
+      return true
+    }
+    return false
   }
 
   // MARK: - Methods exposed for testing

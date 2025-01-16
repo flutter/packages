@@ -75,21 +75,7 @@ androidController.setCustomWidgetCallbacks(
 
 ## Contributing
 
-This package uses [pigeon][3] to generate the communication layer between Flutter and the host
-platform (Android). The communication interface is defined in the `pigeons/android_webview.dart`
-file. After editing the communication interface regenerate the communication layer by running
-`dart run pigeon --input pigeons/android_webview.dart`.
-
-Besides [pigeon][3] this package also uses [mockito][4] to generate mock objects for testing
-purposes. To generate the mock objects run the following command:
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
-
-If you would like to contribute to the plugin, check out our [contribution guide][5].
+For information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 [1]: https://pub.dev/packages/webview_flutter
 [2]: https://flutter.dev/to/endorsed-federated-plugin
-[3]: https://pub.dev/packages/pigeon
-[4]: https://pub.dev/packages/mockito
-[5]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md

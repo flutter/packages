@@ -4,6 +4,8 @@
 
 // ignore_for_file: unused_local_variable
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -2170,6 +2172,22 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       return;
     }
 
+    testWidgets('named constructor', (_) async {
+      final ProxyApiTestClass instance = ProxyApiTestClass.namedConstructor(
+        aBool: true,
+        anInt: 0,
+        aDouble: 0.0,
+        aString: '',
+        aUint8List: Uint8List(0),
+        aList: const <Object?>[],
+        aMap: const <String?, Object?>{},
+        anEnum: ProxyApiTestEnum.one,
+        aProxyApi: ProxyApiSuperClass(),
+      );
+      // Ensure no error calling method on instance.
+      await instance.noop();
+    });
+
     testWidgets('noop', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
@@ -2840,6 +2858,60 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     final UnusedClass unused = UnusedClass();
     expect(unused, unused);
   });
+
+  /// Event channels
+
+  const List<TargetGenerator> eventChannelSupported = <TargetGenerator>[
+    TargetGenerator.kotlin,
+    TargetGenerator.swift
+  ];
+  testWidgets('event channel sends continuous ints', (_) async {
+    final Stream<int> events = streamInts();
+    final List<int> listEvents = await events.toList();
+    for (final int value in listEvents) {
+      expect(listEvents[value], value);
+    }
+  }, skip: !eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('event channel handles extended sealed classes', (_) async {
+    final Completer<void> completer = Completer<void>();
+    int count = 0;
+    final Stream<PlatformEvent> events = streamEvents();
+    events.listen((PlatformEvent event) {
+      switch (event) {
+        case IntEvent():
+          expect(event.value, 1);
+          expect(count, 0);
+          count++;
+        case StringEvent():
+          expect(event.value, 'string');
+          expect(count, 1);
+          count++;
+        case BoolEvent():
+          expect(event.value, false);
+          expect(count, 2);
+          count++;
+        case DoubleEvent():
+          expect(event.value, 3.14);
+          expect(count, 3);
+          count++;
+        case ObjectsEvent():
+          expect(event.value, true);
+          expect(count, 4);
+          count++;
+        case EnumEvent():
+          expect(event.value, EventEnum.fortyTwo);
+          expect(count, 5);
+          count++;
+        case ClassEvent():
+          expect(event.value.aNullableInt, 0);
+          expect(count, 6);
+          count++;
+          completer.complete();
+      }
+    });
+    await completer.future;
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {

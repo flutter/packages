@@ -47,6 +47,7 @@ class QuickActionsIos extends QuickActionsPlatform {
     return ShortcutItemMessage(
       type: item.type,
       localizedTitle: item.localizedTitle,
+      localizedSubtitle: item.localizedSubtitle,
       icon: item.icon,
     );
   }

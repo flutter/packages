@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.13.2
+
+* Updates most objects passed from Dart to native to use typed data.
+
 ## 2.13.1
 
 * Updates Pigeon for non-nullable collection type support.

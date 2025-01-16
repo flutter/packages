@@ -52,16 +52,39 @@
   NSString *markerId1 = @"m1";
   NSString *markerId2 = @"m2";
 
-  FGMPlatformMarker *marker1 = [FGMPlatformMarker makeWithJson:@{
-    @"markerId" : markerId1,
-    @"position" : @[ @0, @0 ],
-    @"clusterManagerId" : clusterManagerId
-  }];
-  FGMPlatformMarker *marker2 = [FGMPlatformMarker makeWithJson:@{
-    @"markerId" : markerId2,
-    @"position" : @[ @0, @0 ],
-    @"clusterManagerId" : clusterManagerId
-  }];
+  FGMPlatformPoint *zeroPoint = [FGMPlatformPoint makeWithX:0 y:0];
+  FGMPlatformLatLng *zeroLatLng = [FGMPlatformLatLng makeWithLatitude:0 longitude:0];
+  FGMPlatformBitmap *bitmap =
+      [FGMPlatformBitmap makeWithBitmap:[FGMPlatformBitmapDefaultMarker makeWithHue:0]];
+  FGMPlatformInfoWindow *infoWindow = [FGMPlatformInfoWindow makeWithTitle:@"Info"
+                                                                   snippet:NULL
+                                                                    anchor:zeroPoint];
+  FGMPlatformMarker *marker1 = [FGMPlatformMarker makeWithAlpha:1
+                                                         anchor:zeroPoint
+                                               consumeTapEvents:NO
+                                                      draggable:NO
+                                                           flat:NO
+                                                           icon:bitmap
+                                                     infoWindow:infoWindow
+                                                       position:zeroLatLng
+                                                       rotation:0
+                                                        visible:YES
+                                                         zIndex:1
+                                                       markerId:markerId1
+                                               clusterManagerId:clusterManagerId];
+  FGMPlatformMarker *marker2 = [FGMPlatformMarker makeWithAlpha:1
+                                                         anchor:zeroPoint
+                                               consumeTapEvents:NO
+                                                      draggable:NO
+                                                           flat:NO
+                                                           icon:bitmap
+                                                     infoWindow:infoWindow
+                                                       position:zeroLatLng
+                                                       rotation:0
+                                                        visible:YES
+                                                         zIndex:1
+                                                       markerId:markerId2
+                                               clusterManagerId:clusterManagerId];
 
   [markersController addMarkers:@[ marker1, marker2 ]];
 

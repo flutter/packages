@@ -96,6 +96,58 @@ class _FakeAdsManager_6 extends _i1.SmartFake implements _i2.AdsManager {
         );
 }
 
+class _FakeAdsRenderingSettings_7 extends _i1.SmartFake
+    implements _i2.AdsRenderingSettings {
+  _FakeAdsRenderingSettings_7(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeImaSdkSettings_8 extends _i1.SmartFake
+    implements _i2.ImaSdkSettings {
+  _FakeImaSdkSettings_8(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeAdsLoader_9 extends _i1.SmartFake implements _i2.AdsLoader {
+  _FakeAdsLoader_9(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeAdsRequest_10 extends _i1.SmartFake implements _i2.AdsRequest {
+  _FakeAdsRequest_10(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeImaSdkFactory_11 extends _i1.SmartFake implements _i2.ImaSdkFactory {
+  _FakeImaSdkFactory_11(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AdError].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -520,12 +572,390 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<void> init() => (super.noSuchMethod(
+  _i4.Future<void> init(_i2.AdsRenderingSettings? settings) =>
+      (super.noSuchMethod(
         Invocation.method(
           #init,
+          [settings],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> focus() => (super.noSuchMethod(
+        Invocation.method(
+          #focus,
           [],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i2.AdProgressInfo?> getAdProgressInfo() => (super.noSuchMethod(
+        Invocation.method(
+          #getAdProgressInfo,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.AdProgressInfo?>.value(),
+        returnValueForMissingStub: _i4.Future<_i2.AdProgressInfo?>.value(),
+      ) as _i4.Future<_i2.AdProgressInfo?>);
+
+  @override
+  _i4.Future<_i2.Ad?> getCurrentAd() => (super.noSuchMethod(
+        Invocation.method(
+          #getCurrentAd,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.Ad?>.value(),
+        returnValueForMissingStub: _i4.Future<_i2.Ad?>.value(),
+      ) as _i4.Future<_i2.Ad?>);
+
+  @override
+  _i4.Future<void> removeAdErrorListener(_i2.AdErrorListener? errorListener) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeAdErrorListener,
+          [errorListener],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> removeAdEventListener(
+          _i2.AdEventListener? adEventListener) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeAdEventListener,
+          [adEventListener],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+}
+
+/// A class which mocks [AdsRenderingSettings].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockAdsRenderingSettings extends _i1.Mock
+    implements _i2.AdsRenderingSettings {
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+        returnValueForMissingStub: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<int> getBitrateKbps() => (super.noSuchMethod(
+        Invocation.method(
+          #getBitrateKbps,
+          [],
+        ),
+        returnValue: _i4.Future<int>.value(0),
+        returnValueForMissingStub: _i4.Future<int>.value(0),
+      ) as _i4.Future<int>);
+
+  @override
+  _i4.Future<bool> getEnableCustomTabs() => (super.noSuchMethod(
+        Invocation.method(
+          #getEnableCustomTabs,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> getEnablePreloading() => (super.noSuchMethod(
+        Invocation.method(
+          #getEnablePreloading,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<bool> getFocusSkipButtonWhenAvailable() => (super.noSuchMethod(
+        Invocation.method(
+          #getFocusSkipButtonWhenAvailable,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<List<String>> getMimeTypes() => (super.noSuchMethod(
+        Invocation.method(
+          #getMimeTypes,
+          [],
+        ),
+        returnValue: _i4.Future<List<String>>.value(<String>[]),
+        returnValueForMissingStub: _i4.Future<List<String>>.value(<String>[]),
+      ) as _i4.Future<List<String>>);
+
+  @override
+  _i4.Future<void> setBitrateKbps(int? bitrate) => (super.noSuchMethod(
+        Invocation.method(
+          #setBitrateKbps,
+          [bitrate],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setEnableCustomTabs(bool? enableCustomTabs) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setEnableCustomTabs,
+          [enableCustomTabs],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setEnablePreloading(bool? enablePreloading) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setEnablePreloading,
+          [enablePreloading],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setFocusSkipButtonWhenAvailable(
+          bool? enableFocusSkipButton) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setFocusSkipButtonWhenAvailable,
+          [enableFocusSkipButton],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setLoadVideoTimeout(int? loadVideoTimeout) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLoadVideoTimeout,
+          [loadVideoTimeout],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setMimeTypes(List<String>? mimeTypes) => (super.noSuchMethod(
+        Invocation.method(
+          #setMimeTypes,
+          [mimeTypes],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setPlayAdsAfterTime(double? time) => (super.noSuchMethod(
+        Invocation.method(
+          #setPlayAdsAfterTime,
+          [time],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setUiElements(List<_i2.UiElement>? uiElements) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setUiElements,
+          [uiElements],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i2.AdsRenderingSettings pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeAdsRenderingSettings_7(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeAdsRenderingSettings_7(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.AdsRenderingSettings);
+}
+
+/// A class which mocks [ImaSdkFactory].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockImaSdkFactory extends _i1.Mock implements _i2.ImaSdkFactory {
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+        returnValueForMissingStub: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<_i2.ImaSdkSettings> createImaSdkSettings() => (super.noSuchMethod(
+        Invocation.method(
+          #createImaSdkSettings,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.ImaSdkSettings>.value(_FakeImaSdkSettings_8(
+          this,
+          Invocation.method(
+            #createImaSdkSettings,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i2.ImaSdkSettings>.value(_FakeImaSdkSettings_8(
+          this,
+          Invocation.method(
+            #createImaSdkSettings,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.ImaSdkSettings>);
+
+  @override
+  _i4.Future<_i2.AdsLoader> createAdsLoader(
+    _i2.ImaSdkSettings? settings,
+    _i2.AdDisplayContainer? container,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createAdsLoader,
+          [
+            settings,
+            container,
+          ],
+        ),
+        returnValue: _i4.Future<_i2.AdsLoader>.value(_FakeAdsLoader_9(
+          this,
+          Invocation.method(
+            #createAdsLoader,
+            [
+              settings,
+              container,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i2.AdsLoader>.value(_FakeAdsLoader_9(
+          this,
+          Invocation.method(
+            #createAdsLoader,
+            [
+              settings,
+              container,
+            ],
+          ),
+        )),
+      ) as _i4.Future<_i2.AdsLoader>);
+
+  @override
+  _i4.Future<_i2.AdsRequest> createAdsRequest() => (super.noSuchMethod(
+        Invocation.method(
+          #createAdsRequest,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.AdsRequest>.value(_FakeAdsRequest_10(
+          this,
+          Invocation.method(
+            #createAdsRequest,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i2.AdsRequest>.value(_FakeAdsRequest_10(
+          this,
+          Invocation.method(
+            #createAdsRequest,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.AdsRequest>);
+
+  @override
+  _i4.Future<_i2.AdsRenderingSettings> createAdsRenderingSettings() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createAdsRenderingSettings,
+          [],
+        ),
+        returnValue: _i4.Future<_i2.AdsRenderingSettings>.value(
+            _FakeAdsRenderingSettings_7(
+          this,
+          Invocation.method(
+            #createAdsRenderingSettings,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i2.AdsRenderingSettings>.value(
+            _FakeAdsRenderingSettings_7(
+          this,
+          Invocation.method(
+            #createAdsRenderingSettings,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.AdsRenderingSettings>);
+
+  @override
+  _i2.ImaSdkFactory pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeImaSdkFactory_11(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeImaSdkFactory_11(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.ImaSdkFactory);
 }

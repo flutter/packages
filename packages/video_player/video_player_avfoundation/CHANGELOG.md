@@ -1,3 +1,25 @@
+## 2.6.7
+
+* Fixes playback speed resetting.
+
+## 2.6.6
+
+* Fixes changing global audio session category to be collision free across plugins.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.6.5
+
+* Bugfix to allow the audio-only HLS (.m3u8) on iOS.
+
+## 2.6.4
+
+* Refactors native code structure.
+
+## 2.6.3
+
+* Fixes VideoPlayerController.initialize() future never resolving with invalid video file.
+* Adds more details to the error message returned by VideoPlayerController.initialize().
+
 ## 2.6.2
 
 * Updates Pigeon for non-nullable collection type support.

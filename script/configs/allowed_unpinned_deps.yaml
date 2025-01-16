@@ -39,6 +39,7 @@
 - io
 - js
 - json_serializable
+- leak_tracker_flutter_testing
 - lints
 - logging
 - markdown
@@ -46,6 +47,7 @@
 - mime
 - mockito
 - path
+- package_config
 - platform
 - pub_semver
 - shelf

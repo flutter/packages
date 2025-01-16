@@ -299,54 +299,43 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateCircles(captureAny, captureAny, captureAny));
-    final List<PlatformCircle?> toAdd =
-        verification.captured[0] as List<PlatformCircle?>;
-    final List<PlatformCircle?> toChange =
-        verification.captured[1] as List<PlatformCircle?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformCircle> toAdd =
+        verification.captured[0] as List<PlatformCircle>;
+    final List<PlatformCircle> toChange =
+        verification.captured[1] as List<PlatformCircle>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.circleId.value);
     // Object two should be changed.
     {
       expect(toChange.length, 1);
-      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
-      expect(encoded?.getRange(0, 6), <Object?>[
-        object2new.consumeTapEvents,
-        object2new.fillColor.value,
-        object2new.strokeColor.value,
-        object2new.visible,
-        object2new.strokeWidth,
-        object2new.zIndex.toDouble(),
-      ]);
-      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
-      expect(latLng?.latitude, object2new.center.latitude);
-      expect(latLng?.longitude, object2new.center.longitude);
-      expect(encoded?.getRange(7, 9), <Object?>[
-        object2new.radius,
-        object2new.circleId.value,
-      ]);
+      final PlatformCircle firstChanged = toChange.first;
+      expect(firstChanged.consumeTapEvents, object2new.consumeTapEvents);
+      expect(firstChanged.fillColor, object2new.fillColor.value);
+      expect(firstChanged.strokeColor, object2new.strokeColor.value);
+      expect(firstChanged.visible, object2new.visible);
+      expect(firstChanged.strokeWidth, object2new.strokeWidth);
+      expect(firstChanged.zIndex, object2new.zIndex.toDouble());
+      expect(firstChanged.center.latitude, object2new.center.latitude);
+      expect(firstChanged.center.longitude, object2new.center.longitude);
+      expect(firstChanged.radius, object2new.radius);
+      expect(firstChanged.circleId, object2new.circleId.value);
     }
     // Object 3 should be added.
-    expect(toAdd.length, 1);
     {
       expect(toAdd.length, 1);
-      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
-      expect(encoded?.getRange(0, 6), <Object?>[
-        object3.consumeTapEvents,
-        object3.fillColor.value,
-        object3.strokeColor.value,
-        object3.visible,
-        object3.strokeWidth,
-        object3.zIndex.toDouble(),
-      ]);
-      final PlatformLatLng? latLng = encoded?[6] as PlatformLatLng?;
-      expect(latLng?.latitude, object3.center.latitude);
-      expect(latLng?.longitude, object3.center.longitude);
-      expect(encoded?.getRange(7, 9), <Object?>[
-        object3.radius,
-        object3.circleId.value,
-      ]);
+      final PlatformCircle firstAdded = toAdd.first;
+      expect(firstAdded.consumeTapEvents, object3.consumeTapEvents);
+      expect(firstAdded.fillColor, object3.fillColor.value);
+      expect(firstAdded.strokeColor, object3.strokeColor.value);
+      expect(firstAdded.visible, object3.visible);
+      expect(firstAdded.strokeWidth, object3.strokeWidth);
+      expect(firstAdded.zIndex, object3.zIndex.toDouble());
+      expect(firstAdded.center.latitude, object3.center.latitude);
+      expect(firstAdded.center.longitude, object3.center.longitude);
+      expect(firstAdded.radius, object3.radius);
+      expect(firstAdded.circleId, object3.circleId.value);
     }
   });
 
@@ -366,9 +355,9 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateClusterManagers(captureAny, captureAny));
-    final List<PlatformClusterManager?> toAdd =
-        verification.captured[0] as List<PlatformClusterManager?>;
-    final List<String?> toRemove = verification.captured[1] as List<String?>;
+    final List<PlatformClusterManager> toAdd =
+        verification.captured[0] as List<PlatformClusterManager>;
+    final List<String> toRemove = verification.captured[1] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.clusterManagerId.value);
@@ -376,7 +365,7 @@ void main() {
     // managers, since they have no non-ID properties.
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expect(toAdd.first?.identifier, object3.clusterManagerId.value);
+    expect(toAdd.first.identifier, object3.clusterManagerId.value);
   });
 
   test('updateMarkers passes expected arguments', () async {
@@ -395,83 +384,69 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateMarkers(captureAny, captureAny, captureAny));
-    final List<PlatformMarker?> toAdd =
-        verification.captured[0] as List<PlatformMarker?>;
-    final List<PlatformMarker?> toChange =
-        verification.captured[1] as List<PlatformMarker?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformMarker> toAdd =
+        verification.captured[0] as List<PlatformMarker>;
+    final List<PlatformMarker> toChange =
+        verification.captured[1] as List<PlatformMarker>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.markerId.value);
     // Object two should be changed.
     {
       expect(toChange.length, 1);
-      final List<Object?>? encoded = toChange.first?.encode() as List<Object?>?;
-      expect(encoded?[0], object2new.alpha);
-      final PlatformDoublePair? offset = encoded?[1] as PlatformDoublePair?;
-      expect(offset?.x, object2new.anchor.dx);
-      expect(offset?.y, object2new.anchor.dy);
-      expect(encoded?.getRange(2, 5).toList(), <Object?>[
-        object2new.consumeTapEvents,
-        object2new.draggable,
-        object2new.flat,
-      ]);
+      final PlatformMarker firstChanged = toChange.first;
+      expect(firstChanged.alpha, object2new.alpha);
+      expect(firstChanged.anchor.x, object2new.anchor.dx);
+      expect(firstChanged.anchor.y, object2new.anchor.dy);
+      expect(firstChanged.consumeTapEvents, object2new.consumeTapEvents);
+      expect(firstChanged.draggable, object2new.draggable);
+      expect(firstChanged.flat, object2new.flat);
       expect(
-          (encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType,
+          firstChanged.icon.bitmap.runtimeType,
           GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
                   object2new.icon)
               .bitmap
               .runtimeType);
-      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
-      expect(window?.title, object2new.infoWindow.title);
-      expect(window?.snippet, object2new.infoWindow.snippet);
-      expect(window?.anchor.x, object2new.infoWindow.anchor.dx);
-      expect(window?.anchor.y, object2new.infoWindow.anchor.dy);
-      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
-      expect(latLng?.latitude, object2new.position.latitude);
-      expect(latLng?.longitude, object2new.position.longitude);
-      expect(encoded?.getRange(8, 13), <Object?>[
-        object2new.rotation,
-        object2new.visible,
-        object2new.zIndex,
-        object2new.markerId.value,
-        object2new.clusterManagerId?.value,
-      ]);
+      expect(firstChanged.infoWindow.title, object2new.infoWindow.title);
+      expect(firstChanged.infoWindow.snippet, object2new.infoWindow.snippet);
+      expect(firstChanged.infoWindow.anchor.x, object2new.infoWindow.anchor.dx);
+      expect(firstChanged.infoWindow.anchor.y, object2new.infoWindow.anchor.dy);
+      expect(firstChanged.position.latitude, object2new.position.latitude);
+      expect(firstChanged.position.longitude, object2new.position.longitude);
+      expect(firstChanged.rotation, object2new.rotation);
+      expect(firstChanged.visible, object2new.visible);
+      expect(firstChanged.zIndex, object2new.zIndex);
+      expect(firstChanged.markerId, object2new.markerId.value);
+      expect(firstChanged.clusterManagerId, object2new.clusterManagerId?.value);
     }
     // Object 3 should be added.
     {
       expect(toAdd.length, 1);
-      final List<Object?>? encoded = toAdd.first?.encode() as List<Object?>?;
-      expect(encoded?[0], object3.alpha);
-      final PlatformDoublePair? offset = encoded?[1] as PlatformDoublePair?;
-      expect(offset?.x, object3.anchor.dx);
-      expect(offset?.y, object3.anchor.dy);
-      expect(encoded?.getRange(2, 5).toList(), <Object?>[
-        object3.consumeTapEvents,
-        object3.draggable,
-        object3.flat,
-      ]);
+      final PlatformMarker firstAdded = toAdd.first;
+      expect(firstAdded.alpha, object3.alpha);
+      expect(firstAdded.anchor.x, object3.anchor.dx);
+      expect(firstAdded.anchor.y, object3.anchor.dy);
+      expect(firstAdded.consumeTapEvents, object3.consumeTapEvents);
+      expect(firstAdded.draggable, object3.draggable);
+      expect(firstAdded.flat, object3.flat);
       expect(
-          (encoded?[5] as PlatformBitmap?)?.bitmap.runtimeType,
+          firstAdded.icon.bitmap.runtimeType,
           GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
                   object3.icon)
               .bitmap
               .runtimeType);
-      final PlatformInfoWindow? window = encoded?[6] as PlatformInfoWindow?;
-      expect(window?.title, object3.infoWindow.title);
-      expect(window?.snippet, object3.infoWindow.snippet);
-      expect(window?.anchor.x, object3.infoWindow.anchor.dx);
-      expect(window?.anchor.y, object3.infoWindow.anchor.dy);
-      final PlatformLatLng? latLng = encoded?[7] as PlatformLatLng?;
-      expect(latLng?.latitude, object3.position.latitude);
-      expect(latLng?.longitude, object3.position.longitude);
-      expect(encoded?.getRange(8, 13), <Object?>[
-        object3.rotation,
-        object3.visible,
-        object3.zIndex,
-        object3.markerId.value,
-        object3.clusterManagerId?.value,
-      ]);
+      expect(firstAdded.infoWindow.title, object3.infoWindow.title);
+      expect(firstAdded.infoWindow.snippet, object3.infoWindow.snippet);
+      expect(firstAdded.infoWindow.anchor.x, object3.infoWindow.anchor.dx);
+      expect(firstAdded.infoWindow.anchor.y, object3.infoWindow.anchor.dy);
+      expect(firstAdded.position.latitude, object3.position.latitude);
+      expect(firstAdded.position.longitude, object3.position.longitude);
+      expect(firstAdded.rotation, object3.rotation);
+      expect(firstAdded.visible, object3.visible);
+      expect(firstAdded.zIndex, object3.zIndex);
+      expect(firstAdded.markerId, object3.markerId.value);
+      expect(firstAdded.clusterManagerId, object3.clusterManagerId?.value);
     }
   });
 
@@ -491,49 +466,44 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updatePolygons(captureAny, captureAny, captureAny));
-    final List<PlatformPolygon?> toAdd =
-        verification.captured[0] as List<PlatformPolygon?>;
-    final List<PlatformPolygon?> toChange =
-        verification.captured[1] as List<PlatformPolygon?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformPolygon> toAdd =
+        verification.captured[0] as List<PlatformPolygon>;
+    final List<PlatformPolygon> toChange =
+        verification.captured[1] as List<PlatformPolygon>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
     expect(toRemove.first, object1.polygonId.value);
     void expectPolygon(PlatformPolygon actual, Polygon expected) {
-      final List<Object?> encoded = actual.encode() as List<Object?>;
-      expect(encoded.sublist(0, 4), <Object>[
-        expected.polygonId.value,
-        expected.consumeTapEvents,
-        expected.fillColor.value,
-        expected.geodesic,
-      ]);
+      expect(actual.polygonId, expected.polygonId.value);
+      expect(actual.consumesTapEvents, expected.consumeTapEvents);
+      expect(actual.fillColor, expected.fillColor.value);
+      expect(actual.geodesic, expected.geodesic);
       expect(actual.points.length, expected.points.length);
       for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
-        expect(point?.latitude, actual.points[i]?.latitude);
-        expect(point?.longitude, actual.points[i]?.longitude);
+        expect(point?.latitude, expected.points[i].latitude);
+        expect(point?.longitude, expected.points[i].longitude);
       }
       expect(actual.holes.length, expected.holes.length);
-      for (final (int i, List<PlatformLatLng?>? hole) in actual.holes.indexed) {
+      for (final (int i, List<PlatformLatLng>? hole) in actual.holes.indexed) {
         final List<LatLng> expectedHole = expected.holes[i];
         for (final (int j, PlatformLatLng? point) in hole!.indexed) {
           expect(point?.latitude, expectedHole[j].latitude);
           expect(point?.longitude, expectedHole[j].longitude);
         }
       }
-      expect(encoded.sublist(6), <Object>[
-        expected.visible,
-        expected.strokeColor.value,
-        expected.strokeWidth,
-        expected.zIndex,
-      ]);
+      expect(actual.visible, expected.visible);
+      expect(actual.strokeColor, expected.strokeColor.value);
+      expect(actual.strokeWidth, expected.strokeWidth);
+      expect(actual.zIndex, expected.zIndex);
     }
 
     // Object two should be changed.
     expect(toChange.length, 1);
-    expectPolygon(toChange.first!, object2new);
+    expectPolygon(toChange.first, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expectPolygon(toAdd.first!, object3);
+    expectPolygon(toAdd.first, object3);
   });
 
   test('updatePolylines passes expected arguments', () async {
@@ -558,29 +528,25 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updatePolylines(captureAny, captureAny, captureAny));
-    final List<PlatformPolyline?> toAdd =
-        verification.captured[0] as List<PlatformPolyline?>;
-    final List<PlatformPolyline?> toChange =
-        verification.captured[1] as List<PlatformPolyline?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
+    final List<PlatformPolyline> toAdd =
+        verification.captured[0] as List<PlatformPolyline>;
+    final List<PlatformPolyline> toChange =
+        verification.captured[1] as List<PlatformPolyline>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
     void expectPolyline(PlatformPolyline actual, Polyline expected) {
-      final List<Object?> encoded = actual.encode() as List<Object?>;
-      expect(encoded.sublist(0, 5), <Object?>[
-        expected.polylineId.value,
-        expected.consumeTapEvents,
-        expected.color.value,
-        expected.geodesic,
-        platformJointTypeFromJointType(expected.jointType),
-      ]);
-      expect(encoded.sublist(9), <Object?>[
-        expected.visible,
-        expected.width,
-        expected.zIndex,
-      ]);
+      expect(actual.polylineId, expected.polylineId.value);
+      expect(actual.consumesTapEvents, expected.consumeTapEvents);
+      expect(actual.color, expected.color.value);
+      expect(actual.geodesic, expected.geodesic);
+      expect(
+          actual.jointType, platformJointTypeFromJointType(expected.jointType));
+      expect(actual.visible, expected.visible);
+      expect(actual.width, expected.width);
+      expect(actual.zIndex, expected.zIndex);
       expect(actual.points.length, expected.points.length);
       for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
-        expect(point?.latitude, actual.points[i]?.latitude);
-        expect(point?.longitude, actual.points[i]?.longitude);
+        expect(point?.latitude, actual.points[i].latitude);
+        expect(point?.longitude, actual.points[i].longitude);
       }
       expect(actual.patterns.length, expected.patterns.length);
       for (final (int i, PlatformPatternItem? pattern)
@@ -607,10 +573,10 @@ void main() {
     expect(toRemove.first, object1.polylineId.value);
     // Object two should be changed.
     expect(toChange.length, 1);
-    expectPolyline(toChange.first!, object2new);
+    expectPolyline(toChange.first, object2new);
     // Object 3 should be added.
     expect(toAdd.length, 1);
-    expectPolyline(toAdd.first!, object3);
+    expectPolyline(toAdd.first, object3);
   });
 
   test('updateTileOverlays passes expected arguments', () async {
@@ -634,20 +600,18 @@ void main() {
 
     final VerificationResult verification =
         verify(api.updateTileOverlays(captureAny, captureAny, captureAny));
-    final List<PlatformTileOverlay?> toAdd =
-        verification.captured[0] as List<PlatformTileOverlay?>;
-    final List<PlatformTileOverlay?> toChange =
-        verification.captured[1] as List<PlatformTileOverlay?>;
-    final List<String?> toRemove = verification.captured[2] as List<String?>;
-    void expectTileOverlay(PlatformTileOverlay? actual, TileOverlay expected) {
-      expect(actual?.encode(), <Object?>[
-        expected.tileOverlayId.value,
-        expected.fadeIn,
-        expected.transparency,
-        expected.zIndex,
-        expected.visible,
-        expected.tileSize,
-      ]);
+    final List<PlatformTileOverlay> toAdd =
+        verification.captured[0] as List<PlatformTileOverlay>;
+    final List<PlatformTileOverlay> toChange =
+        verification.captured[1] as List<PlatformTileOverlay>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
+    void expectTileOverlay(PlatformTileOverlay actual, TileOverlay expected) {
+      expect(actual.tileOverlayId, expected.tileOverlayId.value);
+      expect(actual.fadeIn, expected.fadeIn);
+      expect(actual.transparency, expected.transparency);
+      expect(actual.zIndex, expected.zIndex);
+      expect(actual.visible, expected.visible);
+      expect(actual.tileSize, expected.tileSize);
     }
 
     // Object one should be removed.

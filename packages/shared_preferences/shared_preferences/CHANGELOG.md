@@ -1,3 +1,15 @@
+## 2.3.5
+
+* Adds information about Android SharedPreferences support.
+
+## 2.3.4
+
+* Security update, requires shared_preferences_android to be 2.3.4.
+
+## 2.3.3
+
+* Clarifies scope of prefix handling in README.
+
 ## 2.3.2
 
 * Removes outdated testing information from README.

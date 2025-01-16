@@ -1,3 +1,11 @@
+## 2.14.12
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
+## 2.14.11
+
+* Updates internal Pigeon API to use newer features.
+
 ## 2.14.10
 
 * Adds 'PlatformBitmap' type.

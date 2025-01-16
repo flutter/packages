@@ -90,6 +90,15 @@ PigeonExamplePackageCode pigeon_example_package_message_data_get_code(
 FlValue* pigeon_example_package_message_data_get_data(
     PigeonExamplePackageMessageData* object);
 
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,
+                     pigeon_example_package_message_codec,
+                     PIGEON_EXAMPLE_PACKAGE, MESSAGE_CODEC,
+                     FlStandardMessageCodec)
+
+G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
+                     pigeon_example_package_example_host_api,
+                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API, GObject)
+
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApiResponseHandle,
                      pigeon_example_package_example_host_api_response_handle,
                      PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API_RESPONSE_HANDLE,

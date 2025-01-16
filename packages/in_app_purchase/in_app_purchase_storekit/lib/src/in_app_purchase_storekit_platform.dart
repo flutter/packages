@@ -51,7 +51,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Callback handler for transaction status changes for StoreKit2 transactions
   @visibleForTesting
-  static SK2TransactionObserverWrapper get sk2transactionObserver =>
+  static SK2TransactionObserverWrapper get sk2TransactionObserver =>
       _sk2transactionObserver;
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].
@@ -149,6 +149,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   @override
   Future<void> restorePurchases({String? applicationUserName}) async {
+    if (_useStoreKit2) {
+      return SK2Transaction.restorePurchases();
+    }
     return _sk1transactionObserver
         .restoreTransactions(
             queue: _skPaymentQueueWrapper,
@@ -246,8 +249,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   Future<String?> getCountryCode() => countryCode();
 
   /// Turns on StoreKit2. You cannot disable this after it is enabled.
-  void enableStoreKit2() {
-    _useStoreKit2 = true;
+  /// This can only be enabled if your device supports StoreKit 2.
+  static Future<bool> enableStoreKit2() async {
+    _useStoreKit2 = await SKRequestMaker.supportsStoreKit2();
+    return _useStoreKit2;
   }
 }
 

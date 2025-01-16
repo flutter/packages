@@ -1,3 +1,27 @@
+## 0.2.3+4
+
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.
+
+## 0.2.3+3
+
+* Adds internal wrapper for Android native `CompanionAdSlot` and `CompanionAdSlot.ClickListener`.
+
+## 0.2.3+2
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.35.1 to 3.36.0.
+
+## 0.2.3+1
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
+## 0.2.3
+
+* Adds parameters to control the rendering of ads. See `AdsManager.init`.
+
+## 0.2.2+15
+
+* Adds remaining methods for internal wrapper of the Android native `BaseManager`.
+
 ## 0.2.2+14
 
 * Adds internal wrapper for iOS native `IMACompanionAdSlot` and `IMACompanionDelegate`.

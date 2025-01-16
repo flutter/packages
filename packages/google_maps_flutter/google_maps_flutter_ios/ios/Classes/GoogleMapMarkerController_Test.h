@@ -8,14 +8,14 @@
 
 /// Extracts an icon image from the iconData array.
 ///
-/// @param iconData An array containing the data for the icon image.
+/// @param platformBitmap The Pigeon representation of the icon image.
 /// @param registrar A Flutter plugin registrar.
 /// @param screenScale Screen scale factor for scaling bitmaps. Must be greater than 0.
 /// @return A UIImage object created from the icon data.
 /// @note Assert unless screenScale is greater than 0.
-- (UIImage *)extractIconFromData:(NSArray *)iconData
-                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                     screenScale:(CGFloat)screenScale;
+- (UIImage *)iconFromBitmap:(FGMPlatformBitmap *)platformBitmap
+                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                screenScale:(CGFloat)screenScale;
 
 /// Checks if an image can be scaled from an original size to a target size using a scale factor
 /// while maintaining the aspect ratio.

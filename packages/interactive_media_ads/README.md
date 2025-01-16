@@ -154,7 +154,7 @@ late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
           },
         ));
 
-        manager.init();
+        manager.init(settings: AdsRenderingSettings(enablePreloading: true));
       },
       onAdsLoadError: (AdsLoadErrorData data) {
         debugPrint('OnAdsLoadError: ${data.error.message}');

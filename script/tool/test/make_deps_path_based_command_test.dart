@@ -64,6 +64,21 @@ void main() {
     package.pubspecFile.writeAsStringSync(lines.join('\n'));
   }
 
+  /// Adds dummy 'dependencies:' entries for each package in [dependencies]
+  /// to [package], using a path-based dependency.
+  void addPathDependencies(
+      RepositoryPackage package, Iterable<String> dependencies,
+      {required String relativePathBase}) {
+    final List<String> lines = package.pubspecFile.readAsLinesSync();
+    final int dependenciesStartIndex = lines.indexOf('dependencies:');
+    assert(dependenciesStartIndex != -1);
+    lines.insertAll(dependenciesStartIndex + 1, <String>[
+      for (final String dependency in dependencies)
+        '  $dependency: { path: $relativePathBase$dependency }',
+    ]);
+    package.pubspecFile.writeAsStringSync(lines.join('\n'));
+  }
+
   /// Adds a 'dev_dependencies:' section with entries for each package in
   /// [dependencies] to [package].
   void addDevDependenciesSection(
@@ -172,15 +187,15 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
     final Map<String, String?> simplePackageOverrides =
         getDependencyOverrides(simplePackage);
     expect(simplePackageOverrides.length, 2);
-    expect(simplePackageOverrides['bar'], '../bar/bar');
+    expect(simplePackageOverrides['bar'], '../../packages/bar/bar');
     expect(simplePackageOverrides['bar_platform_interface'],
-        '../bar/bar_platform_interface');
+        '../../packages/bar/bar_platform_interface');
 
     final Map<String, String?> appFacingPackageOverrides =
         getDependencyOverrides(pluginAppFacing);
     expect(appFacingPackageOverrides.length, 1);
     expect(appFacingPackageOverrides['bar_platform_interface'],
-        '../../bar/bar_platform_interface');
+        '../../../packages/bar/bar_platform_interface');
   });
 
   test('rewrites "dev_dependencies" references', () async {
@@ -205,7 +220,7 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
     final Map<String, String?> overrides =
         getDependencyOverrides(builderPackage);
     expect(overrides.length, 1);
-    expect(overrides['foo'], '../foo');
+    expect(overrides['foo'], '../../packages/foo');
   });
 
   test('rewrites examples when rewriting the main package', () async {
@@ -230,7 +245,8 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
     final Map<String, String?> exampleOverrides =
         getDependencyOverrides(pluginAppFacing.getExamples().first);
     expect(exampleOverrides.length, 1);
-    expect(exampleOverrides['bar_android'], '../../../bar/bar_android');
+    expect(exampleOverrides['bar_android'],
+        '../../../../packages/bar/bar_android');
   });
 
   test('example overrides include both local and main-package dependencies',
@@ -258,8 +274,24 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
     final Map<String, String?> exampleOverrides =
         getDependencyOverrides(pluginAppFacing.getExamples().first);
     expect(exampleOverrides.length, 2);
-    expect(exampleOverrides['another_package'], '../../../another_package');
-    expect(exampleOverrides['bar_android'], '../../../bar/bar_android');
+    expect(exampleOverrides['another_package'],
+        '../../../../packages/another_package');
+    expect(exampleOverrides['bar_android'],
+        '../../../../packages/bar/bar_android');
+  });
+
+  test('does not rewrite path-based dependencies that are already path based',
+      () async {
+    final RepositoryPackage package = createFakePlugin('foo', packagesDir);
+    final RepositoryPackage example = package.getExamples().first;
+    addPathDependencies(example, <String>['foo'], relativePathBase: '../');
+
+    await runCapturingPrint(
+        runner, <String>['make-deps-path-based', '--target-dependencies=foo']);
+
+    final Map<String, String?> exampleOverrides =
+        getDependencyOverrides(example);
+    expect(exampleOverrides.length, 0);
   });
 
   test(
@@ -315,6 +347,32 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
         getDependencyOverrides(firstPartyPackge);
     expect(simplePackageOverrides.length, 1);
     expect(simplePackageOverrides['bar'], '../../third_party/packages/bar');
+  });
+
+  test('handles third_party target package references in third_party',
+      () async {
+    createFakePackage('bar', thirdPartyPackagesDir, isFlutter: true);
+    final RepositoryPackage otherThirdPartyPackge =
+        createFakePlugin('foo', thirdPartyPackagesDir);
+
+    addDependencies(otherThirdPartyPackge, <String>[
+      'bar',
+    ]);
+
+    final List<String> output = await runCapturingPrint(
+        runner, <String>['make-deps-path-based', '--target-dependencies=bar']);
+
+    expect(
+        output,
+        containsAll(<String>[
+          'Rewriting references to: bar...',
+          '  Modified third_party/packages/foo/pubspec.yaml',
+        ]));
+
+    final Map<String, String?> simplePackageOverrides =
+        getDependencyOverrides(otherThirdPartyPackge);
+    expect(simplePackageOverrides.length, 1);
+    expect(simplePackageOverrides['bar'], '../../../third_party/packages/bar');
   });
 
   // This test case ensures that running CI using this command on an interim
@@ -420,7 +478,7 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Skipping foo; deleted.'),
+          contains('Skipping packages/foo; deleted.'),
           contains('No target dependencies'),
         ]),
       );

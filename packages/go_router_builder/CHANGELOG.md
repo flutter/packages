@@ -1,6 +1,12 @@
-## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+## 2.7.3
+
+- Fixes an issue when using a not null List or Set param.
+
+## 2.7.2
+
+- Supports the latest `package:analyzer` and `package:source_gen`.
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.7.1
 

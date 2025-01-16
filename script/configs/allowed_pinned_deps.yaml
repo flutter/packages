@@ -1,4 +1,6 @@
 # The list of external dependencies that are allowed as pinned dependencies.
+# A pin can be either an exact version, or a range with an explicit, inclusive
+# max version, which must a version that already exists, not a future version.
 # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies
 #
 # All entries here should have an explanation for why they are here.
@@ -15,3 +17,9 @@
 # This should be removed; see
 # https://github.com/flutter/flutter/issues/130897
 - provider
+
+# Used by vector_graphics_compiler, as a production, user-facing dependency.
+# This is allowed only with pinned dependencies, so that any changes can be
+# audited before passing them on to clients as transitive updates, to mitigated
+# the risk of the package being compromised.
+- xml

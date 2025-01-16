@@ -18,6 +18,7 @@ packages/flutter_migrate/**                              @stuartmorgan
 packages/flutter_template_images/**                      @stuartmorgan
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
+packages/google_adsense/**                               @sokoloff06 @ditman
 packages/google_identity_services_web/**                 @ditman
 packages/google_maps_flutter/**                          @stuartmorgan
 packages/google_sign_in/**                               @stuartmorgan
@@ -40,12 +41,17 @@ packages/shared_preferences/**                           @tarrinneal
 packages/standard_message_codec/**                       @jonahwilliams
 packages/two_dimensional_scrollables/**                  @Piinks
 packages/url_launcher/**                                 @stuartmorgan
+packages/vector_graphics/**                              @jonahwilliams
+packages/vector_graphics_codec/**                        @jonahwilliams
+packages/vector_graphics_compiler/**                     @jonahwilliams
 packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
 packages/xdg_directories/**                              @stuartmorgan
 third_party/packages/cupertino_icons/**                  @MitchellGoodwin
 third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
+third_party/packages/flutter_svg/**                      @domesticmouse
+third_party/packages/flutter_svg_test/**                 @domesticmouse
 third_party/packages/path_parsing/**                     @domesticmouse
 
 # Plugin platform implementation rules. These should stay last, since the last

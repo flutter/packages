@@ -5,6 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager.dart';
 import 'package:interactive_media_ads/src/android/android_ads_manager_delegate.dart';
+import 'package:interactive_media_ads/src/android/android_ads_rendering_settings.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
@@ -21,6 +22,8 @@ import 'ads_manager_test.mocks.dart';
   MockSpec<ima.AdEvent>(),
   MockSpec<ima.AdEventListener>(),
   MockSpec<ima.AdsManager>(),
+  MockSpec<ima.AdsRenderingSettings>(),
+  MockSpec<ima.ImaSdkFactory>(),
 ])
 void main() {
   group('AndroidAdsManager', () {
@@ -32,12 +35,46 @@ void main() {
       verify(mockAdsManager.destroy());
     });
 
-    test('init', () {
+    test('init', () async {
       final MockAdsManager mockAdsManager = MockAdsManager();
-      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
-      adsManager.init(AdsManagerInitParams());
 
-      verify(mockAdsManager.init());
+      final MockImaSdkFactory mockImaSdkFactory = MockImaSdkFactory();
+      final MockAdsRenderingSettings mockAdsRenderingSettings =
+          MockAdsRenderingSettings();
+      when(mockImaSdkFactory.createAdsRenderingSettings()).thenAnswer(
+        (_) => Future<ima.AdsRenderingSettings>.value(mockAdsRenderingSettings),
+      );
+
+      final AndroidAdsManager adsManager = AndroidAdsManager(mockAdsManager);
+
+      final AndroidAdsRenderingSettings settings = AndroidAdsRenderingSettings(
+        AndroidAdsRenderingSettingsCreationParams(
+          bitrate: 1000,
+          enablePreloading: false,
+          loadVideoTimeout: const Duration(seconds: 2),
+          mimeTypes: const <String>['value'],
+          playAdsAfterTime: const Duration(seconds: 5),
+          uiElements: const <AdUIElement>{AdUIElement.countdown},
+          enableCustomTabs: true,
+          proxy: InteractiveMediaAdsProxy(
+            instanceImaSdkFactory: () => mockImaSdkFactory,
+          ),
+        ),
+      );
+      await adsManager.init(settings: settings);
+
+      verifyInOrder(<Future<void>>[
+        mockAdsRenderingSettings.setBitrateKbps(1000),
+        mockAdsRenderingSettings.setEnablePreloading(false),
+        mockAdsRenderingSettings.setLoadVideoTimeout(2000),
+        mockAdsRenderingSettings.setMimeTypes(<String>['value']),
+        mockAdsRenderingSettings.setPlayAdsAfterTime(5.0),
+        mockAdsRenderingSettings.setUiElements(
+          <ima.UiElement>[ima.UiElement.countdown],
+        ),
+        mockAdsRenderingSettings.setEnableCustomTabs(true),
+        mockAdsManager.init(mockAdsRenderingSettings),
+      ]);
     });
 
     test('start', () {

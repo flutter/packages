@@ -1428,6 +1428,15 @@ CoreTestsPigeonTestTestMessage* core_tests_pigeon_test_test_message_new(
 FlValue* core_tests_pigeon_test_test_message_get_test_list(
     CoreTestsPigeonTestTestMessage* object);
 
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
+                     core_tests_pigeon_test_message_codec,
+                     CORE_TESTS_PIGEON_TEST, MESSAGE_CODEC,
+                     FlStandardMessageCodec)
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApi,
+                     core_tests_pigeon_test_host_integration_core_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API, GObject)
+
 G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle,
     core_tests_pigeon_test_host_integration_core_api_response_handle,
@@ -11869,6 +11878,10 @@ core_tests_pigeon_test_flutter_integration_core_api_echo_async_string_finish(
     CoreTestsPigeonTestFlutterIntegrationCoreApi* api, GAsyncResult* result,
     GError** error);
 
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostTrivialApi,
+                     core_tests_pigeon_test_host_trivial_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_TRIVIAL_API, GObject)
+
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostTrivialApiNoopResponse,
                      core_tests_pigeon_test_host_trivial_api_noop_response,
                      CORE_TESTS_PIGEON_TEST, HOST_TRIVIAL_API_NOOP_RESPONSE,
@@ -11935,6 +11948,10 @@ void core_tests_pigeon_test_host_trivial_api_set_method_handlers(
  */
 void core_tests_pigeon_test_host_trivial_api_clear_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix);
+
+G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApi,
+                     core_tests_pigeon_test_host_small_api,
+                     CORE_TESTS_PIGEON_TEST, HOST_SMALL_API, GObject)
 
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostSmallApiResponseHandle,
                      core_tests_pigeon_test_host_small_api_response_handle,

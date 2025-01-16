@@ -192,6 +192,8 @@ branches: <StatefulShellBranch>[
         ],
       ),
     ],
+    // To enable preloading of the initial locations of branches, pass
+    // 'true' for the parameter `preload` (false is default).
   ),
 ```
 
