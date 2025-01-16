@@ -157,9 +157,14 @@ class GoRouterState {
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
+    String? fragment,
   }) {
+    // Generate base location using configuration, with optional path and query parameters
+    // Then conditionally append fragment if it exists and is not empty
     return _configuration.namedLocation(name,
-        pathParameters: pathParameters, queryParameters: queryParameters);
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        fragment: fragment);
   }
 
   @override
