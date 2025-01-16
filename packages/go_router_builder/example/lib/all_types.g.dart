@@ -91,10 +91,10 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
 
 extension $BigIntRouteExtension on BigIntRoute {
   static BigIntRoute _fromState(GoRouterState state) => BigIntRoute(
-        requiredBigIntField:
-            BigInt.parse(state.pathParameters['requiredBigIntField']!),
+        requiredBigIntField: BigInt.parse(
+            state.pathParameters['requiredBigIntField']!.toString())!,
         bigIntField: _$convertMapValue(
-            'big-int-field', state.uri.queryParameters, BigInt.parse),
+            'big-int-field', state.uri.queryParameters, BigInt.tryParse),
       );
 
   String get location => GoRouteData.$location(
@@ -116,8 +116,8 @@ extension $BigIntRouteExtension on BigIntRoute {
 
 extension $BoolRouteExtension on BoolRoute {
   static BoolRoute _fromState(GoRouterState state) => BoolRoute(
-        requiredBoolField:
-            _$boolConverter(state.pathParameters['requiredBoolField']!),
+        requiredBoolField: _$boolConverter(
+            state.pathParameters['requiredBoolField']!.toString())!,
         boolField: _$convertMapValue(
             'bool-field', state.uri.queryParameters, _$boolConverter),
         boolFieldWithDefaultValue: _$convertMapValue(
@@ -149,10 +149,10 @@ extension $BoolRouteExtension on BoolRoute {
 
 extension $DateTimeRouteExtension on DateTimeRoute {
   static DateTimeRoute _fromState(GoRouterState state) => DateTimeRoute(
-        requiredDateTimeField:
-            DateTime.parse(state.pathParameters['requiredDateTimeField']!),
+        requiredDateTimeField: DateTime.parse(
+            state.pathParameters['requiredDateTimeField']!.toString())!,
         dateTimeField: _$convertMapValue(
-            'date-time-field', state.uri.queryParameters, DateTime.parse),
+            'date-time-field', state.uri.queryParameters, DateTime.tryParse),
       );
 
   String get location => GoRouteData.$location(
@@ -175,10 +175,10 @@ extension $DateTimeRouteExtension on DateTimeRoute {
 
 extension $DoubleRouteExtension on DoubleRoute {
   static DoubleRoute _fromState(GoRouterState state) => DoubleRoute(
-        requiredDoubleField:
-            double.parse(state.pathParameters['requiredDoubleField']!),
+        requiredDoubleField: double.parse(
+            state.pathParameters['requiredDoubleField']!.toString())!,
         doubleField: _$convertMapValue(
-            'double-field', state.uri.queryParameters, double.parse),
+            'double-field', state.uri.queryParameters, double.tryParse),
         doubleFieldWithDefaultValue: _$convertMapValue(
                 'double-field-with-default-value',
                 state.uri.queryParameters,
@@ -208,9 +208,10 @@ extension $DoubleRouteExtension on DoubleRoute {
 
 extension $IntRouteExtension on IntRoute {
   static IntRoute _fromState(GoRouterState state) => IntRoute(
-        requiredIntField: int.parse(state.pathParameters['requiredIntField']!),
+        requiredIntField:
+            int.parse(state.pathParameters['requiredIntField']!.toString())!,
         intField: _$convertMapValue(
-            'int-field', state.uri.queryParameters, int.parse),
+            'int-field', state.uri.queryParameters, int.tryParse),
         intFieldWithDefaultValue: _$convertMapValue(
                 'int-field-with-default-value',
                 state.uri.queryParameters,
@@ -239,9 +240,10 @@ extension $IntRouteExtension on IntRoute {
 
 extension $NumRouteExtension on NumRoute {
   static NumRoute _fromState(GoRouterState state) => NumRoute(
-        requiredNumField: num.parse(state.pathParameters['requiredNumField']!),
+        requiredNumField:
+            num.parse(state.pathParameters['requiredNumField']!.toString())!,
         numField: _$convertMapValue(
-            'num-field', state.uri.queryParameters, num.parse),
+            'num-field', state.uri.queryParameters, num.tryParse),
         numFieldWithDefaultValue: _$convertMapValue(
                 'num-field-with-default-value',
                 state.uri.queryParameters,
@@ -271,7 +273,7 @@ extension $NumRouteExtension on NumRoute {
 extension $EnumRouteExtension on EnumRoute {
   static EnumRoute _fromState(GoRouterState state) => EnumRoute(
         requiredEnumField: _$PersonDetailsEnumMap
-            ._$fromName(state.pathParameters['requiredEnumField']!),
+            ._$fromName(state.pathParameters['requiredEnumField']!.toString())!,
         enumField: _$convertMapValue('enum-field', state.uri.queryParameters,
             _$PersonDetailsEnumMap._$fromName),
         enumFieldWithDefaultValue: _$convertMapValue(
@@ -311,7 +313,7 @@ const _$PersonDetailsEnumMap = {
 extension $EnhancedEnumRouteExtension on EnhancedEnumRoute {
   static EnhancedEnumRoute _fromState(GoRouterState state) => EnhancedEnumRoute(
         requiredEnumField: _$SportDetailsEnumMap
-            ._$fromName(state.pathParameters['requiredEnumField']!),
+            ._$fromName(state.pathParameters['requiredEnumField']!.toString())!,
         enumField: _$convertMapValue('enum-field', state.uri.queryParameters,
             _$SportDetailsEnumMap._$fromName),
         enumFieldWithDefaultValue: _$convertMapValue(
@@ -379,9 +381,10 @@ extension $StringRouteExtension on StringRoute {
 
 extension $UriRouteExtension on UriRoute {
   static UriRoute _fromState(GoRouterState state) => UriRoute(
-        requiredUriField: Uri.parse(state.pathParameters['requiredUriField']!),
+        requiredUriField:
+            Uri.parse(state.pathParameters['requiredUriField']!.toString())!,
         uriField: _$convertMapValue(
-            'uri-field', state.uri.queryParameters, Uri.parse),
+            'uri-field', state.uri.queryParameters, Uri.tryParse),
       );
 
   String get location => GoRouteData.$location(
@@ -403,59 +406,97 @@ extension $UriRouteExtension on UriRoute {
 
 extension $IterableRouteExtension on IterableRoute {
   static IterableRoute _fromState(GoRouterState state) => IterableRoute(
-        intIterableField:
-            state.uri.queryParametersAll['int-iterable-field']?.map(int.parse),
-        doubleIterableField: state
+        intIterableField: (state.uri.queryParametersAll['int-iterable-field']
+            ?.map(int.parse)
+            ?.where((e) => e != null)
+            ?.cast<int>() as Iterable<int>?),
+        doubleIterableField: (state
             .uri.queryParametersAll['double-iterable-field']
-            ?.map(double.parse),
-        stringIterableField: state
+            ?.map(double.parse)
+            ?.where((e) => e != null)
+            ?.cast<double>() as Iterable<double>?),
+        stringIterableField: (state
             .uri.queryParametersAll['string-iterable-field']
-            ?.map((e) => e),
-        boolIterableField: state.uri.queryParametersAll['bool-iterable-field']
-            ?.map(_$boolConverter),
-        enumIterableField: state.uri.queryParametersAll['enum-iterable-field']
-            ?.map(_$SportDetailsEnumMap._$fromName),
-        enumOnlyInIterableField: state
+            ?.map((e) => e)),
+        boolIterableField: (state.uri.queryParametersAll['bool-iterable-field']
+            ?.map(_$boolConverter)
+            ?.where((e) => e != null)
+            ?.cast<bool>() as Iterable<bool>?),
+        enumIterableField: (state.uri.queryParametersAll['enum-iterable-field']
+            ?.map(_$SportDetailsEnumMap._$fromName)
+            ?.where((e) => e != null)
+            ?.cast<SportDetails>() as Iterable<SportDetails>?),
+        enumOnlyInIterableField: (state
             .uri.queryParametersAll['enum-only-in-iterable-field']
-            ?.map(_$CookingRecipeEnumMap._$fromName),
-        intListField: state.uri.queryParametersAll['int-list-field']
-            ?.map(int.parse)
-            .toList(),
-        doubleListField: state.uri.queryParametersAll['double-list-field']
-            ?.map(double.parse)
-            .toList(),
-        stringListField: state.uri.queryParametersAll['string-list-field']
-            ?.map((e) => e)
-            .toList(),
-        boolListField: state.uri.queryParametersAll['bool-list-field']
-            ?.map(_$boolConverter)
-            .toList(),
-        enumListField: state.uri.queryParametersAll['enum-list-field']
-            ?.map(_$SportDetailsEnumMap._$fromName)
-            .toList(),
-        enumOnlyInListField: state
-            .uri.queryParametersAll['enum-only-in-list-field']
             ?.map(_$CookingRecipeEnumMap._$fromName)
-            .toList(),
-        intSetField: state.uri.queryParametersAll['int-set-field']
-            ?.map(int.parse)
-            .toSet(),
-        doubleSetField: state.uri.queryParametersAll['double-set-field']
-            ?.map(double.parse)
-            .toSet(),
-        stringSetField: state.uri.queryParametersAll['string-set-field']
-            ?.map((e) => e)
-            .toSet(),
-        boolSetField: state.uri.queryParametersAll['bool-set-field']
-            ?.map(_$boolConverter)
-            .toSet(),
-        enumSetField: state.uri.queryParametersAll['enum-set-field']
-            ?.map(_$SportDetailsEnumMap._$fromName)
-            .toSet(),
-        enumOnlyInSetField: state
-            .uri.queryParametersAll['enum-only-in-set-field']
-            ?.map(_$CookingRecipeEnumMap._$fromName)
-            .toSet(),
+            ?.where((e) => e != null)
+            ?.cast<CookingRecipe>() as Iterable<CookingRecipe>?),
+        intListField: (state.uri.queryParametersAll['int-list-field']
+                ?.map(int.parse)
+                ?.where((e) => e != null)
+                ?.cast<int>()
+                ?.toList() as List<int>?)
+            ?.toList(),
+        doubleListField: (state.uri.queryParametersAll['double-list-field']
+                ?.map(double.parse)
+                ?.where((e) => e != null)
+                ?.cast<double>()
+                ?.toList() as List<double>?)
+            ?.toList(),
+        stringListField: (state.uri.queryParametersAll['string-list-field']
+            ?.map((e) => e))?.toList(),
+        boolListField: (state.uri.queryParametersAll['bool-list-field']
+                ?.map(_$boolConverter)
+                ?.where((e) => e != null)
+                ?.cast<bool>()
+                ?.toList() as List<bool>?)
+            ?.toList(),
+        enumListField: (state.uri.queryParametersAll['enum-list-field']
+                ?.map(_$SportDetailsEnumMap._$fromName)
+                ?.where((e) => e != null)
+                ?.cast<SportDetails>()
+                ?.toList() as List<SportDetails>?)
+            ?.toList(),
+        enumOnlyInListField: (state
+                .uri.queryParametersAll['enum-only-in-list-field']
+                ?.map(_$CookingRecipeEnumMap._$fromName)
+                ?.where((e) => e != null)
+                ?.cast<CookingRecipe>()
+                ?.toList() as List<CookingRecipe>?)
+            ?.toList(),
+        intSetField: (state.uri.queryParametersAll['int-set-field']
+                ?.map(int.parse)
+                ?.where((e) => e != null)
+                ?.cast<int>()
+                ?.toSet() as Set<int>?)
+            ?.toSet(),
+        doubleSetField: (state.uri.queryParametersAll['double-set-field']
+                ?.map(double.parse)
+                ?.where((e) => e != null)
+                ?.cast<double>()
+                ?.toSet() as Set<double>?)
+            ?.toSet(),
+        stringSetField: (state.uri.queryParametersAll['string-set-field']
+            ?.map((e) => e))?.toSet(),
+        boolSetField: (state.uri.queryParametersAll['bool-set-field']
+                ?.map(_$boolConverter)
+                ?.where((e) => e != null)
+                ?.cast<bool>()
+                ?.toSet() as Set<bool>?)
+            ?.toSet(),
+        enumSetField: (state.uri.queryParametersAll['enum-set-field']
+                ?.map(_$SportDetailsEnumMap._$fromName)
+                ?.where((e) => e != null)
+                ?.cast<SportDetails>()
+                ?.toSet() as Set<SportDetails>?)
+            ?.toSet(),
+        enumOnlyInSetField: (state
+                .uri.queryParametersAll['enum-only-in-set-field']
+                ?.map(_$CookingRecipeEnumMap._$fromName)
+                ?.where((e) => e != null)
+                ?.cast<CookingRecipe>()
+                ?.toSet() as Set<CookingRecipe>?)
+            ?.toSet(),
       );
 
   String get location => GoRouteData.$location(
@@ -536,62 +577,92 @@ extension $IterableRouteWithDefaultValuesExtension
     on IterableRouteWithDefaultValues {
   static IterableRouteWithDefaultValues _fromState(GoRouterState state) =>
       IterableRouteWithDefaultValues(
-        intIterableField: state.uri.queryParametersAll['int-iterable-field']
-                ?.map(int.parse) ??
+        intIterableField: (state.uri.queryParametersAll['int-iterable-field']
+                ?.map(int.parse)
+                ?.where((e) => e != null)
+                ?.cast<int>() as Iterable<int>?) ??
             const <int>[0],
-        doubleIterableField: state
+        doubleIterableField: (state
                 .uri.queryParametersAll['double-iterable-field']
-                ?.map(double.parse) ??
+                ?.map(double.parse)
+                ?.where((e) => e != null)
+                ?.cast<double>() as Iterable<double>?) ??
             const <double>[0, 1, 2],
-        stringIterableField: state
+        stringIterableField: (state
                 .uri.queryParametersAll['string-iterable-field']
-                ?.map((e) => e) ??
+                ?.map((e) => e)) ??
             const <String>['defaultValue'],
-        boolIterableField: state.uri.queryParametersAll['bool-iterable-field']
-                ?.map(_$boolConverter) ??
+        boolIterableField: (state.uri.queryParametersAll['bool-iterable-field']
+                ?.map(_$boolConverter)
+                ?.where((e) => e != null)
+                ?.cast<bool>() as Iterable<bool>?) ??
             const <bool>[false],
-        enumIterableField: state.uri.queryParametersAll['enum-iterable-field']
-                ?.map(_$SportDetailsEnumMap._$fromName) ??
+        enumIterableField: (state.uri.queryParametersAll['enum-iterable-field']
+                ?.map(_$SportDetailsEnumMap._$fromName)
+                ?.where((e) => e != null)
+                ?.cast<SportDetails>() as Iterable<SportDetails>?) ??
             const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
-        intListField: state.uri.queryParametersAll['int-list-field']
-                ?.map(int.parse)
-                .toList() ??
+        intListField: (state.uri.queryParametersAll['int-list-field']
+                    ?.map(int.parse)
+                    ?.where((e) => e != null)
+                    ?.cast<int>()
+                    ?.toList() as List<int>?)
+                ?.toList() ??
             const <int>[0],
-        doubleListField: state.uri.queryParametersAll['double-list-field']
-                ?.map(double.parse)
-                .toList() ??
+        doubleListField: (state.uri.queryParametersAll['double-list-field']
+                    ?.map(double.parse)
+                    ?.where((e) => e != null)
+                    ?.cast<double>()
+                    ?.toList() as List<double>?)
+                ?.toList() ??
             const <double>[1, 2, 3],
-        stringListField: state.uri.queryParametersAll['string-list-field']
-                ?.map((e) => e)
-                .toList() ??
+        stringListField: (state.uri.queryParametersAll['string-list-field']
+                ?.map((e) => e))?.toList() ??
             const <String>['defaultValue0', 'defaultValue1'],
-        boolListField: state.uri.queryParametersAll['bool-list-field']
-                ?.map(_$boolConverter)
-                .toList() ??
+        boolListField: (state.uri.queryParametersAll['bool-list-field']
+                    ?.map(_$boolConverter)
+                    ?.where((e) => e != null)
+                    ?.cast<bool>()
+                    ?.toList() as List<bool>?)
+                ?.toList() ??
             const <bool>[true],
-        enumListField: state.uri.queryParametersAll['enum-list-field']
-                ?.map(_$SportDetailsEnumMap._$fromName)
-                .toList() ??
+        enumListField: (state.uri.queryParametersAll['enum-list-field']
+                    ?.map(_$SportDetailsEnumMap._$fromName)
+                    ?.where((e) => e != null)
+                    ?.cast<SportDetails>()
+                    ?.toList() as List<SportDetails>?)
+                ?.toList() ??
             const <SportDetails>[SportDetails.football],
-        intSetField: state.uri.queryParametersAll['int-set-field']
-                ?.map(int.parse)
-                .toSet() ??
+        intSetField: (state.uri.queryParametersAll['int-set-field']
+                    ?.map(int.parse)
+                    ?.where((e) => e != null)
+                    ?.cast<int>()
+                    ?.toSet() as Set<int>?)
+                ?.toSet() ??
             const <int>{0, 1},
-        doubleSetField: state.uri.queryParametersAll['double-set-field']
-                ?.map(double.parse)
-                .toSet() ??
+        doubleSetField: (state.uri.queryParametersAll['double-set-field']
+                    ?.map(double.parse)
+                    ?.where((e) => e != null)
+                    ?.cast<double>()
+                    ?.toSet() as Set<double>?)
+                ?.toSet() ??
             const <double>{},
-        stringSetField: state.uri.queryParametersAll['string-set-field']
-                ?.map((e) => e)
-                .toSet() ??
+        stringSetField: (state.uri.queryParametersAll['string-set-field']
+                ?.map((e) => e))?.toSet() ??
             const <String>{'defaultValue'},
-        boolSetField: state.uri.queryParametersAll['bool-set-field']
-                ?.map(_$boolConverter)
-                .toSet() ??
+        boolSetField: (state.uri.queryParametersAll['bool-set-field']
+                    ?.map(_$boolConverter)
+                    ?.where((e) => e != null)
+                    ?.cast<bool>()
+                    ?.toSet() as Set<bool>?)
+                ?.toSet() ??
             const <bool>{true, false},
-        enumSetField: state.uri.queryParametersAll['enum-set-field']
-                ?.map(_$SportDetailsEnumMap._$fromName)
-                .toSet() ??
+        enumSetField: (state.uri.queryParametersAll['enum-set-field']
+                    ?.map(_$SportDetailsEnumMap._$fromName)
+                    ?.where((e) => e != null)
+                    ?.cast<SportDetails>()
+                    ?.toSet() as Set<SportDetails>?)
+                ?.toSet() ??
             const <SportDetails>{SportDetails.hockey},
       );
 
@@ -654,7 +725,7 @@ extension $IterableRouteWithDefaultValuesExtension
 T? _$convertMapValue<T>(
   String key,
   Map<String, String> map,
-  T Function(String) converter,
+  T? Function(String) converter,
 ) {
   final value = map[key];
   return value == null ? null : converter(value);
@@ -672,6 +743,6 @@ bool _$boolConverter(String value) {
 }
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? _$fromName(String value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }
