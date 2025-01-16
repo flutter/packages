@@ -65,6 +65,22 @@
 #endif
 }
 
+- (void)verticalScrollBarEnabledForScrollViewWithIdentifier:(NSInteger)identifier
+                                          isEnabled:(BOOL)enabled
+                                      error:(FlutterError *_Nullable *_Nonnull)error {
+#if TARGET_OS_IOS
+  [[self scrollViewForIdentifier:identifier] setShowsVerticalScrollIndicator:enabled];
+#endif
+}
+
+- (void)horizontalScrollBarEnabledForScrollViewWithIdentifier:(NSInteger)identifier
+                                          isEnabled:(BOOL)enabled
+                                      error:(FlutterError *_Nullable *_Nonnull)error {
+#if TARGET_OS_IOS
+  [[self scrollViewForIdentifier:identifier] setShowsHorizontalScrollIndicator:enabled];
+#endif
+}
+
 - (void)setContentOffsetForScrollViewWithIdentifier:(NSInteger)identifier
                                                 toX:(double)x
                                                   y:(double)y

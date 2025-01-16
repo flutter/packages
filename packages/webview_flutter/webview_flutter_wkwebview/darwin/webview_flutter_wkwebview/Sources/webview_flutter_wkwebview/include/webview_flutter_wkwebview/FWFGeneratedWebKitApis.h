@@ -645,6 +645,12 @@ NSObject<FlutterMessageCodec> *FWFUIScrollViewHostApiGetCodec(void);
                                           x:(double)x
                                           y:(double)y
                                       error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)verticalScrollBarEnabledForScrollViewWithIdentifier:(NSInteger)identifier
+                                          isEnabled:(BOOL)enabled
+                                      error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)horizontalScrollBarEnabledForScrollViewWithIdentifier:(NSInteger)identifier
+                                          isEnabled:(BOOL)enabled
+                                      error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setContentOffsetForScrollViewWithIdentifier:(NSInteger)identifier
                                                 toX:(double)x
                                                   y:(double)y

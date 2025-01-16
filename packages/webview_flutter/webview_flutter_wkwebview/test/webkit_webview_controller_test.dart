@@ -603,6 +603,28 @@ void main() {
       verify(mockScrollView.scrollBy(const Point<double>(2.0, 4.0)));
     });
 
+    test('verticalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      await controller.verticalScrollBarEnabled(false);
+      verify(mockScrollView.verticalScrollBarEnabled(false));
+    });
+
+    test('horizontalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      await controller.horizontalScrollBarEnabled(false);
+      verify(mockScrollView.horizontalScrollBarEnabled(false);
+    });
+
     test('getScrollPosition', () {
       final MockUIScrollView mockScrollView = MockUIScrollView();
 
