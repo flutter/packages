@@ -16,6 +16,7 @@
 #include "capture_controller.h"
 #include "capture_controller_listener.h"
 #include "messages.g.h"
+#include "task_runner.h"
 
 namespace camera_windows {
 using flutter::MethodResult;
@@ -68,6 +69,7 @@ class CameraPlugin : public flutter::Plugin,
   void StopVideoRecording(
       int64_t camera_id,
       std::function<void(ErrorOr<std::string> reply)> result) override;
+  ErrorOr<std::string> StartImageStream(int64_t camera_id) override;
   void TakePicture(
       int64_t camera_id,
       std::function<void(ErrorOr<std::string> reply)> result) override;
@@ -93,6 +95,7 @@ class CameraPlugin : public flutter::Plugin,
   flutter::TextureRegistrar* texture_registrar_;
   flutter::BinaryMessenger* messenger_;
   std::vector<std::unique_ptr<Camera>> cameras_;
+  std::shared_ptr<TaskRunner> task_runner_;
 
   friend class camera_windows::test::MockCameraPlugin;
 };

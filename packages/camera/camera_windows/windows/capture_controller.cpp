@@ -5,11 +5,14 @@
 #include "capture_controller.h"
 
 #include <comdef.h>
+#include <flutter/event_stream_handler_functions.h>
+#include <flutter/standard_method_codec.h>
 #include <wincodec.h>
 #include <wrl/client.h>
 
 #include <cassert>
 #include <chrono>
+#include <iostream>
 
 #include "com_heap_ptr.h"
 #include "photo_handler.h"
@@ -300,7 +303,8 @@ void CaptureControllerImpl::ResetCaptureController() {
 
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
-    const PlatformMediaSettings& media_settings) {
+    const PlatformMediaSettings& media_settings,
+    std::shared_ptr<TaskRunner> task_runner) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {
@@ -317,6 +321,7 @@ bool CaptureControllerImpl::InitCaptureDevice(
   media_settings_ = media_settings;
   texture_registrar_ = texture_registrar;
   video_device_id_ = device_id;
+  task_runner_ = task_runner;
 
   // MFStartup must be called before using Media Foundation.
   if (!media_foundation_started_) {
@@ -554,6 +559,16 @@ void CaptureControllerImpl::StopRecord() {
     return OnRecordStopped(GetCameraResult(hr),
                            "Failed to stop video recording");
   }
+}
+void CaptureControllerImpl::StartImageStream(
+    std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) {
+  assert(capture_controller_listener_);
+  image_stream_sink_ = std::move(sink);
+}
+
+void CaptureControllerImpl::StopImageStream() {
+  assert(capture_controller_listener_);
+  image_stream_sink_.reset();
 }
 
 // Starts capturing preview frames using preview handler
@@ -860,8 +875,30 @@ void CaptureControllerImpl::OnRecordStopped(CameraResult result,
 // Implements CaptureEngineObserver::UpdateBuffer.
 bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
                                          uint32_t data_length) {
+  using flutter::EncodableValue, flutter::EncodableMap;
+
   if (!texture_handler_) {
     return false;
+  }
+  if (image_stream_sink_) {
+    // Encode the frame into a map that can be sent through the `EventSink`.
+    EncodableMap encoded_frame = {
+        {EncodableValue("data"),
+         EncodableValue(std::vector<uint8_t>(buffer, buffer + data_length))},
+        {EncodableValue("height"),
+         EncodableValue(static_cast<int64_t>(preview_frame_height_))},
+        {EncodableValue("width"),
+         EncodableValue(static_cast<int64_t>(preview_frame_width_))},
+        {EncodableValue("length"),
+         EncodableValue(static_cast<int64_t>(data_length))}};
+
+    task_runner_->EnqueueTask([weak_sink = std::weak_ptr(image_stream_sink_),
+                               encoded_frame = std::move(encoded_frame)]() {
+      auto sink = weak_sink.lock();
+      if (sink) {
+        sink->Success(encoded_frame);
+      }
+    });
   }
   return texture_handler_->UpdateBuffer(buffer, data_length);
 }
