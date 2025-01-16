@@ -21,11 +21,11 @@
 - (void)testResolutionPresetWithBestFormat_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPresetInputPriority;
 
-  id videoSessionMock = OCMClassMock([AVCaptureSession class]);
+  id videoSessionMock = OCMProtocolMock(@protocol(FLTCaptureSession));
   OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
 
   id captureFormatMock = OCMClassMock([AVCaptureDeviceFormat class]);
-  id captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
+  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDevice));
   OCMStub([captureDeviceMock formats]).andReturn(@[ captureFormatMock ]);
 
   OCMExpect([captureDeviceMock activeFormat]).andReturn(captureFormatMock);
@@ -48,7 +48,7 @@
 - (void)testResolutionPresetWithCanSetSessionPresetMax_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPreset3840x2160;
 
-  id videoSessionMock = OCMClassMock([AVCaptureSession class]);
+  id videoSessionMock = OCMProtocolMock(@protocol(FLTCaptureSession));
   OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
 
   // Make sure that setting resolution preset for session always succeeds.
@@ -64,7 +64,7 @@
 - (void)testResolutionPresetWithCanSetSessionPresetUltraHigh_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPreset3840x2160;
 
-  id videoSessionMock = OCMClassMock([AVCaptureSession class]);
+  id videoSessionMock = OCMProtocolMock(@protocol(FLTCaptureSession));
   OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
 
   // Make sure that setting resolution preset for session always succeeds.

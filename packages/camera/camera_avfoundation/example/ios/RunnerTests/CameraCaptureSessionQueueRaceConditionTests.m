@@ -8,13 +8,29 @@
 #endif
 @import XCTest;
 
+#import "MockCameraDeviceDiscoverer.h"
+#import "MockCaptureDevice.h"
+#import "MockCaptureSession.h"
+
 @interface CameraCaptureSessionQueueRaceConditionTests : XCTestCase
 @end
 
 @implementation CameraCaptureSessionQueueRaceConditionTests
 
 - (void)testFixForCaptureSessionQueueNullPointerCrashDueToRaceCondition {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  MockCaptureDevice *captureDevice = [[MockCaptureDevice alloc] init];
+
+  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
+      messenger:nil
+      globalAPI:nil
+      deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
+      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+        return captureDevice;
+      }
+      captureSessionFactory:^id<FLTCaptureSession> {
+        return [[MockCaptureSession alloc] init];
+      }
+      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
 
   XCTestExpectation *disposeExpectation =
       [self expectationWithDescription:@"dispose's result block must be called"];

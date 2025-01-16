@@ -5,6 +5,8 @@
 @import AVFoundation;
 @import Foundation;
 
+#import "FLTCaptureDevice.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /**
@@ -25,14 +27,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outError The optional error.
  * @result A BOOL indicating whether the device was successfully locked for configuration.
  */
-- (BOOL)lockDevice:(AVCaptureDevice *)captureDevice error:(NSError *_Nullable *_Nullable)outError;
+- (BOOL)lockDevice:(id<FLTCaptureDevice>)captureDevice
+             error:(NSError *_Nullable *_Nullable)outError;
 
 /**
  * @method unlockDevice:
  * @abstract Release exclusive control over device hardware properties.
  * @param captureDevice The capture device.
  */
-- (void)unlockDevice:(AVCaptureDevice *)captureDevice;
+- (void)unlockDevice:(id<FLTCaptureDevice>)captureDevice;
 
 /**
  * @method beginConfigurationForSession:
@@ -57,7 +60,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMinFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice;
+- (void)setMinFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDevice>)captureDevice;
 
 /**
  * @method setMaxFrameDuration:onDevice:
@@ -66,7 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMaxFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice;
+- (void)setMaxFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDevice>)captureDevice;
 
 /**
  * @method assetWriterAudioInputWithOutputSettings:

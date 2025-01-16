@@ -3,14 +3,16 @@
 // found in the LICENSE file.
 
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
+#import "./include/camera_avfoundation/FLTCaptureDevice.h"
 
 @implementation FLTCamMediaSettingsAVWrapper
 
-- (BOOL)lockDevice:(AVCaptureDevice *)captureDevice error:(NSError *_Nullable *_Nullable)outError {
+- (BOOL)lockDevice:(id<FLTCaptureDevice>)captureDevice
+             error:(NSError *_Nullable *_Nullable)outError {
   return [captureDevice lockForConfiguration:outError];
 }
 
-- (void)unlockDevice:(AVCaptureDevice *)captureDevice {
+- (void)unlockDevice:(id<FLTCaptureDevice>)captureDevice {
   return [captureDevice unlockForConfiguration];
 }
 
@@ -22,11 +24,13 @@
   [videoCaptureSession commitConfiguration];
 }
 
-- (void)setMinFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice {
+- (void)setMinFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDevice>)captureDevice {
   captureDevice.activeVideoMinFrameDuration = duration;
 }
 
-- (void)setMaxFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice {
+- (void)setMaxFrameDuration:(CMTime)duration
+                   onDevice:(id<FLTCaptureDevice>)captureDevice {
   captureDevice.activeVideoMaxFrameDuration = duration;
 }
 
