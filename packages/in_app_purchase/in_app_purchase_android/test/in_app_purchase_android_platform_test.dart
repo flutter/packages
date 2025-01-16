@@ -263,6 +263,64 @@ void main() {
   });
 
   group('make payment', () {
+    test('buy non consumable subscribe offer, serializes and deserializes data', () async {
+      const ProductDetailsWrapper productDetails = dummySubscriptionProductDetails;
+      const String accountId = 'hashedAccountId';
+      const String debugMessage = 'dummy message';
+      const BillingResponse sentCode = BillingResponse.ok;
+      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+          responseCode: sentCode, debugMessage: debugMessage);
+
+      when(mockApi.launchBillingFlow(any)).thenAnswer((_) async {
+        // Mock java update purchase callback.
+        iapAndroidPlatform.billingClientManager.client.hostCallbackHandler
+            .onPurchasesUpdated(PlatformPurchasesResponse(
+          billingResult: convertToPigeonResult(expectedBillingResult),
+          purchases: <PlatformPurchase>[
+            PlatformPurchase(
+              orderId: 'orderID1',
+              products: <String>[productDetails.productId],
+              isAutoRenewing: false,
+              packageName: 'package',
+              purchaseTime: 1231231231,
+              purchaseToken: 'token',
+              signature: 'sign',
+              originalJson: 'json',
+              developerPayload: 'dummy payload',
+              isAcknowledged: true,
+              purchaseState: PlatformPurchaseState.purchased,
+              quantity: 1,
+            )
+          ],
+        ));
+
+        return convertToPigeonResult(expectedBillingResult);
+      });
+      final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
+      PurchaseDetails purchaseDetails;
+      final Stream<List<PurchaseDetails>> purchaseStream =
+          iapAndroidPlatform.purchaseStream;
+      late StreamSubscription<List<PurchaseDetails>> subscription;
+      subscription = purchaseStream.listen((List<PurchaseDetails> details) {
+        purchaseDetails = details.first;
+        completer.complete(purchaseDetails);
+        subscription.cancel();
+      }, onDone: () {});
+      final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
+          offerToken: productDetails.subscriptionOfferDetails?.first.offerIdToken,
+          productDetails:
+          GooglePlayProductDetails.fromProductDetails(productDetails).first,
+          applicationUserName: accountId);
+      final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam);
+
+      final PurchaseDetails result = await completer.future;
+      expect(launchResult, isTrue);
+      expect(result.purchaseID, 'orderID1');
+      expect(result.status, PurchaseStatus.purchased);
+      expect(result.productID, productDetails.productId);
+    });
+
     test('buy non consumable, serializes and deserializes data', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
