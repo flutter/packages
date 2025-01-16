@@ -338,4 +338,27 @@
   CFRelease(videoSample);
 }
 
+- (void)testStartVideoRecordingWithCompletionShouldNotDisableMixWithOthers {
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+
+  id writerMock = OCMClassMock([AVAssetWriter class]);
+  OCMStub([writerMock alloc]).andReturn(writerMock);
+  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
+      .andReturn(writerMock);
+
+  [AVAudioSession.sharedInstance setCategory:AVAudioSessionCategoryPlayback
+                                 withOptions:AVAudioSessionCategoryOptionMixWithOthers
+                                       error:nil];
+
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
+  XCTAssert(
+      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionMixWithOthers,
+      @"Flag MixWithOthers was removed.");
+  XCTAssert(AVAudioSession.sharedInstance.category == AVAudioSessionCategoryPlayAndRecord,
+            @"Category should be PlayAndRecord.");
+}
+
 @end

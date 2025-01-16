@@ -237,6 +237,8 @@ static void selectBestFormatForRequestedFrameRate(
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
   _fileFormat = FCPPlatformImageFileFormatJpeg;
+  _videoCaptureSession.automaticallyConfiguresApplicationAudioSession = NO;
+  _audioCaptureSession.automaticallyConfiguresApplicationAudioSession = NO;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -725,7 +727,8 @@ static void selectBestFormatForRequestedFrameRate(
     if (_isFirstVideoSample) {
       [_videoWriter startSessionAtSourceTime:currentSampleTime];
       // fix sample times not being numeric when pause/resume happens before first sample buffer
-      // arrives https://github.com/flutter/flutter/issues/132014
+      // arrives
+      // https://github.com/flutter/flutter/issues/132014
       _lastVideoSampleTime = currentSampleTime;
       _lastAudioSampleTime = currentSampleTime;
       _isFirstVideoSample = NO;
@@ -1283,9 +1286,7 @@ static void selectBestFormatForRequestedFrameRate(
     return NO;
   }
 
-  if (_mediaSettings.enableAudio && !_isAudioSetup) {
-    [self setUpCaptureSessionForAudio];
-  }
+  [self setUpCaptureSessionForAudioIfNeeded];
 
   _videoWriter = [[AVAssetWriter alloc] initWithURL:outputURL
                                            fileType:AVFileTypeMPEG4
@@ -1365,9 +1366,42 @@ static void selectBestFormatForRequestedFrameRate(
   return YES;
 }
 
-- (void)setUpCaptureSessionForAudio {
+// This function, although slightly modified, is also in video_player_avfoundation.
+// Both need to do the same thing and run on the same thread (for example main thread).
+// Configure application wide audio session manually to prevent overwriting flag
+// MixWithOthers by capture session.
+// Only change category if it is considered an upgrade which means it can only enable
+// ability to play in silent mode or ability to record audio but never disables it,
+// that could affect other plugins which depend on this global state. Only change
+// category or options if there is change to prevent unnecessary lags and silence.
+static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
+                                        AVAudioSessionCategoryOptions options) {
+  NSSet *playCategories = [NSSet
+      setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
+  NSSet *recordCategories =
+      [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
+  NSSet *requiredCategories =
+      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  BOOL requiresPlay = [requiredCategories intersectsSet:playCategories];
+  BOOL requiresRecord = [requiredCategories intersectsSet:recordCategories];
+  if (requiresPlay && requiresRecord) {
+    requestedCategory = AVAudioSessionCategoryPlayAndRecord;
+  } else if (requiresPlay) {
+    requestedCategory = AVAudioSessionCategoryPlayback;
+  } else if (requiresRecord) {
+    requestedCategory = AVAudioSessionCategoryRecord;
+  }
+  options = AVAudioSession.sharedInstance.categoryOptions | options;
+  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
+      options == AVAudioSession.sharedInstance.categoryOptions) {
+    return;
+  }
+  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
+}
+
+- (void)setUpCaptureSessionForAudioIfNeeded {
   // Don't setup audio twice or we will lose the audio.
-  if (_isAudioSetup) {
+  if (!_mediaSettings.enableAudio || _isAudioSetup) {
     return;
   }
 
@@ -1382,6 +1416,20 @@ static void selectBestFormatForRequestedFrameRate(
   }
   // Setup the audio output.
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
+
+  dispatch_block_t block = ^{
+    // Set up options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other
+    // plugins like video_player.
+    upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
+                                AVAudioSessionCategoryOptionDefaultToSpeaker |
+                                    AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+                                    AVAudioSessionCategoryOptionAllowAirPlay);
+  };
+  if (!NSThread.isMainThread) {
+    dispatch_sync(dispatch_get_main_queue(), block);
+  } else {
+    block();
+  }
 
   if ([_audioCaptureSession canAddInput:audioInput]) {
     [_audioCaptureSession addInput:audioInput];
