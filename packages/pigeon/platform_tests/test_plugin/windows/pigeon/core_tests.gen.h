@@ -1060,8 +1060,18 @@ class HostIntegrationCoreApi {
       const AllTypes& everything,
       std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
   // Returns the passed object, to test async serialization and deserialization
-  // using `await`-style.
+  // using `await`-style and Swift does not throw an exception.
   virtual void EchoModernAsyncAllTypes(
+      const AllTypes& everything,
+      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+  // Returns the passed object, to test async serialization and deserialization
+  // using `await`-style and Swift can throw an exception.
+  virtual void EchoModernAsyncAllTypesAndNotThrow(
+      const AllTypes& everything,
+      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+  // Returns the passed object, to test async serialization and deserialization
+  // using `await`-style and throws an exception.
+  virtual void EchoModernAsyncAllTypesAndThrow(
       const AllTypes& everything,
       std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
   // Returns the passed object, to test serialization and deserialization.
@@ -1070,7 +1080,7 @@ class HostIntegrationCoreApi {
       std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
           result) = 0;
   // Returns the passed object, to test async serialization and deserialization
-  // using `await`-style.
+  // using `await`-style and Swift does not throw an exception.
   virtual void EchoModernAsyncNullableAllNullableTypes(
       const AllNullableTypes* everything,
       std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>

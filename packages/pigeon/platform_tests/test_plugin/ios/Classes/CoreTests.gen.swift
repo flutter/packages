@@ -912,13 +912,21 @@ protocol HostIntegrationCoreApi {
   func throwAsyncFlutterError(completion: @escaping (Result<Any?, Error>) -> Void)
   /// Returns the passed object, to test async serialization and deserialization.
   func echoAsync(_ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void)
-  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift does not throw an exception.
   func echoModernAsyncAllTypes(_ everything: AllTypes) async -> AllTypes
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift can throw an exception.
+  func echoModernAsyncAllTypesAndNotThrow(_ everything: AllTypes) async throws -> AllTypes
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and throws an exception.
+  func echoModernAsyncAllTypesAndThrow(_ everything: AllTypes) async throws -> AllTypes
   /// Returns the passed object, to test serialization and deserialization.
   func echoAsync(
     _ everything: AllNullableTypes?,
     completion: @escaping (Result<AllNullableTypes?, Error>) -> Void)
-  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift does not throw an exception.
   func echoModernAsyncNullableAllNullableTypes(_ everything: AllNullableTypes?) async
     -> AllNullableTypes?
   /// Returns the passed object, to test serialization and deserialization.
@@ -2686,7 +2694,8 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncAllTypesChannel.setMessageHandler(nil)
     }
-    /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+    /// Returns the passed object, to test async serialization and deserialization using `await`-style
+    /// and Swift does not throw an exception.
     let echoModernAsyncAllTypesChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypes\(channelSuffix)",
@@ -2702,6 +2711,50 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoModernAsyncAllTypesChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed object, to test async serialization and deserialization using `await`-style
+    /// and Swift can throw an exception.
+    let echoModernAsyncAllTypesAndNotThrowChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypesAndNotThrow\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoModernAsyncAllTypesAndNotThrowChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let everythingArg = args[0] as! AllTypes
+        Task { @MainActor in
+          do {
+            let result = try await api.echoModernAsyncAllTypesAndNotThrow(everythingArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoModernAsyncAllTypesAndNotThrowChannel.setMessageHandler(nil)
+    }
+    /// Returns the passed object, to test async serialization and deserialization using `await`-style
+    /// and throws an exception.
+    let echoModernAsyncAllTypesAndThrowChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncAllTypesAndThrow\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      echoModernAsyncAllTypesAndThrowChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let everythingArg = args[0] as! AllTypes
+        Task { @MainActor in
+          do {
+            let result = try await api.echoModernAsyncAllTypesAndThrow(everythingArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      echoModernAsyncAllTypesAndThrowChannel.setMessageHandler(nil)
     }
     /// Returns the passed object, to test serialization and deserialization.
     let echoAsyncNullableAllNullableTypesChannel = FlutterBasicMessageChannel(
@@ -2724,7 +2777,8 @@ class HostIntegrationCoreApiSetup {
     } else {
       echoAsyncNullableAllNullableTypesChannel.setMessageHandler(nil)
     }
-    /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+    /// Returns the passed object, to test async serialization and deserialization using `await`-style
+    /// and Swift does not throw an exception.
     let echoModernAsyncNullableAllNullableTypesChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoModernAsyncNullableAllNullableTypes\(channelSuffix)",

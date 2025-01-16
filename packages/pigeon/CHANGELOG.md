@@ -1,6 +1,6 @@
 ## 22.8.0
 
-* [swift, kotlin] Added support of modern asynchronous api for Swift (async) and Kotlin (suspend).
+* [swift, kotlin] Added support of swift concurrency and kotlin coroutines.
 
 ## 22.7.2
 

@@ -96,6 +96,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return _api.sendMessageModernAsync(message);
   }
+
+  Future<bool> sendMessageModernAsyncAndThrow(String messageText) {
+    final MessageData message = MessageData(
+      code: Code.two,
+      data: <String, String>{'header': 'this is a header'},
+      description: 'uri text',
+    );
+
+    return _api.sendMessageModernAsyncThrows(message);
+  }
   // #enddocregion main-dart
 
   // #docregion main-dart-event
@@ -185,6 +195,25 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 },
                 child: const Text('Send message modern async'),
+              ),
+            if (Platform.isAndroid || Platform.isIOS)
+              ElevatedButton(
+                onPressed: () async {
+                  final ScaffoldMessengerState scaffoldMessenger =
+                      ScaffoldMessenger.of(context);
+                  scaffoldMessenger.hideCurrentSnackBar();
+
+                  try {
+                    await sendMessageModernAsyncAndThrow('throw');
+                  } catch (e) {
+                    scaffoldMessenger.showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                      ),
+                    );
+                  }
+                },
+                child: const Text('Send message modern async and throw'),
               )
           ],
         ),

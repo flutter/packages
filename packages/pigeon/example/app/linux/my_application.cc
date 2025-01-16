@@ -73,11 +73,22 @@ static void handle_send_message_modern_async(
       response_handle, TRUE);
 }
 
+static void handle_send_message_modern_async_throws(
+    PigeonExamplePackageMessageData* message,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gpointer user_data) {
+  g_autoptr(FlValue) details = fl_value_new_string("details");
+  pigeon_example_package_example_host_api_respond_error_send_message_modern_async_throws(
+      response_handle, "code", "message", details);
+}
+
 static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
     .get_host_language = handle_get_host_language,
     .add = handle_add,
     .send_message = handle_send_message,
-    .send_message_modern_async = handle_send_message_modern_async};
+    .send_message_modern_async = handle_send_message_modern_async,
+    .send_message_modern_async_throws =
+        handle_send_message_modern_async_throws};
 // #enddocregion vtable
 
 // #docregion flutter-method-callback

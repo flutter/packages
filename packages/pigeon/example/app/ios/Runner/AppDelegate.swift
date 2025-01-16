@@ -31,6 +31,10 @@ private class PigeonApiImplementation: ExampleHostApi {
   func sendMessageModernAsync(message: MessageData) async -> Bool {
     return true
   }
+
+  func sendMessageModernAsyncThrows(message: MessageData) async throws -> Bool {
+    throw PigeonError(code: "code", message: "message", details: "details")
+  }
 }
 // #enddocregion swift-class
 

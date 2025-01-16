@@ -50,6 +50,10 @@ private class PigeonApiImplementation : ExampleHostApi {
 
     return true
   }
+
+  override suspend fun sendMessageModernAsyncThrows(message: MessageData): Boolean {
+    throw FlutterError("code", "message", "details")
+  }
 }
 // #enddocregion kotlin-class
 

@@ -3685,6 +3685,14 @@ typedef struct {
       CoreTestsPigeonTestAllTypes* everything,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
+  void (*echo_modern_async_all_types_and_not_throw)(
+      CoreTestsPigeonTestAllTypes* everything,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  void (*echo_modern_async_all_types_and_throw)(
+      CoreTestsPigeonTestAllTypes* everything,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
   void (*echo_async_nullable_all_nullable_types)(
       CoreTestsPigeonTestAllNullableTypes* everything,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
@@ -4517,6 +4525,56 @@ void core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_
  * Responds with an error to HostIntegrationCoreApi.echoModernAsyncAllTypes.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types_and_not_throw:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.echoModernAsyncAllTypesAndNotThrow.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types_and_not_throw(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types_and_not_throw:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.echoModernAsyncAllTypesAndNotThrow.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types_and_not_throw(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types_and_throw:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.echoModernAsyncAllTypesAndThrow.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types_and_throw(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types_and_throw:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.echoModernAsyncAllTypesAndThrow.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types_and_throw(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 

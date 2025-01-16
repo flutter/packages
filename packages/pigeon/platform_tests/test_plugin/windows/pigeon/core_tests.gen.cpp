@@ -5336,6 +5336,84 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
     BasicMessageChannel<> channel(
         binary_messenger,
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoModernAsyncAllTypesAndNotThrow" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_everything_arg = args.at(0);
+              if (encodable_everything_arg.IsNull()) {
+                reply(WrapError("everything_arg unexpectedly null."));
+                return;
+              }
+              const auto& everything_arg = std::any_cast<const AllTypes&>(
+                  std::get<CustomEncodableValue>(encodable_everything_arg));
+              api->EchoModernAsyncAllTypesAndNotThrow(
+                  everything_arg, [reply](ErrorOr<AllTypes>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        CustomEncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "echoModernAsyncAllTypesAndThrow" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              const auto& args = std::get<EncodableList>(message);
+              const auto& encodable_everything_arg = args.at(0);
+              if (encodable_everything_arg.IsNull()) {
+                reply(WrapError("everything_arg unexpectedly null."));
+                return;
+              }
+              const auto& everything_arg = std::any_cast<const AllTypes&>(
+                  std::get<CustomEncodableValue>(encodable_everything_arg));
+              api->EchoModernAsyncAllTypesAndThrow(
+                  everything_arg, [reply](ErrorOr<AllTypes>&& output) {
+                    if (output.has_error()) {
+                      reply(WrapError(output.error()));
+                      return;
+                    }
+                    EncodableList wrapped;
+                    wrapped.push_back(
+                        CustomEncodableValue(std::move(output).TakeValue()));
+                    reply(EncodableValue(std::move(wrapped)));
+                  });
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
         "echoAsyncNullableAllNullableTypes" +
             prepended_suffix,
         &GetCodec());

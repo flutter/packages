@@ -422,6 +422,18 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
   }
 
   @Override
+  public void echoModernAsyncAllTypesAndNotThrow(
+      @NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoModernAsyncAllTypesAndThrow(
+      @NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
+    result.error(new CoreTests.FlutterError("code", "message", "details"));
+  }
+
+  @Override
   public void echoAsyncNullableAllNullableTypes(
       @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result) {
     result.success(everything);

@@ -650,6 +650,25 @@ static void echo_modern_async_all_types(
       response_handle, everything);
 }
 
+static void echo_modern_async_all_types_and_not_throw(
+
+    CoreTestsPigeonTestAllTypes* everything,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types_and_not_throw(
+      response_handle, everything);
+}
+
+static void echo_modern_async_all_types_and_throw(
+
+    CoreTestsPigeonTestAllTypes* everything,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  g_autoptr(FlValue) details = fl_value_new_string("details");
+  core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types_and_throw(
+      response_handle, "code", "message", details);
+}
+
 static void echo_async_nullable_all_nullable_types(
 
     CoreTestsPigeonTestAllNullableTypes* everything,
@@ -3279,6 +3298,10 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .throw_async_flutter_error = throw_async_flutter_error,
     .echo_async_all_types = echo_async_all_types,
     .echo_modern_async_all_types = echo_modern_async_all_types,
+    .echo_modern_async_all_types_and_not_throw =
+        echo_modern_async_all_types_and_not_throw,
+    .echo_modern_async_all_types_and_throw =
+        echo_modern_async_all_types_and_throw,
     .echo_async_nullable_all_nullable_types =
         echo_async_nullable_all_nullable_types,
     .echo_modern_async_nullable_all_nullable_types =

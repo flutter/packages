@@ -723,11 +723,26 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsync(_:)')
   AllTypes echoAsyncAllTypes(AllTypes everything);
 
-  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift does not throw an exception.
   @Async(type: AsyncType.await(isSwiftThrows: false))
   @ObjCSelector('echoModernAsyncAllTypes:')
   @SwiftFunction('echoModernAsyncAllTypes(_:)')
   AllTypes echoModernAsyncAllTypes(AllTypes everything);
+
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift can throw an exception.
+  @Async(type: AsyncType.await(isSwiftThrows: true))
+  @ObjCSelector('echoModernAsyncAllTypesAndNotThrow:')
+  @SwiftFunction('echoModernAsyncAllTypesAndNotThrow(_:)')
+  AllTypes echoModernAsyncAllTypesAndNotThrow(AllTypes everything);
+
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and throws an exception.
+  @Async(type: AsyncType.await(isSwiftThrows: true))
+  @ObjCSelector('echoModernAsyncAllTypesAndThrow:')
+  @SwiftFunction('echoModernAsyncAllTypesAndThrow(_:)')
+  AllTypes echoModernAsyncAllTypesAndThrow(AllTypes everything);
 
   /// Returns the passed object, to test serialization and deserialization.
   @async
@@ -736,7 +751,8 @@ abstract class HostIntegrationCoreApi {
   AllNullableTypes? echoAsyncNullableAllNullableTypes(
       AllNullableTypes? everything);
 
-  /// Returns the passed object, to test async serialization and deserialization using `await`-style.
+  /// Returns the passed object, to test async serialization and deserialization using `await`-style
+  /// and Swift does not throw an exception.
   @Async(type: AsyncType.await(isSwiftThrows: false))
   @ObjCSelector('echoModernAsyncNullableAllNullableTypes:')
   @SwiftFunction('echoModernAsyncNullableAllNullableTypes(_:)')

@@ -183,6 +183,10 @@ typedef struct {
       PigeonExamplePackageMessageData* message,
       PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
       gpointer user_data);
+  void (*send_message_modern_async_throws)(
+      PigeonExamplePackageMessageData* message,
+      PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+      gpointer user_data);
 } PigeonExamplePackageExampleHostApiVTable;
 
 /**
@@ -258,6 +262,30 @@ void pigeon_example_package_example_host_api_respond_send_message_modern_async(
  * Responds with an error to ExampleHostApi.sendMessageModernAsync.
  */
 void pigeon_example_package_example_host_api_respond_error_send_message_modern_async(
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * pigeon_example_package_example_host_api_respond_send_message_modern_async_throws:
+ * @response_handle: a #PigeonExamplePackageExampleHostApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to ExampleHostApi.sendMessageModernAsyncThrows.
+ */
+void pigeon_example_package_example_host_api_respond_send_message_modern_async_throws(
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gboolean return_value);
+
+/**
+ * pigeon_example_package_example_host_api_respond_error_send_message_modern_async_throws:
+ * @response_handle: a #PigeonExamplePackageExampleHostApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to ExampleHostApi.sendMessageModernAsyncThrows.
+ */
+void pigeon_example_package_example_host_api_respond_error_send_message_modern_async_throws(
     PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 

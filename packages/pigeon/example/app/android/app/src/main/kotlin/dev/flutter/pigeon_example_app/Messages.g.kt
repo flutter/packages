@@ -126,6 +126,8 @@ interface ExampleHostApi {
 
   suspend fun sendMessageModernAsync(message: MessageData): Boolean
 
+  suspend fun sendMessageModernAsyncThrows(message: MessageData): Boolean
+
   companion object {
     /** The codec used by ExampleHostApi. */
     val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
@@ -220,6 +222,30 @@ interface ExampleHostApi {
               val wrapped: List<Any?> =
                   try {
                     listOf(api.sendMessageModernAsync(messageArg))
+                  } catch (exception: Throwable) {
+                    wrapError(exception)
+                  }
+              withContext(Dispatchers.Main) { reply.reply(wrapped) }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessageModernAsyncThrows$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val messageArg = args[0] as MessageData
+            coroutineScope.launch {
+              val wrapped: List<Any?> =
+                  try {
+                    listOf(api.sendMessageModernAsyncThrows(messageArg))
                   } catch (exception: Throwable) {
                     wrapError(exception)
                   }

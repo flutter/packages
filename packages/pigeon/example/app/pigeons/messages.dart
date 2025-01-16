@@ -58,6 +58,10 @@ abstract class ExampleHostApi {
   // In Swift, this method does not throw exceptions (`isSwiftThrows: false`).
   @Async(type: AsyncType.await(isSwiftThrows: false))
   bool sendMessageModernAsync(MessageData message);
+
+  // The same as sendMessageModernAsync, but throws an exception.
+  @Async(type: AsyncType.await(isSwiftThrows: true))
+  bool sendMessageModernAsyncThrows(MessageData message);
 }
 // #enddocregion host-definitions
 

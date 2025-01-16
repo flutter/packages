@@ -343,6 +343,14 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
+  override suspend fun echoModernAsyncAllTypesAndNotThrow(everything: AllTypes): AllTypes {
+    return everything
+  }
+
+  override suspend fun echoModernAsyncAllTypesAndThrow(everything: AllTypes): AllTypes {
+    throw FlutterError("code", "message", "details")
+  }
+
   override fun echoAsyncNullableAllNullableTypes(
       everything: AllNullableTypes?,
       callback: (Result<AllNullableTypes?>) -> Unit

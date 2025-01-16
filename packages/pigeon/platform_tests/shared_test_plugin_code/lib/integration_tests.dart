@@ -986,7 +986,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
 
     testWidgets(
-        'all datatypes async serialize and deserialize correctly using `await`-style.',
+        'all datatypes async serialize and deserialize correctly using `await`-style',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
@@ -994,6 +994,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.echoModernAsyncAllTypes(genericAllTypes);
 
       compareAllTypes(echoObject, genericAllTypes);
+    });
+
+    testWidgets(
+        'all datatypes async serialize and deserialize correctly using `await`-style and does not throw',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllTypes echoObject =
+          await api.echoModernAsyncAllTypesAndNotThrow(genericAllTypes);
+
+      compareAllTypes(echoObject, genericAllTypes);
+    });
+
+    testWidgets(
+        'all datatypes async serialize correctly using `await`-style and throws',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      await expectLater(
+        () => api.echoModernAsyncAllTypesAndThrow(genericAllTypes),
+        throwsA(isA<PlatformException>()),
+      );
     });
 
     testWidgets(
@@ -1008,7 +1030,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
 
     testWidgets(
-        'all nullable async datatypes serialize and deserialize correctly using `await`-style.',
+        'all nullable async datatypes serialize and deserialize correctly using `await`-style',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 
@@ -1030,7 +1052,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
 
     testWidgets(
-        'all null datatypes async serialize and deserialize correctly using `await`-style.',
+        'all null datatypes async serialize and deserialize correctly using `await`-style',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
 

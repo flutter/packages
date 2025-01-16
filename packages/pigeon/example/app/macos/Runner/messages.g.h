@@ -54,6 +54,9 @@ NSObject<FlutterMessageCodec> *PGNGetMessagesCodec(void);
 - (void)sendMessageModernAsyncMessage:(PGNMessageData *)message
                            completion:
                                (void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
+- (void)sendMessageModernAsyncThrowsMessage:(PGNMessageData *)message
+                                 completion:(void (^)(NSNumber *_Nullable,
+                                                      FlutterError *_Nullable))completion;
 @end
 
 extern void SetUpPGNExampleHostApi(id<FlutterBinaryMessenger> binaryMessenger,

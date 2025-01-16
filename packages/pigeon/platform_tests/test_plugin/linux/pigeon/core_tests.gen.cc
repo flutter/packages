@@ -8440,6 +8440,158 @@ core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_res
 }
 
 G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_NOT_THROW_RESPONSE,
+    GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_NOT_THROW_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_new(
+    CoreTestsPigeonTestAllTypes* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_NOT_THROW_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value,
+                       fl_value_new_custom_object(132, G_OBJECT(return_value)));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_NOT_THROW_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_THROW_RESPONSE,
+    GObject)
+
+struct
+    _CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response,
+    G_TYPE_OBJECT)
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_dispose(
+    GObject* object) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse*
+      self =
+          CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_THROW_RESPONSE(
+              object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse*
+        self) {}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_class_init(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_dispose;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_new(
+    CoreTestsPigeonTestAllTypes* return_value) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_THROW_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value,
+                       fl_value_new_custom_object(132, G_OBJECT(return_value)));
+  return self;
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse*
+      self = CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API_ECHO_MODERN_ASYNC_ALL_TYPES_AND_THROW_RESPONSE(
+          g_object_new(
+              core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
+G_DECLARE_FINAL_TYPE(
     CoreTestsPigeonTestHostIntegrationCoreApiEchoAsyncNullableAllNullableTypesResponse,
     core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullable_types_response,
     CORE_TESTS_PIGEON_TEST,
@@ -16099,6 +16251,50 @@ core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_cb(
 }
 
 static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_modern_async_all_types_and_not_throw == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAllTypes* everything = CORE_TESTS_PIGEON_TEST_ALL_TYPES(
+      fl_value_get_custom_value_object(value0));
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->echo_modern_async_all_types_and_not_throw(everything, handle,
+                                                          self->user_data);
+}
+
+static void
+core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CoreTestsPigeonTestHostIntegrationCoreApi* self =
+      CORE_TESTS_PIGEON_TEST_HOST_INTEGRATION_CORE_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->echo_modern_async_all_types_and_throw == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  CoreTestsPigeonTestAllTypes* everything = CORE_TESTS_PIGEON_TEST_ALL_TYPES(
+      fl_value_get_custom_value_object(value0));
+  g_autoptr(CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle) handle =
+      core_tests_pigeon_test_host_integration_core_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->echo_modern_async_all_types_and_throw(everything, handle,
+                                                      self->user_data);
+}
+
+static void
 core_tests_pigeon_test_host_integration_core_api_echo_async_nullable_all_nullable_types_cb(
     FlBasicMessageChannel* channel, FlValue* message_,
     FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -18621,6 +18817,34 @@ void core_tests_pigeon_test_host_integration_core_api_set_method_handlers(
       echo_modern_async_all_types_channel,
       core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_modern_async_all_types_and_not_throw_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoModernAsyncAllTypesAndNotThrow%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      echo_modern_async_all_types_and_not_throw_channel =
+          fl_basic_message_channel_new(
+              messenger, echo_modern_async_all_types_and_not_throw_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_modern_async_all_types_and_not_throw_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_cb,
+      g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* echo_modern_async_all_types_and_throw_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoModernAsyncAllTypesAndThrow%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      echo_modern_async_all_types_and_throw_channel =
+          fl_basic_message_channel_new(
+              messenger, echo_modern_async_all_types_and_throw_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_modern_async_all_types_and_throw_channel,
+      core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_cb,
+      g_object_ref(api_data), g_object_unref);
   g_autofree gchar* echo_async_nullable_all_nullable_types_channel_name =
       g_strdup_printf(
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -20356,6 +20580,31 @@ void core_tests_pigeon_test_host_integration_core_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       echo_modern_async_all_types_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* echo_modern_async_all_types_and_not_throw_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoModernAsyncAllTypesAndNotThrow%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      echo_modern_async_all_types_and_not_throw_channel =
+          fl_basic_message_channel_new(
+              messenger, echo_modern_async_all_types_and_not_throw_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_modern_async_all_types_and_not_throw_channel, nullptr, nullptr,
+      nullptr);
+  g_autofree gchar* echo_modern_async_all_types_and_throw_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+          "echoModernAsyncAllTypesAndThrow%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel)
+      echo_modern_async_all_types_and_throw_channel =
+          fl_basic_message_channel_new(
+              messenger, echo_modern_async_all_types_and_throw_channel_name,
+              FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      echo_modern_async_all_types_and_throw_channel, nullptr, nullptr, nullptr);
   g_autofree gchar* echo_async_nullable_all_nullable_types_channel_name =
       g_strdup_printf(
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
@@ -21861,6 +22110,74 @@ void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
               "echoModernAsyncAllTypes", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types_and_not_throw(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllTypes* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoModernAsyncAllTypesAndNotThrow", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types_and_not_throw(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndNotThrowResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_not_throw_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoModernAsyncAllTypesAndNotThrow", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_modern_async_all_types_and_throw(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllTypes* return_value) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoModernAsyncAllTypesAndThrow", error->message);
+  }
+}
+
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_modern_async_all_types_and_throw(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      CoreTestsPigeonTestHostIntegrationCoreApiEchoModernAsyncAllTypesAndThrowResponse)
+      response =
+          core_tests_pigeon_test_host_integration_core_api_echo_modern_async_all_types_and_throw_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "HostIntegrationCoreApi",
+              "echoModernAsyncAllTypesAndThrow", error->message);
   }
 }
 

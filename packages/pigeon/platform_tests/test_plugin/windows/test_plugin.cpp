@@ -509,6 +509,18 @@ void TestPlugin::EchoModernAsyncAllTypes(
   result(everything);
 }
 
+void TestPlugin::EchoModernAsyncAllTypesAndNotThrow(
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) {
+  result(everything);
+}
+
+void TestPlugin::EchoModernAsyncAllTypesAndThrow(
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) {
+  result(FlutterError("code", "message", EncodableValue("details")));
+}
+
 void TestPlugin::EchoAsyncInt(
     int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) {
   result(an_int);

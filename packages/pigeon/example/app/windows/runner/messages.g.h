@@ -127,6 +127,9 @@ class ExampleHostApi {
   virtual void SendMessageModernAsync(
       const MessageData& message,
       std::function<void(ErrorOr<bool> reply)> result) = 0;
+  virtual void SendMessageModernAsyncThrows(
+      const MessageData& message,
+      std::function<void(ErrorOr<bool> reply)> result) = 0;
 
   // The codec used by ExampleHostApi.
   static const flutter::StandardMessageCodec& GetCodec();

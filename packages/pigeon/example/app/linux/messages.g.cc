@@ -534,6 +534,78 @@ pigeon_example_package_example_host_api_send_message_modern_async_response_new_e
   return self;
 }
 
+G_DECLARE_FINAL_TYPE(
+    PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse,
+    pigeon_example_package_example_host_api_send_message_modern_async_throws_response,
+    PIGEON_EXAMPLE_PACKAGE,
+    EXAMPLE_HOST_API_SEND_MESSAGE_MODERN_ASYNC_THROWS_RESPONSE, GObject)
+
+struct _PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(
+    PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse,
+    pigeon_example_package_example_host_api_send_message_modern_async_throws_response,
+    G_TYPE_OBJECT)
+
+static void
+pigeon_example_package_example_host_api_send_message_modern_async_throws_response_dispose(
+    GObject* object) {
+  PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API_SEND_MESSAGE_MODERN_ASYNC_THROWS_RESPONSE(
+          object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(
+      pigeon_example_package_example_host_api_send_message_modern_async_throws_response_parent_class)
+      ->dispose(object);
+}
+
+static void
+pigeon_example_package_example_host_api_send_message_modern_async_throws_response_init(
+    PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse*
+        self) {}
+
+static void
+pigeon_example_package_example_host_api_send_message_modern_async_throws_response_class_init(
+    PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponseClass*
+        klass) {
+  G_OBJECT_CLASS(klass)->dispose =
+      pigeon_example_package_example_host_api_send_message_modern_async_throws_response_dispose;
+}
+
+static PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse*
+pigeon_example_package_example_host_api_send_message_modern_async_throws_response_new(
+    gboolean return_value) {
+  PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API_SEND_MESSAGE_MODERN_ASYNC_THROWS_RESPONSE(
+          g_object_new(
+              pigeon_example_package_example_host_api_send_message_modern_async_throws_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_bool(return_value));
+  return self;
+}
+
+static PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse*
+pigeon_example_package_example_host_api_send_message_modern_async_throws_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details) {
+  PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API_SEND_MESSAGE_MODERN_ASYNC_THROWS_RESPONSE(
+          g_object_new(
+              pigeon_example_package_example_host_api_send_message_modern_async_throws_response_get_type(),
+              nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value,
+                       fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details)
+                                                       : fl_value_new_null());
+  return self;
+}
+
 struct _PigeonExamplePackageExampleHostApi {
   GObject parent_instance;
 
@@ -675,6 +747,29 @@ pigeon_example_package_example_host_api_send_message_modern_async_cb(
   self->vtable->send_message_modern_async(message, handle, self->user_data);
 }
 
+static void
+pigeon_example_package_example_host_api_send_message_modern_async_throws_cb(
+    FlBasicMessageChannel* channel, FlValue* message_,
+    FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  PigeonExamplePackageExampleHostApi* self =
+      PIGEON_EXAMPLE_PACKAGE_EXAMPLE_HOST_API(user_data);
+
+  if (self->vtable == nullptr ||
+      self->vtable->send_message_modern_async_throws == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  PigeonExamplePackageMessageData* message =
+      PIGEON_EXAMPLE_PACKAGE_MESSAGE_DATA(
+          fl_value_get_custom_value_object(value0));
+  g_autoptr(PigeonExamplePackageExampleHostApiResponseHandle) handle =
+      pigeon_example_package_example_host_api_response_handle_new(
+          channel, response_handle);
+  self->vtable->send_message_modern_async_throws(message, handle,
+                                                 self->user_data);
+}
+
 void pigeon_example_package_example_host_api_set_method_handlers(
     FlBinaryMessenger* messenger, const gchar* suffix,
     const PigeonExamplePackageExampleHostApiVTable* vtable, gpointer user_data,
@@ -728,6 +823,19 @@ void pigeon_example_package_example_host_api_set_method_handlers(
       send_message_modern_async_channel,
       pigeon_example_package_example_host_api_send_message_modern_async_cb,
       g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* send_message_modern_async_throws_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
+          "sendMessageModernAsyncThrows%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel) send_message_modern_async_throws_channel =
+      fl_basic_message_channel_new(
+          messenger, send_message_modern_async_throws_channel_name,
+          FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      send_message_modern_async_throws_channel,
+      pigeon_example_package_example_host_api_send_message_modern_async_throws_cb,
+      g_object_ref(api_data), g_object_unref);
 }
 
 void pigeon_example_package_example_host_api_clear_method_handlers(
@@ -771,6 +879,17 @@ void pigeon_example_package_example_host_api_clear_method_handlers(
                                    FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(
       send_message_modern_async_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* send_message_modern_async_throws_channel_name =
+      g_strdup_printf(
+          "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi."
+          "sendMessageModernAsyncThrows%s",
+          dot_suffix);
+  g_autoptr(FlBasicMessageChannel) send_message_modern_async_throws_channel =
+      fl_basic_message_channel_new(
+          messenger, send_message_modern_async_throws_channel_name,
+          FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(
+      send_message_modern_async_throws_channel, nullptr, nullptr, nullptr);
 }
 
 void pigeon_example_package_example_host_api_respond_send_message(
@@ -832,6 +951,40 @@ void pigeon_example_package_example_host_api_respond_error_send_message_modern_a
                                         response->value, &error)) {
     g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
               "sendMessageModernAsync", error->message);
+  }
+}
+
+void pigeon_example_package_example_host_api_respond_send_message_modern_async_throws(
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gboolean return_value) {
+  g_autoptr(
+      PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse)
+      response =
+          pigeon_example_package_example_host_api_send_message_modern_async_throws_response_new(
+              return_value);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
+              "sendMessageModernAsyncThrows", error->message);
+  }
+}
+
+void pigeon_example_package_example_host_api_respond_error_send_message_modern_async_throws(
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(
+      PigeonExamplePackageExampleHostApiSendMessageModernAsyncThrowsResponse)
+      response =
+          pigeon_example_package_example_host_api_send_message_modern_async_throws_response_new_error(
+              code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel,
+                                        response_handle->response_handle,
+                                        response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "ExampleHostApi",
+              "sendMessageModernAsyncThrows", error->message);
   }
 }
 

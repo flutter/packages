@@ -82,6 +82,10 @@ abstract class ExampleHostApi {
   // In Swift, this method does not throw exceptions (`isSwiftThrows: false`).
   @Async(type: AsyncType.await(isSwiftThrows: false))
   bool sendMessageModernAsync(MessageData message);
+
+  // The same as sendMessageModernAsync, but throws an exception.
+  @Async(type: AsyncType.await(isSwiftThrows: true))
+  bool sendMessageModernAsyncThrows(MessageData message);
 }
 ```
 
@@ -129,6 +133,16 @@ Future<bool> sendMessageModernAsync(String messageText) {
 
   return _api.sendMessageModernAsync(message);
 }
+
+Future<bool> sendMessageModernAsyncAndThrow(String messageText) {
+  final MessageData message = MessageData(
+    code: Code.two,
+    data: <String, String>{'header': 'this is a header'},
+    description: 'uri text',
+  );
+
+  return _api.sendMessageModernAsyncThrows(message);
+}
 ```
 
 ### Swift
@@ -162,6 +176,10 @@ private class PigeonApiImplementation: ExampleHostApi {
   func sendMessageModernAsync(message: MessageData) async -> Bool {
     return true
   }
+
+  func sendMessageModernAsyncThrows(message: MessageData) async throws -> Bool {
+    throw PigeonError(code: "code", message: "message", details: "details")
+  }
 }
 ```
 
@@ -194,6 +212,10 @@ private class PigeonApiImplementation : ExampleHostApi {
     }
 
     return true
+  }
+
+  override suspend fun sendMessageModernAsyncThrows(message: MessageData): Boolean {
+    throw FlutterError("code", "message", "details")
   }
 }
 ```
@@ -229,6 +251,12 @@ class PigeonApiImplementation : public ExampleHostApi {
       return;
     }
     result(true);
+  }
+
+  void SendMessageModernAsyncThrows(
+      const MessageData& message,
+      std::function<void(ErrorOr<bool> reply)> result) {
+    result(FlutterError("code", "message", "details"));
   }
 };
 ```
@@ -287,11 +315,22 @@ static void handle_send_message_modern_async(
       response_handle, TRUE);
 }
 
+static void handle_send_message_modern_async_throws(
+    PigeonExamplePackageMessageData* message,
+    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    gpointer user_data) {
+  g_autoptr(FlValue) details = fl_value_new_string("details");
+  pigeon_example_package_example_host_api_respond_error_send_message_modern_async_throws(
+      response_handle, "code", "message", details);
+}
+
 static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
     .get_host_language = handle_get_host_language,
     .add = handle_add,
     .send_message = handle_send_message,
-    .send_message_modern_async = handle_send_message_modern_async};
+    .send_message_modern_async = handle_send_message_modern_async,
+    .send_message_modern_async_throws =
+        handle_send_message_modern_async_throws};
 ```
 
 ## FlutterApi Example
