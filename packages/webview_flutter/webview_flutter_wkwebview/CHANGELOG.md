@@ -1,3 +1,7 @@
+## 3.18.0
+
+* Updates internal API wrapper to use ProxyApis.
+
 ## 3.17.0
 
 * Adds a change listener for the `canGoBack` property. See
