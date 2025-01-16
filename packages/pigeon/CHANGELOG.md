@@ -1,3 +1,7 @@
+## 22.7.3
+
+* Adds support for empty data classes.
+
 ## 22.7.2
 
 * Updates README to discuss best practices for using Pigeon-generated code.

@@ -1807,4 +1807,28 @@ name: foobar
     expect(code, contains('buffer.putUint8(4);'));
     expect(code, contains('buffer.putInt64(value);'));
   });
+
+  // https://github.com/flutter/flutter/issues/160501
+  test('gen one empty class', () {
+    final Class classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const DartGenerator generator = DartGenerator();
+    generator.generate(
+      const DartOptions(),
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('Object encode()'));
+    expect(code, contains('static Foobar decode(Object result)'));
+  });
 }

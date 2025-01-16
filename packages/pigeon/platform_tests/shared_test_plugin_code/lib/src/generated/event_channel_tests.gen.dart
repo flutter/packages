@@ -352,6 +352,17 @@ class ClassEvent extends PlatformEvent {
   }
 }
 
+class EmptyEvent extends PlatformEvent {
+  Object encode() {
+    return <Object?>[];
+  }
+
+  static EmptyEvent decode(Object result) {
+    result as List<Object?>;
+    return EmptyEvent();
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -389,6 +400,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is ClassEvent) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
+    } else if (value is EmptyEvent) {
+      buffer.putUint8(139);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -419,6 +433,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return EnumEvent.decode(readValue(buffer)!);
       case 138:
         return ClassEvent.decode(readValue(buffer)!);
+      case 139:
+        return EmptyEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }

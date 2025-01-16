@@ -1251,6 +1251,7 @@ class SendEvents: StreamEventsStreamHandler {
       ObjectsEvent(value: true),
       EnumEvent(value: EventEnum.fortyTwo),
       ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
+      EmptyEvent(),
     ]
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {

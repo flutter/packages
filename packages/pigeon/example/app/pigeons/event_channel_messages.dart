@@ -33,6 +33,9 @@ class StringEvent extends PlatformEvent {
   StringEvent(this.data);
   String data;
 }
+
+class EmptyEvent extends PlatformEvent {}
+
 // #enddocregion sealed-definitions
 
 // #docregion event-definitions
