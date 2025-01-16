@@ -40,6 +40,11 @@ class NetworkImageWithRetry extends ImageProvider<NetworkImageWithRetry> {
   /// The HTTP client used to download images.
   static final io.HttpClient _client = io.HttpClient();
 
+  /// Closes the static HTTP client
+  static void dispose() {
+    _client.close();
+  }
+
   /// The URL from which the image will be fetched.
   final String url;
 
@@ -342,6 +347,7 @@ class FetchFailure implements Exception {
 /// An indefinitely growing builder of a [Uint8List].
 class _Uint8ListBuilder {
   static const int _kInitialSize = 100000; // 100KB-ish
+  static const int _kMaxSize = 50 * 1024 * 1024; // 50MB limit
 
   int _usedLength = 0;
   Uint8List _buffer = Uint8List(_kInitialSize);
@@ -357,9 +363,13 @@ class _Uint8ListBuilder {
   void _ensureCanAdd(int byteCount) {
     final int totalSpaceNeeded = _usedLength + byteCount;
 
+    if (totalSpaceNeeded > _kMaxSize) {
+      throw Exception('Response too large: $totalSpaceNeeded bytes');
+    }
+
     int newLength = _buffer.length;
     while (totalSpaceNeeded > newLength) {
-      newLength *= 2;
+      newLength = math.min(_kMaxSize, newLength * 2);
     }
 
     if (newLength != _buffer.length) {
