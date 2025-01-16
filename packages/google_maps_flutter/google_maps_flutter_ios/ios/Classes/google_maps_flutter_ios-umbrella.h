@@ -3,7 +3,10 @@
 // found in the LICENSE file.
 
 #import <Foundation/Foundation.h>
+#import <google_maps_flutter_ios/FGMGroundOverlayController.h>
+#import <google_maps_flutter_ios/FGMGroundOverlayController_Test.h>
 #import <google_maps_flutter_ios/FGMMarkerUserData.h>
+#import <google_maps_flutter_ios/FGMUtils.h>
 #import <google_maps_flutter_ios/FLTGoogleMapHeatmapController.h>
 #import <google_maps_flutter_ios/FLTGoogleMapJSONConversions.h>
 #import <google_maps_flutter_ios/FLTGoogleMapTileOverlayController.h>

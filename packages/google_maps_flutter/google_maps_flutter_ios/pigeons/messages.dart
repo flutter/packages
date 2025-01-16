@@ -357,6 +357,43 @@ class PlatformCameraTargetBounds {
   final PlatformLatLngBounds? bounds;
 }
 
+/// Pair of double values, such as for an offset or size.
+class PlatformDoublePair {
+  PlatformDoublePair(this.x, this.y);
+
+  final double x;
+  final double y;
+}
+
+/// Pigeon equivalent of the GroundOverlay class.
+class PlatformGroundOverlay {
+  PlatformGroundOverlay({
+    required this.groundOverlayId,
+    required this.image,
+    required this.position,
+    required this.bounds,
+    required this.anchor,
+    required this.transparency,
+    required this.bearing,
+    required this.zIndex,
+    required this.visible,
+    required this.clickable,
+    required this.zoomLevel,
+  });
+
+  final String groundOverlayId;
+  final PlatformBitmap image;
+  final PlatformLatLng? position;
+  final PlatformLatLngBounds? bounds;
+  final PlatformDoublePair? anchor;
+  final double transparency;
+  final double bearing;
+  final double zIndex;
+  final bool visible;
+  final bool clickable;
+  final double? zoomLevel;
+}
+
 /// Information passed to the platform view creation.
 class PlatformMapViewCreationParams {
   PlatformMapViewCreationParams({
@@ -369,6 +406,7 @@ class PlatformMapViewCreationParams {
     required this.initialHeatmaps,
     required this.initialTileOverlays,
     required this.initialClusterManagers,
+    required this.initialGroundOverlays,
   });
 
   final PlatformCameraPosition initialCameraPosition;
@@ -380,6 +418,7 @@ class PlatformMapViewCreationParams {
   final List<PlatformHeatmap> initialHeatmaps;
   final List<PlatformTileOverlay> initialTileOverlays;
   final List<PlatformClusterManager> initialClusterManagers;
+  final List<PlatformGroundOverlay> initialGroundOverlays;
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -596,6 +635,11 @@ abstract class MapsApi {
   void updateTileOverlays(List<PlatformTileOverlay> toAdd,
       List<PlatformTileOverlay> toChange, List<String> idsToRemove);
 
+  /// Updates the set of ground overlays on the map.
+  @ObjCSelector('updateGroundOverlaysByAdding:changing:removing:')
+  void updateGroundOverlays(List<PlatformGroundOverlay> toAdd,
+      List<PlatformGroundOverlay> toChange, List<String> idsToRemove);
+
   /// Gets the screen coordinate for the given map location.
   @ObjCSelector('screenCoordinatesForLatLng:')
   PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
@@ -717,6 +761,10 @@ abstract class MapsCallbackApi {
   @ObjCSelector('didTapPolylineWithIdentifier:')
   void onPolylineTap(String polylineId);
 
+  /// Called when a ground overlay is tapped.
+  @ObjCSelector('didTapGroundOverlayWithIdentifier:')
+  void onGroundOverlayTap(String groundOverlayId);
+
   /// Called to get data for a map tile.
   @async
   @ObjCSelector('tileWithOverlayIdentifier:location:zoom:')
@@ -746,6 +794,8 @@ abstract class MapsInspectorApi {
   bool isTrafficEnabled();
   @ObjCSelector('tileOverlayWithIdentifier:')
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
+  @ObjCSelector('groundOverlayWithIdentifier:')
+  PlatformGroundOverlay? getGroundOverlayInfo(String groundOverlayId);
   @ObjCSelector('heatmapWithIdentifier:')
   PlatformHeatmap? getHeatmapInfo(String heatmapId);
   @ObjCSelector('zoomRange')
