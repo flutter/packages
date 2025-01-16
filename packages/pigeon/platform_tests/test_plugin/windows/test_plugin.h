@@ -217,6 +217,18 @@ class TestPlugin : public flutter::Plugin,
           void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
                    reply)>
           result) override;
+  void EchoModernAsyncAllTypesAndNotThrow(
+      const core_tests_pigeontest::AllTypes& everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
+                   reply)>
+          result) override;
+  void EchoModernAsyncAllTypesAndThrow(
+      const core_tests_pigeontest::AllTypes& everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
+                   reply)>
+          result) override;
   void EchoAsyncNullableAllNullableTypes(
       const core_tests_pigeontest::AllNullableTypes* everything,
       std::function<void(core_tests_pigeontest::ErrorOr<
