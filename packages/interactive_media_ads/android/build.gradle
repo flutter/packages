@@ -2,7 +2,7 @@ group 'dev.flutter.packages.interactive_media_ads'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.9.10'
+    ext.kotlin_version = '2.1.0'
     repositories {
         google()
         mavenCentral()

@@ -1,3 +1,7 @@
+## 4.3.1
+
+* Bumps gradle-plugin to 2.1.0.
+
 ## 4.3.0
 
 * Adds support for disabling content URL access within WebView and disabling the Geolocation API.

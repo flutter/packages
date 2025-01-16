@@ -1,3 +1,7 @@
+## 0.2.3+5
+
+* Bumps gradle-plugin to 2.1.0.
+
 ## 0.2.3+4
 
 * Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.
