@@ -6175,8 +6175,12 @@ public class Messages {
     PlatformLatLngBounds getVisibleRegion();
     /** Moves the camera according to [cameraUpdate] immediately, with no animation. */
     void moveCamera(@NonNull PlatformCameraUpdate cameraUpdate);
-    /** Moves the camera according to [cameraUpdate], animating the update. */
-    void animateCamera(@NonNull PlatformCameraUpdate cameraUpdate);
+    /**
+     * Moves the camera according to [cameraUpdate], animating the update using a duration in
+     * milliseconds if provided.
+     */
+    void animateCamera(
+        @NonNull PlatformCameraUpdate cameraUpdate, @Nullable Long durationMilliseconds);
     /** Gets the current map zoom level. */
     @NonNull
     Double getZoomLevel();
@@ -6577,8 +6581,9 @@ public class Messages {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
                 PlatformCameraUpdate cameraUpdateArg = (PlatformCameraUpdate) args.get(0);
+                Long durationMillisecondsArg = (Long) args.get(1);
                 try {
-                  api.animateCamera(cameraUpdateArg);
+                  api.animateCamera(cameraUpdateArg, durationMillisecondsArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -7363,6 +7368,9 @@ public class Messages {
     @NonNull
     List<PlatformCluster> getClusters(@NonNull String clusterManagerId);
 
+    @NonNull
+    PlatformCameraPosition getCameraPosition();
+
     /** The codec used by MapsInspectorApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
@@ -7695,6 +7703,29 @@ public class Messages {
                 String clusterManagerIdArg = (String) args.get(0);
                 try {
                   List<PlatformCluster> output = api.getClusters(clusterManagerIdArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getCameraPosition"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  PlatformCameraPosition output = api.getCameraPosition();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

@@ -367,6 +367,12 @@ class GoogleMapController {
         _configurationAndStyleToGmapsOptions(_lastMapConfiguration, styles));
   }
 
+  /// Convert current map camera position to [CameraPosition].
+  CameraPosition getCameraPosition() {
+    assert(_googleMap != null, 'Cannot get camera position from a null map.');
+    return _gmViewportToCameraPosition(_googleMap!);
+  }
+
   /// A getter for the current styles. Only for tests.
   @visibleForTesting
   List<gmaps.MapTypeStyle> get styles => _lastStyles;

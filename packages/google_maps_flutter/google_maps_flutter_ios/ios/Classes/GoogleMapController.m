@@ -85,6 +85,8 @@
 @property(nonatomic, copy) NSObject<FlutterBinaryMessenger> *messenger;
 /// The suffix this instance was registered under with Pigeon.
 @property(nonatomic, copy) NSString *pigeonSuffix;
+/// The transaction wrapper to use for camera animations.
+@property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
 @end
 
 #pragma mark -
@@ -525,6 +527,7 @@
     _controller = controller;
     _messenger = messenger;
     _pigeonSuffix = suffix;
+    _transactionWrapper = [[FGMCATransactionWrapper alloc] init];
   }
   return self;
 }
@@ -656,6 +659,7 @@
 }
 
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+                       duration:(nullable NSNumber *)durationMilliseconds
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate);
   if (!update) {
@@ -664,7 +668,11 @@
                                  details:nil];
     return;
   }
+  FGMCATransactionWrapper *transaction = durationMilliseconds ? self.transactionWrapper : nil;
+  [transaction begin];
+  [transaction setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
   [self.controller.mapView animateWithCameraUpdate:update];
+  [transaction commit];
 }
 
 - (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
@@ -820,6 +828,11 @@
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return [FGMPlatformZoomRange makeWithMin:@(self.controller.mapView.minZoom)
                                        max:@(self.controller.mapView.maxZoom)];
+}
+
+- (nullable FGMPlatformCameraPosition *)cameraPosition:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return FGMGetPigeonCameraPositionForPosition(self.controller.mapView.camera);
 }
 
 @end

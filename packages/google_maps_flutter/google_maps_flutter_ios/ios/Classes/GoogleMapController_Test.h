@@ -4,8 +4,16 @@
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
+#import "FGMCATransactionWrapper.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+
+/// Transaction wrapper for CATransaction to allow mocking in tests.
+@property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
+
+@end
 
 @interface FLTGoogleMapController (Test)
 
@@ -19,6 +27,9 @@ NS_ASSUME_NONNULL_BEGIN
                  viewIdentifier:(int64_t)viewId
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+
+// The main Pigeon API implementation.
+@property(nonatomic, strong, readonly) FGMMapCallHandler *callHandler;
 
 @end
 
