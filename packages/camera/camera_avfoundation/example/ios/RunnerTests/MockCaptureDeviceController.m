@@ -1,3 +1,4 @@
+
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -13,7 +14,6 @@
 @implementation MockCaptureDeviceController
 
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
-  _activeFormat = format;
   if (self.setActiveFormatStub) {
     self.setActiveFormatStub(format);
   }
@@ -24,7 +24,6 @@
 }
 
 - (void)setTorchMode:(AVCaptureTorchMode)mode {
-  _torchMode = mode;
   if (self.setTorchModeStub) {
     self.setTorchModeStub(mode);
   }
@@ -38,21 +37,18 @@
 }
 
 - (void)setFocusMode:(AVCaptureFocusMode)mode {
-  _focusMode = mode;
   if (self.setFocusModeStub) {
     self.setFocusModeStub(mode);
   }
 }
 
 - (void)setFocusPointOfInterest:(CGPoint)point {
-  _focusPointOfInterest = point;
   if (self.setFocusPointOfInterestStub) {
     self.setFocusPointOfInterestStub(point);
   }
 }
 
 - (void)setExposureMode:(AVCaptureExposureMode)mode {
-  _exposureMode = mode;
   if (self.setExposureModeStub) {
     self.setExposureModeStub(mode);
   }
@@ -68,13 +64,10 @@
 - (void)setExposureTargetBias:(float)bias completionHandler:(void (^)(CMTime))handler {
   if (self.setExposureTargetBiasStub) {
     self.setExposureTargetBiasStub(bias, handler);
-  } else if (handler) {
-    handler(kCMTimeZero);
   }
 }
 
 - (void)setVideoZoomFactor:(float)factor {
-  _videoZoomFactor = factor;
   if (self.setVideoZoomFactorStub) {
     self.setVideoZoomFactorStub(factor);
   }
@@ -101,14 +94,12 @@
 }
 
 - (void)setActiveVideoMinFrameDuration:(CMTime)duration {
-  _activeVideoMinFrameDuration = duration;
   if (self.setActiveVideoMinFrameDurationStub) {
     self.setActiveVideoMinFrameDurationStub(duration);
   }
 }
 
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration {
-  _activeVideoMaxFrameDuration = duration;
   if (self.setActiveVideoMaxFrameDurationStub) {
     self.setActiveVideoMaxFrameDurationStub(duration);
   }

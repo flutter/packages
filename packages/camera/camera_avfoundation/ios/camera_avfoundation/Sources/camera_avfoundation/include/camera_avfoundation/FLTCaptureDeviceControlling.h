@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// A default implementation of FLTCaptureDeviceControlling protocol which
-///  wraps an instance of AVCaptureDevice.
+/// wraps an instance of AVCaptureDevice.
 @interface FLTDefaultCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
 
 /// Initializes the controller with the given device.
