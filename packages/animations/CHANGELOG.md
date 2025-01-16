@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
+## 2.0.12
+
+* Fixes `renderflex overflowed` on `example`.
+
 ## 2.0.11
 
 * Fixes new lint warnings.
