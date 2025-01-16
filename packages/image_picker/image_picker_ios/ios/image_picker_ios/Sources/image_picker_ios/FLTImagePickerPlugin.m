@@ -22,7 +22,6 @@
 - (instancetype)initWithResult:(nonnull FlutterResultAdapter)result {
   if (self = [super init]) {
     _result = [result copy];
-      
   }
   return self;
 }
