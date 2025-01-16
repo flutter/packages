@@ -2,12 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages_async.g.dart';
+import 'strings.dart';
 
 const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
 
@@ -130,7 +133,22 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
-    return api.setStringList(key, value, pigeonOptions);
+    final String stringValue = '$jsonListPrefix${jsonEncode(value)}';
+    return api.setString(key, stringValue, pigeonOptions);
+  }
+
+  /// Adds a `List<String>` to preferences using platform encoding to test
+  /// moving from platform encoding to JSON encoding.
+  @visibleForTesting
+  Future<void> setStringListPlatformEncodedForTesting(
+    String key,
+    List<String> value,
+    SharedPreferencesOptions options,
+  ) async {
+    final SharedPreferencesPigeonOptions pigeonOptions =
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
+    return api.setDeprecatedStringList(key, value, pigeonOptions);
   }
 
   @override
@@ -189,10 +207,26 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         _convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
-    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
-    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
-    return _convertKnownExceptions<List<String>>(() async =>
-        (await api.getStringList(key, pigeonOptions))?.cast<String>().toList());
+    // Request JSON encoded string list.
+    final String? jsonEncodedStringList =
+        await _convertKnownExceptions<String?>(
+            () async => api.getStringList(key, pigeonOptions));
+    if (jsonEncodedStringList != null) {
+      final String jsonEncodedString =
+          jsonEncodedStringList.substring(jsonListPrefix.length);
+      try {
+        final List<String> decodedList =
+            (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
+        return decodedList;
+      } catch (e) {
+        throw TypeError();
+      }
+    }
+    // If no JSON encoded string list exists, check for platform encoded value.
+    final List<String>? stringList =
+        await _convertKnownExceptions<List<String>?>(
+            () async => api.getPlatformEncodedStringList(key, pigeonOptions));
+    return stringList?.cast<String>().toList();
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {
@@ -236,6 +270,13 @@ base class SharedPreferencesAsyncAndroid
       filter.allowList?.toList(),
       pigeonOptions,
     );
+    data.forEach((String? key, Object? value) {
+      if (value is String && value.startsWith(jsonListPrefix)) {
+        data[key!] = (jsonDecode(value.substring(jsonListPrefix.length))
+                as List<dynamic>)
+            .cast<String>();
+      }
+    });
     return data.cast<String, Object>();
   }
 }

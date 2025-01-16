@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
@@ -9,6 +11,7 @@ import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages.g.dart';
 import 'shared_preferences_async_android.dart';
+import 'strings.dart';
 
 /// The Android implementation of [SharedPreferencesStorePlatform].
 ///
@@ -47,7 +50,9 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       case 'Double':
         return _api.setDouble(key, value as double);
       case 'StringList':
-        return _api.setStringList(key, value as List<String>);
+        return _api.setStringList(key, '$jsonListPrefix${jsonEncode(value)}');
+      case 'PlatformEncodedStringListForTesting':
+        return _api.setDeprecatedStringList(key, value as List<String>);
     }
     // TODO(tarrinneal): change to ArgumentError across all platforms.
     throw PlatformException(
@@ -100,6 +105,16 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
     final PreferencesFilter filter = parameters.filter;
     final Map<String?, Object?> data =
         await _api.getAll(filter.prefix, filter.allowList?.toList());
+    data.forEach((String? key, Object? value) {
+      if (value.runtimeType == String &&
+          (value! as String).startsWith(jsonListPrefix)) {
+        data[key!] =
+            (jsonDecode((value as String).substring(jsonListPrefix.length))
+                    as List<dynamic>)
+                .cast<String>()
+                .toList();
+      }
+    });
     return data.cast<String, Object>();
   }
 }

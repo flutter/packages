@@ -41,7 +41,7 @@ internal class SharedPreferencesTest {
 
   private val testDouble = 3.14159
 
-  private val testList = listOf("foo", "bar")
+  private val testList = JSON_LIST_PREFIX + listOf("foo", "bar").toString()
 
   private val dataStoreOptions = SharedPreferencesPigeonOptions(useDataStore = true)
   private val sharedPreferencesOptions = SharedPreferencesPigeonOptions(useDataStore = false)
