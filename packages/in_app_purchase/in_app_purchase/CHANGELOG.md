@@ -1,4 +1,4 @@
-## NEXT
+## 3.3.0
 
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 * Updates `in_app_purchase_android` to 0.4.0.
