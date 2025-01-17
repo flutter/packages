@@ -8,12 +8,18 @@ import XCTest
 
 class TestProxyApiRegistrar: ProxyAPIRegistrar {
   init() {
-    super.init(binaryMessenger: TestBinaryMessenger())
+    super.init(binaryMessenger: TestBinaryMessenger(), bundle: TestBundle())
   }
 
   override func dispatchOnMainThread(
     execute work: @escaping (@escaping (String, PigeonError) -> Void) -> Void
   ) {
     work { _, _ in }
+  }
+}
+
+class TestBundle: Bundle, @unchecked Sendable {
+  override func url(forResource name: String?, withExtension ext: String?) -> URL? {
+    return URL(string: "assets/www/index.html")!
   }
 }
