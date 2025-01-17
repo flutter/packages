@@ -11,6 +11,7 @@ part of '../google_maps_flutter.dart';
 class MapStateException implements Exception {
   /// Creates a new instance of [MapStateException].
   MapStateException(this.message);
+
   /// Error message describing the exception.
   final String message;
 
@@ -105,10 +106,10 @@ class GoogleMapController {
   Future<void> _updateMapConfiguration(MapConfiguration update) {
     if (_googleMapState.mounted) {
       return GoogleMapsFlutterPlatform.instance
-        .updateMapConfiguration(update, mapId: mapId);
+          .updateMapConfiguration(update, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updateMapConfiguration on an unmounted GoogleMap instance.');
+          'Cannot call method _updateMapConfiguration on an unmounted GoogleMap instance.');
     }
   }
 
@@ -124,7 +125,7 @@ class GoogleMapController {
           .updateMarkers(markerUpdates, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updateMarkers on an unmounted GoogleMap instance.');
+          'Cannot call method _updateMarkers on an unmounted GoogleMap instance.');
     }
   }
 
@@ -141,7 +142,7 @@ class GoogleMapController {
           .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updateClusterManagers on an unmounted GoogleMap instance.');
+          'Cannot call method _updateClusterManagers on an unmounted GoogleMap instance.');
     }
   }
 
@@ -157,7 +158,7 @@ class GoogleMapController {
           .updatePolygons(polygonUpdates, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updatePolygons on an unmounted GoogleMap instance.');
+          'Cannot call method _updatePolygons on an unmounted GoogleMap instance.');
     }
   }
 
@@ -173,7 +174,7 @@ class GoogleMapController {
           .updatePolylines(polylineUpdates, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updatePolylines on an unmounted GoogleMap instance.');
+          'Cannot call method _updatePolylines on an unmounted GoogleMap instance.');
     }
   }
 
@@ -189,7 +190,7 @@ class GoogleMapController {
           .updateCircles(circleUpdates, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updateCircles on an unmounted GoogleMap instance.');
+          'Cannot call method _updateCircles on an unmounted GoogleMap instance.');
     }
   }
 
@@ -205,7 +206,7 @@ class GoogleMapController {
           .updateHeatmaps(heatmapUpdates, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updateHeatmaps on an unmounted GoogleMap instance.');
+          'Cannot call method _updateHeatmaps on an unmounted GoogleMap instance.');
     }
   }
 
@@ -221,7 +222,7 @@ class GoogleMapController {
           .updateTileOverlays(newTileOverlays: newTileOverlays, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method _updateTileOverlays on an unmounted GoogleMap instance.');
+          'Cannot call method _updateTileOverlays on an unmounted GoogleMap instance.');
     }
   }
 
@@ -238,7 +239,7 @@ class GoogleMapController {
           .clearTileCache(tileOverlayId, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method clearTileCache on an unmounted GoogleMap instance.');
+          'Cannot call method clearTileCache on an unmounted GoogleMap instance.');
     }
   }
 
@@ -252,7 +253,7 @@ class GoogleMapController {
           .animateCamera(cameraUpdate, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method animateCamera on an unmounted GoogleMap instance.');
+          'Cannot call method animateCamera on an unmounted GoogleMap instance.');
     }
   }
 
@@ -266,7 +267,7 @@ class GoogleMapController {
           .moveCamera(cameraUpdate, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method moveCamera on an unmounted GoogleMap instance.');
+          'Cannot call method moveCamera on an unmounted GoogleMap instance.');
     }
   }
 
@@ -290,7 +291,7 @@ class GoogleMapController {
           .setMapStyle(mapStyle, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method setMapStyle on an unmounted GoogleMap instance.');
+          'Cannot call method setMapStyle on an unmounted GoogleMap instance.');
     }
   }
 
@@ -300,7 +301,7 @@ class GoogleMapController {
       return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method getStyleError on an unmounted GoogleMap instance.');
+          'Cannot call method getStyleError on an unmounted GoogleMap instance.');
     }
   }
 
@@ -310,7 +311,7 @@ class GoogleMapController {
       return GoogleMapsFlutterPlatform.instance.getVisibleRegion(mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method getVisibleRegion on an unmounted GoogleMap instance.');
+          'Cannot call method getVisibleRegion on an unmounted GoogleMap instance.');
     }
   }
 
@@ -325,7 +326,7 @@ class GoogleMapController {
           .getScreenCoordinate(latLng, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method getScreenCoordinate on an unmounted GoogleMap instance.');
+          'Cannot call method getScreenCoordinate on an unmounted GoogleMap instance.');
     }
   }
 
@@ -339,7 +340,7 @@ class GoogleMapController {
           .getLatLng(screenCoordinate, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method getLatLng on an unmounted GoogleMap instance.');
+          'Cannot call method getLatLng on an unmounted GoogleMap instance.');
     }
   }
 
@@ -357,7 +358,7 @@ class GoogleMapController {
           .showMarkerInfoWindow(markerId, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method showMarkerInfoWindow on an unmounted GoogleMap instance.');
+          'Cannot call method showMarkerInfoWindow on an unmounted GoogleMap instance.');
     }
   }
 
@@ -376,7 +377,7 @@ class GoogleMapController {
           .hideMarkerInfoWindow(markerId, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method hideMarkerInfoWindow on an unmounted GoogleMap instance.');
+          'Cannot call method hideMarkerInfoWindow on an unmounted GoogleMap instance.');
     }
   }
 
@@ -394,7 +395,7 @@ class GoogleMapController {
           .isMarkerInfoWindowShown(markerId, mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method isMarkerInfoWindowShown on an unmounted GoogleMap instance.');
+          'Cannot call method isMarkerInfoWindowShown on an unmounted GoogleMap instance.');
     }
   }
 
@@ -404,7 +405,7 @@ class GoogleMapController {
       return GoogleMapsFlutterPlatform.instance.getZoomLevel(mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method getZoomLevel on an unmounted GoogleMap instance.');
+          'Cannot call method getZoomLevel on an unmounted GoogleMap instance.');
     }
   }
 
@@ -414,7 +415,7 @@ class GoogleMapController {
       return GoogleMapsFlutterPlatform.instance.takeSnapshot(mapId: mapId);
     } else {
       throw MapStateException(
-        'Cannot call method takeSnapshot on an unmounted GoogleMap instance.');
+          'Cannot call method takeSnapshot on an unmounted GoogleMap instance.');
     }
   }
 
