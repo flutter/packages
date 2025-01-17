@@ -80,7 +80,6 @@ class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
 }
 
 class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
-  var view: NSView?
   var plugin: WebViewFlutterPlugin?
 
   #if os(iOS)
@@ -95,7 +94,15 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
     func addApplicationDelegate(_ delegate: FlutterPlugin) {
 
     }
+
+    func register(
+      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
+      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
+    ) {
+    }
   #elseif os(macOS)
+    var view: NSView?
+
     var messenger: any FlutterBinaryMessenger {
       return TestBinaryMessenger()
     }
@@ -111,14 +118,6 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
 
   func register(_ factory: FlutterPlatformViewFactory, withId factoryId: String) {
   }
-
-  #if os(iOS)
-    func register(
-      _ factory: FlutterPlatformViewFactory, withId factoryId: String,
-      gestureRecognizersBlockingPolicy: FlutterPlatformViewGestureRecognizersBlockingPolicy
-    ) {
-    }
-  #endif
 
   func publish(_ value: NSObject) {
     plugin = (value as! WebViewFlutterPlugin)
