@@ -342,7 +342,7 @@ internal class SharedPreferencesTest {
     // Inject the bad pref as a string, as that is how string lists are stored internally.
     plugin.setString(badListKey, badPref, dataStoreOptions)
     assertThrows(ClassNotFoundException::class.java) {
-      plugin.getStringList(badListKey, dataStoreOptions)
+      plugin.getPlatformEncodedStringList(badListKey, dataStoreOptions)
     }
   }
 }
