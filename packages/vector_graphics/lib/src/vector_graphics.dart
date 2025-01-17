@@ -518,17 +518,19 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       );
     } else {
       child = widget.placeholderBuilder != null
-          ? AnimatedSwitcher(
-              duration: widget.transitionDuration ??
-                  const Duration(milliseconds: 500), // User-defined duration
-              child: widget.placeholderBuilder!.call(context),
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: child,
-                );
-              },
-            )
+          ? widget.transitionDuration != null
+              ? AnimatedSwitcher(
+                  duration: widget.transitionDuration!,
+                  child: widget.placeholderBuilder!.call(context),
+                  transitionBuilder:
+                      (Widget child, Animation<double> animation) {
+                    return FadeTransition(
+                      opacity: animation,
+                      child: child,
+                    );
+                  },
+                )
+              : widget.placeholderBuilder!.call(context)
           : SizedBox(
               width: widget.width,
               height: widget.height,
