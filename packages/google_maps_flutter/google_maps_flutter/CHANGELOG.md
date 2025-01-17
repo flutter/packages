@@ -1,6 +1,6 @@
-## NEXT
+## 2.11.0
 
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds map mounted check to google map controller map functions.
 
 ## 2.10.0
 
