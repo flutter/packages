@@ -13,7 +13,7 @@ class FrameInfoProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
-    var instance: TestFrameInfo? = TestFrameInfo()
+    let instance: TestFrameInfo? = TestFrameInfo()
     let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance!)
 
     XCTAssertEqual(value, instance!.isMainFrame)
@@ -23,7 +23,7 @@ class FrameInfoProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
 
-    var instance: TestFrameInfo? = TestFrameInfo()
+    let instance: TestFrameInfo? = TestFrameInfo()
     let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance!)
 
     XCTAssertEqual(value?.value, instance!.request)
