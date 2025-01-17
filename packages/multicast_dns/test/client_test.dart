@@ -158,11 +158,35 @@ void main() {
       });
     }
   });
+
+  test('Reports socket errors', () async {
+    final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
+        (dynamic host, int port,
+            {bool reuseAddress = true,
+            bool reusePort = true,
+            int ttl = 1}) async {
+      return datagramSocket;
+    });
+
+    final Completer<void> errorCompleter = Completer<void>();
+
+    await client.start(onSocketError: (Object e, StackTrace stacktrace) {
+      expect(e, 'Hello world');
+      errorCompleter.complete();
+    });
+
+    datagramSocket.controller.addError('Hello world');
+    await errorCompleter.future;
+  });
 }
 
 class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   @override
   InternetAddress address = InternetAddress.anyIPv4;
+
+  final StreamController<RawSocketEvent> controller =
+      StreamController<RawSocketEvent>();
 
   @override
   StreamSubscription<RawSocketEvent> listen(
@@ -170,7 +194,7 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
       {Function? onError,
       void Function()? onDone,
       bool? cancelOnError}) {
-    return const Stream<RawSocketEvent>.empty().listen(onData,
+    return controller.stream.listen(onData,
         onError: onError, cancelOnError: cancelOnError, onDone: onDone);
   }
 
@@ -178,6 +202,7 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
 
   @override
   void close() {
+    controller.close();
     closed = true;
   }
 

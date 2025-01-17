@@ -48,7 +48,7 @@ class LookupResolver {
     return controller.stream;
   }
 
-  /// Parses [ResoureRecord]s received and delivers them to the appropriate
+  /// Parses [ResourceRecord]s received and delivers them to the appropriate
   /// listener(s) added via [addPendingRequest].
   void handleResponse(List<ResourceRecord> response) {
     for (final ResourceRecord r in response) {

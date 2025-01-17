@@ -84,6 +84,11 @@ class MDnsClient {
   /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
   /// or `FF02::FB`.
   ///
+  /// On socket errors, the [onSocketError] handler is called with the error
+  /// object and possibly a stack trace. The [onSocketError] callback must be of
+  /// type `void Function(Object error)` or
+  /// `void Function(Object error, StackTrace)`.
+  ///
   /// Subsequent calls to this method are ignored while the mDNS client is in
   /// started state.
   Future<void> start({
@@ -91,6 +96,7 @@ class MDnsClient {
     NetworkInterfacesFactory? interfacesFactory,
     int mDnsPort = mDnsPort,
     InternetAddress? mDnsAddress,
+    Function? onSocketError,
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
@@ -152,7 +158,10 @@ class MDnsClient {
       // Join multicast on this interface.
       incoming.joinMulticast(_mDnsAddress!, interface);
     }
-    incoming.listen((RawSocketEvent event) => _handleIncoming(event, incoming));
+    incoming.listen(
+      (RawSocketEvent event) => _handleIncoming(event, incoming),
+      onError: onSocketError,
+    );
     _started = true;
     _starting = false;
   }

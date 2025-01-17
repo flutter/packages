@@ -1,6 +1,7 @@
-## NEXT
+## 0.3.2+8
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds `onSocketError` to `MDnsClient.start`.
 
 ## 0.3.2+7
 
