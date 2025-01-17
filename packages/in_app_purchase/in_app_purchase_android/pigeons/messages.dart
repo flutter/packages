@@ -35,8 +35,25 @@ class PlatformAccountIdentifiers {
 class PlatformBillingResult {
   PlatformBillingResult(
       {required this.responseCode, required this.debugMessage});
-  final int responseCode;
+  final PlatformBillingResponse responseCode;
   final String debugMessage;
+}
+
+/// Pigeon version of Java BillingClient.BillingResponseCode.
+enum PlatformBillingResponse {
+  serviceTimeout,
+  featureNotSupported,
+  serviceDisconnected,
+  ok,
+  userCanceled,
+  serviceUnavailable,
+  billingUnavailable,
+  itemUnavailable,
+  developerError,
+  error,
+  itemAlreadyOwned,
+  itemNotOwned,
+  networkError,
 }
 
 /// Pigeon version of Java ProductDetails.OneTimePurchaseOfferDetails.
@@ -119,15 +136,21 @@ class PlatformBillingFlowParams {
   });
 
   final String product;
-  // Ideally this would be replaced with an enum on the dart side that maps
-  // to constants on the Java side, but it's deprecated anyway so that will be
-  // resolved during the update to the new API.
-  final int replacementMode;
+  final PlatformReplacementMode replacementMode;
   final String? offerToken;
   final String? accountId;
   final String? obfuscatedProfileId;
   final String? oldProduct;
   final String? purchaseToken;
+}
+
+enum PlatformReplacementMode {
+  unknownReplacementMode,
+  withTimeProration,
+  chargeProratedPrice,
+  withoutProration,
+  deferred,
+  chargeFullPrice,
 }
 
 /// Pigeon version of Java ProductDetails.PricingPhase.
@@ -336,6 +359,18 @@ enum PlatformBillingChoiceMode {
   userChoiceBilling,
 }
 
+/// Pigeon version of Java BillingClient.FeatureType.
+enum PlatformBillingClientFeature {
+  alternativeBillingOnly,
+  billingConfig,
+  externalOffer,
+  inAppMessaging,
+  priceChangeConfirmation,
+  productDetails,
+  subscriptions,
+  subscriptionsUpdate,
+}
+
 /// Pigeon version of Java Purchase.PurchaseState.
 enum PlatformPurchaseState {
   unspecified,
@@ -396,10 +431,7 @@ abstract class InAppPurchaseApi {
       List<PlatformQueryProduct> products);
 
   /// Wraps BillingClient#isFeatureSupported(String).
-  // TODO(stuartmorgan): Consider making this take a enum, and converting the
-  // enum value to string constants on the native side, so that magic strings
-  // from the Play Billing API aren't duplicated in Dart code.
-  bool isFeatureSupported(String feature);
+  bool isFeatureSupported(PlatformBillingClientFeature feature);
 
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   @async

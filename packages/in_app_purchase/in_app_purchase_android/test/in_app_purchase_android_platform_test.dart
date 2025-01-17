@@ -30,8 +30,9 @@ void main() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
 
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any, any)).thenAnswer(
-        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
+    when(mockApi.startConnection(any, any, any)).thenAnswer((_) async =>
+        PlatformBillingResult(
+            responseCode: PlatformBillingResponse.ok, debugMessage: ''));
     iapAndroidPlatform = InAppPurchaseAndroidPlatform(
         manager: BillingClientManager(
             billingClientFactory: (PurchasesUpdatedListener listener,
@@ -59,19 +60,18 @@ void main() {
         () async {
       when(mockApi.acknowledgePurchase(any)).thenAnswer(
         (_) async => PlatformBillingResult(
-            responseCode: const BillingResponseConverter()
-                .toJson(BillingResponse.serviceDisconnected),
+            responseCode: PlatformBillingResponse.serviceDisconnected,
             debugMessage: 'disconnected'),
       );
       when(mockApi.startConnection(any, any, any)).thenAnswer((_) async {
         // Change the acknowledgePurchase response to success for the next call.
         when(mockApi.acknowledgePurchase(any)).thenAnswer(
           (_) async => PlatformBillingResult(
-              responseCode:
-                  const BillingResponseConverter().toJson(BillingResponse.ok),
+              responseCode: PlatformBillingResponse.ok,
               debugMessage: 'disconnected'),
         );
-        return PlatformBillingResult(responseCode: 0, debugMessage: '');
+        return PlatformBillingResult(
+            responseCode: PlatformBillingResponse.ok, debugMessage: '');
       });
       final PurchaseDetails purchase =
           GooglePlayPurchaseDetails.fromPurchase(dummyUnacknowledgedPurchase)
@@ -99,13 +99,11 @@ void main() {
   group('queryProductDetails', () {
     test('handles empty productDetails', () async {
       const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.ok;
+      const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
       when(mockApi.queryProductDetailsAsync(any))
           .thenAnswer((_) async => PlatformProductDetailsResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(responseCode),
-                    debugMessage: debugMessage),
+                    responseCode: responseCode, debugMessage: debugMessage),
                 productDetails: <PlatformProductDetails>[],
               ));
 
@@ -116,13 +114,11 @@ void main() {
 
     test('should get correct product details', () async {
       const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.ok;
+      const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
       when(mockApi.queryProductDetailsAsync(any))
           .thenAnswer((_) async => PlatformProductDetailsResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(responseCode),
-                    debugMessage: debugMessage),
+                    responseCode: responseCode, debugMessage: debugMessage),
                 productDetails: <PlatformProductDetails>[
                   convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
@@ -144,13 +140,11 @@ void main() {
 
     test('should get the correct notFoundIDs', () async {
       const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.ok;
+      const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
       when(mockApi.queryProductDetailsAsync(any))
           .thenAnswer((_) async => PlatformProductDetailsResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(responseCode),
-                    debugMessage: debugMessage),
+                    responseCode: responseCode, debugMessage: debugMessage),
                 productDetails: <PlatformProductDetails>[
                   convertToPigeonProductDetails(dummyOneTimeProductDetails)
                 ],
@@ -224,14 +218,12 @@ void main() {
       });
 
       const String debugMessage = 'dummy message';
-      const BillingResponse responseCode = BillingResponse.ok;
+      const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
 
       when(mockApi.queryPurchasesAsync(any))
           .thenAnswer((_) async => PlatformPurchasesResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(responseCode),
-                    debugMessage: debugMessage),
+                    responseCode: responseCode, debugMessage: debugMessage),
                 purchases: <PlatformPurchase>[
                   convertToPigeonPurchase(dummyPurchase),
                 ],

@@ -352,7 +352,9 @@ class MockInAppPurchaseApi extends _i1.Mock implements _i2.InAppPurchaseApi {
       ) as _i4.Future<_i2.PlatformProductDetailsResponse>);
 
   @override
-  _i4.Future<bool> isFeatureSupported(String? feature) => (super.noSuchMethod(
+  _i4.Future<bool> isFeatureSupported(
+          _i2.PlatformBillingClientFeature? feature) =>
+      (super.noSuchMethod(
         Invocation.method(
           #isFeatureSupported,
           [feature],

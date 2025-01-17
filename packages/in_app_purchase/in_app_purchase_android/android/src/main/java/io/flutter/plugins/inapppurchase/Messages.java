@@ -72,6 +72,44 @@ public class Messages {
   @Retention(CLASS)
   @interface CanIgnoreReturnValue {}
 
+  /** Pigeon version of Java BillingClient.BillingResponseCode. */
+  public enum PlatformBillingResponse {
+    SERVICE_TIMEOUT(0),
+    FEATURE_NOT_SUPPORTED(1),
+    SERVICE_DISCONNECTED(2),
+    OK(3),
+    USER_CANCELED(4),
+    SERVICE_UNAVAILABLE(5),
+    BILLING_UNAVAILABLE(6),
+    ITEM_UNAVAILABLE(7),
+    DEVELOPER_ERROR(8),
+    ERROR(9),
+    ITEM_ALREADY_OWNED(10),
+    ITEM_NOT_OWNED(11),
+    NETWORK_ERROR(12);
+
+    final int index;
+
+    PlatformBillingResponse(final int index) {
+      this.index = index;
+    }
+  }
+
+  public enum PlatformReplacementMode {
+    UNKNOWN_REPLACEMENT_MODE(0),
+    WITH_TIME_PRORATION(1),
+    CHARGE_PRORATED_PRICE(2),
+    WITHOUT_PRORATION(3),
+    DEFERRED(4),
+    CHARGE_FULL_PRICE(5);
+
+    final int index;
+
+    PlatformReplacementMode(final int index) {
+      this.index = index;
+    }
+  }
+
   /** Pigeon version of Java BillingClient.ProductType. */
   public enum PlatformProductType {
     INAPP(0),
@@ -100,6 +138,23 @@ public class Messages {
     final int index;
 
     PlatformBillingChoiceMode(final int index) {
+      this.index = index;
+    }
+  }
+
+  public enum PlatformBillingClientFeature {
+    ALTERNATIVE_BILLING_ONLY(0),
+    BILLING_CONFIG(1),
+    EXTERNAL_OFFER(2),
+    IN_APP_MESSAGING(3),
+    PRICE_CHANGE_CONFIRMATION(4),
+    PRODUCT_DETAILS(5),
+    SUBSCRIPTIONS(6),
+    SUBSCRIPTIONS_UPDATE(7);
+
+    final int index;
+
+    PlatformBillingClientFeature(final int index) {
       this.index = index;
     }
   }
@@ -320,13 +375,13 @@ public class Messages {
    * <p>Generated class from Pigeon that represents data sent in messages.
    */
   public static final class PlatformBillingResult {
-    private @NonNull Long responseCode;
+    private @NonNull PlatformBillingResponse responseCode;
 
-    public @NonNull Long getResponseCode() {
+    public @NonNull PlatformBillingResponse getResponseCode() {
       return responseCode;
     }
 
-    public void setResponseCode(@NonNull Long setterArg) {
+    public void setResponseCode(@NonNull PlatformBillingResponse setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"responseCode\" is null.");
       }
@@ -368,10 +423,10 @@ public class Messages {
 
     public static final class Builder {
 
-      private @Nullable Long responseCode;
+      private @Nullable PlatformBillingResponse responseCode;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setResponseCode(@NonNull Long setterArg) {
+      public @NonNull Builder setResponseCode(@NonNull PlatformBillingResponse setterArg) {
         this.responseCode = setterArg;
         return this;
       }
@@ -403,7 +458,7 @@ public class Messages {
     static @NonNull PlatformBillingResult fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       PlatformBillingResult pigeonResult = new PlatformBillingResult();
       Object responseCode = pigeonVar_list.get(0);
-      pigeonResult.setResponseCode((Long) responseCode);
+      pigeonResult.setResponseCode((PlatformBillingResponse) responseCode);
       Object debugMessage = pigeonVar_list.get(1);
       pigeonResult.setDebugMessage((String) debugMessage);
       return pigeonResult;
@@ -1086,13 +1141,13 @@ public class Messages {
       this.product = setterArg;
     }
 
-    private @NonNull Long replacementMode;
+    private @NonNull PlatformReplacementMode replacementMode;
 
-    public @NonNull Long getReplacementMode() {
+    public @NonNull PlatformReplacementMode getReplacementMode() {
       return replacementMode;
     }
 
-    public void setReplacementMode(@NonNull Long setterArg) {
+    public void setReplacementMode(@NonNull PlatformReplacementMode setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"replacementMode\" is null.");
       }
@@ -1192,10 +1247,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable Long replacementMode;
+      private @Nullable PlatformReplacementMode replacementMode;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setReplacementMode(@NonNull Long setterArg) {
+      public @NonNull Builder setReplacementMode(@NonNull PlatformReplacementMode setterArg) {
         this.replacementMode = setterArg;
         return this;
       }
@@ -1271,7 +1326,7 @@ public class Messages {
       Object product = pigeonVar_list.get(0);
       pigeonResult.setProduct((String) product);
       Object replacementMode = pigeonVar_list.get(1);
-      pigeonResult.setReplacementMode((Long) replacementMode);
+      pigeonResult.setReplacementMode((PlatformReplacementMode) replacementMode);
       Object offerToken = pigeonVar_list.get(2);
       pigeonResult.setOfferToken((String) offerToken);
       Object accountId = pigeonVar_list.get(3);
@@ -3061,68 +3116,89 @@ public class Messages {
         case (byte) 129:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformProductType.values()[((Long) value).intValue()];
+            return value == null
+                ? null
+                : PlatformBillingResponse.values()[((Long) value).intValue()];
           }
         case (byte) 130:
           {
             Object value = readValue(buffer);
             return value == null
                 ? null
-                : PlatformBillingChoiceMode.values()[((Long) value).intValue()];
+                : PlatformReplacementMode.values()[((Long) value).intValue()];
           }
         case (byte) 131:
           {
             Object value = readValue(buffer);
-            return value == null ? null : PlatformPurchaseState.values()[((Long) value).intValue()];
+            return value == null ? null : PlatformProductType.values()[((Long) value).intValue()];
           }
         case (byte) 132:
           {
             Object value = readValue(buffer);
             return value == null
                 ? null
-                : PlatformRecurrenceMode.values()[((Long) value).intValue()];
+                : PlatformBillingChoiceMode.values()[((Long) value).intValue()];
           }
         case (byte) 133:
-          return PlatformQueryProduct.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformBillingClientFeature.values()[((Long) value).intValue()];
+          }
         case (byte) 134:
-          return PlatformAccountIdentifiers.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformPurchaseState.values()[((Long) value).intValue()];
+          }
         case (byte) 135:
-          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null
+                ? null
+                : PlatformRecurrenceMode.values()[((Long) value).intValue()];
+          }
         case (byte) 136:
+          return PlatformQueryProduct.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 137:
+          return PlatformAccountIdentifiers.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 138:
+          return PlatformBillingResult.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 139:
           return PlatformOneTimePurchaseOfferDetails.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 137:
+        case (byte) 140:
           return PlatformProductDetails.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 138:
+        case (byte) 141:
           return PlatformProductDetailsResponse.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 139:
+        case (byte) 142:
           return PlatformAlternativeBillingOnlyReportingDetailsResponse.fromList(
               (ArrayList<Object>) readValue(buffer));
-        case (byte) 140:
-          return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 141:
-          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 142:
-          return PlatformPricingPhase.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 143:
-          return PlatformPurchase.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingConfigResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 144:
-          return PlatformPendingPurchaseUpdate.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBillingFlowParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 145:
-          return PlatformPurchaseHistoryRecord.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPricingPhase.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 146:
-          return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchase.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 147:
-          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPendingPurchaseUpdate.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 148:
-          return PlatformSubscriptionOfferDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchaseHistoryRecord.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
-          return PlatformUserChoiceDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchaseHistoryResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 150:
-          return PlatformUserChoiceProduct.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPurchasesResponse.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 151:
-          return PlatformInstallmentPlanDetails.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformSubscriptionOfferDetails.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 152:
+          return PlatformUserChoiceDetails.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 153:
+          return PlatformUserChoiceProduct.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 154:
+          return PlatformInstallmentPlanDetails.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 155:
           return PlatformPendingPurchasesParams.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -3131,78 +3207,87 @@ public class Messages {
 
     @Override
     protected void writeValue(@NonNull ByteArrayOutputStream stream, Object value) {
-      if (value instanceof PlatformProductType) {
+      if (value instanceof PlatformBillingResponse) {
         stream.write(129);
+        writeValue(stream, value == null ? null : ((PlatformBillingResponse) value).index);
+      } else if (value instanceof PlatformReplacementMode) {
+        stream.write(130);
+        writeValue(stream, value == null ? null : ((PlatformReplacementMode) value).index);
+      } else if (value instanceof PlatformProductType) {
+        stream.write(131);
         writeValue(stream, value == null ? null : ((PlatformProductType) value).index);
       } else if (value instanceof PlatformBillingChoiceMode) {
-        stream.write(130);
+        stream.write(132);
         writeValue(stream, value == null ? null : ((PlatformBillingChoiceMode) value).index);
+      } else if (value instanceof PlatformBillingClientFeature) {
+        stream.write(133);
+        writeValue(stream, value == null ? null : ((PlatformBillingClientFeature) value).index);
       } else if (value instanceof PlatformPurchaseState) {
-        stream.write(131);
+        stream.write(134);
         writeValue(stream, value == null ? null : ((PlatformPurchaseState) value).index);
       } else if (value instanceof PlatformRecurrenceMode) {
-        stream.write(132);
+        stream.write(135);
         writeValue(stream, value == null ? null : ((PlatformRecurrenceMode) value).index);
       } else if (value instanceof PlatformQueryProduct) {
-        stream.write(133);
+        stream.write(136);
         writeValue(stream, ((PlatformQueryProduct) value).toList());
       } else if (value instanceof PlatformAccountIdentifiers) {
-        stream.write(134);
+        stream.write(137);
         writeValue(stream, ((PlatformAccountIdentifiers) value).toList());
       } else if (value instanceof PlatformBillingResult) {
-        stream.write(135);
+        stream.write(138);
         writeValue(stream, ((PlatformBillingResult) value).toList());
       } else if (value instanceof PlatformOneTimePurchaseOfferDetails) {
-        stream.write(136);
+        stream.write(139);
         writeValue(stream, ((PlatformOneTimePurchaseOfferDetails) value).toList());
       } else if (value instanceof PlatformProductDetails) {
-        stream.write(137);
+        stream.write(140);
         writeValue(stream, ((PlatformProductDetails) value).toList());
       } else if (value instanceof PlatformProductDetailsResponse) {
-        stream.write(138);
+        stream.write(141);
         writeValue(stream, ((PlatformProductDetailsResponse) value).toList());
       } else if (value instanceof PlatformAlternativeBillingOnlyReportingDetailsResponse) {
-        stream.write(139);
+        stream.write(142);
         writeValue(
             stream, ((PlatformAlternativeBillingOnlyReportingDetailsResponse) value).toList());
       } else if (value instanceof PlatformBillingConfigResponse) {
-        stream.write(140);
+        stream.write(143);
         writeValue(stream, ((PlatformBillingConfigResponse) value).toList());
       } else if (value instanceof PlatformBillingFlowParams) {
-        stream.write(141);
+        stream.write(144);
         writeValue(stream, ((PlatformBillingFlowParams) value).toList());
       } else if (value instanceof PlatformPricingPhase) {
-        stream.write(142);
+        stream.write(145);
         writeValue(stream, ((PlatformPricingPhase) value).toList());
       } else if (value instanceof PlatformPurchase) {
-        stream.write(143);
+        stream.write(146);
         writeValue(stream, ((PlatformPurchase) value).toList());
       } else if (value instanceof PlatformPendingPurchaseUpdate) {
-        stream.write(144);
+        stream.write(147);
         writeValue(stream, ((PlatformPendingPurchaseUpdate) value).toList());
       } else if (value instanceof PlatformPurchaseHistoryRecord) {
-        stream.write(145);
+        stream.write(148);
         writeValue(stream, ((PlatformPurchaseHistoryRecord) value).toList());
       } else if (value instanceof PlatformPurchaseHistoryResponse) {
-        stream.write(146);
+        stream.write(149);
         writeValue(stream, ((PlatformPurchaseHistoryResponse) value).toList());
       } else if (value instanceof PlatformPurchasesResponse) {
-        stream.write(147);
+        stream.write(150);
         writeValue(stream, ((PlatformPurchasesResponse) value).toList());
       } else if (value instanceof PlatformSubscriptionOfferDetails) {
-        stream.write(148);
+        stream.write(151);
         writeValue(stream, ((PlatformSubscriptionOfferDetails) value).toList());
       } else if (value instanceof PlatformUserChoiceDetails) {
-        stream.write(149);
+        stream.write(152);
         writeValue(stream, ((PlatformUserChoiceDetails) value).toList());
       } else if (value instanceof PlatformUserChoiceProduct) {
-        stream.write(150);
+        stream.write(153);
         writeValue(stream, ((PlatformUserChoiceProduct) value).toList());
       } else if (value instanceof PlatformInstallmentPlanDetails) {
-        stream.write(151);
+        stream.write(154);
         writeValue(stream, ((PlatformInstallmentPlanDetails) value).toList());
       } else if (value instanceof PlatformPendingPurchasesParams) {
-        stream.write(152);
+        stream.write(155);
         writeValue(stream, ((PlatformPendingPurchasesParams) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -3283,7 +3368,7 @@ public class Messages {
         @NonNull Result<PlatformProductDetailsResponse> result);
     /** Wraps BillingClient#isFeatureSupported(String). */
     @NonNull
-    Boolean isFeatureSupported(@NonNull String feature);
+    Boolean isFeatureSupported(@NonNull PlatformBillingClientFeature feature);
     /** Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync(). */
     void isAlternativeBillingOnlyAvailableAsync(@NonNull Result<PlatformBillingResult> result);
     /** Wraps BillingClient#showAlternativeBillingOnlyInformationDialog(). */
@@ -3620,7 +3705,8 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                String featureArg = (String) args.get(0);
+                PlatformBillingClientFeature featureArg =
+                    (PlatformBillingClientFeature) args.get(0);
                 try {
                   Boolean output = api.isFeatureSupported(featureArg);
                   wrapped.add(0, output);

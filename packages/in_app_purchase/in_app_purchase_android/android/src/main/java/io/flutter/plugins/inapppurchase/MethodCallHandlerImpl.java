@@ -10,8 +10,10 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.toBillingClientFeature;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
+import static io.flutter.plugins.inapppurchase.Translator.toReplacementMode;
 
 import android.app.Activity;
 import android.app.Application;
@@ -37,6 +39,7 @@ import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
@@ -44,6 +47,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
+import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
 import io.flutter.plugins.inapppurchase.Messages.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,9 +56,9 @@ import java.util.List;
 /** Handles method channel for the plugin. */
 class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, InAppPurchaseApi {
   @VisibleForTesting
-  static final int REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
-      com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams.ReplacementMode
-          .UNKNOWN_REPLACEMENT_MODE;
+  static final PlatformReplacementMode
+      REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
+          PlatformReplacementMode.UNKNOWN_REPLACEMENT_MODE;
 
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
@@ -335,7 +339,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       if (params.getReplacementMode()
           != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
         subscriptionUpdateParamsBuilder.setSubscriptionReplacementMode(
-            params.getReplacementMode().intValue());
+            toReplacementMode(params.getReplacementMode()));
       }
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
@@ -502,11 +506,11 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   }
 
   @Override
-  public @NonNull Boolean isFeatureSupported(@NonNull String feature) {
+  public @NonNull Boolean isFeatureSupported(@NonNull PlatformBillingClientFeature feature) {
     if (billingClient == null) {
       throw getNullBillingClientError();
     }
-    BillingResult billingResult = billingClient.isFeatureSupported(feature);
+    BillingResult billingResult = billingClient.isFeatureSupported(toBillingClientFeature(feature));
     return billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK;
   }
 }

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+
 import '../billing_client_wrappers.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
 import 'billing_client_wrappers/pending_purchases_params_wrapper.dart';
@@ -22,8 +24,7 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
 /// Creates a [BillingResultWrapper] from the Pigeon equivalent.
 BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
   return BillingResultWrapper(
-      responseCode:
-          billingResponseFromPlatformResponseCode(result.responseCode),
+      responseCode: billingResponseFromPlatform(result.responseCode),
       debugMessage: result.debugMessage);
 }
 
@@ -101,9 +102,7 @@ PurchasesResultWrapper purchasesResultWrapperFromPlatform(
     purchasesList: response.purchases.map(purchaseWrapperFromPlatform).toList(),
     responseCode: forceOkResponseCode
         ? BillingResponse.ok
-        : billingResponseFromPlatformResponseCode(
-            response.billingResult.responseCode,
-          ),
+        : billingResponseFromPlatform(response.billingResult.responseCode),
   );
 }
 
@@ -113,7 +112,7 @@ AlternativeBillingOnlyReportingDetailsWrapper
     alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
         PlatformAlternativeBillingOnlyReportingDetailsResponse response) {
   return AlternativeBillingOnlyReportingDetailsWrapper(
-    responseCode: billingResponseFromPlatformResponseCode(
+    responseCode: billingResponseFromPlatform(
       response.billingResult.responseCode,
     ),
     debugMessage: response.billingResult.debugMessage,
@@ -125,7 +124,7 @@ AlternativeBillingOnlyReportingDetailsWrapper
 BillingConfigWrapper billingConfigWrapperFromPlatform(
     PlatformBillingConfigResponse response) {
   return BillingConfigWrapper(
-    responseCode: billingResponseFromPlatformResponseCode(
+    responseCode: billingResponseFromPlatform(
       response.billingResult.responseCode,
     ),
     debugMessage: response.billingResult.debugMessage,
@@ -213,6 +212,15 @@ PurchaseStateWrapper purchaseStateWrapperFromPlatform(
   };
 }
 
+/// Converts [PurchaseStateWrapper] to [PurchaseStatus].
+PurchaseStatus purchaseStatusFromWrapper(PurchaseStateWrapper purchaseState) {
+  return switch (purchaseState) {
+    PurchaseStateWrapper.unspecified_state => PurchaseStatus.error,
+    PurchaseStateWrapper.purchased => PurchaseStatus.purchased,
+    PurchaseStateWrapper.pending => PurchaseStatus.pending,
+  };
+}
+
 /// Creates a [RecurrenceMode] from the Pigeon equivalent.
 RecurrenceMode recurrenceModeFromPlatform(PlatformRecurrenceMode mode) {
   return switch (mode) {
@@ -281,23 +289,92 @@ PlatformPendingPurchasesParams pendingPurchasesParamsFromWrapper(
   );
 }
 
-/// Converts https://developer.android.com/reference/com/android/billingclient/api/BillingClient.BillingResponseCode
-/// to its public API enum equivalent.
-BillingResponse billingResponseFromPlatformResponseCode(int responseCode) {
+/// Converts [PlatformBillingResponse] to its public API enum equivalent.
+BillingResponse billingResponseFromPlatform(
+    PlatformBillingResponse responseCode) {
   return switch (responseCode) {
-    -3 => BillingResponse.serviceTimeout,
-    -2 => BillingResponse.featureNotSupported,
-    -1 => BillingResponse.serviceDisconnected,
-    0 => BillingResponse.ok,
-    1 => BillingResponse.userCanceled,
-    2 => BillingResponse.serviceUnavailable,
-    3 => BillingResponse.billingUnavailable,
-    4 => BillingResponse.itemUnavailable,
-    5 => BillingResponse.developerError,
-    6 => BillingResponse.error,
-    7 => BillingResponse.itemAlreadyOwned,
-    8 => BillingResponse.itemNotOwned,
-    12 => BillingResponse.networkError,
-    _ => BillingResponse.error,
+    PlatformBillingResponse.serviceTimeout => BillingResponse.serviceTimeout,
+    PlatformBillingResponse.featureNotSupported =>
+      BillingResponse.featureNotSupported,
+    PlatformBillingResponse.serviceDisconnected =>
+      BillingResponse.serviceDisconnected,
+    PlatformBillingResponse.ok => BillingResponse.ok,
+    PlatformBillingResponse.userCanceled => BillingResponse.userCanceled,
+    PlatformBillingResponse.serviceUnavailable =>
+      BillingResponse.serviceUnavailable,
+    PlatformBillingResponse.billingUnavailable =>
+      BillingResponse.billingUnavailable,
+    PlatformBillingResponse.itemUnavailable => BillingResponse.itemUnavailable,
+    PlatformBillingResponse.developerError => BillingResponse.developerError,
+    PlatformBillingResponse.error => BillingResponse.error,
+    PlatformBillingResponse.itemAlreadyOwned =>
+      BillingResponse.itemAlreadyOwned,
+    PlatformBillingResponse.itemNotOwned => BillingResponse.itemNotOwned,
+    PlatformBillingResponse.networkError => BillingResponse.networkError,
+  };
+}
+
+/// Converts a [BillingResponse] to its Pigeon equivalent.
+PlatformBillingResponse billingResponseFromWrapper(
+    BillingResponse responseCode) {
+  return switch (responseCode) {
+    BillingResponse.serviceTimeout => PlatformBillingResponse.serviceTimeout,
+    BillingResponse.featureNotSupported =>
+      PlatformBillingResponse.featureNotSupported,
+    BillingResponse.serviceDisconnected =>
+      PlatformBillingResponse.serviceDisconnected,
+    BillingResponse.ok => PlatformBillingResponse.ok,
+    BillingResponse.userCanceled => PlatformBillingResponse.userCanceled,
+    BillingResponse.serviceUnavailable =>
+      PlatformBillingResponse.serviceUnavailable,
+    BillingResponse.billingUnavailable =>
+      PlatformBillingResponse.billingUnavailable,
+    BillingResponse.itemUnavailable => PlatformBillingResponse.itemUnavailable,
+    BillingResponse.developerError => PlatformBillingResponse.developerError,
+    BillingResponse.error => PlatformBillingResponse.error,
+    BillingResponse.itemAlreadyOwned =>
+      PlatformBillingResponse.itemAlreadyOwned,
+    BillingResponse.itemNotOwned => PlatformBillingResponse.itemNotOwned,
+    BillingResponse.networkError => PlatformBillingResponse.networkError,
+  };
+}
+
+/// Converts [ReplacementMode] enum to its Pigeon equivalent.
+PlatformReplacementMode replacementModeFromWrapper(
+    ReplacementMode replacementMode) {
+  return switch (replacementMode) {
+    ReplacementMode.unknownReplacementMode =>
+      PlatformReplacementMode.unknownReplacementMode,
+    ReplacementMode.withTimeProration =>
+      PlatformReplacementMode.withTimeProration,
+    ReplacementMode.chargeProratedPrice =>
+      PlatformReplacementMode.chargeProratedPrice,
+    ReplacementMode.withoutProration =>
+      PlatformReplacementMode.withoutProration,
+    ReplacementMode.deferred => PlatformReplacementMode.deferred,
+    ReplacementMode.chargeFullPrice => PlatformReplacementMode.chargeFullPrice,
+  };
+}
+
+/// Converts [BillingClientFeature] enum to its Pigeon equivalent.
+PlatformBillingClientFeature billingClientFeatureFromWrapper(
+    BillingClientFeature feature) {
+  return switch (feature) {
+    BillingClientFeature.alternativeBillingOnly =>
+      PlatformBillingClientFeature.alternativeBillingOnly,
+    BillingClientFeature.priceChangeConfirmation =>
+      PlatformBillingClientFeature.priceChangeConfirmation,
+    BillingClientFeature.productDetails =>
+      PlatformBillingClientFeature.productDetails,
+    BillingClientFeature.subscriptions =>
+      PlatformBillingClientFeature.subscriptions,
+    BillingClientFeature.subscriptionsUpdate =>
+      PlatformBillingClientFeature.subscriptionsUpdate,
+    BillingClientFeature.billingConfig =>
+      PlatformBillingClientFeature.billingConfig,
+    BillingClientFeature.externalOffer =>
+      PlatformBillingClientFeature.externalOffer,
+    BillingClientFeature.inAppMessaging =>
+      PlatformBillingClientFeature.inAppMessaging,
   };
 }

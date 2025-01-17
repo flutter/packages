@@ -4,6 +4,8 @@
 * **BREAKING CHANGES**:
   * Removes the deprecated `ProrationMode` enum. `ReplacementMode` should be used instead.
   * Removes the deprecated `BillingClientWrapper.enablePendingPurchases` method.
+  * Removes JSON serialization from Dart wrapper classes.
+  * Removes `subscriptionsOnVR` and `inAppItemsOnVR` from `BillingClientFeature`.
 * Adds `installmentPlanDetails` to `SubscriptionOfferDetailsWrapper`.
 * Adds APIs to support pending transactions for subscription prepaid plans (`PendingPurchasesParams`).
 

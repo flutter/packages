@@ -191,8 +191,9 @@ class BillingClient {
     return resultWrapperFromPlatform(
         await _hostApi.launchBillingFlow(PlatformBillingFlowParams(
       product: product,
-      replacementMode: const ReplacementModeConverter()
-          .toJson(replacementMode ?? ReplacementMode.unknownReplacementMode),
+      replacementMode: replacementModeFromWrapper(
+        replacementMode ?? ReplacementMode.unknownReplacementMode,
+      ),
       offerToken: offerToken,
       accountId: accountId,
       obfuscatedProfileId: obfuscatedProfileId,
@@ -291,8 +292,8 @@ class BillingClient {
   /// Checks if the specified feature or capability is supported by the Play Store.
   /// Call this to check if a [BillingClientFeature] is supported by the device.
   Future<bool> isFeatureSupported(BillingClientFeature feature) async {
-    return _hostApi.isFeatureSupported(
-        const BillingClientFeatureConverter().toJson(feature));
+    return _hostApi
+        .isFeatureSupported(billingClientFeatureFromWrapper(feature));
   }
 
   /// Fetches billing config info into a [BillingConfigWrapper] object.
@@ -376,9 +377,6 @@ typedef OnBillingServiceDisconnected = void Function();
 /// See the `BillingResponse` docs for more explanation of the different
 /// constants.
 enum BillingResponse {
-  // WARNING: Changes to this enum need to be reflected in billingResponseFromPlatform
-  // function in pigeon_converters.dart.
-
   /// The request has reached the maximum timeout before Google Play responds.
   serviceTimeout,
 
@@ -488,21 +486,27 @@ enum ReplacementMode {
 
 /// Features/capabilities supported by [BillingClient.isFeatureSupported()](https://developer.android.com/reference/com/android/billingclient/api/BillingClient.FeatureType).
 enum BillingClientFeature {
-  /// Purchase/query for in-app items on VR.
-  inAppItemsOnVR,
+  /// Alternative billing only.
+  alternativeBillingOnly,
+
+  /// Get billing config.
+  billingConfig,
+
+  /// Play billing library support for external offer.
+  externalOffer,
+
+  /// Show in-app messages.
+  inAppMessaging,
 
   /// Launch a price change confirmation flow.
   priceChangeConfirmation,
 
-  /// Play billing library support for querying and purchasing with ProductDetails.
+  /// Play billing library support for querying and purchasing.
   productDetails,
 
   /// Purchase/query for subscriptions.
   subscriptions,
 
-  /// Purchase/query for subscriptions on VR.
-  subscriptionsOnVR,
-
   /// Subscriptions update/replace.
-  subscriptionsUpdate
+  subscriptionsUpdate,
 }
