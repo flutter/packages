@@ -48,9 +48,16 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
-  /// Creates an instance of a video player and returns its textureId.
+  /// Creates an instance of a video player and returns its playerId.
+  @Deprecated('Use createWithOptions() instead.')
   Future<int?> create(DataSource dataSource) {
     throw UnimplementedError('create() has not been implemented.');
+  }
+
+  /// Creates an instance of a video player based on creation options
+  /// and returns its playerId.
+  Future<int?> createWithOptions(VideoCreationOptions options) {
+    return create(options.dataSource);
   }
 
   /// Returns a Stream of [VideoEventType]s.
@@ -93,9 +100,17 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
+  // TODO(FirentisTFW): Rename textureId to playerId everywhere.
   /// Returns a widget displaying the video with a given textureID.
+  @Deprecated('Use buildViewWithOptions() instead.')
   Widget buildView(int textureId) {
     throw UnimplementedError('buildView() has not been implemented.');
+  }
+
+  /// Returns a widget displaying the video based on given options.
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    // Default implementation for backwards compatibility.
+    return buildView(options.playerId);
   }
 
   /// Sets the audio mode to mix with other sources
@@ -196,6 +211,15 @@ enum VideoFormat {
 
   /// Any format other than the other ones defined in this enum.
   other,
+}
+
+/// The type of video view to be used.
+enum VideoViewType {
+  /// Texture will be used to render video.
+  textureView,
+
+  /// Platform view will be used to render video.
+  platformView,
 }
 
 /// Event emitted from the platform implementation.
@@ -475,4 +499,32 @@ class VideoPlayerWebOptionsControls {
 
     return controlsList.join(' ');
   }
+}
+
+/// [VideoViewOptions] contains configuration options for a video view.
+@immutable
+class VideoViewOptions {
+  /// Constructs an instance of [VideoViewOptions].
+  const VideoViewOptions({
+    required this.playerId,
+  });
+
+  /// The identifier of the video player.
+  final int playerId;
+}
+
+/// [VideoCreationOptions] contains creation options for a video player.
+@immutable
+class VideoCreationOptions {
+  /// Constructs an instance of [VideoCreationOptions].
+  const VideoCreationOptions({
+    required this.dataSource,
+    required this.viewType,
+  });
+
+  /// The data source used to create the player.
+  final DataSource dataSource;
+
+  /// The type of view to be used for displaying the video player
+  final VideoViewType viewType;
 }
