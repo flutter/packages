@@ -244,6 +244,7 @@ void main() {
     expect(childSize.height, fractionallySizedBoxSize.height * 0.8);
     expect(tester.widget<Text>(find.text('test')).textScaler, const TextScaler.linear(3));
     expect(tester.widget<FractionallySizedBox>(find.byType(FractionallySizedBox)).alignment, Alignment.center);
+    imageCache.clear();
   });
 
   testWidgets('More core widgets', (WidgetTester tester) async {
