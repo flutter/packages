@@ -4,6 +4,12 @@
 # customers of the plugin.
 cmake_minimum_required(VERSION 3.14)
 
+# Due to "number of sections exceeded object file format limit: compile with /bigobj" error
+if(MSVC)
+  add_compile_options("/bigobj")
+endif()
+
+
 # Project-level configuration.
 set(PROJECT_NAME "test_plugin")
 project(${PROJECT_NAME} LANGUAGES CXX)
