@@ -2,6 +2,10 @@
 
 * [swift, kotlin] Added support of swift concurrency and kotlin coroutines.
 
+## 22.7.3
+
+* Adds compatibility with `analyzer` 7.x.*.
+
 ## 22.7.2
 
 * Updates README to discuss best practices for using Pigeon-generated code.
