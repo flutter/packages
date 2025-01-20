@@ -175,6 +175,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   [videoPlayerPlugin initialize:&initializationError];
   XCTAssertNil(initializationError);
 
+  id mockRegistrar = OCMPartialMock(registrar);
+  OCMStub([mockRegistrar lookupKeyForAsset:[OCMArg any]]).andReturn(nil);
+
   FVPCreationOptions *create =
       [FVPCreationOptions makeWithAsset:@"invalid/path/to/asset"
                                     uri:nil
