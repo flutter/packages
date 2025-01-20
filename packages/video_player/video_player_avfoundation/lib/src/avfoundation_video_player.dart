@@ -15,10 +15,11 @@ import 'messages.g.dart';
 class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   final AVFoundationVideoPlayerApi _api = AVFoundationVideoPlayerApi();
 
-  /// A map that associates player ID with a view type.
+  /// A map that associates player ID with a view state.
   /// This is used to determine which view type to use when building a view.
   @visibleForTesting
-  final Map<int, VideoViewType> playerViewTypes = <int, VideoViewType>{};
+  final Map<int, VideoPlayerViewState> playerViewStates =
+      <int, VideoPlayerViewState>{};
 
   /// Registers this class as the default instance of [VideoPlayerPlatform].
   static void registerWith() {
@@ -34,7 +35,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int textureId) async {
     await _api.dispose(textureId);
-    playerViewTypes.remove(textureId);
+    playerViewStates.remove(textureId);
   }
 
   @override
@@ -81,7 +82,12 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     );
 
     final int playerId = await _api.create(pigeonCreationOptions);
-    playerViewTypes[playerId] = options.viewType;
+    playerViewStates[playerId] = switch (options.viewType) {
+      // playerId is also the textureId when using texture view.
+      VideoViewType.textureView =>
+        VideoPlayerTextureViewState(textureId: playerId),
+      VideoViewType.platformView => const VideoPlayerPlatformViewState(),
+    };
 
     return playerId;
   }
@@ -179,12 +185,12 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final VideoViewType? viewType = playerViewTypes[playerId];
+    final VideoPlayerViewState? viewType = playerViewStates[playerId];
 
     return switch (viewType) {
-      // playerId is also the textureId when using texture view.
-      VideoViewType.textureView => Texture(textureId: playerId),
-      VideoViewType.platformView => _buildPlatformView(playerId),
+      VideoPlayerTextureViewState(:final int textureId) =>
+        Texture(textureId: textureId),
+      VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
       null => throw Exception(
           'Could not find corresponding view type for playerId: $playerId',
         ),
@@ -233,4 +239,39 @@ PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
     VideoViewType.textureView => PlatformVideoViewType.textureView,
     VideoViewType.platformView => PlatformVideoViewType.platformView,
   };
+}
+
+/// Base class representing the state of a video player view.
+@visibleForTesting
+@immutable
+sealed class VideoPlayerViewState {
+  const VideoPlayerViewState();
+}
+
+/// Represents the state of a video player view that uses a texture.
+@visibleForTesting
+final class VideoPlayerTextureViewState extends VideoPlayerViewState {
+  /// Creates a new instance of [VideoPlayerTextureViewState].
+  const VideoPlayerTextureViewState({
+    required this.textureId,
+  });
+
+  /// The ID of the texture used by the video player.
+  final int textureId;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoPlayerTextureViewState && other.textureId == textureId;
+  }
+
+  @override
+  int get hashCode => textureId.hashCode;
+}
+
+/// Represents the state of a video player view that uses a platform view.
+@visibleForTesting
+final class VideoPlayerPlatformViewState extends VideoPlayerViewState {
+  /// Creates a new instance of [VideoPlayerPlatformViewState].
+  const VideoPlayerPlatformViewState();
 }
