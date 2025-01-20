@@ -118,12 +118,13 @@ void main() {
     });
 
     test('dispose', () async {
-      player.playerViewTypes[1] = VideoViewType.textureView;
+      player.playerViewStates[1] =
+          const VideoPlayerTextureViewState(textureId: 1);
 
       await player.dispose(1);
       expect(log.log.last, 'dispose');
       expect(log.textureId, 1);
-      expect(player.playerViewTypes, isEmpty);
+      expect(player.playerViewStates, isEmpty);
     });
 
     test('create with asset', () async {
@@ -136,7 +137,8 @@ void main() {
       expect(log.creationOptions?.asset, 'someAsset');
       expect(log.creationOptions?.packageName, 'somePackage');
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     // FIXME Is this test valid?
@@ -165,7 +167,8 @@ void main() {
       expect(log.creationOptions?.formatHint, 'dash');
       expect(log.creationOptions?.httpHeaders, <String, String>{});
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with network (some headers)', () async {
@@ -182,7 +185,8 @@ void main() {
       expect(log.creationOptions?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with file', () async {
@@ -193,7 +197,8 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.creationOptions?.uri, 'someUri');
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with asset', () async {
@@ -211,7 +216,8 @@ void main() {
       expect(log.creationOptions?.asset, 'someAsset');
       expect(log.creationOptions?.packageName, 'somePackage');
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     // FIXME Is this test valid?
@@ -250,7 +256,8 @@ void main() {
       expect(log.creationOptions?.formatHint, 'dash');
       expect(log.creationOptions?.httpHeaders, <String, String>{});
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with network (some headers)', () async {
@@ -272,7 +279,8 @@ void main() {
       expect(log.creationOptions?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with file', () async {
@@ -288,23 +296,8 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.creationOptions?.uri, 'someUri');
       expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
-    });
-
-    test('createWithOptions with texture view', () async {
-      final int? textureId = await player.createWithOptions(
-        VideoCreationOptions(
-          dataSource: DataSource(
-            sourceType: DataSourceType.file,
-            uri: 'someUri',
-          ),
-          viewType: VideoViewType.textureView,
-        ),
-      );
-      expect(log.log.last, 'create');
-      expect(log.creationOptions?.viewType, PlatformVideoViewType.textureView);
-      expect(textureId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.textureView);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with platform view', () async {
@@ -320,7 +313,7 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.creationOptions?.viewType, PlatformVideoViewType.platformView);
       expect(playerId, 3);
-      expect(player.playerViewTypes[3], VideoViewType.platformView);
+      expect(player.playerViewStates[3], const VideoPlayerPlatformViewState());
     });
 
     test('setLooping', () async {
