@@ -141,19 +141,6 @@ void main() {
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
-    // FIXME Is this test valid?
-    test('create with incorrect asset throws exception', () async {
-      try {
-        await player.create(DataSource(
-          sourceType: DataSourceType.asset,
-          asset: '/path/to/incorrect_asset',
-        ));
-        fail('should throw PlatformException');
-      } catch (e) {
-        expect(e, isException);
-      }
-    });
-
     test('create with network', () async {
       final int? textureId = await player.create(DataSource(
         sourceType: DataSourceType.network,
@@ -218,24 +205,6 @@ void main() {
       expect(textureId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
-    });
-
-    // FIXME Is this test valid?
-    test('createWithOptions with incorrect asset throws exception', () async {
-      try {
-        await player.createWithOptions(
-          VideoCreationOptions(
-            dataSource: DataSource(
-              sourceType: DataSourceType.asset,
-              asset: '/path/to/incorrect_asset',
-            ),
-            viewType: VideoViewType.textureView,
-          ),
-        );
-        fail('should throw PlatformException');
-      } catch (e) {
-        expect(e, isException);
-      }
     });
 
     test('createWithOptions with network', () async {

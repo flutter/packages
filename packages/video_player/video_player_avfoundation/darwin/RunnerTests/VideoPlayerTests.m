@@ -165,6 +165,32 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 @implementation VideoPlayerTests
 
+- (void)testCreateWithOptionsReturnsErrorForInvalidAssetPath {
+  NSObject<FlutterPluginRegistrar> *registrar = [GetPluginRegistry()
+      registrarForPlugin:@"testCreateWithOptionsReturnsErrorForInvalidAssetPath"];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  FlutterError *initializationError;
+  [videoPlayerPlugin initialize:&initializationError];
+  XCTAssertNil(initializationError);
+
+  FVPCreationOptions *create =
+      [FVPCreationOptions makeWithAsset:@"invalid/path/to/asset"
+                                    uri:nil
+                            packageName:nil
+                             formatHint:nil
+                            httpHeaders:@{}
+                               viewType:FVPPlatformVideoViewTypeTextureView];
+
+  FlutterError *createError;
+  NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&createError];
+
+  XCTAssertNil(textureId);
+  XCTAssertNotNil(createError);
+  XCTAssertEqualObjects(createError.code, @"video_player");
+}
+
 - (void)testBlankVideoBugWithEncryptedVideoStreamAndInvertedAspectRatioBugForSomeVideoStream {
   // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
   // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
