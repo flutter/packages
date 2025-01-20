@@ -100,7 +100,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
-  /// Returns a widget displaying the video with a given playerID.
+  /// Returns a widget displaying the video with a given playerId.
   @Deprecated('Use buildViewWithOptions() instead.')
   Widget buildView(int playerId) {
     throw UnimplementedError('buildView() has not been implemented.');
@@ -112,12 +112,12 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     return buildView(options.playerId);
   }
 
-  /// Sets the audio mode to mix with other sources
+  /// Sets the audio mode to mix with other sources.
   Future<void> setMixWithOthers(bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
-  /// Sets additional options on web
+  /// Sets additional options on web.
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
