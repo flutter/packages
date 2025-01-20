@@ -1,3 +1,7 @@
+## 0.3.6+14
+
+* GooglePlayPurchaseParam add possibility set selected offerToken
+
 ## 0.3.6+13
 
 * Updates androidx.annotation:annotation to 1.9.1.
