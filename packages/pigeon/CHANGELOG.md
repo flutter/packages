@@ -1,7 +1,9 @@
+## 22.7.4
+* Adds support for empty data classes.
+
 ## 22.7.3
 
 * Adds compatibility with `analyzer` 7.x.*.
-* Adds support for empty data classes.
 
 ## 22.7.2
 
