@@ -14,6 +14,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+// TODO(FirentisTFW): Remove the ignore and rename parameters when adding support for platform views.
+// ignore_for_file: avoid_renaming_method_parameters
+
 const String _localhost = 'https://127.0.0.1';
 final Uri _localhostUri = Uri.parse(_localhost);
 
