@@ -185,9 +185,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final VideoPlayerViewState? viewType = playerViewStates[playerId];
+    final VideoPlayerViewState? viewState = playerViewStates[playerId];
 
-    return switch (viewType) {
+    return switch (viewState) {
       VideoPlayerTextureViewState(:final int textureId) =>
         Texture(textureId: textureId),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
@@ -260,10 +260,9 @@ final class VideoPlayerTextureViewState extends VideoPlayerViewState {
   final int textureId;
 
   @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        other is VideoPlayerTextureViewState && other.textureId == textureId;
-  }
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VideoPlayerTextureViewState && other.textureId == textureId;
 
   @override
   int get hashCode => textureId.hashCode;
