@@ -284,8 +284,8 @@ class _MyAppState extends State<_MyApp> {
                           changeSubscriptionParam: (oldSubscription != null)
                               ? ChangeSubscriptionParam(
                                   oldPurchaseDetails: oldSubscription,
-                                  replacementMode:
-                                      ReplacementMode.withTimeProration,
+                                  prorationMode:
+                                      ProrationMode.immediateWithTimeProration,
                                 )
                               : null);
                     } else {
