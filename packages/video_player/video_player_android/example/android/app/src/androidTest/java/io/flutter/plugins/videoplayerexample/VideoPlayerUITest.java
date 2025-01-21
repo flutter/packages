@@ -20,7 +20,6 @@ import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
 public class VideoPlayerUITest {
-
   @Rule
   public ActivityScenarioRule<DriverExtensionActivity> activityRule =
       new ActivityScenarioRule<>(DriverExtensionActivity.class);
