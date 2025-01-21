@@ -2,11 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if __has_include(<storekit_objc/FIATransactionCache.h>)
-#import <storekit_objc/FIATransactionCache.h>
-#else
+#include <TargetConditionals.h>
 #import "FIATransactionCache.h"
-#endif
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #include <TargetConditionals.h>
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
@@ -10,11 +11,7 @@
 #endif
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#if __has_include("Protocols/FLTMethodChannelProtocol.h")
-#import "Protocols/FLTMethodChannelProtocol.h"
-#else
 #import "FLTMethodChannelProtocol.h"
-#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

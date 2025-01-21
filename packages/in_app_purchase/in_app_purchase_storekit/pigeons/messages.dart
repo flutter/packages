@@ -8,11 +8,12 @@ import 'package:pigeon/pigeon.dart';
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
   objcHeaderOut:
-      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit_objc/include/in_app_purchase_storekit_objc/messages.g.h',
+      'darwin/in_app_purchase_storekit/Sources/storekit_objc/include/storekit_objc/messages.g.h',
   objcSourceOut:
-      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit_objc/messages.g.m',
+      'darwin/in_app_purchase_storekit/Sources/storekit_objc/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FIA',
+    headerIncludePath: './include/storekit_objc/messages.g.h',
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))

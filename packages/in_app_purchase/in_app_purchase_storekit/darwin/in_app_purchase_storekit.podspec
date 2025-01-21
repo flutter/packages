@@ -19,7 +19,6 @@ Downloaded by pub (not CocoaPods).
   s.swift_version = '5.0'
   s.source_files = 'in_app_purchase_storekit/Sources/**/*.{h,m,swift}'
   s.public_header_files = 'in_app_purchase_storekit/Sources/storekit_objc/include/**/*.h'
-  s.exclude_files = 'in_app_purchase_storekit/Sources/storekit_objc/include/*{-umbrella.h}'
 
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'

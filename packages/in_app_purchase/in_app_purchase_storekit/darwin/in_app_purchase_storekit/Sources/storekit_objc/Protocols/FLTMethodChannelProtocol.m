@@ -3,17 +3,14 @@
 // found in the LICENSE file.
 
 #include <TargetConditionals.h>
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
 #endif
 
-#if __has_include(<Protocols/FLTMethodChannelProtocol.h>)
-#import <Protocols/FLTMethodChannelProtocol.h>
-#else
-#import "FLTMethodChannelProtocol.h"
-#endif
+#import "../include/storekit_objc/FLTMethodChannelProtocol.h"
 
 @interface DefaultMethodChannel ()
 /// The wrapped FlutterMethodChannel

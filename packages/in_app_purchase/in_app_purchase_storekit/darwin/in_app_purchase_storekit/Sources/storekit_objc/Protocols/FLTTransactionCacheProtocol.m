@@ -2,11 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if __has_include(<Protocols/FLTTransactionCacheProtocol.h>)
-#import <Protocols/FLTTransactionCacheProtocol.h>
-#else
-#import "FLTTransactionCacheProtocol.h"
-#endif
+#import "../include/storekit_objc/FLTTransactionCacheProtocol.h"
 
 @interface DefaultTransactionCache ()
 /// The wrapped FIATransactionCache

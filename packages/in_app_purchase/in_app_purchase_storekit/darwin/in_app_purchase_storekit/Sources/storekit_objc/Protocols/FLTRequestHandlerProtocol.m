@@ -2,13 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if __has_include(<Protocols/FLTRequestHandlerProtocol.h>)
-#import <Protocols/FLTRequestHandlerProtocol.h>
-#else
-#import "FLTRequestHandlerProtocol.h"
-#endif
+#import "../include/storekit_objc/FLTRequestHandlerProtocol.h"
 #import <Foundation/Foundation.h>
-#import "FIAPRequestHandler.h"
+#import "../include/storekit_objc/FIAPRequestHandler.h"
 
 @interface DefaultRequestHandler ()
 /// The wrapped FIAPRequestHandler
