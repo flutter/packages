@@ -54,6 +54,12 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
         var purchaseOptions: Set<Product.PurchaseOption> = []
 
+        if let appAccountToken = options?.appAccountToken,
+           let accountTokenUUID = UUID(uuidString: appAccountToken)
+        {
+          purchaseOptions.insert(.appAccountToken(accountTokenUUID))
+        }
+
         if #available(iOS 18.0, macOS 15.0, *) {
           if let winBackOfferId = options?.winBackOfferId,
              let winBackOffer = product.subscription?.winBackOffers.first(where: { $0.id == winBackOfferId })
