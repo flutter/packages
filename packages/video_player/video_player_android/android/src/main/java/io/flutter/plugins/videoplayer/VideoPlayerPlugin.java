@@ -18,16 +18,16 @@ import io.flutter.view.TextureRegistry;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
 public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
-  /**
-   * The next non-texture player ID, initialized to a high number to avoid collisions with texture
-   * IDs (which are generated separately).
-   */
-  private static Long nextNonTexturePlayerId = 1000000L;
-
   private static final String TAG = "VideoPlayerPlugin";
   private final LongSparseArray<VideoPlayer> videoPlayers = new LongSparseArray<>();
   private FlutterState flutterState;
   private final VideoPlayerOptions options = new VideoPlayerOptions();
+
+  /**
+   * The next non-texture player ID, initialized to a high number to avoid collisions with texture
+   * IDs (which are generated separately).
+   */
+  private Long nextNonTexturePlayerId = Long.MAX_VALUE;
 
   /** Register this with the v2 embedding for the plugin to respond to lifecycle callbacks. */
   public VideoPlayerPlugin() {}
@@ -116,7 +116,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     long id;
     VideoPlayer videoPlayer;
     if (arg.getViewType() == Messages.PlatformVideoViewType.PLATFORM_VIEW) {
-      id = VideoPlayerPlugin.nextNonTexturePlayerId++;
+      id = nextNonTexturePlayerId--;
       videoPlayer =
           VideoPlayer.create(
               flutterState.applicationContext,
