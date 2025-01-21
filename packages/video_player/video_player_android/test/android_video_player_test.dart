@@ -133,6 +133,8 @@ void main() {
       expect(log.passedCreateMessage?.asset, 'someAsset');
       expect(log.passedCreateMessage?.packageName, 'somePackage');
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with network', () async {
@@ -148,6 +150,8 @@ void main() {
       expect(log.passedCreateMessage?.formatHint, 'dash');
       expect(log.passedCreateMessage?.httpHeaders, <String, String>{});
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with network (some headers)', () async {
@@ -164,6 +168,8 @@ void main() {
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with file', () async {
@@ -174,6 +180,8 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.passedCreateMessage?.uri, 'someUri');
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with file (some headers)', () async {
@@ -187,6 +195,8 @@ void main() {
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with asset', () async {
@@ -204,6 +214,8 @@ void main() {
       expect(log.passedCreateMessage?.asset, 'someAsset');
       expect(log.passedCreateMessage?.packageName, 'somePackage');
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with network', () async {
@@ -224,6 +236,8 @@ void main() {
       expect(log.passedCreateMessage?.formatHint, 'dash');
       expect(log.passedCreateMessage?.httpHeaders, <String, String>{});
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with network (some headers)', () async {
@@ -245,6 +259,8 @@ void main() {
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with file', () async {
@@ -260,6 +276,8 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.passedCreateMessage?.uri, 'someUri');
       expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with file (some headers)', () async {
@@ -278,22 +296,8 @@ void main() {
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
-    });
-
-    test('createWithOptions with texture view', () async {
-      final int? textureId = await player.createWithOptions(
-        VideoCreationOptions(
-          dataSource: DataSource(
-            sourceType: DataSourceType.file,
-            uri: 'someUri',
-          ),
-          viewType: VideoViewType.textureView,
-        ),
-      );
-      expect(log.log.last, 'create');
-      expect(
-          log.passedCreateMessage?.viewType, PlatformVideoViewType.textureView);
-      expect(textureId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with platform view', () async {
@@ -310,6 +314,7 @@ void main() {
       expect(log.passedCreateMessage?.viewType,
           PlatformVideoViewType.platformView);
       expect(playerId, 3);
+      expect(player.playerViewStates[3], const VideoPlayerPlatformViewState());
     });
 
     test('setLooping', () async {
