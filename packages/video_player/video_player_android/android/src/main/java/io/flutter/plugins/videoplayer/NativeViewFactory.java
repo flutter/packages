@@ -5,7 +5,6 @@
 package io.flutter.plugins.videoplayer;
 
 import android.content.Context;
-import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -14,11 +13,11 @@ import io.flutter.plugin.platform.PlatformViewFactory;
 import java.util.Objects;
 
 class NativeViewFactory extends PlatformViewFactory {
-  private final LongSparseArray<VideoPlayer> videoPlayers;
+  private final VideoPlayerProvider videoPlayerProvider;
 
-  NativeViewFactory(LongSparseArray<VideoPlayer> videoPlayers) {
+  public NativeViewFactory(@NonNull VideoPlayerProvider videoPlayerProvider) {
     super(Messages.AndroidVideoPlayerApi.getCodec());
-    this.videoPlayers = videoPlayers;
+    this.videoPlayerProvider = videoPlayerProvider;
   }
 
   @NonNull
@@ -28,7 +27,7 @@ class NativeViewFactory extends PlatformViewFactory {
         Objects.requireNonNull((Messages.PlatformVideoViewCreationParams) args);
     final Long playerId = params.getPlayerId();
 
-    final VideoPlayer player = videoPlayers.get(playerId);
+    final VideoPlayer player = videoPlayerProvider.getVideoPlayer(playerId);
     final ExoPlayer exoPlayer = player.getExoPlayer();
 
     return new NativeView(context, exoPlayer);
