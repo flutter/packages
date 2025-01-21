@@ -146,12 +146,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @NonNull
-  private VideoPlayer getPlayer(long textureId) {
-    VideoPlayer player = videoPlayers.get(textureId);
+  private VideoPlayer getPlayer(long playerId) {
+    VideoPlayer player = videoPlayers.get(playerId);
 
     // Avoid a very ugly un-debuggable NPE that results in returning a null player.
     if (player == null) {
-      String message = "No player found with textureId <" + textureId + ">";
+      String message = "No player found with playerId <" + playerId + ">";
       if (videoPlayers.size() == 0) {
         message += " and no active players created by the plugin.";
       }
@@ -162,53 +162,53 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
-  public void dispose(@NonNull Long textureId) {
-    VideoPlayer player = getPlayer(textureId);
+  public void dispose(@NonNull Long playerId) {
+    VideoPlayer player = getPlayer(playerId);
     player.dispose();
-    videoPlayers.remove(textureId);
+    videoPlayers.remove(playerId);
   }
 
   @Override
-  public void setLooping(@NonNull Long textureId, @NonNull Boolean looping) {
-    VideoPlayer player = getPlayer(textureId);
+  public void setLooping(@NonNull Long playerId, @NonNull Boolean looping) {
+    VideoPlayer player = getPlayer(playerId);
     player.setLooping(looping);
   }
 
   @Override
-  public void setVolume(@NonNull Long textureId, @NonNull Double volume) {
-    VideoPlayer player = getPlayer(textureId);
+  public void setVolume(@NonNull Long playerId, @NonNull Double volume) {
+    VideoPlayer player = getPlayer(playerId);
     player.setVolume(volume);
   }
 
   @Override
-  public void setPlaybackSpeed(@NonNull Long textureId, @NonNull Double speed) {
-    VideoPlayer player = getPlayer(textureId);
+  public void setPlaybackSpeed(@NonNull Long playerId, @NonNull Double speed) {
+    VideoPlayer player = getPlayer(playerId);
     player.setPlaybackSpeed(speed);
   }
 
   @Override
-  public void play(@NonNull Long textureId) {
-    VideoPlayer player = getPlayer(textureId);
+  public void play(@NonNull Long playerId) {
+    VideoPlayer player = getPlayer(playerId);
     player.play();
   }
 
   @Override
-  public @NonNull Long position(@NonNull Long textureId) {
-    VideoPlayer player = getPlayer(textureId);
+  public @NonNull Long position(@NonNull Long playerId) {
+    VideoPlayer player = getPlayer(playerId);
     long position = player.getPosition();
     player.sendBufferingUpdate();
     return position;
   }
 
   @Override
-  public void seekTo(@NonNull Long textureId, @NonNull Long position) {
-    VideoPlayer player = getPlayer(textureId);
+  public void seekTo(@NonNull Long playerId, @NonNull Long position) {
+    VideoPlayer player = getPlayer(playerId);
     player.seekTo(position.intValue());
   }
 
   @Override
-  public void pause(@NonNull Long textureId) {
-    VideoPlayer player = getPlayer(textureId);
+  public void pause(@NonNull Long playerId) {
+    VideoPlayer player = getPlayer(playerId);
     player.pause();
   }
 
