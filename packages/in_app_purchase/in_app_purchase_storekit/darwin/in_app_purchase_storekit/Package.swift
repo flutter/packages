@@ -30,6 +30,7 @@ let package = Package(
     .target(
       name: "storekit_objc",
       dependencies: [],
+      publicHeadersPath: "include/storekit_objc",
       cSettings: [
         .headerSearchPath("include/storekit_objc")
       ]

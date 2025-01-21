@@ -4,23 +4,18 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
-#if __has_include(<storekit_objc/FIATransactionCache.h>)
-#import <storekit_objc/FIATransactionCache.h>
-#import <storekit_objc/Protocols/FLTMethodChannelProtocol.h>
-#import <storekit_objc/Protocols/FLTPaymentQueueHandlerProtocol.h>
-#import <storekit_objc/Protocols/FLTPaymentQueueProtocol.h>
-#import <storekit_objc/Protocols/FLTRequestHandlerProtocol.h>
-#import <storekit_objc/Protocols/FLTTransactionCacheProtocol.h>
-#else
 #import "FIATransactionCache.h"
 #import "FLTMethodChannelProtocol.h"
 #import "FLTPaymentQueueHandlerProtocol.h"
 #import "FLTPaymentQueueProtocol.h"
 #import "FLTRequestHandlerProtocol.h"
 #import "FLTTransactionCacheProtocol.h"
-#endif
 
+#if __has_include(<in_app_purchase_storekit/in_app_purchase_storekit.h>)
 @import in_app_purchase_storekit;
+#else
+@import storekit_objc;
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 API_AVAILABLE(ios(11.2), macos(10.13.2))
