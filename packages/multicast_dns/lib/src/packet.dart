@@ -125,10 +125,6 @@ String readFQDN(List<int> packet, [int offset = 0]) {
 // parts and the number of bytes consumed.
 //
 // If decoding fails (e.g. due to an invalid packet) `null` is returned.
-// Read a FQDN at the given offset. Returns a pair with the FQDN
-// parts and the number of bytes consumed.
-//
-// If decoding fails (e.g. due to an invalid packet) `null` is returned.
 _FQDNReadResult _readFQDN(
     Uint8List data, ByteData byteData, int offset, int length) {
   void checkLength(int required) {
