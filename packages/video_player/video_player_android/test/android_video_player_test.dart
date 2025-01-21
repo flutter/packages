@@ -12,7 +12,7 @@ import 'test_api.g.dart';
 
 class _ApiLogger implements TestHostVideoPlayerApi {
   final List<String> log = <String>[];
-  int? passedTextureId;
+  int? passedPlayerId;
   CreateMessage? passedCreateMessage;
   int? passedPosition;
   bool? passedLooping;
@@ -28,9 +28,9 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void dispose(int textureId) {
+  void dispose(int playerId) {
     log.add('dispose');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
   }
 
   @override
@@ -39,15 +39,15 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void pause(int textureId) {
+  void pause(int playerId) {
     log.add('pause');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
   }
 
   @override
-  void play(int textureId) {
+  void play(int playerId) {
     log.add('play');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
   }
 
   @override
@@ -57,37 +57,37 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  int position(int textureId) {
+  int position(int playerId) {
     log.add('position');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
     return 234;
   }
 
   @override
-  void seekTo(int textureId, int position) {
+  void seekTo(int playerId, int position) {
     log.add('seekTo');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
     passedPosition = position;
   }
 
   @override
-  void setLooping(int textureId, bool looping) {
+  void setLooping(int playerId, bool looping) {
     log.add('setLooping');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
     passedLooping = looping;
   }
 
   @override
-  void setVolume(int textureId, double volume) {
+  void setVolume(int playerId, double volume) {
     log.add('setVolume');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
     passedVolume = volume;
   }
 
   @override
-  void setPlaybackSpeed(int textureId, double speed) {
+  void setPlaybackSpeed(int playerId, double speed) {
     log.add('setPlaybackSpeed');
-    passedTextureId = textureId;
+    passedPlayerId = playerId;
     passedPlaybackSpeed = speed;
   }
 }
@@ -120,11 +120,11 @@ void main() {
     test('dispose', () async {
       await player.dispose(1);
       expect(log.log.last, 'dispose');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
     });
 
     test('create with asset', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.asset,
         asset: 'someAsset',
         package: 'somePackage',
@@ -132,13 +132,13 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.passedCreateMessage?.asset, 'someAsset');
       expect(log.passedCreateMessage?.packageName, 'somePackage');
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with network', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
         formatHint: VideoFormat.dash,
@@ -149,13 +149,13 @@ void main() {
       expect(log.passedCreateMessage?.packageName, null);
       expect(log.passedCreateMessage?.formatHint, 'dash');
       expect(log.passedCreateMessage?.httpHeaders, <String, String>{});
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with network (some headers)', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
@@ -167,25 +167,25 @@ void main() {
       expect(log.passedCreateMessage?.formatHint, null);
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with file', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.file,
         uri: 'someUri',
       ));
       expect(log.log.last, 'create');
       expect(log.passedCreateMessage?.uri, 'someUri');
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with file (some headers)', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.file,
         uri: 'someUri',
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
@@ -194,13 +194,13 @@ void main() {
       expect(log.passedCreateMessage?.uri, 'someUri');
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with asset', () async {
-      final int? textureId = await player.createWithOptions(
+      final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
             sourceType: DataSourceType.asset,
@@ -213,13 +213,13 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.passedCreateMessage?.asset, 'someAsset');
       expect(log.passedCreateMessage?.packageName, 'somePackage');
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with network', () async {
-      final int? textureId = await player.createWithOptions(
+      final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
             sourceType: DataSourceType.network,
@@ -235,13 +235,13 @@ void main() {
       expect(log.passedCreateMessage?.packageName, null);
       expect(log.passedCreateMessage?.formatHint, 'dash');
       expect(log.passedCreateMessage?.httpHeaders, <String, String>{});
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with network (some headers)', () async {
-      final int? textureId = await player.createWithOptions(
+      final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
             sourceType: DataSourceType.network,
@@ -258,13 +258,13 @@ void main() {
       expect(log.passedCreateMessage?.formatHint, null);
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with file', () async {
-      final int? textureId = await player.createWithOptions(
+      final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
             sourceType: DataSourceType.file,
@@ -275,13 +275,13 @@ void main() {
       );
       expect(log.log.last, 'create');
       expect(log.passedCreateMessage?.uri, 'someUri');
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('createWithOptions with file (some headers)', () async {
-      final int? textureId = await player.createWithOptions(
+      final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
             sourceType: DataSourceType.file,
@@ -295,7 +295,7 @@ void main() {
       expect(log.passedCreateMessage?.uri, 'someUri');
       expect(log.passedCreateMessage?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
-      expect(textureId, 3);
+      expect(playerId, 3);
       expect(player.playerViewStates[3],
           const VideoPlayerTextureViewState(textureId: 3));
     });
@@ -320,20 +320,20 @@ void main() {
     test('setLooping', () async {
       await player.setLooping(1, true);
       expect(log.log.last, 'setLooping');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
       expect(log.passedLooping, true);
     });
 
     test('play', () async {
       await player.play(1);
       expect(log.log.last, 'play');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
     });
 
     test('pause', () async {
       await player.pause(1);
       expect(log.log.last, 'pause');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
     });
 
     test('setMixWithOthers', () async {
@@ -349,28 +349,28 @@ void main() {
     test('setVolume', () async {
       await player.setVolume(1, 0.7);
       expect(log.log.last, 'setVolume');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
       expect(log.passedVolume, 0.7);
     });
 
     test('setPlaybackSpeed', () async {
       await player.setPlaybackSpeed(1, 1.5);
       expect(log.log.last, 'setPlaybackSpeed');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
       expect(log.passedPlaybackSpeed, 1.5);
     });
 
     test('seekTo', () async {
       await player.seekTo(1, const Duration(milliseconds: 12345));
       expect(log.log.last, 'seekTo');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
       expect(log.passedPosition, 12345);
     });
 
     test('getPosition', () async {
       final Duration position = await player.getPosition(1);
       expect(log.log.last, 'position');
-      expect(log.passedTextureId, 1);
+      expect(log.passedPlayerId, 1);
       expect(position, const Duration(milliseconds: 234));
     });
 

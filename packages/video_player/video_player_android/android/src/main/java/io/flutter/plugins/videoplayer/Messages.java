@@ -21,10 +21,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -382,22 +378,22 @@ public class Messages {
     @NonNull
     Long create(@NonNull CreateMessage msg);
 
-    void dispose(@NonNull Long textureId);
+    void dispose(@NonNull Long playerId);
 
-    void setLooping(@NonNull Long textureId, @NonNull Boolean looping);
+    void setLooping(@NonNull Long playerId, @NonNull Boolean looping);
 
-    void setVolume(@NonNull Long textureId, @NonNull Double volume);
+    void setVolume(@NonNull Long playerId, @NonNull Double volume);
 
-    void setPlaybackSpeed(@NonNull Long textureId, @NonNull Double speed);
+    void setPlaybackSpeed(@NonNull Long playerId, @NonNull Double speed);
 
-    void play(@NonNull Long textureId);
+    void play(@NonNull Long playerId);
 
     @NonNull
-    Long position(@NonNull Long textureId);
+    Long position(@NonNull Long playerId);
 
-    void seekTo(@NonNull Long textureId, @NonNull Long position);
+    void seekTo(@NonNull Long playerId, @NonNull Long position);
 
-    void pause(@NonNull Long textureId);
+    void pause(@NonNull Long playerId);
 
     void setMixWithOthers(@NonNull Boolean mixWithOthers);
 
@@ -480,9 +476,9 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 try {
-                  api.dispose(textureIdArg);
+                  api.dispose(playerIdArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -505,10 +501,10 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 Boolean loopingArg = (Boolean) args.get(1);
                 try {
-                  api.setLooping(textureIdArg, loopingArg);
+                  api.setLooping(playerIdArg, loopingArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -531,10 +527,10 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 Double volumeArg = (Double) args.get(1);
                 try {
-                  api.setVolume(textureIdArg, volumeArg);
+                  api.setVolume(playerIdArg, volumeArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -557,10 +553,10 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 Double speedArg = (Double) args.get(1);
                 try {
-                  api.setPlaybackSpeed(textureIdArg, speedArg);
+                  api.setPlaybackSpeed(playerIdArg, speedArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -583,9 +579,9 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 try {
-                  api.play(textureIdArg);
+                  api.play(playerIdArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -608,9 +604,9 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 try {
-                  Long output = api.position(textureIdArg);
+                  Long output = api.position(playerIdArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -633,10 +629,10 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 Long positionArg = (Long) args.get(1);
                 try {
-                  api.seekTo(textureIdArg, positionArg);
+                  api.seekTo(playerIdArg, positionArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -659,9 +655,9 @@ public class Messages {
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
                 ArrayList<Object> args = (ArrayList<Object>) message;
-                Long textureIdArg = (Long) args.get(0);
+                Long playerIdArg = (Long) args.get(0);
                 try {
-                  api.pause(textureIdArg);
+                  api.pause(playerIdArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
