@@ -103,15 +103,15 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
   #elseif os(macOS)
     var view: NSView?
 
-    var messenger: any FlutterBinaryMessenger {
+    var messenger: FlutterBinaryMessenger {
       return TestBinaryMessenger()
     }
 
-    var textures: any FlutterTextureRegistry {
+    var textures: FlutterTextureRegistry {
       return TestFlutterTextureRegistry()
     }
 
-    func addApplicationDelegate(_ delegate: any FlutterAppLifecycleDelegate) {
+    func addApplicationDelegate(_ delegate: FlutterAppLifecycleDelegate) {
 
     }
   #endif
