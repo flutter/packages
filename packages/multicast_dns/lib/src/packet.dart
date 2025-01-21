@@ -187,41 +187,6 @@ _FQDNReadResult _readFQDN(
   return _FQDNReadResult(parts, highestOffsetRead - prevOffset);
 }
 
-/// Decode an mDNS query packet.
-///
-/// If decoding fails (e.g. due to an invalid packet), `null` is returned.
-///
-/// See https://tools.ietf.org/html/rfc1035 for format.
-ResourceRecordQuery? decodeMDnsQuery(List<int> packet) {
-  final int length = packet.length;
-  if (length < _kHeaderSize) {
-    return null;
-  }
-
-  final Uint8List data =
-      packet is Uint8List ? packet : Uint8List.fromList(packet);
-  final ByteData packetBytes = ByteData.view(data.buffer);
-
-  // Check whether it's a query.
-  final int flags = packetBytes.getUint16(_kFlagsOffset);
-  if (flags != 0) {
-    return null;
-  }
-  final int questionCount = packetBytes.getUint16(_kQdcountOffset);
-  if (questionCount == 0) {
-    return null;
-  }
-
-  final _FQDNReadResult fqdn =
-      _readFQDN(data, packetBytes, _kHeaderSize, data.length);
-
-  int offset = _kHeaderSize + fqdn.bytesRead;
-  final int type = packetBytes.getUint16(offset);
-  offset += 2;
-  final int queryType = packetBytes.getUint16(offset) & 0x8000;
-  return ResourceRecordQuery(type, fqdn.fqdn, queryType);
-}
-
 /// Decode an mDNS response packet.
 ///
 /// If decoding fails (e.g. due to an invalid packet) `null` is returned.
