@@ -104,13 +104,8 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updateMapConfiguration(MapConfiguration update) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updateMapConfiguration(update, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updateMapConfiguration on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updateMapConfiguration(update, mapId: mapId);
   }
 
   /// Updates marker configuration.
@@ -120,13 +115,8 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updateMarkers(MarkerUpdates markerUpdates) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updateMarkers(markerUpdates, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updateMarkers on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updateMarkers(markerUpdates, mapId: mapId);
   }
 
   /// Updates cluster manager configuration.
@@ -137,13 +127,8 @@ class GoogleMapController {
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updateClusterManagers(
       ClusterManagerUpdates clusterManagerUpdates) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updateClusterManagers on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
   }
 
   /// Updates polygon configuration.
@@ -153,13 +138,8 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updatePolygons(PolygonUpdates polygonUpdates) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updatePolygons(polygonUpdates, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updatePolygons on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updatePolygons(polygonUpdates, mapId: mapId);
   }
 
   /// Updates polyline configuration.
@@ -169,13 +149,8 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updatePolylines(PolylineUpdates polylineUpdates) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updatePolylines(polylineUpdates, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updatePolylines on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updatePolylines(polylineUpdates, mapId: mapId);
   }
 
   /// Updates circle configuration.
@@ -185,13 +160,8 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updateCircles(CircleUpdates circleUpdates) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updateCircles(circleUpdates, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updateCircles on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updateCircles(circleUpdates, mapId: mapId);
   }
 
   /// Updates heatmap configuration.
@@ -201,13 +171,8 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updateHeatmaps(HeatmapUpdates heatmapUpdates) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updateHeatmaps(heatmapUpdates, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updateHeatmaps on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updateHeatmaps(heatmapUpdates, mapId: mapId);
   }
 
   /// Updates tile overlays configuration.
@@ -217,13 +182,8 @@ class GoogleMapController {
   ///
   /// The returned [Future] completes after listeners have been notified.
   Future<void> _updateTileOverlays(Set<TileOverlay> newTileOverlays) {
-    if (_googleMapState.mounted) {
-      return GoogleMapsFlutterPlatform.instance
-          .updateTileOverlays(newTileOverlays: newTileOverlays, mapId: mapId);
-    } else {
-      throw MapStateException(
-          'Cannot call method _updateTileOverlays on an unmounted GoogleMap instance.');
-    }
+    return GoogleMapsFlutterPlatform.instance
+        .updateTileOverlays(newTileOverlays: newTileOverlays, mapId: mapId);
   }
 
   /// Clears the tile cache so that all tiles will be requested again from the
