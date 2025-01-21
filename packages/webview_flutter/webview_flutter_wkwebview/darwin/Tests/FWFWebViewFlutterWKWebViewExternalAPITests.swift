@@ -73,7 +73,7 @@ class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
   func textureFrameAvailable(_ textureId: Int64) {
 
   }
-g
+
   func unregisterTexture(_ textureId: Int64) {
 
   }
