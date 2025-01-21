@@ -108,7 +108,7 @@ final class ExoPlayerEventListener implements Player.Listener {
       rotationCorrection = RotationDegrees.fromDegrees(0);
     }
 
-    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.degrees);
+    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.getDegrees());
   }
 
   private void sendInitializedForTextureBased() {

@@ -4,7 +4,10 @@
 
 package io.flutter.plugins.videoplayer;
 
+import androidx.annotation.NonNull;
+
 @FunctionalInterface
-public interface VideoPlayerProvider {
-  VideoPlayer getVideoPlayer(Long playerId);
+interface VideoPlayerProvider {
+  @NonNull
+  VideoPlayer getVideoPlayer(@NonNull Long playerId);
 }
