@@ -25,6 +25,7 @@ public class VideoPlayerUITest {
       new ActivityScenarioRule<>(DriverExtensionActivity.class);
 
   @Test
+  @Ignore("Doesn't run in Firebase Test Lab: https://github.com/flutter/flutter/issues/94748")
   public void playVideo() {
     WidgetInteraction remoteTab = onFlutterWidget(withText("Remote"));
     remoteTab.check(matches(isExisting()));
