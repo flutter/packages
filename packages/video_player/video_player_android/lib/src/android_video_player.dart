@@ -38,9 +38,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> dispose(int textureId) async {
-    await _api.dispose(textureId);
-    playerViewStates.remove(textureId);
+  Future<void> dispose(int playerId) async {
+    await _api.dispose(playerId);
+    playerViewStates.remove(playerId);
   }
 
   @override
@@ -99,46 +99,46 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setLooping(int textureId, bool looping) {
-    return _api.setLooping(textureId, looping);
+  Future<void> setLooping(int playerId, bool looping) {
+    return _api.setLooping(playerId, looping);
   }
 
   @override
-  Future<void> play(int textureId) {
-    return _api.play(textureId);
+  Future<void> play(int playerId) {
+    return _api.play(playerId);
   }
 
   @override
-  Future<void> pause(int textureId) {
-    return _api.pause(textureId);
+  Future<void> pause(int playerId) {
+    return _api.pause(playerId);
   }
 
   @override
-  Future<void> setVolume(int textureId, double volume) {
-    return _api.setVolume(textureId, volume);
+  Future<void> setVolume(int playerId, double volume) {
+    return _api.setVolume(playerId, volume);
   }
 
   @override
-  Future<void> setPlaybackSpeed(int textureId, double speed) {
+  Future<void> setPlaybackSpeed(int playerId, double speed) {
     assert(speed > 0);
 
-    return _api.setPlaybackSpeed(textureId, speed);
+    return _api.setPlaybackSpeed(playerId, speed);
   }
 
   @override
-  Future<void> seekTo(int textureId, Duration position) {
-    return _api.seekTo(textureId, position.inMilliseconds);
+  Future<void> seekTo(int playerId, Duration position) {
+    return _api.seekTo(playerId, position.inMilliseconds);
   }
 
   @override
-  Future<Duration> getPosition(int textureId) async {
-    final int position = await _api.position(textureId);
+  Future<Duration> getPosition(int playerId) async {
+    final int position = await _api.position(playerId);
     return Duration(milliseconds: position);
   }
 
   @override
-  Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId)
+  Stream<VideoEvent> videoEventsFor(int playerId) {
+    return _eventChannelFor(playerId)
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
@@ -178,9 +178,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId) {
+  Widget buildView(int playerId) {
     return buildViewWithOptions(
-      VideoViewOptions(playerId: textureId),
+      VideoViewOptions(playerId: playerId),
     );
   }
 
@@ -243,8 +243,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
-  EventChannel _eventChannelFor(int textureId) {
-    return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
+  EventChannel _eventChannelFor(int playerId) {
+    return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }
 
   static const Map<VideoFormat, String> _videoFormatStringMap =
