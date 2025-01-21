@@ -107,6 +107,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           appAccountToken: purchaseParam.applicationUserName,
           quantity: purchaseParam.quantity,
           winBackOfferId: purchaseParam.winBackOfferId,
+          promotionalOffer: _convertPromotionalOffer(
+            purchaseParam.promotionalOffer,
+          ),
         );
       } else {
         options = SK2ProductPurchaseOptions(
@@ -136,6 +139,24 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
             : null));
 
     return true; // There's no error feedback from iOS here to return.
+  }
+
+  SK2SubscriptionOfferPurchaseMessage? _convertPromotionalOffer(
+    SK2PromotionalOffer? promotionalOffer,
+  ) {
+    if (promotionalOffer == null) {
+      return null;
+    }
+
+    return SK2SubscriptionOfferPurchaseMessage(
+      promotionalOfferSignature: SK2SubscriptionOfferSignatureMessage(
+        keyID: promotionalOffer.signature.keyID,
+        signature: promotionalOffer.signature.signature,
+        nonce: promotionalOffer.signature.nonce,
+        timestamp: promotionalOffer.signature.timestamp,
+      ),
+      promotionalOfferId: promotionalOffer.offerId,
+    );
   }
 
   @override

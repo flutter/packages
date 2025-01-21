@@ -287,10 +287,70 @@ struct SK2PriceLocaleMessage {
   }
 }
 
+/// A Pigeon message class representing a Signature
+/// https://developer.apple.com/documentation/storekit/product/subscriptionoffer/signature
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct SK2SubscriptionOfferSignatureMessage {
+  var keyID: String
+  var nonce: String
+  var timestamp: Int64
+  var signature: String
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> SK2SubscriptionOfferSignatureMessage? {
+    let keyID = pigeonVar_list[0] as! String
+    let nonce = pigeonVar_list[1] as! String
+    let timestamp = pigeonVar_list[2] as! Int64
+    let signature = pigeonVar_list[3] as! String
+
+    return SK2SubscriptionOfferSignatureMessage(
+      keyID: keyID,
+      nonce: nonce,
+      timestamp: timestamp,
+      signature: signature
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      keyID,
+      nonce,
+      timestamp,
+      signature,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct SK2SubscriptionOfferPurchaseMessage {
+  var promotionalOfferId: String
+  var promotionalOfferSignature: SK2SubscriptionOfferSignatureMessage
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> SK2SubscriptionOfferPurchaseMessage? {
+    let promotionalOfferId = pigeonVar_list[0] as! String
+    let promotionalOfferSignature = pigeonVar_list[1] as! SK2SubscriptionOfferSignatureMessage
+
+    return SK2SubscriptionOfferPurchaseMessage(
+      promotionalOfferId: promotionalOfferId,
+      promotionalOfferSignature: promotionalOfferSignature
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      promotionalOfferId,
+      promotionalOfferSignature,
+    ]
+  }
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct SK2ProductPurchaseOptionsMessage {
   var appAccountToken: String? = nil
   var quantity: Int64? = nil
+  var promotionalOffer: SK2SubscriptionOfferPurchaseMessage? = nil
   var winBackOfferId: String? = nil
 
 
@@ -298,11 +358,13 @@ struct SK2ProductPurchaseOptionsMessage {
   static func fromList(_ pigeonVar_list: [Any?]) -> SK2ProductPurchaseOptionsMessage? {
     let appAccountToken: String? = nilOrValue(pigeonVar_list[0])
     let quantity: Int64? = nilOrValue(pigeonVar_list[1])
-    let winBackOfferId: String? = nilOrValue(pigeonVar_list[2])
+    let promotionalOffer: SK2SubscriptionOfferPurchaseMessage? = nilOrValue(pigeonVar_list[2])
+    let winBackOfferId: String? = nilOrValue(pigeonVar_list[3])
 
     return SK2ProductPurchaseOptionsMessage(
       appAccountToken: appAccountToken,
       quantity: quantity,
+      promotionalOffer: promotionalOffer,
       winBackOfferId: winBackOfferId
     )
   }
@@ -310,6 +372,7 @@ struct SK2ProductPurchaseOptionsMessage {
     return [
       appAccountToken,
       quantity,
+      promotionalOffer,
       winBackOfferId,
     ]
   }
@@ -447,10 +510,14 @@ private class Sk2PigeonPigeonCodecReader: FlutterStandardReader {
     case 138:
       return SK2PriceLocaleMessage.fromList(self.readValue() as! [Any?])
     case 139:
-      return SK2ProductPurchaseOptionsMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferSignatureMessage.fromList(self.readValue() as! [Any?])
     case 140:
-      return SK2TransactionMessage.fromList(self.readValue() as! [Any?])
+      return SK2SubscriptionOfferPurchaseMessage.fromList(self.readValue() as! [Any?])
     case 141:
+      return SK2ProductPurchaseOptionsMessage.fromList(self.readValue() as! [Any?])
+    case 142:
+      return SK2TransactionMessage.fromList(self.readValue() as! [Any?])
+    case 143:
       return SK2ErrorMessage.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -490,14 +557,20 @@ private class Sk2PigeonPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? SK2PriceLocaleMessage {
       super.writeByte(138)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ProductPurchaseOptionsMessage {
+    } else if let value = value as? SK2SubscriptionOfferSignatureMessage {
       super.writeByte(139)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2TransactionMessage {
+    } else if let value = value as? SK2SubscriptionOfferPurchaseMessage {
       super.writeByte(140)
       super.writeValue(value.toList())
-    } else if let value = value as? SK2ErrorMessage {
+    } else if let value = value as? SK2ProductPurchaseOptionsMessage {
       super.writeByte(141)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2TransactionMessage {
+      super.writeByte(142)
+      super.writeValue(value.toList())
+    } else if let value = value as? SK2ErrorMessage {
+      super.writeByte(143)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

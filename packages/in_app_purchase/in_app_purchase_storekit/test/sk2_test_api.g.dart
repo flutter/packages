@@ -51,14 +51,20 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is SK2PriceLocaleMessage) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2ProductPurchaseOptionsMessage) {
+    }    else if (value is SK2SubscriptionOfferSignatureMessage) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2TransactionMessage) {
+    }    else if (value is SK2SubscriptionOfferPurchaseMessage) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2ErrorMessage) {
+    }    else if (value is SK2ProductPurchaseOptionsMessage) {
       buffer.putUint8(141);
+      writeValue(buffer, value.encode());
+    }    else if (value is SK2TransactionMessage) {
+      buffer.putUint8(142);
+      writeValue(buffer, value.encode());
+    }    else if (value is SK2ErrorMessage) {
+      buffer.putUint8(143);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -94,10 +100,14 @@ class _PigeonCodec extends StandardMessageCodec {
       case 138: 
         return SK2PriceLocaleMessage.decode(readValue(buffer)!);
       case 139: 
-        return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionOfferSignatureMessage.decode(readValue(buffer)!);
       case 140: 
-        return SK2TransactionMessage.decode(readValue(buffer)!);
+        return SK2SubscriptionOfferPurchaseMessage.decode(readValue(buffer)!);
       case 141: 
+        return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
+      case 142: 
+        return SK2TransactionMessage.decode(readValue(buffer)!);
+      case 143: 
         return SK2ErrorMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

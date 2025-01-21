@@ -286,6 +286,7 @@ class SK2ProductPurchaseOptions {
   SK2ProductPurchaseOptions({
     this.appAccountToken,
     this.quantity,
+    this.promotionalOffer,
     this.winBackOfferId,
   });
 
@@ -295,7 +296,10 @@ class SK2ProductPurchaseOptions {
   /// Indicates the quantity of items the customer is purchasing.
   final int? quantity;
 
-  /// Sets a win back offer identifier to buy
+  /// Sets a promotional offer to a purchase
+  final SK2SubscriptionOfferPurchaseMessage? promotionalOffer;
+
+  /// Sets a win back offer to a purchase
   final String? winBackOfferId;
 
   /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage]
@@ -304,6 +308,7 @@ class SK2ProductPurchaseOptions {
       appAccountToken: appAccountToken,
       quantity: quantity,
       winBackOfferId: winBackOfferId,
+      promotionalOffer: promotionalOffer,
     );
   }
 }
