@@ -52,7 +52,17 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           return completion(.failure(error))
         }
 
-        let result = try await product.purchase(options: [])
+        var purchaseOptions: Set<Product.PurchaseOption> = []
+
+        if #available(iOS 18.0, macOS 15.0, *) {
+          if let winBackOfferId = options?.winBackOfferId,
+             let winBackOffer = product.subscription?.winBackOffers.first(where: { $0.id == winBackOfferId })
+          {
+            purchaseOptions.insert(.winBackOffer(winBackOffer))
+          }
+        }
+
+        let result = try await product.purchase(options: purchaseOptions)
 
         switch result {
         case .success(let verification):

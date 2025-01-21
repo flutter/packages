@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+
 import '../../store_kit_2_wrappers.dart';
 
 InAppPurchase2API _hostApi = InAppPurchase2API();
@@ -62,8 +63,11 @@ enum SK2SubscriptionOfferType {
   /// An introductory offer.
   introductory,
 
-  /// A A promotional offer.
-  promotional
+  /// A promotional offer.
+  promotional,
+
+  /// A win-back offer.
+  winBack,
 }
 
 extension on SK2SubscriptionOfferTypeMessage {
@@ -73,6 +77,8 @@ extension on SK2SubscriptionOfferTypeMessage {
         return SK2SubscriptionOfferType.introductory;
       case SK2SubscriptionOfferTypeMessage.promotional:
         return SK2SubscriptionOfferType.promotional;
+      case SK2SubscriptionOfferTypeMessage.winBack:
+        return SK2SubscriptionOfferType.winBack;
     }
   }
 }
@@ -147,12 +153,12 @@ class SK2SubscriptionInfo {
 extension on SK2SubscriptionInfoMessage {
   SK2SubscriptionInfo convertFromPigeon() {
     return SK2SubscriptionInfo(
-        subscriptionGroupID: subscriptionGroupID,
-        promotionalOffers: promotionalOffers
-            .map((SK2SubscriptionOfferMessage offer) =>
-                offer.convertFromPigeon())
-            .toList(),
-        subscriptionPeriod: subscriptionPeriod.convertFromPigeon());
+      subscriptionGroupID: subscriptionGroupID,
+      promotionalOffers: promotionalOffers
+          .map((SK2SubscriptionOfferMessage offer) => offer.convertFromPigeon())
+          .toList(),
+      subscriptionPeriod: subscriptionPeriod.convertFromPigeon(),
+    );
   }
 }
 
@@ -277,7 +283,11 @@ enum SK2ProductPurchaseResult {
 /// https://developer.apple.com/documentation/storekit/product/purchaseoption
 class SK2ProductPurchaseOptions {
   /// Creates a new instance of [SK2ProductPurchaseOptions]
-  SK2ProductPurchaseOptions({this.appAccountToken, this.quantity});
+  SK2ProductPurchaseOptions({
+    this.appAccountToken,
+    this.quantity,
+    this.winBackOfferId,
+  });
 
   /// Sets a UUID to associate the purchase with an account in your system.
   final String? appAccountToken;
@@ -285,10 +295,16 @@ class SK2ProductPurchaseOptions {
   /// Indicates the quantity of items the customer is purchasing.
   final int? quantity;
 
+  /// Sets a win back offer identifier to buy
+  final String? winBackOfferId;
+
   /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage]
   SK2ProductPurchaseOptionsMessage convertToPigeon() {
     return SK2ProductPurchaseOptionsMessage(
-        appAccountToken: appAccountToken, quantity: quantity);
+      appAccountToken: appAccountToken,
+      quantity: quantity,
+      winBackOfferId: winBackOfferId,
+    );
   }
 }
 

@@ -5,3 +5,4 @@
 export 'app_store_product_details.dart';
 export 'app_store_purchase_details.dart';
 export 'app_store_purchase_param.dart';
+export 'sk2_purchase_param.dart';

@@ -52,10 +52,23 @@ extension Product.ProductType {
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionInfo {
   var convertToPigeon: SK2SubscriptionInfoMessage {
+    var allOffers: [SK2SubscriptionOfferMessage] = []
+
+    if #available(iOS 18.0, macOS 15.0, *) {
+      allOffers.append(contentsOf: winBackOffers.map { $0.convertToPigeon })
+    }
+
+    allOffers.append(contentsOf: promotionalOffers.map { $0.convertToPigeon })
+
+    if let introductory = introductoryOffer {
+      allOffers.append(introductory.convertToPigeon)
+    }
+
     return SK2SubscriptionInfoMessage(
-      promotionalOffers: promotionalOffers.map({ $0.convertToPigeon }),
+      promotionalOffers: allOffers,
       subscriptionGroupID: subscriptionGroupID,
-      subscriptionPeriod: subscriptionPeriod.convertToPigeon)
+      subscriptionPeriod: subscriptionPeriod.convertToPigeon
+    )
   }
 }
 
@@ -99,7 +112,12 @@ extension Product.SubscriptionOffer.OfferType {
     case .promotional:
       return SK2SubscriptionOfferTypeMessage.promotional
     default:
-      fatalError("An unknown OfferType was passed in")
+      if #available(iOS 18.0, macOS 15.0, *) {
+        if self == .winBack {
+          return SK2SubscriptionOfferTypeMessage.winBack
+        }
+      }
+      fatalError("An unknown or unsupported OfferType was passed in")
     }
   }
 }

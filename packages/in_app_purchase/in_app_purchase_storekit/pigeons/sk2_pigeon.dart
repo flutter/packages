@@ -24,7 +24,11 @@ enum SK2ProductTypeMessage {
   autoRenewable
 }
 
-enum SK2SubscriptionOfferTypeMessage { introductory, promotional }
+enum SK2SubscriptionOfferTypeMessage {
+  introductory,
+  promotional,
+  winBack,
+}
 
 enum SK2SubscriptionOfferPaymentModeMessage {
   payAsYouGo,
@@ -130,9 +134,12 @@ class SK2ProductPurchaseOptionsMessage {
   SK2ProductPurchaseOptionsMessage({
     this.appAccountToken,
     this.quantity = 1,
+    this.winBackOfferId,
   });
+
   final String? appAccountToken;
   final int? quantity;
+  final String? winBackOfferId;
 }
 
 class SK2TransactionMessage {
