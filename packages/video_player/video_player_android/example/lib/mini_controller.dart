@@ -7,6 +7,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,7 @@ class VideoPlayerValue {
     this.isBuffering = false,
     this.playbackSpeed = 1.0,
     this.errorDescription,
+    this.rotationCorrection = 0,
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -83,6 +85,9 @@ class VideoPlayerValue {
   /// Indicates whether or not the video has been loaded and is ready to play.
   final bool isInitialized;
 
+  /// Degrees to rotate the video (clockwise) so it is displayed correctly.
+  final int rotationCorrection;
+
   /// Indicates whether or not the video is in an error state. If this is true
   /// [errorDescription] should have information about the problem.
   bool get hasError => errorDescription != null;
@@ -116,6 +121,7 @@ class VideoPlayerValue {
     bool? isBuffering,
     double? playbackSpeed,
     String? errorDescription,
+    int? rotationCorrection,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -127,6 +133,7 @@ class VideoPlayerValue {
       isBuffering: isBuffering ?? this.isBuffering,
       playbackSpeed: playbackSpeed ?? this.playbackSpeed,
       errorDescription: errorDescription ?? this.errorDescription,
+      rotationCorrection: rotationCorrection ?? this.rotationCorrection,
     );
   }
 
@@ -143,7 +150,8 @@ class VideoPlayerValue {
           playbackSpeed == other.playbackSpeed &&
           errorDescription == other.errorDescription &&
           size == other.size &&
-          isInitialized == other.isInitialized;
+          isInitialized == other.isInitialized &&
+          rotationCorrection == other.rotationCorrection;
 
   @override
   int get hashCode => Object.hash(
@@ -156,6 +164,7 @@ class VideoPlayerValue {
         errorDescription,
         size,
         isInitialized,
+        rotationCorrection,
       );
 }
 
@@ -167,20 +176,27 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  MiniController.asset(this.dataSource, {this.package})
-      : dataSourceType = DataSourceType.asset,
+  MiniController.asset(
+    this.dataSource, {
+    this.package,
+    this.viewType = VideoViewType.textureView,
+  })  : dataSourceType = DataSourceType.asset,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
-  MiniController.network(this.dataSource)
-      : dataSourceType = DataSourceType.network,
+  MiniController.network(
+    this.dataSource, {
+    this.viewType = VideoViewType.textureView,
+  })  : dataSourceType = DataSourceType.network,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
-  MiniController.file(File file)
-      : dataSource = Uri.file(file.absolute.path).toString(),
+  MiniController.file(
+    File file, {
+    this.viewType = VideoViewType.textureView,
+  })  : dataSource = Uri.file(file.absolute.path).toString(),
         dataSourceType = DataSourceType.file,
         package = null,
         super(const VideoPlayerValue(duration: Duration.zero));
@@ -195,6 +211,9 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
+
+  /// The type of view used to display the video.
+  final VideoViewType viewType;
 
   Timer? _timer;
   Completer<void>? _creatingCompleter;
@@ -239,7 +258,12 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         );
     }
 
-    _textureId = (await _platform.create(dataSourceDescription)) ??
+    final VideoCreationOptions creationOptions = VideoCreationOptions(
+      dataSource: dataSourceDescription,
+      viewType: viewType,
+    );
+
+    _textureId = (await _platform.createWithOptions(creationOptions)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
@@ -249,6 +273,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.initialized:
           value = value.copyWith(
             duration: event.duration,
+            rotationCorrection: event.rotationCorrection,
             size: event.size,
             isInitialized: event.duration != null,
           );
@@ -422,7 +447,32 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Widget build(BuildContext context) {
     return _textureId == MiniController.kUninitializedTextureId
         ? Container()
-        : _platform.buildView(_textureId);
+        : _VideoPlayerWithRotation(
+            rotation: widget.controller.value.rotationCorrection,
+            child: _platform.buildViewWithOptions(
+              VideoViewOptions(playerId: _textureId),
+            ),
+          );
+  }
+}
+
+class _VideoPlayerWithRotation extends StatelessWidget {
+  const _VideoPlayerWithRotation({
+    required this.rotation,
+    required this.child,
+  });
+
+  final int rotation;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return rotation == 0
+        ? child
+        : Transform.rotate(
+            angle: rotation * pi / 180,
+            child: child,
+          );
   }
 }
 

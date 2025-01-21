@@ -188,6 +188,130 @@ void main() {
           <String, String>{'Authorization': 'Bearer token'});
       expect(textureId, 3);
     });
+
+    test('createWithOptions with asset', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.asset,
+            asset: 'someAsset',
+            package: 'somePackage',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.passedCreateMessage?.asset, 'someAsset');
+      expect(log.passedCreateMessage?.packageName, 'somePackage');
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with network', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            formatHint: VideoFormat.dash,
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.passedCreateMessage?.asset, null);
+      expect(log.passedCreateMessage?.uri, 'someUri');
+      expect(log.passedCreateMessage?.packageName, null);
+      expect(log.passedCreateMessage?.formatHint, 'dash');
+      expect(log.passedCreateMessage?.httpHeaders, <String, String>{});
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with network (some headers)', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.passedCreateMessage?.asset, null);
+      expect(log.passedCreateMessage?.uri, 'someUri');
+      expect(log.passedCreateMessage?.packageName, null);
+      expect(log.passedCreateMessage?.formatHint, null);
+      expect(log.passedCreateMessage?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with file', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.passedCreateMessage?.uri, 'someUri');
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with file (some headers)', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.passedCreateMessage?.uri, 'someUri');
+      expect(log.passedCreateMessage?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with texture view', () async {
+      final int? textureId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(
+          log.passedCreateMessage?.viewType, PlatformVideoViewType.textureView);
+      expect(textureId, 3);
+    });
+
+    test('createWithOptions with platform view', () async {
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.platformView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.passedCreateMessage?.viewType,
+          PlatformVideoViewType.platformView);
+      expect(playerId, 3);
+    });
+
     test('setLooping', () async {
       await player.setLooping(1, true);
       expect(log.log.last, 'setLooping');

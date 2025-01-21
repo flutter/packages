@@ -18,6 +18,12 @@ import io.flutter.view.TextureRegistry;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
 public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
+  /**
+   * The next non-texture player ID, initialized to a high number to avoid collisions with texture
+   * IDs (which are generated separately).
+   */
+  private static Long nextNonTexturePlayerId = 1000000L;
+
   private static final String TAG = "VideoPlayerPlugin";
   private final LongSparseArray<VideoPlayer> videoPlayers = new LongSparseArray<>();
   private FlutterState flutterState;
@@ -37,6 +43,10 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             injector.flutterLoader()::getLookupKeyForAsset,
             binding.getTextureRegistry());
     flutterState.startListening(this, binding.getBinaryMessenger());
+    binding
+        .getPlatformViewRegistry()
+        .registerViewFactory(
+            "plugins.flutter.dev/video_player_android", new NativeViewFactory(videoPlayers));
   }
 
   @Override
@@ -72,11 +82,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
   @Override
   public @NonNull Long create(@NonNull CreateMessage arg) {
-    TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
-    EventChannel eventChannel =
-        new EventChannel(
-            flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + handle.id());
-
     final VideoAsset videoAsset;
     if (arg.getAsset() != null) {
       String assetLookupKey;
@@ -107,16 +112,37 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       }
       videoAsset = VideoAsset.fromRemoteUrl(arg.getUri(), streamingFormat, arg.getHttpHeaders());
     }
-    videoPlayers.put(
-        handle.id(),
-        VideoPlayer.create(
-            flutterState.applicationContext,
-            VideoPlayerEventCallbacks.bindTo(eventChannel),
-            handle,
-            videoAsset,
-            options));
 
-    return handle.id();
+    long id;
+    VideoPlayer videoPlayer;
+    if (arg.getViewType() == Messages.PlatformVideoViewType.PLATFORM_VIEW) {
+      id = VideoPlayerPlugin.nextNonTexturePlayerId++;
+      videoPlayer =
+          VideoPlayer.create(
+              flutterState.applicationContext,
+              VideoPlayerEventCallbacks.bindTo(createEventChannel(id)),
+              videoAsset,
+              options);
+    } else {
+      TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
+      id = handle.id();
+      videoPlayer =
+          TextureBasedVideoPlayer.create(
+              flutterState.applicationContext,
+              VideoPlayerEventCallbacks.bindTo(createEventChannel(id)),
+              handle,
+              videoAsset,
+              options);
+    }
+
+    videoPlayers.put(id, videoPlayer);
+    return id;
+  }
+
+  @NonNull
+  private EventChannel createEventChannel(long id) {
+    return new EventChannel(
+        flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + id);
   }
 
   @NonNull

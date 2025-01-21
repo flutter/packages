@@ -11,12 +11,14 @@ import androidx.media3.common.Format;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
+import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import java.util.Objects;
 
 final class ExoPlayerEventListener implements Player.Listener {
   private final ExoPlayer exoPlayer;
   private final VideoPlayerCallbacks events;
+  private final Messages.PlatformVideoViewType viewType;
   private boolean isBuffering = false;
   private boolean isInitialized;
 
@@ -46,13 +48,19 @@ final class ExoPlayerEventListener implements Player.Listener {
     }
   }
 
-  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
-    this(exoPlayer, events, false);
+  ExoPlayerEventListener(
+      ExoPlayer exoPlayer, VideoPlayerCallbacks events, Messages.PlatformVideoViewType viewType) {
+    this(exoPlayer, events, viewType, false);
   }
 
-  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean initialized) {
+  ExoPlayerEventListener(
+      ExoPlayer exoPlayer,
+      VideoPlayerCallbacks events,
+      Messages.PlatformVideoViewType viewType,
+      boolean initialized) {
     this.exoPlayer = exoPlayer;
     this.events = events;
+    this.viewType = viewType;
     this.isInitialized = initialized;
   }
 
@@ -74,6 +82,36 @@ final class ExoPlayerEventListener implements Player.Listener {
       return;
     }
     isInitialized = true;
+
+    if (viewType == Messages.PlatformVideoViewType.PLATFORM_VIEW) {
+      sendInitializedForPlatformViewBased();
+    } else {
+      sendInitializedForTextureBased();
+    }
+  }
+
+  @OptIn(markerClass = UnstableApi.class)
+  private void sendInitializedForPlatformViewBased() {
+    // We can't rely on VideoSize here, because at this point it is not available - the platform
+    // view was not created yet. We use the video format instead.
+    Format videoFormat = exoPlayer.getVideoFormat();
+    RotationDegrees rotationCorrection =
+        RotationDegrees.fromDegrees(Objects.requireNonNull(videoFormat).rotationDegrees);
+    int width = videoFormat.width;
+    int height = videoFormat.height;
+
+    if (rotationCorrection == RotationDegrees.ROTATE_90
+        || rotationCorrection == RotationDegrees.ROTATE_270) {
+      width = videoFormat.height;
+      height = videoFormat.width;
+
+      rotationCorrection = RotationDegrees.fromDegrees(0);
+    }
+
+    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.degrees);
+  }
+
+  private void sendInitializedForTextureBased() {
     VideoSize videoSize = exoPlayer.getVideoSize();
     int rotationCorrection = 0;
     int width = videoSize.width;
@@ -91,8 +129,8 @@ final class ExoPlayerEventListener implements Player.Listener {
           rotationCorrection =
               getRotationCorrectionFromUnappliedRotation(reportedRotationCorrection);
         } catch (IllegalArgumentException e) {
-          // Unapplied rotation other than 0, 90, 180, 270 reported by VideoSize. Because this is unexpected,
-          // we apply no rotation correction.
+          // Unapplied rotation other than 0, 90, 180, 270 reported by VideoSize. Because this is
+          // unexpected, we apply no rotation correction.
           reportedRotationCorrection = RotationDegrees.ROTATE_0;
           rotationCorrection = 0;
         }
@@ -112,8 +150,8 @@ final class ExoPlayerEventListener implements Player.Listener {
         try {
           reportedRotationCorrection = RotationDegrees.fromDegrees(rotationCorrection);
         } catch (IllegalArgumentException e) {
-          // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is unexpected,
-          // we apply no rotation correction.
+          // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is
+          // unexpected, we apply no rotation correction.
           reportedRotationCorrection = RotationDegrees.ROTATE_0;
           rotationCorrection = 0;
         }
