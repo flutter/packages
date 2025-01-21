@@ -4,12 +4,21 @@
 
 #import <Foundation/Foundation.h>
 #import <StoreKit/StoreKit.h>
+#if __has_include(<storekit_objc/FIATransactionCache.h>)
+#import <storekit_objc/FIATransactionCache.h>
+#import "Protocols/FLTMethodChannelProtocol.h"
+#import "Protocols/FLTPaymentQueueHandlerProtocol.h"
+#import "Protocols/FLTPaymentQueueProtocol.h"
+#import "Protocols/FLTRequestHandlerProtocol.h"
+#import "Protocols/FLTTransactionCacheProtocol.h"
+#else
 #import "FIATransactionCache.h"
 #import "FLTMethodChannelProtocol.h"
 #import "FLTPaymentQueueHandlerProtocol.h"
 #import "FLTPaymentQueueProtocol.h"
 #import "FLTRequestHandlerProtocol.h"
 #import "FLTTransactionCacheProtocol.h"
+#endif
 
 @import in_app_purchase_storekit;
 
