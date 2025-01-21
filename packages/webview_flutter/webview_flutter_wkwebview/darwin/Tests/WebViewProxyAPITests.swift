@@ -354,17 +354,13 @@ class TestViewWKWebView: WKWebView {
   var loadArgs: [AnyHashable?]? = nil
   var loadHtmlStringArgs: [AnyHashable?]? = nil
   var loadFileUrlArgs: [URL]? = nil
-  var canGoBackCalled = false
-  var canGoForwardCalled = false
   var goBackCalled = false
   var goForwardCalled = false
   var reloadCalled = false
-  var getTitleCalled = false
   var setAllowsBackForwardNavigationGesturesArgs: [AnyHashable?]? = nil
   var setCustomUserAgentArgs: [AnyHashable?]? = nil
   var evaluateJavaScriptArgs: [AnyHashable?]? = nil
   var setInspectableArgs: [AnyHashable?]? = nil
-  var getCustomUserAgentCalled = false
 
   override var configuration: WKWebViewConfiguration {
     return configurationTestValue

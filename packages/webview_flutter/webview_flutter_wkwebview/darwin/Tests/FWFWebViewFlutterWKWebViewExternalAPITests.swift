@@ -101,9 +101,7 @@ class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
     ) {
     }
   #elseif os(macOS)
-    var view: NSView? {
-      return nil
-    }
+    var view: NSView?
 
     var messenger: any FlutterBinaryMessenger {
       return TestBinaryMessenger()
