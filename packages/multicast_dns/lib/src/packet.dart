@@ -125,6 +125,10 @@ String readFQDN(List<int> packet, [int offset = 0]) {
 // parts and the number of bytes consumed.
 //
 // If decoding fails (e.g. due to an invalid packet) `null` is returned.
+// Read a FQDN at the given offset. Returns a pair with the FQDN
+// parts and the number of bytes consumed.
+//
+// If decoding fails (e.g. due to an invalid packet) `null` is returned.
 _FQDNReadResult _readFQDN(
     Uint8List data, ByteData byteData, int offset, int length) {
   void checkLength(int required) {
@@ -136,10 +140,15 @@ _FQDNReadResult _readFQDN(
   final List<String> parts = <String>[];
   final int prevOffset = offset;
   final List<int> offsetsToVisit = <int>[offset];
+  final Set<int> visitedOffsets = <int>{};
   int highestOffsetRead = offset;
 
   while (offsetsToVisit.isNotEmpty) {
     offset = offsetsToVisit.removeLast();
+    if (visitedOffsets.contains(offset)) {
+      throw MDnsDecodeException(offset);
+    }
+    visitedOffsets.add(offset);
 
     while (true) {
       // At least one byte is required.
