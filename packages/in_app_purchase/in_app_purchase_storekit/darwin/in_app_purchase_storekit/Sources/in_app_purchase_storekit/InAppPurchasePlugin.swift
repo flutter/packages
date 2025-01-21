@@ -4,6 +4,9 @@
 
 import Foundation
 import StoreKit
+#if canImport(storekit_objc)
+import storekit_objc
+#endif
 
 #if os(iOS)
   import Flutter

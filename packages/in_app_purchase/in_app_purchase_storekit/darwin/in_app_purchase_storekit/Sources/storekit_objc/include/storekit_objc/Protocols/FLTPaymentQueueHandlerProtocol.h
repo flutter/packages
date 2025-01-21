@@ -2,8 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <StoreKit/StoreKit.h>
+#if __has_include(<storekit_objc/FIATransactionCache.h>)
+#import <storekit_objc/FIATransactionCache.h>
+#else
 #import "FIATransactionCache.h"
+#endif
+#import <StoreKit/StoreKit.h>
 #import "FLTPaymentQueueProtocol.h"
 #import "FLTTransactionCacheProtocol.h"
 
