@@ -129,8 +129,8 @@ final class ExoPlayerEventListener implements Player.Listener {
           rotationCorrection =
               getRotationCorrectionFromUnappliedRotation(reportedRotationCorrection);
         } catch (IllegalArgumentException e) {
-          // Unapplied rotation other than 0, 90, 180, 270 reported by VideoSize. Because this is
-          // unexpected, we apply no rotation correction.
+          // Unapplied rotation other than 0, 90, 180, 270 reported by VideoSize. Because this is unexpected,
+          // we apply no rotation correction.
           reportedRotationCorrection = RotationDegrees.ROTATE_0;
           rotationCorrection = 0;
         }
@@ -150,8 +150,8 @@ final class ExoPlayerEventListener implements Player.Listener {
         try {
           reportedRotationCorrection = RotationDegrees.fromDegrees(rotationCorrection);
         } catch (IllegalArgumentException e) {
-          // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is
-          // unexpected, we apply no rotation correction.
+          // Rotation correction other than 0, 90, 180, 270 reported by Format. Because this is unexpected,
+          // we apply no rotation correction.
           reportedRotationCorrection = RotationDegrees.ROTATE_0;
           rotationCorrection = 0;
         }
