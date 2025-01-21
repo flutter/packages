@@ -5,9 +5,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Due to "number of sections exceeded object file format limit: compile with /bigobj" error
-if(MSVC)
-  add_compile_options("/bigobj")
-endif()
+add_compile_options("/bigobj")
 
 
 # Project-level configuration.
