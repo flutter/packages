@@ -115,7 +115,7 @@ class NavigationDelegateProxyAPITests: XCTestCase {
     let instance = NavigationDelegateImpl(api: api, registrar: registrar)
     let webView = WKWebView(frame: .zero)
     let challenge = URLAuthenticationChallenge(
-      protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 32,
+      protectionSpace: URLProtectionSpace(), proposedCredential: nil, previousFailureCount: 3,
       failureResponse: nil, error: nil, sender: TestURLAuthenticationChallengeSender())
 
     var dispositionResult: URLSession.AuthChallengeDisposition?
@@ -227,7 +227,9 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
     didReceiveAuthenticationChallengeArgs = [webViewArg, challengeArg]
     completion(
       .success(
-        AuthenticationChallengeResponse(disposition: .useCredential, credential: URLCredential())))
+        AuthenticationChallengeResponse(
+          disposition: .useCredential,
+          credential: URLCredential(user: "user", password: "password", persistence: .none))))
   }
 }
 

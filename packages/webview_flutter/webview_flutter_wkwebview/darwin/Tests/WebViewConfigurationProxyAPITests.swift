@@ -39,13 +39,12 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.userContentController)
   }
 
-  @available(iOS 17.0, macOS 14.0, *)
   @MainActor func testSetWebsiteDataStore() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
 
     let instance = WKWebViewConfiguration()
-    let dataStore = WKWebsiteDataStore(forIdentifier: UUID())
+    let dataStore = WKWebsiteDataStore.default()
     try? api.pigeonDelegate.setWebsiteDataStore(
       pigeonApi: api, pigeonInstance: instance, dataStore: dataStore)
 
