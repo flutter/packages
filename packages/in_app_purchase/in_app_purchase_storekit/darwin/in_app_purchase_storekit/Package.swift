@@ -8,31 +8,31 @@
 import PackageDescription
 
 let package = Package(
-    name: "in_app_purchase_storekit",
-    platforms: [
-        .iOS(.v12),
-        .macOS(.v10_15)
-    ],
-    products: [
-        .library(name: "in-app-purchase-storekit", targets: ["in_app_purchase_storekit"])
-    ],
-    dependencies: [],
-    targets: [
-        .target(
-            name: "in_app_purchase_storekit",
-            dependencies: [
-                "storekit_objc"
-            ],
-            resources: [
-                .process("Resources/PrivacyInfo.xcprivacy")
-            ]
-        ),
-        .target(
-            name: "storekit_objc",
-            dependencies: [],
-            cSettings: [
-                .headerSearchPath("include/storekit_objc")
-            ]
-        )
-    ]
+  name: "in_app_purchase_storekit",
+  platforms: [
+    .iOS(.v12),
+    .macOS(.v10_15),
+  ],
+  products: [
+    .library(name: "in-app-purchase-storekit", targets: ["in_app_purchase_storekit"])
+  ],
+  dependencies: [],
+  targets: [
+    .target(
+      name: "in_app_purchase_storekit",
+      dependencies: [
+        "storekit_objc"
+      ],
+      resources: [
+        .process("Resources/PrivacyInfo.xcprivacy")
+      ]
+    ),
+    .target(
+      name: "storekit_objc",
+      dependencies: [],
+      cSettings: [
+        .headerSearchPath("include/storekit_objc")
+      ]
+    ),
+  ]
 )
