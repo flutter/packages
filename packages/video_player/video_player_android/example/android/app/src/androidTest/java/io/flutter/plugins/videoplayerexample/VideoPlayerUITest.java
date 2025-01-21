@@ -4,8 +4,8 @@
 
 package io.flutter.plugins.videoplayerexample;
 
-import static androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget;
 import static androidx.test.espresso.flutter.EspressoFlutter.WidgetInteraction;
+import static androidx.test.espresso.flutter.EspressoFlutter.onFlutterWidget;
 import static androidx.test.espresso.flutter.action.FlutterActions.click;
 import static androidx.test.espresso.flutter.assertion.FlutterAssertions.matches;
 import static androidx.test.espresso.flutter.matcher.FlutterMatchers.isExisting;
