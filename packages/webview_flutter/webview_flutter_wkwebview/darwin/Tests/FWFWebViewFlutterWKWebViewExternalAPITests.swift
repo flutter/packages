@@ -73,14 +73,14 @@ class TestFlutterTextureRegistry: NSObject, FlutterTextureRegistry {
   func textureFrameAvailable(_ textureId: Int64) {
 
   }
-
+g
   func unregisterTexture(_ textureId: Int64) {
 
   }
 }
 
 class TestFlutterPluginRegistrar: NSObject, FlutterPluginRegistrar {
-  var plugin: WebViewFlutterPlugin?
+  var plugin: WebViewFlutterPlugin? = nil
 
   #if os(iOS)
     func messenger() -> FlutterBinaryMessenger {
