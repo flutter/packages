@@ -126,20 +126,6 @@ Uri concatenateUris(Uri parentUri, Uri childUri) {
   return newUri;
 }
 
-/// Concatenates two Uri. It will [concatenatePaths] the parent's and the child's paths, and take only the child's parameters.
-///
-/// e.g: pathA = /a?fid=f1, pathB = c/d?pid=p2,  concatenatePaths(pathA, pathB) = /a/c/d?pid=2.
-Uri concatenateUris(Uri parentUri, Uri childUri) {
-  Uri newUri = parentUri.replace(
-    path: concatenatePaths(parentUri.path, childUri.path),
-    queryParameters: childUri.queryParameters,
-  );
-
-  // Parse the new normalized uri to remove unnecessary parts, like the trailing '?'.
-  newUri = Uri.parse(canonicalUri(newUri.toString()));
-  return newUri;
-}
-
 /// Normalizes the location string.
 String canonicalUri(String loc) {
   if (loc.isEmpty) {

@@ -109,22 +109,6 @@ void main() {
     verify('/a?fid=f1#f', 'b/c?pid=p2#', '/a/b/c?pid=p2#');
   });
 
-  test('concatenateUris', () {
-    void verify(String pathA, String pathB, String expected) {
-      final String result =
-          concatenateUris(Uri.parse(pathA), Uri.parse(pathB)).toString();
-      expect(result, expected);
-    }
-
-    verify('/a', 'b/c', '/a/b/c');
-    verify('/', 'b', '/b');
-
-    // Test with parameters
-    verify('/a?fid=f1', 'b/c', '/a/b/c');
-    verify('/a', 'b/c?pid=p2', '/a/b/c?pid=p2');
-    verify('/a?fid=f1', 'b/c?pid=p2', '/a/b/c?pid=p2');
-  });
-
   test('canonicalUri', () {
     void verify(String path, String expected) =>
         expect(canonicalUri(path), expected);
