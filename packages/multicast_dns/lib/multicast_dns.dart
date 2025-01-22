@@ -44,6 +44,7 @@ class MDnsClient {
   /// Create a new [MDnsClient].
   MDnsClient({
     RawDatagramSocketFactory rawDatagramSocketFactory = RawDatagramSocket.bind,
+    required this.cache,
   }) : _rawDatagramSocketFactory = rawDatagramSocketFactory;
 
   bool _starting = false;
@@ -53,6 +54,7 @@ class MDnsClient {
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
+  final bool cache;
 
   InternetAddress? _mDnsAddress;
   int? _mDnsPort;
@@ -198,14 +200,16 @@ class MDnsClient {
       throw StateError('mDNS client must be started before calling lookup.');
     }
     // Look for entries in the cache.
-    final List<T> cached = <T>[];
-    _cache.lookup<T>(
-        query.fullyQualifiedName, query.resourceRecordType, cached);
-    if (cached.isNotEmpty) {
-      final StreamController<T> controller = StreamController<T>();
-      cached.forEach(controller.add);
-      controller.close();
-      return controller.stream;
+    if (cache) {
+      final List<T> cached = <T>[];
+      _cache.lookup<T>(
+          query.fullyQualifiedName, query.resourceRecordType, cached);
+      if (cached.isNotEmpty) {
+        final StreamController<T> controller = StreamController<T>();
+        cached.forEach(controller.add);
+        controller.close();
+        return controller.stream;
+      }
     }
 
     // Add the pending request before sending the query.
