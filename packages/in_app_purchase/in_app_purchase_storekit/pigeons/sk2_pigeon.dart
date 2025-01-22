@@ -146,6 +146,7 @@ class SK2TransactionMessage {
       this.appAccountToken,
       this.error,
       this.receiptData,
+      this.jsonRepresentation,
       this.restoring = false});
   final int id;
   final int originalId;
@@ -157,6 +158,7 @@ class SK2TransactionMessage {
   final bool restoring;
   final String? receiptData;
   final SK2ErrorMessage? error;
+  final String? jsonRepresentation;
 }
 
 class SK2ErrorMessage {
