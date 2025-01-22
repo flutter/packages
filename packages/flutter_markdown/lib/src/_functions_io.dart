@@ -24,21 +24,60 @@ final ImageBuilder kDefaultImageBuilder = (
   double? height,
 ) {
   if (uri.scheme == 'http' || uri.scheme == 'https') {
-    return Image.network(uri.toString(), width: width, height: height);
+    return Image.network(
+      uri.toString(),
+      width: width,
+      height: height,
+      errorBuilder: kDefaultImageErrorWidgetBuilder,
+    );
   } else if (uri.scheme == 'data') {
     return _handleDataSchemeUri(uri, width, height);
   } else if (uri.scheme == 'resource') {
-    return Image.asset(uri.path, width: width, height: height);
+    return Image.asset(
+      uri.path,
+      width: width,
+      height: height,
+      errorBuilder: kDefaultImageErrorWidgetBuilder,
+    );
   } else {
     final Uri fileUri = imageDirectory != null
         ? Uri.parse(imageDirectory + uri.toString())
         : uri;
     if (fileUri.scheme == 'http' || fileUri.scheme == 'https') {
-      return Image.network(fileUri.toString(), width: width, height: height);
+      return Image.network(
+        fileUri.toString(),
+        width: width,
+        height: height,
+        errorBuilder: kDefaultImageErrorWidgetBuilder,
+      );
     } else {
-      return Image.file(File.fromUri(fileUri), width: width, height: height);
+      try {
+        return Image.file(
+          File.fromUri(fileUri),
+          width: width,
+          height: height,
+          errorBuilder: kDefaultImageErrorWidgetBuilder,
+        );
+      } catch (error, stackTrace) {
+        // Handle any invalid file URI's.
+        return Builder(
+          builder: (BuildContext context) {
+            return kDefaultImageErrorWidgetBuilder(context, error, stackTrace);
+          },
+        );
+      }
     }
   }
+};
+
+/// A default error widget builder for handling image errors.
+// ignore: prefer_function_declarations_over_variables
+final ImageErrorWidgetBuilder kDefaultImageErrorWidgetBuilder = (
+  BuildContext context,
+  Object error,
+  StackTrace? stackTrace,
+) {
+  return const SizedBox();
 };
 
 /// A default style sheet generator.
@@ -76,6 +115,7 @@ Widget _handleDataSchemeUri(
       uri.data!.contentAsBytes(),
       width: width,
       height: height,
+      errorBuilder: kDefaultImageErrorWidgetBuilder,
     );
   } else if (mimeType.startsWith('text/')) {
     return Text(uri.data!.contentAsString());

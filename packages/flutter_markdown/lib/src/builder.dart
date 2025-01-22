@@ -10,7 +10,7 @@ import '_functions_io.dart' if (dart.library.js_interop) '_functions_web.dart';
 import 'style_sheet.dart';
 import 'widget.dart';
 
-const List<String> _kBlockTags = <String>[
+final List<String> _kBlockTags = <String>[
   'p',
   'h1',
   'h2',
@@ -112,6 +112,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.paddingBuilders,
     required this.listItemCrossAxisAlignment,
     this.fitContent = false,
+    this.onSelectionChanged,
     this.onTapText,
     this.softLineBreak = false,
   });
@@ -155,6 +156,9 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// does not allow for intrinsic height measurements.
   final MarkdownListItemCrossAxisAlignment listItemCrossAxisAlignment;
 
+  /// Called when the user changes selection when [selectable] is set to true.
+  final MarkdownOnSelectionChangedCallback? onSelectionChanged;
+
   /// Default tap handler used when [selectable] is set to true
   final VoidCallback? onTapText;
 
@@ -170,7 +174,6 @@ class MarkdownBuilder implements md.NodeVisitor {
   final List<_TableElement> _tables = <_TableElement>[];
   final List<_InlineElement> _inlines = <_InlineElement>[];
   final List<GestureRecognizer> _linkHandlers = <GestureRecognizer>[];
-  final ScrollController _preScrollController = ScrollController();
   String? _currentBlockTag;
   String? _lastVisitedTag;
   bool _isInBlockquote = false;
@@ -185,6 +188,12 @@ class MarkdownBuilder implements md.NodeVisitor {
     _inlines.clear();
     _linkHandlers.clear();
     _isInBlockquote = false;
+
+    builders.forEach((String key, MarkdownElementBuilder value) {
+      if (value.isBlockElement()) {
+        _kBlockTags.add(key);
+      }
+    });
 
     _blocks.add(_BlockElement(null));
 
@@ -337,22 +346,27 @@ class MarkdownBuilder implements md.NodeVisitor {
       child = builders[_blocks.last.tag!]!
           .visitText(text, styleSheet.styles[_blocks.last.tag!]);
     } else if (_blocks.last.tag == 'pre') {
-      child = Scrollbar(
-        controller: _preScrollController,
-        child: SingleChildScrollView(
-          controller: _preScrollController,
-          scrollDirection: Axis.horizontal,
-          padding: styleSheet.codeblockPadding,
-          child: _buildRichText(delegate.formatText(styleSheet, text.text)),
-        ),
-      );
+      child = _ScrollControllerBuilder(
+          builder: (BuildContext context, ScrollController preScrollController,
+              Widget? child) {
+            return Scrollbar(
+              controller: preScrollController,
+              child: SingleChildScrollView(
+                controller: preScrollController,
+                scrollDirection: Axis.horizontal,
+                padding: styleSheet.codeblockPadding,
+                child: child,
+              ),
+            );
+          },
+          child: _buildRichText(delegate.formatText(styleSheet, text.text)));
     } else {
       child = _buildRichText(
         TextSpan(
           style: _isInBlockquote
               ? styleSheet.blockquote!.merge(_inlines.last.style)
               : _inlines.last.style,
-          text: _isInBlockquote ? text.text : trimText(text.text),
+          text: trimText(text.text),
           recognizer: _linkHandlers.isNotEmpty ? _linkHandlers.last : null,
         ),
         textAlign: _textAlignForBlockTag(_currentBlockTag),
@@ -373,19 +387,28 @@ class MarkdownBuilder implements md.NodeVisitor {
       _addAnonymousBlockIfNeeded();
 
       final _BlockElement current = _blocks.removeLast();
-      Widget child;
 
-      if (current.children.isNotEmpty) {
-        child = Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: fitContent
-              ? CrossAxisAlignment.start
-              : CrossAxisAlignment.stretch,
-          children: current.children,
-        );
-      } else {
-        child = const SizedBox();
+      Widget defaultChild() {
+        if (current.children.isNotEmpty) {
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: fitContent
+                ? CrossAxisAlignment.start
+                : CrossAxisAlignment.stretch,
+            children: current.children,
+          );
+        } else {
+          return const SizedBox();
+        }
       }
+
+      Widget child = builders[tag]?.visitElementAfterWithContext(
+            delegate.context,
+            element,
+            styleSheet.styles[tag],
+            _inlines.isNotEmpty ? _inlines.last.style : null,
+          ) ??
+          defaultChild();
 
       if (_isListTag(tag)) {
         assert(_listIndents.isNotEmpty);
@@ -428,12 +451,25 @@ class MarkdownBuilder implements md.NodeVisitor {
           );
         }
       } else if (tag == 'table') {
-        child = Table(
-          defaultColumnWidth: styleSheet.tableColumnWidth!,
-          defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
-          border: styleSheet.tableBorder,
-          children: _tables.removeLast().rows,
-        );
+        if (styleSheet.tableColumnWidth is FixedColumnWidth) {
+          child = _ScrollControllerBuilder(
+            builder: (BuildContext context,
+                ScrollController tableScrollController, Widget? child) {
+              return Scrollbar(
+                controller: tableScrollController,
+                child: SingleChildScrollView(
+                  controller: tableScrollController,
+                  scrollDirection: Axis.horizontal,
+                  padding: styleSheet.tablePadding,
+                  child: child,
+                ),
+              );
+            },
+            child: _buildTable(),
+          );
+        } else {
+          child = _buildTable();
+        }
       } else if (tag == 'blockquote') {
         _isInBlockquote = false;
         child = DecoratedBox(
@@ -508,7 +544,7 @@ class MarkdownBuilder implements md.NodeVisitor {
           _mergeInlineChildren(current.children, align),
           textAlign: align,
         );
-        _ambiguate(_tables.single.rows.last.children)!.add(child);
+        _tables.single.rows.last.children.add(child);
       } else if (tag == 'a') {
         _linkHandlers.removeLast();
       } else if (tag == 'sup') {
@@ -527,6 +563,8 @@ class MarkdownBuilder implements md.NodeVisitor {
               style: textSpan.style?.copyWith(
                 fontFeatures: <FontFeature>[
                   const FontFeature.enable('sups'),
+                  if (styleSheet.superscriptFontFeatureTag != null)
+                    FontFeature.enable(styleSheet.superscriptFontFeatureTag!),
                 ],
               ),
             ),
@@ -546,6 +584,15 @@ class MarkdownBuilder implements md.NodeVisitor {
     _lastVisitedTag = tag;
   }
 
+  Table _buildTable() {
+    return Table(
+      defaultColumnWidth: styleSheet.tableColumnWidth!,
+      defaultVerticalAlignment: styleSheet.tableVerticalAlignment,
+      border: styleSheet.tableBorder,
+      children: _tables.removeLast().rows,
+    );
+  }
+
   Widget _buildImage(String src, String? title, String? alt) {
     final List<String> parts = src.split('#');
     if (parts.isEmpty) {
@@ -558,12 +605,17 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (parts.length == 2) {
       final List<String> dimensions = parts.last.split('x');
       if (dimensions.length == 2) {
-        width = double.parse(dimensions[0]);
-        height = double.parse(dimensions[1]);
+        width = double.tryParse(dimensions[0]);
+        height = double.tryParse(dimensions[1]);
       }
     }
 
-    final Uri uri = Uri.parse(path);
+    final Uri? uri = Uri.tryParse(path);
+
+    if (uri == null) {
+      return const SizedBox();
+    }
+
     Widget child;
     if (imageBuilder != null) {
       child = imageBuilder!(uri, title, alt);
@@ -601,8 +653,15 @@ class MarkdownBuilder implements md.NodeVisitor {
     if (bulletBuilder != null) {
       return Padding(
         padding: styleSheet.listBulletPadding!,
-        child: bulletBuilder!(index,
-            isUnordered ? BulletStyle.unorderedList : BulletStyle.orderedList),
+        child: bulletBuilder!(
+          MarkdownBulletParameters(
+            index: index,
+            style: isUnordered
+                ? BulletStyle.unorderedList
+                : BulletStyle.orderedList,
+            nestLevel: _listIndents.length - 1,
+          ),
+        ),
       );
     }
 
@@ -634,7 +693,15 @@ class MarkdownBuilder implements md.NodeVisitor {
         child: DefaultTextStyle(
           style: styleSheet.tableBody!,
           textAlign: textAlign,
-          child: Wrap(children: children as List<Widget>),
+          child: Wrap(
+            alignment: switch (textAlign) {
+              TextAlign.left => WrapAlignment.start,
+              TextAlign.center => WrapAlignment.center,
+              TextAlign.right => WrapAlignment.end,
+              _ => WrapAlignment.start,
+            },
+            children: children as List<Widget>,
+          ),
         ),
       ),
     );
@@ -942,6 +1009,10 @@ class MarkdownBuilder implements md.NodeVisitor {
         text!,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
+        onSelectionChanged: onSelectionChanged != null
+            ? (TextSelection selection, SelectionChangedCause? cause) =>
+                onSelectionChanged!(text.text, selection, cause)
+            : null,
         onTap: onTapText,
         key: k,
       );
@@ -954,10 +1025,34 @@ class MarkdownBuilder implements md.NodeVisitor {
       );
     }
   }
+}
 
-  /// This allows a value of type T or T? to be treated as a value of type T?.
-  ///
-  /// We use this so that APIs that have become non-nullable can still be used
-  /// with `!` and `?` on the stable branch.
-  T? _ambiguate<T>(T? value) => value;
+class _ScrollControllerBuilder extends StatefulWidget {
+  const _ScrollControllerBuilder({
+    required this.builder,
+    this.child,
+  });
+
+  final ValueWidgetBuilder<ScrollController> builder;
+
+  final Widget? child;
+
+  @override
+  State<_ScrollControllerBuilder> createState() =>
+      _ScrollControllerBuilderState();
+}
+
+class _ScrollControllerBuilderState extends State<_ScrollControllerBuilder> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, _controller, widget.child);
+  }
 }

@@ -8,10 +8,13 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/common/web_kit.g.dart',
     dartTestOut: 'test/src/common/test_web_kit.g.dart',
-    objcHeaderOut: 'ios/Classes/FWFGeneratedWebKitApis.h',
-    objcSourceOut: 'ios/Classes/FWFGeneratedWebKitApis.m',
+    objcHeaderOut:
+        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
+    objcSourceOut:
+        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/FWFGeneratedWebKitApis.m',
     objcOptions: ObjcOptions(
-      headerIncludePath: 'ios/Classes/FWFGeneratedWebKitApis.h',
+      headerIncludePath:
+          './include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
       prefix: 'FWF',
     ),
     copyrightHeader: 'pigeons/copyright.txt',
@@ -28,7 +31,7 @@ enum NSKeyValueObservingOptionsEnum {
   priorNotification,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSKeyValueObservingOptionsEnumData {
   late NSKeyValueObservingOptionsEnum value;
@@ -44,7 +47,7 @@ enum NSKeyValueChangeEnum {
   replacement,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSKeyValueChangeEnumData {
   late NSKeyValueChangeEnum value;
@@ -62,7 +65,7 @@ enum NSKeyValueChangeKeyEnum {
   unknown,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSKeyValueChangeKeyEnumData {
   late NSKeyValueChangeKeyEnum value;
@@ -76,7 +79,7 @@ enum WKUserScriptInjectionTimeEnum {
   atDocumentEnd,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKUserScriptInjectionTimeEnumData {
   late WKUserScriptInjectionTimeEnum value;
@@ -92,7 +95,7 @@ enum WKAudiovisualMediaTypeEnum {
   all,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKAudiovisualMediaTypeEnumData {
   late WKAudiovisualMediaTypeEnum value;
@@ -112,7 +115,7 @@ enum WKWebsiteDataTypeEnum {
   indexedDBDatabases,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKWebsiteDataTypeEnumData {
   late WKWebsiteDataTypeEnum value;
@@ -126,10 +129,18 @@ enum WKNavigationActionPolicyEnum {
   cancel,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKNavigationActionPolicyEnumData {
   late WKNavigationActionPolicyEnum value;
+}
+
+/// Mirror of WKNavigationResponsePolicy.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
+enum WKNavigationResponsePolicyEnum {
+  allow,
+  cancel,
 }
 
 /// Mirror of NSHTTPCookiePropertyKey.
@@ -152,7 +163,7 @@ enum NSHttpCookiePropertyKeyEnum {
   version,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class NSHttpCookiePropertyKeyEnumData {
   late NSHttpCookiePropertyKeyEnum value;
@@ -220,7 +231,7 @@ enum WKPermissionDecision {
   prompt,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKPermissionDecisionData {
   late WKPermissionDecision value;
@@ -252,7 +263,7 @@ enum WKMediaCaptureType {
   unknown,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because thay can't
+// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
 // be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
 class WKMediaCaptureTypeData {
   late WKMediaCaptureType value;
@@ -320,6 +331,13 @@ class NSUrlRequestData {
   late Map<String?, String?> allHttpHeaderFields;
 }
 
+/// Mirror of NSURLResponse.
+///
+/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
+class NSHttpUrlResponseData {
+  late int statusCode;
+}
+
 /// Mirror of WKUserScript.
 ///
 /// See https://developer.apple.com/documentation/webkit/wkuserscript?language=objc.
@@ -336,6 +354,14 @@ class WKNavigationActionData {
   late NSUrlRequestData request;
   late WKFrameInfoData targetFrame;
   late WKNavigationType navigationType;
+}
+
+/// Mirror of WKNavigationResponse.
+///
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
+class WKNavigationResponseData {
+  late NSHttpUrlResponseData response;
+  late bool forMainFrame;
 }
 
 /// Mirror of WKFrameInfo.
@@ -617,6 +643,16 @@ abstract class WKNavigationDelegateFlutterApi {
     int identifier,
     int webViewIdentifier,
     WKNavigationActionData navigationAction,
+  );
+
+  @ObjCSelector(
+    'decidePolicyForNavigationResponseForDelegateWithIdentifier:webViewIdentifier:navigationResponse:',
+  )
+  @async
+  WKNavigationResponsePolicyEnum decidePolicyForNavigationResponse(
+    int identifier,
+    int webViewIdentifier,
+    WKNavigationResponseData navigationResponse,
   );
 
   @ObjCSelector(

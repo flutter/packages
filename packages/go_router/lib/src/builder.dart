@@ -98,7 +98,8 @@ class RouteBuilder {
   Widget build(
     BuildContext context,
     RouteMatchList matchList,
-    bool routerNeglect,
+    bool routerNeglect, // TODO(tolo): This parameter is not used and should be
+    // removed in the next major version.
   ) {
     if (matchList.isEmpty && !matchList.isError) {
       // The build method can be called before async redirect finishes. Build a
@@ -109,6 +110,8 @@ class RouteBuilder {
     return builderWithNav(
       context,
       _CustomNavigator(
+        // The state needs to persist across rebuild.
+        key: GlobalObjectKey(configuration.navigatorKey.hashCode),
         navigatorKey: configuration.navigatorKey,
         observers: observers,
         navigatorRestorationId: restorationScopeId,
@@ -189,6 +192,13 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     _pages = null;
   }
 
+  @override
+  void dispose() {
+    _controller?.dispose();
+    _registry.dispose();
+    super.dispose();
+  }
+
   void _updatePages(BuildContext context) {
     assert(_pages == null);
     final List<Page<Object?>> pages = <Page<Object?>>[];
@@ -263,16 +273,22 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       route: match.route,
       routerState: state,
       navigatorKey: navigatorKey,
+      match: match,
       routeMatchList: widget.matchList,
-      navigatorBuilder:
-          (List<NavigatorObserver>? observers, String? restorationScopeId) {
+      navigatorBuilder: (
+        GlobalKey<NavigatorState> navigatorKey,
+        ShellRouteMatch match,
+        RouteMatchList matchList,
+        List<NavigatorObserver>? observers,
+        String? restorationScopeId,
+      ) {
         return _CustomNavigator(
           // The state needs to persist across rebuild.
           key: GlobalObjectKey(navigatorKey.hashCode),
           navigatorRestorationId: restorationScopeId,
           navigatorKey: navigatorKey,
           matches: match.matches,
-          matchList: widget.matchList,
+          matchList: matchList,
           configuration: widget.configuration,
           observers: observers ?? const <NavigatorObserver>[],
           onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,

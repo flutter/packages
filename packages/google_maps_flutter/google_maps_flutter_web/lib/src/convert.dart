@@ -12,6 +12,16 @@ final gmaps.LatLngBounds _nullGmapsLatLngBounds =
 // The TrustedType Policy used by this plugin. Used to sanitize InfoWindow contents.
 TrustedTypePolicy? _gmapsTrustedTypePolicy;
 
+// A cache for image size Futures to reduce redundant image fetch requests.
+// This cache should be always cleaned up after marker updates are processed.
+final Map<String, Future<Size?>> _bitmapSizeFutureCache =
+    <String, Future<Size?>>{};
+
+// A cache for blob URLs of bitmaps to avoid creating a new blob URL for the
+// same bitmap instances. This cache should be always cleaned up after marker
+// updates are processed.
+final Map<int, String> _bitmapBlobUrlCache = <int, String>{};
+
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
   return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
@@ -20,6 +30,11 @@ String _getCssColor(Color color) {
 // Extracts the opacity from a [Color].
 double _getCssOpacity(Color color) {
   return color.opacity;
+}
+
+// Converts a [Color] into a valid CSS value rgba(R, G, B, A).
+String _getCssColorWithAlpha(Color color) {
+  return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${(color.alpha / 255).toStringAsFixed(2)})';
 }
 
 // Converts options from the plugin into gmaps.MapOptions that can be used by the JS SDK.
@@ -172,30 +187,32 @@ gmaps.LatLng _latLngToGmLatLng(LatLng latLng) {
   return gmaps.LatLng(latLng.latitude, latLng.longitude);
 }
 
-LatLng _gmLatLngToLatLng(gmaps.LatLng latLng) {
+/// Converts [gmaps.LatLng] to [LatLng].
+LatLng gmLatLngToLatLng(gmaps.LatLng latLng) {
   return LatLng(latLng.lat.toDouble(), latLng.lng.toDouble());
 }
 
-LatLngBounds _gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
+/// Converts a [gmaps.LatLngBounds] into a [LatLngBounds].
+LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
   return LatLngBounds(
-    southwest: _gmLatLngToLatLng(latLngBounds.southWest),
-    northeast: _gmLatLngToLatLng(latLngBounds.northEast),
+    southwest: gmLatLngToLatLng(latLngBounds.southWest),
+    northeast: gmLatLngToLatLng(latLngBounds.northEast),
   );
 }
 
-CameraPosition _gmViewportToCameraPosition(gmaps.GMap map) {
+CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
-    target: _gmLatLngToLatLng(map.center ?? _nullGmapsLatLng),
-    bearing: map.heading?.toDouble() ?? 0,
-    tilt: map.tilt?.toDouble() ?? 0,
-    zoom: map.zoom?.toDouble() ?? 0,
+    target:
+        gmLatLngToLatLng(map.isCenterDefined() ? map.center : _nullGmapsLatLng),
+    bearing: map.isHeadingDefined() ? map.heading.toDouble() : 0,
+    tilt: map.isTiltDefined() ? map.tilt.toDouble() : 0,
+    zoom: map.isZoomDefined() ? map.zoom.toDouble() : 0,
   );
 }
 
 // Convert plugin objects to gmaps.Options objects
 // TODO(ditman): Move to their appropriate objects, maybe make them copy constructors?
 // Marker.fromMarker(anotherMarker, moreOptions);
-
 gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
   final String markerTitle = marker.infoWindow.title ?? '';
   final String markerSnippet = marker.infoWindow.snippet ?? '';
@@ -241,8 +258,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
       // XSS attacks through the contents of the marker InfoWindow.
       // See: https://pub.dev/documentation/sanitize_html/latest/sanitize_html/sanitizeHtml.html
       // See: b/159137885, b/159598165
-      // ignore: unsafe_html
-      snippet.innerHTML = sanitizeHtml(markerSnippet);
+      snippet.innerHTMLString = sanitizeHtml(markerSnippet);
     }
 
     container.appendChild(snippet);
@@ -262,20 +278,132 @@ gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
     final List<Object?>? rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
     if (rawIconSize != null) {
       size = gmaps.Size(
-        rawIconSize[0] as num?,
-        rawIconSize[1] as num?,
+        rawIconSize[0]! as double,
+        rawIconSize[1]! as double,
       );
     }
   }
   return size;
 }
 
-// Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
-gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
-  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+/// Sets the size of the Google Maps icon.
+void _setIconSize({
+  required Size size,
+  required gmaps.Icon icon,
+}) {
+  final gmaps.Size gmapsSize = gmaps.Size(size.width, size.height);
+  icon.size = gmapsSize;
+  icon.scaledSize = gmapsSize;
+}
 
+/// Determines the appropriate size for a bitmap based on its descriptor.
+///
+/// This method returns the icon's size based on the provided [width] and
+/// [height]. If both dimensions are null, the size is calculated using the
+/// [imagePixelRatio] based on the actual size of the image fetched from the
+/// [url]. If only one of the dimensions is provided, the other is calculated to
+/// maintain the image's original aspect ratio.
+Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
+  final double? width = mapBitmap.width;
+  final double? height = mapBitmap.height;
+  if (width != null && height != null) {
+    // If both, width and height are set, return the provided dimensions.
+    return Size(width, height);
+  } else {
+    assert(
+        url.isNotEmpty, 'URL must not be empty when calculating dimensions.');
+
+    final Size? bitmapSize = await _bitmapSizeFutureCache.putIfAbsent(url, () {
+      return _fetchBitmapSize(url);
+    });
+
+    if (bitmapSize == null) {
+      // If bitmap size is null, the image is invalid,
+      // and the icon size cannot be calculated.
+      return null;
+    }
+
+    double targetWidth = bitmapSize.width;
+    double targetHeight = bitmapSize.height;
+    if (width == null && height == null) {
+      // Width and height are not provided, so the imagePixelRatio is used to
+      // calculate the target size.
+      targetWidth /= mapBitmap.imagePixelRatio;
+      targetHeight /= mapBitmap.imagePixelRatio;
+    } else {
+      final double aspectRatio = bitmapSize.width / bitmapSize.height;
+      targetWidth = width ?? (height ?? bitmapSize.height) * aspectRatio;
+      targetHeight = height ?? (width ?? bitmapSize.width) / aspectRatio;
+    }
+
+    // Return the calculated size.
+    return Size(targetWidth, targetHeight);
+  }
+}
+
+/// Fetches the size of the bitmap from a given URL and caches the result.
+///
+/// This method attempts to fetch the image size for a given [url].
+Future<Size?> _fetchBitmapSize(String url) async {
+  final HTMLImageElement image = HTMLImageElement()..src = url;
+
+  // Wait for the onLoad or onError event.
+  await Future.any(<Future<Event>>[image.onLoad.first, image.onError.first]);
+
+  if (image.width == 0 || image.height == 0) {
+    // Complete with null for invalid images.
+    return null;
+  }
+
+  // Complete with the image size for valid images.
+  return Size(image.width.toDouble(), image.height.toDouble());
+}
+
+/// Cleans up the caches used for bitmap size conversion and URL storage.
+///
+/// This method should be called after marker updates are processed to ensure
+/// that memory usage is optimized by removing completed or outdated cache
+/// entries.
+void _cleanUpBitmapConversionCaches() {
+  _bitmapSizeFutureCache.clear();
+  _bitmapBlobUrlCache.clear();
+}
+
+// Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
+Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
+    BitmapDescriptor bitmapDescriptor) async {
   gmaps.Icon? icon;
 
+  if (bitmapDescriptor is MapBitmap) {
+    final String url = switch (bitmapDescriptor) {
+      (final BytesMapBitmap bytesMapBitmap) =>
+        _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
+          final Blob blob =
+              Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+          return URL.createObjectURL(blob as JSObject);
+        }),
+      (final AssetMapBitmap assetMapBitmap) =>
+        ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
+      _ => throw UnimplementedError(),
+    };
+
+    icon = gmaps.Icon()..url = url;
+
+    switch (bitmapDescriptor.bitmapScaling) {
+      case MapBitmapScaling.auto:
+        final Size? size = await _getBitmapSize(bitmapDescriptor, url);
+        if (size != null) {
+          _setIconSize(size: size, icon: icon);
+        }
+      case MapBitmapScaling.none:
+        break;
+    }
+    return icon;
+  }
+
+  // The following code is for the deprecated BitmapDescriptor.fromBytes
+  // and BitmapDescriptor.fromAssetImage.
+  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
   if (iconConfig[0] == 'fromAssetImage') {
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
@@ -313,16 +441,15 @@ gmaps.Icon? _gmIconFromBitmapDescriptor(BitmapDescriptor bitmapDescriptor) {
         ..scaledSize = size;
     }
   }
-
   return icon;
 }
 
 // Computes the options for a new [gmaps.Marker] from an incoming set of options
 // [marker], and the existing marker registered with the map: [currentMarker].
-gmaps.MarkerOptions _markerOptionsFromMarker(
+Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
-) {
+) async {
   return gmaps.MarkerOptions()
     ..position = gmaps.LatLng(
       marker.position.latitude,
@@ -333,7 +460,7 @@ gmaps.MarkerOptions _markerOptionsFromMarker(
     ..visible = marker.visible
     ..opacity = marker.alpha
     ..draggable = marker.draggable
-    ..icon = _gmIconFromBitmapDescriptor(marker.icon);
+    ..icon = await _gmIconFromBitmapDescriptor(marker.icon);
   // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
   // Flat and Rotation are not supported directly on the web.
 }
@@ -352,8 +479,35 @@ gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
   return circleOptions;
 }
 
+visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
+  final Iterable<Color>? gradientColors =
+      heatmap.gradient?.colors.map((HeatmapGradientColor e) => e.color);
+  final visualization.HeatmapLayerOptions heatmapOptions =
+      visualization.HeatmapLayerOptions()
+        ..data = heatmap.data
+            .map(
+              (WeightedLatLng e) => visualization.WeightedLocation()
+                ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
+                ..weight = e.weight,
+            )
+            .toList()
+            .toJS
+        ..dissipating = heatmap.dissipating
+        ..gradient = gradientColors == null
+            ? null
+            : <Color>[
+                // Web needs a first color with 0 alpha
+                gradientColors.first.withAlpha(0),
+                ...gradientColors,
+              ].map(_getCssColorWithAlpha).toList()
+        ..maxIntensity = heatmap.maxIntensity
+        ..opacity = heatmap.opacity
+        ..radius = heatmap.radius.radius;
+  return heatmapOptions;
+}
+
 gmaps.PolygonOptions _polygonOptionsFromPolygon(
-    gmaps.GMap googleMap, Polygon polygon) {
+    gmaps.Map googleMap, Polygon polygon) {
   // Convert all points to GmLatLng
   final List<gmaps.LatLng> path =
       polygon.points.map(_latLngToGmLatLng).toList();
@@ -374,7 +528,7 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
   }
 
   return gmaps.PolygonOptions()
-    ..paths = paths
+    ..paths = paths.map((List<gmaps.LatLng> e) => e.toJS).toList().toJS
     ..strokeColor = _getCssColor(polygon.strokeColor)
     ..strokeOpacity = _getCssOpacity(polygon.strokeColor)
     ..strokeWeight = polygon.strokeWidth
@@ -428,12 +582,12 @@ bool _isPolygonClockwise(List<gmaps.LatLng> path) {
 }
 
 gmaps.PolylineOptions _polylineOptionsFromPolyline(
-    gmaps.GMap googleMap, Polyline polyline) {
+    gmaps.Map googleMap, Polyline polyline) {
   final List<gmaps.LatLng> paths =
       polyline.points.map(_latLngToGmLatLng).toList();
 
   return gmaps.PolylineOptions()
-    ..path = paths
+    ..path = paths.toJS
     ..strokeWeight = polyline.width
     ..strokeColor = _getCssColor(polyline.color)
     ..strokeOpacity = _getCssOpacity(polyline.color)
@@ -447,8 +601,8 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
 //  this.width = 10,
 }
 
-// Translates a [CameraUpdate] into operations on a [gmaps.GMap].
-void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
+// Translates a [CameraUpdate] into operations on a [gmaps.Map].
+void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
   // Casts [value] to a JSON dictionary (string -> nullable object). [value]
   // must be a non-null JSON dictionary.
   Map<String, Object?> asJsonObject(dynamic value) {
@@ -465,19 +619,19 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
     case 'newCameraPosition':
       final Map<String, Object?> position = asJsonObject(json[1]);
       final List<Object?> latLng = asJsonList(position['target']);
-      map.heading = position['bearing'] as num?;
-      map.zoom = position['zoom'] as num?;
+      map.heading = position['bearing']! as num;
+      map.zoom = position['zoom']! as num;
       map.panTo(
-        gmaps.LatLng(latLng[0] as num?, latLng[1] as num?),
+        gmaps.LatLng(latLng[0]! as num, latLng[1]! as num),
       );
-      map.tilt = position['tilt'] as num?;
+      map.tilt = position['tilt']! as num;
     case 'newLatLng':
       final List<Object?> latLng = asJsonList(json[1]);
-      map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
+      map.panTo(gmaps.LatLng(latLng[0]! as num, latLng[1]! as num));
     case 'newLatLngZoom':
       final List<Object?> latLng = asJsonList(json[1]);
-      map.zoom = json[2] as num?;
-      map.panTo(gmaps.LatLng(latLng[0] as num?, latLng[1] as num?));
+      map.zoom = json[2]! as num;
+      map.panTo(gmaps.LatLng(latLng[0]! as num, latLng[1]! as num));
     case 'newLatLngBounds':
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
@@ -485,13 +639,13 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
       final double padding = json[2] as double;
       map.fitBounds(
         gmaps.LatLngBounds(
-          gmaps.LatLng(latLng1[0] as num?, latLng1[1] as num?),
-          gmaps.LatLng(latLng2[0] as num?, latLng2[1] as num?),
+          gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
+          gmaps.LatLng(latLng2[0]! as num, latLng2[1]! as num),
         ),
-        padding,
+        padding.toJS,
       );
     case 'scrollBy':
-      map.panBy(json[1] as num?, json[2] as num?);
+      map.panBy(json[1]! as num, json[2]! as num);
     case 'zoomBy':
       gmaps.LatLng? focusLatLng;
       final double zoomDelta = json[1] as double? ?? 0;
@@ -509,44 +663,45 @@ void _applyCameraUpdate(gmaps.GMap map, CameraUpdate update) {
           // print('Error computing new focus LatLng. JS Error: ' + e.toString());
         }
       }
-      map.zoom = (map.zoom ?? 0) + newZoomDelta;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) + newZoomDelta;
       if (focusLatLng != null) {
         map.panTo(focusLatLng);
       }
     case 'zoomIn':
-      map.zoom = (map.zoom ?? 0) + 1;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) + 1;
     case 'zoomOut':
-      map.zoom = (map.zoom ?? 0) - 1;
+      map.zoom = (map.isZoomDefined() ? map.zoom : 0) - 1;
     case 'zoomTo':
-      map.zoom = json[1] as num?;
+      map.zoom = json[1]! as num;
     default:
       throw UnimplementedError('Unimplemented CameraMove: ${json[0]}.');
   }
 }
 
 // original JS by: Byron Singh (https://stackoverflow.com/a/30541162)
-gmaps.LatLng _pixelToLatLng(gmaps.GMap map, int x, int y) {
+gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   final gmaps.LatLngBounds? bounds = map.bounds;
   final gmaps.Projection? projection = map.projection;
-  final num? zoom = map.zoom;
 
   assert(
       bounds != null, 'Map Bounds required to compute LatLng of screen x/y.');
   assert(projection != null,
       'Map Projection required to compute LatLng of screen x/y');
-  assert(zoom != null,
+  assert(map.isZoomDefined(),
       'Current map zoom level required to compute LatLng of screen x/y');
+
+  final num zoom = map.zoom;
 
   final gmaps.LatLng ne = bounds!.northEast;
   final gmaps.LatLng sw = bounds.southWest;
 
-  final gmaps.Point topRight = projection!.fromLatLngToPoint!(ne)!;
-  final gmaps.Point bottomLeft = projection.fromLatLngToPoint!(sw)!;
+  final gmaps.Point topRight = projection!.fromLatLngToPoint(ne)!;
+  final gmaps.Point bottomLeft = projection.fromLatLngToPoint(sw)!;
 
-  final int scale = 1 << (zoom!.toInt()); // 2 ^ zoom
+  final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
   final gmaps.Point point =
-      gmaps.Point((x / scale) + bottomLeft.x!, (y / scale) + topRight.y!);
+      gmaps.Point((x / scale) + bottomLeft.x, (y / scale) + topRight.y);
 
-  return projection.fromPointToLatLng!(point)!;
+  return projection.fromPointToLatLng(point)!;
 }

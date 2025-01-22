@@ -250,7 +250,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
   /// any missing periods.
   ///
   /// E.g., 'A line\nAnother line.' will become:
-  /// ```
+  /// ```none
   /// [ '* A line.', '* Another line.' ]
   /// ```
   Iterable<String> _changelogAdditionsAsList({String listMarker = '*'}) {

@@ -34,7 +34,7 @@ Finally, manage the app's quick actions, for instance:
 ```dart
 quickActions.setShortcutItems(<ShortcutItem>[
   const ShortcutItem(type: 'action_main', localizedTitle: 'Main view', icon: 'icon_main'),
-  const ShortcutItem(type: 'action_help', localizedTitle: 'Help', icon: 'icon_help')
+  const ShortcutItem(type: 'action_help', localizedTitle: 'Help', localizedSubtitle: 'Tap to get help', icon: 'icon_help')
 ]);
 ```
 
@@ -52,3 +52,6 @@ If the drawables used as icons are not referenced other than in your Dart code,
 you may need to
 [explicitly mark them to be kept](https://developer.android.com/studio/build/shrink-code#keep-resources)
 to ensure that they will be available for use in release builds.
+
+For more information on using this package on Android, see the
+[`quick_actions_android` README](https://github.com/flutter/packages/blob/main/packages/quick_actions/quick_actions_android/README.md).

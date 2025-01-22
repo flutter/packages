@@ -11,7 +11,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker_for_web/src/image_resizer.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:web/helpers.dart';
 import 'package:web/web.dart' as web;
 
 //This is a sample 10x10 png image
@@ -136,5 +135,5 @@ web.Blob _base64ToBlob(String data) {
     n--;
   }
 
-  return Blob(<JSUint8Array>[u8arr.toJS].toJS);
+  return web.Blob(<JSUint8Array>[u8arr.toJS].toJS);
 }

@@ -28,6 +28,7 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/a',
     routes: <RouteBase>[
+      // #docregion configuration-builder
       StatefulShellRoute.indexedStack(
         builder: (BuildContext context, GoRouterState state,
             StatefulNavigationShell navigationShell) {
@@ -37,6 +38,8 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
           // branches in a stateful way.
           return ScaffoldWithNavBar(navigationShell: navigationShell);
         },
+        // #enddocregion configuration-builder
+        // #docregion configuration-branches
         branches: <StatefulShellBranch>[
           // The route branch for the first tab of the bottom navigation bar.
           StatefulShellBranch(
@@ -60,7 +63,10 @@ class NestedTabNavigationExampleApp extends StatelessWidget {
                 ],
               ),
             ],
+            // To enable preloading of the initial locations of branches, pass
+            // 'true' for the parameter `preload` (false is default).
           ),
+          // #enddocregion configuration-branches
 
           // The route branch for the second tab of the bottom navigation bar.
           StatefulShellBranch(
@@ -145,9 +151,12 @@ class ScaffoldWithNavBar extends StatelessWidget {
   /// The navigation shell and container for the branch Navigators.
   final StatefulNavigationShell navigationShell;
 
+  // #docregion configuration-custom-shell
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // The StatefulNavigationShell from the associated StatefulShellRoute is
+      // directly passed as the body of the Scaffold.
       body: navigationShell,
       bottomNavigationBar: BottomNavigationBar(
         // Here, the items of BottomNavigationBar are hard coded. In a real
@@ -160,13 +169,18 @@ class ScaffoldWithNavBar extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.tab), label: 'Section C'),
         ],
         currentIndex: navigationShell.currentIndex,
-        onTap: (int index) => _onTap(context, index),
+        // Navigate to the current location of the branch at the provided index
+        // when tapping an item in the BottomNavigationBar.
+        onTap: (int index) => navigationShell.goBranch(index),
       ),
     );
   }
+  // #enddocregion configuration-custom-shell
 
-  /// Navigate to the current location of the branch at the provided index when
-  /// tapping an item in the BottomNavigationBar.
+  /// NOTE: For a slightly more sophisticated branch switching, change the onTap
+  /// handler on the BottomNavigationBar above to the following:
+  /// `onTap: (int index) => _onTap(context, index),`
+  // ignore: unused_element
   void _onTap(BuildContext context, int index) {
     // When navigating to a new branch, it's recommended to use the goBranch
     // method, as doing so makes sure the last navigation state of the

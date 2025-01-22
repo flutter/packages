@@ -42,6 +42,7 @@ class ShellRouteConfig extends RouteBaseConfig {
     required super.routeDataClass,
     required this.observers,
     required super.parent,
+    required this.restorationScopeId,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -52,6 +53,9 @@ class ShellRouteConfig extends RouteBaseConfig {
 
   /// The navigator observers.
   final String? observers;
+
+  /// The restoration scope id.
+  final String? restorationScopeId;
 
   @override
   Iterable<String> classDeclarations() {
@@ -77,7 +81,8 @@ class ShellRouteConfig extends RouteBaseConfig {
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
       '${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}'
-      '${observers == null ? '' : 'observers: $observers,'}';
+      '${observers == null ? '' : 'observers: $observers,'}'
+      '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}';
 
   @override
   String get factorConstructorParameters =>
@@ -141,6 +146,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required this.navigatorKey,
     required super.routeDataClass,
     required super.parent,
+    required this.observers,
     this.restorationScopeId,
     this.initialLocation,
   }) : super._();
@@ -154,6 +160,9 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   /// The initial route.
   final String? initialLocation;
 
+  /// The navigator observers.
+  final String? observers;
+
   @override
   Iterable<String> classDeclarations() => <String>[];
 
@@ -163,7 +172,8 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
-      '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}';
+      '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}'
+      '${observers == null ? '' : 'observers: $observers,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
@@ -478,6 +488,10 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$observers',
           ),
+          restorationScopeId: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$restorationScopeId',
+          ),
         );
       case 'TypedStatefulShellRoute':
         value = StatefulShellRouteConfig._(
@@ -511,6 +525,10 @@ abstract class RouteBaseConfig {
           initialLocation: _generateParameterGetterCode(
             classElement,
             parameterName: r'$initialLocation',
+          ),
+          observers: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$observers',
           ),
         );
       case 'TypedGoRoute':

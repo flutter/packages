@@ -172,25 +172,18 @@ class CameraValue {
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
   CameraController(
-    CameraDescription cameraDescription,
-    this.resolutionPreset, {
-    this.enableAudio = true,
+    CameraDescription cameraDescription, {
+    MediaSettings mediaSettings =
+        const MediaSettings(resolutionPreset: ResolutionPreset.medium),
     this.imageFormatGroup,
-  }) : super(CameraValue.uninitialized(cameraDescription));
+  })  : _mediaSettings = mediaSettings,
+        super(CameraValue.uninitialized(cameraDescription));
+
+  ///
+  final MediaSettings _mediaSettings;
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
-
-  /// The resolution this controller is targeting.
-  ///
-  /// This resolution preset is not guaranteed to be available on the device,
-  /// if unavailable a lower resolution will be used.
-  ///
-  /// See also: [ResolutionPreset].
-  final ResolutionPreset resolutionPreset;
-
-  /// Whether to include audio when recording a video.
-  final bool enableAudio;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
@@ -223,10 +216,9 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     });
 
-    _cameraId = await CameraPlatform.instance.createCamera(
+    _cameraId = await CameraPlatform.instance.createCameraWithSettings(
       description,
-      resolutionPreset,
-      enableAudio: enableAudio,
+      _mediaSettings,
     );
 
     unawaited(CameraPlatform.instance
@@ -502,7 +494,7 @@ class Optional<T> extends IterableBase<T> {
     if (_value == null) {
       throw StateError('value called on absent Optional.');
     }
-    return _value!;
+    return _value;
   }
 
   /// Executes a function if the Optional value is present.

@@ -87,7 +87,7 @@ class ShellRouteExampleApp extends StatelessWidget {
             },
             routes: <RouteBase>[
               // The details screen to display stacked on the inner Navigator.
-              // This will cover screen A but not the application shell.
+              // This will cover screen C but not the application shell.
               GoRoute(
                 path: 'details',
                 builder: (BuildContext context, GoRouterState state) {
@@ -152,7 +152,7 @@ class ScaffoldWithNavBar extends StatelessWidget {
   }
 
   static int _calculateSelectedIndex(BuildContext context) {
-    final String location = GoRouterState.of(context).uri.toString();
+    final String location = GoRouterState.of(context).uri.path;
     if (location.startsWith('/a')) {
       return 0;
     }

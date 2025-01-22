@@ -31,32 +31,6 @@ class InAppPurchaseAndroidPlatformAddition
   late final Stream<GooglePlayUserChoiceDetails> userChoiceDetailsStream =
       _userChoiceDetailsStreamController.stream;
 
-  /// Whether pending purchase is enabled.
-  ///
-  ///  **Deprecation warning:** it is no longer required to call
-  /// [enablePendingPurchases] when initializing your application. From now on
-  /// this is handled internally and the [enablePendingPurchase] property will
-  /// always return `true`.
-  ///
-  /// See also [enablePendingPurchases] for more on pending purchases.
-  @Deprecated(
-      'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
-  static bool get enablePendingPurchase => true;
-
-  /// Enable the [InAppPurchaseConnection] to handle pending purchases.
-  ///
-  /// **Deprecation warning:** it is no longer required to call
-  /// [enablePendingPurchases] when initializing your application.
-  @Deprecated(
-      'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
-  static void enablePendingPurchases() {
-    // No-op, until it is time to completely remove this method from the API.
-  }
-
   final BillingClientManager _billingClientManager;
 
   /// Mark that the user has consumed a product.
@@ -167,6 +141,7 @@ class InAppPurchaseAndroidPlatformAddition
   ///
   /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
   /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
+  @Deprecated('Use InAppPurchasePlatfrom.countryCode')
   Future<String> getCountryCode() async {
     final BillingConfigWrapper billingConfig = await _billingClientManager
         .runWithClient((BillingClient client) => client.getBillingConfig());

@@ -7,17 +7,13 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'ios/Classes/messages.g.h',
-  objcSourceOut: 'ios/Classes/messages.g.m',
-  objcOptions: ObjcOptions(
-    prefix: 'FFS',
-  ),
+  swiftOut: 'ios/file_selector_ios/Sources/file_selector_ios/messages.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 class FileSelectorConfig {
   FileSelectorConfig(
-      {this.utis = const <String?>[], this.allowMultiSelection = false});
-  List<String?> utis;
+      {this.utis = const <String>[], this.allowMultiSelection = false});
+  List<String> utis;
   bool allowMultiSelection;
 }
 

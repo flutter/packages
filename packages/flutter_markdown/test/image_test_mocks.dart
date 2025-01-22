@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:mockito/mockito.dart';
@@ -69,25 +68,15 @@ MockHttpClient createMockImageHttpClient(SecurityContext? _) {
   return client;
 }
 
-// This string represents the hexidecial bytes of a transparent image. A
-// string is used to make the visual representation of the data compact. A
-// List<int> of the same data requires over 60 lines in a source file with
-// each element in the array on a single line.
-const String _imageBytesAsString = '''
+// A list of integers that can be consumed as image data in a stream.
+final List<int> _transparentImage = <int>[
+  // Image bytes.
   0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49,
   0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06,
   0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4, 0x89, 0x00, 0x00, 0x00, 0x0A, 0x49, 0x44,
   0x41, 0x54, 0x78, 0x9C, 0x63, 0x00, 0x01, 0x00, 0x00, 0x05, 0x00, 0x01, 0x0D,
   0x0A, 0x2D, 0xB4, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE,
-  ''';
-
-// Convert the string representing the hexidecimal bytes in the image into
-// a list of integers that can be consumed as image data in a stream.
-final List<int> _transparentImage = const LineSplitter()
-    .convert(_imageBytesAsString.replaceAllMapped(
-        RegExp(r' *0x([A-F0-9]{2}),? *\n? *'), (Match m) => '${m[1]}\n'))
-    .map<int>((String b) => int.parse(b, radix: 16))
-    .toList();
+];
 
 List<int> getTestImageData() {
   return _transparentImage;

@@ -1,0 +1,4 @@
+# TODO(Piinks): Remove once https://github.com/flutter/flutter/pull/147202 reaches stable
+buildFlags:
+  global:
+    - "--no-tree-shake-icons"

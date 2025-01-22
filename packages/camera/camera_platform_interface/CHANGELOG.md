@@ -1,3 +1,14 @@
+## 2.9.0
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds API support query for image streaming.
+
+## 2.8.0
+
+* Deprecates `maxVideoDuration`/`maxDuration`, as it was never implemented on
+  most platforms, and there is no plan to implement it in the future.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
 ## 2.7.4
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.

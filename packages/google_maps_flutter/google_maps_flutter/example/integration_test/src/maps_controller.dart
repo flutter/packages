@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'resources/icon_image_base64.dart';
 import 'shared.dart';
 
 /// Integration Tests that only need a standard [GoogleMapController].
@@ -19,60 +21,65 @@ void main() {
 }
 
 void runTests() {
-  testWidgets('testInitialCenterLocationAtCenter', (WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(const Size(800, 600));
+  testWidgets(
+    'testInitialCenterLocationAtCenter',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 600));
 
-    final Completer<GoogleMapController> mapControllerCompleter =
-        Completer<GoogleMapController>();
-    final Key key = GlobalKey();
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          key: key,
-          initialCameraPosition: kInitialCameraPosition,
-          onMapCreated: (GoogleMapController controller) {
-            mapControllerCompleter.complete(controller);
-          },
+      final Completer<GoogleMapController> mapControllerCompleter =
+          Completer<GoogleMapController>();
+      final Key key = GlobalKey();
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            onMapCreated: (GoogleMapController controller) {
+              mapControllerCompleter.complete(controller);
+            },
+          ),
         ),
-      ),
-    );
-    final GoogleMapController mapController =
-        await mapControllerCompleter.future;
+      );
+      final GoogleMapController mapController =
+          await mapControllerCompleter.future;
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
-    // in `mapRendered`.
-    // https://github.com/flutter/flutter/issues/54758
-    await Future<void>.delayed(const Duration(seconds: 1));
+      // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and `mapControllerCompleter.complete(controller)` above should happen
+      // in `mapRendered`.
+      // https://github.com/flutter/flutter/issues/54758
+      await Future<void>.delayed(const Duration(seconds: 1));
 
-    final ScreenCoordinate coordinate =
-        await mapController.getScreenCoordinate(kInitialCameraPosition.target);
-    final Rect rect = tester.getRect(find.byKey(key));
-    if (isIOS || isWeb) {
-      // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
-      // So we don't need to do the conversion like we did below for other platforms.
-      expect(coordinate.x, (rect.center.dx - rect.topLeft.dx).round());
-      expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
-    } else {
-      expect(
-          coordinate.x,
-          ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
-              .round());
-      expect(
-          coordinate.y,
-          ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
-              .round());
-    }
-    await tester.binding.setSurfaceSize(null);
-  },
-      // Android doesn't like the layout required for the web, so we skip web in this test.
-      // The equivalent web test already exists here:
-      // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
-      skip: isWeb ||
-          // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
-          isIOS);
+      final ScreenCoordinate coordinate = await mapController
+          .getScreenCoordinate(kInitialCameraPosition.target);
+      final Rect rect = tester.getRect(find.byKey(key));
+      if (isIOS || isWeb) {
+        // On iOS, the coordinate value from the GoogleMapSdk doesn't include the devicePixelRatio`.
+        // So we don't need to do the conversion like we did below for other platforms.
+        expect(coordinate.x, (rect.center.dx - rect.topLeft.dx).round());
+        expect(coordinate.y, (rect.center.dy - rect.topLeft.dy).round());
+      } else {
+        expect(
+            coordinate.x,
+            ((rect.center.dx - rect.topLeft.dx) * tester.view.devicePixelRatio)
+                .round());
+        expect(
+            coordinate.y,
+            ((rect.center.dy - rect.topLeft.dy) * tester.view.devicePixelRatio)
+                .round());
+      }
+      await tester.binding.setSurfaceSize(null);
+    },
+    // Android doesn't like the layout required for the web, so we skip web in this test.
+    // The equivalent web test already exists here:
+    // https://github.com/flutter/packages/blob/c43cc13498a1a1c4f3d1b8af2add9ce7c15bd6d0/packages/google_maps_flutter/google_maps_flutter_web/example/integration_test/projection_test.dart#L78
+    skip: isWeb ||
+        // TODO(stuartmorgan): Re-enable; see https://github.com/flutter/flutter/issues/139825
+        isIOS ||
+        // TODO(tarrinneal): Re-enable; see https://github.com/flutter/flutter/issues/160115
+        isAndroid,
+  );
 
   testWidgets('testGetVisibleRegion', (WidgetTester tester) async {
     final Key key = GlobalKey();
@@ -160,6 +167,8 @@ void runTests() {
 
     const String mapStyle =
         '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
+    // Intentionally testing the deprecated code path.
+    // ignore: deprecated_member_use
     await controller.setMapStyle(mapStyle);
   });
 
@@ -182,6 +191,8 @@ void runTests() {
     final GoogleMapController controller = await controllerCompleter.future;
 
     try {
+      // Intentionally testing the deprecated code path.
+      // ignore: deprecated_member_use
       await controller.setMapStyle('invalid_value');
       fail('expected MapStyleException');
     } on MapStyleException catch (e) {
@@ -206,6 +217,8 @@ void runTests() {
     );
     final GoogleMapController controller = await controllerCompleter.future;
 
+    // Intentionally testing the deprecated code path.
+    // ignore: deprecated_member_use
     await controller.setMapStyle(null);
   });
 
@@ -399,6 +412,116 @@ void runTests() {
     await controller.hideMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
+  });
+
+  testWidgets('markerWithAssetMapBitmap', (WidgetTester tester) async {
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          icon: AssetMapBitmap(
+            'assets/red_square.png',
+            imagePixelRatio: 1.0,
+          )),
+    };
+    await pumpMap(
+      tester,
+      GoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    );
+  });
+
+  testWidgets('markerWithAssetMapBitmapCreate', (WidgetTester tester) async {
+    final ImageConfiguration imageConfiguration = ImageConfiguration(
+      devicePixelRatio: tester.view.devicePixelRatio,
+    );
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          icon: await AssetMapBitmap.create(
+            imageConfiguration,
+            'assets/red_square.png',
+          )),
+    };
+    await pumpMap(
+      tester,
+      GoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    );
+  });
+
+  testWidgets('markerWithBytesMapBitmap', (WidgetTester tester) async {
+    final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+    final Set<Marker> markers = <Marker>{
+      Marker(
+        markerId: const MarkerId('1'),
+        icon: BytesMapBitmap(
+          bytes,
+          imagePixelRatio: tester.view.devicePixelRatio,
+        ),
+      ),
+    };
+    await pumpMap(
+      tester,
+      GoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    );
+  });
+
+  testWidgets('markerWithLegacyAsset', (WidgetTester tester) async {
+    tester.view.devicePixelRatio = 2.0;
+    final ImageConfiguration imageConfiguration = ImageConfiguration(
+      devicePixelRatio: tester.view.devicePixelRatio,
+      size: const Size(100, 100),
+    );
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          // Intentionally testing the deprecated code path.
+          // ignore: deprecated_member_use
+          icon: await BitmapDescriptor.fromAssetImage(
+            imageConfiguration,
+            'assets/red_square.png',
+          )),
+    };
+    await pumpMap(
+      tester,
+      GoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    );
+
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('markerWithLegacyBytes', (WidgetTester tester) async {
+    tester.view.devicePixelRatio = 2.0;
+    final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+    final Set<Marker> markers = <Marker>{
+      Marker(
+          markerId: const MarkerId('1'),
+          // Intentionally testing the deprecated code path.
+          // ignore: deprecated_member_use
+          icon: BitmapDescriptor.fromBytes(
+            bytes,
+            size: const Size(100, 100),
+          )),
+    };
+    await pumpMap(
+      tester,
+      GoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+      ),
+    );
+
+    await tester.pumpAndSettle();
   });
 
   testWidgets('testTakeSnapshot', (WidgetTester tester) async {

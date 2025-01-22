@@ -20,16 +20,22 @@ Downloaded by pub (not CocoaPods).
   s.dependency 'Flutter'
   # Allow any version up to the next breaking change after the latest version that
   # has been confirmed to be compatible via an example in examples/. See discussion
-  # in https://github.com/flutter/flutter/issues/86820 for why this is so broad.
-  s.dependency 'GoogleMaps', '< 9.0'
+  # in https://github.com/flutter/flutter/issues/86820 for why this should be as
+  # broad as possible.
+  # Versions earlier than 8.4 can't be supported because that's the first version
+  # that supports privacy manifests.
+  s.dependency 'GoogleMaps', '>= 8.4', '< 10.0'
+  # Google-Maps-iOS-Utils 5.x supports GoogleMaps 8.x and iOS 14.0+
+  # Google-Maps-iOS-Utils 6.x supports GoogleMaps 9.x and iOS 15.0+
+  s.dependency 'Google-Maps-iOS-Utils', '>= 5.0', '< 7.0'
   s.static_framework = true
-  s.platform = :ios, '12.0'
-  # GoogleMaps 6.x does not support arm64 simulators, but also doesn't declare
-  # explicitly that it doesn't, so mark that here so that the Flutter tool knows
-  # to build the Runner for x86_64 instead. See https://github.com/flutter/flutter/issues/94491
-  # TODO(stuartmorgan): Remove EXCLUDED_ARCHS once this plugin requires iOS 13+,
-  # at which point Cocoapods will resolve to a version of GoogleMaps that has
-  # arm64 support.
-  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'arm64' }
+  s.platform = :ios, '14.0'
+  # "Google-Maps-iOS-Utils" is static and contains Swift classes.
+  # Find the Swift runtime when these plugins are built as libraries without `use_frameworks!`
+  s.swift_version = '5.9'
+  s.xcconfig = {
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
+  }
   s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

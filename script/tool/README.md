@@ -47,6 +47,8 @@ anywhere within a package).
 dart run script/tool/bin/flutter_plugin_tools.dart format --packages package_name
 ```
 
+The `flutter/packages` repository uses clang version `15.0.0` . Newer versions of clang may format code differently.
+
 ### Run the Dart Static Analyzer
 
 ```sh
@@ -96,7 +98,7 @@ dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts
 dart run script/tool/bin/flutter_plugin_tools.dart update-excerpts --packages package_name
 ```
 
-_See also: https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#readme-code_
+_See also: https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#readme-code_
 
 ### Update CHANGELOG and Version
 
@@ -153,9 +155,9 @@ generation (e.g., regenerating mocks when updating `mockito`).
 **Releases are automated for `flutter/packages`.**
 
 The manual procedure described here is _deprecated_, and should only be used when
-the automated process fails. Please, read
-[Releasing a Plugin or Package](https://github.com/flutter/flutter/wiki/Releasing-a-Plugin-or-Package)
-on the Flutter Wiki first.
+the automated process fails. Please read
+[Releasing a Plugin or Package](https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md)
+before using `publish`.
 
 ```sh
 cd <path_to_repo>

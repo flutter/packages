@@ -11,14 +11,14 @@ tasks:
     infra_step: true
   - name: build examples
     script: .ci/scripts/tool_runner.sh
-    args: ["build-examples", "--ios"]
+    args: ["build-examples", "--ios", "--swift-package-manager"]
   - name: xcode analyze
     script: .ci/scripts/tool_runner.sh
     args: ["xcode-analyze", "--ios"]
   - name: xcode analyze deprecation
     # Ensure we don't accidentally introduce deprecated code.
     script: .ci/scripts/tool_runner.sh
-    args: ["xcode-analyze", "--ios", "--ios-min-version=13.0"]
+    args: ["xcode-analyze", "--ios", "--ios-min-version=14.0", "--exclude=script/configs/exclude_xcode_deprecation.yaml"]
   - name: native test
     script: .ci/scripts/tool_runner.sh
     # Simulator name and version must match name and version in create_simulator.sh

@@ -5,8 +5,8 @@ two-dimensional foundation of the Flutter framework.
 
 ## Features
 
-This package provides support for a TableView widget that scrolls in both the
-vertical and horizontal axes.
+This package provides support for TableView and TreeView widgets that scroll
+in both the vertical and horizontal axes.
 
 ### TableView
 
@@ -14,9 +14,21 @@ vertical and horizontal axes.
 children lazily in a `TwoDimensionalViewport`. This widget can
 
 - Scroll diagonally, or lock axes
+- Build infinite rows and columns
 - Apply decorations to rows and columns
 - Handle gestures & custom pointers for rows and columns
 - Pin rows and columns
+- Merge table cells
+
+### TreeView
+
+`TreeView` is a subclass of `TwoDimensionalScrollView`, building its provided
+children lazily in a `TwoDimensionalViewport`. This widget can
+
+- Scroll diagonally, or lock axes
+- Apply decorations to tree rows
+- Handle gestures & custom pointers for tree rows
+- Animate TreeViewNodes in and out of view
 
 ## Getting started
 
@@ -40,12 +52,19 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 ### TableView
 
-The code in `example/` shows a `TableView` of initially 400 cells, each varying
-in sizes with a few `TableSpanDecoration`s like background colors and borders. The
-`builder` constructor is called on demand for the cells that are visible in the
-TableView. Additional rows can be added on demand while the vertical position
-can jump between the first and last row using the buttons at the bottom of the
-screen.
+The code in `example/lib/table_view` has three `TableView` samples, each
+showcasing different features. The `TableExample` demonstrates adding and
+removing rows from the table, and applying `TableSpanDecoration`s. The
+`MergedTableExample` demonstrates pinned and merged `TableViewCell`s.
+Lastly, the `InfiniteTableExample` demonstrates an infinite `TableView`.
+
+### TreeView
+
+The code in `example/lib/tree_view` has two `TreeView` samples, each
+showcasing different features. The `TreeExample` demonstrates most of
+the default builders and animations. The `CustomTreeExample` demonstrates
+a highly customized tree, utilizing `TreeView.treeNodeBuilder`,
+`TreeView.treeRowBuilder` and `TreeView.onNodeToggle`.
 
 ## Changelog
 

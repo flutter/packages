@@ -3,15 +3,48 @@
 // found in the LICENSE file.
 
 #import "CameraTestUtils.h"
+
 #import <OCMock/OCMock.h>
 @import AVFoundation;
+@import camera_avfoundation;
+
+static FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
+    FCPPlatformResolutionPreset resolutionPreset) {
+  return [FCPPlatformMediaSettings makeWithResolutionPreset:resolutionPreset
+                                            framesPerSecond:nil
+                                               videoBitrate:nil
+                                               audioBitrate:nil
+                                                enableAudio:YES];
+}
 
 FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue) {
+  return FLTCreateCamWithCaptureSessionQueueAndMediaSettings(captureSessionQueue, nil, nil, nil);
+}
+
+FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
+    dispatch_queue_t captureSessionQueue, FCPPlatformMediaSettings *mediaSettings,
+    FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper,
+    CaptureDeviceFactory captureDeviceFactory) {
+  if (!mediaSettings) {
+    mediaSettings = FCPGetDefaultMediaSettings(FCPPlatformResolutionPresetMedium);
+  }
+
+  if (!mediaSettingsAVWrapper) {
+    mediaSettingsAVWrapper = [[FLTCamMediaSettingsAVWrapper alloc] init];
+  }
+
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
       .andReturn(inputMock);
 
   id videoSessionMock = OCMClassMock([AVCaptureSession class]);
+  OCMStub([videoSessionMock beginConfiguration])
+      .andDo(^(NSInvocation *invocation){
+      });
+  OCMStub([videoSessionMock commitConfiguration])
+      .andDo(^(NSInvocation *invocation){
+      });
+
   OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
@@ -19,18 +52,80 @@ FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue
   OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  return [[FLTCam alloc] initWithCameraName:@"camera"
-                           resolutionPreset:@"medium"
-                                enableAudio:true
-                                orientation:UIDeviceOrientationPortrait
-                        videoCaptureSession:videoSessionMock
-                        audioCaptureSession:audioSessionMock
-                        captureSessionQueue:captureSessionQueue
-                                      error:nil];
+  id frameRateRangeMock1 = OCMClassMock([AVFrameRateRange class]);
+  OCMStub([frameRateRangeMock1 minFrameRate]).andReturn(3);
+  OCMStub([frameRateRangeMock1 maxFrameRate]).andReturn(30);
+  id captureDeviceFormatMock1 = OCMClassMock([AVCaptureDeviceFormat class]);
+  OCMStub([captureDeviceFormatMock1 videoSupportedFrameRateRanges]).andReturn(@[
+    frameRateRangeMock1
+  ]);
+
+  id frameRateRangeMock2 = OCMClassMock([AVFrameRateRange class]);
+  OCMStub([frameRateRangeMock2 minFrameRate]).andReturn(3);
+  OCMStub([frameRateRangeMock2 maxFrameRate]).andReturn(60);
+  id captureDeviceFormatMock2 = OCMClassMock([AVCaptureDeviceFormat class]);
+  OCMStub([captureDeviceFormatMock2 videoSupportedFrameRateRanges]).andReturn(@[
+    frameRateRangeMock2
+  ]);
+
+  id captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([captureDeviceMock lockForConfiguration:[OCMArg setTo:nil]]).andReturn(YES);
+  OCMStub([captureDeviceMock formats]).andReturn((@[
+    captureDeviceFormatMock1, captureDeviceFormatMock2
+  ]));
+  __block AVCaptureDeviceFormat *format = captureDeviceFormatMock1;
+  OCMStub([captureDeviceMock setActiveFormat:[OCMArg any]]).andDo(^(NSInvocation *invocation) {
+    [invocation retainArguments];
+    [invocation getArgument:&format atIndex:2];
+  });
+  OCMStub([captureDeviceMock activeFormat]).andDo(^(NSInvocation *invocation) {
+    [invocation setReturnValue:&format];
+  });
+
+  id fltCam = [[FLTCam alloc] initWithMediaSettings:mediaSettings
+                             mediaSettingsAVWrapper:mediaSettingsAVWrapper
+                             orientation:UIDeviceOrientationPortrait
+                             videoCaptureSession:videoSessionMock
+                             audioCaptureSession:audioSessionMock
+                             captureSessionQueue:captureSessionQueue
+                               captureDeviceFactory:captureDeviceFactory ?: ^AVCaptureDevice *(void) {
+                               return captureDeviceMock;
+                             }
+                             videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+                               return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
+                             }
+                             error:nil];
+
+  id captureVideoDataOutputMock = [OCMockObject niceMockForClass:[AVCaptureVideoDataOutput class]];
+
+  OCMStub([captureVideoDataOutputMock new]).andReturn(captureVideoDataOutputMock);
+
+  OCMStub([captureVideoDataOutputMock
+              recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4])
+      .andReturn(@{});
+
+  OCMStub([captureVideoDataOutputMock sampleBufferCallbackQueue]).andReturn(captureSessionQueue);
+
+  id videoMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
+  OCMStub([videoMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
+                                                sourcePixelBufferAttributes:OCMOCK_ANY])
+      .andReturn(videoMock);
+
+  id writerInputMock = [OCMockObject niceMockForClass:[AVAssetWriterInput class]];
+
+  OCMStub([writerInputMock assetWriterInputWithMediaType:AVMediaTypeAudio
+                                          outputSettings:[OCMArg any]])
+      .andReturn(writerInputMock);
+
+  OCMStub([writerInputMock assetWriterInputWithMediaType:AVMediaTypeVideo
+                                          outputSettings:[OCMArg any]])
+      .andReturn(writerInputMock);
+
+  return fltCam;
 }
 
 FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
-                                            NSString *resolutionPreset) {
+                                            FCPPlatformResolutionPreset resolutionPreset) {
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
       .andReturn(inputMock);
@@ -40,8 +135,8 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   return [[FLTCam alloc] initWithCameraName:@"camera"
-                           resolutionPreset:resolutionPreset
-                                enableAudio:true
+                              mediaSettings:FCPGetDefaultMediaSettings(resolutionPreset)
+                     mediaSettingsAVWrapper:[[FLTCamMediaSettingsAVWrapper alloc] init]
                                 orientation:UIDeviceOrientationPortrait
                         videoCaptureSession:captureSession
                         audioCaptureSession:audioSessionMock
@@ -50,8 +145,8 @@ FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
 }
 
 FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    AVCaptureSession *captureSession, NSString *resolutionPreset, AVCaptureDevice *captureDevice,
-    VideoDimensionsForFormat videoDimensionsForFormat) {
+    AVCaptureSession *captureSession, FCPPlatformResolutionPreset resolutionPreset,
+    AVCaptureDevice *captureDevice, VideoDimensionsForFormat videoDimensionsForFormat) {
   id inputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([inputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg setTo:nil]])
       .andReturn(inputMock);
@@ -60,9 +155,8 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
   OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
-  return
-      [[FLTCam alloc] initWithResolutionPreset:resolutionPreset
-                                   enableAudio:true
+  return [[FLTCam alloc] initWithMediaSettings:FCPGetDefaultMediaSettings(resolutionPreset)
+                        mediaSettingsAVWrapper:[[FLTCamMediaSettingsAVWrapper alloc] init]
                                    orientation:UIDeviceOrientationPortrait
                            videoCaptureSession:captureSession
                            audioCaptureSession:audioSessionMock

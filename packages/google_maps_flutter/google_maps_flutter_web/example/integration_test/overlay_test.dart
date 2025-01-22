@@ -41,11 +41,11 @@ void main() {
         tileOverlay: const TileOverlay(tileOverlayId: id),
       );
 
-      final gmaps.Size size = controller.gmMapType.tileSize!;
+      final gmaps.Size size = controller.gmMapType.tileSize;
       expect(size.width, TileOverlayController.logicalTileSize);
       expect(size.height, TileOverlayController.logicalTileSize);
       expect(
-        controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document),
+        controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document),
         null,
       );
     });
@@ -58,18 +58,17 @@ void main() {
         ),
       );
 
-      final HTMLImageElement img =
-          controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document)!
-              as HTMLImageElement;
+      final HTMLImageElement img = controller.gmMapType
+          .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
       expect(img.naturalWidth, 0);
       expect(img.naturalHeight, 0);
-      expect(img.hidden, true);
+      expect((img.hidden! as JSBoolean).toDart, true);
 
       await img.onLoad.first;
 
       await img.decode().toDart;
 
-      expect(img.hidden, false);
+      expect((img.hidden! as JSBoolean).toDart, false);
       expect(img.naturalWidth, 16);
       expect(img.naturalHeight, 16);
     });
@@ -82,9 +81,8 @@ void main() {
         ),
       );
       {
-        final HTMLImageElement img =
-            controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document)!
-                as HTMLImageElement;
+        final HTMLImageElement img = controller.gmMapType
+            .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
         await null; // let `getTile` `then` complete
         expect(
           img.src,
@@ -98,9 +96,8 @@ void main() {
         tileProvider: TestTileProvider(),
       ));
       {
-        final HTMLImageElement img =
-            controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document)!
-                as HTMLImageElement;
+        final HTMLImageElement img = controller.gmMapType
+            .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
 
         await img.onLoad.first;
 
@@ -114,7 +111,7 @@ void main() {
       controller.update(const TileOverlay(tileOverlayId: id));
       {
         expect(
-          controller.gmMapType.getTile!(gmaps.Point(0, 0), 0, document),
+          controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document),
           null,
           reason: 'Setting a null tileProvider should work.',
         );

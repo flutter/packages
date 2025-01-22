@@ -3,11 +3,12 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+#if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
 @import camera_avfoundation.Test;
+#endif
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
-#import "MockFLTThreadSafeFlutterResult.h"
 
 @interface CameraPreviewPauseTests : XCTestCase
 @end
@@ -16,17 +17,15 @@
 
 - (void)testPausePreviewWithResult_shouldPausePreview {
   FLTCam *camera = [[FLTCam alloc] init];
-  MockFLTThreadSafeFlutterResult *resultObject = [[MockFLTThreadSafeFlutterResult alloc] init];
 
-  [camera pausePreviewWithResult:resultObject];
+  [camera pausePreview];
   XCTAssertTrue(camera.isPreviewPaused);
 }
 
 - (void)testResumePreviewWithResult_shouldResumePreview {
   FLTCam *camera = [[FLTCam alloc] init];
-  MockFLTThreadSafeFlutterResult *resultObject = [[MockFLTThreadSafeFlutterResult alloc] init];
 
-  [camera resumePreviewWithResult:resultObject];
+  [camera resumePreview];
   XCTAssertFalse(camera.isPreviewPaused);
 }
 

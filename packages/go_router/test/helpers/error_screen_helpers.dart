@@ -42,6 +42,7 @@ WidgetTesterCallback testClickingTheButtonRedirectsToRoot({
         ),
       ],
     );
+    addTearDown(router.dispose);
     await tester.pumpWidget(appRouterBuilder(router));
     await tester.tap(buttonFinder);
     await tester.pumpAndSettle();

@@ -135,9 +135,10 @@ void main() {
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('IterableRoute'), findsOneWidget);
+    expect(find.text('/iterable-route'), findsOneWidget);
     expect(
         find.text(
-            '/iterable-route?enum-iterable-field=football&int-list-field=1&int-list-field=2&int-list-field=3&enum-only-in-set-field=burger&enum-only-in-set-field=pizza'),
+            '{enum-iterable-field: football, int-list-field: 3, enum-only-in-set-field: pizza}'),
         findsOneWidget);
   });
 

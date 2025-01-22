@@ -20,25 +20,10 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
   private static final String TAG = "UrlLauncherPlugin";
   @Nullable private UrlLauncher urlLauncher;
 
-  /**
-   * Registers a plugin implementation that uses the stable {@code io.flutter.plugin.common}
-   * package.
-   *
-   * <p>Calling this automatically initializes the plugin. However plugins initialized this way
-   * won't react to changes in activity or context, unlike {@link UrlLauncherPlugin}.
-   */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    UrlLauncher handler = new UrlLauncher(registrar.context());
-    handler.setActivity(registrar.activity());
-    Messages.UrlLauncherApi.setup(registrar.messenger(), handler);
-  }
-
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     urlLauncher = new UrlLauncher(binding.getApplicationContext());
-    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), urlLauncher);
+    Messages.UrlLauncherApi.setUp(binding.getBinaryMessenger(), urlLauncher);
   }
 
   @Override
@@ -48,7 +33,7 @@ public final class UrlLauncherPlugin implements FlutterPlugin, ActivityAware {
       return;
     }
 
-    Messages.UrlLauncherApi.setup(binding.getBinaryMessenger(), null);
+    Messages.UrlLauncherApi.setUp(binding.getBinaryMessenger(), null);
     urlLauncher = null;
   }
 

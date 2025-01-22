@@ -1,3 +1,152 @@
+## 22.7.3
+
+* Adds compatibility with `analyzer` 7.x.*.
+
+## 22.7.2
+
+* Updates README to discuss best practices for using Pigeon-generated code.
+
+## 22.7.1
+
+* [swift] Adds support for platform checks of imports of ProxyApis.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 22.7.0
+
+* [swift, kotlin] Adds event channel support.
+* [swift, kotlin] Adds `sealed` class inheritance support.
+* [swift] Updates codec class names to be upper camel case.
+
+## 22.6.4
+
+* [swift] Fixes the channel names of the named constructors of ProxyApis.
+
+## 22.6.3
+
+* Replaces deprecated collection method usage.
+
+## 22.6.2
+
+* Removes the `@protected` annotation from the InstanceManager field of the
+  `PigeonInternalProxyApiBaseClass`.
+
+## 22.6.1
+
+* [gobject] Moves class declarations to the header to work around a bug in some
+  versions of glib.
+
+## 22.6.0
+
+* [swift] Adds `includeErrorClass` to `SwiftOptions`.
+
+## 22.5.0
+
+* [swift] Adds implementation for `@ProxyApi`.
+
+## 22.4.2
+
+* Updates `README.md` to replace the deprecated `flutter pub run pigeon` command with `dart run pigeon`.
+
+## 22.4.1
+
+* [dart] Fixes bug where special handling of ints is ignored if no custom types are used.
+
+## 22.4.0
+
+* Adds support for non-nullable types in collections.
+
+## 22.3.0
+
+* Adds support for enums and classes in collections.
+
+## 22.2.0
+
+* [kotlin] Adds implementation for `@ProxyApi`.
+
+## 22.1.0
+
+* Allows generation of classes that aren't referenced in an API.
+
+## 22.0.0
+
+* [dart] Changes codec to send int64 instead of int32.
+* **Breaking Change** [swift] Changes generic `map` to nullable keys of `AnyHashable` to conform to other platforms.
+* Adds tests to validate collections of ints.
+
+## 21.2.0
+
+* Removes restriction on number of custom types.
+* [java] Fixes bug with multiple enums.
+* [java] Removes `Object` from generics.
+* [objc] Fixes bug with multiple enums per data class.
+* Updates `varPrefix` and `classMemberNamePrefix`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 21.1.0
+
+* Adds GObject (Linux) support.
+
+## 21.0.0
+
+* **Breaking Change** [cpp] Fixes style of enum names. References to enum values
+  will need to be updated to `EnumType.kValue` style, instead of the previous
+  `EnumType.value`.
+
+## 20.0.2
+
+* [java] Adds `equals` and `hashCode` support for data classes.
+* [swift] Fully-qualifies types in Equatable extension test.
+
+## 20.0.1
+
+* [cpp] Fixes handling of null class arguments.
+
+## 20.0.0
+
+* Moves all codec logic to single custom codec per file.
+* **Breaking Change** Limits the number of total custom types to 126.
+  * If more than 126 custom types are needed, consider breaking up your definition files.
+* Fixes bug that prevented collection subtypes from being added properly.
+* [swift] Adds `@unchecked Sendable` to codec method.
+* [objc] [cpp] Fixes bug that prevented setting custom header import path.
+
+## 19.0.2
+
+* [kotlin] Adds the `@JvmOverloads` to the `HostApi` setUp method. This prevents the calling Java code from having to provide an empty `String` as Kotlin provides it by default
+
+## 19.0.1
+
+* [dart] Updates `PigeonInstanceMangerApi` to use the shared api channel code.
+
+## 19.0.0
+
+* **Breaking Change** [swift] Removes `FlutterError` in favor of `PigeonError`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 18.0.1
+
+* Fixes unnecessary calls of `toList` and `fromList` when encoding/decoding data classes.
+* [kotlin] Changes to some code to make it more idiomatic.
+* Removes collisions with the word `list`.
+
+## 18.0.0
+
+* Adds message channel suffix option to all APIs.
+* **Breaking Change** [dart] Changes `FlutterApi` `setup` to `setUp`.
+
+## 17.3.0
+
+* [swift] Adds `@SwiftClass` annotation to allow choice between `struct` and `class` for data classes.
+* [cpp] Adds support for recursive data class definitions.
+
+## 17.2.0
+
+* [dart] Adds implementation for `@ProxyApi`.
+
+## 17.1.3
+
+* [objc] Fixes double prefixes added to enum names.
+
 ## 17.1.2
 
 * [swift] Separates message call code generation into separate methods.
@@ -109,8 +258,6 @@
     `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
-
-
 
 ## 12.0.1
 

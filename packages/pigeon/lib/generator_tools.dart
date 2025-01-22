@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:mirrors';
 
 import 'package:yaml/yaml.dart' as yaml;
@@ -13,7 +14,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '17.1.2';
+const String pigeonVersion = '22.7.3';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -31,7 +32,7 @@ bool debugGenerators = false;
 
 /// A helper class for managing indentation, wrapping a [StringSink].
 class Indent {
-  /// Constructor which takes a [StringSink] [Ident] will wrap.
+  /// Constructor which takes a [StringSink] [Indent] will wrap.
   Indent(this._sink);
 
   int _count = 0;
@@ -70,11 +71,29 @@ class Indent {
   }
 
   /// Replaces the newlines and tabs of input and adds it to the stream.
-  void format(String input,
-      {bool leadingSpace = true, bool trailingNewline = true}) {
+  ///
+  /// [trimIndentation] flag finds the line with the fewest leading empty
+  /// spaces and trims the beginning of all lines by this number.
+  void format(
+    String input, {
+    bool leadingSpace = true,
+    bool trailingNewline = true,
+    bool trimIndentation = true,
+  }) {
     final List<String> lines = input.split('\n');
+
+    final int indentationToRemove = !trimIndentation
+        ? 0
+        : lines
+            .where((String line) => line.trim().isNotEmpty)
+            .map((String line) => line.length - line.trimLeft().length)
+            .reduce(min);
+
     for (int i = 0; i < lines.length; ++i) {
-      final String line = lines[i];
+      final String line = lines[i].length >= indentationToRemove
+          ? lines[i].substring(indentationToRemove)
+          : lines[i];
+
       if (i == 0 && !leadingSpace) {
         add(line.replaceAll('\t', tab));
       } else if (line.isNotEmpty) {
@@ -96,8 +115,6 @@ class Indent {
     bool addTrailingNewline = true,
     int nestCount = 1,
   }) {
-    assert(begin != '' || end != '',
-        'Use nest for indentation without any decoration');
     if (begin != null) {
       _sink.write(begin + newline);
     }
@@ -117,8 +134,6 @@ class Indent {
     Function func, {
     bool addTrailingNewline = true,
   }) {
-    assert(begin != '' || end != '',
-        'Use nest for indentation without any decoration');
     addScoped(str() + (begin ?? ''), end, func,
         addTrailingNewline: addTrailingNewline);
   }
@@ -164,9 +179,22 @@ class Indent {
   }
 }
 
-/// Create the generated channel name for a [func] on a [api].
-String makeChannelName(Api api, Method func, String dartPackageName) {
-  return 'dev.flutter.pigeon.$dartPackageName.${api.name}.${func.name}';
+/// Create the generated channel name for a [method] on an [api].
+String makeChannelName(Api api, Method method, String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: api.name,
+    methodName: method.name,
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// Create the generated channel name for a method on an api.
+String makeChannelNameWithStrings({
+  required String apiName,
+  required String methodName,
+  required String dartPackageName,
+}) {
+  return 'dev.flutter.pigeon.$dartPackageName.$apiName.$methodName';
 }
 
 // TODO(tarrinneal): Determine whether HostDataType is needed.
@@ -282,23 +310,45 @@ String getGeneratedCodeWarning() {
 /// String to be printed after `getGeneratedCodeWarning()'s warning`.
 const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 
-/// Prefix for utility classes generated for ProxyApis.
+/// Prefix for generated internal classes.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String classNamePrefix = 'Pigeon_';
+const String classNamePrefix = 'PigeonInternal';
 
-/// Name for the generated InstanceManager for ProxyApis.
+/// Prefix for classes generated to use with ProxyApis.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
-const String instanceManagerClassName = '${classNamePrefix}InstanceManager';
+const String proxyApiClassNamePrefix = 'Pigeon';
+
+/// Prefix for APIs generated for ProxyApi.
+///
+/// Since ProxyApis are intended to wrap a class and will often share the name
+/// of said class, host APIs should prefix the API with this protected name.
+const String hostProxyApiPrefix = '${proxyApiClassNamePrefix}Api';
 
 /// Prefix for class member names not defined by the user.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
 const String classMemberNamePrefix = 'pigeon_';
+
+/// Prefix for variable names not defined by the user.
+///
+/// This lowers the chances of variable name collisions with user defined
+/// parameters.
+const String varNamePrefix = 'pigeonVar_';
+
+/// Prefixes that are not allowed for any names of any types or methods.
+const List<String> disallowedPrefixes = <String>[
+  classNamePrefix,
+  classMemberNamePrefix,
+  hostProxyApiPrefix,
+  proxyApiClassNamePrefix,
+  varNamePrefix,
+  'pigeonChannelCodec'
+];
 
 /// Collection of keys used in dictionaries across generators.
 class Keys {
@@ -362,16 +412,29 @@ Map<String, Object> mergeMaps(
   return result;
 }
 
-/// A class name that is enumerated.
-class EnumeratedClass {
+/// A type name that is enumerated.
+class EnumeratedType {
   /// Constructor.
-  EnumeratedClass(this.name, this.enumeration);
+  EnumeratedType(this.name, this.enumeration, this.type,
+      {this.associatedClass, this.associatedEnum});
 
-  /// The name of the class.
+  /// The name of the type.
   final String name;
 
   /// The enumeration of the class.
   final int enumeration;
+
+  /// The type of custom type of the enumerated type.
+  final CustomTypes type;
+
+  /// The associated Class that is represented by the [EnumeratedType].
+  final Class? associatedClass;
+
+  /// The associated Enum that is represented by the [EnumeratedType].
+  final Enum? associatedEnum;
+
+  /// Returns the offset of the enumeration.
+  int offset(int offset) => enumeration - offset;
 }
 
 /// Supported basic datatypes.
@@ -389,9 +452,26 @@ const List<String> validTypes = <String>[
   'Object',
 ];
 
-/// Custom codecs' custom types are enumerated from 255 down to this number to
+/// The dedicated key for accessing an InstanceManager in ProxyApi base codecs.
+///
+/// Generated codecs override the `StandardMessageCodec` which reserves the byte
+/// keys of 0-127, so this value is chosen because it is the lowest available
+/// key.
+///
+/// See https://api.flutter.dev/flutter/services/StandardMessageCodec/writeValue.html
+/// for more information on keys in MessageCodecs.
+const int proxyApiCodecInstanceManagerKey = 128;
+
+/// Custom codecs' custom types are enumerations begin at this number to
 /// avoid collisions with the StandardMessageCodec.
-const int _minimumCodecFieldKey = 128;
+const int minimumCodecFieldKey = proxyApiCodecInstanceManagerKey + 1;
+
+/// The maximum codec enumeration allowed.
+const int maximumCodecFieldKey = 255;
+
+/// The total number of keys allowed in the custom codec.
+const int totalCustomCodecKeysAllowed =
+    maximumCodecFieldKey - minimumCodecFieldKey;
 
 Iterable<TypeDeclaration> _getTypeArguments(TypeDeclaration type) sync* {
   for (final TypeDeclaration typeArg in type.typeArguments) {
@@ -475,40 +555,92 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
   return references.map;
 }
 
-/// Returns true if the concrete type cannot be determined at compile-time.
-bool _isConcreteTypeAmbiguous(TypeDeclaration type) {
-  return (type.baseName == 'List' && type.typeArguments.isEmpty) ||
-      (type.baseName == 'Map' && type.typeArguments.isEmpty) ||
-      type.baseName == 'Object';
+/// Find the [TypeDeclaration] that has the highest API requirement and its
+/// version, [T].
+///
+/// [T] depends on the language. For example, Android uses an int while iOS uses
+/// semantic versioning.
+({TypeDeclaration type, T version})?
+    findHighestApiRequirement<T extends Object>(
+  Iterable<TypeDeclaration> types, {
+  required T? Function(TypeDeclaration) onGetApiRequirement,
+  required Comparator<T> onCompare,
+}) {
+  Iterable<TypeDeclaration> addAllRecursive(TypeDeclaration type) sync* {
+    yield type;
+    if (type.typeArguments.isNotEmpty) {
+      for (final TypeDeclaration typeArg in type.typeArguments) {
+        yield* addAllRecursive(typeArg);
+      }
+    }
+  }
+
+  final Iterable<TypeDeclaration> allReferencedTypes = types
+      .expand(addAllRecursive)
+      .where((TypeDeclaration type) => onGetApiRequirement(type) != null);
+
+  if (allReferencedTypes.isEmpty) {
+    return null;
+  }
+
+  final TypeDeclaration typeWithHighestRequirement = allReferencedTypes.reduce(
+    (TypeDeclaration one, TypeDeclaration two) {
+      return onCompare(onGetApiRequirement(one)!, onGetApiRequirement(two)!) > 0
+          ? one
+          : two;
+    },
+  );
+
+  return (
+    type: typeWithHighestRequirement,
+    version: onGetApiRequirement(typeWithHighestRequirement)!,
+  );
 }
 
-/// Given an [Api], return the enumerated classes that must exist in the codec
+/// All custom definable data types.
+enum CustomTypes {
+  /// A custom Class.
+  customClass,
+
+  /// A custom Enum.
+  customEnum,
+}
+
+/// Return the enumerated types that must exist in the codec
 /// where the enumeration should be the key used in the buffer.
-Iterable<EnumeratedClass> getCodecClasses(Api api, Root root) sync* {
-  final Set<String> enumNames = root.enums.map((Enum e) => e.name).toSet();
-  final Map<TypeDeclaration, List<int>> referencedTypes =
-      getReferencedTypes(<Api>[api], root.classes);
-  final Iterable<String> allTypeNames =
-      referencedTypes.keys.any(_isConcreteTypeAmbiguous)
-          ? root.classes.map((Class aClass) => aClass.name)
-          : referencedTypes.keys.map((TypeDeclaration e) => e.baseName);
-  final List<String> sortedNames = allTypeNames
-      .where((String element) =>
-          element != 'void' &&
-          !validTypes.contains(element) &&
-          !enumNames.contains(element))
-      .toList();
-  sortedNames.sort();
-  int enumeration = _minimumCodecFieldKey;
-  const int maxCustomClassesPerApi = 255 - _minimumCodecFieldKey;
-  if (sortedNames.length > maxCustomClassesPerApi) {
-    throw Exception(
-        "Pigeon doesn't support more than $maxCustomClassesPerApi referenced custom classes per API, try splitting up your APIs.");
+Iterable<EnumeratedType> getEnumeratedTypes(
+  Root root, {
+  bool excludeSealedClasses = false,
+}) sync* {
+  int index = 0;
+
+  for (final Enum customEnum in root.enums) {
+    yield EnumeratedType(
+      customEnum.name,
+      index + minimumCodecFieldKey,
+      CustomTypes.customEnum,
+      associatedEnum: customEnum,
+    );
+    index += 1;
   }
-  for (final String name in sortedNames) {
-    yield EnumeratedClass(name, enumeration);
-    enumeration += 1;
+
+  for (final Class customClass in root.classes) {
+    if (!excludeSealedClasses || !customClass.isSealed) {
+      yield EnumeratedType(
+        customClass.name,
+        index + minimumCodecFieldKey,
+        CustomTypes.customClass,
+        associatedClass: customClass,
+      );
+      index += 1;
+    }
   }
+}
+
+/// Checks if [root] contains enough custom types to require overflow codec tools.
+bool customTypeOverflowCheck(Root root) {
+  return root.classes.length + root.enums.length >
+      maximumCodecFieldKey - minimumCodecFieldKey;
 }
 
 /// Describes how to format a document comment.
@@ -532,7 +664,7 @@ class DocumentCommentSpecification {
 
 /// Formats documentation comments and adds them to current Indent.
 ///
-/// The [comments] list is meant for comments written in the input dart file.
+/// The [comments] list is meant for comments written in the input Dart file.
 /// The [generatorComments] list is meant for comments added by the generators.
 /// Include white space for all tokens when called, no assumptions are made.
 void addDocumentationComments(
@@ -541,6 +673,23 @@ void addDocumentationComments(
   DocumentCommentSpecification commentSpec, {
   List<String> generatorComments = const <String>[],
 }) {
+  asDocumentationComments(
+    comments,
+    commentSpec,
+    generatorComments: generatorComments,
+  ).forEach(indent.writeln);
+}
+
+/// Formats documentation comments and adds them to current Indent.
+///
+/// The [comments] list is meant for comments written in the input Dart file.
+/// The [generatorComments] list is meant for comments added by the generators.
+/// Include white space for all tokens when called, no assumptions are made.
+Iterable<String> asDocumentationComments(
+  Iterable<String> comments,
+  DocumentCommentSpecification commentSpec, {
+  List<String> generatorComments = const <String>[],
+}) sync* {
   final List<String> allComments = <String>[
     ...comments,
     if (comments.isNotEmpty && generatorComments.isNotEmpty) '',
@@ -549,24 +698,20 @@ void addDocumentationComments(
   String currentLineOpenToken = commentSpec.openCommentToken;
   if (allComments.length > 1) {
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.openCommentToken);
+      yield commentSpec.openCommentToken;
       currentLineOpenToken = commentSpec.blockContinuationToken;
     }
     for (String line in allComments) {
       if (line.isNotEmpty && line[0] != ' ') {
         line = ' $line';
       }
-      indent.writeln(
-        '$currentLineOpenToken$line',
-      );
+      yield '$currentLineOpenToken$line';
     }
     if (commentSpec.closeCommentToken != '') {
-      indent.writeln(commentSpec.closeCommentToken);
+      yield commentSpec.closeCommentToken;
     }
   } else if (allComments.length == 1) {
-    indent.writeln(
-      '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}',
-    );
+    yield '$currentLineOpenToken${allComments.first}${commentSpec.closeCommentToken}';
   }
 }
 
@@ -619,92 +764,6 @@ String? deducePackageName(String mainDartFile) {
   }
 }
 
-/// Recursively search for all the interfaces apis from a list of names of
-/// interfaces.
-///
-/// This method assumes that all interfaces are ProxyApis and an api doesn't
-/// contains itself as an interface. Otherwise, throws an [ArgumentError].
-Set<AstProxyApi> recursiveFindAllInterfaceApis(
-  AstProxyApi api, {
-  Set<AstProxyApi> seenApis = const <AstProxyApi>{},
-}) {
-  final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
-
-  allInterfaces.addAll(
-    api.interfaces.map(
-      (TypeDeclaration type) {
-        if (!type.isProxyApi) {
-          throw ArgumentError(
-            'Could not find a valid ProxyApi for an interface: $type',
-          );
-        } else if (seenApis.contains(type.associatedProxyApi)) {
-          throw ArgumentError(
-            'A ProxyApi cannot be a super class of itself: ${type.baseName}',
-          );
-        }
-        return type.associatedProxyApi!;
-      },
-    ),
-  );
-
-  // Adds the current api since it would be invalid for it to be an interface
-  // of itself.
-  final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, api};
-
-  for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
-    allInterfaces.addAll(recursiveFindAllInterfaceApis(
-      interfaceApi,
-      seenApis: newSeenApis,
-    ));
-  }
-
-  return allInterfaces;
-}
-
-/// Creates a list of ProxyApis where each `extends` the ProxyApi that follows
-/// it.
-///
-/// Returns an empty list if [proxyApi] does not extend a ProxyApi.
-///
-/// This method assumes the super classes of each ProxyApi doesn't create a
-/// loop. Throws a [ArgumentError] if a loop is found.
-///
-/// This method also assumes that all super classes are ProxyApis. Otherwise,
-/// throws an [ArgumentError].
-List<AstProxyApi> recursiveGetSuperClassApisChain(AstProxyApi api) {
-  final List<AstProxyApi> superClassChain = <AstProxyApi>[];
-
-  if (api.superClass != null && !api.superClass!.isProxyApi) {
-    throw ArgumentError(
-      'Could not find a ProxyApi for super class: ${api.superClass!.baseName}',
-    );
-  }
-
-  AstProxyApi? currentProxyApi = api.superClass?.associatedProxyApi;
-  while (currentProxyApi != null) {
-    if (superClassChain.contains(currentProxyApi)) {
-      throw ArgumentError(
-        'Loop found when processing super classes for a ProxyApi: '
-        '${api.name}, ${superClassChain.map((AstProxyApi api) => api.name)}',
-      );
-    }
-
-    superClassChain.add(currentProxyApi);
-
-    if (currentProxyApi.superClass != null &&
-        !currentProxyApi.superClass!.isProxyApi) {
-      throw ArgumentError(
-        'Could not find a ProxyApi for super class: '
-        '${currentProxyApi.superClass!.baseName}',
-      );
-    }
-
-    currentProxyApi = currentProxyApi.superClass?.associatedProxyApi;
-  }
-
-  return superClassChain;
-}
-
 /// Enum to specify api type when generating code.
 enum ApiType {
   /// Flutter api.
@@ -738,4 +797,61 @@ class OutputFileOptions<T> {
 
   /// Options for specified language across all file types.
   T languageOptions;
+}
+
+/// Converts strings to Upper Camel Case.
+String toUpperCamelCase(String text) {
+  final RegExp separatorPattern = RegExp(r'[ _-]');
+  return text.split(separatorPattern).map((String word) {
+    return word.isEmpty
+        ? ''
+        : word.substring(0, 1).toUpperCase() + word.substring(1);
+  }).join();
+}
+
+/// Converts strings to Lower Camel Case.
+String toLowerCamelCase(String text) {
+  final RegExp separatorPattern = RegExp(r'[ _-]');
+  bool firstWord = true;
+  return text.split(separatorPattern).map((String word) {
+    if (word.isEmpty) {
+      return '';
+    }
+    if (firstWord) {
+      firstWord = false;
+      return word.substring(0, 1).toLowerCase() + word.substring(1);
+    }
+    return word.substring(0, 1).toUpperCase() + word.substring(1);
+  }).join();
+}
+
+/// Converts string to SCREAMING_SNAKE_CASE.
+String toScreamingSnakeCase(String string) {
+  return string
+      .replaceAllMapped(
+          RegExp(r'(?<=[a-z])[A-Z]'), (Match m) => '_${m.group(0)}')
+      .toUpperCase();
+}
+
+/// The channel name for the `removeStrongReference` method of the
+/// `InstanceManager` API.
+///
+/// This ensures the channel name is the same for all languages.
+String makeRemoveStrongReferenceChannelName(String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: '${classNamePrefix}InstanceManager',
+    methodName: 'removeStrongReference',
+    dartPackageName: dartPackageName,
+  );
+}
+
+/// The channel name for the `clear` method of the `InstanceManager` API.
+///
+/// This ensures the channel name is the same for all languages.
+String makeClearChannelName(String dartPackageName) {
+  return makeChannelNameWithStrings(
+    apiName: '${classNamePrefix}InstanceManager',
+    methodName: 'clear',
+    dartPackageName: dartPackageName,
+  );
 }

@@ -1,6 +1,19 @@
+## 2.3.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Corrects the behavior of muting/unmuting videos in Chrome's Tap Emulation mode.
+
+## 2.3.2
+
+* Adds support for `web: ^1.0.0`.
+
+## 2.3.1
+
+* Fixes some `package:web` tweaks.
+
 ## 2.3.0
 
-* Migrates package and tests to `package:web``.
+* Migrates package and tests to `package:web`.
 * Fixes infinite event loop caused by `seekTo` when the video ends.
 
 ## 2.2.0

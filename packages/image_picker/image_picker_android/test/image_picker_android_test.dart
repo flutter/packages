@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:image_picker_android/image_picker_android.dart';
@@ -156,6 +157,7 @@ void main() {
       expect(api.passedImageOptions?.maxWidth, null);
       expect(api.passedImageOptions?.maxHeight, null);
       expect(api.passedImageOptions?.quality, 100);
+      expect(api.limit, null);
     });
 
     test('passes image option arguments correctly', () async {
@@ -465,6 +467,7 @@ void main() {
       expect(api.passedImageOptions?.maxWidth, null);
       expect(api.passedImageOptions?.maxHeight, null);
       expect(api.passedImageOptions?.quality, 100);
+      expect(api.limit, null);
     });
 
     test('passes image option arguments correctly', () async {
@@ -681,6 +684,7 @@ void main() {
       expect(api.passedImageOptions?.maxWidth, null);
       expect(api.passedImageOptions?.maxHeight, null);
       expect(api.passedImageOptions?.quality, 100);
+      expect(api.limit, null);
     });
 
     test('passes image option arguments correctly', () async {
@@ -692,11 +696,13 @@ void main() {
           maxHeight: 20.0,
           imageQuality: 70,
         ),
+        limit: 5,
       ));
 
       expect(api.passedImageOptions?.maxWidth, 10.0);
       expect(api.passedImageOptions?.maxHeight, 20.0);
       expect(api.passedImageOptions?.quality, 70);
+      expect(api.limit, 5);
     });
 
     test('does not accept a negative width or height argument', () {
@@ -738,6 +744,37 @@ void main() {
             allowMultiple: true,
             imageOptions: ImageOptions(imageQuality: 101),
           ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept an invalid limit argument', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            limit: -1,
+          ),
+        ),
+        throwsArgumentError,
+      );
+
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(
+            allowMultiple: true,
+            limit: 0,
+          ),
+        ),
+        throwsArgumentError,
+      );
+    });
+
+    test('does not accept a not null limit when allowMultiple is false', () {
+      expect(
+        () => picker.getMedia(
+          options: const MediaOptions(allowMultiple: false, limit: 5),
         ),
         throwsArgumentError,
       );
@@ -926,10 +963,11 @@ class _FakeImagePickerApi implements ImagePickerApi {
   VideoSelectionOptions? passedVideoOptions;
   bool? passedAllowMultiple;
   bool? passedPhotoPickerFlag;
+  int? limit;
   _LastPickType? lastCall;
 
   @override
-  Future<List<String?>> pickImages(
+  Future<List<String>> pickImages(
     SourceSpecification source,
     ImageSelectionOptions options,
     GeneralOptions generalOptions,
@@ -939,11 +977,12 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedImageOptions = options;
     passedAllowMultiple = generalOptions.allowMultiple;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
-    return returnValue as List<String?>? ?? <String>[];
+    limit = generalOptions.limit;
+    return returnValue as List<String>? ?? <String>[];
   }
 
   @override
-  Future<List<String?>> pickMedia(
+  Future<List<String>> pickMedia(
     MediaSelectionOptions options,
     GeneralOptions generalOptions,
   ) async {
@@ -951,11 +990,12 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedImageOptions = options.imageSelectionOptions;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
     passedAllowMultiple = generalOptions.allowMultiple;
-    return returnValue as List<String?>? ?? <String>[];
+    limit = generalOptions.limit;
+    return returnValue as List<String>? ?? <String>[];
   }
 
   @override
-  Future<List<String?>> pickVideos(
+  Future<List<String>> pickVideos(
     SourceSpecification source,
     VideoSelectionOptions options,
     GeneralOptions generalOptions,
@@ -965,11 +1005,19 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedVideoOptions = options;
     passedAllowMultiple = generalOptions.allowMultiple;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
-    return returnValue as List<String?>? ?? <String>[];
+    return returnValue as List<String>? ?? <String>[];
   }
 
   @override
   Future<CacheRetrievalResult?> retrieveLostResults() async {
     return returnValue as CacheRetrievalResult?;
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }

@@ -4,6 +4,7 @@
 
 import 'analyzer.dart';
 import 'camera.dart';
+import 'camera2_camera_info.dart';
 import 'camera_control.dart';
 import 'camera_info.dart';
 import 'camera_selector.dart';
@@ -52,7 +53,8 @@ class AndroidCameraXCameraFlutterApis {
       PlaneProxyFlutterApiImpl? planeProxyFlutterApiImpl,
       AnalyzerFlutterApiImpl? analyzerFlutterApiImpl,
       CameraControlFlutterApiImpl? cameraControlFlutterApiImpl,
-      FocusMeteringResultFlutterApiImpl? focusMeteringResultFlutterApiImpl}) {
+      FocusMeteringResultFlutterApiImpl? focusMeteringResultFlutterApiImpl,
+      Camera2CameraInfoFlutterApiImpl? camera2CameraInfoFlutterApiImpl}) {
     this.javaObjectFlutterApiImpl =
         javaObjectFlutterApiImpl ?? JavaObjectFlutterApiImpl();
     this.cameraInfoFlutterApiImpl =
@@ -99,6 +101,8 @@ class AndroidCameraXCameraFlutterApis {
     this.focusMeteringResultFlutterApiImpl =
         focusMeteringResultFlutterApiImpl ??
             FocusMeteringResultFlutterApiImpl();
+    this.camera2CameraInfoFlutterApiImpl =
+        camera2CameraInfoFlutterApiImpl ?? Camera2CameraInfoFlutterApiImpl();
   }
 
   static bool _haveBeenSetUp = false;
@@ -178,6 +182,9 @@ class AndroidCameraXCameraFlutterApis {
   late final FocusMeteringResultFlutterApiImpl
       focusMeteringResultFlutterApiImpl;
 
+  /// Flutter Api implementation for [Camera2CameraInfo].
+  late final Camera2CameraInfoFlutterApiImpl camera2CameraInfoFlutterApiImpl;
+
   /// Ensures all the Flutter APIs have been setup to receive calls from native code.
   void ensureSetUp() {
     if (!_haveBeenSetUp) {
@@ -205,6 +212,7 @@ class AndroidCameraXCameraFlutterApis {
       ObserverFlutterApi.setup(observerFlutterApiImpl);
       CameraControlFlutterApi.setup(cameraControlFlutterApiImpl);
       FocusMeteringResultFlutterApi.setup(focusMeteringResultFlutterApiImpl);
+      Camera2CameraInfoFlutterApi.setup(camera2CameraInfoFlutterApiImpl);
       _haveBeenSetUp = true;
     }
   }

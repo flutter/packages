@@ -7,6 +7,6 @@ tasks:
   # This is to minimize accidentally making changes that break old versions
   # (which we don't commit to supporting, but don't want to actively break)
   # without updating the constraints.
-  # See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#supported-flutter-versions
+  # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#supported-flutter-versions
   - name: analyze - legacy
     script: .ci/scripts/analyze_legacy.sh

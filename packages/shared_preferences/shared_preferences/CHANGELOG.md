@@ -1,10 +1,37 @@
-## NEXT
+## 2.3.5
+
+* Adds information about Android SharedPreferences support.
+
+## 2.3.4
+
+* Security update, requires shared_preferences_android to be 2.3.4.
+
+## 2.3.3
+
+* Clarifies scope of prefix handling in README.
+
+## 2.3.2
+
+* Removes outdated testing information from README.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.3.1
+
+* Fixes `getStringList` bug with `List<Object?>` cast exception.
+
+## 2.3.0
+
+* Adds `SharedPreferencesAsync` and `SharedPreferencesWithCache` APIs.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.2.3
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this
   package with iOS 11, but will not receive any further updates to the iOS implementation.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates minimum iOS implementation version to include a privacy manifest.
 
 ## 2.2.2
 

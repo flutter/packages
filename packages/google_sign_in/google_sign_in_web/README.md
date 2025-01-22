@@ -18,7 +18,7 @@ plugin required a major version update.
 
 The **Google Sign-In JavaScript for Web JS SDK** is set to be deprecated after
 March 31, 2023. **Google Identity Services (GIS) SDK** is the new solution to
-quickly and easily sign users into your app suing their Google accounts.
+quickly and easily sign users into your app using their Google accounts.
 
 * In the GIS SDK, Authentication and Authorization are now two separate concerns.
   * Authentication (information about the current user) flows will not
@@ -145,7 +145,7 @@ The GIS SDK limits authorization token duration to one hour (3600 seconds).
 
 ### Import the package
 
-This package is [endorsed](https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin),
+This package is [endorsed](https://flutter.dev/to/endorsed-federated-plugin),
 which means you can simply use `google_sign_in`
 normally. This package will be automatically included in your app when you do,
 so you do not need to add it to your `pubspec.yaml`.

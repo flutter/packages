@@ -97,6 +97,7 @@ void main() {
         )
       ],
     );
+    addTearDown(router.dispose);
 
     await tester.pumpWidget(
       MaterialApp.router(

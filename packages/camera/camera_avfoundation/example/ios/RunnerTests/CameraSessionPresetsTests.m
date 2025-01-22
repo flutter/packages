@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+#if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
 @import camera_avfoundation.Test;
+#endif
 
 @import AVFoundation;
 @import XCTest;
@@ -30,7 +32,8 @@
   OCMExpect([captureDeviceMock lockForConfiguration:NULL]).andReturn(YES);
   OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
 
-  FLTCreateCamWithVideoDimensionsForFormat(videoSessionMock, @"max", captureDeviceMock,
+  FLTCreateCamWithVideoDimensionsForFormat(videoSessionMock, FCPPlatformResolutionPresetMax,
+                                           captureDeviceMock,
                                            ^CMVideoDimensions(AVCaptureDeviceFormat *format) {
                                              CMVideoDimensions videoDimensions;
                                              videoDimensions.width = 1;
@@ -53,7 +56,7 @@
 
   OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
 
-  FLTCreateCamWithVideoCaptureSession(videoSessionMock, @"max");
+  FLTCreateCamWithVideoCaptureSession(videoSessionMock, FCPPlatformResolutionPresetMax);
 
   OCMVerifyAll(videoSessionMock);
 }
@@ -70,7 +73,7 @@
   // Expect that setting "ultraHigh" resolutionPreset correctly updates videoCaptureSession.
   OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
 
-  FLTCreateCamWithVideoCaptureSession(videoSessionMock, @"ultraHigh");
+  FLTCreateCamWithVideoCaptureSession(videoSessionMock, FCPPlatformResolutionPresetUltraHigh);
 
   OCMVerifyAll(videoSessionMock);
 }

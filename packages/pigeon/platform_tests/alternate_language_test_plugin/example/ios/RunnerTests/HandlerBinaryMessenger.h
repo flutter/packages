@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef id _Nullable (^HandlerBinaryMessengerHandler)(NSArray *_Nonnull args);
+typedef id _Nullable (^HandlerBinaryMessengerHandler)(NSArray<id> *_Nonnull args);
 
 /// A FlutterBinaryMessenger that calls a supplied method when a call is
 /// invoked.

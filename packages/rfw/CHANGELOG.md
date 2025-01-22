@@ -1,3 +1,26 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 1.0.30
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 1.0.29
+
+* Adds support for the `Slider` Material widget.
+
+## 1.0.28
+
+* Updates documentation to WidgetStateProperty and ButtonBar.
+
+## 1.0.27
+* Adds support for `DecorationImage.filterQuality`.
+
+## 1.0.26
+* Supports overriding the error widget builder.
+
 ## 1.0.25
 * Adds support for wildget builders.
 

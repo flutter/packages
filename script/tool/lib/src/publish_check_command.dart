@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:file/file.dart';
 import 'package:http/http.dart' as http;
 import 'package:pub_semver/pub_semver.dart';
 
@@ -73,10 +74,20 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    _PublishCheckResult? result = await _passesPublishCheck(package);
-    if (result == null) {
+    if (_isMarkedAsUnpublishable(package)) {
       return PackageResult.skip('Package is marked as unpublishable.');
     }
+
+    // The pre-publish hook must be run first if it exists, since passing the
+    // publish check may rely on its execution.
+    final bool prePublishHookPassesOrNoops =
+        await _validatePrePublishHook(package);
+    // Given that, don't run publish check if the pre-publish hook fails.
+    _PublishCheckResult result = prePublishHookPassesOrNoops
+        ? await _passesPublishCheck(package)
+        : _PublishCheckResult.error;
+
+    // But do continue with other checks to find all problems at once.
     if (!_passesAuthorsCheck(package)) {
       _printImportantStatusMessage(
           'No AUTHORS file found. Packages must include an AUTHORS file.',
@@ -196,17 +207,22 @@ class PublishCheckCommand extends PackageLoopingCommand {
             'Packages with an SDK constraint on a pre-release of the Dart SDK should themselves be published as a pre-release version.');
   }
 
+  /// Returns true if the package has been explicitly marked as not for
+  /// publishing.
+  bool _isMarkedAsUnpublishable(RepositoryPackage package) {
+    final Pubspec? pubspec = _tryParsePubspec(package);
+    return pubspec?.publishTo == 'none';
+  }
+
   /// Returns the result of the publish check, or null if the package is marked
   /// as unpublishable.
-  Future<_PublishCheckResult?> _passesPublishCheck(
+  Future<_PublishCheckResult> _passesPublishCheck(
       RepositoryPackage package) async {
     final String packageName = package.directory.basename;
     final Pubspec? pubspec = _tryParsePubspec(package);
     if (pubspec == null) {
       print('No valid pubspec found.');
       return _PublishCheckResult.error;
-    } else if (pubspec.publishTo == 'none') {
-      return null;
     }
 
     final Version? version = pubspec.version;
@@ -266,6 +282,33 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       return true;
     }
     return package.authorsFile.existsSync();
+  }
+
+  Future<bool> _validatePrePublishHook(RepositoryPackage package) async {
+    final File script = package.prePublishScript;
+    if (!script.existsSync()) {
+      // If there's no custom step, then it can't block publishing.
+      return true;
+    }
+    final String relativeScriptPath =
+        getRelativePosixPath(script, from: package.directory);
+    print('Running pre-publish hook $relativeScriptPath...');
+
+    // Ensure that dependencies are available.
+    if (!await runPubGet(package, processRunner, platform)) {
+      _printImportantStatusMessage('Failed to get depenedencies',
+          isError: true);
+      return false;
+    }
+
+    final int exitCode = await processRunner.runAndStream(
+        'dart', <String>['run', relativeScriptPath],
+        workingDir: package.directory);
+    if (exitCode != 0) {
+      _printImportantStatusMessage('Pre-publish script failed.', isError: true);
+      return false;
+    }
+    return true;
   }
 
   void _printImportantStatusMessage(String message, {required bool isError}) {

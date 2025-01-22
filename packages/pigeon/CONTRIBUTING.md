@@ -21,8 +21,10 @@ generators with that AST.
 * [ast.dart](./lib/ast.dart) - The data structure for representing the Abstract Syntax Tree.
 * [dart_generator.dart](./lib/dart_generator.dart) - The Dart code generator.
 * [java_generator.dart](./lib/java_generator.dart) - The Java code generator.
+* [kotlin_generator.dart](./lib/kotlin_generator.dart) - The Kotlin code generator.
 * [objc_generator.dart](./lib/objc_generator.dart) - The Objective-C code
   generator (header and source files).
+* [swift_generator.dart](./lib/swift_generator.dart) - The Swift code generator.
 * [cpp_generator.dart](./lib/cpp_generator.dart) - The C++ code generator.
 * [generator_tools.dart](./lib/generator_tools.dart) - Shared code between generators.
 * [pigeon_cl.dart](./lib/pigeon_cl.dart) - The top-level function executed by
@@ -49,13 +51,18 @@ Pigeon has 3 types of tests, you'll find them all in
   code, then execute the generated code.  It can be thought of as unit-tests run
   against the generated code.  Examples: [platform_tests](./platform_tests)
 
+For local testing, always use `test.dart` rather than `run_tests.dart`, as
+`run_tests.dart` is specifically a CI entrypoint. When iterating on a specific
+generator, you will likely want to use the `-t` flag to specific only the
+relevant tests. Pass `-l` to get a list of available tests for the `-t` flag.
+
 ## Generated Source Code Example
 
 This is what the temporary generated code that the _PigeonIsolate_ executes
 looks like (see [State Diagram](#state-diagram)):
 
 ```dart
-import 'path/to/supplied/pigeon/file.dart'
+import 'path/to/supplied/pigeon/file.dart';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:pigeon/pigeon_lib.dart';

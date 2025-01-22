@@ -26,6 +26,7 @@ void main() {
               builder: (_, __) => const SizedBox())
         ],
       );
+      addTearDown(router.dispose);
       await tester.pumpWidget(MaterialApp.router(
         routerConfig: router,
       ));
@@ -37,9 +38,7 @@ void main() {
       final GoRouter router = await createGoRouter(tester);
       await tester.tap(find.text('Settings'));
       await tester.pumpAndSettle();
-      final ImperativeRouteMatch routeMatch = router
-          .routerDelegate.currentConfiguration.last as ImperativeRouteMatch;
-      expect(routeMatch.matches.uri.toString(),
+      expect(router.routerDelegate.currentConfiguration.uri.toString(),
           '/page-0/settings?search=notification');
     });
   });

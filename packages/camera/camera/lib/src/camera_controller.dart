@@ -232,12 +232,30 @@ class CameraValue {
 /// To show the camera preview on the screen use a [CameraPreview] widget.
 class CameraController extends ValueNotifier<CameraValue> {
   /// Creates a new camera controller in an uninitialized state.
+  ///
+  /// - [resolutionPreset] affect the quality of video recording and image capture.
+  /// - [enableAudio] controls audio presence in recorded video.
+  ///
+  /// Following parameters (if present) will overwrite [resolutionPreset] settings:
+  /// - [fps] controls rate at which frames should be captured by the camera in frames per second.
+  /// - [videoBitrate] controls the video encoding bit rate for recording.
+  /// - [audioBitrate] controls the audio encoding bit rate for recording.
+
   CameraController(
     CameraDescription description,
-    this.resolutionPreset, {
-    this.enableAudio = true,
+    ResolutionPreset resolutionPreset, {
+    bool enableAudio = true,
+    int? fps,
+    int? videoBitrate,
+    int? audioBitrate,
     this.imageFormatGroup,
-  }) : super(CameraValue.uninitialized(description));
+  })  : mediaSettings = MediaSettings(
+            resolutionPreset: resolutionPreset,
+            enableAudio: enableAudio,
+            fps: fps,
+            videoBitrate: videoBitrate,
+            audioBitrate: audioBitrate),
+        super(CameraValue.uninitialized(description));
 
   /// The properties of the camera device controlled by this controller.
   CameraDescription get description => value.description;
@@ -248,10 +266,19 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// if unavailable a lower resolution will be used.
   ///
   /// See also: [ResolutionPreset].
-  final ResolutionPreset resolutionPreset;
+  ResolutionPreset get resolutionPreset =>
+      mediaSettings.resolutionPreset ?? ResolutionPreset.max;
 
   /// Whether to include audio when recording a video.
-  final bool enableAudio;
+  bool get enableAudio => mediaSettings.enableAudio;
+
+  /// The media settings this controller is targeting.
+  ///
+  /// This media settings are not guaranteed to be available on the device,
+  /// if unavailable a [resolutionPreset] default values will be used.
+  ///
+  /// See also: [MediaSettings].
+  final MediaSettings mediaSettings;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   ///
@@ -265,6 +292,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   bool _isDisposed = false;
   StreamSubscription<CameraImageData>? _imageStreamSubscription;
+
   // A Future awaiting an attempt to initialize (e.g. after `initialize` was
   // just called). If the controller has not been initialized at least once,
   // this value is null.
@@ -313,10 +341,9 @@ class CameraController extends ValueNotifier<CameraValue> {
         );
       });
 
-      _cameraId = await CameraPlatform.instance.createCamera(
+      _cameraId = await CameraPlatform.instance.createCameraWithSettings(
         description,
-        resolutionPreset,
-        enableAudio: enableAudio,
+        mediaSettings,
       );
 
       _unawaited(CameraPlatform.instance
@@ -372,7 +399,7 @@ class CameraController extends ValueNotifier<CameraValue> {
 
   /// Pauses the current camera preview
   Future<void> pausePreview() async {
-    if (value.isPreviewPaused) {
+    if (value.isPreviewPaused || !value.isInitialized || _isDisposed) {
       return;
     }
     try {
@@ -923,7 +950,7 @@ class Optional<T> extends IterableBase<T> {
     if (_value == null) {
       throw StateError('value called on absent Optional.');
     }
-    return _value!;
+    return _value;
   }
 
   /// Executes a function if the Optional value is present.
@@ -960,7 +987,7 @@ class Optional<T> extends IterableBase<T> {
   Optional<S> transform<S>(S Function(T value) transformer) {
     return _value == null
         ? Optional<S>.absent()
-        : Optional<S>.of(transformer(_value as T));
+        : Optional<S>.of(transformer(_value));
   }
 
   /// Transforms the Optional value.
@@ -971,7 +998,7 @@ class Optional<T> extends IterableBase<T> {
   Optional<S> transformNullable<S>(S? Function(T value) transformer) {
     return _value == null
         ? Optional<S>.absent()
-        : Optional<S>.fromNullable(transformer(_value as T));
+        : Optional<S>.fromNullable(transformer(_value));
   }
 
   @override

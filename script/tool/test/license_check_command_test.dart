@@ -115,6 +115,7 @@ void main() {
         'GeneratedPluginRegistrant.m',
         'generated_plugin_registrant.cc',
         'generated_plugin_registrant.cpp',
+        'web_plugin_registrant.dart',
         // Ignored path suffixes.
         'foo.g.dart',
         'foo.mocks.dart',
@@ -159,6 +160,24 @@ void main() {
       for (final String filePath in submoduleFiles) {
         expect(output, isNot(contains('Checking $filePath')));
       }
+    });
+
+    test('ignores FlutterGeneratedPluginSwiftPackage', () async {
+      final Directory packageDir = root
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+        ..createSync();
+      packageDir.childFile('Package.swift').createSync();
+      packageDir
+          .childDirectory('Sources')
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+          .childFile('FlutterGeneratedPluginSwiftPackage.swift')
+          .createSync(recursive: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['license-check']);
+
+      expect(output,
+          isNot(contains('Checking FlutterGeneratedPluginSwiftPackage')));
     });
 
     test('passes if all checked files have license blocks', () async {
@@ -542,6 +561,23 @@ void main() {
             contains(
                 'No recognized license was found for the following third-party files:'),
             contains('  third_party/bad.cc'),
+          ]));
+    });
+
+    test('passes if Package.swift has license blocks', () async {
+      final File checked = root.childFile('Package.swift');
+      checked.createSync();
+      writeLicense(checked, prefix: '// swift-tools-version: 5.9\n');
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['license-check']);
+
+      // Sanity check that the test did actually check a file.
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Checking Package.swift'),
+            contains('All files passed validation!'),
           ]));
     });
   });

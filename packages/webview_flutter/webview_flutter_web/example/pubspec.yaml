@@ -3,14 +3,15 @@ description: Demonstrates how to use the webview_flutter_web plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
+  web: ^1.0.0
   webview_flutter_platform_interface: ^2.0.0
   webview_flutter_web:
     # When depending on this package from a real application you should use:

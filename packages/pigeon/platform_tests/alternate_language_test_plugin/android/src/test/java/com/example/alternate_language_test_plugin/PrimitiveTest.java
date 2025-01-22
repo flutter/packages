@@ -32,14 +32,6 @@ public class PrimitiveTest {
               ArrayList<Object> args =
                   (ArrayList<Object>) PrimitiveFlutterApi.getCodec().decodeMessage(message);
               Object arg = args.get(0);
-              if (arg instanceof Long) {
-                Long longArg = (Long) arg;
-                if (longArg.intValue() == longArg.longValue()) {
-                  // Value fits in the Integer so gets sent as such
-                  // https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-java-tab#codec
-                  arg = Integer.valueOf(longArg.intValue());
-                }
-              }
               ArrayList<Object> wrapped = new ArrayList<Object>();
               wrapped.add(0, arg);
               ByteBuffer replyData = PrimitiveFlutterApi.getCodec().encodeMessage(wrapped);
@@ -106,7 +98,7 @@ public class PrimitiveTest {
             handler.capture());
     MessageCodec<Object> codec = PrimitiveHostApi.getCodec();
     @SuppressWarnings("unchecked")
-    ByteBuffer message = codec.encodeMessage(new ArrayList<Object>(Arrays.asList((Integer) 1)));
+    ByteBuffer message = codec.encodeMessage(new ArrayList<Object>(Arrays.asList(1L)));
     message.rewind();
     handler
         .getValue()

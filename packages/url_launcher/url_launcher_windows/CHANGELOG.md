@@ -1,6 +1,17 @@
-## NEXT
+## 3.1.4
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes an issue where the URL logged would not be unescaped on failure.
+
+## 3.1.3
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Fixes handling of `file:` URLs that contain UTF-8 encoded paths.
+
+## 3.1.2
+
+* Updates to pigeon 21.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 
 ## 3.1.1
 

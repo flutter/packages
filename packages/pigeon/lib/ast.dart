@@ -4,7 +4,11 @@
 
 import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
+
+import 'generator_tools.dart';
+import 'kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
+import 'swift_generator.dart' show SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -139,6 +143,8 @@ class AstProxyApi extends Api {
     required this.fields,
     this.superClass,
     this.interfaces = const <TypeDeclaration>{},
+    this.swiftOptions,
+    this.kotlinOptions,
   });
 
   /// List of constructors inside the API.
@@ -152,6 +158,14 @@ class AstProxyApi extends Api {
 
   /// Name of the classes this class considers to be implemented.
   Set<TypeDeclaration> interfaces;
+
+  /// Options that control how Swift code will be generated for a specific
+  /// ProxyApi.
+  final SwiftProxyApiOptions? swiftOptions;
+
+  /// Options that control how Kotlin code will be generated for a specific
+  /// ProxyApi.
+  final KotlinProxyApiOptions? kotlinOptions;
 
   /// Methods implemented in the host platform language.
   Iterable<Method> get hostMethods => methods.where(
@@ -177,11 +191,168 @@ class AstProxyApi extends Api {
         (ApiField field) => !field.isAttached,
       );
 
+  /// A list of AstProxyApis where each `extends` the API that follows it.
+  ///
+  /// Returns an empty list if this api does not extend a ProxyApi.
+  ///
+  /// This method assumes the super classes of each ProxyApi doesn't create a
+  /// loop. Throws a [ArgumentError] if a loop is found.
+  ///
+  /// This method also assumes that all super classes are ProxyApis. Otherwise,
+  /// throws an [ArgumentError].
+  Iterable<AstProxyApi> allSuperClasses() {
+    final List<AstProxyApi> superClassChain = <AstProxyApi>[];
+
+    if (superClass != null && !superClass!.isProxyApi) {
+      throw ArgumentError(
+        'Could not find a ProxyApi for super class: ${superClass!.baseName}',
+      );
+    }
+
+    AstProxyApi? currentProxyApi = superClass?.associatedProxyApi;
+    while (currentProxyApi != null) {
+      if (superClassChain.contains(currentProxyApi)) {
+        throw ArgumentError(
+          'Loop found when processing super classes for a ProxyApi: '
+          '$name, ${superClassChain.map((AstProxyApi api) => api.name)}',
+        );
+      }
+
+      superClassChain.add(currentProxyApi);
+
+      if (currentProxyApi.superClass != null &&
+          !currentProxyApi.superClass!.isProxyApi) {
+        throw ArgumentError(
+          'Could not find a ProxyApi for super class: '
+          '${currentProxyApi.superClass!.baseName}',
+        );
+      }
+
+      currentProxyApi = currentProxyApi.superClass?.associatedProxyApi;
+    }
+
+    return superClassChain;
+  }
+
+  /// All ProxyApis this API `implements` and all the interfaces those APIs
+  /// `implements`.
+  Iterable<AstProxyApi> apisOfInterfaces() => _recursiveFindAllInterfaceApis();
+
+  /// All methods inherited from interfaces and the interfaces of interfaces.
+  Iterable<Method> flutterMethodsFromInterfaces() sync* {
+    for (final AstProxyApi proxyApi in apisOfInterfaces()) {
+      yield* proxyApi.methods;
+    }
+  }
+
+  /// A list of Flutter methods inherited from the ProxyApi that this ProxyApi
+  /// `extends`.
+  ///
+  /// This also recursively checks the ProxyApi that the super class `extends`
+  /// and so on.
+  ///
+  /// This also includes methods that super classes inherited from interfaces
+  /// with `implements`.
+  Iterable<Method> flutterMethodsFromSuperClasses() sync* {
+    for (final AstProxyApi proxyApi in allSuperClasses().toList().reversed) {
+      yield* proxyApi.flutterMethods;
+    }
+    if (superClass != null) {
+      final Set<AstProxyApi> interfaceApisFromSuperClasses =
+          superClass!.associatedProxyApi!._recursiveFindAllInterfaceApis();
+      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
+        yield* proxyApi.methods;
+      }
+    }
+  }
+
+  /// Whether the API has a method that callbacks to Dart to add a new instance
+  /// to the InstanceManager.
+  ///
+  /// This is possible as long as no callback methods are required to
+  /// instantiate the class.
+  bool hasCallbackConstructor() {
+    return flutterMethods
+        .followedBy(flutterMethodsFromSuperClasses())
+        .followedBy(flutterMethodsFromInterfaces())
+        .every((Method method) => !method.isRequired);
+  }
+
+  /// Whether the API has any message calls from Dart to host.
+  bool hasAnyHostMessageCalls() =>
+      constructors.isNotEmpty ||
+      attachedFields.isNotEmpty ||
+      hostMethods.isNotEmpty;
+
+  /// Whether the API has any message calls from host to Dart.
+  bool hasAnyFlutterMessageCalls() =>
+      hasCallbackConstructor() || flutterMethods.isNotEmpty;
+
+  /// Whether the host proxy API class will have methods that need to be
+  /// implemented.
+  bool hasMethodsRequiringImplementation() =>
+      hasAnyHostMessageCalls() || unattachedFields.isNotEmpty;
+
+  // Recursively search for all the interfaces apis from a list of names of
+  // interfaces.
+  //
+  // This method assumes that all interfaces are ProxyApis and an api doesn't
+  // contains itself as an interface. Otherwise, throws an [ArgumentError].
+  Set<AstProxyApi> _recursiveFindAllInterfaceApis([
+    Set<AstProxyApi> seenApis = const <AstProxyApi>{},
+  ]) {
+    final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
+
+    allInterfaces.addAll(
+      interfaces.map(
+        (TypeDeclaration type) {
+          if (!type.isProxyApi) {
+            throw ArgumentError(
+              'Could not find a valid ProxyApi for an interface: $type',
+            );
+          } else if (seenApis.contains(type.associatedProxyApi)) {
+            throw ArgumentError(
+              'A ProxyApi cannot be a super class of itself: ${type.baseName}',
+            );
+          }
+          return type.associatedProxyApi!;
+        },
+      ),
+    );
+
+    // Adds the current api since it would be invalid for it to be an interface
+    // of itself.
+    final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, this};
+
+    for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
+      allInterfaces.addAll(
+        interfaceApi._recursiveFindAllInterfaceApis(newSeenApis),
+      );
+    }
+
+    return allInterfaces;
+  }
+
   @override
   String toString() {
     return '(ProxyApi name:$name methods:$methods field:$fields '
         'documentationComments:$documentationComments '
         'superClassName:$superClass interfacesNames:$interfaces)';
+  }
+}
+
+/// Represents a collection of [Method]s that are wrappers for Event
+class AstEventChannelApi extends Api {
+  /// Parametric constructor for [AstEventChannelApi].
+  AstEventChannelApi({
+    required super.name,
+    required super.methods,
+    super.documentationComments = const <String>[],
+  });
+
+  @override
+  String toString() {
+    return '(EventChannelApi name:$name methods:$methods documentationComments:$documentationComments)';
   }
 }
 
@@ -388,10 +559,22 @@ class TypeDeclaration {
     );
   }
 
+  /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
+  TypeDeclaration copyWithTypeArguments(List<TypeDeclaration> types) {
+    return TypeDeclaration(
+      baseName: baseName,
+      isNullable: isNullable,
+      typeArguments: types,
+      associatedClass: associatedClass,
+      associatedEnum: associatedEnum,
+      associatedProxyApi: associatedProxyApi,
+    );
+  }
+
   @override
   String toString() {
     final String typeArgumentsStr =
-        typeArguments.isEmpty ? '' : 'typeArguments:$typeArguments';
+        typeArguments.isEmpty ? '' : ' typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';
   }
 }
@@ -512,6 +695,11 @@ class Class extends Node {
   Class({
     required this.name,
     required this.fields,
+    this.superClassName,
+    this.superClass,
+    this.isSealed = false,
+    this.isReferenced = true,
+    this.isSwiftClass = false,
     this.documentationComments = const <String>[],
   });
 
@@ -520,6 +708,29 @@ class Class extends Node {
 
   /// All the fields contained in the class.
   List<NamedType> fields;
+
+  /// Name of parent class, will be empty when there is no super class.
+  String? superClassName;
+
+  /// The definition of the parent class.
+  Class? superClass;
+
+  /// List of class definitions of children.
+  ///
+  /// This is only meant to be used by sealed classes used in event channel methods.
+  List<Class> children = <Class>[];
+
+  /// Whether the class is sealed.
+  bool isSealed;
+
+  /// Whether the class is referenced in any API.
+  bool isReferenced;
+
+  /// Determines whether the defined class should be represented as a struct or
+  /// a class in Swift generation.
+  ///
+  /// Defaults to false, which would represent a struct.
+  bool isSwiftClass;
 
   /// List of documentation comments, separated by line.
   ///
@@ -530,7 +741,7 @@ class Class extends Node {
 
   @override
   String toString() {
-    return '(Class name:$name fields:$fields documentationComments:$documentationComments)';
+    return '(Class name:$name fields:$fields superClass:$superClassName children:$children isSealed:$isSealed isReferenced:$isReferenced documentationComments:$documentationComments)';
   }
 }
 
@@ -593,6 +804,10 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    this.containsHostApi = false,
+    this.containsFlutterApi = false,
+    this.containsProxyApi = false,
+    this.containsEventChannel = false,
   });
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
@@ -608,6 +823,26 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
+
+  /// Whether the root has any Host API definitions.
+  bool containsHostApi;
+
+  /// Whether the root has any Flutter API definitions.
+  bool containsFlutterApi;
+
+  /// Whether the root has any Proxy API definitions.
+  bool containsProxyApi;
+
+  /// Whether the root has any event channel definitions.
+  bool containsEventChannel;
+
+  /// Returns true if the number of custom types would exceed the available enumerations
+  /// on the standard codec.
+  bool get requiresOverflowClass =>
+      classes.length - _numberOfSealedClasses() + enums.length >=
+      totalCustomCodecKeysAllowed;
+
+  int _numberOfSealedClasses() => classes.where((Class c) => c.isSealed).length;
 
   @override
   String toString() {

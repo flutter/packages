@@ -203,6 +203,7 @@ abstract class RouteMatchBase with Diagnosticable {
 
     final RegExpMatch? regExpMatch =
         route.matchPatternAsPrefix(remainingLocation);
+
     if (regExpMatch == null) {
       return _empty;
     }
@@ -555,13 +556,9 @@ class RouteMatchList with Diagnosticable {
   /// [RouteMatchA(), RouteMatchB(), RouteMatchC()]
   /// ```
   static String _generateFullPath(Iterable<RouteMatchBase> matches) {
-    final StringBuffer buffer = StringBuffer();
-    bool addsSlash = false;
+    String fullPath = '';
     for (final RouteMatchBase match in matches
         .where((RouteMatchBase match) => match is! ImperativeRouteMatch)) {
-      if (addsSlash) {
-        buffer.write('/');
-      }
       final String pathSegment;
       if (match is RouteMatch) {
         pathSegment = match.route.path;
@@ -571,10 +568,9 @@ class RouteMatchList with Diagnosticable {
         assert(false, 'Unexpected match type: $match');
         continue;
       }
-      buffer.write(pathSegment);
-      addsSlash = pathSegment.isNotEmpty && (addsSlash || pathSegment != '/');
+      fullPath = concatenatePaths(fullPath, pathSegment);
     }
-    return buffer.toString();
+    return fullPath;
   }
 
   /// Returns true if there are no matches.
@@ -944,7 +940,7 @@ class _RouteMatchListDecoder
           ?.decode(encodedExtra[RouteMatchListCodec._encodedKey]);
     }
     RouteMatchList matchList =
-        configuration.findMatch(rootLocation, extra: extra);
+        configuration.findMatch(Uri.parse(rootLocation), extra: extra);
 
     final List<Object?>? imperativeMatches =
         input[RouteMatchListCodec._imperativeMatchesKey] as List<Object?>?;

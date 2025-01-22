@@ -183,7 +183,7 @@ void main() {
     expect(
         code,
         contains(
-            'Enum1Box *enum1 = enum1AsNumber == nil ? nil : [[Enum1Box alloc] initWithValue:[enum1AsNumber integerValue]];'));
+            'return enumAsNumber == nil ? nil : [[Enum1Box alloc] initWithValue:[enumAsNumber integerValue]];'));
   });
 
   test('primitive enum host', () {
@@ -246,7 +246,9 @@ void main() {
       expect(
           code,
           contains(
-              'ACFoo arg_foo = [GetNullableObjectAtIndex(args, 0) integerValue];'));
+              'return enumAsNumber == nil ? nil : [[ACFooBox alloc] initWithValue:[enumAsNumber integerValue]];'));
+
+      expect(code, contains('ACFooBox *box = (ACFooBox *)value;'));
     }
   });
 
@@ -381,7 +383,6 @@ void main() {
     expect(code, contains('/// @return `nil` only when `error != nil`.'));
     expect(code, matches('nullable Output.*doSomething.*Input.*FlutterError'));
     expect(code, matches('SetUpApi.*<Api>.*_Nullable'));
-    expect(code, contains('ApiGetCodec(void)'));
   });
 
   test('gen one api source', () {
@@ -439,7 +440,6 @@ void main() {
         code,
         contains(
             'NSCAssert([api respondsToSelector:@selector(doSomething:error:)'));
-    expect(code, contains('ApiGetCodec(void) {'));
   });
 
   test('all the simple datatypes header', () {
@@ -600,12 +600,8 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(
-        code,
-        contains(
-            'pigeonResult.nested = [Input nullableFromList:(GetNullableObjectAtIndex(list, 0))];'));
-    expect(
-        code, contains('self.nested ? [self.nested toList] : [NSNull null]'));
+    expect(code,
+        contains('pigeonResult.nested = GetNullableObjectAtIndex(list, 0);'));
   });
 
   test('prefix class header', () {
@@ -823,7 +819,6 @@ void main() {
         contains(
             'initWithBinaryMessenger:(id<FlutterBinaryMessenger>)binaryMessenger;'));
     expect(code, matches('void.*doSomething.*Input.*Output'));
-    expect(code, contains('ApiGetCodec(void)'));
   });
 
   test('gen flutter api source', () {
@@ -875,7 +870,6 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
-    expect(code, contains('ApiGetCodec(void) {'));
   });
 
   test('gen host void header', () {
@@ -2125,7 +2119,7 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSArray<id> *args = message;'));
       expect(
           code,
           contains(
@@ -2197,7 +2191,7 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      expect(code, contains('NSArray *args = message;'));
+      expect(code, contains('NSArray<id> *args = message;'));
       expect(
           code,
           contains(
@@ -2784,50 +2778,7 @@ void main() {
     expect(code, contains('/// ///'));
   });
 
-  test("doesn't create codecs if no custom datatypes", () {
-    final Root root = Root(
-      apis: <Api>[
-        AstFlutterApi(
-          name: 'Api',
-          methods: <Method>[
-            Method(
-              name: 'method',
-              location: ApiLocation.flutter,
-              returnType: const TypeDeclaration.voidDeclaration(),
-              parameters: <Parameter>[
-                Parameter(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
-      fileType: FileType.source,
-      languageOptions: const ObjcOptions(),
-    );
-    generator.generate(
-      generatorOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(' : FlutterStandardReader')));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
@@ -2910,6 +2861,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
@@ -2930,5 +2882,179 @@ void main() {
         contains(
             'return [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: \'", channelName, @"\'."] details:@""]'));
     expect(code, contains('completion(createConnectionError(channelName))'));
+  });
+
+  test('header of FlutterApi uses correct enum name with prefix', () {
+    final Enum enum1 = Enum(
+      name: 'Enum1',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
+    );
+    final Root root = Root(apis: <Api>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
+        Method(
+          name: 'doSomething',
+          location: ApiLocation.flutter,
+          isAsynchronous: true,
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
+            baseName: 'Enum1',
+            isNullable: false,
+            associatedEnum: enum1,
+          ),
+        )
+      ]),
+    ], classes: <Class>[], enums: <Enum>[
+      enum1,
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(prefix: 'FLT'),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, isNot(contains('FLTFLT')));
+    expect(code, contains('FLTEnum1Box'));
+  });
+
+  test('source of FlutterApi uses correct enum name with prefix', () {
+    final Enum enum1 = Enum(
+      name: 'Enum1',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
+    );
+    final Root root = Root(apis: <Api>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
+        Method(
+          name: 'doSomething',
+          location: ApiLocation.flutter,
+          isAsynchronous: true,
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
+            baseName: 'Enum1',
+            isNullable: false,
+            associatedEnum: enum1,
+          ),
+        )
+      ]),
+    ], classes: <Class>[], enums: <Enum>[
+      enum1,
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(prefix: 'FLT'),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, isNot(contains('FLTFLT')));
+    expect(code, contains('FLTEnum1Box'));
+  });
+
+  test('header of HostApi uses correct enum name with prefix', () {
+    final Enum enum1 = Enum(
+      name: 'Enum1',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
+    );
+    final TypeDeclaration enumType = TypeDeclaration(
+      baseName: 'Enum1',
+      isNullable: false,
+      associatedEnum: enum1,
+    );
+    final Root root = Root(apis: <Api>[
+      AstHostApi(name: 'Api', methods: <Method>[
+        Method(
+          name: 'doSomething',
+          location: ApiLocation.host,
+          isAsynchronous: true,
+          parameters: <Parameter>[Parameter(name: 'value', type: enumType)],
+          returnType: enumType,
+        )
+      ]),
+    ], classes: <Class>[], enums: <Enum>[
+      enum1,
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.header,
+      languageOptions: const ObjcOptions(prefix: 'FLT'),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, isNot(contains('FLTFLT')));
+    expect(code, contains('FLTEnum1Box'));
+  });
+
+  test('source of HostApi uses correct enum name with prefix', () {
+    final Enum enum1 = Enum(
+      name: 'Enum1',
+      members: <EnumMember>[
+        EnumMember(name: 'one'),
+        EnumMember(name: 'two'),
+      ],
+    );
+    final TypeDeclaration enumType = TypeDeclaration(
+      baseName: 'Enum1',
+      isNullable: false,
+      associatedEnum: enum1,
+    );
+    final Root root = Root(apis: <Api>[
+      AstHostApi(name: 'Api', methods: <Method>[
+        Method(
+          name: 'doSomething',
+          location: ApiLocation.host,
+          isAsynchronous: true,
+          parameters: <Parameter>[Parameter(name: 'value', type: enumType)],
+          returnType: enumType,
+        )
+      ]),
+    ], classes: <Class>[], enums: <Enum>[
+      enum1,
+    ]);
+    final StringBuffer sink = StringBuffer();
+    const ObjcGenerator generator = ObjcGenerator();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: const ObjcOptions(prefix: 'FLT'),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, isNot(contains('FLTFLT')));
+    expect(code, contains('FLTEnum1Box'));
   });
 }

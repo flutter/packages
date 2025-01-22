@@ -550,6 +550,7 @@ class ArgumentDecoders {
       centerSlice: rect(source, [...key, 'centerSlice']),
       repeat: enumValue<ImageRepeat>(ImageRepeat.values, source, [...key, 'repeat']) ?? ImageRepeat.noRepeat,
       matchTextDirection: source.v<bool>([...key, 'matchTextDirection']) ?? false,
+      filterQuality: enumValue<FilterQuality>(FilterQuality.values, source, [...key, 'filterQuality']) ?? FilterQuality.medium,
     );
   }
 

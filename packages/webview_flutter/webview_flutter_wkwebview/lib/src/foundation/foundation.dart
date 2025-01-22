@@ -221,6 +221,21 @@ class NSErrorUserInfoKey {
       'NSErrorFailingURLStringKey';
 }
 
+/// The metadata associated with the response to an HTTP protocol URL load
+/// request.
+///
+/// Wraps [NSHttpUrlResponse](https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc).
+@immutable
+class NSHttpUrlResponse {
+  /// Constructs an [NSHttpUrlResponse].
+  const NSHttpUrlResponse({
+    required this.statusCode,
+  });
+
+  /// The response’s HTTP status code.
+  final int statusCode;
+}
+
 /// Information about an error condition.
 ///
 /// Wraps [NSError](https://developer.apple.com/documentation/foundation/nserror?language=objc).
@@ -490,6 +505,9 @@ class NSUrlAuthenticationMethod {
 
   /// Use HTTP digest authentication for this protection space.
   static const String httpDigest = 'NSURLAuthenticationMethodHTTPDigest';
+
+  /// Use NTLM authentication for this protection space.
+  static const String httpNtlm = 'NSURLAuthenticationMethodNTLM';
 }
 
 /// A challenge from a server requiring authentication from the client.

@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -32,21 +33,21 @@ void main() {
 
   group('TileOverlaysController', () {
     late TileOverlaysController controller;
-    late gmaps.GMap map;
+    late gmaps.Map map;
     late List<MockTileProvider> tileProviders;
     late List<TileOverlay> tileOverlays;
 
     /// Queries the current overlay map types for tiles at x = 0, y = 0, zoom =
     /// 0.
     void probeTiles() {
-      for (final gmaps.MapType? mapType in map.overlayMapTypes!.array!) {
-        mapType?.getTile!(gmaps.Point(0, 0), 0, document);
+      for (final gmaps.MapType? mapType in map.overlayMapTypes.array.toDart) {
+        mapType?.getTile(gmaps.Point(0, 0), 0, document);
       }
     }
 
     setUp(() {
       controller = TileOverlaysController();
-      map = gmaps.GMap(createDivElement());
+      map = gmaps.Map(createDivElement());
       controller.googleMap = map;
 
       tileProviders = <MockTileProvider>[

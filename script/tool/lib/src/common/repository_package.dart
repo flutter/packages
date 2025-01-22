@@ -66,6 +66,14 @@ class RepositoryPackage {
   /// The test directory containing the package's Dart tests.
   Directory get testDirectory => directory.childDirectory('test');
 
+  /// The path to the script that is run by the `custom-test` command.
+  File get customTestScript =>
+      directory.childDirectory('tool').childFile('run_tests.dart');
+
+  /// The path to the script that is run before publishing.
+  File get prePublishScript =>
+      directory.childDirectory('tool').childFile('pre_publish.dart');
+
   /// Returns the directory containing support for [platform].
   Directory platformDirectory(FlutterPlatform platform) {
     late final String directoryName;

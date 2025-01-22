@@ -1,3 +1,37 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.10.0
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes detection of WebAssembly support on package site.
+
+## 2.9.0
+
+* Adds clustering support.
+
+## 2.8.0
+
+* Adds support for heatmap layers.
+
+## 2.7.1
+
+* Updates the example app to use TLHC mode, per current package guidance.
+
+## 2.7.0
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.6.1
+
+* Updates the minimum version of the iOS implementation package to a version
+  with privacy manifest support.
+* Updates README and example app to reflect that the minimum supported version
+  is now iOS 14. Removal of support for iOS 12 and 13 was necessary due to the
+  upcoming App Store privary manifest requirements.
+
 ## 2.6.0
 
 * Adds `style` to the GoogleMap widget constructor. This allows setting the map
