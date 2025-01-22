@@ -234,7 +234,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     (nonnull void (^)(FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
-    [weakSelf.camera setUpCaptureSessionForAudio];
+    [weakSelf.camera setUpCaptureSessionForAudioIfNeeded];
     completion(nil);
   });
 }
