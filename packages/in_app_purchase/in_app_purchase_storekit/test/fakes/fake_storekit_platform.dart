@@ -297,6 +297,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
   PlatformException? queryProductException;
   bool isListenerRegistered = false;
+  SK2ProductPurchaseOptionsMessage? lastPurchaseOptions;
 
   void reset() {
     validProductIDs = <String>{'123', '456'};
@@ -355,6 +356,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   @override
   Future<SK2ProductPurchaseResultMessage> purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options}) {
+    lastPurchaseOptions = options;
     final SK2TransactionMessage transaction = createPendingTransaction(id);
 
     InAppPurchaseStoreKitPlatform.sk2TransactionObserver

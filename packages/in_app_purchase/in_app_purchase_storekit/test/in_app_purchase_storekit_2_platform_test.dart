@@ -154,6 +154,81 @@ void main() {
               purchaseParam: purchaseParam, autoConsume: false),
           throwsA(isInstanceOf<AssertionError>()));
     });
+
+    test('should process Sk2PurchaseParam with winBackOfferId only', () async {
+      final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
+        productDetails:
+            AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+        winBackOfferId: 'winBack123',
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.appAccountToken, 'testUser');
+      expect(lastPurchaseOptions.quantity, 1);
+      expect(lastPurchaseOptions.winBackOfferId, 'winBack123');
+      expect(lastPurchaseOptions.promotionalOffer, isNull);
+    });
+
+    test('should process Sk2PurchaseParam with promotionalOffer only',
+        () async {
+      final SK2SubscriptionOfferSignature fakeSignature =
+          SK2SubscriptionOfferSignature(
+        keyID: 'key123',
+        signature: 'signature123',
+        nonce: 'nonce123',
+        timestamp: 1234567890,
+      );
+
+      final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
+        productDetails:
+            AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+        quantity: 2,
+        promotionalOffer: SK2PromotionalOffer(
+          signature: fakeSignature,
+          offerId: 'promo123',
+        ),
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.appAccountToken, 'testUser');
+      expect(lastPurchaseOptions.quantity, 2);
+      expect(
+          lastPurchaseOptions.promotionalOffer!.promotionalOfferId, 'promo123');
+      expect(
+          lastPurchaseOptions.promotionalOffer!.promotionalOfferSignature.keyID,
+          'key123');
+      expect(lastPurchaseOptions.winBackOfferId, isNull);
+    });
+
+    test(
+        'should process Sk2PurchaseParam with no winBackOfferId or promotionalOffer',
+        () async {
+      final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
+        productDetails:
+            AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.appAccountToken, 'testUser');
+      expect(lastPurchaseOptions.quantity, 1);
+      expect(lastPurchaseOptions.winBackOfferId, isNull);
+      expect(lastPurchaseOptions.promotionalOffer, isNull);
+    });
   });
 
   group('restore purchases', () {
