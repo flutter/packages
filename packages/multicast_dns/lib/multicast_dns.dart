@@ -54,7 +54,7 @@ class MDnsClient {
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
-  final bool cache;
+  final bool cache; // flag the cache consumption, default is true
 
   InternetAddress? _mDnsAddress;
   int? _mDnsPort;
