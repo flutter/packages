@@ -44,7 +44,7 @@ class MDnsClient {
   /// Create a new [MDnsClient].
   MDnsClient({
     RawDatagramSocketFactory rawDatagramSocketFactory = RawDatagramSocket.bind,
-    required this.cache,
+    this.cache = true,
   }) : _rawDatagramSocketFactory = rawDatagramSocketFactory;
 
   bool _starting = false;
