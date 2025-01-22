@@ -1,3 +1,9 @@
+## 0.3.21
+
+* Adds support for **Win Back Offers** when purchasing products via StoreKit2 
+* Adds support for **Promotional Offers** when purchasing products via StoreKit2
+* Ensures `appAccountToken` is correctly handled in StoreKit2 purchases.
+
 ## 0.3.20+4
 
 * Exposes `jsonRepresentation` field for transactions.
