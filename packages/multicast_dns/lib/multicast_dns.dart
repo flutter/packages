@@ -38,6 +38,9 @@ typedef RawDatagramSocketFactory = Future<RawDatagramSocket> Function(
 /// listening. [MDnsQuerier.stop] must be called when done to clean up
 /// resources.
 ///
+/// The [cache] flag determines whether DNS responses are cached to optimize
+/// subsequent queries. Default is `true`.
+///
 /// This client only supports "One-Shot Multicast DNS Queries" as described in
 /// section 5.1 of [RFC 6762](https://tools.ietf.org/html/rfc6762).
 class MDnsClient {
@@ -54,7 +57,9 @@ class MDnsClient {
   final LookupResolver _resolver = LookupResolver();
   final ResourceRecordCache _cache = ResourceRecordCache();
   final RawDatagramSocketFactory _rawDatagramSocketFactory;
-  final bool cache; // flag the cache consumption, default is true
+
+  /// Whether to enable caching of DNS records. Defaults to `true`.
+  final bool cache;
 
   InternetAddress? _mDnsAddress;
   int? _mDnsPort;
