@@ -35,7 +35,7 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
       webView, withIdentifier: Int64(webViewIdentifier))
 
     let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
-      forIdentifier: Int64(webViewIdentifier), with: registry)
+      forIdentifier: Int64(webViewIdentifier), withPluginRegistry: registry)
     XCTAssertEqual(result, webView)
   }
 }

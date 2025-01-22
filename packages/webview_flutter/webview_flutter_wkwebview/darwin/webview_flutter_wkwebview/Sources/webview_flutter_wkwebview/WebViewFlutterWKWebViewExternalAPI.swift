@@ -26,7 +26,7 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
   /// underlying `WKWebView`.
   @objc(webViewForIdentifier:withPluginRegistry:)
   public static func webView(
-    forIdentifier identifier: Int64, with registry: FlutterPluginRegistry
+    forIdentifier identifier: Int64, withPluginRegistry registry: FlutterPluginRegistry
   ) -> WKWebView? {
     let plugin = registry.valuePublished(byPlugin: "WebViewFlutterPlugin") as! WebViewFlutterPlugin
 
