@@ -13,23 +13,38 @@ final class StoreKit2TranslatorTests: XCTestCase {
   private var session: SKTestSession!
   private var plugin: InAppPurchasePlugin!
   private var product: Product!
-
+  
   // This is transcribed from the Configuration.storekit file.
   var productMessage: SK2ProductMessage =
-    SK2ProductMessage(
-      id: "subscription_silver",
-      displayName: "Subscription Silver",
-      description: "A lower level subscription.",
-      price: 4.99,
-      displayPrice: "$4.99",
-      type: SK2ProductTypeMessage.autoRenewable,
-      subscription: SK2SubscriptionInfoMessage(
-        promotionalOffers: [],
-        subscriptionGroupID: "D0FEE8D8",
-        subscriptionPeriod: SK2SubscriptionPeriodMessage(
-          value: 1,
-          unit: SK2SubscriptionPeriodUnitMessage.week)),
-      priceLocale: SK2PriceLocaleMessage(currencyCode: "USD", currencySymbol: "$"))
+  SK2ProductMessage(
+    id: "subscription_silver",
+    displayName: "Subscription Silver",
+    description: "A lower level subscription.",
+    price: 4.99,
+    displayPrice: "$4.99",
+    type: SK2ProductTypeMessage.autoRenewable,
+    subscription: SK2SubscriptionInfoMessage(
+      promotionalOffers: [
+        SK2SubscriptionOfferMessage(
+          id: "subscription_silver_winback_offer",
+          price: 0.99,
+          type: .winBack,
+          period: SK2SubscriptionPeriodMessage(value: 1, unit: .week),
+          periodCount: 1,
+          paymentMode: .payAsYouGo),
+        SK2SubscriptionOfferMessage(
+          id: "subscription_silver_big_promo",
+          price: 0.99,
+          type: .promotional,
+          period: SK2SubscriptionPeriodMessage(value: 1, unit: .week),
+          periodCount: 1,
+          paymentMode: .payAsYouGo)
+      ],
+      subscriptionGroupID: "D0FEE8D8",
+      subscriptionPeriod: SK2SubscriptionPeriodMessage(
+        value: 1,
+        unit: SK2SubscriptionPeriodUnitMessage.week)),
+    priceLocale: SK2PriceLocaleMessage(currencyCode: "USD", currencySymbol: "$"))
 
   override func setUp() async throws {
     try await super.setUp()

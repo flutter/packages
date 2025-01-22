@@ -284,6 +284,73 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [expectation], timeout: 5)
   }
 
+func testPurchaseWithAppAccountToken() async throws {
+  let expectation = self.expectation(description: "Purchase with appAccountToken should succeed")
+
+  let appAccountToken = UUID().uuidString
+  let options = SK2ProductPurchaseOptionsMessage(
+    appAccountToken: appAccountToken, promotionalOffer: nil, winBackOfferId: nil)
+
+  plugin.purchase(id: "consumable", options: options) { result in
+    switch result {
+    case .success:
+      expectation.fulfill()
+    case .failure(let error):
+      XCTFail("Purchase should NOT fail. Failed with \(error)")
+    }
+  }
+
+  await fulfillment(of: [expectation], timeout: 5)
+}
+
+@available(iOS 17.4, macOS 14.4, *)
+func testPurchaseWithPromotionalOffer() async throws {
+  let expectation = self.expectation(description: "Purchase with promotionalOffer should succeed")
+
+  let promotionalOffer = SK2SubscriptionOfferPurchaseMessage(
+    promotionalOfferId: "promo_123",
+    promotionalOfferSignature: SK2SubscriptionOfferSignatureMessage(
+      keyID: "key123",
+      nonce: UUID().uuidString,
+      timestamp: Int64(Date().timeIntervalSince1970),
+      signature: "dmFsaWRzaWduYXR1cmU="
+    )
+  )
+  let options = SK2ProductPurchaseOptionsMessage(
+    appAccountToken: nil, promotionalOffer: promotionalOffer, winBackOfferId: nil)
+
+  plugin.purchase(id: "consumable", options: options) { result in
+    switch result {
+    case .success:
+      expectation.fulfill()
+    case .failure(let error):
+      XCTFail("Purchase should NOT fail. Failed with \(error)")
+    }
+  }
+
+  await fulfillment(of: [expectation], timeout: 5)
+}
+
+@available(iOS 18.0, macOS 15.0, *)
+func testPurchaseWithWinBackOffer() async throws {
+  let expectation = self.expectation(description: "Purchase with winBackOffer should succeed")
+
+  let options = SK2ProductPurchaseOptionsMessage(
+    appAccountToken: nil, promotionalOffer: nil,
+    winBackOfferId: "subscription_silver_winback_offer_1month")
+
+  plugin.purchase(id: "subscription_silver", options: options) { result in
+    switch result {
+    case .success:
+      expectation.fulfill()
+    case .failure(let error):
+      XCTFail("Purchase should NOT fail. Failed with \(error)")
+    }
+  }
+
+  await fulfillment(of: [expectation], timeout: 5)
+}
+
   func testRestoreProductSuccess() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase request should succeed")
     let restoreExpectation = self.expectation(description: "Restore request should succeed")
