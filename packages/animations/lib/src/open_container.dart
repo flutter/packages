@@ -839,10 +839,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     );
   }
 
-  // TODO(justinmc): Make it transition from the pback transition into the opencontainer transition.
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-    // TODO(justinmc): This does the normal open container transition.
     return _PredictiveBackGestureDetector(
       route: this,
       builder: (BuildContext context) {
@@ -902,8 +900,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   String? get barrierLabel => null;
 }
 
-// TODO(justinmc): This is copied from the framework, but should be made public.
-// Definitely think through the API before making it public, though.
+// TODO(justinmc): Deduplicate this with the same class in the framework.
 class _PredictiveBackGestureDetector extends StatefulWidget {
   const _PredictiveBackGestureDetector({
     required this.route,
