@@ -360,6 +360,7 @@ class _GoogleMapState extends State<GoogleMap> {
         circles: widget.circles,
         clusterManagers: widget.clusterManagers,
         heatmaps: widget.heatmaps,
+        tileOverlays: widget.tileOverlays
       ),
       mapConfiguration: _mapConfiguration,
     );
