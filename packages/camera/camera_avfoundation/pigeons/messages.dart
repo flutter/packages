@@ -6,9 +6,14 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut: 'ios/Classes/messages.g.h',
-  objcSourceOut: 'ios/Classes/messages.g.m',
-  objcOptions: ObjcOptions(prefix: 'FCP'),
+  objcHeaderOut:
+      'ios/camera_avfoundation/Sources/camera_avfoundation/include/camera_avfoundation/messages.g.h',
+  objcSourceOut:
+      'ios/camera_avfoundation/Sources/camera_avfoundation/messages.g.m',
+  objcOptions: ObjcOptions(
+    prefix: 'FCP',
+    headerIncludePath: './include/camera_avfoundation/messages.g.h',
+  ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
@@ -155,7 +160,7 @@ abstract class CameraApi {
   // The consuming code treats it as non-nullable.
   @async
   @ObjCSelector('availableCamerasWithCompletion')
-  List<PlatformCameraDescription?> getAvailableCameras();
+  List<PlatformCameraDescription> getAvailableCameras();
 
   /// Create a new camera with the given settings, and returns its ID.
   @async

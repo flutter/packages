@@ -24,7 +24,8 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final HttpServer server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
+  final HttpServer server =
+      await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
   unawaited(server.forEach((HttpRequest request) {
     if (request.uri.path == '/hello.txt') {
       request.response.writeln('Hello, world.');
@@ -554,7 +555,9 @@ Future<void> main() async {
       final bool fullScreen = await controller
           .runJavaScriptReturningResult('isFullScreen();') as bool;
       expect(fullScreen, true);
-    });
+    },
+        // allowsInlineMediaPlayback has no effect on macOS.
+        skip: Platform.isMacOS);
   });
 
   group('Audio playback policy', () {
@@ -657,7 +660,10 @@ Future<void> main() async {
           await controller.runJavaScriptReturningResult('isPaused();') as bool;
       expect(isPaused, true);
     });
-  });
+  },
+      // OGG playback is not supported on macOS, so the test data would need
+      // to be changed to support macOS.
+      skip: Platform.isMacOS);
 
   testWidgets('getTitle', (WidgetTester tester) async {
     const String getTitleTest = '''
@@ -801,7 +807,10 @@ Future<void> main() async {
       expect(recordedPosition?.x, X_SCROLL * 2);
       expect(recordedPosition?.y, Y_SCROLL * 2);
     });
-  });
+  },
+      // Scroll position is currently not implemented for macOS.
+      // Flakes on iOS: https://github.com/flutter/flutter/issues/154826
+      skip: Platform.isMacOS || Platform.isIOS);
 
   group('NavigationDelegate', () {
     const String blankPage = '<!DOCTYPE html><head></head><body></body></html>';
@@ -821,7 +830,7 @@ Future<void> main() async {
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(
         delegate.setOnNavigationRequest((NavigationRequest navigationRequest) {
-          return (navigationRequest.url.contains('youtube.com'))
+          return navigationRequest.url.contains('youtube.com')
               ? NavigationDecision.prevent
               : NavigationDecision.navigate;
         }),
@@ -1078,7 +1087,7 @@ Future<void> main() async {
       unawaited(delegate.setOnPageFinished((_) => pageLoaded.complete()));
       unawaited(delegate
           .setOnNavigationRequest((NavigationRequest navigationRequest) {
-        return (navigationRequest.url.contains('youtube.com'))
+        return navigationRequest.url.contains('youtube.com')
             ? NavigationDecision.prevent
             : NavigationDecision.navigate;
       }));

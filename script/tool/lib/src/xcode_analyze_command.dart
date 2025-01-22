@@ -97,10 +97,10 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
             multiplePlatformsRequested ? failures : <String>[]);
   }
 
-  /// Analyzes [plugin] for [platform], returning true if it passed analysis.
+  /// Analyzes [plugin] for [targetPlatform], returning true if it passed analysis.
   Future<bool> _analyzePlugin(
     RepositoryPackage plugin,
-    String platform, {
+    String targetPlatform, {
     List<String> extraFlags = const <String>[],
   }) async {
     bool passing = true;
@@ -108,25 +108,26 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
       // Running tests and static analyzer.
       final String examplePath = getRelativePosixPath(example.directory,
           from: plugin.directory.parent);
-      print('Running $platform tests and analyzer for $examplePath...');
+      print('Running $targetPlatform tests and analyzer for $examplePath...');
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
-        platform,
+        targetPlatform,
         // Clean before analyzing to remove cached swiftmodules from previous
         // runs, which can cause conflicts.
         actions: <String>['clean', 'analyze'],
-        workspace: '${platform.toLowerCase()}/Runner.xcworkspace',
+        workspace: '${targetPlatform.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
+        hostPlatform: platform,
         extraFlags: <String>[
           ...extraFlags,
           'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
         ],
       );
       if (exitCode == 0) {
-        printSuccess('$examplePath ($platform) passed analysis.');
+        printSuccess('$examplePath ($targetPlatform) passed analysis.');
       } else {
-        printError('$examplePath ($platform) failed analysis.');
+        printError('$examplePath ($targetPlatform) failed analysis.');
         passing = false;
       }
     }

@@ -488,9 +488,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     }
 
     final Version? dartConstraintMin =
-        _minimumForConstraint(pubspec.environment?['sdk']);
+        _minimumForConstraint(pubspec.environment['sdk']);
     final Version? flutterConstraintMin =
-        _minimumForConstraint(pubspec.environment?['flutter']);
+        _minimumForConstraint(pubspec.environment['flutter']);
 
     // Validate the Flutter constraint, if any.
     if (flutterConstraintMin != null && minMinFlutterVersion != null) {
@@ -564,13 +564,16 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       'build_runner',
       'integration_test',
       'flutter_test',
+      'leak_tracker_flutter_testing',
       'mockito',
       'pigeon',
       'test',
     };
     // Non-published packages like pigeon subpackages are allowed to violate
-    // the dev only dependencies rule.
-    if (pubspec.publishTo != 'none') {
+    // the dev only dependencies rule, as are packages that end in `_test` (as
+    // they are assumed to be intended to be used as dev_dependencies by
+    // clients).
+    if (pubspec.publishTo != 'none' && !pubspec.name.endsWith('_test')) {
       pubspec.dependencies.forEach((String name, Dependency dependency) {
         if (devOnlyDependencies.contains(name)) {
           misplacedDevDependencies.add(name);
@@ -612,7 +615,8 @@ Please move them to dev_dependencies.
       if (constraint is VersionRange &&
           constraint.min != null &&
           constraint.max != null &&
-          constraint.min == constraint.max) {
+          constraint.includeMin &&
+          constraint.includeMax) {
         return true;
       }
     }

@@ -1,3 +1,19 @@
+## 2.4.0
+
+* Enhances handling of out-of-order events.
+* Adds support for clicks with a modifier key (e.g. cmd+click).
+* Improves support for semantics.
+* Applies the `target` attribute to semantic links.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 2.3.3
+
+* Changes `launchUrl` so it always returns `true`, except for disallowed URL schemes.
+
+## 2.3.2
+
+* Adds support for `web: ^1.0.0`.
+
 ## 2.3.1
 
 * Implements correct handling of keyboard events with Link.

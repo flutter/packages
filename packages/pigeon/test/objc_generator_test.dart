@@ -248,7 +248,7 @@ void main() {
           contains(
               'return enumAsNumber == nil ? nil : [[ACFooBox alloc] initWithValue:[enumAsNumber integerValue]];'));
 
-      expect(code, contains('ACFooBox * box = (ACFooBox *)value;'));
+      expect(code, contains('ACFooBox *box = (ACFooBox *)value;'));
     }
   });
 
@@ -2861,6 +2861,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();

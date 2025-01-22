@@ -4,54 +4,42 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:url_launcher_linux/src/messages.g.dart';
 import 'package:url_launcher_linux/url_launcher_linux.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('UrlLauncherLinux', () {
-    const MethodChannel channel =
-        MethodChannel('plugins.flutter.io/url_launcher_linux');
-    final List<MethodCall> log = <MethodCall>[];
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      log.add(methodCall);
-
-      // Return null explicitly instead of relying on the implicit null
-      // returned by the method channel if no return statement is specified.
-      return null;
-    });
-
-    tearDown(() {
-      log.clear();
-    });
-
     test('registers instance', () {
       UrlLauncherLinux.registerWith();
       expect(UrlLauncherPlatform.instance, isA<UrlLauncherLinux>());
     });
 
-    test('canLaunch', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.canLaunch('http://example.com/');
-      expect(
-        log,
-        <Matcher>[isMethodCall('canLaunch', arguments: 'http://example.com/')],
-      );
+    test('canLaunch passes true', () async {
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+
+      final bool canLaunch = await launcher.canLaunch('http://example.com/');
+
+      expect(canLaunch, true);
     });
 
-    test('canLaunch should return false if platform returns null', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
+    test('canLaunch passes false', () async {
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(canLaunch: false);
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+
       final bool canLaunch = await launcher.canLaunch('http://example.com/');
 
       expect(canLaunch, false);
     });
 
     test('launch', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+      const String url = 'http://example.com/';
+
+      final bool launched = await launcher.launch(
+        url,
         useSafariVC: true,
         useWebView: false,
         enableJavaScript: false,
@@ -59,43 +47,54 @@ void main() {
         universalLinksOnly: false,
         headers: const <String, String>{},
       );
-      expect(
-        log,
-        <Matcher>[isMethodCall('launch', arguments: 'http://example.com/')],
-      );
+
+      expect(launched, true);
+      expect(api.argument, url);
     });
 
-    test('launch should return false if platform returns null', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      final bool launched = await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
+    test('launch should throw if platform returns an error', () async {
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(error: 'An error');
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
 
-      expect(launched, false);
+      await expectLater(
+          launcher.launch(
+            'http://example.com/',
+            useSafariVC: true,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          throwsA(isA<PlatformException>()
+              .having((PlatformException e) => e.code, 'code', 'Launch Error')
+              .having((PlatformException e) => e.message, 'message',
+                  contains('Failed to launch URL: An error'))));
     });
 
     group('launchUrl', () {
       test('passes URL', () async {
-        final UrlLauncherLinux launcher = UrlLauncherLinux();
-        await launcher.launchUrl('http://example.com/', const LaunchOptions());
-        expect(
-          log,
-          <Matcher>[isMethodCall('launch', arguments: 'http://example.com/')],
-        );
+        final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
+        final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+        const String url = 'http://example.com/';
+
+        final bool launched =
+            await launcher.launchUrl(url, const LaunchOptions());
+
+        expect(launched, true);
+        expect(api.argument, url);
       });
 
-      test('returns false if platform returns null', () async {
-        final UrlLauncherLinux launcher = UrlLauncherLinux();
-        final bool launched = await launcher.launchUrl(
-            'http://example.com/', const LaunchOptions());
+      test('throws if platform returns an error', () async {
+        final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(error: 'An error');
+        final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
 
-        expect(launched, false);
+        await expectLater(
+            launcher.launchUrl('http://example.com/', const LaunchOptions()),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'Launch Error')
+                .having((PlatformException e) => e.message, 'message',
+                    contains('Failed to launch URL: An error'))));
       });
     });
 
@@ -140,4 +139,37 @@ void main() {
           false);
     });
   });
+}
+
+class _FakeUrlLauncherApi implements UrlLauncherApi {
+  _FakeUrlLauncherApi({this.canLaunch = true, this.error});
+
+  /// The value to return from canLaunch.
+  final bool canLaunch;
+
+  /// The error to return from launchUrl, if any.
+  final String? error;
+
+  /// The argument that was passed to an API call.
+  String? argument;
+
+  @override
+  Future<bool> canLaunchUrl(String url) async {
+    argument = url;
+    return canLaunch;
+  }
+
+  @override
+  Future<String?> launchUrl(String url) async {
+    argument = url;
+    return error;
+  }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }

@@ -11,6 +11,9 @@ import 'package:pigeon/pigeon.dart';
   cppOptions: CppOptions(namespace: 'pigeon_example'),
   cppHeaderOut: 'windows/runner/messages.g.h',
   cppSourceOut: 'windows/runner/messages.g.cpp',
+  gobjectHeaderOut: 'linux/messages.g.h',
+  gobjectSourceOut: 'linux/messages.g.cc',
+  gobjectOptions: GObjectOptions(),
   kotlinOut:
       'android/app/src/main/kotlin/dev/flutter/pigeon_example_app/Messages.g.kt',
   kotlinOptions: KotlinOptions(),
@@ -27,8 +30,6 @@ import 'package:pigeon/pigeon.dart';
 ))
 // #enddocregion config
 
-// This file and ./messages_test.dart must be identical below this line.
-
 // #docregion host-definitions
 enum Code { one, two }
 
@@ -37,7 +38,7 @@ class MessageData {
   String? name;
   String? description;
   Code code;
-  Map<String?, String?> data;
+  Map<String, String> data;
 }
 
 @HostApi()

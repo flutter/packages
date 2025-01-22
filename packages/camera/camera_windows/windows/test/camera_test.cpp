@@ -16,6 +16,7 @@
 #include <memory>
 #include <string>
 
+#include "messages.g.h"
 #include "mocks.h"
 
 namespace camera_windows {
@@ -48,17 +49,13 @@ TEST(Camera, InitCameraCreatesCaptureController) {
 
   EXPECT_TRUE(camera->GetCaptureController() == nullptr);
 
-  RecordSettings record_settings(false);
-  record_settings.fps = 5;
-  record_settings.video_bitrate = 200000;
-  record_settings.audio_bitrate = 32000;
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, false);
 
   // Init camera with mock capture controller factory
-  bool result =
-      camera->InitCamera(std::move(capture_controller_factory),
-                         std::make_unique<MockTextureRegistrar>().get(),
-                         std::make_unique<MockBinaryMessenger>().get(),
-                         ResolutionPreset::kAuto, record_settings);
+  bool result = camera->InitCamera(
+      std::move(capture_controller_factory),
+      std::make_unique<MockTextureRegistrar>().get(),
+      std::make_unique<MockBinaryMessenger>().get(), media_settings);
   EXPECT_TRUE(result);
   EXPECT_TRUE(camera->GetCaptureController() != nullptr);
 }
@@ -84,438 +81,538 @@ TEST(Camera, InitCameraReportsFailure) {
 
   EXPECT_TRUE(camera->GetCaptureController() == nullptr);
 
-  RecordSettings record_settings(false);
-  record_settings.fps = 5;
-  record_settings.video_bitrate = 200000;
-  record_settings.audio_bitrate = 32000;
+  PlatformMediaSettings media_settings(PlatformResolutionPreset::kMax, false);
 
   // Init camera with mock capture controller factory
-  bool result =
-      camera->InitCamera(std::move(capture_controller_factory),
-                         std::make_unique<MockTextureRegistrar>().get(),
-                         std::make_unique<MockBinaryMessenger>().get(),
-                         ResolutionPreset::kAuto, record_settings);
+  bool result = camera->InitCamera(
+      std::move(capture_controller_factory),
+      std::make_unique<MockTextureRegistrar>().get(),
+      std::make_unique<MockBinaryMessenger>().get(), media_settings);
   EXPECT_FALSE(result);
   EXPECT_TRUE(camera->GetCaptureController() != nullptr);
 }
 
-TEST(Camera, AddPendingResultReturnsErrorForDuplicates) {
+TEST(Camera, AddPendingVoidResultReturnsErrorForDuplicates) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> first_pending_result =
-      std::make_unique<MockMethodResult>();
-  std::unique_ptr<MockMethodResult> second_pending_result =
-      std::make_unique<MockMethodResult>();
+  bool first_result_called = false;
+  std::function<void(std::optional<FlutterError>)> first_pending_result =
+      [&first_result_called](std::optional<FlutterError> reply) {
+        first_result_called = true;
+      };
+  bool second_result_called = false;
+  std::function<void(std::optional<FlutterError>)> second_pending_result =
+      [&second_result_called](std::optional<FlutterError> reply) {
+        second_result_called = true;
+        EXPECT_TRUE(reply);
+      };
 
-  EXPECT_CALL(*first_pending_result, ErrorInternal).Times(0);
-  EXPECT_CALL(*first_pending_result, SuccessInternal);
-  EXPECT_CALL(*second_pending_result, ErrorInternal).Times(1);
+  camera->AddPendingVoidResult(PendingResultType::kStartRecord,
+                               std::move(first_pending_result));
+  camera->AddPendingVoidResult(PendingResultType::kStartRecord,
+                               std::move(second_pending_result));
 
-  camera->AddPendingResult(PendingResultType::kCreateCamera,
-                           std::move(first_pending_result));
+  EXPECT_FALSE(first_result_called);
+  EXPECT_TRUE(second_result_called);
+}
 
-  // This should fail
-  camera->AddPendingResult(PendingResultType::kCreateCamera,
-                           std::move(second_pending_result));
+TEST(Camera, AddPendingIntResultReturnsErrorForDuplicates) {
+  std::unique_ptr<CameraImpl> camera =
+      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
+  bool first_result_called = false;
+  std::function<void(ErrorOr<int64_t>)> first_pending_result =
+      [&first_result_called](ErrorOr<int64_t> reply) {
+        first_result_called = true;
+      };
+  bool second_result_called = false;
+  std::function<void(ErrorOr<int64_t>)> second_pending_result =
+      [&second_result_called](ErrorOr<int64_t> reply) {
+        second_result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
 
-  // Mark pending result as succeeded
-  camera->OnCreateCaptureEngineSucceeded(0);
+  camera->AddPendingIntResult(PendingResultType::kCreateCamera,
+                              std::move(first_pending_result));
+  camera->AddPendingIntResult(PendingResultType::kCreateCamera,
+                              std::move(second_pending_result));
+
+  EXPECT_FALSE(first_result_called);
+  EXPECT_TRUE(second_result_called);
+}
+
+TEST(Camera, AddPendingStringResultReturnsErrorForDuplicates) {
+  std::unique_ptr<CameraImpl> camera =
+      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
+  bool first_result_called = false;
+  std::function<void(ErrorOr<std::string>)> first_pending_result =
+      [&first_result_called](ErrorOr<std::string> reply) {
+        first_result_called = true;
+      };
+  bool second_result_called = false;
+  std::function<void(ErrorOr<std::string>)> second_pending_result =
+      [&second_result_called](ErrorOr<std::string> reply) {
+        second_result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
+
+  camera->AddPendingStringResult(PendingResultType::kStopRecord,
+                                 std::move(first_pending_result));
+  camera->AddPendingStringResult(PendingResultType::kStopRecord,
+                                 std::move(second_pending_result));
+
+  EXPECT_FALSE(first_result_called);
+  EXPECT_TRUE(second_result_called);
+}
+
+TEST(Camera, AddPendingSizeResultReturnsErrorForDuplicates) {
+  std::unique_ptr<CameraImpl> camera =
+      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
+  bool first_result_called = false;
+  std::function<void(ErrorOr<PlatformSize>)> first_pending_result =
+      [&first_result_called](ErrorOr<PlatformSize> reply) {
+        first_result_called = true;
+      };
+  bool second_result_called = false;
+  std::function<void(ErrorOr<PlatformSize>)> second_pending_result =
+      [&second_result_called](ErrorOr<PlatformSize> reply) {
+        second_result_called = true;
+        EXPECT_TRUE(reply.has_error());
+      };
+
+  camera->AddPendingSizeResult(PendingResultType::kInitialize,
+                               std::move(first_pending_result));
+  camera->AddPendingSizeResult(PendingResultType::kInitialize,
+                               std::move(second_pending_result));
+
+  EXPECT_FALSE(first_result_called);
+  EXPECT_TRUE(second_result_called);
 }
 
 TEST(Camera, OnCreateCaptureEngineSucceededReturnsCameraId) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const int64_t texture_id = 12345;
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(
-      *result,
-      SuccessInternal(Pointee(EncodableValue(EncodableMap(
-          {{EncodableValue("cameraId"), EncodableValue(texture_id)}})))));
-
-  camera->AddPendingResult(PendingResultType::kCreateCamera, std::move(result));
+  bool result_called = false;
+  camera->AddPendingIntResult(
+      PendingResultType::kCreateCamera,
+      [&result_called, texture_id](ErrorOr<int64_t> reply) {
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), texture_id);
+      });
 
   camera->OnCreateCaptureEngineSucceeded(texture_id);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, CreateCaptureEngineReportsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result, ErrorInternal(Eq("camera_error"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kCreateCamera, std::move(result));
+  bool result_called = false;
+  camera->AddPendingIntResult(
+      PendingResultType::kCreateCamera,
+      [&result_called, error_text](ErrorOr<int64_t> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "camera_error");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnCreateCaptureEngineFailed(CameraResult::kError, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, CreateCaptureEngineReportsAccessDenied) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result,
-              ErrorInternal(Eq("CameraAccessDenied"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kCreateCamera, std::move(result));
+  bool result_called = false;
+  camera->AddPendingIntResult(
+      PendingResultType::kCreateCamera,
+      [&result_called, error_text](ErrorOr<int64_t> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "CameraAccessDenied");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnCreateCaptureEngineFailed(CameraResult::kAccessDenied, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, OnStartPreviewSucceededReturnsFrameSize) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const int32_t width = 123;
   const int32_t height = 456;
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(
-      *result,
-      SuccessInternal(Pointee(EncodableValue(EncodableMap({
-          {EncodableValue("previewWidth"), EncodableValue((float)width)},
-          {EncodableValue("previewHeight"), EncodableValue((float)height)},
-      })))));
-
-  camera->AddPendingResult(PendingResultType::kInitialize, std::move(result));
+  bool result_called = false;
+  camera->AddPendingSizeResult(
+      PendingResultType::kInitialize,
+      [&result_called, width, height](ErrorOr<PlatformSize> reply) {
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value().width(), width);
+        EXPECT_EQ(reply.value().height(), height);
+      });
 
   camera->OnStartPreviewSucceeded(width, height);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, StartPreviewReportsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result, ErrorInternal(Eq("camera_error"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kInitialize, std::move(result));
+  bool result_called = false;
+  camera->AddPendingSizeResult(
+      PendingResultType::kInitialize,
+      [&result_called, error_text](ErrorOr<PlatformSize> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "camera_error");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnStartPreviewFailed(CameraResult::kError, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, StartPreviewReportsAccessDenied) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result,
-              ErrorInternal(Eq("CameraAccessDenied"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kInitialize, std::move(result));
+  bool result_called = false;
+  camera->AddPendingSizeResult(
+      PendingResultType::kInitialize,
+      [&result_called, error_text](ErrorOr<PlatformSize> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "CameraAccessDenied");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnStartPreviewFailed(CameraResult::kAccessDenied, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, OnPausePreviewSucceededReturnsSuccess) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(*result, SuccessInternal(nullptr));
-
-  camera->AddPendingResult(PendingResultType::kPausePreview, std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kPausePreview,
+      [&result_called](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_FALSE(reply);
+      });
 
   camera->OnPausePreviewSucceeded();
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, PausePreviewReportsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result, ErrorInternal(Eq("camera_error"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kPausePreview, std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kPausePreview,
+      [&result_called, error_text](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply);
+        EXPECT_EQ(reply.value().code(), "camera_error");
+        EXPECT_EQ(reply.value().message(), error_text);
+      });
 
   camera->OnPausePreviewFailed(CameraResult::kError, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, PausePreviewReportsAccessDenied) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result,
-              ErrorInternal(Eq("CameraAccessDenied"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kPausePreview, std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kPausePreview,
+      [&result_called, error_text](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply);
+        EXPECT_EQ(reply.value().code(), "CameraAccessDenied");
+        EXPECT_EQ(reply.value().message(), error_text);
+      });
 
   camera->OnPausePreviewFailed(CameraResult::kAccessDenied, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, OnResumePreviewSucceededReturnsSuccess) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(*result, SuccessInternal(nullptr));
-
-  camera->AddPendingResult(PendingResultType::kResumePreview,
-                           std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kResumePreview,
+      [&result_called](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_FALSE(reply);
+      });
 
   camera->OnResumePreviewSucceeded();
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, ResumePreviewReportsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result, ErrorInternal(Eq("camera_error"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kResumePreview,
-                           std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kResumePreview,
+      [&result_called, error_text](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply);
+        EXPECT_EQ(reply.value().code(), "camera_error");
+        EXPECT_EQ(reply.value().message(), error_text);
+      });
 
   camera->OnResumePreviewFailed(CameraResult::kError, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, OnResumePreviewPermissionFailureReturnsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result,
-              ErrorInternal(Eq("CameraAccessDenied"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kResumePreview,
-                           std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kResumePreview,
+      [&result_called, error_text](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply);
+        EXPECT_EQ(reply.value().code(), "CameraAccessDenied");
+        EXPECT_EQ(reply.value().message(), error_text);
+      });
 
   camera->OnResumePreviewFailed(CameraResult::kAccessDenied, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, OnStartRecordSucceededReturnsSuccess) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(*result, SuccessInternal(nullptr));
-
-  camera->AddPendingResult(PendingResultType::kStartRecord, std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kStartRecord,
+      [&result_called](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_FALSE(reply);
+      });
 
   camera->OnStartRecordSucceeded();
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, StartRecordReportsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result, ErrorInternal(Eq("camera_error"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kStartRecord, std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kStartRecord,
+      [&result_called, error_text](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply);
+        EXPECT_EQ(reply.value().code(), "camera_error");
+        EXPECT_EQ(reply.value().message(), error_text);
+      });
 
   camera->OnStartRecordFailed(CameraResult::kError, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, StartRecordReportsAccessDenied) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result,
-              ErrorInternal(Eq("CameraAccessDenied"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kStartRecord, std::move(result));
+  bool result_called = false;
+  camera->AddPendingVoidResult(
+      PendingResultType::kStartRecord,
+      [&result_called, error_text](std::optional<FlutterError> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply);
+        EXPECT_EQ(reply.value().code(), "CameraAccessDenied");
+        EXPECT_EQ(reply.value().message(), error_text);
+      });
 
   camera->OnStartRecordFailed(CameraResult::kAccessDenied, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, OnStopRecordSucceededReturnsSuccess) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string file_path = "C:\temp\filename.mp4";
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(*result, SuccessInternal(Pointee(EncodableValue(file_path))));
-
-  camera->AddPendingResult(PendingResultType::kStopRecord, std::move(result));
+  bool result_called = false;
+  camera->AddPendingStringResult(
+      PendingResultType::kStopRecord,
+      [&result_called, file_path](ErrorOr<std::string> reply) {
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), file_path);
+      });
 
   camera->OnStopRecordSucceeded(file_path);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, StopRecordReportsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result, ErrorInternal(Eq("camera_error"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kStopRecord, std::move(result));
+  bool result_called = false;
+  camera->AddPendingStringResult(
+      PendingResultType::kStopRecord,
+      [&result_called, error_text](ErrorOr<std::string> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "camera_error");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnStopRecordFailed(CameraResult::kError, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, StopRecordReportsAccessDenied) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result,
-              ErrorInternal(Eq("CameraAccessDenied"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kStopRecord, std::move(result));
+  bool result_called = false;
+  camera->AddPendingStringResult(
+      PendingResultType::kStopRecord,
+      [&result_called, error_text](ErrorOr<std::string> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "CameraAccessDenied");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnStopRecordFailed(CameraResult::kAccessDenied, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, OnTakePictureSucceededReturnsSuccess) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string file_path = "C:\\temp\\filename.jpeg";
 
-  EXPECT_CALL(*result, ErrorInternal).Times(0);
-  EXPECT_CALL(*result, SuccessInternal(Pointee(EncodableValue(file_path))));
-
-  camera->AddPendingResult(PendingResultType::kTakePicture, std::move(result));
+  bool result_called = false;
+  camera->AddPendingStringResult(
+      PendingResultType::kTakePicture,
+      [&result_called, file_path](ErrorOr<std::string> reply) {
+        result_called = true;
+        EXPECT_FALSE(reply.has_error());
+        EXPECT_EQ(reply.value(), file_path);
+      });
 
   camera->OnTakePictureSucceeded(file_path);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, TakePictureReportsError) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result, ErrorInternal(Eq("camera_error"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kTakePicture, std::move(result));
+  bool result_called = false;
+  camera->AddPendingStringResult(
+      PendingResultType::kTakePicture,
+      [&result_called, error_text](ErrorOr<std::string> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "camera_error");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnTakePictureFailed(CameraResult::kError, error_text);
+
+  EXPECT_TRUE(result_called);
 }
 
 TEST(Camera, TakePictureReportsAccessDenied) {
   std::unique_ptr<CameraImpl> camera =
       std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockMethodResult> result =
-      std::make_unique<MockMethodResult>();
 
   const std::string error_text = "error_text";
 
-  EXPECT_CALL(*result, SuccessInternal).Times(0);
-  EXPECT_CALL(*result,
-              ErrorInternal(Eq("CameraAccessDenied"), Eq(error_text), _));
-
-  camera->AddPendingResult(PendingResultType::kTakePicture, std::move(result));
+  bool result_called = false;
+  camera->AddPendingStringResult(
+      PendingResultType::kTakePicture,
+      [&result_called, error_text](ErrorOr<std::string> reply) {
+        result_called = true;
+        EXPECT_TRUE(reply.has_error());
+        EXPECT_EQ(reply.error().code(), "CameraAccessDenied");
+        EXPECT_EQ(reply.error().message(), error_text);
+      });
 
   camera->OnTakePictureFailed(CameraResult::kAccessDenied, error_text);
-}
 
-TEST(Camera, OnVideoRecordSucceededInvokesCameraChannelEvent) {
-  std::unique_ptr<CameraImpl> camera =
-      std::make_unique<CameraImpl>(MOCK_DEVICE_ID);
-  std::unique_ptr<MockCaptureControllerFactory> capture_controller_factory =
-      std::make_unique<MockCaptureControllerFactory>();
-
-  std::unique_ptr<MockBinaryMessenger> binary_messenger =
-      std::make_unique<MockBinaryMessenger>();
-
-  const std::string file_path = "C:\\temp\\filename.mp4";
-  const int64_t camera_id = 12345;
-  std::string camera_channel =
-      std::string("plugins.flutter.io/camera_windows/camera") +
-      std::to_string(camera_id);
-  const int64_t video_duration = 1000000;
-
-  EXPECT_CALL(*capture_controller_factory, CreateCaptureController)
-      .Times(1)
-      .WillOnce(
-          []() { return std::make_unique<NiceMock<MockCaptureController>>(); });
-
-  // TODO: test binary content.
-  // First time is video record success message,
-  // and second is camera closing message.
-  EXPECT_CALL(*binary_messenger, Send(Eq(camera_channel), _, _, _)).Times(2);
-
-  RecordSettings record_settings;
-  record_settings.record_audio = false;
-  record_settings.fps = 5;
-  record_settings.video_bitrate = 200000;
-  record_settings.audio_bitrate = 32000;
-
-  // Init camera with mock capture controller factory
-  camera->InitCamera(std::move(capture_controller_factory),
-                     std::make_unique<MockTextureRegistrar>().get(),
-                     binary_messenger.get(), ResolutionPreset::kAuto,
-                     record_settings);
-
-  // Pass camera id for camera
-  camera->OnCreateCaptureEngineSucceeded(camera_id);
-
-  camera->OnVideoRecordSucceeded(file_path, video_duration);
-
-  // Dispose camera before message channel.
-  camera = nullptr;
+  EXPECT_TRUE(result_called);
 }
 
 }  // namespace test

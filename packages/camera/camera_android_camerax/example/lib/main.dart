@@ -698,7 +698,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           showInSnackBar('Audio access is restricted.');
         default:
           _showCameraException(e);
-          break;
       }
     }
 

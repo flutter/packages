@@ -10,11 +10,7 @@ A Flutter plugin for launching a URL.
 |-------------|---------|-------|-------|--------|-----|-------------|
 | **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Windows 10+ |
 
-## Usage
-
-To use this plugin, add `url_launcher` as a [dependency in your pubspec.yaml file](https://flutter.dev/platform-plugins/).
-
-### Example
+## Example
 
 <?code-excerpt "lib/basic.dart (basic-example)"?>
 ```dart
@@ -172,19 +168,6 @@ String? encodeQueryParameters(Map<String, String> params) {
   );
 
   launchUrl(emailLaunchUri);
-```
-
-Encoding for `sms` is slightly different:
-
-<?code-excerpt "lib/encoding.dart (sms)"?>
-```dart
-final Uri smsLaunchUri = Uri(
-  scheme: 'sms',
-  path: '0118 999 881 999 119 7253',
-  queryParameters: <String, String>{
-    'body': Uri.encodeComponent('Example Subject & Symbols are allowed!'),
-  },
-);
 ```
 
 ### URLs not handled by `Uri`

@@ -13,8 +13,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'image_test_mocks.dart';
 import 'utils.dart';
 
-bool isRunningInStable = io.Platform.environment['CHANNEL'] == 'stable';
-
 void main() => defineTests();
 
 void defineTests() {
@@ -169,9 +167,8 @@ void defineTests() {
 
         await expectLater(
             find.byType(Container),
-            matchesGoldenFile(isRunningInStable
-                ? 'assets/images/golden/image_test/resource_asset_logo_old.png'
-                : 'assets/images/golden/image_test/resource_asset_logo.png'));
+            matchesGoldenFile(
+                'assets/images/golden/image_test/resource_asset_logo.png'));
       },
       skip: kIsWeb, // Goldens are platform-specific.
     );
@@ -337,6 +334,46 @@ void defineTests() {
     );
 
     testWidgets(
+      'should gracefully handle image URLs with empty scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        expect(find.byType(Image), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'should gracefully handle image URLs with invalid scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](ttps://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        // On the web, any URI with an unrecognized scheme is treated as a network image.
+        // Thus the error builder of the Image widget is called.
+        // On non-web, any URI with an unrecognized scheme is treated as a file image.
+        // However, constructing a file from an invalid URI will throw an exception.
+        // Thus the Image widget is never created, nor is its error builder called.
+        if (kIsWeb) {
+          expect(find.byType(Image), findsOneWidget);
+        } else {
+          expect(find.byType(Image), findsNothing);
+        }
+
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
       'should gracefully handle width parsing failures',
       (WidgetTester tester) async {
         const String data = '![alt](https://img#x50)';
@@ -416,9 +453,9 @@ void defineTests() {
 
         await expectLater(
             find.byType(Container),
-            matchesGoldenFile(isRunningInStable
-                ? 'assets/images/golden/image_test/custom_builder_asset_logo_old.png'
-                : 'assets/images/golden/image_test/custom_builder_asset_logo.png'));
+            matchesGoldenFile(
+                'assets/images/golden/image_test/custom_builder_asset_logo.png'));
+        imageCache.clear();
       },
       skip: kIsWeb, // Goldens are platform-specific.
     );

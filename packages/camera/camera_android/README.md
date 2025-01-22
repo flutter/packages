@@ -17,7 +17,7 @@ when recording a video with sound enabled and trying to play it back, the durati
 you will only see the first frame.
 
 [1]: https://pub.dev/packages/camera
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://pub.dev/packages/camera_android_camerax
 [4]: https://developer.android.com/media/camera/camera2
 [5]: https://developer.android.com/reference/android/media/MediaRecorder

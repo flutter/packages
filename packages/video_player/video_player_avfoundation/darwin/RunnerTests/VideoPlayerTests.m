@@ -530,6 +530,22 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
 }
 
+- (void)testAudioOnlyHLSControls {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"TestAudioOnlyHLSControls"];
+
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  NSDictionary<NSString *, id> *videoInitialization =
+      [self testPlugin:videoPlayerPlugin
+                   uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/"
+                       @"bee_audio_only.m3u8"];
+  XCTAssertEqualObjects(videoInitialization[@"height"], @0);
+  XCTAssertEqualObjects(videoInitialization[@"width"], @0);
+  XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
+}
+
 #if TARGET_OS_IOS
 - (void)testTransformFix {
   [self validateTransformFixForOrientation:UIImageOrientationUp];
@@ -655,6 +671,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   // Change playback speed.
   [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:textureId.integerValue error:&error];
+  XCTAssertNil(error);
+  [videoPlayerPlugin playPlayer:textureId.integerValue error:&error];
   XCTAssertNil(error);
   XCTAssertEqual(avPlayer.rate, 2);
   XCTAssertEqual(avPlayer.timeControlStatus, AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate);
@@ -790,7 +808,109 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertTrue([publishedValue isKindOfClass:[FVPVideoPlayerPlugin class]]);
 }
 
+- (void)testFailedToLoadVideoEventShouldBeAlwaysSent {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"testFailedToLoadVideoEventShouldBeAlwaysSent"];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FlutterError *error;
+
+  [videoPlayerPlugin initialize:&error];
+
+  FVPCreationOptions *create = [FVPCreationOptions makeWithAsset:nil
+                                                             uri:@""
+                                                     packageName:nil
+                                                      formatHint:nil
+                                                     httpHeaders:@{}];
+  NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+  XCTAssertNotNil(player);
+
+  [self keyValueObservingExpectationForObject:(id)player.player.currentItem
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusFailed)];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+
+  XCTestExpectation *failedExpectation = [self expectationWithDescription:@"failed"];
+  [player onListenWithArguments:nil
+                      eventSink:^(FlutterError *event) {
+                        if ([event isKindOfClass:FlutterError.class]) {
+                          [failedExpectation fulfill];
+                        }
+                      }];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+}
+
+- (void)testUpdatePlayingStateShouldNotResetRate {
+  NSObject<FlutterPluginRegistrar> *registrar =
+      [GetPluginRegistry() registrarForPlugin:@"testUpdatePlayingStateShouldNotResetRate"];
+
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+      displayLinkFactory:nil
+               registrar:registrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithAsset:nil
+                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+        packageName:nil
+         formatHint:nil
+        httpHeaders:@{}];
+  NSNumber *textureId = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByTextureId[textureId];
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  [player onListenWithArguments:nil
+                      eventSink:^(NSDictionary<NSString *, id> *event) {
+                        if ([event[@"event"] isEqualToString:@"initialized"]) {
+                          [initializedExpectation fulfill];
+                        }
+                      }];
+  [self waitForExpectationsWithTimeout:10 handler:nil];
+
+  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:textureId.integerValue error:&error];
+  [videoPlayerPlugin playPlayer:textureId.integerValue error:&error];
+  XCTAssertEqual(player.player.rate, 2);
+}
+
 #if TARGET_OS_IOS
+- (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
+  NSObject<FlutterPluginRegistrar> *registrar = [GetPluginRegistry()
+      registrarForPlugin:@"testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker"];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FlutterError *error;
+
+  [AVAudioSession.sharedInstance setCategory:AVAudioSessionCategoryPlayAndRecord
+                                 withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
+                                       error:nil];
+
+  [videoPlayerPlugin initialize:&error];
+  [videoPlayerPlugin setMixWithOthers:true error:&error];
+  XCTAssert(AVAudioSession.sharedInstance.category == AVAudioSessionCategoryPlayAndRecord,
+            @"Category should be PlayAndRecord.");
+  XCTAssert(
+      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionDefaultToSpeaker,
+      @"Flag DefaultToSpeaker was removed.");
+  XCTAssert(
+      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionMixWithOthers,
+      @"Flag MixWithOthers should be set.");
+
+  id sessionMock = OCMClassMock([AVAudioSession class]);
+  OCMStub([sessionMock sharedInstance]).andReturn(sessionMock);
+  OCMStub([sessionMock category]).andReturn(AVAudioSessionCategoryPlayAndRecord);
+  OCMStub([sessionMock categoryOptions])
+      .andReturn(AVAudioSessionCategoryOptionMixWithOthers |
+                 AVAudioSessionCategoryOptionDefaultToSpeaker);
+  OCMReject([sessionMock setCategory:OCMOCK_ANY withOptions:0 error:[OCMArg setTo:nil]])
+      .ignoringNonObjectArgs();
+
+  [videoPlayerPlugin setMixWithOthers:true error:&error];
+}
+
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
   AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
   CGAffineTransform t = FVPGetStandardizedTransformForTrack(track);

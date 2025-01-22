@@ -12,7 +12,7 @@ class MockFlutterApi: IOSQuickActionsFlutterApiProtocol {
   var launchActionCallback: ((String) -> Void)? = nil
 
   func launchAction(
-    action actionArg: String, completion: @escaping (Result<Void, FlutterError>) -> Void
+    action actionArg: String, completion: @escaping (Result<Void, PigeonError>) -> Void
   ) {
     self.launchActionCallback?(actionArg)
     completion(.success(Void()))

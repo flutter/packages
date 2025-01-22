@@ -14,7 +14,13 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
-    show DataSourceType, DurationRange, VideoFormat, VideoPlayerOptions;
+    show
+        DataSourceType,
+        DurationRange,
+        VideoFormat,
+        VideoPlayerOptions,
+        VideoPlayerWebOptions,
+        VideoPlayerWebOptionsControls;
 
 export 'src/closed_caption_file.dart';
 
@@ -436,6 +442,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
+    // Apply the web-specific options
+    if (kIsWeb && videoPlayerOptions?.webOptions != null) {
+      await _videoPlayerPlatform.setWebOptions(
+        _textureId,
+        videoPlayerOptions!.webOptions!,
+      );
+    }
+
     void eventListener(VideoEvent event) {
       if (_isDisposed) {
         return;
@@ -451,6 +465,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             errorDescription: null,
             isCompleted: false,
           );
+          assert(
+            !initializingCompleter.isCompleted,
+            'VideoPlayerController already initialized. This is typically a '
+            'sign that an implementation of the VideoPlayerPlatform '
+            '(${_videoPlayerPlatform.runtimeType}) has a bug and is sending '
+            'more than one initialized event per instance.',
+          );
+          if (initializingCompleter.isCompleted) {
+            throw StateError('VideoPlayerController already initialized');
+          }
           initializingCompleter.complete(null);
           _applyLooping();
           _applyVolume();

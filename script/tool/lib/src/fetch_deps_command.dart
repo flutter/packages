@@ -87,10 +87,8 @@ class FetchDepsCommand extends PackageLoopingCommand {
         flutterCommand,
         <String>[
           'precache',
-          if (precacheIOS)
-            '--ios',
-          if (precacheMacOS)
-            '--macos',
+          if (precacheIOS) '--ios',
+          if (precacheMacOS) '--macos',
         ],
       );
       if (precacheExitCode != 0) {

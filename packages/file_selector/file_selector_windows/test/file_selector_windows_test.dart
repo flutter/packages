@@ -22,7 +22,7 @@ void main() {
 
   setUp(() {
     mockApi = MockTestFileSelectorApi();
-    TestFileSelectorApi.setup(mockApi);
+    TestFileSelectorApi.setUp(mockApi);
   });
 
   test('registered instance', () {
@@ -33,7 +33,7 @@ void main() {
   group('openFile', () {
     setUp(() {
       when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String?>['foo']));
+          .thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {
@@ -109,7 +109,7 @@ void main() {
   group('openFiles', () {
     setUp(() {
       when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String?>['foo', 'bar']));
+          .thenReturn(FileDialogResult(paths: <String>['foo', 'bar']));
     });
 
     test('simple call works', () async {
@@ -186,7 +186,7 @@ void main() {
   group('getDirectoryPath', () {
     setUp(() {
       when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String?>['foo']));
+          .thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {
@@ -216,11 +216,11 @@ void main() {
   group('getDirectoryPaths', () {
     setUp(() {
       when(mockApi.showOpenDialog(any, any, any))
-          .thenReturn(FileDialogResult(paths: <String?>['foo', 'bar']));
+          .thenReturn(FileDialogResult(paths: <String>['foo', 'bar']));
     });
 
     test('simple call works', () async {
-      final List<String?> paths = await plugin.getDirectoryPaths();
+      final List<String> paths = await plugin.getDirectoryPaths();
 
       expect(paths[0], 'foo');
       expect(paths[1], 'bar');
@@ -247,7 +247,7 @@ void main() {
   group('getSaveLocation', () {
     setUp(() {
       when(mockApi.showSaveDialog(any, any, any, any))
-          .thenReturn(FileDialogResult(paths: <String?>['foo']));
+          .thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {
@@ -291,7 +291,7 @@ void main() {
 
     test('returns the selected type group correctly', () async {
       when(mockApi.showSaveDialog(any, any, any, any)).thenReturn(
-          FileDialogResult(paths: <String?>['foo'], typeGroupIndex: 1));
+          FileDialogResult(paths: <String>['foo'], typeGroupIndex: 1));
       const XTypeGroup group = XTypeGroup(
         label: 'text',
         extensions: <String>['txt'],
@@ -359,7 +359,7 @@ void main() {
   group('getSavePath (deprecated)', () {
     setUp(() {
       when(mockApi.showSaveDialog(any, any, any, any))
-          .thenReturn(FileDialogResult(paths: <String?>['foo']));
+          .thenReturn(FileDialogResult(paths: <String>['foo']));
     });
 
     test('simple call works', () async {

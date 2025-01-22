@@ -35,8 +35,25 @@ class PlatformAccountIdentifiers {
 class PlatformBillingResult {
   PlatformBillingResult(
       {required this.responseCode, required this.debugMessage});
-  final int responseCode;
+  final PlatformBillingResponse responseCode;
   final String debugMessage;
+}
+
+/// Pigeon version of Java BillingClient.BillingResponseCode.
+enum PlatformBillingResponse {
+  serviceTimeout,
+  featureNotSupported,
+  serviceDisconnected,
+  ok,
+  userCanceled,
+  serviceUnavailable,
+  billingUnavailable,
+  itemUnavailable,
+  developerError,
+  error,
+  itemAlreadyOwned,
+  itemNotOwned,
+  networkError,
 }
 
 /// Pigeon version of Java ProductDetails.OneTimePurchaseOfferDetails.
@@ -70,11 +87,7 @@ class PlatformProductDetails {
   final PlatformProductType productType;
   final String title;
   final PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it (the entries, not the list itself) as
-  // non-nullable.
-  final List<PlatformSubscriptionOfferDetails?>? subscriptionOfferDetails;
+  final List<PlatformSubscriptionOfferDetails>? subscriptionOfferDetails;
 }
 
 /// Pigeon version of ProductDetailsResponseWrapper, which contains the
@@ -86,10 +99,7 @@ class PlatformProductDetailsResponse {
   });
 
   final PlatformBillingResult billingResult;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformProductDetails?> productDetails;
+  final List<PlatformProductDetails> productDetails;
 }
 
 /// Pigeon version of AlternativeBillingOnlyReportingDetailsWrapper, which
@@ -117,7 +127,6 @@ class PlatformBillingConfigResponse {
 class PlatformBillingFlowParams {
   PlatformBillingFlowParams({
     required this.product,
-    required this.prorationMode,
     required this.replacementMode,
     required this.offerToken,
     required this.accountId,
@@ -127,16 +136,21 @@ class PlatformBillingFlowParams {
   });
 
   final String product;
-  // Ideally this would be replaced with an enum on the dart side that maps
-  // to constants on the Java side, but it's deprecated anyway so that will be
-  // resolved during the update to the new API.
-  final int prorationMode;
-  final int replacementMode;
+  final PlatformReplacementMode replacementMode;
   final String? offerToken;
   final String? accountId;
   final String? obfuscatedProfileId;
   final String? oldProduct;
   final String? purchaseToken;
+}
+
+enum PlatformReplacementMode {
+  unknownReplacementMode,
+  withTimeProration,
+  chargeProratedPrice,
+  withoutProration,
+  deferred,
+  chargeFullPrice,
 }
 
 /// Pigeon version of Java ProductDetails.PricingPhase.
@@ -176,6 +190,7 @@ class PlatformPurchase {
     required this.quantity,
     required this.purchaseState,
     required this.accountIdentifiers,
+    required this.pendingPurchaseUpdate,
   });
 
   final String? orderId;
@@ -183,10 +198,7 @@ class PlatformPurchase {
   final int purchaseTime;
   final String purchaseToken;
   final String signature;
-  // TODO(stuartmorgan): Make the type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<String?> products;
+  final List<String> products;
   final bool isAutoRenewing;
   final String originalJson;
   final String developerPayload;
@@ -194,6 +206,20 @@ class PlatformPurchase {
   final int quantity;
   final PlatformPurchaseState purchaseState;
   final PlatformAccountIdentifiers? accountIdentifiers;
+  final PlatformPendingPurchaseUpdate? pendingPurchaseUpdate;
+}
+
+/// Pigeon version of Java Purchase.
+///
+/// See also PendingPurchaseUpdateWrapper on the Dart side.
+class PlatformPendingPurchaseUpdate {
+  PlatformPendingPurchaseUpdate({
+    required this.products,
+    required this.purchaseToken,
+  });
+
+  final List<String> products;
+  final String purchaseToken;
 }
 
 /// Pigeon version of PurchaseHistoryRecord.
@@ -216,10 +242,7 @@ class PlatformPurchaseHistoryRecord {
   final String originalJson;
   final String purchaseToken;
   final String signature;
-  // TODO(stuartmorgan): Make the type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<String?> products;
+  final List<String> products;
 }
 
 /// Pigeon version of PurchasesHistoryResult, which contains the components of
@@ -231,10 +254,7 @@ class PlatformPurchaseHistoryResponse {
   });
 
   final PlatformBillingResult billingResult;
-  // TODO(stuartmorgan): Make the type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformPurchaseHistoryRecord?> purchases;
+  final List<PlatformPurchaseHistoryRecord> purchases;
 }
 
 /// Pigeon version of PurchasesResultWrapper, which contains the components of
@@ -246,10 +266,7 @@ class PlatformPurchasesResponse {
   });
 
   final PlatformBillingResult billingResult;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformPurchase?> purchases;
+  final List<PlatformPurchase> purchases;
 }
 
 /// Pigeon version of Java ProductDetails.SubscriptionOfferDetails.
@@ -260,23 +277,19 @@ class PlatformSubscriptionOfferDetails {
     required this.offerToken,
     required this.offerTags,
     required this.pricingPhases,
+    required this.installmentPlanDetails,
   });
 
   final String basePlanId;
   final String? offerId;
   final String offerToken;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<String?> offerTags;
+  final List<String> offerTags;
   // On the native side this is actually a class called PricingPhases,
   // which contains nothing but a List<PricingPhase>. Since this is an
   // internal API, we can always add that indirection later if we need it,
   // so for now this bypasses that unnecessary wrapper.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformPricingPhase?> pricingPhases;
+  final List<PlatformPricingPhase> pricingPhases;
+  final PlatformInstallmentPlanDetails? installmentPlanDetails;
 }
 
 /// Pigeon version of UserChoiceDetailsWrapper and Java UserChoiceDetails.
@@ -289,10 +302,7 @@ class PlatformUserChoiceDetails {
 
   final String? originalExternalTransactionId;
   final String externalTransactionToken;
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
-  final List<PlatformUserChoiceProduct?> products;
+  final List<PlatformUserChoiceProduct> products;
 }
 
 /// Pigeon version of UserChoiseDetails.Product.
@@ -306,6 +316,27 @@ class PlatformUserChoiceProduct {
   final String id;
   final String? offerToken;
   final PlatformProductType type;
+}
+
+/// Pigeon version of ProductDetails.InstallmentPlanDetails.
+/// https://developer.android.com/reference/com/android/billingclient/api/PendingPurchasesParams.Builder#enableOneTimeProducts()
+class PlatformInstallmentPlanDetails {
+  PlatformInstallmentPlanDetails({
+    required this.commitmentPaymentsCount,
+    required this.subsequentCommitmentPaymentsCount,
+  });
+
+  final int commitmentPaymentsCount;
+  final int subsequentCommitmentPaymentsCount;
+}
+
+/// Pigeon version of Java PendingPurchasesParams.
+class PlatformPendingPurchasesParams {
+  PlatformPendingPurchasesParams({
+    required this.enablePrepaidPlans,
+  });
+
+  final bool enablePrepaidPlans;
 }
 
 /// Pigeon version of Java BillingClient.ProductType.
@@ -326,6 +357,18 @@ enum PlatformBillingChoiceMode {
 
   /// Users can choose Play billing or alternative billing.
   userChoiceBilling,
+}
+
+/// Pigeon version of Java BillingClient.FeatureType.
+enum PlatformBillingClientFeature {
+  alternativeBillingOnly,
+  billingConfig,
+  externalOffer,
+  inAppMessaging,
+  priceChangeConfirmation,
+  productDetails,
+  subscriptions,
+  subscriptionsUpdate,
 }
 
 /// Pigeon version of Java Purchase.PurchaseState.
@@ -350,7 +393,9 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#startConnection(BillingClientStateListener).
   @async
   PlatformBillingResult startConnection(
-      int callbackHandle, PlatformBillingChoiceMode billingMode);
+      int callbackHandle,
+      PlatformBillingChoiceMode billingMode,
+      PlatformPendingPurchasesParams pendingPurchasesParams);
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();
@@ -386,10 +431,7 @@ abstract class InAppPurchaseApi {
       List<PlatformQueryProduct> products);
 
   /// Wraps BillingClient#isFeatureSupported(String).
-  // TODO(stuartmorgan): Consider making this take a enum, and converting the
-  // enum value to string constants on the native side, so that magic strings
-  // from the Play Billing API aren't duplicated in Dart code.
-  bool isFeatureSupported(String feature);
+  bool isFeatureSupported(PlatformBillingClientFeature feature);
 
   /// Wraps BillingClient#isAlternativeBillingOnlyAvailableAsync().
   @async

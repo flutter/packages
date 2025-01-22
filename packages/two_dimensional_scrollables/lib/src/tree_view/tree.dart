@@ -496,6 +496,7 @@ class TreeView<T> extends StatefulWidget {
 
   /// The default [AnimationStyle] used for node expand and collapse animations,
   /// when one has not been provided in [toggleAnimationStyle].
+  // ignore: prefer_const_constructors
   static AnimationStyle defaultToggleAnimationStyle = AnimationStyle(
     curve: defaultAnimationCurve,
     duration: defaultAnimationDuration,
@@ -886,6 +887,15 @@ class _TreeViewState<T> extends State<TreeView<T>>
       if (widget.onNodeToggle != null) {
         widget.onNodeToggle!(node);
       }
+
+      // If animation is disabled or duration is zero, skip the animation
+      // and update the active nodes immediately. This ensures the tree
+      // is updated correctly when the node's children are no longer active.
+      if (widget.toggleAnimationStyle?.duration == Duration.zero) {
+        _unpackActiveNodes();
+        return;
+      }
+
       final AnimationController controller =
           _currentAnimationForParent[node]?.controller ??
               AnimationController(
@@ -902,6 +912,12 @@ class _TreeViewState<T> extends State<TreeView<T>>
               _currentAnimationForParent[node]!.controller.dispose();
               _currentAnimationForParent.remove(node);
               _updateActiveAnimations();
+              // If the node is collapsing, we need to unpack the active
+              // nodes to remove the ones that were removed from the tree.
+              // This is only necessary if the node is collapsing.
+              if (!node._expanded) {
+                _unpackActiveNodes();
+              }
             case AnimationStatus.forward:
             case AnimationStatus.reverse:
           }
@@ -940,9 +956,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
           controller.forward();
         case false:
           // Collapsing
-          controller.reverse().then((_) {
-            _unpackActiveNodes();
-          });
+          controller.reverse();
       }
     });
   }

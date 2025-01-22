@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+#if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
 @import camera_avfoundation.Test;
+#endif
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
@@ -142,7 +144,7 @@ static const BOOL gTestEnableAudio = YES;
       [[TestMediaSettingsAVWrapper alloc] initWithTestCase:self];
 
   FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, injectedWrapper);
+      dispatch_queue_create("test", NULL), settings, injectedWrapper, nil);
 
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
@@ -198,6 +200,22 @@ static const BOOL gTestEnableAudio = YES;
 
   // Verify the result
   XCTAssertNotNil(resultValue);
+}
+
+- (void)testSettings_ShouldSelectFormatWhichSupports60FPS {
+  FCPPlatformMediaSettings *settings =
+      [FCPPlatformMediaSettings makeWithResolutionPreset:gTestResolutionPreset
+                                         framesPerSecond:@(60)
+                                            videoBitrate:@(gTestVideoBitrate)
+                                            audioBitrate:@(gTestAudioBitrate)
+                                             enableAudio:gTestEnableAudio];
+
+  FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
+      dispatch_queue_create("test", NULL), settings, nil, nil);
+
+  AVFrameRateRange *range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
+  XCTAssertLessThanOrEqual(range.minFrameRate, 60);
+  XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60);
 }
 
 @end

@@ -9,7 +9,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rfw/formats.dart' show parseLibraryFile;
 import 'package:rfw/rfw.dart';
 
+import 'tolerant_comparator.dart'
+    if (dart.library.js_interop) 'tolerant_comparator_web.dart';
 import 'utils.dart';
+
+/// A const to tell apart Wasm from JS web.
+///
+/// This is used below to do comparisons of numbers, where in JS a whole double
+/// is serialized as "2", in Wasm (and non-web platforms) it's "2.0".
+const bool kIsJS = kIsWeb && !kIsWasm;
 
 void main() {
   const LibraryName coreName = LibraryName(<String>['core']);
@@ -21,6 +29,13 @@ void main() {
       ..update(coreName, createCoreWidgets())
       ..update(materialName, createMaterialWidgets());
   }
+
+  setUpAll(() {
+    setUpTolerantComparator(
+      testPath: 'test/material_widget_test.dart',
+      precisionTolerance: 0.00002,
+    );
+  });
 
   testWidgets('Material widgets', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
@@ -194,7 +209,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.scaffold.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
 
     await tester.tap(find.byType(DropdownButton<Object>).first);
@@ -202,8 +219,8 @@ void main() {
     await expectLater(
       find.byType(MaterialApp),
       matchesGoldenFile('goldens/material_test.dropdown.png'),
-      // TODO(bparrishMines): Unskip once golden file is updated. See
-      // https://github.com/flutter/flutter/issues/150127
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
       skip: !runGoldens || true,
     );
     // Tap on the second item.
@@ -218,7 +235,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(eventLog, contains('menu_item {args: second}'));
     expect(eventLog,
-        contains(kIsWeb ? 'dropdown {value: 2}' : 'dropdown {value: 2.0}'));
+        contains(kIsJS ? 'dropdown {value: 2}' : 'dropdown {value: 2.0}'));
 
     await tester.tapAt(const Offset(20.0, 20.0));
     await tester.pump();
@@ -291,7 +308,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.button_bar_properties.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
 
     // Update the surface size for ButtonBar to overflow.
@@ -363,7 +382,9 @@ void main() {
       find.byType(RemoteWidget),
       matchesGoldenFile(
           'goldens/material_test.overflow_bar_resembles_button_bar.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
   });
 
@@ -438,7 +459,9 @@ void main() {
       find.byType(RemoteWidget),
       matchesGoldenFile(
           'goldens/material_test.overflow_bar_properties.overflow.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
   });
 
@@ -568,8 +591,8 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.material_properties.png'),
-      // TODO(bparrishMines): Unskip once golden file is updated. See
-      // https://github.com/flutter/flutter/issues/150127
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
       skip: !runGoldens || true,
     );
 
@@ -665,15 +688,15 @@ void main() {
     await _slideToValue(tester, sliderFinder, 20.0);
     await tester.pumpAndSettle();
     expect(eventLog,
-        contains(kIsWeb ? 'slider {value: 20}' : 'slider {value: 20.0}'));
+        contains(kIsJS ? 'slider {value: 20}' : 'slider {value: 20.0}'));
     expect(
         eventLog,
         contains(
-            kIsWeb ? 'slider.start {value: 0}' : 'slider.start {value: 0.0}'));
+            kIsJS ? 'slider.start {value: 0}' : 'slider.start {value: 0.0}'));
     expect(
         eventLog,
         contains(
-            kIsWeb ? 'slider.end {value: 20}' : 'slider.end {value: 20.0}'));
+            kIsJS ? 'slider.end {value: 20}' : 'slider.end {value: 20.0}'));
   });
 }
 

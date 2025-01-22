@@ -4,6 +4,8 @@
 
 #include "flutter_window.h"
 
+#include <flutter/binary_messenger.h>
+
 #include <memory>
 #include <optional>
 
@@ -11,8 +13,12 @@
 #include "messages.g.h"
 
 namespace {
+using pigeon_example::Code;
 using pigeon_example::ErrorOr;
 using pigeon_example::ExampleHostApi;
+using pigeon_example::FlutterError;
+using pigeon_example::MessageData;
+using pigeon_example::MessageFlutterApi;
 
 // #docregion cpp-class
 class PigeonApiImplementation : public ExampleHostApi {
@@ -29,7 +35,7 @@ class PigeonApiImplementation : public ExampleHostApi {
   }
   void SendMessage(const MessageData& message,
                    std::function<void(ErrorOr<bool> reply)> result) {
-    if (message.code == Code.one) {
+    if (message.code() == Code::kOne) {
       result(FlutterError("code", "message", "details"));
       return;
     }
@@ -37,6 +43,26 @@ class PigeonApiImplementation : public ExampleHostApi {
   }
 };
 // #enddocregion cpp-class
+
+// #docregion cpp-method-flutter
+class PigeonFlutterApi {
+ public:
+  PigeonFlutterApi(flutter::BinaryMessenger* messenger)
+      : flutterApi_(std::make_unique<MessageFlutterApi>(messenger)) {}
+
+  void CallFlutterMethod(
+      const std::string& a_string,
+      std::function<void(ErrorOr<std::string> reply)> result) {
+    flutterApi_->FlutterMethod(
+        &a_string, [result](const std::string& echo) { result(echo); },
+        [result](const FlutterError& error) { result(error); });
+  }
+
+ private:
+  std::unique_ptr<MessageFlutterApi> flutterApi_;
+};
+// #enddocregion cpp-method-flutter
+
 }  // namespace
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
@@ -48,15 +74,6 @@ bool FlutterWindow::OnCreate() {
   if (!Win32Window::OnCreate()) {
     return false;
   }
-
-  // #docregion cpp-method-flutter
-  void TestPlugin::CallFlutterMethod(
-      String aString, std::function<void(ErrorOr<int64_t> reply)> result) {
-    MessageFlutterApi->FlutterMethod(
-        aString, [result](String echo) { result(echo); },
-        [result](const FlutterError& error) { result(error); });
-  }
-  // #enddocregion cpp-method-flutter
 
   RECT frame = GetClientArea();
 

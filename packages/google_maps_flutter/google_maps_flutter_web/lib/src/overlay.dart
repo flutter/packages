@@ -49,7 +49,7 @@ class TileOverlayController {
     img.setAttribute('decoding', 'async');
 
     _tileOverlay.tileProvider!
-        .getTile(tileCoord!.x!.toInt(), tileCoord.y!.toInt(), zoom?.toInt())
+        .getTile(tileCoord!.x.toInt(), tileCoord.y.toInt(), zoom?.toInt())
         .then((Tile tile) {
       if (tile.data == null) {
         return;

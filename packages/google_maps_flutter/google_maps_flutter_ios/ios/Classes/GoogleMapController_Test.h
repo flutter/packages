@@ -13,11 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param mapView A map view that will be displayed by the controller
 /// @param viewId A unique identifier for the controller.
-/// @param args Parameters for initialising the map view.
+/// @param creationParameters Parameters for initialising the map view.
 /// @param registrar The plugin registrar passed from Flutter.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                  viewIdentifier:(int64_t)viewId
-                      arguments:(id _Nullable)args
+             creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 @end

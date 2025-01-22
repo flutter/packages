@@ -34,3 +34,15 @@ extension CreateScriptUrlNoArgs on web.TrustedTypePolicy {
     String input,
   );
 }
+
+/// This extension gives web.HTMLScriptElement a nullable getter to the
+/// `nonce` property, which needs to be used to check for feature support.
+extension NullableNonceGetter on web.HTMLScriptElement {
+  /// (Nullable) Bindings to HTMLScriptElement.nonce.
+  ///
+  /// This may be null if the browser doesn't support the Nonce API.
+  ///
+  /// See: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/nonce
+  @JS('nonce')
+  external String? get nullableNonce;
+}

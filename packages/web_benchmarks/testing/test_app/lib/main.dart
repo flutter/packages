@@ -3,32 +3,44 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:go_router/go_router.dart';
 
 import 'about_page.dart';
 import 'home_page.dart';
-import 'icon_page.dart';
 
 void main() {
+  usePathUrlStrategy();
   runApp(const MyApp());
 }
+
+final GoRouter _router = GoRouter(
+  routes: <GoRoute>[
+    GoRoute(
+      path: '/',
+      builder: (_, __) => const HomePage(title: 'Flutter Demo Home Page'),
+    ),
+    GoRoute(
+      path: '/about',
+      builder: (_, __) => const AboutPage(),
+    ),
+  ],
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: 'home',
-      routes: <String, WidgetBuilder>{
-        'home': (_) => const HomePage(title: 'Flutter Demo Home Page'),
-        'about': (_) => const AboutPage(),
-        'icon_generator': (_) => const IconGeneratorPage(),
-      },
+      routerConfig: _router,
+      // This blocks the About page button.
+      debugShowCheckedModeBanner: false,
     );
   }
 }

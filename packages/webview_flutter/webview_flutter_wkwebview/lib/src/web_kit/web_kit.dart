@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../common/instance_manager.dart';
 import '../foundation/foundation.dart';
 import '../ui_kit/ui_kit.dart';
+import '../ui_kit/ui_kit_api_impls.dart' show UIViewHostApiImpl;
 import 'web_kit_api_impls.dart';
 
 export 'web_kit_api_impls.dart'
@@ -1009,8 +1010,12 @@ class WKNavigationDelegate extends NSObject {
 /// Object that displays interactive web content, such as for an in-app browser.
 ///
 /// Wraps [WKWebView](https://developer.apple.com/documentation/webkit/wkwebview?language=objc).
+///
+/// This is abstract, since iOS and macOS WKWebViews have different
+/// implementation details; the concrete implementations are [WKWebViewIOS] and
+/// [WKWebViewMacOS].
 @immutable
-class WKWebView extends UIView {
+abstract class WKWebView extends NSObject {
   /// Constructs a [WKWebView].
   ///
   /// [configuration] contains the configuration details for the web view. This
@@ -1063,13 +1068,6 @@ class WKWebView extends UIView {
   /// property contains a default configuration object.
   late final WKWebViewConfiguration configuration =
       WKWebViewConfiguration.fromWebView(
-    this,
-    binaryMessenger: _webViewApi.binaryMessenger,
-    instanceManager: _webViewApi.instanceManager,
-  );
-
-  /// The scrollable view associated with the web view.
-  late final UIScrollView scrollView = UIScrollView.fromWebView(
     this,
     binaryMessenger: _webViewApi.binaryMessenger,
     instanceManager: _webViewApi.instanceManager,
@@ -1163,6 +1161,13 @@ class WKWebView extends UIView {
     return _webViewApi.getTitleForInstances(this);
   }
 
+  /// The custom user agent string.
+  ///
+  /// Represents [WKWebView.customUserAgent](https://developer.apple.com/documentation/webkit/wkwebview/1414950-customuseragent?language=objc).
+  Future<String?> getCustomUserAgent() {
+    return _webViewApi.getCustomUserAgentForInstances(this);
+  }
+
   /// Indicates whether horizontal swipe gestures trigger page navigation.
   ///
   /// The default value is false.
@@ -1212,17 +1217,89 @@ class WKWebView extends UIView {
       inspectable,
     );
   }
+}
 
-  /// The custom user agent string.
-  ///
-  /// Represents [WKWebView.customUserAgent](https://developer.apple.com/documentation/webkit/wkwebview/1414950-customuseragent?language=objc).
-  Future<String?> getCustomUserAgent() {
-    return _webViewApi.getCustomUserAgentForInstances(this);
-  }
+/// The iOS version of a WKWebView.
+class WKWebViewIOS extends WKWebView implements UIView {
+  /// Constructs a new iOS WKWebView; see [WKWebView] for details.
+  WKWebViewIOS(
+    super.configuration, {
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _viewApi = UIViewHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super();
+
+  /// See [WKWebView.detached].
+  WKWebViewIOS.detached({
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  })  : _viewApi = UIViewHostApiImpl(
+          binaryMessenger: binaryMessenger,
+          instanceManager: instanceManager,
+        ),
+        super.detached();
+
+  /// The scrollable view associated with the web view.
+  late final UIScrollView scrollView = UIScrollView.fromWebView(
+    this,
+    binaryMessenger: _webViewApi.binaryMessenger,
+    instanceManager: _webViewApi.instanceManager,
+  );
 
   @override
   WKWebView copy() {
-    return WKWebView.detached(
+    return WKWebViewIOS.detached(
+      observeValue: observeValue,
+      binaryMessenger: _webViewApi.binaryMessenger,
+      instanceManager: _webViewApi.instanceManager,
+    );
+  }
+
+  final UIViewHostApiImpl _viewApi;
+
+  // UIView implementations. This is duplicated from the UIViewBase class since
+  // WKWebView can't inherit from UIView, so this is a workaround to multiple
+  // inheritance limitations. This is a way of dealing with the lack of
+  // preprocessor in Dart, which is how the native side has different base
+  // classes. If the amount of code here grows, this could become a mixin used
+  // by both UIViewBase and this class (at the cost of exposing the view API
+  // object, or adjusting files to allow it to stay private).
+  @override
+  Future<void> setBackgroundColor(Color? color) {
+    return _viewApi.setBackgroundColorForInstances(this, color);
+  }
+
+  @override
+  Future<void> setOpaque(bool opaque) {
+    return _viewApi.setOpaqueForInstances(this, opaque);
+  }
+}
+
+/// The macOS version of a WKWebView.
+class WKWebViewMacOS extends WKWebView {
+  /// Constructs a new macOS WKWebView; see [WKWebView] for details.
+  WKWebViewMacOS(
+    super.configuration, {
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super();
+
+  /// See [WKWebView.detached].
+  WKWebViewMacOS.detached({
+    super.observeValue,
+    super.binaryMessenger,
+    super.instanceManager,
+  }) : super.detached();
+
+  @override
+  WKWebView copy() {
+    return WKWebViewMacOS.detached(
       observeValue: observeValue,
       binaryMessenger: _webViewApi.binaryMessenger,
       instanceManager: _webViewApi.instanceManager,

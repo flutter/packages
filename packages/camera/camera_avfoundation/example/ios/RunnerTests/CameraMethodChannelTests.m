@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 @import camera_avfoundation;
+#if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
 @import camera_avfoundation.Test;
+#endif
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
@@ -46,6 +48,44 @@
 
   // Verify the result
   XCTAssertNotNil(resultValue);
+}
+
+- (void)testDisposeShouldDeallocCamera {
+  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+
+  id avCaptureDeviceInputMock = OCMClassMock([AVCaptureDeviceInput class]);
+  OCMStub([avCaptureDeviceInputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg anyObjectRef]])
+      .andReturn([AVCaptureInput alloc]);
+
+  id avCaptureSessionMock = OCMClassMock([AVCaptureSession class]);
+  OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
+  OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
+
+  XCTestExpectation *createExpectation =
+      [self expectationWithDescription:@"create's result block must be called"];
+  [camera createCameraOnSessionQueueWithName:@"acamera"
+                                    settings:[FCPPlatformMediaSettings
+                                                 makeWithResolutionPreset:
+                                                     FCPPlatformResolutionPresetMedium
+                                                          framesPerSecond:nil
+                                                             videoBitrate:nil
+                                                             audioBitrate:nil
+                                                              enableAudio:YES]
+                                  completion:^(NSNumber *_Nullable result,
+                                               FlutterError *_Nullable error) {
+                                    [createExpectation fulfill];
+                                  }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertNotNil(camera.camera);
+
+  XCTestExpectation *disposeExpectation =
+      [self expectationWithDescription:@"dispose's result block must be called"];
+  [camera disposeCamera:0
+             completion:^(FlutterError *_Nullable error) {
+               [disposeExpectation fulfill];
+             }];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
+  XCTAssertNil(camera.camera, @"camera should be deallocated after dispose");
 }
 
 @end

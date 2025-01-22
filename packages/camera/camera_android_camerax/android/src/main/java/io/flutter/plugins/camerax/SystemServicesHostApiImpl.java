@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -102,5 +103,19 @@ public class SystemServicesHostApiImpl implements SystemServicesHostApi {
           "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e.toString(),
           null);
     }
+  }
+
+  /**
+   * Returns whether or not Impeller uses an {@code ImageReader} backend to provide a {@code
+   * Surface} to CameraX to build the preview. If it is backed by an {@code ImageReader}, then
+   * CameraX will not automatically apply the transformation needed to correct the preview.
+   *
+   * <p>This is determined by the engine, which approximately uses {@code SurfaceTexture}s on
+   * Android SDKs below 29.
+   */
+  @Override
+  @NonNull
+  public Boolean isPreviewPreTransformed() {
+    return Build.VERSION.SDK_INT < 29;
   }
 }

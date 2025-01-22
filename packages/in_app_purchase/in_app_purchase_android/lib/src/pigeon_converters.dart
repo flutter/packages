@@ -2,8 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+
 import '../billing_client_wrappers.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
+import 'billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'messages.g.dart';
 
 /// Converts a [BillingChoiceMode] to the Pigeon equivalent.
@@ -21,8 +24,7 @@ PlatformBillingChoiceMode platformBillingChoiceMode(BillingChoiceMode mode) {
 /// Creates a [BillingResultWrapper] from the Pigeon equivalent.
 BillingResultWrapper resultWrapperFromPlatform(PlatformBillingResult result) {
   return BillingResultWrapper(
-      responseCode:
-          const BillingResponseConverter().fromJson(result.responseCode),
+      responseCode: billingResponseFromPlatform(result.responseCode),
       debugMessage: result.debugMessage);
 }
 
@@ -32,8 +34,6 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
   return ProductDetailsResponseWrapper(
       billingResult: resultWrapperFromPlatform(response.billingResult),
       productDetailsList: response.productDetails
-          // See TODOs in messages.dart for why casting away nullability is safe.
-          .map((PlatformProductDetails? p) => p!)
           .map(productDetailsWrapperFromPlatform)
           .toList());
 }
@@ -50,9 +50,7 @@ ProductDetailsWrapper productDetailsWrapperFromPlatform(
     oneTimePurchaseOfferDetails: oneTimePurchaseOfferDetailsWrapperFromPlatform(
         product.oneTimePurchaseOfferDetails),
     subscriptionOfferDetails: product.subscriptionOfferDetails
-        // See comment in messages.dart for why casting away nullability is safe.
-        ?.map((PlatformSubscriptionOfferDetails? o) => o!)
-        .map(subscriptionOfferDetailsWrapperFromPlatform)
+        ?.map(subscriptionOfferDetailsWrapperFromPlatform)
         .toList(),
   );
 }
@@ -77,8 +75,6 @@ PurchasesHistoryResult purchaseHistoryResultFromPlatform(
   return PurchasesHistoryResult(
     billingResult: resultWrapperFromPlatform(response.billingResult),
     purchaseHistoryRecordList: response.purchases
-        // See comment in messages.dart for why casting away nullability is safe.
-        .map((PlatformPurchaseHistoryRecord? r) => r!)
         .map(purchaseHistoryRecordWrapperFromPlatform)
         .toList(),
   );
@@ -91,8 +87,7 @@ PurchaseHistoryRecordWrapper purchaseHistoryRecordWrapperFromPlatform(
     purchaseTime: record.purchaseTime,
     purchaseToken: record.purchaseToken,
     signature: record.signature,
-    // See comment in messages.dart for why casting away nullability is safe.
-    products: record.products.map((String? s) => s!).toList(),
+    products: record.products,
     originalJson: record.originalJson,
     developerPayload: record.developerPayload,
   );
@@ -104,15 +99,10 @@ PurchasesResultWrapper purchasesResultWrapperFromPlatform(
     {bool forceOkResponseCode = false}) {
   return PurchasesResultWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    purchasesList: response.purchases
-        // See TODOs in messages.dart for why casting away nullability is safe.
-        .map((PlatformPurchase? p) => p!)
-        .map(purchaseWrapperFromPlatform)
-        .toList(),
+    purchasesList: response.purchases.map(purchaseWrapperFromPlatform).toList(),
     responseCode: forceOkResponseCode
         ? BillingResponse.ok
-        : const BillingResponseConverter()
-            .fromJson(response.billingResult.responseCode),
+        : billingResponseFromPlatform(response.billingResult.responseCode),
   );
 }
 
@@ -122,8 +112,9 @@ AlternativeBillingOnlyReportingDetailsWrapper
     alternativeBillingOnlyReportingDetailsWrapperFromPlatform(
         PlatformAlternativeBillingOnlyReportingDetailsResponse response) {
   return AlternativeBillingOnlyReportingDetailsWrapper(
-    responseCode: const BillingResponseConverter()
-        .fromJson(response.billingResult.responseCode),
+    responseCode: billingResponseFromPlatform(
+      response.billingResult.responseCode,
+    ),
     debugMessage: response.billingResult.debugMessage,
     externalTransactionToken: response.externalTransactionToken,
   );
@@ -133,8 +124,9 @@ AlternativeBillingOnlyReportingDetailsWrapper
 BillingConfigWrapper billingConfigWrapperFromPlatform(
     PlatformBillingConfigResponse response) {
   return BillingConfigWrapper(
-    responseCode: const BillingResponseConverter()
-        .fromJson(response.billingResult.responseCode),
+    responseCode: billingResponseFromPlatform(
+      response.billingResult.responseCode,
+    ),
     debugMessage: response.billingResult.debugMessage,
     countryCode: response.countryCode,
   );
@@ -185,8 +177,7 @@ PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
     purchaseTime: purchase.purchaseTime,
     purchaseToken: purchase.purchaseToken,
     signature: purchase.signature,
-    // See comment in messages.dart for why casting away nullability is safe.
-    products: purchase.products.map((String? s) => s!).toList(),
+    products: purchase.products,
     isAutoRenewing: purchase.isAutoRenewing,
     originalJson: purchase.originalJson,
     isAcknowledged: purchase.isAcknowledged,
@@ -194,7 +185,21 @@ PurchaseWrapper purchaseWrapperFromPlatform(PlatformPurchase purchase) {
     developerPayload: purchase.developerPayload,
     obfuscatedAccountId: purchase.accountIdentifiers?.obfuscatedAccountId,
     obfuscatedProfileId: purchase.accountIdentifiers?.obfuscatedProfileId,
+    pendingPurchaseUpdate:
+        pendingPurchaseUpdateFromPlatform(purchase.pendingPurchaseUpdate),
   );
+}
+
+/// Creates a [PendingPurchaseUpdateWrapper] from the Pigeon equivalent.
+PendingPurchaseUpdateWrapper? pendingPurchaseUpdateFromPlatform(
+    PlatformPendingPurchaseUpdate? pendingPurchaseUpdate) {
+  if (pendingPurchaseUpdate == null) {
+    return null;
+  }
+
+  return PendingPurchaseUpdateWrapper(
+      purchaseToken: pendingPurchaseUpdate.purchaseToken,
+      products: pendingPurchaseUpdate.products);
 }
 
 /// Creates a [PurchaseStateWrapper] from the Pigeon equivalent.
@@ -204,6 +209,15 @@ PurchaseStateWrapper purchaseStateWrapperFromPlatform(
     PlatformPurchaseState.unspecified => PurchaseStateWrapper.unspecified_state,
     PlatformPurchaseState.purchased => PurchaseStateWrapper.purchased,
     PlatformPurchaseState.pending => PurchaseStateWrapper.pending,
+  };
+}
+
+/// Converts [PurchaseStateWrapper] to [PurchaseStatus].
+PurchaseStatus purchaseStatusFromWrapper(PurchaseStateWrapper purchaseState) {
+  return switch (purchaseState) {
+    PurchaseStateWrapper.unspecified_state => PurchaseStatus.error,
+    PurchaseStateWrapper.purchased => PurchaseStatus.purchased,
+    PurchaseStateWrapper.pending => PurchaseStatus.pending,
   };
 }
 
@@ -223,14 +237,12 @@ SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
   return SubscriptionOfferDetailsWrapper(
     basePlanId: offer.basePlanId,
     offerId: offer.offerId,
-    // See comment in messages.dart for why casting away nullability is safe.
-    offerTags: offer.offerTags.map((String? s) => s!).toList(),
+    offerTags: offer.offerTags,
     offerIdToken: offer.offerToken,
-    pricingPhases: offer.pricingPhases
-        // See comment in messages.dart for why casting away nullability is safe.
-        .map((PlatformPricingPhase? p) => p!)
-        .map(pricingPhaseWrapperFromPlatform)
-        .toList(),
+    pricingPhases:
+        offer.pricingPhases.map(pricingPhaseWrapperFromPlatform).toList(),
+    installmentPlanDetails:
+        installmentPlanDetailsFromPlatform(offer.installmentPlanDetails),
   );
 }
 
@@ -240,11 +252,8 @@ UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
   return UserChoiceDetailsWrapper(
     originalExternalTransactionId: details.originalExternalTransactionId ?? '',
     externalTransactionToken: details.externalTransactionToken,
-    products: details.products
-        // See comment in messages.dart for why casting away nullability is safe.
-        .map((PlatformUserChoiceProduct? p) => p!)
-        .map(userChoiceDetailsProductFromPlatform)
-        .toList(),
+    products:
+        details.products.map(userChoiceDetailsProductFromPlatform).toList(),
   );
 }
 
@@ -256,4 +265,116 @@ UserChoiceDetailsProductWrapper userChoiceDetailsProductFromPlatform(
     offerToken: product.offerToken ?? '',
     productType: productTypeFromPlatform(product.type),
   );
+}
+
+/// Creates a [InstallmentPlanDetailsWrapper] from the Pigeon equivalent.
+InstallmentPlanDetailsWrapper? installmentPlanDetailsFromPlatform(
+    PlatformInstallmentPlanDetails? details) {
+  if (details == null) {
+    return null;
+  }
+
+  return InstallmentPlanDetailsWrapper(
+    commitmentPaymentsCount: details.commitmentPaymentsCount,
+    subsequentCommitmentPaymentsCount:
+        details.subsequentCommitmentPaymentsCount,
+  );
+}
+
+/// Converts a [PendingPurchasesParamsWrapper] to its Pigeon equivalent.
+PlatformPendingPurchasesParams pendingPurchasesParamsFromWrapper(
+    PendingPurchasesParamsWrapper params) {
+  return PlatformPendingPurchasesParams(
+    enablePrepaidPlans: params.enablePrepaidPlans,
+  );
+}
+
+/// Converts [PlatformBillingResponse] to its public API enum equivalent.
+BillingResponse billingResponseFromPlatform(
+    PlatformBillingResponse responseCode) {
+  return switch (responseCode) {
+    PlatformBillingResponse.serviceTimeout => BillingResponse.serviceTimeout,
+    PlatformBillingResponse.featureNotSupported =>
+      BillingResponse.featureNotSupported,
+    PlatformBillingResponse.serviceDisconnected =>
+      BillingResponse.serviceDisconnected,
+    PlatformBillingResponse.ok => BillingResponse.ok,
+    PlatformBillingResponse.userCanceled => BillingResponse.userCanceled,
+    PlatformBillingResponse.serviceUnavailable =>
+      BillingResponse.serviceUnavailable,
+    PlatformBillingResponse.billingUnavailable =>
+      BillingResponse.billingUnavailable,
+    PlatformBillingResponse.itemUnavailable => BillingResponse.itemUnavailable,
+    PlatformBillingResponse.developerError => BillingResponse.developerError,
+    PlatformBillingResponse.error => BillingResponse.error,
+    PlatformBillingResponse.itemAlreadyOwned =>
+      BillingResponse.itemAlreadyOwned,
+    PlatformBillingResponse.itemNotOwned => BillingResponse.itemNotOwned,
+    PlatformBillingResponse.networkError => BillingResponse.networkError,
+  };
+}
+
+/// Converts a [BillingResponse] to its Pigeon equivalent.
+PlatformBillingResponse billingResponseFromWrapper(
+    BillingResponse responseCode) {
+  return switch (responseCode) {
+    BillingResponse.serviceTimeout => PlatformBillingResponse.serviceTimeout,
+    BillingResponse.featureNotSupported =>
+      PlatformBillingResponse.featureNotSupported,
+    BillingResponse.serviceDisconnected =>
+      PlatformBillingResponse.serviceDisconnected,
+    BillingResponse.ok => PlatformBillingResponse.ok,
+    BillingResponse.userCanceled => PlatformBillingResponse.userCanceled,
+    BillingResponse.serviceUnavailable =>
+      PlatformBillingResponse.serviceUnavailable,
+    BillingResponse.billingUnavailable =>
+      PlatformBillingResponse.billingUnavailable,
+    BillingResponse.itemUnavailable => PlatformBillingResponse.itemUnavailable,
+    BillingResponse.developerError => PlatformBillingResponse.developerError,
+    BillingResponse.error => PlatformBillingResponse.error,
+    BillingResponse.itemAlreadyOwned =>
+      PlatformBillingResponse.itemAlreadyOwned,
+    BillingResponse.itemNotOwned => PlatformBillingResponse.itemNotOwned,
+    BillingResponse.networkError => PlatformBillingResponse.networkError,
+  };
+}
+
+/// Converts [ReplacementMode] enum to its Pigeon equivalent.
+PlatformReplacementMode replacementModeFromWrapper(
+    ReplacementMode replacementMode) {
+  return switch (replacementMode) {
+    ReplacementMode.unknownReplacementMode =>
+      PlatformReplacementMode.unknownReplacementMode,
+    ReplacementMode.withTimeProration =>
+      PlatformReplacementMode.withTimeProration,
+    ReplacementMode.chargeProratedPrice =>
+      PlatformReplacementMode.chargeProratedPrice,
+    ReplacementMode.withoutProration =>
+      PlatformReplacementMode.withoutProration,
+    ReplacementMode.deferred => PlatformReplacementMode.deferred,
+    ReplacementMode.chargeFullPrice => PlatformReplacementMode.chargeFullPrice,
+  };
+}
+
+/// Converts [BillingClientFeature] enum to its Pigeon equivalent.
+PlatformBillingClientFeature billingClientFeatureFromWrapper(
+    BillingClientFeature feature) {
+  return switch (feature) {
+    BillingClientFeature.alternativeBillingOnly =>
+      PlatformBillingClientFeature.alternativeBillingOnly,
+    BillingClientFeature.priceChangeConfirmation =>
+      PlatformBillingClientFeature.priceChangeConfirmation,
+    BillingClientFeature.productDetails =>
+      PlatformBillingClientFeature.productDetails,
+    BillingClientFeature.subscriptions =>
+      PlatformBillingClientFeature.subscriptions,
+    BillingClientFeature.subscriptionsUpdate =>
+      PlatformBillingClientFeature.subscriptionsUpdate,
+    BillingClientFeature.billingConfig =>
+      PlatformBillingClientFeature.billingConfig,
+    BillingClientFeature.externalOffer =>
+      PlatformBillingClientFeature.externalOffer,
+    BillingClientFeature.inAppMessaging =>
+      PlatformBillingClientFeature.inAppMessaging,
+  };
 }

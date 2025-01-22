@@ -66,13 +66,13 @@ TEST(NullFields, BuildWithValues) {
   reply.set_error("error");
   reply.set_indices(EncodableList({1, 2, 3}));
   reply.set_request(request);
-  reply.set_type(NullFieldsSearchReplyType::success);
+  reply.set_type(NullFieldsSearchReplyType::kSuccess);
 
   EXPECT_EQ(*reply.result(), "result");
   EXPECT_EQ(*reply.error(), "error");
   EXPECT_EQ(reply.indices()->size(), 3);
   EXPECT_EQ(*reply.request()->query(), "hello");
-  EXPECT_EQ(*reply.type(), NullFieldsSearchReplyType::success);
+  EXPECT_EQ(*reply.type(), NullFieldsSearchReplyType::kSuccess);
 }
 
 TEST(NullFields, BuildRequestWithNulls) {
@@ -92,9 +92,10 @@ TEST(NullFields, BuildReplyWithNulls) {
 }
 
 TEST_F(NullFieldsTest, RequestFromListWithValues) {
+  int64_t one = 1;
   EncodableList list{
       EncodableValue("hello"),
-      EncodableValue(1),
+      EncodableValue(one),
   };
   NullFieldsSearchRequest request = RequestFromList(list);
 
@@ -103,9 +104,10 @@ TEST_F(NullFieldsTest, RequestFromListWithValues) {
 }
 
 TEST_F(NullFieldsTest, RequestFromListWithNulls) {
+  int64_t one = 1;
   EncodableList list{
       EncodableValue(),
-      EncodableValue(1),
+      EncodableValue(one),
   };
   NullFieldsSearchRequest request = RequestFromList(list);
 
@@ -121,7 +123,7 @@ TEST_F(NullFieldsTest, ReplyFromListWithValues) {
       EncodableValue("error"),
       EncodableValue(EncodableList({1, 2, 3})),
       CustomEncodableValue(request),
-      CustomEncodableValue(NullFieldsSearchReplyType::success),
+      CustomEncodableValue(NullFieldsSearchReplyType::kSuccess),
   };
   NullFieldsSearchReply reply = ReplyFromList(list);
 
@@ -130,7 +132,7 @@ TEST_F(NullFieldsTest, ReplyFromListWithValues) {
   EXPECT_EQ(reply.indices()->size(), 3);
   EXPECT_EQ(*reply.request()->query(), "hello");
   EXPECT_EQ(reply.request()->identifier(), 1);
-  EXPECT_EQ(*reply.type(), NullFieldsSearchReplyType::success);
+  EXPECT_EQ(*reply.type(), NullFieldsSearchReplyType::kSuccess);
 }
 
 TEST_F(NullFieldsTest, ReplyFromListWithNulls) {
@@ -178,7 +180,7 @@ TEST_F(NullFieldsTest, ReplyToMapWithValues) {
   reply.set_error("error");
   reply.set_indices(EncodableList({1, 2, 3}));
   reply.set_request(request);
-  reply.set_type(NullFieldsSearchReplyType::success);
+  reply.set_type(NullFieldsSearchReplyType::kSuccess);
 
   const EncodableList list = ListFromReply(reply);
 

@@ -17,5 +17,13 @@ void main() {
     await tester.tap(find.text('Go to the Settings screen'));
     await tester.pumpAndSettle();
     expect(find.byType(example.SettingsScreen), findsOneWidget);
+
+    await tester.tap(find.text('Go back'));
+    await tester.pumpAndSettle();
+    expect(find.byType(example.DetailsScreen), findsOneWidget);
+
+    await tester.tap(find.text('Go back'));
+    await tester.pumpAndSettle();
+    expect(find.byType(example.HomeScreen), findsOneWidget);
   });
 }

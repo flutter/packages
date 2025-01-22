@@ -3,12 +3,10 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i4;
+import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:webview_flutter_android/src/android_webview.dart' as _i2;
-
-import 'test_android_webview.g.dart' as _i3;
+import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -23,8 +21,9 @@ import 'test_android_webview.g.dart' as _i3;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeJavaObject_0 extends _i1.SmartFake implements _i2.JavaObject {
-  _FakeJavaObject_0(
+class _FakePigeonInstanceManager_0 extends _i1.SmartFake
+    implements _i2.PigeonInstanceManager {
+  _FakePigeonInstanceManager_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -33,23 +32,26 @@ class _FakeJavaObject_0 extends _i1.SmartFake implements _i2.JavaObject {
         );
 }
 
-/// A class which mocks [TestInstanceManagerHostApi].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockTestInstanceManagerHostApi extends _i1.Mock
-    implements _i3.TestInstanceManagerHostApi {
-  MockTestInstanceManagerHostApi() {
-    _i1.throwOnMissingStub(this);
-  }
+class _FakeHttpAuthHandler_1 extends _i1.SmartFake
+    implements _i2.HttpAuthHandler {
+  _FakeHttpAuthHandler_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
 
-  @override
-  void clear() => super.noSuchMethod(
-        Invocation.method(
-          #clear,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+class _FakeDownloadListener_2 extends _i1.SmartFake
+    implements _i2.DownloadListener {
+  _FakeDownloadListener_2(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
 }
 
 /// A class which mocks [HttpAuthHandler].
@@ -61,17 +63,35 @@ class MockHttpAuthHandler extends _i1.Mock implements _i2.HttpAuthHandler {
   }
 
   @override
-  _i4.Future<void> cancel() => (super.noSuchMethod(
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i3.Future<bool> useHttpAuthUsernamePassword() => (super.noSuchMethod(
+        Invocation.method(
+          #useHttpAuthUsernamePassword,
+          [],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<void> cancel() => (super.noSuchMethod(
         Invocation.method(
           #cancel,
           [],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i4.Future<void> proceed(
+  _i3.Future<void> proceed(
     String? username,
     String? password,
   ) =>
@@ -83,31 +103,82 @@ class MockHttpAuthHandler extends _i1.Mock implements _i2.HttpAuthHandler {
             password,
           ],
         ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i4.Future<bool> useHttpAuthUsernamePassword() => (super.noSuchMethod(
+  _i2.HttpAuthHandler pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
-          #useHttpAuthUsernamePassword,
+          #pigeon_copy,
           [],
         ),
-        returnValue: _i4.Future<bool>.value(false),
-      ) as _i4.Future<bool>);
-
-  @override
-  _i2.JavaObject copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeJavaObject_0(
+        returnValue: _FakeHttpAuthHandler_1(
           this,
           Invocation.method(
-            #copy,
+            #pigeon_copy,
             [],
           ),
         ),
-      ) as _i2.JavaObject);
+      ) as _i2.HttpAuthHandler);
+}
+
+/// A class which mocks [DownloadListener].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
+  MockDownloadListener() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void Function(
+    _i2.DownloadListener,
+    String,
+    String,
+    String,
+    String,
+    int,
+  ) get onDownloadStart => (super.noSuchMethod(
+        Invocation.getter(#onDownloadStart),
+        returnValue: (
+          _i2.DownloadListener pigeon_instance,
+          String url,
+          String userAgent,
+          String contentDisposition,
+          String mimetype,
+          int contentLength,
+        ) {},
+      ) as void Function(
+        _i2.DownloadListener,
+        String,
+        String,
+        String,
+        String,
+        int,
+      ));
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i2.DownloadListener pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeDownloadListener_2(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.DownloadListener);
 }

@@ -1,3 +1,25 @@
+## 2.5.4
+
+* Updates Pigeon to fix lint error.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.5.3
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 2.5.2
+
+* Fixes getting all preferences when suite name is used.
+
+## 2.5.1
+
+* Fixes `getStringList` returning immutable list.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.5.0
+
+* Adds new `SharedPreferencesAsyncFoundation` API.
+
 ## 2.4.0
 
 * Adds Swift Package Manager compatibility.

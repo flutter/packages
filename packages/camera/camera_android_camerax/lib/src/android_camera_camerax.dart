@@ -233,6 +233,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   static const String exposureCompensationNotSupported =
       'exposureCompensationNotSupported';
 
+  /// Whether or not the created camera is front facing.
+  @visibleForTesting
+  late bool cameraIsFrontFacing;
+
+  /// The camera sensor orientation.
+  @visibleForTesting
+  late int sensorOrientation;
+
+  /// Subscription for listening to changes in device orientation.
+  StreamSubscription<DeviceOrientationChangedEvent>?
+      _subscriptionForDeviceOrientationChanges;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -321,7 +333,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Save CameraSelector that matches cameraDescription.
     final int cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
-    final bool cameraIsFrontFacing =
+    cameraIsFrontFacing =
         cameraSelectorLensDirection == CameraSelector.lensFacingFront;
     cameraSelector = proxy.createCameraSelector(cameraSelectorLensDirection);
     // Start listening for device orientation changes preceding camera creation.
@@ -365,6 +377,13 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
+
+    // Retrieve info required for correcting the rotation of the camera preview
+    // if necessary.
+
+    final Camera2CameraInfo camera2CameraInfo =
+        await proxy.getCamera2CameraInfo(cameraInfo!);
+    sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
 
     return flutterSurfaceTextureId;
   }
@@ -425,6 +444,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     await liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
+    await _subscriptionForDeviceOrientationChanges?.cancel();
   }
 
   /// The camera has been initialized.
@@ -815,6 +835,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         "Camera not found. Please call the 'create' method before calling 'buildPreview'",
       );
     }
+
     return Texture(textureId: cameraId);
   }
 
@@ -902,16 +923,15 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> startVideoRecording(int cameraId,
       {Duration? maxVideoDuration}) async {
-    return startVideoCapturing(
-        VideoCaptureOptions(cameraId, maxDuration: maxVideoDuration));
+    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
+    return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
 
   /// Starts a video recording and/or streaming session.
   ///
   /// Please see [VideoCaptureOptions] for documentation on the
-  /// configuration options. Currently, maxVideoDuration and streamOptions
-  /// are unsupported due to the limitations of CameraX and the platform
-  /// interface, respectively.
+  /// configuration options. Currently streamOptions are unsupported due to
+  /// limitations of the platform interface.
   @override
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
     if (recording != null) {
@@ -1041,6 +1061,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       await recording!.resume();
     }
   }
+
+  @override
+  bool supportsImageStreaming() => true;
 
   /// A new streamed frame is available.
   ///

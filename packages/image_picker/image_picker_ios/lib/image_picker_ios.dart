@@ -88,7 +88,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<dynamic> paths = await _pickMultiImageAsPath(
+    final List<String> paths = await _pickMultiImageAsPath(
       options: MultiImagePickerOptions(
         imageOptions: ImageOptions(
           maxWidth: maxWidth,
@@ -103,7 +103,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
       return null;
     }
 
-    return paths.map((dynamic path) => PickedFile(path as String)).toList();
+    return paths.map((String path) => PickedFile(path)).toList();
   }
 
   @override
@@ -138,15 +138,12 @@ class ImagePickerIOS extends ImagePickerPlatform {
       throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
 
-    // TODO(stuartmorgan): Remove the cast once Pigeon supports non-nullable
-    //  generics, https://github.com/flutter/flutter/issues/97848
-    return (await _hostApi.pickMultiImage(
+    return _hostApi.pickMultiImage(
       MaxSize(width: maxWidth, height: maxHeight),
       imageQuality,
       options.imageOptions.requestFullMetadata,
       limit,
-    ))
-        .cast<String>();
+    );
   }
 
   Future<String?> _pickImageAsPath({

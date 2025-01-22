@@ -387,4 +387,81 @@ void main() {
 
     expect(() => a.apisOfInterfaces(), throwsArgumentError);
   });
+
+  test('findHighestApiRequirement', () {
+    final TypeDeclaration typeWithoutMinApi = TypeDeclaration(
+      baseName: 'TypeWithoutMinApi',
+      isNullable: false,
+      associatedProxyApi: AstProxyApi(
+        name: 'TypeWithoutMinApi',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      ),
+    );
+
+    final TypeDeclaration typeWithMinApi = TypeDeclaration(
+      baseName: 'TypeWithMinApi',
+      isNullable: false,
+      associatedProxyApi: AstProxyApi(
+        name: 'TypeWithMinApi',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      ),
+    );
+
+    final TypeDeclaration typeWithHighestMinApi = TypeDeclaration(
+      baseName: 'TypeWithHighestMinApi',
+      isNullable: false,
+      associatedProxyApi: AstProxyApi(
+        name: 'TypeWithHighestMinApi',
+        methods: <Method>[],
+        constructors: <Constructor>[],
+        fields: <ApiField>[],
+      ),
+    );
+
+    final ({TypeDeclaration type, int version})? result =
+        findHighestApiRequirement(
+      <TypeDeclaration>[
+        typeWithoutMinApi,
+        typeWithMinApi,
+        typeWithHighestMinApi,
+      ],
+      onGetApiRequirement: (TypeDeclaration type) {
+        if (type == typeWithMinApi) {
+          return 1;
+        } else if (type == typeWithHighestMinApi) {
+          return 2;
+        }
+
+        return null;
+      },
+      onCompare: (int one, int two) => one.compareTo(two),
+    );
+
+    expect(result?.type, typeWithHighestMinApi);
+    expect(result?.version, 2);
+  });
+
+  test('Indent.format trims indentation', () {
+    final StringBuffer buffer = StringBuffer();
+    final Indent indent = Indent(buffer);
+
+    indent.format(
+      '''
+      void myMethod() {
+
+        print('hello');
+      }''',
+    );
+
+    expect(buffer.toString(), '''
+void myMethod() {
+
+  print('hello');
+}
+''');
+  });
 }

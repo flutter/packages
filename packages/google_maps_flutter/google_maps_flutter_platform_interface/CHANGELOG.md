@@ -1,3 +1,38 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.9.5
+
+* Converts `BitmapDescriptor` to typesafe structures.
+
+## 2.9.4
+
+* Converts `PatternItem` to typesafe structure.
+* Converts `Cap` to typesafe structure.
+
+## 2.9.3
+
+* Corrects an incorrect comment in polyline.dart file.
+
+## 2.9.2
+
+* Corrects JSON tag for `CameraUpdateNewLatLngBounds`.
+
+## 2.9.1
+
+* Splits CameraUpdate into dervied classes for different update cases.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.9.0
+
+* Adds support for heatmap layers.
+
+## 2.8.0
+
+* Deprecates `BitmapDescriptor.fromAssetImage` in favor of `BitmapDescriptor.asset` and `AssetMapBitmap.create`.
+* Deprecates `BitmapDescriptor.fromBytes` in favor of `BitmapDescriptor.bytes` and `BytesMapBitmap`
+
 ## 2.7.1
 
 * Undeprecates `BitmapDescriptor.fromAssetImage`.

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:image_picker_android/image_picker_android.dart';
@@ -966,7 +967,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
   _LastPickType? lastCall;
 
   @override
-  Future<List<String?>> pickImages(
+  Future<List<String>> pickImages(
     SourceSpecification source,
     ImageSelectionOptions options,
     GeneralOptions generalOptions,
@@ -977,11 +978,11 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedAllowMultiple = generalOptions.allowMultiple;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
     limit = generalOptions.limit;
-    return returnValue as List<String?>? ?? <String>[];
+    return returnValue as List<String>? ?? <String>[];
   }
 
   @override
-  Future<List<String?>> pickMedia(
+  Future<List<String>> pickMedia(
     MediaSelectionOptions options,
     GeneralOptions generalOptions,
   ) async {
@@ -990,11 +991,11 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
     passedAllowMultiple = generalOptions.allowMultiple;
     limit = generalOptions.limit;
-    return returnValue as List<String?>? ?? <String>[];
+    return returnValue as List<String>? ?? <String>[];
   }
 
   @override
-  Future<List<String?>> pickVideos(
+  Future<List<String>> pickVideos(
     SourceSpecification source,
     VideoSelectionOptions options,
     GeneralOptions generalOptions,
@@ -1004,11 +1005,19 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedVideoOptions = options;
     passedAllowMultiple = generalOptions.allowMultiple;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
-    return returnValue as List<String?>? ?? <String>[];
+    return returnValue as List<String>? ?? <String>[];
   }
 
   @override
   Future<CacheRetrievalResult?> retrieveLostResults() async {
     return returnValue as CacheRetrievalResult?;
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }
