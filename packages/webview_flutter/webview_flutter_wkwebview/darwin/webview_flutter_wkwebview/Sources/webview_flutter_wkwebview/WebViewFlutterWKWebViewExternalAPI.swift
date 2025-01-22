@@ -24,7 +24,7 @@ public class FWFWebViewFlutterWKWebViewExternalAPI: NSObject {
   ///
   /// See the Dart method `WebKitWebViewController.webViewIdentifier` to get the identifier of an
   /// underlying `WKWebView`.
-  @objc
+  @objc(webViewForIdentifier:withPluginRegistry:)
   public static func webView(
     forIdentifier identifier: Int64, with registry: FlutterPluginRegistry
   ) -> WKWebView? {
