@@ -61,7 +61,7 @@ VectorGraphic createCompatVectorGraphic({
   String? semanticsLabel,
   bool excludeFromSemantics = false,
   Clip clipBehavior = Clip.hardEdge,
-  Duration transitionDuration = const Duration(milliseconds: 500),
+  Duration? transitionDuration,
   WidgetBuilder? placeholderBuilder,
   VectorGraphicsErrorWidget? errorBuilder,
   ColorFilter? colorFilter,
