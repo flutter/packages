@@ -471,8 +471,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
           .toList(),
     );
 
-    if (!_tileOverlays.containsKey(creationId)) {
-      // Set initial tile overlays on new map creation.
+    if (_tileOverlays[creationId] == null) {
+      // Initialize the tile overlays for the mapId.
       _tileOverlays[creationId] = keyTileOverlayId(mapObjects.tileOverlays);
     }
 
