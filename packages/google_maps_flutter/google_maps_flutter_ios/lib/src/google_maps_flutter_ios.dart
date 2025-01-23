@@ -119,7 +119,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
 
   @override
   void dispose({required int mapId}) {
-    // Noop!
+    _tileOverlays.remove(mapId);
   }
 
   // The controller we need to broadcast the different events coming
@@ -470,6 +470,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
           .map(_platformClusterManagerFromClusterManager)
           .toList(),
     );
+
+    if (!_tileOverlays.containsKey(creationId)) {
+      // Set initial tile overlays on new map creation.
+      _tileOverlays[creationId] = keyTileOverlayId(mapObjects.tileOverlays);
+    }
 
     return UiKitView(
       viewType: 'plugins.flutter.dev/google_maps_ios',
