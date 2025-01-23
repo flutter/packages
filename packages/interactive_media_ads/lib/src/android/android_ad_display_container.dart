@@ -216,32 +216,38 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       },
       onPrepared: (_, ima.MediaPlayer player) async {
         final AndroidAdDisplayContainer? container = weakThis.target;
-        if (container != null) {
-          container._adDuration = await player.getDuration();
-          container._mediaPlayer = player;
-          if (container._savedAdPosition > 0) {
-            await player.seekTo(container._savedAdPosition);
-          }
+        try {
+          if (container != null) {
+            container._adDuration = await player.getDuration();
+            container._mediaPlayer = player;
+            if (container._savedAdPosition > 0) {
+              await player.seekTo(container._savedAdPosition);
+            }
 
-          if (container._startPlayerWhenVideoIsPrepared) {
-            await player.start();
-            container._startAdProgressTracking();
+            if (container._startPlayerWhenVideoIsPrepared) {
+              await player.start();
+              container._startAdProgressTracking();
+            }
           }
+        } catch (_) {
+          _onError(container);
         }
       },
       onError: (_, __, ___, ____) {
-        final AndroidAdDisplayContainer? container = weakThis.target;
-        if (container != null) {
-          container._clearMediaPlayer();
-          for (final ima.VideoAdPlayerCallback callback
-              in container.videoAdPlayerCallbacks) {
-            callback.onError(container._loadedAdMediaInfo!);
-          }
-          container._loadedAdMediaInfo = null;
-          container._adDuration = null;
-        }
+        _onError(weakThis.target);
       },
     );
+  }
+
+  static void _onError(AndroidAdDisplayContainer? container) {
+    if (container == null) return;
+    container._clearMediaPlayer();
+    for (final ima.VideoAdPlayerCallback callback
+        in container.videoAdPlayerCallbacks) {
+      callback.onError(container._loadedAdMediaInfo!);
+    }
+    container._loadedAdMediaInfo = null;
+    container._adDuration = null;
   }
 
   // This value is created in a static method because the callback methods for
