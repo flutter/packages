@@ -22,10 +22,10 @@ flutter:
         default_package: video_player_web
 
 dependencies:
+  collection: ^1.19.0
   flutter:
     sdk: flutter
   html: ^0.15.0
-  collection: ^1.19.0
   video_player_android: ^2.3.5
   video_player_avfoundation: ^2.5.6
   video_player_platform_interface: ^6.2.0
