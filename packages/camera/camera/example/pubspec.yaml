@@ -27,10 +27,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-
-dependency_overrides:
-  camera_web:
-    path: ../../camera_web
+  leak_tracker_flutter_testing: any
 
 flutter:
   uses-material-design: true
