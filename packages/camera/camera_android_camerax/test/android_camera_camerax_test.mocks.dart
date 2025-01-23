@@ -550,6 +550,32 @@ class MockAspectRatioStrategy extends _i1.Mock
       ) as _i2.PigeonInstanceManager);
 
   @override
+  _i5.Future<_i2.AspectRatioStrategyFallbackRule> getFallbackRule() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getFallbackRule,
+          [],
+        ),
+        returnValue: _i5.Future<_i2.AspectRatioStrategyFallbackRule>.value(
+            _i2.AspectRatioStrategyFallbackRule.auto),
+        returnValueForMissingStub:
+            _i5.Future<_i2.AspectRatioStrategyFallbackRule>.value(
+                _i2.AspectRatioStrategyFallbackRule.auto),
+      ) as _i5.Future<_i2.AspectRatioStrategyFallbackRule>);
+
+  @override
+  _i5.Future<_i2.AspectRatio> getPreferredAspectRatio() => (super.noSuchMethod(
+        Invocation.method(
+          #getPreferredAspectRatio,
+          [],
+        ),
+        returnValue:
+            _i5.Future<_i2.AspectRatio>.value(_i2.AspectRatio.ratio16To9),
+        returnValueForMissingStub:
+            _i5.Future<_i2.AspectRatio>.value(_i2.AspectRatio.ratio16To9),
+      ) as _i5.Future<_i2.AspectRatio>);
+
+  @override
   _i2.AspectRatioStrategy pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,
@@ -3462,6 +3488,31 @@ class MockResolutionSelector extends _i1.Mock
           Invocation.getter(#pigeon_instanceManager),
         ),
       ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i5.Future<_i2.AspectRatioStrategy> getAspectRatioStrategy() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAspectRatioStrategy,
+          [],
+        ),
+        returnValue: _i5.Future<_i2.AspectRatioStrategy>.value(
+            _FakeAspectRatioStrategy_2(
+          this,
+          Invocation.method(
+            #getAspectRatioStrategy,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i5.Future<_i2.AspectRatioStrategy>.value(
+            _FakeAspectRatioStrategy_2(
+          this,
+          Invocation.method(
+            #getAspectRatioStrategy,
+            [],
+          ),
+        )),
+      ) as _i5.Future<_i2.AspectRatioStrategy>);
 
   @override
   _i2.ResolutionSelector pigeon_copy() => (super.noSuchMethod(

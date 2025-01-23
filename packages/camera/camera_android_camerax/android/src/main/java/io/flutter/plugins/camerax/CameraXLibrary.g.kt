@@ -5865,6 +5865,13 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
   /** The resolution selection strategy for the `UseCase`. */
   abstract fun resolutionStrategy(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): androidx.camera.core.resolutionselector.ResolutionStrategy?
 
+  /**
+   * Returns the specified `AspectRatioStrategy`, or
+   * `AspectRatioStrategy.ratio_4_3FallbackAutoStrategy` if none is specified
+   * when creating the ResolutionSelector.
+   */
+  abstract fun getAspectRatioStrategy(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionSelector): androidx.camera.core.resolutionselector.AspectRatioStrategy
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiResolutionSelector?) {
@@ -5881,6 +5888,23 @@ abstract class PigeonApiResolutionSelector(open val pigeonRegistrar: CameraXLibr
             val wrapped: List<Any?> = try {
               api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.pigeon_defaultConstructor(resolutionFilterArg,resolutionStrategyArg,aspectRatioStrategyArg), pigeon_identifierArg)
               listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.ResolutionSelector.getAspectRatioStrategy", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.resolutionselector.ResolutionSelector
+            val wrapped: List<Any?> = try {
+              listOf(api.getAspectRatioStrategy(pigeon_instanceArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -5971,6 +5995,12 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
     return pigeon_instance.getResolutionStrategy();
   }
 
+  @NonNull
+  @Override
+  public androidx.camera.core.resolutionselector.AspectRatioStrategy getAspectRatioStrategy(ResolutionSelector pigeon_instance) {
+    return pigeon_instance.getAspectRatioStrategy();
+  }
+
 }
 */
 
@@ -6026,6 +6056,17 @@ public class ResolutionSelectorProxyApiTest {
     assertEquals(value, api.resolutionStrategy(instance));
   }
 
+  @Test
+  public void getAspectRatioStrategy() {
+    final PigeonApiResolutionSelector api = new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
+
+    final ResolutionSelector instance = mock(ResolutionSelector.class);
+    final androidx.camera.core.resolutionselector.AspectRatioStrategy value = mock(AspectRatioStrategy.class);
+    when(instance.getAspectRatioStrategy()).thenReturn(value);
+
+    assertEquals(value, api.getAspectRatioStrategy(instance ));
+  }
+
 }
 */
 /**
@@ -6053,6 +6094,15 @@ abstract class PigeonApiAspectRatioStrategy(open val pigeonRegistrar: CameraXLib
    * RATIO_4_3 in priority.
    */
   abstract fun ratio_4_3FallbackAutoStrategy(): androidx.camera.core.resolutionselector.AspectRatioStrategy
+
+  /**
+   * The specified fallback rule for choosing the aspect ratio when the
+   * preferred aspect ratio is not available.
+   */
+  abstract fun getFallbackRule(pigeon_instance: androidx.camera.core.resolutionselector.AspectRatioStrategy): AspectRatioStrategyFallbackRule
+
+  /** The specified preferred aspect ratio. */
+  abstract fun getPreferredAspectRatio(pigeon_instance: androidx.camera.core.resolutionselector.AspectRatioStrategy): AspectRatio
 
   companion object {
     @Suppress("LocalVariableName")
@@ -6105,6 +6155,40 @@ abstract class PigeonApiAspectRatioStrategy(open val pigeonRegistrar: CameraXLib
             val wrapped: List<Any?> = try {
               api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.ratio_4_3FallbackAutoStrategy(), pigeon_identifierArg)
               listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.AspectRatioStrategy.getFallbackRule", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.resolutionselector.AspectRatioStrategy
+            val wrapped: List<Any?> = try {
+              listOf(api.getFallbackRule(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.AspectRatioStrategy.getPreferredAspectRatio", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.resolutionselector.AspectRatioStrategy
+            val wrapped: List<Any?> = try {
+              listOf(api.getPreferredAspectRatio(pigeon_instanceArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -6190,6 +6274,18 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
     return AspectRatioStrategy.getRatio_4_3FallbackAutoStrategy();
   }
 
+  @NonNull
+  @Override
+  public AspectRatioStrategyFallbackRule getFallbackRule(AspectRatioStrategy pigeon_instance) {
+    return pigeon_instance.getFallbackRule();
+  }
+
+  @NonNull
+  @Override
+  public AspectRatio getPreferredAspectRatio(AspectRatioStrategy pigeon_instance) {
+    return pigeon_instance.getPreferredAspectRatio();
+  }
+
 }
 */
 
@@ -6218,6 +6314,28 @@ public class AspectRatioStrategyProxyApiTest {
     final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
     assertTrue(api.pigeon_defaultConstructor(io.flutter.plugins.camerax.AspectRatio.RATIO16TO9, io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO) instanceof AspectRatioStrategyProxyApi.AspectRatioStrategy);
+  }
+
+  @Test
+  public void getFallbackRule() {
+    final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
+
+    final AspectRatioStrategy instance = mock(AspectRatioStrategy.class);
+    final AspectRatioStrategyFallbackRule value = io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO;
+    when(instance.getFallbackRule()).thenReturn(value);
+
+    assertEquals(value, api.getFallbackRule(instance ));
+  }
+
+  @Test
+  public void getPreferredAspectRatio() {
+    final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
+
+    final AspectRatioStrategy instance = mock(AspectRatioStrategy.class);
+    final AspectRatio value = io.flutter.plugins.camerax.AspectRatio.RATIO16TO9;
+    when(instance.getPreferredAspectRatio()).thenReturn(value);
+
+    assertEquals(value, api.getPreferredAspectRatio(instance ));
   }
 
 }

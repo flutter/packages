@@ -649,6 +649,11 @@ abstract class ResolutionSelector {
 
   /// The resolution selection strategy for the `UseCase`.
   late final ResolutionStrategy? resolutionStrategy;
+
+  /// Returns the specified `AspectRatioStrategy`, or
+  /// `AspectRatioStrategy.ratio_4_3FallbackAutoStrategy` if none is specified
+  /// when creating the ResolutionSelector.
+  AspectRatioStrategy getAspectRatioStrategy();
 }
 
 /// Fallback rule for choosing the aspect ratio when the preferred aspect ratio
@@ -693,6 +698,13 @@ abstract class AspectRatioStrategy {
   /// RATIO_4_3 in priority.
   @static
   late AspectRatioStrategy ratio_4_3FallbackAutoStrategy;
+
+  /// The specified fallback rule for choosing the aspect ratio when the
+  /// preferred aspect ratio is not available.
+  AspectRatioStrategyFallbackRule getFallbackRule();
+
+  /// The specified preferred aspect ratio.
+  AspectRatio getPreferredAspectRatio();
 }
 
 /// Represents the different states the camera can be in.

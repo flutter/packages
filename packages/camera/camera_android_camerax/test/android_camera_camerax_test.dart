@@ -128,204 +128,232 @@ void main() {
       BinaryMessenger? pigeon_binaryMessenger,
       PigeonInstanceManager? pigeon_instanceManager,
     })? createWithOnePreferredSizeResolutionFilter,
-  }) =>
-      CameraXProxy(
-        getInstanceProcessCameraProvider: ({
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) async {
-          return mockProcessCameraProvider;
-        },
-        newCameraSelector: ({
-          LensFacing? requireLensFacing,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          switch (requireLensFacing) {
-            case LensFacing.front:
-              return MockCameraSelector();
-            case LensFacing.back:
-            case LensFacing.external:
-            case LensFacing.unknown:
-            case null:
-          }
+  }) {
+    late final CameraXProxy proxy;
+    final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
+        MockAspectRatioStrategy();
+    proxy = CameraXProxy(
+      getInstanceProcessCameraProvider: ({
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) async {
+        return mockProcessCameraProvider;
+      },
+      newCameraSelector: ({
+        LensFacing? requireLensFacing,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        switch (requireLensFacing) {
+          case LensFacing.front:
+            return MockCameraSelector();
+          case LensFacing.back:
+          case LensFacing.external:
+          case LensFacing.unknown:
+          case null:
+        }
 
-          return MockCameraSelector();
-        },
-        newPreview: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockPreview mockPreview = MockPreview();
-          when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
-          return mockPreview;
-        },
-        newImageCapture: ({
-          int? targetRotation,
-          CameraXFlashMode? flashMode,
-          ResolutionSelector? resolutionSelector,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return ImageCapture.pigeon_detached(
-            resolutionSelector: resolutionSelector,
-            pigeon_instanceManager:
-                PigeonInstanceManager(onWeakReferenceRemoved: (_) {}),
-          );
-        },
-        newRecorder: ({
-          int? aspectRatio,
-          int? targetVideoEncodingBitRate,
-          QualitySelector? qualitySelector,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockRecorder();
-        },
-        withOutputVideoCapture: ({
-          required VideoOutput videoOutput,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockVideoCapture();
-        },
-        newImageAnalysis: ({
-          int? targetRotation,
-          ResolutionSelector? resolutionSelector,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return ImageAnalysis.pigeon_detached(
-            resolutionSelector: resolutionSelector,
-            pigeon_instanceManager:
-                PigeonInstanceManager(onWeakReferenceRemoved: (_) {}),
-          );
-        },
-        newResolutionStrategy: newResolutionStrategy ??
-            ({
-              required CameraSize boundSize,
-              required ResolutionStrategyFallbackRule fallbackRule,
-              BinaryMessenger? pigeon_binaryMessenger,
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              return MockResolutionStrategy();
-            },
-        newResolutionSelector: newResolutionSelector ??
-            ({
-              AspectRatioStrategy? aspectRatioStrategy,
-              ResolutionStrategy? resolutionStrategy,
-              ResolutionFilter? resolutionFilter,
-              BinaryMessenger? pigeon_binaryMessenger,
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              return MockResolutionSelector();
-            },
-        fromQualitySelector: ({
-          required VideoQuality quality,
-          FallbackStrategy? fallbackStrategy,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockQualitySelector();
-        },
-        newObserver: <T>({
-          required void Function(Observer<T>, T) onChanged,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        newSystemServicesManager: ({
-          required void Function(
-            SystemServicesManager,
-            String,
-          ) onCameraError,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockSystemServicesManager();
-        },
-        newDeviceOrientationManager: ({
-          required void Function(
-            DeviceOrientationManager,
-            String,
-          ) onDeviceOrientationChanged,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockDeviceOrientationManager manager =
-              MockDeviceOrientationManager();
-          when(manager.getUiOrientation()).thenAnswer((_) async {
-            return 'PORTRAIT_UP';
-          });
-          return manager;
-        },
-        newAspectRatioStrategy: ({
-          required AspectRatio preferredAspectRatio,
-          required AspectRatioStrategyFallbackRule fallbackRule,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockAspectRatioStrategy();
-        },
-        createWithOnePreferredSizeResolutionFilter:
-            createWithOnePreferredSizeResolutionFilter ??
-                ({
-                  required CameraSize preferredSize,
-                  BinaryMessenger? pigeon_binaryMessenger,
-                  PigeonInstanceManager? pigeon_instanceManager,
-                }) {
-                  return MockResolutionFilter();
-                },
-        fromCamera2CameraInfo: ({
-          required CameraInfo cameraInfo,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final MockCamera2CameraInfo camera2cameraInfo =
-              MockCamera2CameraInfo();
-          when(
-            camera2cameraInfo.getCameraCharacteristic(any),
-          ).thenAnswer((_) async => 90);
-          return camera2cameraInfo;
-        },
-        newCameraSize: ({
-          required int width,
-          required int height,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return CameraSize.pigeon_detached(
-            width: width,
-            height: height,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-        sensorOrientationCameraCharacteristics: () {
-          return MockCameraCharacteristicsKey();
-        },
-        lowerQualityOrHigherThanFallbackStrategy: ({
-          required VideoQuality quality,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockFallbackStrategy();
-        },
-        highestAvailableStrategyResolutionStrategy:
-            highestAvailableStrategyResolutionStrategy ??
-                () {
-                  return MockResolutionStrategy();
-                },
-      );
+        return MockCameraSelector();
+      },
+      newPreview: ({
+        int? targetRotation,
+        ResolutionSelector? resolutionSelector,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockPreview mockPreview = MockPreview();
+        when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+        return mockPreview;
+      },
+      newImageCapture: ({
+        int? targetRotation,
+        CameraXFlashMode? flashMode,
+        ResolutionSelector? resolutionSelector,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return ImageCapture.pigeon_detached(
+          resolutionSelector: resolutionSelector,
+          pigeon_instanceManager:
+              PigeonInstanceManager(onWeakReferenceRemoved: (_) {}),
+        );
+      },
+      newRecorder: ({
+        int? aspectRatio,
+        int? targetVideoEncodingBitRate,
+        QualitySelector? qualitySelector,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return MockRecorder();
+      },
+      withOutputVideoCapture: ({
+        required VideoOutput videoOutput,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return MockVideoCapture();
+      },
+      newImageAnalysis: ({
+        int? targetRotation,
+        ResolutionSelector? resolutionSelector,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return ImageAnalysis.pigeon_detached(
+          resolutionSelector: resolutionSelector,
+          pigeon_instanceManager:
+              PigeonInstanceManager(onWeakReferenceRemoved: (_) {}),
+        );
+      },
+      newResolutionStrategy: newResolutionStrategy ??
+          ({
+            required CameraSize boundSize,
+            required ResolutionStrategyFallbackRule fallbackRule,
+            BinaryMessenger? pigeon_binaryMessenger,
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return MockResolutionStrategy();
+          },
+      newResolutionSelector: newResolutionSelector ??
+          ({
+            AspectRatioStrategy? aspectRatioStrategy,
+            ResolutionStrategy? resolutionStrategy,
+            ResolutionFilter? resolutionFilter,
+            BinaryMessenger? pigeon_binaryMessenger,
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockResolutionSelector mockResolutionSelector =
+                MockResolutionSelector();
+            when(mockResolutionSelector.getAspectRatioStrategy()).thenAnswer(
+              (_) async =>
+                  aspectRatioStrategy ??
+                  proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+            );
+            when(mockResolutionSelector.resolutionStrategy).thenReturn(
+              resolutionStrategy,
+            );
+            when(mockResolutionSelector.resolutionFilter).thenReturn(
+              resolutionFilter,
+            );
+            return mockResolutionSelector;
+          },
+      fromQualitySelector: ({
+        required VideoQuality quality,
+        FallbackStrategy? fallbackStrategy,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return MockQualitySelector();
+      },
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return MockSystemServicesManager();
+      },
+      newDeviceOrientationManager: ({
+        required void Function(
+          DeviceOrientationManager,
+          String,
+        ) onDeviceOrientationChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockDeviceOrientationManager manager =
+            MockDeviceOrientationManager();
+        when(manager.getUiOrientation()).thenAnswer((_) async {
+          return 'PORTRAIT_UP';
+        });
+        return manager;
+      },
+      newAspectRatioStrategy: ({
+        required AspectRatio preferredAspectRatio,
+        required AspectRatioStrategyFallbackRule fallbackRule,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockAspectRatioStrategy mockAspectRatioStrategy =
+            MockAspectRatioStrategy();
+        when(mockAspectRatioStrategy.getFallbackRule()).thenAnswer(
+          (_) async => fallbackRule,
+        );
+        when(mockAspectRatioStrategy.getPreferredAspectRatio()).thenAnswer(
+          (_) async => preferredAspectRatio,
+        );
+        return mockAspectRatioStrategy;
+      },
+      createWithOnePreferredSizeResolutionFilter:
+          createWithOnePreferredSizeResolutionFilter ??
+              ({
+                required CameraSize preferredSize,
+                BinaryMessenger? pigeon_binaryMessenger,
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return MockResolutionFilter();
+              },
+      fromCamera2CameraInfo: ({
+        required CameraInfo cameraInfo,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockCamera2CameraInfo camera2cameraInfo = MockCamera2CameraInfo();
+        when(
+          camera2cameraInfo.getCameraCharacteristic(any),
+        ).thenAnswer((_) async => 90);
+        return camera2cameraInfo;
+      },
+      newCameraSize: ({
+        required int width,
+        required int height,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return CameraSize.pigeon_detached(
+          width: width,
+          height: height,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      sensorOrientationCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+      lowerQualityOrHigherThanFallbackStrategy: ({
+        required VideoQuality quality,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return MockFallbackStrategy();
+      },
+      highestAvailableStrategyResolutionStrategy:
+          highestAvailableStrategyResolutionStrategy ??
+              () {
+                return MockResolutionStrategy();
+              },
+      ratio_4_3FallbackAutoStrategyAspectRatioStrategy: () =>
+          ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
+    );
+
+    return proxy;
+  }
   //
   // /// CameraXProxy for testing exposure and focus related controls.
   // ///
@@ -1251,7 +1279,7 @@ void main() {
     expect(camera.imageCapture!.resolutionSelector, isNull);
     expect(camera.imageAnalysis!.resolutionSelector, isNull);
   });
-/*
+
   test(
       'createCamera properly sets aspect ratio based on preset resolution for non-video capture use cases',
       () async {
@@ -1287,63 +1315,83 @@ void main() {
       await camera.createCamera(testCameraDescription, resolutionPreset,
           enableAudio: enableAudio);
 
-      int? expectedAspectRatio;
-      AspectRatioStrategy? expectedAspectRatioStrategy;
+      AspectRatio? expectedAspectRatio;
+      AspectRatioStrategyFallbackRule? expectedFallbackRule;
       switch (resolutionPreset) {
         case ResolutionPreset.low:
           expectedAspectRatio = AspectRatio.ratio4To3;
+          expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
         case ResolutionPreset.high:
         case ResolutionPreset.veryHigh:
         case ResolutionPreset.ultraHigh:
           expectedAspectRatio = AspectRatio.ratio16To9;
+          expectedFallbackRule = AspectRatioStrategyFallbackRule.auto;
         case ResolutionPreset.medium:
         // Medium resolution preset uses aspect ratio 3:2 which is unsupported
         // by CameraX.
         case ResolutionPreset.max:
-          expectedAspectRatioStrategy = null;
       }
 
-      expectedAspectRatioStrategy = expectedAspectRatio == null
-          ? null
-          : AspectRatioStrategy.detached(
-              preferredAspectRatio: expectedAspectRatio,
-              fallbackRule: AspectRatioStrategy.fallbackRuleAuto);
-
       if (expectedAspectRatio == null) {
-        expect(camera.preview!.resolutionSelector!.aspectRatioStrategy, isNull);
-        expect(camera.imageCapture!.resolutionSelector!.aspectRatioStrategy,
-            isNull);
-        expect(camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy,
-            isNull);
+        expect(
+          await camera.preview!.resolutionSelector!.getAspectRatioStrategy(),
+          equals(
+            camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+          ),
+        );
+        expect(
+          await camera.imageCapture!.resolutionSelector!
+              .getAspectRatioStrategy(),
+          equals(
+            camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+          ),
+        );
+        expect(
+          await camera.imageAnalysis!.resolutionSelector!
+              .getAspectRatioStrategy(),
+          equals(
+            camera.proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+          ),
+        );
         continue;
       }
 
+      final AspectRatioStrategy previewStrategy =
+          await camera.preview!.resolutionSelector!.getAspectRatioStrategy();
+      final AspectRatioStrategy imageCaptureStrategy = await camera
+          .imageCapture!.resolutionSelector!
+          .getAspectRatioStrategy();
+      final AspectRatioStrategy imageAnalysisStrategy = await camera
+          .imageCapture!.resolutionSelector!
+          .getAspectRatioStrategy();
+
       // Check aspect ratio.
       expect(
-          camera.preview!.resolutionSelector!.aspectRatioStrategy!
-              .preferredAspectRatio,
-          equals(expectedAspectRatioStrategy!.preferredAspectRatio));
+        await previewStrategy.getPreferredAspectRatio(),
+        equals(expectedAspectRatio),
+      );
       expect(
-          camera.imageCapture!.resolutionSelector!.aspectRatioStrategy!
-              .preferredAspectRatio,
-          equals(expectedAspectRatioStrategy.preferredAspectRatio));
+        await imageCaptureStrategy.getPreferredAspectRatio(),
+        equals(expectedAspectRatio),
+      );
       expect(
-          camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy!
-              .preferredAspectRatio,
-          equals(expectedAspectRatioStrategy.preferredAspectRatio));
+        await imageAnalysisStrategy.getPreferredAspectRatio(),
+        equals(expectedAspectRatio),
+      );
 
       // Check fallback rule.
       expect(
-          camera.preview!.resolutionSelector!.aspectRatioStrategy!.fallbackRule,
-          equals(expectedAspectRatioStrategy.fallbackRule));
+        await previewStrategy.getFallbackRule(),
+        equals(expectedFallbackRule),
+      );
       expect(
-          camera.imageCapture!.resolutionSelector!.aspectRatioStrategy!
-              .fallbackRule,
-          equals(expectedAspectRatioStrategy.fallbackRule));
+        await imageCaptureStrategy.getFallbackRule(),
+        equals(expectedFallbackRule),
+      );
       expect(
-          camera.imageAnalysis!.resolutionSelector!.aspectRatioStrategy!
-              .fallbackRule,
-          equals(expectedAspectRatioStrategy.fallbackRule));
+        await imageAnalysisStrategy.getFallbackRule(),
+        equals(expectedFallbackRule),
+      );
     }
 
     // Test null case.
@@ -1352,7 +1400,7 @@ void main() {
     expect(camera.imageCapture!.resolutionSelector, isNull);
     expect(camera.imageAnalysis!.resolutionSelector, isNull);
   });
-
+/*
   test(
       'createCamera properly sets preset resolution for video capture use case',
       () async {
