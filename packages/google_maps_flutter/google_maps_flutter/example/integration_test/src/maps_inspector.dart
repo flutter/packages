@@ -672,32 +672,41 @@ void runTests() {
           _getCameraUpdateForType(_cameraUpdateTypeVariants.currentValue!);
       await controller.animateCamera(cameraUpdate);
 
-      // Immediately after calling animateCamera, check that the camera hasn't
-      // reached its final position. This relies on the assumption that the
-      // camera move is animated and won't complete instantly.
-      final CameraPosition beforeFinishedPosition =
-          await inspector.getCameraPosition(mapId: controller.mapId);
+      // If platform supportes getting camera position, check that the camera
+      // has moved as expected.
+      CameraPosition? beforeFinishedPosition;
+      if (inspector.supportsGettingGameraPosition()) {
+        // Immediately after calling animateCamera, check that the camera hasn't
+        // reached its final position. This relies on the assumption that the
+        // camera move is animated and won't complete instantly.
+        beforeFinishedPosition =
+            await inspector.getCameraPosition(mapId: controller.mapId);
 
-      await _checkCameraUpdateByType(
-          _cameraUpdateTypeVariants.currentValue!,
-          beforeFinishedPosition,
-          null,
-          controller,
-          (Matcher matcher) => isNot(matcher));
+        await _checkCameraUpdateByType(
+            _cameraUpdateTypeVariants.currentValue!,
+            beforeFinishedPosition,
+            null,
+            controller,
+            (Matcher matcher) => isNot(matcher));
+      }
 
       // Wait for the animation to complete (onCameraIdle).
       expect(cameraIdleCompleter.isCompleted, isFalse);
       await cameraIdleCompleter.future;
 
-      // After onCameraIdle event, the camera should be at the final position.
-      final CameraPosition afterFinishedPosition =
-          await inspector.getCameraPosition(mapId: controller.mapId);
-      await _checkCameraUpdateByType(
-          _cameraUpdateTypeVariants.currentValue!,
-          afterFinishedPosition,
-          beforeFinishedPosition,
-          controller,
-          (Matcher matcher) => matcher);
+      // If platform supportes getting camera position, check that the camera
+      // has moved as expected.
+      if (inspector.supportsGettingGameraPosition()) {
+        // After onCameraIdle event, the camera should be at the final position.
+        final CameraPosition afterFinishedPosition =
+            await inspector.getCameraPosition(mapId: controller.mapId);
+        await _checkCameraUpdateByType(
+            _cameraUpdateTypeVariants.currentValue!,
+            afterFinishedPosition,
+            beforeFinishedPosition,
+            controller,
+            (Matcher matcher) => matcher);
+      }
     },
     variant: _cameraUpdateTypeVariants,
     // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
@@ -811,18 +820,23 @@ void runTests() {
         duration: const Duration(milliseconds: longCameraAnimationDurationMS),
       );
 
-      // Immediately after calling animateCamera, check that the camera hasn't
-      // reached its final position. This relies on the assumption that the
-      // camera move is animated and won't complete instantly.
-      final CameraPosition beforeFinishedPosition =
-          await inspector.getCameraPosition(mapId: controller.mapId);
+      // If platform supportes getting camera position, check that the camera
+      // has moved as expected.
+      CameraPosition? beforeFinishedPosition;
+      if (inspector.supportsGettingGameraPosition()) {
+        // Immediately after calling animateCamera, check that the camera hasn't
+        // reached its final position. This relies on the assumption that the
+        // camera move is animated and won't complete instantly.
+        beforeFinishedPosition =
+            await inspector.getCameraPosition(mapId: controller.mapId);
 
-      await _checkCameraUpdateByType(
-          _cameraUpdateTypeVariants.currentValue!,
-          beforeFinishedPosition,
-          null,
-          controller,
-          (Matcher matcher) => isNot(matcher));
+        await _checkCameraUpdateByType(
+            _cameraUpdateTypeVariants.currentValue!,
+            beforeFinishedPosition,
+            null,
+            controller,
+            (Matcher matcher) => isNot(matcher));
+      }
 
       // Wait for the animation to complete (onCameraIdle).
       expect(cameraIdleCompleter.isCompleted, isFalse);
@@ -833,15 +847,19 @@ void runTests() {
       expect(stopwatch.elapsedMilliseconds,
           greaterThan(animationDurationMiddlePoint));
 
-      // Camera should be at the final position.
-      final CameraPosition afterFinishedPosition =
-          await inspector.getCameraPosition(mapId: controller.mapId);
-      await _checkCameraUpdateByType(
-          _cameraUpdateTypeVariants.currentValue!,
-          afterFinishedPosition,
-          beforeFinishedPosition,
-          controller,
-          (Matcher matcher) => matcher);
+      // If platform supportes getting camera position, check that the camera
+      // has moved as expected.
+      if (inspector.supportsGettingGameraPosition()) {
+        // Camera should be at the final position.
+        final CameraPosition afterFinishedPosition =
+            await inspector.getCameraPosition(mapId: controller.mapId);
+        await _checkCameraUpdateByType(
+            _cameraUpdateTypeVariants.currentValue!,
+            afterFinishedPosition,
+            beforeFinishedPosition,
+            controller,
+            (Matcher matcher) => matcher);
+      }
     },
     variant: _cameraUpdateTypeVariants,
     // TODO(jokerttu): Remove skip once the web implementation is available,

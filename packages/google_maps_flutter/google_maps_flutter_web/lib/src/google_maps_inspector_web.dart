@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
-import '../google_maps_flutter_web.dart';
 import 'marker_clustering.dart';
 
 /// Function that gets the [MapConfiguration] for a given `mapId`.
@@ -13,18 +12,16 @@ typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 typedef ClusterManagersControllerProvider = ClusterManagersController? Function(
     int mapId);
 
-/// Function that gets the [GoogleMapController] for a given `mapId`.
-typedef MapControllerProvider = GoogleMapController? Function(int mapId);
-
 /// This platform implementation allows inspecting the running maps.
 class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
   /// Build an "inspector" that is able to look into maps.
-  GoogleMapsInspectorWeb(this._configurationProvider,
-      this._clusterManagersControllerProvider, this._mapControllerProvider);
+  GoogleMapsInspectorWeb(ConfigurationProvider configurationProvider,
+      ClusterManagersControllerProvider clusterManagersControllerProvider)
+      : _configurationProvider = configurationProvider,
+        _clusterManagersControllerProvider = clusterManagersControllerProvider;
 
   final ConfigurationProvider _configurationProvider;
   final ClusterManagersControllerProvider _clusterManagersControllerProvider;
-  final MapControllerProvider _mapControllerProvider;
 
   @override
   Future<bool> areBuildingsEnabled({required int mapId}) async {
@@ -105,11 +102,5 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
     return _clusterManagersControllerProvider(mapId)
             ?.getClusters(clusterManagerId) ??
         <Cluster>[];
-  }
-
-  @override
-  Future<CameraPosition> getCameraPosition({required int mapId}) async {
-    return _mapControllerProvider(mapId)?.getCameraPosition() ??
-        const CameraPosition(target: LatLng(0, 0));
   }
 }

@@ -118,6 +118,9 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
   }
 
   @override
+  bool supportsGettingGameraPosition() => true;
+
+  @override
   Future<CameraPosition> getCameraPosition({required int mapId}) async {
     final PlatformCameraPosition cameraPosition =
         await _inspectorProvider(mapId)!.getCameraPosition();
