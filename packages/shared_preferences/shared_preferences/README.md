@@ -175,7 +175,10 @@ import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
         SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-        prefs, sharedPreferencesOptions, 'migrationCompleted');
+      legacySharedPreferencesInstance: prefs,
+      sharedPreferencesAsyncOptions: sharedPreferencesOptions,
+      migrationCompletedKey: 'migrationCompleted',
+    );
 ```
 
 #### Adding, Removing, or changing prefixes on SharedPreferences
