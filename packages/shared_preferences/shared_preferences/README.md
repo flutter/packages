@@ -161,11 +161,11 @@ await prefsWithCache.clear();
 
 #### Migrating from SharedPreferences to SharedPreferencesAsync/WithCache
 
-Migrating to the newer `SharedPreferencesAsync` or `SharedPreferencesWithCache` API's is straightforward.
-All that is need is to import the migration utility, and provide it with the `SharedPreferences` instance 
-that was being used previously, as well as the options for the desired new API options.
+To migrate to the newer `SharedPreferencesAsync` or `SharedPreferencesWithCache` APIs, 
+import the migration utility and provide it with the `SharedPreferences` instance that 
+was being used previously, as well as the options for the desired new API options.
 
-This can be run on every launch without data loss as long as the [migrationCompletedKey] is not altered or deleted.
+This can be run on every launch without data loss as long as the `migrationCompletedKey` is not altered or deleted.
 
 <?code-excerpt "main.dart (migrate)"?>
 ```dart

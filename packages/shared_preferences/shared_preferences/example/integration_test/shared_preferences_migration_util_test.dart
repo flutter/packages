@@ -154,9 +154,9 @@ void runTests(SharedPreferencesOptions sharedPreferencesAsyncOptions,
   testWidgets('data is successfully transferred to new system', (_) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-      preferences,
-      sharedPreferencesAsyncOptions,
-      migrationCompletedKey,
+      legacySharedPreferencesInstance: preferences,
+      sharedPreferencesAsyncOptions: sharedPreferencesAsyncOptions,
+      migrationCompletedKey: migrationCompletedKey,
     );
 
     final SharedPreferencesAsync asyncPreferences =
@@ -172,9 +172,9 @@ void runTests(SharedPreferencesOptions sharedPreferencesAsyncOptions,
   testWidgets('migrationCompleted key is set', (_) async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-      preferences,
-      sharedPreferencesAsyncOptions,
-      migrationCompletedKey,
+      legacySharedPreferencesInstance: preferences,
+      sharedPreferencesAsyncOptions: sharedPreferencesAsyncOptions,
+      migrationCompletedKey: migrationCompletedKey,
     );
 
     final SharedPreferencesAsync asyncPreferences =
@@ -189,18 +189,18 @@ void runTests(SharedPreferencesOptions sharedPreferencesAsyncOptions,
       final SharedPreferences preferences =
           await SharedPreferences.getInstance();
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-        preferences,
-        sharedPreferencesAsyncOptions,
-        migrationCompletedKey,
+        legacySharedPreferencesInstance: preferences,
+        sharedPreferencesAsyncOptions: sharedPreferencesAsyncOptions,
+        migrationCompletedKey: migrationCompletedKey,
       );
 
       final SharedPreferencesAsync asyncPreferences =
           SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
       await preferences.setInt(intKey, -0);
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-        preferences,
-        sharedPreferencesAsyncOptions,
-        migrationCompletedKey,
+        legacySharedPreferencesInstance: preferences,
+        sharedPreferencesAsyncOptions: sharedPreferencesAsyncOptions,
+        migrationCompletedKey: migrationCompletedKey,
       );
       expect(await asyncPreferences.getInt(intKey), testInt);
     },

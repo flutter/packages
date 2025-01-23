@@ -71,7 +71,10 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
         SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-        prefs, sharedPreferencesOptions, 'migrationCompleted');
+      legacySharedPreferencesInstance: prefs,
+      sharedPreferencesAsyncOptions: sharedPreferencesOptions,
+      migrationCompletedKey: 'migrationCompleted',
+    );
     // #enddocregion migrate
   }
 

@@ -6,12 +6,12 @@ import 'package:shared_preferences_platform_interface/types.dart';
 
 import '../shared_preferences.dart';
 
-/// Migrates preferences from the legacy SharedPreferences system to
-/// SharedPreferencesAsync.
+/// Migrates preferences from the legacy [SharedPreferences] system to
+/// [SharedPreferencesAsync].
 ///
 /// This method can be run multiple times without worry of overwriting transferred data,
-/// as long as migrationCompletedKey is the same each time, and the value stored
-/// under migrationCompletedKey in the target preferences system is not modified.
+/// as long as [migrationCompletedKey] is the same each time, and the value stored
+/// under [migrationCompletedKey] in the target preferences system is not modified.
 ///
 /// [legacySharedPreferencesInstance] should be an instance of [SharedPreferences]
 /// that has been instantiated the same way it has been used throughout your app.
@@ -26,11 +26,11 @@ import '../shared_preferences.dart';
 /// which is used to check if the migration has run before, to avoid overwriting
 /// new data going forward. Make sure that there will not be any collisions with
 /// preferences you are or will be setting going forward, or there may be data loss.
-Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-  SharedPreferences legacySharedPreferencesInstance,
-  SharedPreferencesOptions sharedPreferencesAsyncOptions,
-  String migrationCompletedKey,
-) async {
+Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
+  required SharedPreferences legacySharedPreferencesInstance,
+  required SharedPreferencesOptions sharedPreferencesAsyncOptions,
+  required String migrationCompletedKey,
+}) async {
   final SharedPreferencesAsync sharedPreferencesAsyncInstance =
       SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
 
