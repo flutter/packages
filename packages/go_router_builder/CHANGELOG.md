@@ -1,3 +1,6 @@
+## 2.7.4
+
+- Adds `TypedRelativeGoRoute` annotation which supports relative routes.
 
 ## 2.7.3
 

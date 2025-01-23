@@ -1,0 +1,88 @@
+RouteBase get $route1 => GoRouteData.$route(
+      path: 'route-1',
+      factory: $Route1Extension._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'relative-route',
+          factory: $RelativeRouteExtension._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: 'inner-relative-route',
+              factory: $InnerRelativeRouteExtension._fromState,
+            ),
+          ],
+        ),
+      ],
+    );
+
+extension $Route1Extension on Route1 {
+  static Route1 _fromState(GoRouterState state) => const Route1();
+
+  String get location => GoRouteData.$location(
+        'route-1',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension $RelativeRouteExtension on RelativeRoute {
+  static RelativeRoute _fromState(GoRouterState state) => const RelativeRoute();
+
+  String get location => './${GoRouteData.$location(
+        'relative-route',
+      )}';
+
+  void go(BuildContext context) => context.go(location);
+}
+
+extension $InnerRelativeRouteExtension on InnerRelativeRoute {
+  static InnerRelativeRoute _fromState(GoRouterState state) =>
+      const InnerRelativeRoute();
+
+  String get location => './${GoRouteData.$location(
+        'inner-relative-route',
+      )}';
+
+  void go(BuildContext context) => context.go(location);
+}
+
+RouteBase get $route2 => GoRouteData.$route(
+      path: 'route-2',
+      factory: $Route2Extension._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'relative-route',
+          factory: $RelativeRouteExtension._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: 'inner-relative-route',
+              factory: $InnerRelativeRouteExtension._fromState,
+            ),
+          ],
+        ),
+      ],
+    );
+
+extension $Route2Extension on Route2 {
+  static Route2 _fromState(GoRouterState state) => const Route2();
+
+  String get location => GoRouteData.$location(
+        'route-2',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
