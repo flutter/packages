@@ -2932,7 +2932,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
     await completer1.future;
     await completer2.future;
-  });
+  }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
 class _FlutterApiTestImplementation implements FlutterIntegrationCoreApi {
