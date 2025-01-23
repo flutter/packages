@@ -1,6 +1,6 @@
 ## 22.8.0
 
-* [swift, kotlin] Added support of swift concurrency and kotlin coroutines.
+* [swift, kotlin] Adds support for Swift concurrency and Kotlin coroutines.
 
 ## 22.7.3
 
