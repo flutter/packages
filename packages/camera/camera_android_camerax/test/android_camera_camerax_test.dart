@@ -109,20 +109,6 @@ void main() {
   /// preset (setting expected ResolutionSelectors, QualitySelectors, etc.).
   CameraXProxy getProxyForTestingResolutionPreset(
     MockProcessCameraProvider mockProcessCameraProvider, {
-    ResolutionSelector Function({
-      AspectRatioStrategy? aspectRatioStrategy,
-      ResolutionStrategy? resolutionStrategy,
-      ResolutionFilter? resolutionFilter,
-      BinaryMessenger? pigeon_binaryMessenger,
-      PigeonInstanceManager? pigeon_instanceManager,
-    })? newResolutionSelector,
-    ResolutionStrategy Function({
-      required CameraSize boundSize,
-      required ResolutionStrategyFallbackRule fallbackRule,
-      BinaryMessenger? pigeon_binaryMessenger,
-      PigeonInstanceManager? pigeon_instanceManager,
-    })? newResolutionStrategy,
-    ResolutionStrategy Function()? highestAvailableStrategyResolutionStrategy,
     ResolutionFilter Function({
       required CameraSize preferredSize,
       BinaryMessenger? pigeon_binaryMessenger,
@@ -132,7 +118,7 @@ void main() {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
         MockAspectRatioStrategy();
-    final ResolutionStrategy highestAvailableStrategyResolutionStrategy2 =
+    final ResolutionStrategy highestAvailableStrategyResolutionStrategy =
         MockResolutionStrategy();
     proxy = CameraXProxy(
       getInstanceProcessCameraProvider: ({
@@ -206,46 +192,44 @@ void main() {
             .thenReturn(resolutionSelector);
         return mockImageAnalysis;
       },
-      newResolutionStrategy: newResolutionStrategy ??
-          ({
-            required CameraSize boundSize,
-            required ResolutionStrategyFallbackRule fallbackRule,
-            BinaryMessenger? pigeon_binaryMessenger,
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockResolutionStrategy resolutionStrategy =
-                MockResolutionStrategy();
-            when(resolutionStrategy.getBoundSize()).thenAnswer(
-              (_) async => boundSize,
-            );
-            when(resolutionStrategy.getFallbackRule()).thenAnswer(
-              (_) async => fallbackRule,
-            );
-            return resolutionStrategy;
-          },
-      newResolutionSelector: newResolutionSelector ??
-          ({
-            AspectRatioStrategy? aspectRatioStrategy,
-            ResolutionStrategy? resolutionStrategy,
-            ResolutionFilter? resolutionFilter,
-            BinaryMessenger? pigeon_binaryMessenger,
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            final MockResolutionSelector mockResolutionSelector =
-                MockResolutionSelector();
-            when(mockResolutionSelector.getAspectRatioStrategy()).thenAnswer(
-              (_) async =>
-                  aspectRatioStrategy ??
-                  proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
-            );
-            when(mockResolutionSelector.resolutionStrategy).thenReturn(
-              resolutionStrategy,
-            );
-            when(mockResolutionSelector.resolutionFilter).thenReturn(
-              resolutionFilter,
-            );
-            return mockResolutionSelector;
-          },
+      newResolutionStrategy: ({
+        required CameraSize boundSize,
+        required ResolutionStrategyFallbackRule fallbackRule,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockResolutionStrategy resolutionStrategy =
+            MockResolutionStrategy();
+        when(resolutionStrategy.getBoundSize()).thenAnswer(
+          (_) async => boundSize,
+        );
+        when(resolutionStrategy.getFallbackRule()).thenAnswer(
+          (_) async => fallbackRule,
+        );
+        return resolutionStrategy;
+      },
+      newResolutionSelector: ({
+        AspectRatioStrategy? aspectRatioStrategy,
+        ResolutionStrategy? resolutionStrategy,
+        ResolutionFilter? resolutionFilter,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockResolutionSelector mockResolutionSelector =
+            MockResolutionSelector();
+        when(mockResolutionSelector.getAspectRatioStrategy()).thenAnswer(
+          (_) async =>
+              aspectRatioStrategy ??
+              proxy.ratio_4_3FallbackAutoStrategyAspectRatioStrategy(),
+        );
+        when(mockResolutionSelector.resolutionStrategy).thenReturn(
+          resolutionStrategy,
+        );
+        when(mockResolutionSelector.resolutionFilter).thenReturn(
+          resolutionFilter,
+        );
+        return mockResolutionSelector;
+      },
       fromQualitySelector: ({
         required VideoQuality quality,
         FallbackStrategy? fallbackStrategy,
@@ -351,11 +335,9 @@ void main() {
       }) {
         return MockFallbackStrategy();
       },
-      highestAvailableStrategyResolutionStrategy:
-          highestAvailableStrategyResolutionStrategy ??
-              () {
-                return highestAvailableStrategyResolutionStrategy2;
-              },
+      highestAvailableStrategyResolutionStrategy: () {
+        return highestAvailableStrategyResolutionStrategy;
+      },
       ratio_4_3FallbackAutoStrategyAspectRatioStrategy: () =>
           ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
     );
@@ -1172,25 +1154,18 @@ void main() {
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
-    CameraSize? lastSetBoundSize;
     CameraSize? lastSetPreferredSize;
-    camera.proxy = getProxyForTestingResolutionPreset(mockProcessCameraProvider,
-        newResolutionStrategy: ({
-      required CameraSize boundSize,
-      required ResolutionStrategyFallbackRule fallbackRule,
-      BinaryMessenger? pigeon_binaryMessenger,
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      lastSetBoundSize = boundSize;
-      return MockResolutionStrategy();
-    }, createWithOnePreferredSizeResolutionFilter: ({
-      required CameraSize preferredSize,
-      BinaryMessenger? pigeon_binaryMessenger,
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      lastSetPreferredSize = preferredSize;
-      return MockResolutionFilter();
-    });
+    camera.proxy = getProxyForTestingResolutionPreset(
+      mockProcessCameraProvider,
+      createWithOnePreferredSizeResolutionFilter: ({
+        required CameraSize preferredSize,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        lastSetPreferredSize = preferredSize;
+        return MockResolutionFilter();
+      },
+    );
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
@@ -1260,12 +1235,28 @@ void main() {
         lastSetPreferredSize?.height,
         equals(expectedPreferredResolution.height),
       );
+
+      final CameraSize? imageCaptureSize = await camera
+          .imageCapture!.resolutionSelector!.resolutionStrategy!
+          .getBoundSize();
       expect(
-        lastSetBoundSize?.width,
+        imageCaptureSize?.width,
         equals(expectedPreferredResolution.width),
       );
       expect(
-        lastSetBoundSize?.height,
+        imageCaptureSize?.height,
+        equals(expectedPreferredResolution.height),
+      );
+
+      final CameraSize? imageAnalysisSize = await camera
+          .imageAnalysis!.resolutionSelector!.resolutionStrategy!
+          .getBoundSize();
+      expect(
+        imageAnalysisSize?.width,
+        equals(expectedPreferredResolution.width),
+      );
+      expect(
+        imageAnalysisSize?.height,
         equals(expectedPreferredResolution.height),
       );
     }
