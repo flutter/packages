@@ -1,3 +1,7 @@
+## 14.7.0
+
+- Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.
+
 ## 14.6.4
 
 - Rephrases readme.
@@ -6,6 +10,7 @@
 
 - Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 - Updates readme.
+
 
 ## 14.6.2
 
@@ -22,7 +27,6 @@
 ## 14.5.0
 
 - Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
-
 
 ## 14.4.1
 
@@ -42,7 +46,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 
@@ -1146,3 +1150,4 @@
 ## 0.1.0
 
 - squatting on the package name (I'm not too proud to admit it)
+
