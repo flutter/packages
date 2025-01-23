@@ -2865,6 +2865,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     TargetGenerator.kotlin,
     TargetGenerator.swift
   ];
+
   testWidgets('event channel sends continuous ints', (_) async {
     final Stream<int> events = streamInts();
     final List<int> listEvents = await events.toList();
@@ -2911,6 +2912,24 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }
     });
     await completer.future;
+  }, skip: !eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('event channels handle multiple instances', (_) async {
+    final Completer<void> completer1 = Completer<void>();
+    final Completer<void> completer2 = Completer<void>();
+    final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
+    final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
+
+    events1.listen((int event) {
+      expect(event, 1);
+    }).onDone(() => completer1.complete());
+
+    events2.listen((int event) {
+      expect(event, 2);
+    }).onDone(() => completer2.complete());
+
+    await completer1.future;
+    await completer2.future;
   }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
