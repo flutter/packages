@@ -2917,76 +2917,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   testWidgets('event channels handle multiple instances', (_) async {
     final Completer<void> completer1 = Completer<void>();
     final Completer<void> completer2 = Completer<void>();
-    int count1 = 0;
-    int count2 = 0;
-    final Stream<PlatformEvent> events1 = streamEvents(instanceName: '1');
-    final Stream<PlatformEvent> events2 = streamEvents(instanceName: '2');
-    events1.listen((PlatformEvent event) {
-      switch (event) {
-        case IntEvent():
-          expect(event.value, 1);
-          expect(count1, 0);
-          count1++;
-        case StringEvent():
-          expect(event.value, 'string');
-          expect(count1, 1);
-          count1++;
-        case BoolEvent():
-          expect(event.value, false);
-          expect(count1, 2);
-          count1++;
-        case DoubleEvent():
-          expect(event.value, 3.14);
-          expect(count1, 3);
-          count1++;
-        case ObjectsEvent():
-          expect(event.value, true);
-          expect(count1, 4);
-          count1++;
-        case EnumEvent():
-          expect(event.value, EventEnum.fortyTwo);
-          expect(count1, 5);
-          count1++;
-        case ClassEvent():
-          expect(event.value.aNullableInt, 0);
-          expect(count1, 6);
-          count1++;
-          completer1.complete();
-      }
+    final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
+    final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
+
+    events1.listen((int event) {
+      expect(event, 1);
     });
-    events2.listen((PlatformEvent event) {
-      switch (event) {
-        case IntEvent():
-          expect(event.value, 1);
-          expect(count2, 0);
-          count2++;
-        case StringEvent():
-          expect(event.value, 'string');
-          expect(count2, 1);
-          count2++;
-        case BoolEvent():
-          expect(event.value, false);
-          expect(count2, 2);
-          count2++;
-        case DoubleEvent():
-          expect(event.value, 3.14);
-          expect(count2, 3);
-          count2++;
-        case ObjectsEvent():
-          expect(event.value, true);
-          expect(count2, 4);
-          count2++;
-        case EnumEvent():
-          expect(event.value, EventEnum.fortyTwo);
-          expect(count2, 5);
-          count2++;
-        case ClassEvent():
-          expect(event.value.aNullableInt, 0);
-          expect(count2, 6);
-          count2++;
-          completer2.complete();
-      }
+    await events1.last.then((_) => completer1.complete());
+
+    events2.listen((int event) {
+      expect(event, 2);
     });
+    await events2.last.then((_) => completer2.complete());
+
     await completer1.future;
     await completer2.future;
   });

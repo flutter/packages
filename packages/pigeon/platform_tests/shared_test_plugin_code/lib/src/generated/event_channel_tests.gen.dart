@@ -451,3 +451,17 @@ Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
     return event as PlatformEvent;
   });
 }
+
+Stream<int> streamConsistentNumbers({String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel streamConsistentNumbersChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
+      pigeonMethodCodec);
+  return streamConsistentNumbersChannel
+      .receiveBroadcastStream()
+      .map((dynamic event) {
+    return event as int;
+  });
+}

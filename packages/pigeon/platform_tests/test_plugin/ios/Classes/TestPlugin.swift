@@ -31,6 +31,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
     StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, streamHandler: SendConsistentNumbers())
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -1265,6 +1267,31 @@ class SendEvents: StreamEventsStreamHandler {
           } else {
             sink.success(self.eventList[count])
             count += 1
+          }
+        }
+      }
+    }
+  }
+}
+
+var numberToSend = 1
+
+class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
+  var timerActive = false
+  var timer: Timer?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    var numberThatWillBeSent = numberToSend
+    var count: Int64 = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          sink.success(numberThatWillBeSent)
+          count += 1
+          if count >= 10 {
+            sink.endOfStream()
+            self.timer?.invalidate()
           }
         }
       }
