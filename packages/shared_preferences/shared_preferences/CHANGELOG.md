@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Adds shared preferences devtools extension.
+
 ## 2.3.5
 
 * Adds information about Android SharedPreferences support.
