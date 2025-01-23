@@ -32,7 +32,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
     StreamConsistentNumbersStreamHandler.register(
-      with: binaryMessenger, streamHandler: SendConsistentNumbers())
+      with: binaryMessenger, instanceName: "1",
+      streamHandler: SendConsistentNumbers(numberToSend: 1))
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "2",
+      streamHandler: SendConsistentNumbers(numberToSend: 2))
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -1274,9 +1278,11 @@ class SendEvents: StreamEventsStreamHandler {
   }
 }
 
-var numberToSend: Int64 = 1
-
 class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
+  let numberToSend: Int64
+  init(numberToSend: Int64) {
+    self.numberToSend = numberToSend
+  }
   var timerActive = false
   var timer: Timer?
 

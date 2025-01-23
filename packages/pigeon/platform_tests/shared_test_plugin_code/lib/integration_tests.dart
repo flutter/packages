@@ -2922,13 +2922,11 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
     events1.listen((int event) {
       expect(event, 1);
-    });
-    await events1.last.then((_) => completer1.complete());
+    }).onDone(() => completer1.complete());
 
     events2.listen((int event) {
       expect(event, 2);
-    });
-    await events2.last.then((_) => completer2.complete());
+    }).onDone(() => completer2.complete());
 
     await completer1.future;
     await completer2.future;
