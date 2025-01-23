@@ -10,14 +10,14 @@ import PackageDescription
 let package = Package(
     name: "google_maps_flutter_ios",
     platforms: [
-        .iOS(.v14),
+        .iOS(.v15),
     ],
     products: [
         .library(name: "google-maps-flutter-ios", type: .static, targets: ["google_maps_flutter_ios"])
     ],
     dependencies: [
-        .package(url: "https://github.com/googlemaps/ios-maps-sdk", "8.4.0"..<"10.0.0"),
-        .package(url: "https://github.com/googlemaps/google-maps-ios-utils", "5.0.0"..<"7.0.0"),
+        .package(url: "https://github.com/googlemaps/ios-maps-sdk", "9.0.0"..<"10.0.0"),
+        .package(url: "https://github.com/googlemaps/google-maps-ios-utils", "6.1.0"..<"7.0.0"),
     ],
     targets: [
         .target(
