@@ -628,8 +628,16 @@ abstract class ResolutionStrategy {
     ResolutionStrategyFallbackRule fallbackRule,
   );
 
+  /// A resolution strategy chooses the highest available resolution.
   @static
   late ResolutionStrategy highestAvailableStrategy;
+
+  /// The specified bound size.
+  CameraSize? getBoundSize();
+
+  /// The fallback rule for choosing an alternate size when the specified bound
+  /// size is unavailable.
+  ResolutionStrategyFallbackRule getFallbackRule();
 }
 
 /// A set of requirements and priorities used to select a resolution for the

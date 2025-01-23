@@ -5701,7 +5701,17 @@ public class ImageCaptureProxyApiTest {
 abstract class PigeonApiResolutionStrategy(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(boundSize: android.util.Size, fallbackRule: ResolutionStrategyFallbackRule): androidx.camera.core.resolutionselector.ResolutionStrategy
 
+  /** A resolution strategy chooses the highest available resolution. */
   abstract fun highestAvailableStrategy(): androidx.camera.core.resolutionselector.ResolutionStrategy
+
+  /** The specified bound size. */
+  abstract fun getBoundSize(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionStrategy): android.util.Size?
+
+  /**
+   * The fallback rule for choosing an alternate size when the specified bound
+   * size is unavailable.
+   */
+  abstract fun getFallbackRule(pigeon_instance: androidx.camera.core.resolutionselector.ResolutionStrategy): ResolutionStrategyFallbackRule
 
   companion object {
     @Suppress("LocalVariableName")
@@ -5736,6 +5746,40 @@ abstract class PigeonApiResolutionStrategy(open val pigeonRegistrar: CameraXLibr
             val wrapped: List<Any?> = try {
               api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.highestAvailableStrategy(), pigeon_identifierArg)
               listOf(null)
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.ResolutionStrategy.getBoundSize", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.resolutionselector.ResolutionStrategy
+            val wrapped: List<Any?> = try {
+              listOf(api.getBoundSize(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.ResolutionStrategy.getFallbackRule", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.core.resolutionselector.ResolutionStrategy
+            val wrapped: List<Any?> = try {
+              listOf(api.getFallbackRule(pigeon_instanceArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -5816,6 +5860,18 @@ class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
     return ResolutionStrategy.getHighestAvailableStrategy();
   }
 
+  @Nullable
+  @Override
+  public android.util.Size? getBoundSize(ResolutionStrategy pigeon_instance) {
+    return pigeon_instance.getBoundSize();
+  }
+
+  @NonNull
+  @Override
+  public ResolutionStrategyFallbackRule getFallbackRule(ResolutionStrategy pigeon_instance) {
+    return pigeon_instance.getFallbackRule();
+  }
+
 }
 */
 
@@ -5845,6 +5901,28 @@ public class ResolutionStrategyProxyApiTest {
     final PigeonApiResolutionStrategy api = new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
 
     assertTrue(api.pigeon_defaultConstructor(mock(CameraSize.class), io.flutter.plugins.camerax.ResolutionStrategyFallbackRule.CLOSEST_HIGHER) instanceof ResolutionStrategyProxyApi.ResolutionStrategy);
+  }
+
+  @Test
+  public void getBoundSize() {
+    final PigeonApiResolutionStrategy api = new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
+
+    final ResolutionStrategy instance = mock(ResolutionStrategy.class);
+    final android.util.Size value = mock(CameraSize.class);
+    when(instance.getBoundSize()).thenReturn(value);
+
+    assertEquals(value, api.getBoundSize(instance ));
+  }
+
+  @Test
+  public void getFallbackRule() {
+    final PigeonApiResolutionStrategy api = new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
+
+    final ResolutionStrategy instance = mock(ResolutionStrategy.class);
+    final ResolutionStrategyFallbackRule value = io.flutter.plugins.camerax.ResolutionStrategyFallbackRule.CLOSEST_HIGHER;
+    when(instance.getFallbackRule()).thenReturn(value);
+
+    assertEquals(value, api.getFallbackRule(instance ));
   }
 
 }

@@ -3556,6 +3556,30 @@ class MockResolutionStrategy extends _i1.Mock
       ) as _i2.PigeonInstanceManager);
 
   @override
+  _i5.Future<_i2.CameraSize?> getBoundSize() => (super.noSuchMethod(
+        Invocation.method(
+          #getBoundSize,
+          [],
+        ),
+        returnValue: _i5.Future<_i2.CameraSize?>.value(),
+        returnValueForMissingStub: _i5.Future<_i2.CameraSize?>.value(),
+      ) as _i5.Future<_i2.CameraSize?>);
+
+  @override
+  _i5.Future<_i2.ResolutionStrategyFallbackRule> getFallbackRule() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getFallbackRule,
+          [],
+        ),
+        returnValue: _i5.Future<_i2.ResolutionStrategyFallbackRule>.value(
+            _i2.ResolutionStrategyFallbackRule.closestHigher),
+        returnValueForMissingStub:
+            _i5.Future<_i2.ResolutionStrategyFallbackRule>.value(
+                _i2.ResolutionStrategyFallbackRule.closestHigher),
+      ) as _i5.Future<_i2.ResolutionStrategyFallbackRule>);
+
+  @override
   _i2.ResolutionStrategy pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,

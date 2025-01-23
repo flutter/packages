@@ -4646,6 +4646,7 @@ class ResolutionStrategy extends PigeonInternalProxyApiBaseClass {
       _pigeonVar_codecResolutionStrategy =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
+  /// A resolution strategy chooses the highest available resolution.
   static final ResolutionStrategy highestAvailableStrategy =
       pigeonVar_highestAvailableStrategy();
 
@@ -4731,6 +4732,68 @@ class ResolutionStrategy extends PigeonInternalProxyApiBaseClass {
       }
     }();
     return pigeonVar_instance;
+  }
+
+  /// The specified bound size.
+  Future<CameraSize?> getBoundSize() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecResolutionStrategy;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.ResolutionStrategy.getBoundSize';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as CameraSize?);
+    }
+  }
+
+  /// The fallback rule for choosing an alternate size when the specified bound
+  /// size is unavailable.
+  Future<ResolutionStrategyFallbackRule> getFallbackRule() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecResolutionStrategy;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.camera_android_camerax.ResolutionStrategy.getFallbackRule';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[this]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as ResolutionStrategyFallbackRule?)!;
+    }
   }
 
   @override
