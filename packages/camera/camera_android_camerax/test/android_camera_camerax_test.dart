@@ -123,12 +123,11 @@ void main() {
       PigeonInstanceManager? pigeon_instanceManager,
     })? newResolutionStrategy,
     ResolutionStrategy Function()? highestAvailableStrategyResolutionStrategy,
-    Preview Function({
-      int? targetRotation,
-      ResolutionSelector? resolutionSelector,
+    ResolutionFilter Function({
+      required CameraSize preferredSize,
       BinaryMessenger? pigeon_binaryMessenger,
       PigeonInstanceManager? pigeon_instanceManager,
-    })? newPreview,
+    })? createWithOnePreferredSizeResolutionFilter,
   }) =>
       CameraXProxy(
         getInstanceProcessCameraProvider: ({
@@ -153,15 +152,16 @@ void main() {
 
           return MockCameraSelector();
         },
-        newPreview: newPreview ??
-            ({
-              int? targetRotation,
-              ResolutionSelector? resolutionSelector,
-              BinaryMessenger? pigeon_binaryMessenger,
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              return MockPreview();
-            },
+        newPreview: ({
+          int? targetRotation,
+          ResolutionSelector? resolutionSelector,
+          BinaryMessenger? pigeon_binaryMessenger,
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockPreview mockPreview = MockPreview();
+          when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+          return mockPreview;
+        },
         newImageCapture: ({
           int? targetRotation,
           CameraXFlashMode? flashMode,
@@ -275,13 +275,15 @@ void main() {
         }) {
           return MockAspectRatioStrategy();
         },
-        createWithOnePreferredSizeResolutionFilter: ({
-          required CameraSize preferredSize,
-          BinaryMessenger? pigeon_binaryMessenger,
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return MockResolutionFilter();
-        },
+        createWithOnePreferredSizeResolutionFilter:
+            createWithOnePreferredSizeResolutionFilter ??
+                ({
+                  required CameraSize preferredSize,
+                  BinaryMessenger? pigeon_binaryMessenger,
+                  PigeonInstanceManager? pigeon_instanceManager,
+                }) {
+                  return MockResolutionFilter();
+                },
         fromCamera2CameraInfo: ({
           required CameraInfo cameraInfo,
           BinaryMessenger? pigeon_binaryMessenger,
@@ -1007,25 +1009,18 @@ void main() {
       // Tell plugin to create mock/detached objects for testing createCamera
       // as needed.
       camera.proxy = getProxyForTestingResolutionPreset(
-          mockProcessCameraProvider, newResolutionStrategy: ({
-        required CameraSize boundSize,
-        required ResolutionStrategyFallbackRule fallbackRule,
-        BinaryMessenger? pigeon_binaryMessenger,
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        lastSetBoundSize = boundSize;
-        lastSetFallbackRule = fallbackRule;
-        return MockResolutionStrategy();
-      }, newPreview: ({
-        int? targetRotation,
-        ResolutionSelector? resolutionSelector,
-        BinaryMessenger? pigeon_binaryMessenger,
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockPreview mockPreview = MockPreview();
-        when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
-        return mockPreview;
-      });
+        mockProcessCameraProvider,
+        newResolutionStrategy: ({
+          required CameraSize boundSize,
+          required ResolutionStrategyFallbackRule fallbackRule,
+          BinaryMessenger? pigeon_binaryMessenger,
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          lastSetBoundSize = boundSize;
+          lastSetFallbackRule = fallbackRule;
+          return MockResolutionStrategy();
+        },
+      );
 
       await camera.createCamera(
         testCameraDescription,
@@ -1101,16 +1096,6 @@ void main() {
       highestAvailableStrategyResolutionStrategy: () {
         return highestAvailableStrategy;
       },
-      newPreview: ({
-        int? targetRotation,
-        ResolutionSelector? resolutionSelector,
-        BinaryMessenger? pigeon_binaryMessenger,
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockPreview mockPreview = MockPreview();
-        when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
-        return mockPreview;
-      },
     );
 
     await camera.createCamera(
@@ -1140,7 +1125,7 @@ void main() {
     expect(camera.imageCapture!.resolutionSelector, isNull);
     expect(camera.imageAnalysis!.resolutionSelector, isNull);
   });
-/*
+
   test(
       'createCamera properly sets filter for resolution preset for non-video capture use cases',
       () async {
@@ -1162,8 +1147,25 @@ void main() {
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
-    camera.proxy =
-        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
+    CameraSize? lastSetBoundSize;
+    CameraSize? lastSetPreferredSize;
+    camera.proxy = getProxyForTestingResolutionPreset(mockProcessCameraProvider,
+        newResolutionStrategy: ({
+      required CameraSize boundSize,
+      required ResolutionStrategyFallbackRule fallbackRule,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      lastSetBoundSize = boundSize;
+      return MockResolutionStrategy();
+    }, createWithOnePreferredSizeResolutionFilter: ({
+      required CameraSize preferredSize,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      lastSetPreferredSize = preferredSize;
+      return MockResolutionFilter();
+    });
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
@@ -1177,18 +1179,41 @@ void main() {
       await camera.createCamera(testCameraDescription, resolutionPreset,
           enableAudio: enableAudio);
 
-      Size? expectedPreferredResolution;
+      CameraSize? expectedPreferredResolution;
+      final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       switch (resolutionPreset) {
         case ResolutionPreset.low:
-          expectedPreferredResolution = const Size(320, 240);
+          expectedPreferredResolution = CameraSize.pigeon_detached(
+            width: 320,
+            height: 240,
+            pigeon_instanceManager: testInstanceManager,
+          );
         case ResolutionPreset.medium:
-          expectedPreferredResolution = const Size(720, 480);
+          expectedPreferredResolution = CameraSize.pigeon_detached(
+            width: 720,
+            height: 480,
+            pigeon_instanceManager: testInstanceManager,
+          );
         case ResolutionPreset.high:
-          expectedPreferredResolution = const Size(1280, 720);
+          expectedPreferredResolution = CameraSize.pigeon_detached(
+            width: 1280,
+            height: 720,
+            pigeon_instanceManager: testInstanceManager,
+          );
         case ResolutionPreset.veryHigh:
-          expectedPreferredResolution = const Size(1920, 1080);
+          expectedPreferredResolution = CameraSize.pigeon_detached(
+            width: 1920,
+            height: 1080,
+            pigeon_instanceManager: testInstanceManager,
+          );
         case ResolutionPreset.ultraHigh:
-          expectedPreferredResolution = const Size(3840, 2160);
+          expectedPreferredResolution = CameraSize.pigeon_detached(
+            width: 3840,
+            height: 2160,
+            pigeon_instanceManager: testInstanceManager,
+          );
         case ResolutionPreset.max:
           expectedPreferredResolution = null;
       }
@@ -1203,17 +1228,21 @@ void main() {
       }
 
       expect(
-          camera.preview!.resolutionSelector!.resolutionFilter!
-              .preferredResolution,
-          equals(expectedPreferredResolution));
+        lastSetPreferredSize?.width,
+        equals(expectedPreferredResolution.width),
+      );
       expect(
-          camera
-              .imageCapture!.resolutionSelector!.resolutionStrategy!.boundSize,
-          equals(expectedPreferredResolution));
+        lastSetPreferredSize?.height,
+        equals(expectedPreferredResolution.height),
+      );
       expect(
-          camera
-              .imageAnalysis!.resolutionSelector!.resolutionStrategy!.boundSize,
-          equals(expectedPreferredResolution));
+        lastSetBoundSize?.width,
+        equals(expectedPreferredResolution.width),
+      );
+      expect(
+        lastSetBoundSize?.height,
+        equals(expectedPreferredResolution.height),
+      );
     }
 
     // Test null case.
@@ -1222,7 +1251,7 @@ void main() {
     expect(camera.imageCapture!.resolutionSelector, isNull);
     expect(camera.imageAnalysis!.resolutionSelector, isNull);
   });
-
+/*
   test(
       'createCamera properly sets aspect ratio based on preset resolution for non-video capture use cases',
       () async {

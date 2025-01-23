@@ -642,11 +642,12 @@ abstract class ResolutionStrategy {
   ),
 )
 abstract class ResolutionSelector {
-  ResolutionSelector(
-    AspectRatioStrategy? aspectRatioStrategy,
-    ResolutionFilter? resolutionFilter,
-  );
+  ResolutionSelector(AspectRatioStrategy? aspectRatioStrategy);
 
+  /// The resolution filter to output the final desired sizes list.
+  late final ResolutionFilter? resolutionFilter;
+
+  /// The resolution selection strategy for the `UseCase`.
   late final ResolutionStrategy? resolutionStrategy;
 }
 

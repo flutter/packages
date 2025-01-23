@@ -4750,9 +4750,9 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
   ResolutionSelector({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionFilter,
     this.resolutionStrategy,
     AspectRatioStrategy? aspectRatioStrategy,
-    ResolutionFilter? resolutionFilter,
   }) {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -4771,9 +4771,9 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_channel.send(<Object?>[
         pigeonVar_instanceIdentifier,
+        resolutionFilter,
         resolutionStrategy,
-        aspectRatioStrategy,
-        resolutionFilter
+        aspectRatioStrategy
       ]) as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -4797,6 +4797,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
   ResolutionSelector.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    this.resolutionFilter,
     this.resolutionStrategy,
   });
 
@@ -4804,14 +4805,20 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
       _pigeonVar_codecResolutionSelector =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
+  /// The resolution filter to output the final desired sizes list.
+  final ResolutionFilter? resolutionFilter;
+
+  /// The resolution selection strategy for the `UseCase`.
   final ResolutionStrategy? resolutionStrategy;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    ResolutionSelector Function(ResolutionStrategy? resolutionStrategy)?
-        pigeon_newInstance,
+    ResolutionSelector Function(
+      ResolutionFilter? resolutionFilter,
+      ResolutionStrategy? resolutionStrategy,
+    )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -4834,15 +4841,19 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.camera_android_camerax.ResolutionSelector.pigeon_newInstance was null, expected non-null int.');
+          final ResolutionFilter? arg_resolutionFilter =
+              (args[1] as ResolutionFilter?);
           final ResolutionStrategy? arg_resolutionStrategy =
-              (args[1] as ResolutionStrategy?);
+              (args[2] as ResolutionStrategy?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_resolutionStrategy) ??
+              pigeon_newInstance?.call(
+                      arg_resolutionFilter, arg_resolutionStrategy) ??
                   ResolutionSelector.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    resolutionFilter: arg_resolutionFilter,
                     resolutionStrategy: arg_resolutionStrategy,
                   ),
               arg_pigeon_instanceIdentifier!,
@@ -4864,6 +4875,7 @@ class ResolutionSelector extends PigeonInternalProxyApiBaseClass {
     return ResolutionSelector.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      resolutionFilter: resolutionFilter,
       resolutionStrategy: resolutionStrategy,
     );
   }
