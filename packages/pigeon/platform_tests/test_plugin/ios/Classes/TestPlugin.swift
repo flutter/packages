@@ -1274,14 +1274,14 @@ class SendEvents: StreamEventsStreamHandler {
   }
 }
 
-var numberToSend = 1
+var numberToSend: Int64 = 1
 
 class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
   var timerActive = false
   var timer: Timer?
 
   override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
-    var numberThatWillBeSent = numberToSend
+    var numberThatWillBeSent: Int64 = numberToSend
     var count: Int64 = 0
     if !timerActive {
       timerActive = true
