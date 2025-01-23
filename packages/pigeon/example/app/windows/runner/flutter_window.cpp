@@ -41,6 +41,7 @@ class PigeonApiImplementation : public ExampleHostApi {
     }
     result(true);
   }
+  // #enddocregion cpp-class
 
   void SendMessageModernAsync(const MessageData& message,
                               std::function<void(ErrorOr<bool> reply)> result) {
@@ -57,7 +58,6 @@ class PigeonApiImplementation : public ExampleHostApi {
     result(FlutterError("code", "message", "details"));
   }
 };
-// #enddocregion cpp-class
 
 // #docregion cpp-method-flutter
 class PigeonFlutterApi {

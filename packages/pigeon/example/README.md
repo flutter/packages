@@ -243,22 +243,6 @@ class PigeonApiImplementation : public ExampleHostApi {
     }
     result(true);
   }
-
-  void SendMessageModernAsync(const MessageData& message,
-                              std::function<void(ErrorOr<bool> reply)> result) {
-    if (message.code() == Code::kOne) {
-      result(FlutterError("code", "message", "details"));
-      return;
-    }
-    result(true);
-  }
-
-  void SendMessageModernAsyncThrows(
-      const MessageData& message,
-      std::function<void(ErrorOr<bool> reply)> result) {
-    result(FlutterError("code", "message", "details"));
-  }
-};
 ```
 
 ### GObject
@@ -297,40 +281,13 @@ static void handle_send_message(
   pigeon_example_package_example_host_api_respond_send_message(response_handle,
                                                                TRUE);
 }
-
-static void handle_send_message_modern_async(
-    PigeonExamplePackageMessageData* message,
-    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
-    gpointer user_data) {
-  PigeonExamplePackageCode code =
-      pigeon_example_package_message_data_get_code(message);
-  if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
-    g_autoptr(FlValue) details = fl_value_new_string("details");
-    pigeon_example_package_example_host_api_respond_error_send_message_modern_async(
-        response_handle, "code", "message", details);
-    return;
-  }
-
-  pigeon_example_package_example_host_api_respond_send_message_modern_async(
-      response_handle, TRUE);
-}
-
-static void handle_send_message_modern_async_throws(
-    PigeonExamplePackageMessageData* message,
-    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
-    gpointer user_data) {
-  g_autoptr(FlValue) details = fl_value_new_string("details");
-  pigeon_example_package_example_host_api_respond_error_send_message_modern_async_throws(
-      response_handle, "code", "message", details);
-}
-
+// ···
 static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
     .get_host_language = handle_get_host_language,
     .add = handle_add,
     .send_message = handle_send_message,
-    .send_message_modern_async = handle_send_message_modern_async,
-    .send_message_modern_async_throws =
-        handle_send_message_modern_async_throws};
+    // ···
+};
 ```
 
 ## FlutterApi Example

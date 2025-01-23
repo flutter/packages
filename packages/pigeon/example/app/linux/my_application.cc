@@ -55,6 +55,7 @@ static void handle_send_message(
   pigeon_example_package_example_host_api_respond_send_message(response_handle,
                                                                TRUE);
 }
+// #enddocregion vtable
 
 static void handle_send_message_modern_async(
     PigeonExamplePackageMessageData* message,
@@ -82,13 +83,16 @@ static void handle_send_message_modern_async_throws(
       response_handle, "code", "message", details);
 }
 
+// #docregion vtable
 static PigeonExamplePackageExampleHostApiVTable example_host_api_vtable = {
     .get_host_language = handle_get_host_language,
     .add = handle_add,
     .send_message = handle_send_message,
+    // #enddocregion vtable
     .send_message_modern_async = handle_send_message_modern_async,
-    .send_message_modern_async_throws =
-        handle_send_message_modern_async_throws};
+    .send_message_modern_async_throws = handle_send_message_modern_async_throws
+    // #docregion vtable
+};
 // #enddocregion vtable
 
 // #docregion flutter-method-callback
