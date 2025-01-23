@@ -4644,6 +4644,9 @@ abstract class PigeonApiRecorder(open val pigeonRegistrar: CameraXLibraryPigeonP
   /** Gets the target video encoding bitrate of this Recorder. */
   abstract fun getTargetVideoEncodingBitRate(pigeon_instance: androidx.camera.video.Recorder): Long
 
+  /** The quality selector of this Recorder. */
+  abstract fun getQualitySelector(pigeon_instance: androidx.camera.video.Recorder): androidx.camera.video.QualitySelector
+
   /** Prepares a recording that will be saved to a File. */
   abstract fun prepareRecording(pigeon_instance: androidx.camera.video.Recorder, path: String): androidx.camera.video.PendingRecording
 
@@ -4697,6 +4700,23 @@ abstract class PigeonApiRecorder(open val pigeonRegistrar: CameraXLibraryPigeonP
             val pigeon_instanceArg = args[0] as androidx.camera.video.Recorder
             val wrapped: List<Any?> = try {
               listOf(api.getTargetVideoEncodingBitRate(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.camera_android_camerax.Recorder.getQualitySelector", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.camera.video.Recorder
+            val wrapped: List<Any?> = try {
+              listOf(api.getQualitySelector(pigeon_instanceArg))
             } catch (exception: Throwable) {
               wrapError(exception)
             }
@@ -4811,6 +4831,12 @@ class RecorderProxyApi extends PigeonApiRecorder {
 
   @NonNull
   @Override
+  public androidx.camera.video.QualitySelector getQualitySelector(Recorder pigeon_instance) {
+    return pigeon_instance.getQualitySelector();
+  }
+
+  @NonNull
+  @Override
   public androidx.camera.video.PendingRecording prepareRecording(Recorder, pigeon_instance@NonNull String path) {
     return pigeon_instance.prepareRecording(path);
   }
@@ -4867,6 +4893,17 @@ public class RecorderProxyApiTest {
     when(instance.getTargetVideoEncodingBitRate()).thenReturn(value);
 
     assertEquals(value, api.getTargetVideoEncodingBitRate(instance ));
+  }
+
+  @Test
+  public void getQualitySelector() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+
+    final Recorder instance = mock(Recorder.class);
+    final androidx.camera.video.QualitySelector value = mock(QualitySelector.class);
+    when(instance.getQualitySelector()).thenReturn(value);
+
+    assertEquals(value, api.getQualitySelector(instance ));
   }
 
   @Test

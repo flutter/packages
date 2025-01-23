@@ -3384,6 +3384,30 @@ class MockRecorder extends _i1.Mock implements _i2.Recorder {
       ) as _i5.Future<int>);
 
   @override
+  _i5.Future<_i2.QualitySelector> getQualitySelector() => (super.noSuchMethod(
+        Invocation.method(
+          #getQualitySelector,
+          [],
+        ),
+        returnValue:
+            _i5.Future<_i2.QualitySelector>.value(_FakeQualitySelector_27(
+          this,
+          Invocation.method(
+            #getQualitySelector,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i5.Future<_i2.QualitySelector>.value(_FakeQualitySelector_27(
+          this,
+          Invocation.method(
+            #getQualitySelector,
+            [],
+          ),
+        )),
+      ) as _i5.Future<_i2.QualitySelector>);
+
+  @override
   _i5.Future<_i2.PendingRecording> prepareRecording(String? path) =>
       (super.noSuchMethod(
         Invocation.method(

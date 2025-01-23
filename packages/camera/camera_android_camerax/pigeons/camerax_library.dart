@@ -493,6 +493,9 @@ abstract class Recorder implements VideoOutput {
   /// Gets the target video encoding bitrate of this Recorder.
   int getTargetVideoEncodingBitRate();
 
+  /// The quality selector of this Recorder.
+  QualitySelector getQualitySelector();
+
   /// Prepares a recording that will be saved to a File.
   PendingRecording prepareRecording(String path);
 }

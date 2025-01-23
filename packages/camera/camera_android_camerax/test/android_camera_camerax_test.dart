@@ -114,6 +114,17 @@ void main() {
       BinaryMessenger? pigeon_binaryMessenger,
       PigeonInstanceManager? pigeon_instanceManager,
     })? createWithOnePreferredSizeResolutionFilter,
+    FallbackStrategy Function({
+      required VideoQuality quality,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    })? lowerQualityOrHigherThanFallbackStrategy,
+    QualitySelector Function({
+      required VideoQuality quality,
+      FallbackStrategy? fallbackStrategy,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    })? fromQualitySelector,
   }) {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
@@ -172,7 +183,11 @@ void main() {
         BinaryMessenger? pigeon_binaryMessenger,
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
-        return MockRecorder();
+        final MockRecorder mockRecorder = MockRecorder();
+        when(mockRecorder.getQualitySelector()).thenAnswer(
+          (_) async => qualitySelector ?? MockQualitySelector(),
+        );
+        return mockRecorder;
       },
       withOutputVideoCapture: ({
         required VideoOutput videoOutput,
@@ -230,14 +245,15 @@ void main() {
         );
         return mockResolutionSelector;
       },
-      fromQualitySelector: ({
-        required VideoQuality quality,
-        FallbackStrategy? fallbackStrategy,
-        BinaryMessenger? pigeon_binaryMessenger,
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        return MockQualitySelector();
-      },
+      fromQualitySelector: fromQualitySelector ??
+          ({
+            required VideoQuality quality,
+            FallbackStrategy? fallbackStrategy,
+            BinaryMessenger? pigeon_binaryMessenger,
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            return MockQualitySelector();
+          },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
         BinaryMessenger? pigeon_binaryMessenger,
@@ -328,18 +344,27 @@ void main() {
       sensorOrientationCameraCharacteristics: () {
         return MockCameraCharacteristicsKey();
       },
-      lowerQualityOrHigherThanFallbackStrategy: ({
+      lowerQualityOrHigherThanFallbackStrategy:
+          lowerQualityOrHigherThanFallbackStrategy ??
+              ({
+                required VideoQuality quality,
+                BinaryMessenger? pigeon_binaryMessenger,
+                PigeonInstanceManager? pigeon_instanceManager,
+              }) {
+                return MockFallbackStrategy();
+              },
+      highestAvailableStrategyResolutionStrategy: () {
+        return highestAvailableStrategyResolutionStrategy;
+      },
+      ratio_4_3FallbackAutoStrategyAspectRatioStrategy: () =>
+          ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
+      lowerQualityThanFallbackStrategy: ({
         required VideoQuality quality,
         BinaryMessenger? pigeon_binaryMessenger,
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockFallbackStrategy();
       },
-      highestAvailableStrategyResolutionStrategy: () {
-        return highestAvailableStrategyResolutionStrategy;
-      },
-      ratio_4_3FallbackAutoStrategyAspectRatioStrategy: () =>
-          ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
     );
 
     return proxy;
@@ -1388,7 +1413,7 @@ void main() {
     expect(camera.imageCapture!.resolutionSelector, isNull);
     expect(camera.imageAnalysis!.resolutionSelector, isNull);
   });
-/*
+
   test(
       'createCamera properly sets preset resolution for video capture use case',
       () async {
@@ -1410,8 +1435,32 @@ void main() {
 
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
-    camera.proxy =
-        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
+    VideoQuality? fallbackStrategyVideoQuality;
+    VideoQuality? qualitySelectorVideoQuality;
+    FallbackStrategy? setFallbackStrategy;
+    final MockFallbackStrategy mockFallbackStrategy = MockFallbackStrategy();
+    final MockQualitySelector mockQualitySelector = MockQualitySelector();
+    camera.proxy = getProxyForTestingResolutionPreset(
+      mockProcessCameraProvider,
+      lowerQualityOrHigherThanFallbackStrategy: ({
+        required VideoQuality quality,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        fallbackStrategyVideoQuality = quality;
+        return mockFallbackStrategy;
+      },
+      fromQualitySelector: ({
+        required VideoQuality quality,
+        FallbackStrategy? fallbackStrategy,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        qualitySelectorVideoQuality = quality;
+        setFallbackStrategy = fallbackStrategy;
+        return mockQualitySelector;
+      },
+    );
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
@@ -1440,27 +1489,33 @@ void main() {
           expectedVideoQuality = VideoQuality.highest;
       }
 
-      const VideoResolutionFallbackRule expectedFallbackRule =
-          VideoResolutionFallbackRule.lowerQualityOrHigherThan;
-      final FallbackStrategy expectedFallbackStrategy =
-          FallbackStrategy.detached(
-              quality: expectedVideoQuality,
-              fallbackRule: expectedFallbackRule);
+      // const VideoResolutionFallbackRule expectedFallbackRule =
+      //     VideoResolutionFallbackRule.lowerQualityOrHigherThan;
+      // final FallbackStrategy expectedFallbackStrategy =
+      //     FallbackStrategy.detached(
+      //         quality: expectedVideoQuality,
+      //         fallbackRule: expectedFallbackRule);
 
-      expect(camera.recorder!.qualitySelector!.qualityList.length, equals(1));
-      expect(camera.recorder!.qualitySelector!.qualityList.first.quality,
-          equals(expectedVideoQuality));
-      expect(camera.recorder!.qualitySelector!.fallbackStrategy!.quality,
-          equals(expectedFallbackStrategy.quality));
-      expect(camera.recorder!.qualitySelector!.fallbackStrategy!.fallbackRule,
-          equals(expectedFallbackStrategy.fallbackRule));
+      expect(
+        await camera.recorder!.getQualitySelector(),
+        mockQualitySelector,
+      );
+      expect(qualitySelectorVideoQuality, equals(expectedVideoQuality));
+      expect(fallbackStrategyVideoQuality, equals(expectedVideoQuality));
+      expect(setFallbackStrategy, equals(mockFallbackStrategy));
     }
+
+    qualitySelectorVideoQuality = null;
+    setFallbackStrategy = null;
 
     // Test null case.
     await camera.createCamera(testCameraDescription, null);
-    expect(camera.recorder!.qualitySelector, isNull);
+    expect(
+      await camera.recorder!.getQualitySelector(),
+      isNot(equals(mockQualitySelector)),
+    );
   });
-
+/*
   test(
       'createCamera sets sensor and device orientations needed to correct preview rotation as expected',
       () async {
