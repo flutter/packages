@@ -50,7 +50,7 @@ class CallbackAsynchronous extends AsynchronousType {
   const CallbackAsynchronous();
 }
 
-/// Represents an await-style asynchronous api will be used.
+/// Represents that an await-style asynchronous api will be used.
 ///
 /// * Swift - async.
 /// * Kotlin - suspend.
