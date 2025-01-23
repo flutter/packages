@@ -1,6 +1,6 @@
 ## 22.7.4
 
-* [dart] Fixes bug with multi instance event channel support.
+* [dart] Fixes bug with multi-instance event channel support.
 
 ## 22.7.3
 
