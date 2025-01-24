@@ -251,8 +251,8 @@ void TestPlugin::EchoAsyncAllTypesTaskQueueBackground(
 }
 
 void TestPlugin::EchoAsyncNullableAllNullableTypesTaskQueueBackground(
-    const AllNullableTypes& everything,
-    std::function<void(ErrorOr<AllTypes> reply)> result) {
+    const AllNullableTypes* everything,
+    std::function<void(ErrorOr<AllNullableTypes> reply)> result) {
   result(everything);
 }
 

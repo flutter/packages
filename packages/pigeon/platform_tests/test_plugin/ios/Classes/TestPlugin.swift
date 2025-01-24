@@ -529,21 +529,19 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echoAsyncAllTypesTaskQueueBackground(
-    _ everything: AllTypes, completion: @escaping (Result<AllTypes, any Error>) -> Void
+    _ everything: AllTypes, completion: @escaping (Result<AllTypes, Error>) -> Void
   ) {
     completion(.success(everything))
   }
 
   func echoAsyncNullableAllNullableTypesTaskQueueBackground(
     _ everything: AllNullableTypes?,
-    completion: @escaping (Result<AllNullableTypes?, any Error>) -> Void
-  ) {
+    completion: @escaping (Result<AllNullableTypes?, Error>) -> Void
+) {
     completion(.success(everything))
   }
 
-  func throwAsyncErrorFromVoidTaskQueueBackground(
-    completion: @escaping (Result<Void, any Error>) -> Void
-  ) {
+  func throwAsyncErrorFromVoidTaskQueueBackground(completion: @escaping (Result<Void, Error>) -> Void) {
     completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
