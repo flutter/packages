@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Input Creation
 /// Overrides the default implementation of creating capture input.
 /// @param error Error pointer to be set if creation fails
-@property(nonatomic, copy) AVCaptureInput* (^createInputStub)(NSError **error);
+@property(nonatomic, copy) AVCaptureInput * (^createInputStub)(NSError **error);
 
 @end
 
