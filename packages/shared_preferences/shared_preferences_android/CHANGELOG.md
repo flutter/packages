@@ -1,6 +1,10 @@
-## 2.4.2
+## 2.4.3
 
 * Migrates `List<String>` value encoding to JSON.
+
+## 2.4.2
+
+* Bumps gradle-plugin to 2.1.0.
 
 ## 2.4.1
 
