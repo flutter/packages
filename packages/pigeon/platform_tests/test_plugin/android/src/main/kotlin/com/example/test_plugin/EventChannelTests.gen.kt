@@ -8,12 +8,30 @@
 
 package com.example.test_plugin
 
+import android.util.Log
+import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.common.StandardMessageCodec
 import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
+private fun wrapResult(result: Any?): List<Any?> {
+  return listOf(result)
+}
+
+private fun wrapError(exception: Throwable): List<Any?> {
+  return if (exception is EventChannelTestsError) {
+    listOf(exception.code, exception.message, exception.details)
+  } else {
+    listOf(
+        exception.javaClass.simpleName,
+        exception.toString(),
+        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+  }
+}
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
@@ -507,6 +525,48 @@ abstract class StreamConsistentNumbersStreamHandler : PigeonEventChannelWrapper<
       val internalStreamHandler = PigeonStreamHandler<Long>(streamHandler)
       EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
           .setStreamHandler(internalStreamHandler)
+    }
+  }
+}
+
+/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+interface SealedClassApi {
+  fun echo(event: PlatformEvent): PlatformEvent
+
+  companion object {
+    /** The codec used by SealedClassApi. */
+    val codec: MessageCodec<Any?> by lazy { EventChannelTestsPigeonCodec() }
+    /** Sets up an instance of `SealedClassApi` to handle messages through the `binaryMessenger`. */
+    @JvmOverloads
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: SealedClassApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.SealedClassApi.echo$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val eventArg = args[0] as PlatformEvent
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echo(eventArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
     }
   }
 }

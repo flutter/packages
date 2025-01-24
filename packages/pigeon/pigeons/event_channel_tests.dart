@@ -145,3 +145,8 @@ abstract class EventChannelMethods {
   PlatformEvent streamEvents();
   int streamConsistentNumbers();
 }
+
+@HostApi()
+abstract class SealedClassApi {
+  PlatformEvent echo(PlatformEvent event);
+}

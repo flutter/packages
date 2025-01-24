@@ -219,6 +219,132 @@ void compareAllNullableTypes(AllNullableTypes? allNullableTypesOne,
       allNullableTypesTwo.recursiveClassMap);
 }
 
+void compareEventAllNullableTypes(
+  EventAllNullableTypes? eventAllNullableTypesOne,
+  EventAllNullableTypes? eventAllNullableTypesTwo,
+) {
+  expect(eventAllNullableTypesOne == null, eventAllNullableTypesTwo == null);
+  if (eventAllNullableTypesOne == null || eventAllNullableTypesTwo == null) {
+    return;
+  }
+  expect(eventAllNullableTypesOne.aNullableBool,
+      eventAllNullableTypesTwo.aNullableBool);
+  expect(
+    eventAllNullableTypesOne.aNullableInt,
+    eventAllNullableTypesTwo.aNullableInt,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullableInt64,
+    eventAllNullableTypesTwo.aNullableInt64,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullableDouble,
+    eventAllNullableTypesTwo.aNullableDouble,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullableString,
+    eventAllNullableTypesTwo.aNullableString,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullableByteArray,
+    eventAllNullableTypesTwo.aNullableByteArray,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullable4ByteArray,
+    eventAllNullableTypesTwo.aNullable4ByteArray,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullable8ByteArray,
+    eventAllNullableTypesTwo.aNullable8ByteArray,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullableFloatArray,
+    eventAllNullableTypesTwo.aNullableFloatArray,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullableObject,
+    eventAllNullableTypesTwo.aNullableObject,
+  );
+  expect(
+    eventAllNullableTypesOne.aNullableEnum,
+    eventAllNullableTypesTwo.aNullableEnum,
+  );
+  compareEventAllNullableTypes(
+    eventAllNullableTypesOne.allNullableTypes,
+    eventAllNullableTypesTwo.allNullableTypes,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.list,
+    eventAllNullableTypesTwo.list,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.stringList,
+    eventAllNullableTypesTwo.stringList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.boolList,
+    eventAllNullableTypesTwo.boolList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.doubleList,
+    eventAllNullableTypesTwo.doubleList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.intList,
+    eventAllNullableTypesTwo.intList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.enumList,
+    eventAllNullableTypesTwo.enumList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.objectList,
+    eventAllNullableTypesTwo.objectList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.listList,
+    eventAllNullableTypesTwo.listList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.recursiveClassList,
+    eventAllNullableTypesTwo.recursiveClassList,
+  );
+  compareComplexLists(
+    eventAllNullableTypesOne.mapList,
+    eventAllNullableTypesTwo.mapList,
+  );
+  compareComplexMaps(
+      eventAllNullableTypesOne.map, eventAllNullableTypesTwo.map);
+  compareComplexMaps(
+    eventAllNullableTypesOne.stringMap,
+    eventAllNullableTypesTwo.stringMap,
+  );
+  compareComplexMaps(
+    eventAllNullableTypesOne.intMap,
+    eventAllNullableTypesTwo.intMap,
+  );
+  compareComplexMaps(
+    eventAllNullableTypesOne.enumMap,
+    eventAllNullableTypesTwo.enumMap,
+  );
+  compareComplexMaps(
+    eventAllNullableTypesOne.objectMap,
+    eventAllNullableTypesTwo.objectMap,
+  );
+  compareComplexMaps(
+    eventAllNullableTypesOne.listMap,
+    eventAllNullableTypesTwo.listMap,
+  );
+  compareComplexMaps(
+    eventAllNullableTypesOne.mapMap,
+    eventAllNullableTypesTwo.mapMap,
+  );
+  compareComplexMaps(
+    eventAllNullableTypesOne.recursiveClassMap,
+    eventAllNullableTypesTwo.recursiveClassMap,
+  );
+}
+
 void compareAllClassesWrapper(
     AllClassesWrapper? wrapperOne, AllClassesWrapper? wrapperTwo) {
   expect(wrapperOne == null, wrapperTwo == null);
@@ -415,6 +541,13 @@ final List<AnEnum?> enumList = <AnEnum?>[
   null
 ];
 
+final List<EventEnum?> eventEnumList = <EventEnum>[
+  EventEnum.one,
+  EventEnum.two,
+  EventEnum.three,
+  EventEnum.fortyTwo,
+];
+
 final List<List<Object?>?> listList = <List<Object?>?>[
   list,
   stringList,
@@ -471,6 +604,13 @@ final Map<AnEnum?, AnEnum?> enumMap = <AnEnum?, AnEnum?>{
   AnEnum.three: AnEnum.three,
   AnEnum.fortyTwo: AnEnum.fortyTwo,
   AnEnum.fourHundredTwentyTwo: null,
+};
+
+final Map<EventEnum?, EventEnum?> eventEnumMap = <EventEnum, EventEnum>{
+  EventEnum.one: EventEnum.one,
+  EventEnum.two: EventEnum.two,
+  EventEnum.three: EventEnum.three,
+  EventEnum.fortyTwo: EventEnum.fortyTwo,
 };
 
 final Map<int?, List<Object?>?> listMap = <int?, List<Object?>?>{
@@ -622,6 +762,39 @@ final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
   mapMap: mapMap,
 );
 
+final EventAllNullableTypes genericEventAllNullableTypes =
+    EventAllNullableTypes(
+  aNullableBool: true,
+  aNullableInt: regularInt,
+  aNullableInt64: biggerThanBigInt,
+  aNullableDouble: doublePi,
+  aNullableByteArray: genericAllNullableTypes.aNullableByteArray,
+  aNullable4ByteArray: genericAllNullableTypes.aNullable4ByteArray,
+  aNullable8ByteArray: genericAllNullableTypes.aNullable8ByteArray,
+  aNullableFloatArray: genericAllNullableTypes.aNullableFloatArray,
+  aNullableEnum: EventEnum.fortyTwo,
+  anotherNullableEnum: AnotherEventEnum.justInCase,
+  aNullableString: genericAllNullableTypes.aNullableString,
+  aNullableObject: genericAllNullableTypes.aNullableObject,
+  list: list,
+  stringList: stringList,
+  intList: intList,
+  doubleList: doubleList,
+  boolList: boolList,
+  enumList: eventEnumList,
+  objectList: list,
+  listList: listList,
+  mapList: mapList,
+  map: map,
+  stringMap: stringMap,
+  intMap: intMap,
+  enumMap: eventEnumMap,
+  objectMap: map,
+  listMap: listMap,
+  mapMap: mapMap,
+  recursiveClassMap: eventAllNullableTypesMap,
+);
+
 final List<AllNullableTypes> nonNullAllNullableTypesList = <AllNullableTypes>[
   genericAllNullableTypes,
   AllNullableTypes(),
@@ -643,6 +816,13 @@ final Map<int, AllNullableTypes?> allNullableTypesMap =
     <int, AllNullableTypes?>{
   0: genericAllNullableTypes,
   1: AllNullableTypes(),
+  2: null,
+};
+
+final Map<int, EventAllNullableTypes?> eventAllNullableTypesMap =
+    <int, EventAllNullableTypes?>{
+  0: genericEventAllNullableTypes,
+  1: EventAllNullableTypes(),
   2: null,
 };
 

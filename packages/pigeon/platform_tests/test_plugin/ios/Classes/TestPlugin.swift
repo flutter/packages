@@ -7,7 +7,7 @@ import UIKit
 
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
-public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
+public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi, SealedClassApi {
 
   var flutterAPI: FlutterIntegrationCoreApi
   var flutterSmallApiOne: FlutterSmallApi
@@ -19,6 +19,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
     TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
     TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
+    SealedClassApiSetup.setUp(binaryMessenger: registrar.messenger(), api: plugin)
     registrar.publish(plugin)
   }
 
@@ -1204,6 +1205,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func testUnusedClassesGenerate() -> UnusedClass {
     return UnusedClass()
   }
+
+  func echo(event: any PlatformEvent) throws -> any PlatformEvent { event }
 }
 
 public class TestPluginWithSuffix: HostSmallApi {
