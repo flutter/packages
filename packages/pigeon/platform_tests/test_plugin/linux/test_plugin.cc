@@ -791,14 +791,14 @@ static void echo_another_async_nullable_enum(
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse*
 echo_all_types_task_queue_background(CoreTestsPigeonTestAllTypes* everything,
                                      gpointer user_data) {
-  return core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response(
+  return core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types_task_queue_background(
       everything);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse*
 echo_nullable_all_nullable_types_task_queue_background(
     CoreTestsPigeonTestAllNullableTypes* everything, gpointer user_data) {
-  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response(
+  return core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types_task_queue_background(
       everything);
 }
 
@@ -3325,6 +3325,7 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_async_nullable_enum_map = echo_async_nullable_enum_map,
     .echo_async_nullable_class_map = echo_async_nullable_class_map,
     .echo_async_nullable_enum = echo_async_nullable_enum,
+    .echo_another_async_nullable_enum = echo_another_async_nullable_enum,
     .echo_all_types_task_queue_background =
         echo_all_types_task_queue_background,
     .echo_nullable_all_nullable_types_task_queue_background =
@@ -3337,7 +3338,6 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
         echo_async_nullable_all_nullable_types_task_queue_background,
     .throw_async_error_from_void_task_queue_background =
         throw_async_error_from_void_task_queue_background,
-    .echo_another_async_nullable_enum = echo_another_async_nullable_enum,
     .call_flutter_noop = call_flutter_noop,
     .call_flutter_throw_error = call_flutter_throw_error,
     .call_flutter_throw_error_from_void = call_flutter_throw_error_from_void,

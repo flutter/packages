@@ -537,11 +537,13 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func echoAsyncNullableAllNullableTypesTaskQueueBackground(
     _ everything: AllNullableTypes?,
     completion: @escaping (Result<AllNullableTypes?, Error>) -> Void
-) {
+  ) {
     completion(.success(everything))
   }
 
-  func throwAsyncErrorFromVoidTaskQueueBackground(completion: @escaping (Result<Void, Error>) -> Void) {
+  func throwAsyncErrorFromVoidTaskQueueBackground(
+    completion: @escaping (Result<Void, Error>) -> Void
+  ) {
     completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
