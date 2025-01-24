@@ -1856,4 +1856,30 @@ void main() {
     // There should be only one occurrence of 'is Foo' in the block
     expect(count, 1);
   });
+
+  // https://github.com/flutter/flutter/issues/160501
+  test('gen one empty class', () {
+    final Class classDefinition = Class(
+      name: 'Foobar',
+      fields: <NamedType>[],
+    );
+    final Root root = Root(
+      apis: <Api>[],
+      classes: <Class>[classDefinition],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+
+    /// The generated class should not be data class
+    expect(code, isNot(contains('data class')));
+  });
 }

@@ -67,6 +67,19 @@ struct StringEvent: PlatformEvent {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct EmptyEvent: PlatformEvent {
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> EmptyEvent? {
+
+    return EmptyEvent()
+  }
+  func toList() -> [Any?] {
+    return []
+  }
+}
+
 private class EventChannelMessagesPigeonCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -74,6 +87,8 @@ private class EventChannelMessagesPigeonCodecReader: FlutterStandardReader {
       return IntEvent.fromList(self.readValue() as! [Any?])
     case 130:
       return StringEvent.fromList(self.readValue() as! [Any?])
+    case 131:
+      return EmptyEvent.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -87,6 +102,9 @@ private class EventChannelMessagesPigeonCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? StringEvent {
       super.writeByte(130)
+      super.writeValue(value.toList())
+    } else if let value = value as? EmptyEvent {
+      super.writeByte(131)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)

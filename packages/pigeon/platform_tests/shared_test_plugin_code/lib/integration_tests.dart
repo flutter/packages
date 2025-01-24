@@ -2908,6 +2908,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           expect(event.value.aNullableInt, 0);
           expect(count, 6);
           count++;
+        case EmptyEvent():
+          expect(count, 7);
+          count++;
           completer.complete();
       }
     });
