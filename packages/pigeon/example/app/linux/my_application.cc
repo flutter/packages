@@ -78,6 +78,12 @@ static void handle_send_message_modern_async_throws(
     PigeonExamplePackageMessageData* message,
     PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
     gpointer user_data) {
+  if (code == PIGEON_EXAMPLE_PACKAGE_CODE_ONE) {
+    pigeon_example_package_example_host_api_respond_send_message_modern_async_throws(
+        response_handle, TRUE);
+    return;
+  }
+
   g_autoptr(FlValue) details = fl_value_new_string("details");
   pigeon_example_package_example_host_api_respond_error_send_message_modern_async_throws(
       response_handle, "code", "message", details);

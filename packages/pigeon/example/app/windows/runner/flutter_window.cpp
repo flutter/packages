@@ -55,6 +55,10 @@ class PigeonApiImplementation : public ExampleHostApi {
   void SendMessageModernAsyncThrows(
       const MessageData& message,
       std::function<void(ErrorOr<bool> reply)> result) {
+    if (message.code() == Code::kOne) {
+      result(true);
+      return;
+    }
     result(FlutterError("code", "message", "details"));
   }
 };

@@ -32,6 +32,10 @@ private class PigeonApiImplementation: ExampleHostApi {
   }
 
   func sendMessageModernAsyncThrows(message: MessageData) async throws -> Bool {
+    if message.code == .one {
+      return true
+    }
+
     throw PigeonError(code: "code", message: "message", details: "details")
   }
 }

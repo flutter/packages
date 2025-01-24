@@ -52,6 +52,10 @@ private class PigeonApiImplementation : ExampleHostApi {
   }
 
   override suspend fun sendMessageModernAsyncThrows(message: MessageData): Boolean {
+    if (message.code == Code.ONE) {
+      return true
+    }
+
     throw FlutterError("code", "message", "details")
   }
 }
