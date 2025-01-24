@@ -3077,11 +3077,11 @@ class HostIntegrationCoreApiSetup {
       echoAnotherAsyncNullableEnumChannel.setMessageHandler(nil)
     }
     /// Returns the passed object, to test serialization and deserialization.
-    let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()
     let echoAllTypesTaskQueueBackgroundChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypesTaskQueueBackground\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
+      binaryMessenger: binaryMessenger, codec: codec,
+      taskQueue: binaryMessenger.makeBackgroundTaskQueue?())
     if let api = api {
       echoAllTypesTaskQueueBackgroundChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -3116,11 +3116,11 @@ class HostIntegrationCoreApiSetup {
       echoNullableAllNullableTypesTaskQueueBackgroundChannel.setMessageHandler(nil)
     }
     /// Responds with an error from an void function.
-    let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()
     let throwErrorFromVoidTaskQueueBackgroundChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoidTaskQueueBackground\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
+      binaryMessenger: binaryMessenger, codec: codec,
+      taskQueue: binaryMessenger.makeBackgroundTaskQueue?())
     if let api = api {
       throwErrorFromVoidTaskQueueBackgroundChannel.setMessageHandler { _, reply in
         do {
@@ -3134,11 +3134,11 @@ class HostIntegrationCoreApiSetup {
       throwErrorFromVoidTaskQueueBackgroundChannel.setMessageHandler(nil)
     }
     /// Returns the passed object, to test serialization and deserialization.
-    let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()
     let echoAsyncAllTypesTaskQueueBackgroundChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypesTaskQueueBackground\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
+      binaryMessenger: binaryMessenger, codec: codec,
+      taskQueue: binaryMessenger.makeBackgroundTaskQueue?())
     if let api = api {
       echoAsyncAllTypesTaskQueueBackgroundChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -3178,11 +3178,11 @@ class HostIntegrationCoreApiSetup {
       echoAsyncNullableAllNullableTypesTaskQueueBackgroundChannel.setMessageHandler(nil)
     }
     /// Responds with an error from an async void function.
-    let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()
     let throwAsyncErrorFromVoidTaskQueueBackgroundChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoidTaskQueueBackground\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
+      binaryMessenger: binaryMessenger, codec: codec,
+      taskQueue: binaryMessenger.makeBackgroundTaskQueue?())
     if let api = api {
       throwAsyncErrorFromVoidTaskQueueBackgroundChannel.setMessageHandler { _, reply in
         api.throwAsyncErrorFromVoidTaskQueueBackground { result in

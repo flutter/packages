@@ -1536,16 +1536,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-    String? taskQueue;
-    if (taskQueueType != TaskQueueType.serial) {
-      taskQueue = 'taskQueue';
-      indent.writeln(
-        'let $taskQueue = binaryMessenger.makeBackgroundTaskQueue?()',
-      );
-    }
-
-    final String taskQueueArgument =
-        taskQueue != null ? ', $taskQueue: $taskQueue' : '';
+    final String taskQueueArgument = taskQueueType != TaskQueueType.serial
+        ? ', taskQueue: binaryMessenger.makeBackgroundTaskQueue?()'
+        : '';
 
     indent.writeln(
       'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec$taskQueueArgument)',

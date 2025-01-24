@@ -895,9 +895,8 @@ void main() {
     final String code = sink.toString();
     expect(
       code,
-      contains('let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()'),
+      contains('taskQueue: binaryMessenger.makeBackgroundTaskQueue?()'),
     );
-    expect(code, contains('taskQueue: taskQueue'));
   });
 
   test('flutter generics argument', () {

@@ -791,14 +791,14 @@ static void echo_another_async_nullable_enum(
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse*
 echo_all_types_task_queue_background(CoreTestsPigeonTestAllTypes* everything,
                                      gpointer user_data) {
-  return core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types_task_queue_background(
+  return core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response_new(
       everything);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse*
 echo_nullable_all_nullable_types_task_queue_background(
     CoreTestsPigeonTestAllNullableTypes* everything, gpointer user_data) {
-  return core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types_task_queue_background(
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response_new(
       everything);
 }
 
