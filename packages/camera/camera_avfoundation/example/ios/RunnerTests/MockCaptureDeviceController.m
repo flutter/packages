@@ -55,7 +55,6 @@
 }
 
 - (void)setExposurePointOfInterest:(CGPoint)point {
-  _exposurePointOfInterest = point;
   if (self.setExposurePointOfInterestStub) {
     self.setExposurePointOfInterestStub(point);
   }
@@ -75,14 +74,7 @@
 
 - (BOOL)lockForConfiguration:(NSError **)error {
   if (self.lockForConfigurationStub) {
-    self.lockForConfigurationStub(error);
-    return !self.shouldFailConfiguration;
-  }
-  if (self.shouldFailConfiguration) {
-    if (error) {
-      *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
-    }
-    return NO;
+    return self.lockForConfigurationStub(error);
   }
   return YES;
 }
@@ -111,9 +103,9 @@
 
 - (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
   if (self.createInputStub) {
-    self.createInputStub(error);
+    return self.createInputStub(error);
   }
-  return self.inputToReturn;
+  return NULL;
 }
 
 @end

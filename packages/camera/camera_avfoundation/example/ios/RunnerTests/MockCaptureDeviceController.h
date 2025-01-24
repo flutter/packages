@@ -79,10 +79,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) float ISO;
 
 // Configuration Lock
-@property(nonatomic, assign) BOOL shouldFailConfiguration;
 /// Overrides the default implementation of locking device for configuration.
 /// @param error Error pointer to be set if lock fails
-@property(nonatomic, copy) void (^lockForConfigurationStub)(NSError **error);
+@property(nonatomic, copy) BOOL (^lockForConfigurationStub)(NSError **error);
 /// Overrides the default implementation of unlocking device configuration.
 @property(nonatomic, copy) void (^unlockForConfigurationStub)(void);
 
@@ -97,10 +96,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) void (^setActiveVideoMaxFrameDurationStub)(CMTime duration);
 
 // Input Creation
-@property(nonatomic, strong) AVCaptureInput *inputToReturn;
 /// Overrides the default implementation of creating capture input.
 /// @param error Error pointer to be set if creation fails
-@property(nonatomic, copy) void (^createInputStub)(NSError **error);
+@property(nonatomic, copy) AVCaptureInput* (^createInputStub)(NSError **error);
 
 @end
 
