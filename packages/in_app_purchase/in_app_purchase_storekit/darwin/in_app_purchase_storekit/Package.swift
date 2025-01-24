@@ -21,18 +21,18 @@ let package = Package(
     .target(
       name: "in_app_purchase_storekit",
       dependencies: [
-        "storekit_objc"
+        "in_app_purchase_storekit_objc"
       ],
       resources: [
         .process("Resources/PrivacyInfo.xcprivacy")
       ]
     ),
     .target(
-      name: "storekit_objc",
+      name: "in_app_purchase_storekit_objc",
       dependencies: [],
-      publicHeadersPath: "include/storekit_objc",
+      publicHeadersPath: "include/in_app_purchase_storekit_objc",
       cSettings: [
-        .headerSearchPath("include/storekit_objc")
+        .headerSearchPath("include/in_app_purchase_storekit_objc")
       ]
     ),
   ]

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "../include/storekit_objc/FLTPaymentQueueProtocol.h"
+#import "../include/in_app_purchase_storekit_objc/FLTPaymentQueueProtocol.h"
 
 @interface DefaultPaymentQueue ()
 /// The wrapped SKPaymentQueue

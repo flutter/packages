@@ -5,8 +5,8 @@
 import Foundation
 import StoreKit
 
-#if canImport(storekit_objc)
-  import storekit_objc
+#if canImport(in_app_purchase_storekit_objc)
+  import in_app_purchase_storekit_objc
 #endif
 
 #if os(iOS)
