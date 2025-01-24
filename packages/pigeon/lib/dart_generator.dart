@@ -5,6 +5,7 @@
 import 'package:code_builder/code_builder.dart' as cb;
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
+import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
 import 'dart/templates.dart';
@@ -555,8 +556,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         if (instanceName.isNotEmpty) {
           instanceName = '.\$instanceName';
         }
-        const EventChannel ${func.name}Channel =
-            EventChannel('${makeChannelName(api, func, dartPackageName)}', $_pigeonMethodChannelCodec);
+        final EventChannel ${func.name}Channel =
+            EventChannel('${makeChannelName(api, func, dartPackageName)}\$instanceName', $_pigeonMethodChannelCodec);
         return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
           return event as ${func.returnType.baseName};
         });
@@ -779,7 +780,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(
-      DartFormatter().format('${instanceManagerApi.accept(emitter)}'),
+      DartFormatter(languageVersion: Version(3, 6, 0))
+          .format('${instanceManagerApi.accept(emitter)}'),
     );
   }
 
@@ -899,7 +901,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     );
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.format(DartFormatter().format('${proxyApi.accept(emitter)}'));
+    indent.format(DartFormatter(languageVersion: Version(3, 6, 0))
+        .format('${proxyApi.accept(emitter)}'));
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
