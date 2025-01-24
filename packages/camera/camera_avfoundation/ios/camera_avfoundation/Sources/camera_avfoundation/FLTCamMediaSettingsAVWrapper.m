@@ -24,13 +24,11 @@
   [videoCaptureSession commitConfiguration];
 }
 
-- (void)setMinFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDevice>)captureDevice {
+- (void)setMinFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDevice>)captureDevice {
   captureDevice.activeVideoMinFrameDuration = duration;
 }
 
-- (void)setMaxFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDevice>)captureDevice {
+- (void)setMaxFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDevice>)captureDevice {
   captureDevice.activeVideoMaxFrameDuration = duration;
 }
 

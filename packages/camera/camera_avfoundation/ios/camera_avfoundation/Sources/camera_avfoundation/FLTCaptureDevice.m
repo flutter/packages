@@ -8,8 +8,7 @@
 
 @implementation FLTDefaultCaptureDeviceInputFactory
 
-- (AVCaptureInput *)deviceInputWithDevice:(id<FLTCaptureDevice>)device
-                                    error:(NSError **)error {
+- (AVCaptureInput *)deviceInputWithDevice:(id<FLTCaptureDevice>)device error:(NSError **)error {
   return [AVCaptureDeviceInput deviceInputWithDevice:device error:error];
 }
 

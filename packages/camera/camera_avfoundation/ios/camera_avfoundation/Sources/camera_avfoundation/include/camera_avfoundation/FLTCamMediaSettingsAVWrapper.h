@@ -60,8 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMinFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDevice>)captureDevice;
+- (void)setMinFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDevice>)captureDevice;
 
 /**
  * @method setMaxFrameDuration:onDevice:
@@ -70,8 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMaxFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDevice>)captureDevice;
+- (void)setMaxFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDevice>)captureDevice;
 
 /**
  * @method assetWriterAudioInputWithOutputSettings:

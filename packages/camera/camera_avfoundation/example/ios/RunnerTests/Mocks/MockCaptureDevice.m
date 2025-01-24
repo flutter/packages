@@ -131,8 +131,7 @@
   return self;
 }
 
-- (id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDevice>)device
-                                       error:(NSError **)error {
+- (id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDevice>)device error:(NSError **)error {
   return _mockDeviceInput;
 }
 
