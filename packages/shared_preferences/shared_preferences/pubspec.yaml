@@ -40,7 +40,6 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  path: ^1.9.0
 
 topics:
   - persistence

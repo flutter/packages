@@ -1,5 +1,10 @@
+## 22.7.5
+
+Adds support for empty data classes.
+
 ## 22.7.4
-* Adds support for empty data classes.
+
+* [dart] Fixes bug with multi-instance event channel support.
 
 ## 22.7.3
 
