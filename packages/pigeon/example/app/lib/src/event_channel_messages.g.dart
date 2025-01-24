@@ -55,6 +55,17 @@ class StringEvent extends PlatformEvent {
   }
 }
 
+class EmptyEvent extends PlatformEvent {
+  Object encode() {
+    return <Object?>[];
+  }
+
+  static EmptyEvent decode(Object result) {
+    result as List<Object?>;
+    return EmptyEvent();
+  }
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -68,6 +79,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is StringEvent) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
+    } else if (value is EmptyEvent) {
+      buffer.putUint8(131);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -80,6 +94,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return IntEvent.decode(readValue(buffer)!);
       case 130:
         return StringEvent.decode(readValue(buffer)!);
+      case 131:
+        return EmptyEvent.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
