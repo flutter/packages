@@ -41,7 +41,16 @@ class RoutingConfig {
   /// The [routes] must not be empty.
   const RoutingConfig({
     required this.routes,
+    this.onEnter,
+    @Deprecated(
+      'Use onEnter instead. '
+      'This feature will be removed in a future release.',
+    )
     this.redirect = _defaultRedirect,
+    @Deprecated(
+      'Use onEnter instead. '
+      'This feature will be removed in a future release.',
+    )
     this.redirectLimit = 5,
   });
 
@@ -66,12 +75,49 @@ class RoutingConfig {
   /// changes.
   ///
   /// See [GoRouter].
+  @Deprecated(
+    'Use onEnter instead. '
+    'This feature will be removed in a future release.',
+  )
   final GoRouterRedirect redirect;
 
   /// The maximum number of redirection allowed.
   ///
   /// See [GoRouter].
+  @Deprecated(
+    'Use onEnter instead. '
+    'This feature will be removed in a future release.',
+  )
   final int redirectLimit;
+
+  /// A callback invoked for every incoming route before it is processed.
+  ///
+  /// This callback allows you to control navigation by inspecting the incoming
+  /// route and conditionally preventing the navigation. If the callback returns
+  /// `true`, the GoRouter proceeds with the regular navigation and redirection
+  /// logic. If the callback returns `false`, the navigation is canceled.
+  ///
+  /// When a deep link opens the app and `onEnter` returns `false`,  GoRouter
+  /// will automatically redirect to the initial route or '/'.
+  ///
+  /// Example:
+  /// ```dart
+  /// final GoRouter router = GoRouter(
+  ///   routes: [...],
+  ///   onEnter: (BuildContext context, Uri uri) {
+  ///     if (uri.path == '/login' && isUserLoggedIn()) {
+  ///       return false; // Prevent navigation to /login
+  ///     }
+  ///     if (uri.path == '/referral') {
+  ///       // Save the referral code and prevent navigation
+  ///       saveReferralCode(uri.queryParameters['code']);
+  ///       return false;
+  ///     }
+  ///     return true; // Allow navigation
+  ///   },
+  /// );
+  /// ```
+  final OnEnter? onEnter;
 }
 
 /// The route configuration for the app.
@@ -127,9 +173,17 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
+    @Deprecated(
+      'Use onEnter instead. '
+      'This feature will be removed in a future release.',
+    )
     GoRouterRedirect? redirect,
-    Listenable? refreshListenable,
+    @Deprecated(
+      'Use onEnter instead. '
+      'This feature will be removed in a future release.',
+    )
     int redirectLimit = 5,
+    Listenable? refreshListenable,
     bool routerNeglect = false,
     String? initialLocation,
     bool overridePlatformDefaultLocation = false,
@@ -143,11 +197,12 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     return GoRouter.routingConfig(
       routingConfig: _ConstantRoutingConfig(
         RoutingConfig(
-            routes: routes,
-            redirect: redirect ?? RoutingConfig._defaultRedirect,
-            redirectLimit: redirectLimit),
+          routes: routes,
+          redirect: redirect ?? RoutingConfig._defaultRedirect,
+          onEnter: onEnter,
+          redirectLimit: redirectLimit,
+        ),
       ),
-      onEnter: onEnter,
       extraCodec: extraCodec,
       onException: onException,
       errorPageBuilder: errorPageBuilder,
@@ -171,7 +226,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   GoRouter.routingConfig({
     required ValueListenable<RoutingConfig> routingConfig,
     Codec<Object?, Object?>? extraCodec,
-    OnEnter? onEnter,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
@@ -209,7 +263,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       _routingConfig,
       navigatorKey: navigatorKey,
       extraCodec: extraCodec,
-      onEnter: onEnter,
     );
 
     final ParserExceptionHandler? parserExceptionHandler;

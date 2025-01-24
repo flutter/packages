@@ -638,56 +638,101 @@ void main() {
   });
 
   testWidgets(
-      'GoRouteInformationParser short-circuits if onEnter returns false',
-      (WidgetTester tester) async {
-    bool onEnterCalled = false;
-    final GoRouter router = GoRouter(
-      // Provide a custom onEnter callback that always returns true.
-      onEnter: (BuildContext context, GoRouterState state) {
-        onEnterCalled = true;
-        return false; // Always prevent entering new uris.
-      },
-      routes: <RouteBase>[
-        GoRoute(
-          path: '/',
-          builder: (_, __) => const Placeholder(),
-          routes: <GoRoute>[
-            GoRoute(path: 'abc', builder: (_, __) => const Placeholder()),
-          ],
-        ),
-      ],
-    );
-    addTearDown(router.dispose);
+    'GoRouteInformationParser handles onEnter navigation control correctly',
+    (WidgetTester tester) async {
+      // Track states for verification
+      GoRouterState? capturedCurrentState;
+      GoRouterState? capturedNextState;
+      int onEnterCallCount = 0;
 
-    // Pump the widget so the router is actually in the tree.
-    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final GoRouter router = GoRouter(
+        initialLocation: '/',
+        onEnter:
+            (BuildContext context, GoRouterState current, GoRouterState next) {
+          onEnterCallCount++;
+          capturedCurrentState = current;
+          capturedNextState = next;
 
-    // Grab the parser we want to test.
-    final GoRouteInformationParser parser = router.routeInformationParser;
+          // Block navigation only to /blocked route
+          return !next.uri.path.contains('blocked');
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Placeholder(),
+            routes: <GoRoute>[
+              GoRoute(
+                path: 'allowed',
+                builder: (_, __) => const Placeholder(),
+              ),
+              GoRoute(
+                path: 'blocked',
+                builder: (_, __) => const Placeholder(),
+              ),
+            ],
+          ),
+        ],
+      );
 
-    final BuildContext context = tester.element(find.byType(Router<Object>));
-    // Save what we consider "old route" (the route we're currently on).
-    final RouteMatchList oldConfiguration =
-        router.routerDelegate.currentConfiguration;
+      // Important: Dispose router at end
+      addTearDown(() async {
+        router.dispose();
+        // Allow pending timers and microtasks to complete
+        await tester.pumpAndSettle();
+      });
 
-    // Attempt to parse a new deep link: "/abc"
-    final RouteInformation routeInfo = RouteInformation(
-      uri: Uri.parse('/abc'),
-      state: RouteInformationState<void>(type: NavigatingType.go),
-    );
-    final RouteMatchList newMatch =
-        await parser.parseRouteInformationWithDependencies(
-      routeInfo,
-      context,
-    );
+      // Initialize the router
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      final GoRouteInformationParser parser = router.routeInformationParser;
+      final BuildContext context = tester.element(find.byType(Router<Object>));
 
-    // Because our onEnter returned `true`, we expect we "did nothing."
-    //  => Check that the parser short-circuited (did not produce a new route).
-    expect(onEnterCalled, isTrue, reason: 'onEnter was not called.');
-    expect(
-      newMatch,
-      equals(oldConfiguration),
-      reason: 'Expected the parser to short-circuit and keep the old route.',
-    );
-  });
+      // Test Case 1: Initial Route
+      expect(onEnterCallCount, 1,
+          reason: 'onEnter should be called for initial route');
+      expect(
+        capturedCurrentState?.uri.path,
+        capturedNextState?.uri.path,
+        reason: 'Initial route should have same current and next state',
+      );
+
+      // Test Case 2: Blocked Navigation
+      final RouteMatchList beforeBlockedNav =
+          router.routerDelegate.currentConfiguration;
+
+      final RouteInformation blockedRouteInfo = RouteInformation(
+        uri: Uri.parse('/blocked'),
+        state: RouteInformationState<void>(type: NavigatingType.go),
+      );
+
+      final RouteMatchList blockedMatch =
+          await parser.parseRouteInformationWithDependencies(
+        blockedRouteInfo,
+        context,
+      );
+
+      // Wait for any animations to complete
+      await tester.pumpAndSettle();
+
+      expect(onEnterCallCount, 2,
+          reason: 'onEnter should be called for blocked route');
+      expect(
+        blockedMatch.uri.toString(),
+        equals(beforeBlockedNav.uri.toString()),
+        reason: 'Navigation to blocked route should retain previous uri',
+      );
+      expect(
+        capturedCurrentState?.uri.path,
+        '/',
+        reason: 'Current state should be root path',
+      );
+      expect(
+        capturedNextState?.uri.path,
+        '/blocked',
+        reason: 'Next state should be blocked path',
+      );
+
+      // Cleanup properly
+      await tester.pumpAndSettle();
+    },
+  );
 }
