@@ -40,10 +40,7 @@
 }
 
 - (BOOL)canSetSessionPreset:(AVCaptureSessionPreset)preset {
-  if (self.mockCanSetSessionPreset) {
-    return self.mockCanSetSessionPreset;
-  }
-  return YES;
+  return self.canSetSessionPreset;
 }
 
 - (void)addConnection:(nonnull AVCaptureConnection *)connection {
