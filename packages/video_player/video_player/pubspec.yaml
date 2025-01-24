@@ -22,7 +22,7 @@ flutter:
         default_package: video_player_web
 
 dependencies:
-  collection: ^1.19.0
+  collection: ^1.18.0
   flutter:
     sdk: flutter
   html: ^0.15.0
