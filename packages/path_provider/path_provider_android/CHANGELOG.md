@@ -1,3 +1,7 @@
+## 2.2.15
+
+* Removes unnecessary native code.
+
 ## 2.2.14
 
 * Updates annotations lib to 1.9.1.

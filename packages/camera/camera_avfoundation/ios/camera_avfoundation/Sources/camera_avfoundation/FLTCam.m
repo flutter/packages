@@ -9,6 +9,8 @@
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
+#import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
+#import "./include/camera_avfoundation/FLTDeviceOrientationProviding.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
@@ -103,7 +105,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
-
+@property(readonly, nonatomic) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 /// Reports the given error message to the Dart side of the plugin.
 ///
 /// Can be called from any thread.
@@ -144,12 +146,14 @@ NSString *const errorMethod = @"error";
       videoCaptureSession:videoCaptureSession
       audioCaptureSession:videoCaptureSession
       captureSessionQueue:captureSessionQueue
-      captureDeviceFactory:^AVCaptureDevice *(void) {
-        return [AVCaptureDevice deviceWithUniqueID:cameraName];
+      captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
+        AVCaptureDevice *device = [AVCaptureDevice deviceWithUniqueID:cameraName];
+        return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:device];
       }
       videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
         return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
       }
+      deviceOrientationProvider:[[FLTDefaultDeviceOrientationProvider alloc] init]
       error:error];
 }
 
@@ -214,6 +218,7 @@ static void selectBestFormatForRequestedFrameRate(
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
              videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
+            deviceOrientationProvider:(id<FLTDeviceOrientationProviding>)deviceOrientationProvider
                                 error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -237,6 +242,8 @@ static void selectBestFormatForRequestedFrameRate(
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
   _fileFormat = FCPPlatformImageFileFormatJpeg;
+  _videoCaptureSession.automaticallyConfiguresApplicationAudioSession = NO;
+  _audioCaptureSession.automaticallyConfiguresApplicationAudioSession = NO;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -262,6 +269,8 @@ static void selectBestFormatForRequestedFrameRate(
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
+
+  _deviceOrientationProvider = deviceOrientationProvider;
 
   if (_mediaSettings.framesPerSecond) {
     // The frame rate can be changed only on a locked for configuration device.
@@ -309,7 +318,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
   // Setup video capture input.
-  _captureVideoInput = [AVCaptureDeviceInput deviceInputWithDevice:_captureDevice error:error];
+  _captureVideoInput = [_captureDevice createInput:error];
 
   // Test the return value of the `deviceInputWithDevice` method to see whether an error occurred.
   // Don’t just test to see whether the error pointer was set to point to an error.
@@ -725,7 +734,8 @@ static void selectBestFormatForRequestedFrameRate(
     if (_isFirstVideoSample) {
       [_videoWriter startSessionAtSourceTime:currentSampleTime];
       // fix sample times not being numeric when pause/resume happens before first sample buffer
-      // arrives https://github.com/flutter/flutter/issues/132014
+      // arrives
+      // https://github.com/flutter/flutter/issues/132014
       _lastVideoSampleTime = currentSampleTime;
       _lastAudioSampleTime = currentSampleTime;
       _isFirstVideoSample = NO;
@@ -1038,7 +1048,8 @@ static void selectBestFormatForRequestedFrameRate(
   [self applyFocusMode:_focusMode onDevice:_captureDevice];
 }
 
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(AVCaptureDevice *)captureDevice {
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
+              onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:
@@ -1147,7 +1158,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)setExposurePoint:(FCPPlatformPoint *)point
           withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (!_captureDevice.isExposurePointOfInterestSupported) {
+  if (!_captureDevice.exposurePointOfInterestSupported) {
     completion([FlutterError errorWithCode:@"setExposurePointFailed"
                                    message:@"Device does not have exposure point capabilities"
                                    details:nil]);
@@ -1169,13 +1180,13 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)setFocusPoint:(FCPPlatformPoint *)point
        withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (!_captureDevice.isFocusPointOfInterestSupported) {
+  if (!_captureDevice.focusPointOfInterestSupported) {
     completion([FlutterError errorWithCode:@"setFocusPointFailed"
                                    message:@"Device does not have focus point capabilities"
                                    details:nil]);
     return;
   }
-  UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+  UIDeviceOrientation orientation = [_deviceOrientationProvider orientation];
   [_captureDevice lockForConfiguration:nil];
   // A nil point resets to the center.
   [_captureDevice
@@ -1283,9 +1294,7 @@ static void selectBestFormatForRequestedFrameRate(
     return NO;
   }
 
-  if (_mediaSettings.enableAudio && !_isAudioSetup) {
-    [self setUpCaptureSessionForAudio];
-  }
+  [self setUpCaptureSessionForAudioIfNeeded];
 
   _videoWriter = [[AVAssetWriter alloc] initWithURL:outputURL
                                            fileType:AVFileTypeMPEG4
@@ -1365,9 +1374,42 @@ static void selectBestFormatForRequestedFrameRate(
   return YES;
 }
 
-- (void)setUpCaptureSessionForAudio {
+// This function, although slightly modified, is also in video_player_avfoundation.
+// Both need to do the same thing and run on the same thread (for example main thread).
+// Configure application wide audio session manually to prevent overwriting flag
+// MixWithOthers by capture session.
+// Only change category if it is considered an upgrade which means it can only enable
+// ability to play in silent mode or ability to record audio but never disables it,
+// that could affect other plugins which depend on this global state. Only change
+// category or options if there is change to prevent unnecessary lags and silence.
+static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
+                                        AVAudioSessionCategoryOptions options) {
+  NSSet *playCategories = [NSSet
+      setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
+  NSSet *recordCategories =
+      [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
+  NSSet *requiredCategories =
+      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  BOOL requiresPlay = [requiredCategories intersectsSet:playCategories];
+  BOOL requiresRecord = [requiredCategories intersectsSet:recordCategories];
+  if (requiresPlay && requiresRecord) {
+    requestedCategory = AVAudioSessionCategoryPlayAndRecord;
+  } else if (requiresPlay) {
+    requestedCategory = AVAudioSessionCategoryPlayback;
+  } else if (requiresRecord) {
+    requestedCategory = AVAudioSessionCategoryRecord;
+  }
+  options = AVAudioSession.sharedInstance.categoryOptions | options;
+  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
+      options == AVAudioSession.sharedInstance.categoryOptions) {
+    return;
+  }
+  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
+}
+
+- (void)setUpCaptureSessionForAudioIfNeeded {
   // Don't setup audio twice or we will lose the audio.
-  if (_isAudioSetup) {
+  if (!_mediaSettings.enableAudio || _isAudioSetup) {
     return;
   }
 
@@ -1382,6 +1424,20 @@ static void selectBestFormatForRequestedFrameRate(
   }
   // Setup the audio output.
   _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
+
+  dispatch_block_t block = ^{
+    // Set up options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other
+    // plugins like video_player.
+    upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
+                                AVAudioSessionCategoryOptionDefaultToSpeaker |
+                                    AVAudioSessionCategoryOptionAllowBluetoothA2DP |
+                                    AVAudioSessionCategoryOptionAllowAirPlay);
+  };
+  if (!NSThread.isMainThread) {
+    dispatch_sync(dispatch_get_main_queue(), block);
+  } else {
+    block();
+  }
 
   if ([_audioCaptureSession canAddInput:audioInput]) {
     [_audioCaptureSession addInput:audioInput];

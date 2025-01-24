@@ -5,7 +5,9 @@
 package io.flutter.plugins.sharedpreferences
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Base64
+import androidx.preference.PreferenceManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -41,98 +43,104 @@ internal class SharedPreferencesTest {
 
   private val testList = listOf("foo", "bar")
 
-  private val emptyOptions = SharedPreferencesPigeonOptions()
+  private val dataStoreOptions = SharedPreferencesPigeonOptions(useDataStore = true)
+  private val sharedPreferencesOptions = SharedPreferencesPigeonOptions(useDataStore = false)
+  private val testContext: Context = ApplicationProvider.getApplicationContext()
 
-  private fun pluginSetup(): SharedPreferencesPlugin {
-    val testContext: Context = ApplicationProvider.getApplicationContext()
-
+  private fun pluginSetup(options: SharedPreferencesPigeonOptions): SharedPreferencesAsyncApi {
     val plugin = SharedPreferencesPlugin()
     val binaryMessenger = mockk<BinaryMessenger>()
     val flutterPluginBinding = mockk<FlutterPlugin.FlutterPluginBinding>()
     every { flutterPluginBinding.binaryMessenger } returns binaryMessenger
     every { flutterPluginBinding.applicationContext } returns testContext
     plugin.onAttachedToEngine(flutterPluginBinding)
-    plugin.clear(null, emptyOptions)
-    return plugin
+    val backend =
+        SharedPreferencesBackend(
+            flutterPluginBinding.binaryMessenger, flutterPluginBinding.applicationContext)
+    return if (options.useDataStore) {
+      plugin
+    } else {
+      backend
+    }
   }
 
   @Test
-  fun testSetAndGetBool() {
-    val plugin = pluginSetup()
-    plugin.setBool(boolKey, testBool, emptyOptions)
-    Assert.assertEquals(plugin.getBool(boolKey, emptyOptions), testBool)
+  fun testSetAndGetBoolWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setBool(boolKey, testBool, dataStoreOptions)
+    Assert.assertEquals(plugin.getBool(boolKey, dataStoreOptions), testBool)
   }
 
   @Test
-  fun testSetAndGetString() {
-    val plugin = pluginSetup()
-    plugin.setString(stringKey, testString, emptyOptions)
-    Assert.assertEquals(plugin.getString(stringKey, emptyOptions), testString)
+  fun testSetAndGetStringWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setString(stringKey, testString, dataStoreOptions)
+    Assert.assertEquals(plugin.getString(stringKey, dataStoreOptions), testString)
   }
 
   @Test
-  fun testSetAndGetInt() {
-    val plugin = pluginSetup()
-    plugin.setInt(intKey, testInt, emptyOptions)
-    Assert.assertEquals(plugin.getInt(intKey, emptyOptions), testInt)
+  fun testSetAndGetIntWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setInt(intKey, testInt, dataStoreOptions)
+    Assert.assertEquals(plugin.getInt(intKey, dataStoreOptions), testInt)
   }
 
   @Test
-  fun testSetAndGetDouble() {
-    val plugin = pluginSetup()
-    plugin.setDouble(doubleKey, testDouble, emptyOptions)
-    Assert.assertEquals(plugin.getDouble(doubleKey, emptyOptions), testDouble)
+  fun testSetAndGetDoubleWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
+    Assert.assertEquals(plugin.getDouble(doubleKey, dataStoreOptions), testDouble)
   }
 
   @Test
-  fun testSetAndGetStringList() {
-    val plugin = pluginSetup()
-    plugin.setStringList(listKey, testList, emptyOptions)
-    Assert.assertEquals(plugin.getStringList(listKey, emptyOptions), testList)
+  fun testSetAndGetStringListWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setStringList(listKey, testList, dataStoreOptions)
+    Assert.assertEquals(plugin.getStringList(listKey, dataStoreOptions), testList)
   }
 
   @Test
-  fun testGetKeys() {
-    val plugin = pluginSetup()
-    plugin.setBool(boolKey, testBool, emptyOptions)
-    plugin.setString(stringKey, testString, emptyOptions)
-    plugin.setInt(intKey, testInt, emptyOptions)
-    plugin.setDouble(doubleKey, testDouble, emptyOptions)
-    plugin.setStringList(listKey, testList, emptyOptions)
-    val keyList = plugin.getKeys(listOf(boolKey, stringKey), emptyOptions)
+  fun testGetKeysWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setBool(boolKey, testBool, dataStoreOptions)
+    plugin.setString(stringKey, testString, dataStoreOptions)
+    plugin.setInt(intKey, testInt, dataStoreOptions)
+    plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
+    plugin.setStringList(listKey, testList, dataStoreOptions)
+    val keyList = plugin.getKeys(listOf(boolKey, stringKey), dataStoreOptions)
     Assert.assertEquals(keyList.size, 2)
     Assert.assertTrue(keyList.contains(stringKey))
     Assert.assertTrue(keyList.contains(boolKey))
   }
 
   @Test
-  fun testClear() {
-    val plugin = pluginSetup()
-    plugin.setBool(boolKey, testBool, emptyOptions)
-    plugin.setString(stringKey, testString, emptyOptions)
-    plugin.setInt(intKey, testInt, emptyOptions)
-    plugin.setDouble(doubleKey, testDouble, emptyOptions)
-    plugin.setStringList(listKey, testList, emptyOptions)
+  fun testClearWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setBool(boolKey, testBool, dataStoreOptions)
+    plugin.setString(stringKey, testString, dataStoreOptions)
+    plugin.setInt(intKey, testInt, dataStoreOptions)
+    plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
+    plugin.setStringList(listKey, testList, dataStoreOptions)
 
-    plugin.clear(null, emptyOptions)
+    plugin.clear(null, dataStoreOptions)
 
-    Assert.assertNull(plugin.getBool(boolKey, emptyOptions))
-    Assert.assertNull(plugin.getBool(stringKey, emptyOptions))
-    Assert.assertNull(plugin.getBool(intKey, emptyOptions))
-    Assert.assertNull(plugin.getBool(doubleKey, emptyOptions))
-    Assert.assertNull(plugin.getBool(listKey, emptyOptions))
+    Assert.assertNull(plugin.getBool(boolKey, dataStoreOptions))
+    Assert.assertNull(plugin.getBool(stringKey, dataStoreOptions))
+    Assert.assertNull(plugin.getBool(intKey, dataStoreOptions))
+    Assert.assertNull(plugin.getBool(doubleKey, dataStoreOptions))
+    Assert.assertNull(plugin.getBool(listKey, dataStoreOptions))
   }
 
   @Test
-  fun testGetAll() {
-    val plugin = pluginSetup()
-    plugin.setBool(boolKey, testBool, emptyOptions)
-    plugin.setString(stringKey, testString, emptyOptions)
-    plugin.setInt(intKey, testInt, emptyOptions)
-    plugin.setDouble(doubleKey, testDouble, emptyOptions)
-    plugin.setStringList(listKey, testList, emptyOptions)
+  fun testGetAllWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setBool(boolKey, testBool, dataStoreOptions)
+    plugin.setString(stringKey, testString, dataStoreOptions)
+    plugin.setInt(intKey, testInt, dataStoreOptions)
+    plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
+    plugin.setStringList(listKey, testList, dataStoreOptions)
 
-    val all = plugin.getAll(null, emptyOptions)
+    val all = plugin.getAll(null, dataStoreOptions)
 
     Assert.assertEquals(all[boolKey], testBool)
     Assert.assertEquals(all[stringKey], testString)
@@ -142,39 +150,180 @@ internal class SharedPreferencesTest {
   }
 
   @Test
-  fun testClearWithAllowList() {
-    val plugin = pluginSetup()
-    plugin.setBool(boolKey, testBool, emptyOptions)
-    plugin.setString(stringKey, testString, emptyOptions)
-    plugin.setInt(intKey, testInt, emptyOptions)
-    plugin.setDouble(doubleKey, testDouble, emptyOptions)
-    plugin.setStringList(listKey, testList, emptyOptions)
+  fun testClearWithAllowListWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setBool(boolKey, testBool, dataStoreOptions)
+    plugin.setString(stringKey, testString, dataStoreOptions)
+    plugin.setInt(intKey, testInt, dataStoreOptions)
+    plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
+    plugin.setStringList(listKey, testList, dataStoreOptions)
 
-    plugin.clear(listOf(boolKey, stringKey), emptyOptions)
+    plugin.clear(listOf(boolKey, stringKey), dataStoreOptions)
 
-    Assert.assertNull(plugin.getBool(boolKey, emptyOptions))
-    Assert.assertNull(plugin.getString(stringKey, emptyOptions))
-    Assert.assertNotNull(plugin.getInt(intKey, emptyOptions))
-    Assert.assertNotNull(plugin.getDouble(doubleKey, emptyOptions))
-    Assert.assertNotNull(plugin.getStringList(listKey, emptyOptions))
+    Assert.assertNull(plugin.getBool(boolKey, dataStoreOptions))
+    Assert.assertNull(plugin.getString(stringKey, dataStoreOptions))
+    Assert.assertNotNull(plugin.getInt(intKey, dataStoreOptions))
+    Assert.assertNotNull(plugin.getDouble(doubleKey, dataStoreOptions))
+    Assert.assertNotNull(plugin.getStringList(listKey, dataStoreOptions))
   }
 
   @Test
-  fun testGetAllWithAllowList() {
-    val plugin = pluginSetup()
-    plugin.setBool(boolKey, testBool, emptyOptions)
-    plugin.setString(stringKey, testString, emptyOptions)
-    plugin.setInt(intKey, testInt, emptyOptions)
-    plugin.setDouble(doubleKey, testDouble, emptyOptions)
-    plugin.setStringList(listKey, testList, emptyOptions)
+  fun testGetAllWithAllowListWithDataStore() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setBool(boolKey, testBool, dataStoreOptions)
+    plugin.setString(stringKey, testString, dataStoreOptions)
+    plugin.setInt(intKey, testInt, dataStoreOptions)
+    plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
+    plugin.setStringList(listKey, testList, dataStoreOptions)
 
-    val all = plugin.getAll(listOf(boolKey, stringKey), emptyOptions)
+    val all = plugin.getAll(listOf(boolKey, stringKey), dataStoreOptions)
 
     Assert.assertEquals(all[boolKey], testBool)
     Assert.assertEquals(all[stringKey], testString)
     Assert.assertNull(all[intKey])
     Assert.assertNull(all[doubleKey])
     Assert.assertNull(all[listKey])
+  }
+
+  @Test
+  fun testSetAndGetBoolWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setBool(boolKey, testBool, sharedPreferencesOptions)
+    Assert.assertEquals(plugin.getBool(boolKey, sharedPreferencesOptions), testBool)
+  }
+
+  @Test
+  fun testSetAndGetStringWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setString(stringKey, testString, sharedPreferencesOptions)
+    Assert.assertEquals(plugin.getString(stringKey, sharedPreferencesOptions), testString)
+  }
+
+  @Test
+  fun testSetAndGetIntWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setInt(intKey, testInt, sharedPreferencesOptions)
+    Assert.assertEquals(plugin.getInt(intKey, sharedPreferencesOptions), testInt)
+  }
+
+  @Test
+  fun testSetAndGetDoubleWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
+    Assert.assertEquals(plugin.getDouble(doubleKey, sharedPreferencesOptions), testDouble)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+    Assert.assertEquals(plugin.getStringList(listKey, sharedPreferencesOptions), testList)
+  }
+
+  @Test
+  fun testGetKeysWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setBool(boolKey, testBool, sharedPreferencesOptions)
+    plugin.setString(stringKey, testString, sharedPreferencesOptions)
+    plugin.setInt(intKey, testInt, sharedPreferencesOptions)
+    plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
+    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+    val keyList = plugin.getKeys(listOf(boolKey, stringKey), sharedPreferencesOptions)
+    Assert.assertEquals(keyList.size, 2)
+    Assert.assertTrue(keyList.contains(stringKey))
+    Assert.assertTrue(keyList.contains(boolKey))
+  }
+
+  @Test
+  fun testClearWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setBool(boolKey, testBool, sharedPreferencesOptions)
+    plugin.setString(stringKey, testString, sharedPreferencesOptions)
+    plugin.setInt(intKey, testInt, sharedPreferencesOptions)
+    plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
+    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+
+    plugin.clear(null, sharedPreferencesOptions)
+
+    Assert.assertNull(plugin.getBool(boolKey, sharedPreferencesOptions))
+    Assert.assertNull(plugin.getBool(stringKey, sharedPreferencesOptions))
+    Assert.assertNull(plugin.getBool(intKey, sharedPreferencesOptions))
+    Assert.assertNull(plugin.getBool(doubleKey, sharedPreferencesOptions))
+    Assert.assertNull(plugin.getBool(listKey, sharedPreferencesOptions))
+  }
+
+  @Test
+  fun testGetAllWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setBool(boolKey, testBool, sharedPreferencesOptions)
+    plugin.setString(stringKey, testString, sharedPreferencesOptions)
+    plugin.setInt(intKey, testInt, sharedPreferencesOptions)
+    plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
+    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+
+    val all = plugin.getAll(null, sharedPreferencesOptions)
+
+    Assert.assertEquals(all[boolKey], testBool)
+    Assert.assertEquals(all[stringKey], testString)
+    Assert.assertEquals(all[intKey], testInt)
+    Assert.assertEquals(all[doubleKey], testDouble)
+    Assert.assertEquals(all[listKey], testList)
+  }
+
+  @Test
+  fun testClearWithAllowListWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setBool(boolKey, testBool, sharedPreferencesOptions)
+    plugin.setString(stringKey, testString, sharedPreferencesOptions)
+    plugin.setInt(intKey, testInt, sharedPreferencesOptions)
+    plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
+    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+
+    plugin.clear(listOf(boolKey, stringKey), sharedPreferencesOptions)
+
+    Assert.assertNull(plugin.getBool(boolKey, sharedPreferencesOptions))
+    Assert.assertNull(plugin.getString(stringKey, sharedPreferencesOptions))
+    Assert.assertNotNull(plugin.getInt(intKey, sharedPreferencesOptions))
+    Assert.assertNotNull(plugin.getDouble(doubleKey, sharedPreferencesOptions))
+    Assert.assertNotNull(plugin.getStringList(listKey, sharedPreferencesOptions))
+  }
+
+  @Test
+  fun testGetAllWithAllowListWithSharedPreferences() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setBool(boolKey, testBool, sharedPreferencesOptions)
+    plugin.setString(stringKey, testString, sharedPreferencesOptions)
+    plugin.setInt(intKey, testInt, sharedPreferencesOptions)
+    plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
+    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+
+    val all = plugin.getAll(listOf(boolKey, stringKey), sharedPreferencesOptions)
+
+    Assert.assertEquals(all[boolKey], testBool)
+    Assert.assertEquals(all[stringKey], testString)
+    Assert.assertNull(all[intKey])
+    Assert.assertNull(all[doubleKey])
+    Assert.assertNull(all[listKey])
+  }
+
+  @Test
+  fun testSharedPreferencesWithMultipleFiles() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    val optionsWithNewFile =
+        SharedPreferencesPigeonOptions(useDataStore = false, fileName = "test_file")
+    plugin.setInt(intKey, 1, sharedPreferencesOptions)
+    plugin.setInt(intKey, 2, optionsWithNewFile)
+    Assert.assertEquals(plugin.getInt(intKey, sharedPreferencesOptions), 1L)
+    Assert.assertEquals(plugin.getInt(intKey, optionsWithNewFile), 2L)
+  }
+
+  @Test
+  fun testSharedPreferencesDefaultFile() {
+    val defaultPreferences: SharedPreferences =
+        PreferenceManager.getDefaultSharedPreferences(testContext)
+    defaultPreferences.edit().putString(stringKey, testString).commit()
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    Assert.assertEquals(plugin.getString(stringKey, sharedPreferencesOptions), testString)
   }
 
   @Test
@@ -188,12 +337,12 @@ internal class SharedPreferencesTest {
     stream.flush()
     val badPref = LIST_PREFIX + Base64.encodeToString(byteStream.toByteArray(), 0)
 
-    val plugin = pluginSetup()
+    val plugin = pluginSetup(dataStoreOptions)
     val badListKey = "badList"
     // Inject the bad pref as a string, as that is how string lists are stored internally.
-    plugin.setString(badListKey, badPref, emptyOptions)
+    plugin.setString(badListKey, badPref, dataStoreOptions)
     assertThrows(ClassNotFoundException::class.java) {
-      plugin.getStringList(badListKey, emptyOptions)
+      plugin.getStringList(badListKey, dataStoreOptions)
     }
   }
 }

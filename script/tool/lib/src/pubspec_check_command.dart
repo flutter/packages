@@ -488,9 +488,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     }
 
     final Version? dartConstraintMin =
-        _minimumForConstraint(pubspec.environment?['sdk']);
+        _minimumForConstraint(pubspec.environment['sdk']);
     final Version? flutterConstraintMin =
-        _minimumForConstraint(pubspec.environment?['flutter']);
+        _minimumForConstraint(pubspec.environment['flutter']);
 
     // Validate the Flutter constraint, if any.
     if (flutterConstraintMin != null && minMinFlutterVersion != null) {
@@ -564,6 +564,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       'build_runner',
       'integration_test',
       'flutter_test',
+      'leak_tracker_flutter_testing',
       'mockito',
       'pigeon',
       'test',

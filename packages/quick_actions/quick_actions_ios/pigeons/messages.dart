@@ -15,6 +15,7 @@ class ShortcutItemMessage {
   ShortcutItemMessage(
     this.type,
     this.localizedTitle,
+    this.localizedSubtitle,
     this.icon,
   );
 
@@ -23,6 +24,9 @@ class ShortcutItemMessage {
 
   /// Localized title of the item.
   String localizedTitle;
+
+  /// Localized subtitle of the item.
+  String? localizedSubtitle;
 
   /// Name of native resource to be displayed as the icon for this item.
   String? icon;

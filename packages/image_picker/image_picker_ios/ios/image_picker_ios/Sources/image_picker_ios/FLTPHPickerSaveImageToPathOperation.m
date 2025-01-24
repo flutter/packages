@@ -128,64 +128,20 @@ API_AVAILABLE(ios(14))
 - (void)processImage:(NSData *)pickerImageData API_AVAILABLE(ios(14)) {
   UIImage *localImage = [[UIImage alloc] initWithData:pickerImageData];
 
-  PHAsset *originalAsset;
-  // Only if requested, fetch the full "PHAsset" metadata, which requires  "Photo Library Usage"
-  // permissions.
-  if (self.requestFullMetadata) {
-    originalAsset = [FLTImagePickerPhotoAssetUtil getAssetFromPHPickerResult:self.result];
-  }
-
   if (self.maxWidth != nil || self.maxHeight != nil) {
     localImage = [FLTImagePickerImageUtil scaledImage:localImage
                                              maxWidth:self.maxWidth
                                             maxHeight:self.maxHeight
                                   isMetadataAvailable:YES];
   }
-  if (originalAsset) {
-    void (^resultHandler)(NSData *imageData, NSString *dataUTI, NSDictionary *info) =
-        ^(NSData *_Nullable imageData, NSString *_Nullable dataUTI, NSDictionary *_Nullable info) {
-          // maxWidth and maxHeight are used only for GIF images.
-          NSString *savedPath = [FLTImagePickerPhotoAssetUtil
-              saveImageWithOriginalImageData:imageData
-                                       image:localImage
-                                    maxWidth:self.maxWidth
-                                   maxHeight:self.maxHeight
-                                imageQuality:self.desiredImageQuality];
-          [self completeOperationWithPath:savedPath error:nil];
-        };
-    if (@available(iOS 13.0, *)) {
-      [[PHImageManager defaultManager]
-          requestImageDataAndOrientationForAsset:originalAsset
-                                         options:nil
-                                   resultHandler:^(NSData *_Nullable imageData,
-                                                   NSString *_Nullable dataUTI,
-                                                   CGImagePropertyOrientation orientation,
-                                                   NSDictionary *_Nullable info) {
-                                     resultHandler(imageData, dataUTI, info);
-                                   }];
-    } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      [[PHImageManager defaultManager]
-          requestImageDataForAsset:originalAsset
-                           options:nil
-                     resultHandler:^(NSData *_Nullable imageData, NSString *_Nullable dataUTI,
-                                     UIImageOrientation orientation, NSDictionary *_Nullable info) {
-                       resultHandler(imageData, dataUTI, info);
-                     }];
-#pragma clang diagnostic pop
-    }
-  } else {
-    // Image picked without an original asset (e.g. User pick image without permission)
-    // maxWidth and maxHeight are used only for GIF images.
-    NSString *savedPath =
-        [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:pickerImageData
-                                                               image:localImage
-                                                            maxWidth:self.maxWidth
-                                                           maxHeight:self.maxHeight
-                                                        imageQuality:self.desiredImageQuality];
-    [self completeOperationWithPath:savedPath error:nil];
-  }
+  // maxWidth and maxHeight are used only for GIF images.
+  NSString *savedPath =
+      [FLTImagePickerPhotoAssetUtil saveImageWithOriginalImageData:pickerImageData
+                                                             image:localImage
+                                                          maxWidth:self.maxWidth
+                                                         maxHeight:self.maxHeight
+                                                      imageQuality:self.desiredImageQuality];
+  [self completeOperationWithPath:savedPath error:nil];
 }
 
 /// Processes the video.

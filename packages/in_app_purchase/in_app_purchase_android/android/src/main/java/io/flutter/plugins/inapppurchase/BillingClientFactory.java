@@ -19,10 +19,13 @@ interface BillingClientFactory {
    * @param callbackApi The callback API to be used by the {@link BillingClient}.
    * @param billingChoiceMode Enables the ability to offer alternative billing or Google Play
    *     billing.
+   * @param pendingPurchasesParams Parameters to enable pending purchases. See {@link
+   *     com.android.billingclient.api.PendingPurchasesParams}.
    * @return The {@link BillingClient} object that is created.
    */
   BillingClient createBillingClient(
       @NonNull Context context,
       @NonNull Messages.InAppPurchaseCallbackApi callbackApi,
-      PlatformBillingChoiceMode billingChoiceMode);
+      PlatformBillingChoiceMode billingChoiceMode,
+      Messages.PlatformPendingPurchasesParams pendingPurchasesParams);
 }

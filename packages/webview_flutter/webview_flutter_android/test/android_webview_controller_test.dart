@@ -1495,6 +1495,22 @@ void main() {
 
       expect(await controller.getUserAgent(), userAgent);
     });
+
+    test('setAllowFileAccess', () async {
+      final MockWebView mockWebView = MockWebView();
+      final MockWebSettings mockSettings = MockWebSettings();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+        mockSettings: mockSettings,
+      );
+
+      clearInteractions(mockWebView);
+
+      await controller.setAllowFileAccess(true);
+
+      verify(mockWebView.settings).called(1);
+      verify(mockSettings.setAllowFileAccess(true)).called(1);
+    });
   });
 
   test('setMediaPlaybackRequiresUserGesture', () async {
@@ -1508,6 +1524,38 @@ void main() {
     await controller.setMediaPlaybackRequiresUserGesture(true);
 
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
+  });
+
+  test('setAllowContentAccess', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setAllowContentAccess(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setAllowContentAccess(false)).called(1);
+  });
+
+  test('setGeolocationEnabled', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setGeolocationEnabled(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setGeolocationEnabled(false)).called(1);
   });
 
   test('setTextZoom', () async {
