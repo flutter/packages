@@ -108,7 +108,11 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Adds property to data store of type List<String> as encoded String. */
-  override fun setEncodedStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
+  override fun setEncodedStringList(
+      key: String,
+      value: String,
+      options: SharedPreferencesPigeonOptions
+  ) {
     return runBlocking { dataStoreSetString(key, value) }
   }
 
@@ -312,7 +316,11 @@ class SharedPreferencesBackend(
   }
 
   /** Adds property to data store of type List<String>. */
-  override fun setEncodedStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
+  override fun setEncodedStringList(
+      key: String,
+      value: String,
+      options: SharedPreferencesPigeonOptions
+  ) {
     return createSharedPreferences(options).edit().putString(key, value).apply()
   }
 
