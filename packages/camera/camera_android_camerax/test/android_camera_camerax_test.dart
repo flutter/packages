@@ -1528,7 +1528,6 @@ void main() {
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
-    const DeviceOrientation testUiOrientation = DeviceOrientation.portraitDown;
 
     // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
@@ -1799,7 +1798,7 @@ void main() {
     // Check camera instance was received.
     expect(camera.camera, isNotNull);
   });
-/*
+
   test(
       'dispose releases Flutter surface texture, removes camera state observers, and unbinds all use cases',
       () async {
@@ -1812,7 +1811,7 @@ void main() {
 
     await camera.dispose(3);
 
-    verify(camera.preview!.releaseFlutterSurfaceTexture());
+    verify(camera.preview!.releaseSurfaceProvider());
     verify(camera.liveCameraState!.removeObservers());
     verify(camera.processCameraProvider!.unbindAll());
     verify(camera.imageAnalysis!.clearAnalyzer());
@@ -1850,7 +1849,7 @@ void main() {
     expect(await streamQueue.next, equals(cameraClosingEvent));
     await streamQueue.cancel();
   });
-
+/*
   test(
       'onCameraError stream emits errors caught by system services or added to stream within plugin',
       () async {
