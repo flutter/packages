@@ -917,6 +917,40 @@ void main() {
     expect(code, contains('doit(@NonNull List<Long> arg'));
   });
 
+  test('host TaskQueue background method', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+              taskQueueType: TaskQueueType.serialBackgroundThread)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const JavaGenerator generator = JavaGenerator();
+    generator.generate(
+      javaOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+      code,
+      contains(
+        'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();',
+      ),
+    );
+    expect(code, contains('taskQueue);'));
+  });
+
   test('flutter generics argument', () {
     final Root root = Root(
       apis: <Api>[

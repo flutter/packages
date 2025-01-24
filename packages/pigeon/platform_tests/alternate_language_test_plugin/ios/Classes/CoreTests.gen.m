@@ -3319,6 +3319,181 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
+  /// Returns the passed object, to test serialization and deserialization.
+  {
+    NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString stringWithFormat:@"%@%@",
+                                          @"dev.flutter.pigeon.pigeon_integration_tests."
+                                          @"HostIntegrationCoreApi.echoAllTypesTaskQueueBackground",
+                                          messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()
+              taskQueue:taskQueue];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAllTypesTaskQueueBackground:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAllTypesTaskQueueBackground:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTAllTypes *output = [api echoAllTypesTaskQueueBackground:arg_everything error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed object, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi."
+                                             @"echoNullableAllNullableTypesTaskQueueBackground",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (echoNullableAllNullableTypesTaskQueueBackground:error:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoNullableAllNullableTypesTaskQueueBackground:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        FLTAllNullableTypes *output =
+            [api echoNullableAllNullableTypesTaskQueueBackground:arg_everything error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Responds with an error from an void function.
+  {
+    NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString
+                   stringWithFormat:@"%@%@",
+                                    @"dev.flutter.pigeon.pigeon_integration_tests."
+                                    @"HostIntegrationCoreApi.throwErrorFromVoidTaskQueueBackground",
+                                    messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()
+              taskQueue:taskQueue];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(throwErrorFromVoidTaskQueueBackgroundWithError:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(throwErrorFromVoidTaskQueueBackgroundWithError:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        [api throwErrorFromVoidTaskQueueBackgroundWithError:&error];
+        callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed object, to test serialization and deserialization.
+  {
+    NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString
+                   stringWithFormat:@"%@%@",
+                                    @"dev.flutter.pigeon.pigeon_integration_tests."
+                                    @"HostIntegrationCoreApi.echoAsyncAllTypesTaskQueueBackground",
+                                    messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()
+              taskQueue:taskQueue];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(echoAsyncAllTypesTaskQueueBackground:
+                                                                            completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAsyncAllTypesTaskQueueBackground:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api echoAsyncAllTypesTaskQueueBackground:arg_everything
+                                       completion:^(FLTAllTypes *_Nullable output,
+                                                    FlutterError *_Nullable error) {
+                                         callback(wrapResult(output, error));
+                                       }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns the passed object, to test serialization and deserialization.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:
+               [NSString stringWithFormat:
+                             @"%@%@",
+                             @"dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+                             @"echoAsyncNullableAllNullableTypesTaskQueueBackground",
+                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (echoAsyncNullableAllNullableTypesTaskQueueBackground:completion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(echoAsyncNullableAllNullableTypesTaskQueueBackground:completion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FLTAllNullableTypes *arg_everything = GetNullableObjectAtIndex(args, 0);
+        [api echoAsyncNullableAllNullableTypesTaskQueueBackground:arg_everything
+                                                       completion:^(
+                                                           FLTAllNullableTypes *_Nullable output,
+                                                           FlutterError *_Nullable error) {
+                                                         callback(wrapResult(output, error));
+                                                       }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Responds with an error from an async void function.
+  {
+    NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi."
+                                                   @"throwAsyncErrorFromVoidTaskQueueBackground",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()
+              taskQueue:taskQueue];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector
+                     (throwAsyncErrorFromVoidTaskQueueBackgroundWithCompletion:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(throwAsyncErrorFromVoidTaskQueueBackgroundWithCompletion:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        [api throwAsyncErrorFromVoidTaskQueueBackgroundWithCompletion:^(
+                 FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
            initWithName:[NSString stringWithFormat:@"%@%@",

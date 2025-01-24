@@ -9,6 +9,7 @@ import 'ast.dart';
 import 'functional.dart';
 import 'generator.dart';
 import 'generator_tools.dart';
+import 'pigeon_lib.dart' show TaskQueueType;
 import 'swift/templates.dart';
 
 /// Documentation comment open symbol.
@@ -735,6 +736,7 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,
             documentationComments: method.documentationComments,
+            taskQueueType: method.taskQueueType,
           );
         }
       });
@@ -835,6 +837,7 @@ if (wrapped == nil) {
             }) {
               return 'let _: AnyObject? = try instanceManager.removeInstance(${safeArgNames.single})';
             },
+            taskQueueType: TaskQueueType.serial,
           );
           _writeHostMethodMessageHandler(
             indent,
@@ -851,6 +854,7 @@ if (wrapped == nil) {
             }) {
               return 'try instanceManager.removeAllObjects()';
             },
+            taskQueueType: TaskQueueType.serial,
           );
         },
       );
@@ -1516,6 +1520,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required Iterable<Parameter> parameters,
     required TypeDeclaration returnType,
     required bool isAsynchronous,
+    required TaskQueueType taskQueueType,
     required String? swiftFunction,
     String setHandlerCondition = 'let api = api',
     List<String> documentationComments = const <String>[],
@@ -1531,8 +1536,26 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-    indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
+    String? taskQueue;
+    if (taskQueueType != TaskQueueType.serial) {
+      taskQueue = 'taskQueue';
+      indent.writeln(
+        'let $taskQueue = binaryMessenger.makeBackgroundTaskQueue?()',
+      );
+    }
+
+    final String trailingComma = taskQueue != null ? ',' : '';
+    indent.writeScoped('let $varChannelName = FlutterBasicMessageChannel(', ')',
+        () {
+      indent.writeln('name: "$channelName", ');
+      indent.writeln('binaryMessenger: binaryMessenger, ');
+      indent.writeln('codec: codec$trailingComma');
+
+      if (taskQueue != null) {
+        indent.writeln('$taskQueue: $taskQueue');
+      }
+    });
+
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
@@ -2146,6 +2169,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                   }),
                   ...constructor.parameters,
                 ],
+                taskQueueType: TaskQueueType.serial,
               );
             },
           );
@@ -2194,6 +2218,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                     ),
                   ),
                 ],
+                taskQueueType: TaskQueueType.serial,
               );
             },
           );
@@ -2240,6 +2265,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
                     ),
                   ...method.parameters,
                 ],
+                taskQueueType: method.taskQueueType,
               );
             },
           );

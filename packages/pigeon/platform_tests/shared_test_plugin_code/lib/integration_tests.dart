@@ -60,6 +60,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       compareAllTypes(echoObject, genericAllTypes);
     });
 
+    testWidgets(
+        'all datatypes serialize and deserialize correctly TaskQueue background',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllTypes echoObject =
+          await api.echoAllTypesTaskQueueBackground(genericAllTypes);
+      compareAllTypes(echoObject, genericAllTypes);
+    });
+
     testWidgets('all nullable datatypes serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -68,6 +78,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           await api.echoAllNullableTypes(recursiveAllNullableTypes);
 
       compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
+    });
+
+    testWidgets(
+        'all nullable datatypes serialize and deserialize correctly TaskQueue background',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllTypes echoObject =
+          await api.echoAllTypesTaskQueueBackground(genericAllTypes);
+      compareAllTypes(echoObject, genericAllTypes);
     });
 
     testWidgets('all null datatypes serialize and deserialize correctly',
@@ -180,6 +200,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
       expect(() async {
         await api.throwErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets(
+        'errors are returned from TaskQueue background void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.throwErrorFromVoidTaskQueueBackground();
       }, throwsA(isA<PlatformException>()));
     });
 
@@ -963,6 +993,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     });
 
     testWidgets(
+        'async errors are returned from TaskQueue background void methods correctly',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      expect(() async {
+        await api.throwAsyncErrorFromVoidTaskQueueBackground();
+      }, throwsA(isA<PlatformException>()));
+    });
+
+    testWidgets(
         'async flutter errors are returned from non void methods correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -996,6 +1036,17 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
     });
 
+    testWidgets(
+        'all datatypes async serialize and deserialize correctly TaskQueue background',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllTypes echoObject =
+          await api.echoAsyncAllTypesTaskQueueBackground(genericAllTypes);
+
+      compareAllTypes(echoObject, genericAllTypes);
+    });
+
     testWidgets('all null datatypes async serialize and deserialize correctly',
         (WidgetTester _) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
@@ -1005,6 +1056,19 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final AllNullableTypes? echoNullFilledClass =
           await api.echoAsyncNullableAllNullableTypes(allTypesNull);
       compareAllNullableTypes(echoNullFilledClass, allTypesNull);
+    });
+
+    testWidgets(
+        'all nullable async datatypes serialize and deserialize correctly TaskQueue background',
+        (WidgetTester _) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final AllNullableTypes? echoObject =
+          await api.echoAsyncNullableAllNullableTypesTaskQueueBackground(
+        recursiveAllNullableTypes,
+      );
+
+      compareAllNullableTypes(echoObject, recursiveAllNullableTypes);
     });
 
     testWidgets(

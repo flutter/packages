@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
+import 'package:pigeon/pigeon.dart';
 import 'package:pigeon/swift_generator.dart';
 import 'package:test/test.dart';
 
@@ -865,6 +866,38 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('func doit(arg: [Int64?]'));
+  });
+
+  test('host TaskQueue background method', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+              taskQueueType: TaskQueueType.serialBackgroundThread)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+      code,
+      contains('let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()'),
+    );
+    expect(code, contains('taskQueue: taskQueue'));
   });
 
   test('flutter generics argument', () {

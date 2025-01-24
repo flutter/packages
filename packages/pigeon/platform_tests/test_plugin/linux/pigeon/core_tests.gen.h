@@ -3448,6 +3448,113 @@ CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedNullableStringResponse*
 core_tests_pigeon_test_host_integration_core_api_echo_named_nullable_string_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_ALL_TYPES_TASK_QUEUE_BACKGROUND_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response_new:
+ *
+ * Creates a new response to
+ * HostIntegrationCoreApi.echoAllTypesTaskQueueBackground.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response_new(
+    CoreTestsPigeonTestAllTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to
+ * HostIntegrationCoreApi.echoAllTypesTaskQueueBackground.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse,
+    core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_ECHO_NULLABLE_ALL_NULLABLE_TYPES_TASK_QUEUE_BACKGROUND_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response_new:
+ *
+ * Creates a new response to
+ * HostIntegrationCoreApi.echoNullableAllNullableTypesTaskQueueBackground.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response_new(
+    CoreTestsPigeonTestAllNullableTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to
+ * HostIntegrationCoreApi.echoNullableAllNullableTypesTaskQueueBackground.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse*
+core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiThrowErrorFromVoidTaskQueueBackgroundResponse,
+    core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_task_queue_background_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_THROW_ERROR_FROM_VOID_TASK_QUEUE_BACKGROUND_RESPONSE,
+    GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_task_queue_background_response_new:
+ *
+ * Creates a new response to
+ * HostIntegrationCoreApi.throwErrorFromVoidTaskQueueBackground.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiThrowErrorFromVoidTaskQueueBackgroundResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiThrowErrorFromVoidTaskQueueBackgroundResponse*
+core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_task_queue_background_response_new();
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_task_queue_background_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to
+ * HostIntegrationCoreApi.throwErrorFromVoidTaskQueueBackground.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiThrowErrorFromVoidTaskQueueBackgroundResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiThrowErrorFromVoidTaskQueueBackgroundResponse*
+core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_task_queue_background_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
 /**
  * CoreTestsPigeonTestHostIntegrationCoreApiVTable:
  *
@@ -3751,6 +3858,25 @@ typedef struct {
       gpointer user_data);
   void (*echo_another_async_nullable_enum)(
       CoreTestsPigeonTestAnotherEnum* another_enum,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse* (
+      *echo_all_types_task_queue_background)(
+      CoreTestsPigeonTestAllTypes* everything, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse* (
+      *echo_nullable_all_nullable_types_task_queue_background)(
+      CoreTestsPigeonTestAllNullableTypes* everything, gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiThrowErrorFromVoidTaskQueueBackgroundResponse* (
+      *throw_error_from_void_task_queue_background)(gpointer user_data);
+  void (*echo_async_all_types_task_queue_background)(
+      CoreTestsPigeonTestAllTypes* everything,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  void (*echo_async_nullable_all_nullable_types_task_queue_background)(
+      CoreTestsPigeonTestAllNullableTypes* everything,
+      CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+      gpointer user_data);
+  void (*throw_async_error_from_void_task_queue_background)(
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
   void (*call_flutter_noop)(
@@ -4923,6 +5049,81 @@ void core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async
  * HostIntegrationCoreApi.echoAnotherAsyncNullableEnum.
  */
 void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_another_async_nullable_enum(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types_task_queue_background:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to HostIntegrationCoreApi.echoAsyncAllTypesTaskQueueBackground.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types_task_queue_background(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_all_types_task_queue_background:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.echoAsyncAllTypesTaskQueueBackground.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_all_types_task_queue_background(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types_task_queue_background:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to
+ * HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesTaskQueueBackground.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types_task_queue_background(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    CoreTestsPigeonTestAllNullableTypes* return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_nullable_all_nullable_types_task_queue_background:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesTaskQueueBackground.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_echo_async_nullable_all_nullable_types_task_queue_background(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_throw_async_error_from_void_task_queue_background:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ *
+ * Responds to
+ * HostIntegrationCoreApi.throwAsyncErrorFromVoidTaskQueueBackground.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_throw_async_error_from_void_task_queue_background(
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_respond_error_throw_async_error_from_void_task_queue_background:
+ * @response_handle: a #CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to
+ * HostIntegrationCoreApi.throwAsyncErrorFromVoidTaskQueueBackground.
+ */
+void core_tests_pigeon_test_host_integration_core_api_respond_error_throw_async_error_from_void_task_queue_background(
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     const gchar* code, const gchar* message, FlValue* details);
 

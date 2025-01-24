@@ -600,6 +600,43 @@
   completion(AnotherEnumBoxed, nil);
 }
 
+- (nullable FLTAllTypes *)
+    echoAllTypesTaskQueueBackground:(nonnull FLTAllTypes *)everything
+                              error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return everything;
+}
+
+- (void)echoAsyncAllTypesTaskQueueBackground:(nonnull FLTAllTypes *)everything
+                                  completion:(nonnull void (^)(FLTAllTypes *_Nullable,
+                                                               FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (void)
+    echoAsyncNullableAllNullableTypesTaskQueueBackground:(nullable FLTAllNullableTypes *)everything
+                                              completion:(nonnull void (^)(
+                                                             FLTAllNullableTypes *_Nullable,
+                                                             FlutterError *_Nullable))completion {
+  completion(everything, nil);
+}
+
+- (nullable FLTAllNullableTypes *)
+    echoNullableAllNullableTypesTaskQueueBackground:(nullable FLTAllNullableTypes *)everything
+                                              error:(FlutterError *_Nullable __autoreleasing
+                                                         *_Nonnull)error {
+  return everything;
+}
+
+- (void)throwAsyncErrorFromVoidTaskQueueBackgroundWithCompletion:
+    (nonnull void (^)(FlutterError *_Nullable))completion {
+  completion([FlutterError errorWithCode:@"code" message:@"message" details:@"details"]);
+}
+
+- (void)throwErrorFromVoidTaskQueueBackgroundWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  *error = [FlutterError errorWithCode:@"An error" message:nil details:nil];
+}
+
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(FlutterError *error) {
     completion(error);

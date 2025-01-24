@@ -514,6 +514,39 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anotherEnum))
   }
 
+  func echoAllTypesTaskQueueBackground(_ everything: AllTypes) throws -> AllTypes {
+    return everything
+  }
+
+  func echoNullableAllNullableTypesTaskQueueBackground(_ everything: AllNullableTypes?) throws
+    -> AllNullableTypes?
+  {
+    return everything
+  }
+
+  func throwErrorFromVoidTaskQueueBackground() throws {
+    throw PigeonError(code: "code", message: "message", details: "details")
+  }
+
+  func echoAsyncAllTypesTaskQueueBackground(
+    _ everything: AllTypes, completion: @escaping (Result<AllTypes, any Error>) -> Void
+  ) {
+    completion(.success(everything))
+  }
+
+  func echoAsyncNullableAllNullableTypesTaskQueueBackground(
+    _ everything: AllNullableTypes?,
+    completion: @escaping (Result<AllNullableTypes?, any Error>) -> Void
+  ) {
+    completion(.success(everything))
+  }
+
+  func throwAsyncErrorFromVoidTaskQueueBackground(
+    completion: @escaping (Result<Void, any Error>) -> Void
+  ) {
+    completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
+  }
+
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {
     flutterAPI.noop { response in
       switch response {

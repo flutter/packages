@@ -225,6 +225,42 @@ ErrorOr<double> TestPlugin::EchoOptionalDefaultDouble(double a_double) {
 
 ErrorOr<int64_t> TestPlugin::EchoRequiredInt(int64_t an_int) { return an_int; }
 
+ErrorOr<AllTypes> TestPlugin::EchoAllTypesTaskQueueBackground(
+    const AllTypes& everything) {
+  return everything;
+}
+
+ErrorOr<std::optional<AllNullableTypes>>
+TestPlugin::EchoNullableAllNullableTypesTaskQueueBackground(
+    const AllNullableTypes* everything) {
+  if (!everything) {
+    return std::nullopt;
+  }
+  return *everything;
+}
+
+std::optional<FlutterError>
+TestPlugin::ThrowErrorFromVoidTaskQueueBackground() {
+  return FlutterError("An error");
+}
+
+void TestPlugin::EchoAsyncAllTypesTaskQueueBackground(
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) {
+  result(everything);
+}
+
+void TestPlugin::EchoAsyncNullableAllNullableTypesTaskQueueBackground(
+    const AllNullableTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) {
+  result(everything);
+}
+
+void TestPlugin::ThrowAsyncErrorFromVoidTaskQueueBackground(
+    std::function<void(std::optional<FlutterError> reply)> result) {
+  result(FlutterError("code", "message", EncodableValue("details")));
+}
+
 ErrorOr<std::optional<std::string>> TestPlugin::ExtractNestedNullableString(
     const AllClassesWrapper& wrapper) {
   const std::string* inner_string =

@@ -56,8 +56,7 @@ static CoreTestsPigeonTestHostIntegrationCoreApiNoopResponse* noop(
     gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_noop_response_new();
 }
-
-static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesResponse*
+e static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesResponse*
 echo_all_types(CoreTestsPigeonTestAllTypes* everything, gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_all_types_response_new(
       everything);
@@ -787,6 +786,53 @@ static void echo_another_async_nullable_enum(
     gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_nullable_enum(
       response_handle, another_enum);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesTaskQueueBackgroundResponse*
+echo_all_types_task_queue_background(CoreTestsPigeonTestAllTypes* everything,
+                                     gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_all_types_task_queue_background_response(
+      everything);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoNullableAllNullableTypesTaskQueueBackgroundResponse*
+echo_nullable_all_nullable_types_task_queue_background(
+    CoreTestsPigeonTestAllNullableTypes* everything, gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_echo_nullable_all_nullable_types_task_queue_background_response(
+      everything);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiThrowErrorFromVoidTaskQueueBackgroundResponse*
+throw_error_from_void_task_queue_background(gpointer user_data) {
+  return core_tests_pigeon_test_host_integration_core_api_throw_error_from_void_task_queue_background_response_new_error(
+      "An error", "", nullptr);
+}
+
+static void echo_async_all_types(
+
+    CoreTestsPigeonTestAllTypes* everything,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types(
+      response_handle, everything);
+}
+
+static void echo_async_nullable_all_nullable_types_task_queue_background(
+
+    CoreTestsPigeonTestAllNullableTypes* everything,
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_nullable_all_nullable_types_task_queue_background(
+      response_handle, everything);
+}
+
+static void throw_async_error_from_void_task_queue_background(
+
+    CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
+    gpointer user_data) {
+  g_autoptr(FlValue) details = fl_value_new_string("details");
+  core_tests_pigeon_test_host_integration_core_api_respond_error_throw_async_error_from_void_task_queue_background(
+      response_handle, "code", "message", details);
 }
 
 static void noop_cb(GObject* object, GAsyncResult* result, gpointer user_data) {

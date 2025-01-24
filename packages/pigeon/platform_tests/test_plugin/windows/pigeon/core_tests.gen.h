@@ -1156,6 +1156,28 @@ class HostIntegrationCoreApi {
       const AnotherEnum* another_enum,
       std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
           result) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual ErrorOr<AllTypes> EchoAllTypesTaskQueueBackground(
+      const AllTypes& everything) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual ErrorOr<std::optional<AllNullableTypes>>
+  EchoNullableAllNullableTypesTaskQueueBackground(
+      const AllNullableTypes* everything) = 0;
+  // Responds with an error from an void function.
+  virtual std::optional<FlutterError>
+  ThrowErrorFromVoidTaskQueueBackground() = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual void EchoAsyncAllTypesTaskQueueBackground(
+      const AllTypes& everything,
+      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+  // Returns the passed object, to test serialization and deserialization.
+  virtual void EchoAsyncNullableAllNullableTypesTaskQueueBackground(
+      const AllNullableTypes* everything,
+      std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
+          result) = 0;
+  // Responds with an error from an async void function.
+  virtual void ThrowAsyncErrorFromVoidTaskQueueBackground(
+      std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterThrowError(

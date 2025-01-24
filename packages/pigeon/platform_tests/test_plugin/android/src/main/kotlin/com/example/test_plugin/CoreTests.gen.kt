@@ -890,6 +890,26 @@ interface HostIntegrationCoreApi {
       anotherEnum: AnotherEnum?,
       callback: (Result<AnotherEnum?>) -> Unit
   )
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoAllTypesTaskQueueBackground(everything: AllTypes): AllTypes
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoNullableAllNullableTypesTaskQueueBackground(
+      everything: AllNullableTypes?
+  ): AllNullableTypes?
+  /** Responds with an error from an void function. */
+  fun throwErrorFromVoidTaskQueueBackground()
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoAsyncAllTypesTaskQueueBackground(
+      everything: AllTypes,
+      callback: (Result<AllTypes>) -> Unit
+  )
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoAsyncNullableAllNullableTypesTaskQueueBackground(
+      everything: AllNullableTypes?,
+      callback: (Result<AllNullableTypes?>) -> Unit
+  )
+  /** Responds with an error from an async void function. */
+  fun throwAsyncErrorFromVoidTaskQueueBackground(callback: (Result<Unit>) -> Unit)
 
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
 
@@ -3366,6 +3386,149 @@ interface HostIntegrationCoreApi {
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypesTaskQueueBackground$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllTypes
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoAllTypesTaskQueueBackground(everythingArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableAllNullableTypesTaskQueueBackground$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllNullableTypes?
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.echoNullableAllNullableTypesTaskQueueBackground(everythingArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoidTaskQueueBackground$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  api.throwErrorFromVoidTaskQueueBackground()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypesTaskQueueBackground$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllTypes
+            api.echoAsyncAllTypesTaskQueueBackground(everythingArg) { result: Result<AllTypes> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesTaskQueueBackground$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val everythingArg = args[0] as AllNullableTypes?
+            api.echoAsyncNullableAllNullableTypesTaskQueueBackground(everythingArg) {
+                result: Result<AllNullableTypes?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoidTaskQueueBackground$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.throwAsyncErrorFromVoidTaskQueueBackground { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
               }
             }
           }

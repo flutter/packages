@@ -615,6 +615,41 @@ public class AlternateLanguageTestPlugin implements FlutterPlugin, HostIntegrati
     result.success(anotherEnum);
   }
 
+  @NonNull
+  @Override
+  public AllTypes echoAllTypesTaskQueueBackground(@NonNull AllTypes everything) {
+    return everything;
+  }
+
+  @Nullable
+  @Override
+  public AllNullableTypes echoNullableAllNullableTypesTaskQueueBackground(
+      @Nullable AllNullableTypes everything) {
+    return everything;
+  }
+
+  @Override
+  public void throwErrorFromVoidTaskQueueBackground() {
+    throw new CoreTests.FlutterError("code", "message", "details");
+  }
+
+  @Override
+  public void echoAsyncAllTypesTaskQueueBackground(
+      @NonNull AllTypes everything, @NonNull Result<AllTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void echoAsyncNullableAllNullableTypesTaskQueueBackground(
+      @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result) {
+    result.success(everything);
+  }
+
+  @Override
+  public void throwAsyncErrorFromVoidTaskQueueBackground(@NonNull VoidResult result) {
+    result.error(new CoreTests.FlutterError("code", "message", "details"));
+  }
+
   @Override
   public void callFlutterNoop(@NonNull VoidResult result) {
     assert flutterApi != null;

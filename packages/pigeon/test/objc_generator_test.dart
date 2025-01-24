@@ -2062,6 +2062,45 @@ void main() {
     }
   });
 
+  test('host TaskQueue background method', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+              taskQueueType: TaskQueueType.serialBackgroundThread)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    final OutputFileOptions<ObjcOptions> generatorOptions =
+        OutputFileOptions<ObjcOptions>(
+      fileType: FileType.source,
+      languageOptions:
+          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+    );
+    const ObjcGenerator generator = ObjcGenerator();
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+      code,
+      contains(
+        'NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];',
+      ),
+    );
+    expect(code, contains('taskQueue:taskQueue];'));
+  });
+
   test('host multiple args', () {
     final Root root = Root(apis: <Api>[
       AstHostApi(name: 'Api', methods: <Method>[

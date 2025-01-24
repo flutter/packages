@@ -1,3 +1,7 @@
+# 22.7.5
+
+* [swift] Adds support of TaskQueue for Swift.
+
 ## 22.7.4
 
 * [dart] Fixes bug with multi-instance event channel support.

@@ -695,6 +695,30 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)echoAnotherAsyncNullableEnum:(nullable FLTAnotherEnumBox *)anotherEnumBoxed
                           completion:(void (^)(FLTAnotherEnumBox *_Nullable,
                                                FlutterError *_Nullable))completion;
+/// Returns the passed object, to test serialization and deserialization.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable FLTAllTypes *)echoAllTypesTaskQueueBackground:(FLTAllTypes *)everything
+                                                    error:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed object, to test serialization and deserialization.
+- (nullable FLTAllNullableTypes *)
+    echoNullableAllNullableTypesTaskQueueBackground:(nullable FLTAllNullableTypes *)everything
+                                              error:(FlutterError *_Nullable *_Nonnull)error;
+/// Responds with an error from an void function.
+- (void)throwErrorFromVoidTaskQueueBackgroundWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)echoAsyncAllTypesTaskQueueBackground:(FLTAllTypes *)everything
+                                  completion:(void (^)(FLTAllTypes *_Nullable,
+                                                       FlutterError *_Nullable))completion;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)echoAsyncNullableAllNullableTypesTaskQueueBackground:
+            (nullable FLTAllNullableTypes *)everything
+                                                  completion:
+                                                      (void (^)(FLTAllNullableTypes *_Nullable,
+                                                                FlutterError *_Nullable))completion;
+/// Responds with an error from an async void function.
+- (void)throwAsyncErrorFromVoidTaskQueueBackgroundWithCompletion:
+    (void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;

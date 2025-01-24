@@ -4,6 +4,7 @@
 
 import 'package:pigeon/ast.dart';
 import 'package:pigeon/kotlin_generator.dart';
+import 'package:pigeon/pigeon.dart' show TaskQueueType;
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
@@ -1016,6 +1017,38 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('fun doit(arg: List<Long?>'));
+  });
+
+  test('host TaskQueue background method', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+              name: 'doit',
+              location: ApiLocation.host,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[],
+              taskQueueType: TaskQueueType.serialBackgroundThread)
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions = KotlinOptions();
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+      code,
+      contains('val taskQueue = binaryMessenger.makeBackgroundTaskQueue()'),
+    );
+    expect(code, contains('taskQueue)'));
   });
 
   test('flutter generics argument', () {

@@ -526,6 +526,33 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anotherEnum))
   }
 
+  override fun echoAllTypesTaskQueueBackground(everything: AllTypes): AllTypes = everything
+
+  override fun echoNullableAllNullableTypesTaskQueueBackground(
+      everything: AllNullableTypes?
+  ): AllNullableTypes? = everything
+
+  override fun throwErrorFromVoidTaskQueueBackground() =
+      throw FlutterError("code", "message", "details")
+
+  override fun echoAsyncAllTypesTaskQueueBackground(
+      everything: AllTypes,
+      callback: (Result<AllTypes>) -> Unit
+  ) {
+    callback(Result.success(everything))
+  }
+
+  override fun echoAsyncNullableAllNullableTypesTaskQueueBackground(
+      everything: AllNullableTypes?,
+      callback: (Result<AllNullableTypes?>) -> Unit,
+  ) {
+    callback(Result.success(everything))
+  }
+
+  override fun throwAsyncErrorFromVoidTaskQueueBackground(callback: (Result<Unit>) -> Unit) {
+    callback(Result.failure(FlutterError("code", "message", "details")))
+  }
+
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop { callback(Result.success(Unit)) }
   }

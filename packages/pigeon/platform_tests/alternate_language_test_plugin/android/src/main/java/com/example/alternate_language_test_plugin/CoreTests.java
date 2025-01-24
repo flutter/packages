@@ -3166,6 +3166,23 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAnotherAsyncNullableEnum(
         @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result);
+    /** Returns the passed object, to test serialization and deserialization. */
+    @NonNull
+    AllTypes echoAllTypesTaskQueueBackground(@NonNull AllTypes everything);
+    /** Returns the passed object, to test serialization and deserialization. */
+    @Nullable
+    AllNullableTypes echoNullableAllNullableTypesTaskQueueBackground(
+        @Nullable AllNullableTypes everything);
+    /** Responds with an error from an void function. */
+    void throwErrorFromVoidTaskQueueBackground();
+    /** Returns the passed object, to test serialization and deserialization. */
+    void echoAsyncAllTypesTaskQueueBackground(
+        @NonNull AllTypes everything, @NonNull Result<AllTypes> result);
+    /** Returns the passed object, to test serialization and deserialization. */
+    void echoAsyncNullableAllNullableTypesTaskQueueBackground(
+        @Nullable AllNullableTypes everything, @NonNull NullableResult<AllNullableTypes> result);
+    /** Responds with an error from an async void function. */
+    void throwAsyncErrorFromVoidTaskQueueBackground(@NonNull VoidResult result);
 
     void callFlutterNoop(@NonNull VoidResult result);
 
@@ -6104,6 +6121,183 @@ public class CoreTests {
                     };
 
                 api.echoAnotherAsyncNullableEnum(anotherEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAllTypesTaskQueueBackground"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllTypes everythingArg = (AllTypes) args.get(0);
+                try {
+                  AllTypes output = api.echoAllTypesTaskQueueBackground(everythingArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoNullableAllNullableTypesTaskQueueBackground"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
+                try {
+                  AllNullableTypes output =
+                      api.echoNullableAllNullableTypesTaskQueueBackground(everythingArg);
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwErrorFromVoidTaskQueueBackground"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  api.throwErrorFromVoidTaskQueueBackground();
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncAllTypesTaskQueueBackground"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllTypes everythingArg = (AllTypes) args.get(0);
+                Result<AllTypes> resultCallback =
+                    new Result<AllTypes>() {
+                      public void success(AllTypes result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncAllTypesTaskQueueBackground(everythingArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.echoAsyncNullableAllNullableTypesTaskQueueBackground"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                AllNullableTypes everythingArg = (AllNullableTypes) args.get(0);
+                NullableResult<AllNullableTypes> resultCallback =
+                    new NullableResult<AllNullableTypes>() {
+                      public void success(AllNullableTypes result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.echoAsyncNullableAllNullableTypesTaskQueueBackground(
+                    everythingArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.throwAsyncErrorFromVoidTaskQueueBackground"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.throwAsyncErrorFromVoidTaskQueueBackground(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

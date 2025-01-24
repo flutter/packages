@@ -838,6 +838,45 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsyncNullable(_:)')
   AnotherEnum? echoAnotherAsyncNullableEnum(AnotherEnum? anotherEnum);
 
+  // ========== TaskQueue method tests ==========
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoAllTypesTaskQueueBackground:')
+  @SwiftFunction('echoAllTypesTaskQueueBackground(_:)')
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  AllTypes echoAllTypesTaskQueueBackground(AllTypes everything);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @ObjCSelector('echoNullableAllNullableTypesTaskQueueBackground:')
+  @SwiftFunction('echoNullableAllNullableTypesTaskQueueBackground(_:)')
+  AllNullableTypes? echoNullableAllNullableTypesTaskQueueBackground(
+    AllNullableTypes? everything,
+  );
+
+  /// Responds with an error from an void function.
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  void throwErrorFromVoidTaskQueueBackground();
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncAllTypesTaskQueueBackground:')
+  @SwiftFunction('echoAsyncAllTypesTaskQueueBackground(_:)')
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  AllTypes echoAsyncAllTypesTaskQueueBackground(AllTypes everything);
+
+  /// Returns the passed object, to test serialization and deserialization.
+  @async
+  @ObjCSelector('echoAsyncNullableAllNullableTypesTaskQueueBackground:')
+  @SwiftFunction('echoAsyncNullableAllNullableTypesTaskQueueBackground(_:)')
+  AllNullableTypes? echoAsyncNullableAllNullableTypesTaskQueueBackground(
+    AllNullableTypes? everything,
+  );
+
+  /// Responds with an error from an async void function.
+  @async
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  void throwAsyncErrorFromVoidTaskQueueBackground();
+
   // ========== Flutter API test wrappers ==========
 
   @async

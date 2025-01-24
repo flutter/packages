@@ -393,6 +393,31 @@ class TestPlugin : public flutter::Plugin,
                          std::optional<core_tests_pigeontest::AnotherEnum>>
                              reply)>
           result) override;
+  core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
+  EchoAllTypesTaskQueueBackground(
+      const core_tests_pigeontest::AllTypes& everything) override;
+  core_tests_pigeontest::ErrorOr<
+      std::optional<core_tests_pigeontest::AllNullableTypes>>
+  EchoNullableAllNullableTypesTaskQueueBackground(
+      const core_tests_pigeontest::AllNullableTypes* everything) override;
+  std::optional<core_tests_pigeontest::FlutterError>
+  ThrowErrorFromVoidTaskQueueBackground() override;
+  void EchoAsyncAllTypesTaskQueueBackground(
+      const core_tests_pigeontest::AllTypes& everything,
+      std::function<
+          void(core_tests_pigeontest::ErrorOr<core_tests_pigeontest::AllTypes>
+                   reply)>
+          result) override;
+  void EchoAsyncNullableAllNullableTypesTaskQueueBackground(
+      const core_tests_pigeontest::AllNullableTypes* everything,
+      std::function<void(core_tests_pigeontest::ErrorOr<
+                         std::optional<core_tests_pigeontest::AllNullableTypes>>
+                             reply)>
+          result) override;
+  void ThrowAsyncErrorFromVoidTaskQueueBackground(
+      std::function<
+          void(std::optional<core_tests_pigeontest::FlutterError> reply)>
+          result) override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
