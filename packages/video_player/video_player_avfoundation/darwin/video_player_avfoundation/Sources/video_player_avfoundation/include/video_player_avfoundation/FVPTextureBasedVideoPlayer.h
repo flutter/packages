@@ -31,8 +31,12 @@ NS_ASSUME_NONNULL_BEGIN
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                    onDisposed:(void (^)(int64_t))onDisposed;
 
-// Tells the player to run its frame updater until it receives a frame, regardless of the
-// play/pause state.
+/// Sets the texture ID for the frame updater. This method should be called once the texture ID is
+/// obtained from the texture registry.
+- (void)setTextureId:(int64_t)textureId;
+
+/// Tells the player to run its frame updater until it receives a frame, regardless of the
+/// play/pause state.
 - (void)expectFrame;
 @end
 

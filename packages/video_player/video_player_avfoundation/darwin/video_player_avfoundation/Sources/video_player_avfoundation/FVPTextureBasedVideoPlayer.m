@@ -88,6 +88,10 @@
   return self;
 }
 
+- (void)setTextureId:(int64_t)textureId {
+  self.frameUpdater.textureId = textureId;
+}
+
 - (void)expectFrame {
   self.waitingForFrame = YES;
 
