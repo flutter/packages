@@ -205,9 +205,9 @@ class SharedPreferencesApi {
   }
 
   /// Adds property to shared preferences data set of type List<String>.
-  Future<bool> setStringList(String key, String value) async {
+  Future<bool> setEncodedStringList(String key, String value) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setStringList$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setEncodedStringList$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,

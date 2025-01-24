@@ -96,7 +96,7 @@ public class Messages {
     Boolean setDouble(@NonNull String key, @NonNull Double value);
     /** Adds property to shared preferences data set of type List<String>. */
     @NonNull
-    Boolean setStringList(@NonNull String key, @NonNull String value);
+    Boolean setEncodedStringList(@NonNull String key, @NonNull String value);
     /**
      * Adds property to shared preferences data set of type List<String>.
      *
@@ -273,7 +273,7 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setStringList"
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setEncodedStringList"
                     + messageChannelSuffix,
                 getCodec(),
                 taskQueue);
@@ -285,7 +285,7 @@ public class Messages {
                 String keyArg = (String) args.get(0);
                 String valueArg = (String) args.get(1);
                 try {
-                  Boolean output = api.setStringList(keyArg, valueArg);
+                  Boolean output = api.setEncodedStringList(keyArg, valueArg);
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

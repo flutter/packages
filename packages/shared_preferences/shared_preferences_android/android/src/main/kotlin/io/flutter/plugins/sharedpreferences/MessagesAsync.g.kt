@@ -95,7 +95,7 @@ interface SharedPreferencesAsyncApi {
   /** Adds property to shared preferences data set of type double. */
   fun setDouble(key: String, value: Double, options: SharedPreferencesPigeonOptions)
   /** Adds property to shared preferences data set of type List<String>. */
-  fun setStringList(key: String, value: String, options: SharedPreferencesPigeonOptions)
+  fun setEncodedStringList(key: String, value: String, options: SharedPreferencesPigeonOptions)
   /**
    * Adds property to shared preferences data set of type List<String>.
    *
@@ -256,7 +256,7 @@ interface SharedPreferencesAsyncApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setStringList$separatedMessageChannelSuffix",
+                "dev.flutter.pigeon.shared_preferences_android.SharedPreferencesAsyncApi.setEncodedStringList$separatedMessageChannelSuffix",
                 codec,
                 taskQueue)
         if (api != null) {
@@ -267,7 +267,7 @@ interface SharedPreferencesAsyncApi {
             val optionsArg = args[2] as SharedPreferencesPigeonOptions
             val wrapped: List<Any?> =
                 try {
-                  api.setStringList(keyArg, valueArg, optionsArg)
+                  api.setEncodedStringList(keyArg, valueArg, optionsArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)

@@ -56,7 +56,7 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Adds property to shared preferences data set of type List<String>.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  void setStringList(
+  void setEncodedStringList(
     String key,
     String value,
     SharedPreferencesPigeonOptions options,

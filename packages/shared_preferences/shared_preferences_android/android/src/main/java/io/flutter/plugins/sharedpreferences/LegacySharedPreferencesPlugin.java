@@ -104,7 +104,7 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   }
 
   @Override
-  public @NonNull Boolean setStringList(@NonNull String key, @NonNull String value)
+  public @NonNull Boolean setEncodedStringList(@NonNull String key, @NonNull String value)
       throws RuntimeException {
     return preferences.edit().putString(key, value).commit();
   }

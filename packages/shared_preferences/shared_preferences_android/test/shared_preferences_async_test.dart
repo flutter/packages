@@ -338,7 +338,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<bool> setStringList(
+  Future<bool> setEncodedStringList(
       String key, String value, SharedPreferencesPigeonOptions options) async {
     items[key] = '$jsonListPrefix${jsonEncode(value)}';
     return true;

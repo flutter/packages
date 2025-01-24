@@ -52,7 +52,8 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       case 'Double':
         return api.setDouble(key, value as double);
       case 'StringList':
-        return api.setStringList(key, '$jsonListPrefix${jsonEncode(value)}');
+        return api.setEncodedStringList(
+            key, '$jsonListPrefix${jsonEncode(value)}');
     }
     // TODO(tarrinneal): change to ArgumentError across all platforms.
     throw PlatformException(

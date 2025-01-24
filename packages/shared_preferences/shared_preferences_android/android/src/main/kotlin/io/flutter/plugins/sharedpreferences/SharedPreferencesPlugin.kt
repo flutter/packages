@@ -33,7 +33,7 @@ const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
 // All identifiers must match the LegacySharedPreferencesPlugin.java file, as well as the
 // strings.dart file.
 const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
-  // The symbol `!` was chosen as it cannot be created by the base 64 encoding used with LIST_PREFIX.
+// The symbol `!` was chosen as it cannot be created by the base 64 encoding used with LIST_PREFIX.
 const val JSON_LIST_PREFIX = LIST_PREFIX + "!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 
@@ -108,12 +108,12 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Adds property to data store of type List<String> as encoded String. */
-  override fun setStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
+  override fun setEncodedStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
     return runBlocking { dataStoreSetString(key, value) }
   }
 
   /** Deprecated, for testing purposes only. Adds property to data store of type List<String>. */
-  @Deprecated("This is just for testing, use `setStringList`")
+  @Deprecated("This is just for testing, use `setEncodedStringList`")
   override fun setDeprecatedStringList(
       key: String,
       value: List<String>,
@@ -312,12 +312,12 @@ class SharedPreferencesBackend(
   }
 
   /** Adds property to data store of type List<String>. */
-  override fun setStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
+  override fun setEncodedStringList(key: String, value: String, options: SharedPreferencesPigeonOptions) {
     return createSharedPreferences(options).edit().putString(key, value).apply()
   }
 
   /** Adds property to data store of type List<String>. */
-  @Deprecated("This is just for testing, use `setStringList`")
+  @Deprecated("This is just for testing, use `setEncodedStringList`")
   override fun setDeprecatedStringList(
       key: String,
       value: List<String>,
