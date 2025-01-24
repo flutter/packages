@@ -1849,7 +1849,7 @@ void main() {
     expect(await streamQueue.next, equals(cameraClosingEvent));
     await streamQueue.cancel();
   });
-/*
+
   test(
       'onCameraError stream emits errors caught by system services or added to stream within plugin',
       () async {
@@ -1863,7 +1863,24 @@ void main() {
     final StreamQueue<CameraErrorEvent> streamQueue =
         StreamQueue<CameraErrorEvent>(eventStream);
 
-    SystemServices.cameraErrorStreamController.add(firstTestErrorDescription);
+    camera.proxy = CameraXProxy(newSystemServicesManager: ({
+      required void Function(
+        SystemServicesManager,
+        String,
+      ) onCameraError,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      final MockSystemServicesManager mockSystemServicesManager =
+          MockSystemServicesManager();
+      when(mockSystemServicesManager.onCameraError).thenReturn(onCameraError);
+      return mockSystemServicesManager;
+    });
+
+    camera.systemServicesManager.onCameraError(
+      camera.systemServicesManager,
+      firstTestErrorDescription,
+    );
     expect(await streamQueue.next,
         equals(const CameraErrorEvent(cameraId, firstTestErrorDescription)));
 
@@ -1872,7 +1889,7 @@ void main() {
 
     await streamQueue.cancel();
   });
-
+/*
   test(
       'onDeviceOrientationChanged stream emits changes in device orientation detected by system services',
       () async {
