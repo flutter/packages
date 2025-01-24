@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
+import 'package:shared_preferences_android/src/messages_async.g.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -493,6 +494,39 @@ void main() {
         expect(values[key], null);
       }
     });
+
+    testWidgets(
+        'Platform list encoding with getPreferences can be re-added with new encoding without data loss',
+        (WidgetTester _) async {
+      await preferences.clearWithParameters(
+        ClearParameters(
+          filter: PreferencesFilter(prefix: ''),
+        ),
+      );
+      await preferences.setValue('String', 'String', allTestValues['String']!);
+      await preferences.setValue('Bool', 'Bool', allTestValues['Bool']!);
+      await preferences.setValue('Int', 'Int', allTestValues['Int']!);
+      await preferences.setValue('Double', 'Double', allTestValues['Double']!);
+      await (preferences as SharedPreferencesAndroid)
+          .api
+          .setDeprecatedStringList(
+              'StringList', allTestValues['StringList']! as List<String>);
+      Map<String, Object> prefs = await preferences.getAllWithParameters(
+        GetAllParameters(
+          filter: PreferencesFilter(prefix: ''),
+        ),
+      );
+      expect(prefs['StringList'], allTestValues['StringList']);
+      await preferences.setValue(
+          'StringList', 'StringList', prefs['StringList']!);
+      prefs = await preferences.getAllWithParameters(
+        GetAllParameters(
+          filter: PreferencesFilter(prefix: ''),
+        ),
+      );
+
+      expect(prefs['StringList'], allTestValues['StringList']);
+    });
   });
 
   const String stringKey = 'testString';
@@ -755,6 +789,80 @@ void main() {
         expect(await preferences.getBool(boolKey, options), null);
         expect(await preferences.getInt(intKey, options), testInt);
         expect(await preferences.getDouble(doubleKey, options), testDouble);
+        expect(await preferences.getStringList(listKey, options), testList);
+      });
+
+      testWidgets(
+          'platform list encoding updates to JSON encoding process without data loss with $backend',
+          (WidgetTester _) async {
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncAndroid preferences =
+            getPreferences() as SharedPreferencesAsyncAndroid;
+        await clearPreferences(preferences, options);
+        final SharedPreferencesPigeonOptions pigeonOptions =
+            preferences.convertOptionsToPigeonOptions(options);
+        final SharedPreferencesAsyncApi api =
+            preferences.getApiForBackend(pigeonOptions);
+        await api.setDeprecatedStringList(listKey, testList, pigeonOptions);
+        final List<String>? platformEncodedList =
+            await preferences.getStringList(listKey, options);
+        expect(platformEncodedList, testList);
+        await preferences.setStringList(listKey, platformEncodedList!, options);
+        expect(await preferences.getStringList(listKey, options), testList);
+      });
+
+      testWidgets(
+          'platform list encoding still functions with getPreferences with $backend',
+          (WidgetTester _) async {
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncAndroid preferences =
+            getPreferences() as SharedPreferencesAsyncAndroid;
+        await clearPreferences(preferences, options);
+        await Future.wait(<Future<void>>[
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+        ]);
+        final SharedPreferencesPigeonOptions pigeonOptions =
+            preferences.convertOptionsToPigeonOptions(options);
+        final SharedPreferencesAsyncApi api =
+            preferences.getApiForBackend(pigeonOptions);
+        await api.setDeprecatedStringList(listKey, testList, pigeonOptions);
+
+        final Map<String, Object> prefs = await preferences.getPreferences(
+            const GetPreferencesParameters(filter: PreferencesFilters()),
+            options);
+        expect(prefs[listKey], testList);
+      });
+
+      testWidgets(
+          'platform list encoding with getPreferences can be re-added with new encoding without data loss with $backend',
+          (WidgetTester _) async {
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncAndroid preferences =
+            getPreferences() as SharedPreferencesAsyncAndroid;
+        await clearPreferences(preferences, options);
+        await Future.wait(<Future<void>>[
+          preferences.setString(stringKey, testString, options),
+          preferences.setBool(boolKey, testBool, options),
+          preferences.setInt(intKey, testInt, options),
+          preferences.setDouble(doubleKey, testDouble, options),
+        ]);
+        final SharedPreferencesPigeonOptions pigeonOptions =
+            preferences.convertOptionsToPigeonOptions(options);
+        final SharedPreferencesAsyncApi api =
+            preferences.getApiForBackend(pigeonOptions);
+        await api.setDeprecatedStringList(listKey, testList, pigeonOptions);
+
+        final Map<String, Object> prefs = await preferences.getPreferences(
+            const GetPreferencesParameters(filter: PreferencesFilters()),
+            options);
+        await preferences.setStringList(listKey,
+            (prefs[listKey]! as List<Object?>).cast<String>(), options);
         expect(await preferences.getStringList(listKey, options), testList);
       });
     });
