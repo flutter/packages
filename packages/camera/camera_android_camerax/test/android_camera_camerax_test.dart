@@ -1515,13 +1515,13 @@ void main() {
       isNot(equals(mockQualitySelector)),
     );
   });
-/*
+
   test(
       'createCamera sets sensor and device orientations needed to correct preview rotation as expected',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
-    const int testSensorOrientation = 270;
+    const int testSensorOrientation = 90;
     const CameraDescription testCameraDescription = CameraDescription(
         name: 'cameraName',
         lensDirection: testLensDirection,
@@ -1536,19 +1536,12 @@ void main() {
     final MockProcessCameraProvider mockProcessCameraProvider =
         MockProcessCameraProvider();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // The proxy needed for this test is the same as testing resolution
-    // presets except for mocking the retrievall of the sensor and current
+    // presets except for mocking the retrieval of the sensor and current
     // UI orientation.
     camera.proxy =
         getProxyForTestingResolutionPreset(mockProcessCameraProvider);
-    camera.proxy.getSensorOrientation =
-        (_) async => Future<int>.value(testSensorOrientation);
-    camera.proxy.getUiOrientation =
-        () async => Future<DeviceOrientation>.value(testUiOrientation);
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
@@ -1561,7 +1554,7 @@ void main() {
 
     expect(camera.sensorOrientation, testSensorOrientation);
   });
-
+/*
   test(
       'initializeCamera throws a CameraException when createCamera has not been called before initializedCamera',
       () async {
