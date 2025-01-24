@@ -99,8 +99,6 @@ class _MyHomePageState extends State<MyHomePage> {
         case StringEvent():
           final String stringData = event.data;
           yield '$stringData, ';
-        case EmptyEvent():
-          yield 'EmptyEvent, ';
       }
     }
   }

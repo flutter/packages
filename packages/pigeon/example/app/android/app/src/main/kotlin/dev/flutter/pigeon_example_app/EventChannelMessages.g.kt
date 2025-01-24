@@ -49,20 +49,6 @@ data class StringEvent(val data: String) : PlatformEvent() {
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
-class EmptyEvent() : PlatformEvent() {
-  companion object {
-    @Suppress("UNUSED_PARAMETER")
-    fun fromList(pigeonVar_list: List<Any?>): EmptyEvent {
-      return EmptyEvent()
-    }
-  }
-
-  fun toList(): List<Any?> {
-    return listOf()
-  }
-}
-
 private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -71,9 +57,6 @@ private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { StringEvent.fromList(it) }
-      }
-      131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { EmptyEvent.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -87,10 +70,6 @@ private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {
       }
       is StringEvent -> {
         stream.write(130)
-        writeValue(stream, value.toList())
-      }
-      is EmptyEvent -> {
-        stream.write(131)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

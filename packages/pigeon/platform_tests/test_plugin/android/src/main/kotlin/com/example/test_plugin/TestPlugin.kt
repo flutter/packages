@@ -906,8 +906,7 @@ object SendClass : StreamEventsStreamHandler() {
           DoubleEvent(3.14),
           ObjectsEvent(true),
           EnumEvent(EventEnum.FORTY_TWO),
-          ClassEvent(EventAllNullableTypes(aNullableInt = 0)),
-          EmptyEvent())
+          ClassEvent(EventAllNullableTypes(aNullableInt = 0)))
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
     var count: Int = 0

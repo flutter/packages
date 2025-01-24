@@ -170,24 +170,20 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         : '';
 
     indent.write('${sealed}class ${classDefinition.name} $implements');
-
     indent.addScoped('{', '}', () {
-      if (classDefinition.isSealed) {
+      if (classDefinition.fields.isEmpty) {
         return;
       }
+      _writeConstructor(indent, classDefinition);
+      indent.newln();
+      for (final NamedType field
+          in getFieldsInSerializationOrder(classDefinition)) {
+        addDocumentationComments(
+            indent, field.documentationComments, _docCommentSpec);
 
-      if (classDefinition.fields.isNotEmpty) {
-        _writeConstructor(indent, classDefinition);
+        final String datatype = _addGenericTypesNullable(field.type);
+        indent.writeln('$datatype ${field.name};');
         indent.newln();
-        for (final NamedType field
-            in getFieldsInSerializationOrder(classDefinition)) {
-          addDocumentationComments(
-              indent, field.documentationComments, _docCommentSpec);
-
-          final String datatype = _addGenericTypesNullable(field.type);
-          indent.writeln('$datatype ${field.name};');
-          indent.newln();
-        }
       }
       writeClassEncode(
         generatorOptions,

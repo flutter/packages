@@ -390,8 +390,6 @@ Stream<String> getEventStream() async* {
       case StringEvent():
         final String stringData = event.data;
         yield '$stringData, ';
-      case EmptyEvent():
-        yield 'EmptyEvent, ';
     }
   }
 }
@@ -419,12 +417,6 @@ class EventListener: StreamEventsStreamHandler {
   func onStringEvent(event: String) {
     if let eventSink = eventSink {
       eventSink.success(StringEvent(data: event))
-    }
-  }
-
-  func onEmptyEvent() {
-    if let eventSink = eventSink {
-      eventSink.success(EmptyEvent())
     }
   }
 
@@ -463,10 +455,6 @@ class EventListener : StreamEventsStreamHandler() {
 
   fun onStringEvent(event: String) {
     eventSink?.success(StringEvent(data = event))
-  }
-
-  fun onEmptyEvent() {
-    eventSink?.success(EmptyEvent())
   }
 
   fun onEventsDone() {

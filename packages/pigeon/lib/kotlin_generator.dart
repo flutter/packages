@@ -241,11 +241,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     bool private = false,
   }) {
     final String privateString = private ? 'private ' : '';
-    final String classType = classDefinition.isSealed
-        ? 'sealed'
-        : classDefinition.fields.isNotEmpty
-            ? 'data'
-            : '';
+    final String classType = classDefinition.isSealed ? 'sealed' : 'data';
     final String inheritance = classDefinition.superClass != null
         ? ' : ${classDefinition.superClassName}()'
         : '';
@@ -299,10 +295,6 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
     indent.write('companion object ');
     indent.addScoped('{', '}', () {
-      if (getFieldsInSerializationOrder(classDefinition).isEmpty) {
-        indent.writeln('@Suppress("UNUSED_PARAMETER")');
-      }
-
       indent
           .write('fun fromList(${varNamePrefix}list: List<Any?>): $className ');
 

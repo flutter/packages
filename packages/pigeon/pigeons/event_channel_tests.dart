@@ -137,8 +137,6 @@ class ClassEvent extends PlatformEvent {
   final EventAllNullableTypes value;
 }
 
-class EmptyEvent extends PlatformEvent {}
-
 @EventChannelApi()
 abstract class EventChannelMethods {
   int streamInts();
