@@ -195,7 +195,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   }
 }
 
-- (nullable NSNumber *)createTextureBasedPlayerFromOptions:(nonnull FVPCreationOptions *)options {
+- (nullable FVPTextureBasedVideoPlayer *)createTextureBasedPlayerFromOptions:
+    (nonnull FVPCreationOptions *)options {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
   FVPDisplayLink *displayLink =
       [self.displayLinkFactory displayLinkWithRegistrar:_registrar
@@ -228,7 +229,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   return nil;
 }
 
-- (nullable NSNumber *)createRegularPlayerFromOptions:(nonnull FVPCreationOptions *)options {
+- (nullable FVPVideoPlayer *)createRegularPlayerFromOptions:(nonnull FVPCreationOptions *)options {
   if (options.asset) {
     NSString *assetPath = [self prepareAssetPathFromCreationOptions:options];
     return [[FVPVideoPlayer alloc] initWithAsset:assetPath
