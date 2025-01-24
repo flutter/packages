@@ -100,16 +100,6 @@
   return self.exposureModeSupported;
 }
 
-- (BOOL)isExposurePointOfInterestSupported { 
-  return self.exposurePointOfInterestSupported;
-}
-
-
-- (BOOL)isFocusPointOfInterestSupported { 
-  return self.focusPointOfInterestSupported;
-}
-
-
 - (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
   if (self.createInputStub) {
     return self.createInputStub(error);

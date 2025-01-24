@@ -8,6 +8,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A protocol which is a direct passthrough to AVCaptureSession.
+/// It exists to allow replacing AVCaptureSession in tests.
 @protocol FLTCaptureSession <NSObject>
 
 @property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;

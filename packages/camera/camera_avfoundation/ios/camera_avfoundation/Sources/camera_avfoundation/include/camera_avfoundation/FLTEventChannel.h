@@ -6,6 +6,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A protocol which is a direct passthrough to FlutterStreamHandler.
+/// It exists to allow replacing FlutterStreamHandler in tests.
 @protocol FLTEventChannel <NSObject>
 - (void)setStreamHandler:(nullable NSObject<FlutterStreamHandler> *)handler;
 @end

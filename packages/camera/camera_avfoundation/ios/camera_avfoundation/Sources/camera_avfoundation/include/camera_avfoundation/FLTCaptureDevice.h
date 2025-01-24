@@ -7,6 +7,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A protocol which is a direct passthrough to AVCaptureDevice.
+/// It exists to allow replacing AVCaptureDevice in tests.
 @protocol FLTCaptureDevice <NSObject>
 
 // Device
@@ -29,13 +31,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isFlashModeSupported:(AVCaptureFlashMode)mode;
 
 // Focus
-- (BOOL)isFocusPointOfInterestSupported;
+- (BOOL)focusPointOfInterestSupported;
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode;
 - (void)setFocusMode:(AVCaptureFocusMode)focusMode;
 - (void)setFocusPointOfInterest:(CGPoint)point;
 
 // Exposure
-- (BOOL)isExposurePointOfInterestSupported;
+- (BOOL)exposurePointOfInterestSupported;
 - (void)setExposureMode:(AVCaptureExposureMode)exposureMode;
 - (void)setExposurePointOfInterest:(CGPoint)point;
 - (float)minExposureTargetBias;
@@ -66,10 +68,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/// A protocol which is a direct passthrough to AVCaptureInput.
+/// It exists to allow replacing AVCaptureInput in tests.
 @protocol FLTCaptureInput <NSObject>
 @property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *ports;
 @end
 
+/// A protocol which wraps the creation of AVCaptureDeviceInput.
+/// It exists to allow mocking instances of AVCaptureDeviceInput in tests.
 @protocol FLTCaptureDeviceInputFactory <NSObject>
 - (nullable id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDevice>)device
                                                 error:(NSError **)error;
@@ -81,6 +87,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface AVCaptureInput (FLTCaptureInput) <FLTCaptureInput>
 @end
 
+/// A default implementation of FLTCaptureDeviceInputFactory protocol which
+/// wraps a call to AVCaptureInput static method `deviceInputWithDevice`.
 @interface FLTDefaultCaptureDeviceInputFactory : NSObject <FLTCaptureDeviceInputFactory>
 @end
 

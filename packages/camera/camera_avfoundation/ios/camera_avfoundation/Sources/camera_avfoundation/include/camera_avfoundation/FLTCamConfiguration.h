@@ -24,8 +24,10 @@ typedef id<FLTCaptureSession> _Nonnull (^CaptureSessionFactory)(void);
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
 typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
 
+/// A configuration object that centralizes dependencies  for `FLTCam`.
 @interface FLTCamConfiguration : NSObject
 
+/// Initializes a new camera configuration with specified media settings and factories.
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                  mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
