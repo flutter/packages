@@ -762,7 +762,7 @@ final AllNullableTypes genericAllNullableTypes = AllNullableTypes(
   mapMap: mapMap,
 );
 
-final EventAllNullableTypes genericEventAllNullableTypes =
+final EventAllNullableTypes genericEventAllNullableTypesWithoutRecursion =
     EventAllNullableTypes(
   aNullableBool: true,
   aNullableInt: regularInt,
@@ -792,7 +792,6 @@ final EventAllNullableTypes genericEventAllNullableTypes =
   objectMap: map,
   listMap: listMap,
   mapMap: mapMap,
-  recursiveClassMap: eventAllNullableTypesMap,
 );
 
 final List<AllNullableTypes> nonNullAllNullableTypesList = <AllNullableTypes>[
@@ -821,7 +820,7 @@ final Map<int, AllNullableTypes?> allNullableTypesMap =
 
 final Map<int, EventAllNullableTypes?> eventAllNullableTypesMap =
     <int, EventAllNullableTypes?>{
-  0: genericEventAllNullableTypes,
+  0: genericEventAllNullableTypesWithoutRecursion,
   1: EventAllNullableTypes(),
   2: null,
 };

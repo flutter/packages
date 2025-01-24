@@ -3060,9 +3060,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     (WidgetTester _) async {
       final SealedClassApi api = SealedClassApi();
       final EventAllNullableTypes sentEventAllNullableTypes =
-          genericEventAllNullableTypes;
+          genericEventAllNullableTypesWithoutRecursion;
       final PlatformEvent receivedEvent = await api.echo(
-        ClassEvent(value: genericEventAllNullableTypes),
+        ClassEvent(value: genericEventAllNullableTypesWithoutRecursion),
       );
 
       switch (receivedEvent) {
