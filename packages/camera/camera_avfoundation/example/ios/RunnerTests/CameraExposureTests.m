@@ -8,7 +8,6 @@
 
 #import "CameraTestUtils.h"
 #import "MockCaptureDevice.h"
-#import "MockCaptureDeviceController.h"
 #import "MockDeviceOrientationProvider.h"
 
 @interface CameraExposureTests : XCTestCase

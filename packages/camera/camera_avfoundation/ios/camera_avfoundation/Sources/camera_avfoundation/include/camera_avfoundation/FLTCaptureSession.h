@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
 @property(nonatomic, readonly) NSArray<AVCaptureInput *> *inputs;
 @property(nonatomic, readonly) NSArray<AVCaptureOutput *> *outputs;
+@property(nonatomic, assign) BOOL automaticallyConfiguresApplicationAudioSession;
 
 - (void)beginConfiguration;
 - (void)commitConfiguration;

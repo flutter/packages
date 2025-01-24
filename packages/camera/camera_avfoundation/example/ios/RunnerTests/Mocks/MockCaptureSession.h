@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSMutableArray<AVCaptureOutput *> *outputs;
 @property(nonatomic, assign) BOOL mockCanSetSessionPreset;
 @property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
+@property(nonatomic, assign) BOOL automaticallyConfiguresApplicationAudioSession;
 
 @end
 
