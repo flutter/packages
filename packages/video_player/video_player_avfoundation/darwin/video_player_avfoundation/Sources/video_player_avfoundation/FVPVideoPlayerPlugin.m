@@ -194,11 +194,15 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
     }
     @try {
       if (textureBased) {
-        player = [[FVPTextureBasedVideoPlayer alloc] initWithAsset:assetPath
-                                                      frameUpdater:frameUpdater
-                                                       displayLink:displayLink
-                                                         avFactory:_avFactory
-                                                         registrar:self.registrar];
+        player =
+            [[FVPTextureBasedVideoPlayer alloc] initWithAsset:assetPath
+                                                 frameUpdater:frameUpdater
+                                                  displayLink:displayLink
+                                                    avFactory:_avFactory
+                                                    registrar:self.registrar
+                                                   onDisposed:^(int64_t textureId) {
+                                                     [self.registry unregisterTexture:textureId];
+                                                   }];
       } else {
         player = [[FVPVideoPlayer alloc] initWithAsset:assetPath
                                              avFactory:_avFactory
@@ -216,7 +220,10 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                    displayLink:displayLink
                                                    httpHeaders:options.httpHeaders
                                                      avFactory:_avFactory
-                                                     registrar:self.registrar];
+                                                     registrar:self.registrar
+                                                    onDisposed:^(int64_t textureId) {
+                                                      [self.registry unregisterTexture:textureId];
+                                                    }];
     } else {
       player = [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                        httpHeaders:options.httpHeaders
@@ -233,13 +240,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 - (void)disposePlayer:(NSInteger)playerId error:(FlutterError **)error {
   NSNumber *playerKey = @(playerId);
   FVPVideoPlayer *player = self.playersById[playerKey];
-  if ([player isKindOfClass:[FVPTextureBasedVideoPlayer class]]) {
-    [self.registry unregisterTexture:playerId];
-  }
   [self.playersById removeObjectForKey:playerKey];
-  if (!player.disposed) {
-    [player dispose];
-  }
+  [player dispose];
 }
 
 - (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)playerId error:(FlutterError **)error {

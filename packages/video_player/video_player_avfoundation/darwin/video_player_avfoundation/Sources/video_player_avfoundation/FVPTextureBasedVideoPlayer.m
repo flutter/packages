@@ -15,6 +15,7 @@
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
+@property(nonatomic, copy) void (^onDisposed)(int64_t);
 @end
 
 @implementation FVPTextureBasedVideoPlayer
@@ -22,7 +23,8 @@
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(FVPDisplayLink *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                   onDisposed:(void (^)(int64_t))onDisposed {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
 #if TARGET_OS_OSX
   // See https://github.com/flutter/flutter/issues/135302
@@ -36,7 +38,8 @@
                displayLink:displayLink
                httpHeaders:@{}
                  avFactory:avFactory
-                 registrar:registrar];
+                 registrar:registrar
+                onDisposed:onDisposed];
 }
 
 - (instancetype)initWithURL:(NSURL *)url
@@ -44,7 +47,8 @@
                 displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                 onDisposed:(void (^)(int64_t))onDisposed {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
@@ -55,20 +59,23 @@
                      frameUpdater:frameUpdater
                       displayLink:displayLink
                         avFactory:avFactory
-                        registrar:registrar];
+                        registrar:registrar
+                       onDisposed:onDisposed];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(FVPDisplayLink *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                        onDisposed:(void (^)(int64_t))onDisposed {
   self = [super initWithPlayerItem:item avFactory:avFactory registrar:registrar];
 
   if (self) {
     _frameUpdater = frameUpdater;
     _displayLink = displayLink;
     _frameUpdater.videoOutput = self.videoOutput;
+    _onDisposed = [onDisposed copy];
 
     // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
     // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
@@ -140,6 +147,12 @@
   _displayLink = nil;
 }
 
+- (void)dispose {
+  [super dispose];
+
+  _onDisposed(self.frameUpdater.textureId);
+}
+
 #pragma mark - FlutterTexture
 
 - (CVPixelBufferRef)copyPixelBuffer {
@@ -171,7 +184,9 @@
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture {
   dispatch_async(dispatch_get_main_queue(), ^{
-    [self dispose];
+    if (!self.disposed) {
+      [self dispose];
+    }
   });
 }
 
