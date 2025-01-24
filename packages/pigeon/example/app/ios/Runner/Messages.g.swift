@@ -172,9 +172,7 @@ class ExampleHostApiSetup {
     let getHostLanguageChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.getHostLanguage\(channelSuffix)",
-      binaryMessenger: binaryMessenger,
-      codec: codec
-    )
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHostLanguageChannel.setMessageHandler { _, reply in
         do {
@@ -189,9 +187,7 @@ class ExampleHostApiSetup {
     }
     let addChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.add\(channelSuffix)",
-      binaryMessenger: binaryMessenger,
-      codec: codec
-    )
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -209,9 +205,7 @@ class ExampleHostApiSetup {
     }
     let sendMessageChannel = FlutterBasicMessageChannel(
       name: "dev.flutter.pigeon.pigeon_example_package.ExampleHostApi.sendMessage\(channelSuffix)",
-      binaryMessenger: binaryMessenger,
-      codec: codec
-    )
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

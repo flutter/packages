@@ -1544,17 +1544,12 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
     }
 
-    final String trailingComma = taskQueue != null ? ',' : '';
-    indent.writeScoped('let $varChannelName = FlutterBasicMessageChannel(', ')',
-        () {
-      indent.writeln('name: "$channelName", ');
-      indent.writeln('binaryMessenger: binaryMessenger, ');
-      indent.writeln('codec: codec$trailingComma');
+    final String taskQueueArgument =
+        taskQueue != null ? ', $taskQueue: $taskQueue' : '';
 
-      if (taskQueue != null) {
-        indent.writeln('$taskQueue: $taskQueue');
-      }
-    });
+    indent.writeln(
+      'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec$taskQueueArgument)',
+    );
 
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {

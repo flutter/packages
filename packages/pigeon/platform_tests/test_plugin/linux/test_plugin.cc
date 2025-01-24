@@ -56,7 +56,7 @@ static CoreTestsPigeonTestHostIntegrationCoreApiNoopResponse* noop(
     gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_noop_response_new();
 }
-e static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesResponse*
+static CoreTestsPigeonTestHostIntegrationCoreApiEchoAllTypesResponse*
 echo_all_types(CoreTestsPigeonTestAllTypes* everything, gpointer user_data) {
   return core_tests_pigeon_test_host_integration_core_api_echo_all_types_response_new(
       everything);
@@ -808,12 +808,12 @@ throw_error_from_void_task_queue_background(gpointer user_data) {
       "An error", "", nullptr);
 }
 
-static void echo_async_all_types(
+static void echo_async_all_types_task_queue_background(
 
     CoreTestsPigeonTestAllTypes* everything,
     CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
     gpointer user_data) {
-  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types(
+  core_tests_pigeon_test_host_integration_core_api_respond_echo_async_all_types_task_queue_background(
       response_handle, everything);
 }
 
@@ -3325,6 +3325,12 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_async_nullable_enum_map = echo_async_nullable_enum_map,
     .echo_async_nullable_class_map = echo_async_nullable_class_map,
     .echo_async_nullable_enum = echo_async_nullable_enum,
+    .echo_all_types_task_queue_background = echo_all_types_task_queue_background,
+    .echo_nullable_all_nullable_types_task_queue_background = echo_nullable_all_nullable_types_task_queue_background,
+    .throw_error_from_void_task_queue_background = throw_error_from_void_task_queue_background,
+    .echo_async_all_types_task_queue_background = echo_async_all_types_task_queue_background,
+    .echo_async_nullable_all_nullable_types_task_queue_background = echo_async_nullable_all_nullable_types_task_queue_background,
+    .throw_async_error_from_void_task_queue_background = throw_async_error_from_void_task_queue_background,
     .echo_another_async_nullable_enum = echo_another_async_nullable_enum,
     .call_flutter_noop = call_flutter_noop,
     .call_flutter_throw_error = call_flutter_throw_error,
