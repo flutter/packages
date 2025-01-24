@@ -17,6 +17,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   lcov_parser: 0.1.2
+  leak_tracker_flutter_testing: any
 
 topics:
   - ui

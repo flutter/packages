@@ -1,3 +1,7 @@
+## 22.7.4
+
+* [dart] Fixes bug with multi-instance event channel support.
+
 ## 22.7.3
 
 * Adds compatibility with `analyzer` 7.x.*.
