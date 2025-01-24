@@ -1,3 +1,7 @@
+## 14.7.2
+
+- Fix issue 150312.
+
 ## 14.7.1
 
 - Fixes return type of current state getter on `GoRouter` and `GoRouterDelegate` to be non-nullable.
@@ -5,10 +9,6 @@
 ## 14.7.0
 
 - Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.
-
-## 14.6.5
-
-- Fix issue 150312.
 
 ## 14.6.4
 
