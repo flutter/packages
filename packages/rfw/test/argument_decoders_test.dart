@@ -70,6 +70,7 @@ void main() {
         },
       }))
       ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
+    addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(
@@ -235,6 +236,7 @@ void main() {
     final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
+      addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(

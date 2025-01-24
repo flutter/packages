@@ -1,10 +1,10 @@
 ## 0.9.18+2
 
-* Introduces new protocols `FLTEventChannel` and `FLTCameraDeviceDiscovering`
+* Refactors implementations to reduce usage of OCMock in internal testing.
 
 ## 0.9.18+1
 
-* Introduces new protocols `FLTCaptureDeviceControlling` and `FLTDeviceOrientationProviding`
+* Refactors implementations to reduce usage of OCMock in internal testing.
 
 ## 0.9.18
 

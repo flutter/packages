@@ -24,6 +24,8 @@
 		7F29EB412D281C7E00740257 /* MockCaptureSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F29EB402D281C7E00740257 /* MockCaptureSession.m */; };
 		7F56D0382D1EDDCE005676A5 /* CameraPermissionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E0B0D2BA27DFF2AF00E71E4B /* CameraPermissionTests.m */; };
 		7F87E8022D01FD6F00A3549C /* MockCaptureDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F87E8012D01FD5600A3549C /* MockCaptureDevice.m */; };
+		7F56D0382D1EDDCE005676A5 /* CameraPermissionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E0B0D2BA27DFF2AF00E71E4B /* CameraPermissionTests.m */; };
+		7F87E8022D01FD6F00A3549C /* MockCaptureDeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F87E8012D01FD5600A3549C /* MockCaptureDeviceController.m */; };
 		7F87E80C2D0325D900A3549C /* MockDeviceOrientationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F87E80B2D0325D700A3549C /* MockDeviceOrientationProvider.m */; };
 		7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA99E582D22C75300582559 /* CameraExposureTests.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
@@ -90,6 +92,8 @@
 		7F29EB402D281C7E00740257 /* MockCaptureSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureSession.m; sourceTree = "<group>"; };
 		7F87E8012D01FD5600A3549C /* MockCaptureDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDevice.m; sourceTree = "<group>"; };
 		7F87E8032D02FF8C00A3549C /* MockCaptureDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDevice.h; sourceTree = "<group>"; };
+		7F87E8012D01FD5600A3549C /* MockCaptureDeviceController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceController.m; sourceTree = "<group>"; };
+		7F87E8032D02FF8C00A3549C /* MockCaptureDeviceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceController.h; sourceTree = "<group>"; };
 		7F87E80A2D0325B200A3549C /* MockDeviceOrientationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockDeviceOrientationProvider.h; sourceTree = "<group>"; };
 		7F87E80B2D0325D700A3549C /* MockDeviceOrientationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockDeviceOrientationProvider.m; sourceTree = "<group>"; };
 		7FA99E582D22C75300582559 /* CameraExposureTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraExposureTests.m; sourceTree = "<group>"; };
@@ -146,6 +150,10 @@
 			isa = PBXGroup;
 			children = (
 				7F29EB3F2D281C6D00740257 /* Mocks */,
+				7F87E80B2D0325D700A3549C /* MockDeviceOrientationProvider.m */,
+				7F87E80A2D0325B200A3549C /* MockDeviceOrientationProvider.h */,
+				7F87E8032D02FF8C00A3549C /* MockCaptureDeviceController.h */,
+				7F87E8012D01FD5600A3549C /* MockCaptureDeviceController.m */,
 				7D5FCCD32AEF9D0200FB7108 /* CameraSettingsTests.m */,
 				03BB766A2665316900CE5A93 /* CameraFocusTests.m */,
 				7FA99E582D22C75300582559 /* CameraExposureTests.m */,
@@ -487,6 +495,7 @@
 				E0F95E3D27A32AB900699390 /* CameraPropertiesTests.m in Sources */,
 				03BB766B2665316900CE5A93 /* CameraFocusTests.m in Sources */,
 				7F87E8022D01FD6F00A3549C /* MockCaptureDevice.m in Sources */,
+				7F87E8022D01FD6F00A3549C /* MockCaptureDeviceController.m in Sources */,
 				7D5FCCD42AEF9D0200FB7108 /* CameraSettingsTests.m in Sources */,
 				7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */,
 				E487C86026D686A10034AC92 /* CameraPreviewPauseTests.m in Sources */,

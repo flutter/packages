@@ -1113,7 +1113,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)setExposurePoint:(FCPPlatformPoint *)point
           withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (!_captureDevice.isExposurePointOfInterestSupported) {
+  if (!_captureDevice.exposurePointOfInterestSupported) {
     completion([FlutterError errorWithCode:@"setExposurePointFailed"
                                    message:@"Device does not have exposure point capabilities"
                                    details:nil]);
@@ -1135,7 +1135,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)setFocusPoint:(FCPPlatformPoint *)point
        withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (!_captureDevice.isFocusPointOfInterestSupported) {
+  if (!_captureDevice.focusPointOfInterestSupported) {
     completion([FlutterError errorWithCode:@"setFocusPointFailed"
                                    message:@"Device does not have focus point capabilities"
                                    details:nil]);

@@ -14,6 +14,8 @@
 #import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
 
+#import "MockCaptureDeviceController.h"
+
 @interface StubGlobalEventApi : FCPCameraGlobalEventApi
 @property(nonatomic) BOOL called;
 @property(nonatomic) FCPPlatformDeviceOrientation lastOrientation;
