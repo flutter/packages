@@ -33,6 +33,7 @@ const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
 // All identifiers must match the LegacySharedPreferencesPlugin.java file, as well as the
 // strings.dart file.
 const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
+  // The symbol `!` was chosen as it cannot be created by the base 64 encoding used with LIST_PREFIX.
 const val JSON_LIST_PREFIX = LIST_PREFIX + "!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 

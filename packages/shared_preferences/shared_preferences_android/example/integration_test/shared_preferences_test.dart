@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
+import 'package:shared_preferences_android/src/messages_async.g.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
@@ -506,8 +507,10 @@ void main() {
       await preferences.setValue('Bool', 'Bool', allTestValues['Bool']!);
       await preferences.setValue('Int', 'Int', allTestValues['Int']!);
       await preferences.setValue('Double', 'Double', allTestValues['Double']!);
-      await preferences.setValue('PlatformEncodedStringListForTesting',
-          'StringList', allTestValues['StringList']!);
+      await (preferences as SharedPreferencesAndroid)
+          .api
+          .setDeprecatedStringList(
+              'StringList', allTestValues['StringList']! as List<String>);
       Map<String, Object> prefs = await preferences.getAllWithParameters(
         GetAllParameters(
           filter: PreferencesFilter(prefix: ''),
@@ -797,8 +800,11 @@ void main() {
         final SharedPreferencesAsyncAndroid preferences =
             getPreferences() as SharedPreferencesAsyncAndroid;
         await clearPreferences(preferences, options);
-        await preferences.setStringListPlatformEncodedForTesting(
-            listKey, testList, options);
+        final SharedPreferencesPigeonOptions pigeonOptions =
+            preferences.convertOptionsToPigeonOptions(options);
+        final SharedPreferencesAsyncApi api =
+            preferences.getApiForBackend(pigeonOptions);
+        await api.setDeprecatedStringList(listKey, testList, pigeonOptions);
         final List<String>? platformEncodedList =
             await preferences.getStringList(listKey, options);
         expect(platformEncodedList, testList);
@@ -819,9 +825,12 @@ void main() {
           preferences.setBool(boolKey, testBool, options),
           preferences.setInt(intKey, testInt, options),
           preferences.setDouble(doubleKey, testDouble, options),
-          preferences.setStringListPlatformEncodedForTesting(
-              listKey, testList, options)
         ]);
+        final SharedPreferencesPigeonOptions pigeonOptions =
+            preferences.convertOptionsToPigeonOptions(options);
+        final SharedPreferencesAsyncApi api =
+            preferences.getApiForBackend(pigeonOptions);
+        await api.setDeprecatedStringList(listKey, testList, pigeonOptions);
 
         final Map<String, Object> prefs = await preferences.getPreferences(
             const GetPreferencesParameters(filter: PreferencesFilters()),
@@ -842,9 +851,12 @@ void main() {
           preferences.setBool(boolKey, testBool, options),
           preferences.setInt(intKey, testInt, options),
           preferences.setDouble(doubleKey, testDouble, options),
-          preferences.setStringListPlatformEncodedForTesting(
-              listKey, testList, options)
         ]);
+        final SharedPreferencesPigeonOptions pigeonOptions =
+            preferences.convertOptionsToPigeonOptions(options);
+        final SharedPreferencesAsyncApi api =
+            preferences.getApiForBackend(pigeonOptions);
+        await api.setDeprecatedStringList(listKey, testList, pigeonOptions);
 
         final Map<String, Object> prefs = await preferences.getPreferences(
             const GetPreferencesParameters(filter: PreferencesFilters()),

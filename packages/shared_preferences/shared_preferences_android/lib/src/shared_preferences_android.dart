@@ -20,9 +20,11 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAndroid({
     @visibleForTesting SharedPreferencesApi? api,
-  }) : _api = api ?? SharedPreferencesApi();
+  }) : api = api ?? SharedPreferencesApi();
 
-  final SharedPreferencesApi _api;
+  /// The pigeon API used to send messages to the platform.
+  @visibleForTesting
+  final SharedPreferencesApi api;
 
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
   static void registerWith() {
@@ -35,24 +37,22 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> remove(String key) async {
-    return _api.remove(key);
+    return api.remove(key);
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
     switch (valueType) {
       case 'String':
-        return _api.setString(key, value as String);
+        return api.setString(key, value as String);
       case 'Bool':
-        return _api.setBool(key, value as bool);
+        return api.setBool(key, value as bool);
       case 'Int':
-        return _api.setInt(key, value as int);
+        return api.setInt(key, value as int);
       case 'Double':
-        return _api.setDouble(key, value as double);
+        return api.setDouble(key, value as double);
       case 'StringList':
-        return _api.setStringList(key, '$jsonListPrefix${jsonEncode(value)}');
-      case 'PlatformEncodedStringListForTesting':
-        return _api.setDeprecatedStringList(key, value as List<String>);
+        return api.setStringList(key, '$jsonListPrefix${jsonEncode(value)}');
     }
     // TODO(tarrinneal): change to ArgumentError across all platforms.
     throw PlatformException(
@@ -78,7 +78,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   @override
   Future<bool> clearWithParameters(ClearParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
-    return _api.clear(
+    return api.clear(
       filter.prefix,
       filter.allowList?.toList(),
     );
@@ -104,7 +104,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       GetAllParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
     final Map<String?, Object?> data =
-        await _api.getAll(filter.prefix, filter.allowList?.toList());
+        await api.getAll(filter.prefix, filter.allowList?.toList());
     data.forEach((String? key, Object? value) {
       if (value.runtimeType == String &&
           (value! as String).startsWith(jsonListPrefix)) {
