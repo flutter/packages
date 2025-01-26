@@ -405,6 +405,13 @@ class WebViewController {
   ) {
     return platform.setOnScrollPositionChange(onScrollPositionChange);
   }
+
+  /// Sets whether JavaScript can open windows automatically.
+  ///
+  /// The default value is false.
+  Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) {
+    return platform.setJavaScriptCanOpenWindowsAutomatically(enabled);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.

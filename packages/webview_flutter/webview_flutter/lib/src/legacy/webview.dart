@@ -800,6 +800,8 @@ class WebViewController {
 
   /// Sets whether JavaScript running in the context of a file scheme URL can access
   /// content from other file scheme URLs.
+  ///
+  /// The default value is false.
   Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) async {
     if (_settings.javaScriptCanOpenWindowsAutomatically == enabled) {
       return;
