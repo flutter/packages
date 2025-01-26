@@ -179,10 +179,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
-  // MARK: - Convenience Functions
+  // MARK: - Internal Convenience Functions
 
   /// Helper function that fetches and unwraps all verified transactions
-  private func rawTransactions() async -> [Transaction] {
+  func rawTransactions() async -> [Transaction] {
     var transactions: [Transaction] = []
     for await verificationResult in Transaction.all {
       switch verificationResult {
@@ -196,7 +196,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   }
 
   /// Helper function to fetch specific transaction
-  private func fetchTransaction(by id: UInt64) async throws -> Transaction? {
+  func fetchTransaction(by id: UInt64) async throws -> Transaction? {
     for await result in Transaction.all {
       switch result {
       case .verified(let transaction):

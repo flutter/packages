@@ -25,9 +25,11 @@ void main() {
   const LibraryName testName = LibraryName(<String>['test']);
 
   Runtime setupRuntime() {
-    return Runtime()
+    final Runtime runtime = Runtime()
       ..update(coreName, createCoreWidgets())
       ..update(materialName, createMaterialWidgets());
+    addTearDown(runtime.dispose);
+    return runtime;
   }
 
   setUpAll(() {
