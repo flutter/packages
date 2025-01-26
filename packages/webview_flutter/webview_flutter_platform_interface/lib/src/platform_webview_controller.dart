@@ -327,7 +327,6 @@ abstract class PlatformWebViewController extends PlatformInterface {
 
   /// Sets whether JavaScript can open windows automatically.
   ///
-  /// This affects the behavior of window.open() in JavaScript.
   /// The default value is false.
   Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) {
     throw UnimplementedError(

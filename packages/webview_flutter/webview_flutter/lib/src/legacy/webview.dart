@@ -798,8 +798,7 @@ class WebViewController {
     return _webViewPlatformController.getScrollY();
   }
 
-  /// Sets whether JavaScript running in the context of a file scheme URL can access
-  /// content from other file scheme URLs.
+  /// Sets whether JavaScript can open windows automatically.
   ///
   /// The default value is false.
   Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) async {
