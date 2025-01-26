@@ -136,26 +136,29 @@ _FQDNReadResult _readFQDN(
   final List<String> parts = <String>[];
   final int prevOffset = offset;
   final List<int> offsetsToVisit = <int>[offset];
-  final Set<int> visitedOffsets = <int>{};
+  int upperLimitOffset = offset;
   int highestOffsetRead = offset;
 
   while (offsetsToVisit.isNotEmpty) {
     offset = offsetsToVisit.removeLast();
-    if (visitedOffsets.contains(offset)) {
-      throw MDnsDecodeException(offset);
-    }
-    visitedOffsets.add(offset);
 
     while (true) {
       // At least one byte is required.
       checkLength(offset + 1);
       // Check for compressed.
       if (data[offset] & 0xc0 == 0xc0) {
-        // At least two bytes are required for a compressed FQDN.
+        // At least two bytes are required for a compressed FQDN (see RFC1035 section 4.1.4).
         checkLength(offset + 2);
 
         // A compressed FQDN has a new offset in the lower 14 bits.
-        offsetsToVisit.add(byteData.getUint16(offset) & ~0xc000);
+        final int pointerDest = byteData.getUint16(offset) & ~0xc000;
+        // Pointers can only point to prior occurances of some name.
+        // This check also guards against pointers that form loops.
+        if (pointerDest >= upperLimitOffset) {
+          throw MDnsDecodeException(offset);
+        }
+        upperLimitOffset = pointerDest;
+        offsetsToVisit.add(pointerDest);
         highestOffsetRead = max(highestOffsetRead, offset + 2);
         break;
       } else {
