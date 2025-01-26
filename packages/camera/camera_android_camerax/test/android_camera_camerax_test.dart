@@ -1889,7 +1889,7 @@ void main() {
 
     await streamQueue.cancel();
   });
-/*
+
   test(
       'onDeviceOrientationChanged stream emits changes in device orientation detected by system services',
       () async {
@@ -1901,8 +1901,26 @@ void main() {
     const DeviceOrientationChangedEvent testEvent =
         DeviceOrientationChangedEvent(DeviceOrientation.portraitDown);
 
-    DeviceOrientationManager.deviceOrientationChangedStreamController
-        .add(testEvent);
+    camera.proxy = CameraXProxy(newDeviceOrientationManager: ({
+      required void Function(
+        DeviceOrientationManager,
+        String,
+      ) onDeviceOrientationChanged,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      final MockDeviceOrientationManager mockDeviceOrientationManager =
+          MockDeviceOrientationManager();
+      when(mockDeviceOrientationManager.onDeviceOrientationChanged).thenReturn(
+        onDeviceOrientationChanged,
+      );
+      return mockDeviceOrientationManager;
+    });
+
+    camera.deviceOrientationManager.onDeviceOrientationChanged(
+      camera.deviceOrientationManager,
+      'PORTRAIT_DOWN',
+    );
 
     expect(await streamQueue.next, testEvent);
     await streamQueue.cancel();
@@ -2020,7 +2038,7 @@ void main() {
     expect(camera.cameraInfo, equals(mockCameraInfo));
     expect(camera.cameraControl, equals(mockCameraControl));
   });
-
+/*
   test(
       'buildPreview throws an exception if the preview is not bound to the lifecycle',
       () async {
