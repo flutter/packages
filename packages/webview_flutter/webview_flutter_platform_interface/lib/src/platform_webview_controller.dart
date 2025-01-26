@@ -324,6 +324,15 @@ abstract class PlatformWebViewController extends PlatformInterface {
       'setOnJavaScriptTextInputDialog is not implemented on the current platform',
     );
   }
+
+  /// Sets whether JavaScript can open windows automatically.
+  ///
+  /// The default value is false.
+  Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) {
+    throw UnimplementedError(
+      'setJavaScriptCanOpenWindowsAutomatically is not implemented.',
+    );
+  }
 }
 
 /// Describes the parameters necessary for registering a JavaScript channel.

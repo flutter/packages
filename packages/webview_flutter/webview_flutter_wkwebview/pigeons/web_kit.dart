@@ -577,6 +577,10 @@ abstract class WKPreferencesHostApi {
 
   @ObjCSelector('setJavaScriptEnabledForPreferencesWithIdentifier:isEnabled:')
   void setJavaScriptEnabled(int identifier, bool enabled);
+
+  @ObjCSelector(
+      'setJavaScriptCanOpenWindowsAutomaticallyForPreferencesWithIdentifier:isEnabled:')
+  void setJavaScriptCanOpenWindowsAutomatically(int identifier, bool enabled);
 }
 
 /// Mirror of WKScriptMessageHandler.

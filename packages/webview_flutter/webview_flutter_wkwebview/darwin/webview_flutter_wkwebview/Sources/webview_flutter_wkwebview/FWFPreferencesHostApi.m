@@ -45,4 +45,10 @@
   [[self preferencesForIdentifier:identifier] setJavaScriptEnabled:enabled];
 #pragma clang diagnostic pop
 }
+
+- (void)setJavaScriptCanOpenWindowsAutomaticallyForPreferencesWithIdentifier:(NSInteger)identifier
+                                                                  isEnabled:(BOOL)enabled
+                                                                      error:(FlutterError *_Nullable *_Nonnull)error {
+  [[self preferencesForIdentifier:identifier] setJavaScriptCanOpenWindowsAutomatically:enabled];
+}
 @end

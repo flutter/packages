@@ -448,6 +448,12 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
         webView.setAllowsBackForwardNavigationGestures(
           setting.gestureNavigationEnabled!,
         ),
+      if (setting.javaScriptMode?.enabled == true)
+        webView.configuration.preferences.setJavaScriptEnabled(true),
+      if (setting.javaScriptCanOpenWindowsAutomatically != null)
+        webView.configuration.preferences
+            .setJavaScriptCanOpenWindowsAutomatically(
+                setting.javaScriptCanOpenWindowsAutomatically!),
     ]);
   }
 

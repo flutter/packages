@@ -304,6 +304,11 @@ class WKPreferences extends NSObject {
     return _preferencesApi.setJavaScriptEnabledForInstances(this, enabled);
   }
 
+  Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) {
+    return _preferencesApi.setJavaScriptCanOpenWindowsAutomaticallyForInstances(
+        this, enabled);
+  }
+
   @override
   WKPreferences copy() {
     return WKPreferences.detached(
