@@ -731,6 +731,11 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
   }
+
+  @override
+  Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) async {
+    await _webView.settings.setJavaScriptCanOpenWindowsAutomatically(enabled);
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
