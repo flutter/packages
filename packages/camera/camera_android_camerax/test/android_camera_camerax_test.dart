@@ -2011,9 +2011,19 @@ void main() {
     // track camera state once preview is bound to the lifecycle and needed to
     // test for expected updates.
     camera.proxy = CameraXProxy(
-        createCameraStateObserver:
-            (void Function(Object stateAsObject) onChanged) =>
-                Observer<CameraState>.detached(onChanged: onChanged));
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+    );
 
     when(mockProcessCameraProvider
             .bindToLifecycle(camera.cameraSelector, <UseCase>[camera.preview!]))
@@ -2021,8 +2031,8 @@ void main() {
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => mockLiveCameraState);
-    when(mockCamera.getCameraControl())
-        .thenAnswer((_) async => mockCameraControl);
+    when(mockCamera.cameraControl)
+        .thenReturn(mockCameraControl);
 
     await camera.resumePreview(78);
 
@@ -2038,7 +2048,7 @@ void main() {
     expect(camera.cameraInfo, equals(mockCameraInfo));
     expect(camera.cameraControl, equals(mockCameraControl));
   });
-/*
+
   test(
       'buildPreview throws an exception if the preview is not bound to the lifecycle',
       () async {
@@ -2068,7 +2078,7 @@ void main() {
     expect(widget is Texture, isTrue);
     expect((widget as Texture).textureId, cameraId);
   });
-
+/*
   group('video recording', () {
     test(
         'startVideoCapturing binds video capture use case, updates saved camera instance and its properties, and starts the recording',
@@ -4976,153 +4986,153 @@ void main() {
   */
 }
 
-MockCameraXProxy createProxyWithMocks() {
-  final MockCameraXProxy mockProxy = MockCameraXProxy();
-
-  when(mockProxy.newAnalyzer).thenReturn(({
-    required void Function(Analyzer, ImageProxy) analyze,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockAnalyzer();
-  });
-  when(mockProxy.newAspectRatioStrategy).thenReturn(({
-    required AspectRatio preferredAspectRatio,
-    required AspectRatioStrategyFallbackRule fallbackRule,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockAspectRatioStrategy();
-  });
-  when(mockProxy.getInstanceProcessCameraProvider).thenReturn(({
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) async {
-    return MockProcessCameraProvider();
-  });
-  when(mockProxy.newCameraSelector).thenReturn(({
-    LensFacing? requireLensFacing,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockCameraSelector();
-  });
-  when(mockProxy.newPreview).thenReturn(({
-    int? targetRotation,
-    ResolutionSelector? resolutionSelector,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockPreview();
-  });
-  when(mockProxy.newImageCapture).thenReturn(({
-    int? targetRotation,
-    CameraXFlashMode? flashMode,
-    ResolutionSelector? resolutionSelector,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockImageCapture();
-  });
-  when(mockProxy.newRecorder).thenReturn(({
-    int? aspectRatio,
-    int? targetVideoEncodingBitRate,
-    QualitySelector? qualitySelector,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockRecorder();
-  });
-  when(mockProxy.withOutputVideoCapture).thenReturn(({
-    required VideoOutput videoOutput,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockVideoCapture();
-  });
-  when(mockProxy.newImageAnalysis).thenReturn(({
-    int? targetRotation,
-    ResolutionSelector? resolutionSelector,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockImageAnalysis();
-  });
-  when(mockProxy.newResolutionStrategy).thenReturn(({
-    required CameraSize boundSize,
-    required ResolutionStrategyFallbackRule fallbackRule,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockResolutionStrategy();
-  });
-  when(mockProxy.newResolutionSelector).thenReturn(({
-    AspectRatioStrategy? aspectRatioStrategy,
-    ResolutionStrategy? resolutionStrategy,
-    ResolutionFilter? resolutionFilter,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockResolutionSelector();
-  });
-  when(mockProxy.lowerQualityThanFallbackStrategy).thenReturn(({
-    required VideoQuality quality,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockFallbackStrategy();
-  });
-  when(mockProxy.fromQualitySelector).thenReturn(({
-    required VideoQuality quality,
-    FallbackStrategy? fallbackStrategy,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockQualitySelector();
-  });
-  when(mockProxy.newObserver).thenReturn(Observer.detached);
-  when(mockProxy.createWithOnePreferredSizeResolutionFilter).thenReturn(({
-    required CameraSize preferredSize,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockResolutionFilter();
-  });
-  when(mockProxy.fromCamera2CameraInfo).thenReturn(({
-    required CameraInfo cameraInfo,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockCamera2CameraInfo();
-  });
-  when(mockProxy.newDeviceOrientationManager).thenReturn(({
-    required void Function(
-      DeviceOrientationManager,
-      String,
-    ) onDeviceOrientationChanged,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockDeviceOrientationManager();
-  });
-  when(mockProxy.newSystemServicesManager).thenReturn(({
-    required void Function(
-      SystemServicesManager,
-      String,
-    ) onCameraError,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-  }) {
-    return MockSystemServicesManager();
-  });
-
-  // return CameraXProxy(
-  //   startListeningForDeviceOrientationChange: (_, __) {
-  //     startedListeningForDeviceOrientationChanges = true;
-  //   },
-  //   getUiOrientation: () =>
-  //       Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
-  // );
-
-  return mockProxy;
-}
+// MockCameraXProxy createProxyWithMocks() {
+//   final MockCameraXProxy mockProxy = MockCameraXProxy();
+//
+//   when(mockProxy.newAnalyzer).thenReturn(({
+//     required void Function(Analyzer, ImageProxy) analyze,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockAnalyzer();
+//   });
+//   when(mockProxy.newAspectRatioStrategy).thenReturn(({
+//     required AspectRatio preferredAspectRatio,
+//     required AspectRatioStrategyFallbackRule fallbackRule,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockAspectRatioStrategy();
+//   });
+//   when(mockProxy.getInstanceProcessCameraProvider).thenReturn(({
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) async {
+//     return MockProcessCameraProvider();
+//   });
+//   when(mockProxy.newCameraSelector).thenReturn(({
+//     LensFacing? requireLensFacing,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockCameraSelector();
+//   });
+//   when(mockProxy.newPreview).thenReturn(({
+//     int? targetRotation,
+//     ResolutionSelector? resolutionSelector,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockPreview();
+//   });
+//   when(mockProxy.newImageCapture).thenReturn(({
+//     int? targetRotation,
+//     CameraXFlashMode? flashMode,
+//     ResolutionSelector? resolutionSelector,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockImageCapture();
+//   });
+//   when(mockProxy.newRecorder).thenReturn(({
+//     int? aspectRatio,
+//     int? targetVideoEncodingBitRate,
+//     QualitySelector? qualitySelector,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockRecorder();
+//   });
+//   when(mockProxy.withOutputVideoCapture).thenReturn(({
+//     required VideoOutput videoOutput,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockVideoCapture();
+//   });
+//   when(mockProxy.newImageAnalysis).thenReturn(({
+//     int? targetRotation,
+//     ResolutionSelector? resolutionSelector,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockImageAnalysis();
+//   });
+//   when(mockProxy.newResolutionStrategy).thenReturn(({
+//     required CameraSize boundSize,
+//     required ResolutionStrategyFallbackRule fallbackRule,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockResolutionStrategy();
+//   });
+//   when(mockProxy.newResolutionSelector).thenReturn(({
+//     AspectRatioStrategy? aspectRatioStrategy,
+//     ResolutionStrategy? resolutionStrategy,
+//     ResolutionFilter? resolutionFilter,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockResolutionSelector();
+//   });
+//   when(mockProxy.lowerQualityThanFallbackStrategy).thenReturn(({
+//     required VideoQuality quality,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockFallbackStrategy();
+//   });
+//   when(mockProxy.fromQualitySelector).thenReturn(({
+//     required VideoQuality quality,
+//     FallbackStrategy? fallbackStrategy,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockQualitySelector();
+//   });
+//   when(mockProxy.newObserver).thenReturn(Observer.detached);
+//   when(mockProxy.createWithOnePreferredSizeResolutionFilter).thenReturn(({
+//     required CameraSize preferredSize,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockResolutionFilter();
+//   });
+//   when(mockProxy.fromCamera2CameraInfo).thenReturn(({
+//     required CameraInfo cameraInfo,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockCamera2CameraInfo();
+//   });
+//   when(mockProxy.newDeviceOrientationManager).thenReturn(({
+//     required void Function(
+//       DeviceOrientationManager,
+//       String,
+//     ) onDeviceOrientationChanged,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockDeviceOrientationManager();
+//   });
+//   when(mockProxy.newSystemServicesManager).thenReturn(({
+//     required void Function(
+//       SystemServicesManager,
+//       String,
+//     ) onCameraError,
+//     BinaryMessenger? pigeon_binaryMessenger,
+//     PigeonInstanceManager? pigeon_instanceManager,
+//   }) {
+//     return MockSystemServicesManager();
+//   });
+//
+//   // return CameraXProxy(
+//   //   startListeningForDeviceOrientationChange: (_, __) {
+//   //     startedListeningForDeviceOrientationChanges = true;
+//   //   },
+//   //   getUiOrientation: () =>
+//   //       Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+//   // );
+//
+//   return mockProxy;
+// }
