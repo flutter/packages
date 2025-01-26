@@ -867,6 +867,12 @@ window.addEventListener("error", function(e) {
           onJavaScriptTextInputDialog) async {
     _onJavaScriptTextInputDialog = onJavaScriptTextInputDialog;
   }
+
+  @override
+  Future<void> setJavaScriptCanOpenWindowsAutomatically(bool enabled) async {
+    final WKWebViewConfiguration configuration = _webView.configuration;
+    configuration.preferences.setJavaScriptCanOpenWindowsAutomatically(enabled);
+  }
 }
 
 /// An implementation of [JavaScriptChannelParams] with the WebKit api.

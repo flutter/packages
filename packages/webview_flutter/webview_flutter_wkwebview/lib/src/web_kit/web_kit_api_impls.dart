@@ -468,6 +468,17 @@ class WKPreferencesHostApiImpl extends WKPreferencesHostApi {
       enabled,
     );
   }
+
+  @override
+  Future<void> setJavaScriptCanOpenWindowsAutomaticallyForInstances(
+    WKPreferences instance,
+    bool enabled,
+  ) {
+    return setJavaScriptCanOpenWindowsAutomatically(
+      instanceManager.getIdentifier(instance)!,
+      enabled,
+    );
+  }
 }
 
 /// Host api implementation for [WKHttpCookieStore].
