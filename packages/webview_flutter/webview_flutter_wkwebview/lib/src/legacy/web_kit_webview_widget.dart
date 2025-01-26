@@ -433,7 +433,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   }
 
   @override
-  Future<void> updateSettings(WebSettings settings) async {
+  Future<void> updateSettings(WebSettings setting) async {
     if (setting.hasNavigationDelegate != null) {
       _hasNavigationDelegate = setting.hasNavigationDelegate!;
     }
