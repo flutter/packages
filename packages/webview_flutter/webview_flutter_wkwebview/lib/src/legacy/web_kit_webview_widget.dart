@@ -434,30 +434,27 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
   @override
   Future<void> updateSettings(WebSettings settings) async {
-    final bool? javaScriptEnabled = settings.javascriptMode?.enabled;
-    if (javaScriptEnabled != null) {
-      await webView.configuration.preferences
-          .setJavaScriptEnabled(javaScriptEnabled);
+    if (setting.hasNavigationDelegate != null) {
+      _hasNavigationDelegate = setting.hasNavigationDelegate!;
     }
-
-    if (settings.javaScriptCanOpenWindowsAutomatically != null) {
-      await webView.configuration.preferences
-          .setJavaScriptCanOpenWindowsAutomatically(
-              settings.javaScriptCanOpenWindowsAutomatically!);
-    }
-
-    _hasNavigationDelegate =
-        settings.hasNavigationDelegate ?? _hasNavigationDelegate;
-    _zoomEnabled = settings.zoomEnabled ?? _zoomEnabled;
-
-    if (settings.hasProgressTracking != null) {
-      _setProgressTrackingEnabled(settings.hasProgressTracking!);
-    }
-
-    if (settings.gestureNavigationEnabled != null) {
-      await webView.setAllowsBackForwardNavigationGestures(
-          settings.gestureNavigationEnabled!);
-    }
+    await Future.wait(<Future<void>>[
+      _setUserAgent(setting.userAgent),
+      if (setting.hasProgressTracking != null)
+        _setHasProgressTracking(setting.hasProgressTracking!),
+      if (setting.javascriptMode != null)
+        _setJavaScriptMode(setting.javascriptMode!),
+      if (setting.zoomEnabled != null) _setZoomEnabled(setting.zoomEnabled!),
+      if (setting.gestureNavigationEnabled != null)
+        webView.setAllowsBackForwardNavigationGestures(
+          setting.gestureNavigationEnabled!,
+        ),
+      if (setting.javaScriptMode?.enabled == true)
+        webView.configuration.preferences.setJavaScriptEnabled(true),
+      if (setting.javaScriptCanOpenWindowsAutomatically != null)
+        webView.configuration.preferences
+            .setJavaScriptCanOpenWindowsAutomatically(
+                setting.javaScriptCanOpenWindowsAutomatically!),
+    ]);
   }
 
   @override
