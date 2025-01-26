@@ -1024,7 +1024,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Wait for video recording to start.
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
-    while (event is VideoRecordEventStart) {
+    while (event is! VideoRecordEventStart) {
       event = await videoRecordingEventStreamQueue.next;
     }
   }
