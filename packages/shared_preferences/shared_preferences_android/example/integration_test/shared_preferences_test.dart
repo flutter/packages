@@ -639,6 +639,22 @@ void main() {
         expect(list?.length, testList.length + 1);
       });
 
+      testWidgets('getStringList throws type error for String with $backend',
+          (WidgetTester _) async {
+        final SharedPreferencesAsyncAndroidOptions options =
+            getOptions(useDataStore: useDataStore, fileName: 'notDefault');
+        final SharedPreferencesAsyncPlatform preferences = getPreferences();
+        await clearPreferences(preferences, options);
+
+        await preferences.setString(listKey, testString, options);
+
+        // Internally, List<String> is stored as a String on Android, but that
+        // implementation detail shouldn't leak to clients; getting the wrong
+        // type should still throw.
+        expect(preferences.getStringList(listKey, options),
+            throwsA(isA<TypeError>()));
+      });
+
       testWidgets('getPreferences with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options =
             getOptions(useDataStore: useDataStore, fileName: 'notDefault');

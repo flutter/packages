@@ -96,7 +96,26 @@ internal class SharedPreferencesTest {
   fun testSetAndGetStringListWithDataStore() {
     val plugin = pluginSetup(dataStoreOptions)
     plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
-    Assert.assertEquals(plugin.getStringList(listKey, dataStoreOptions), testList)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, testList)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithDataStoreRedirectsForLegacy() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setDeprecatedStringList(listKey, listOf(""), dataStoreOptions)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.foundPlatformEncodedValue, true)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithDataStoreReportsRawString() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setString(listKey, testString, dataStoreOptions)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.foundPlatformEncodedValue, false)
   }
 
   @Test
@@ -217,7 +236,26 @@ internal class SharedPreferencesTest {
   fun testSetAndGetStringListWithSharedPreferences() {
     val plugin = pluginSetup(sharedPreferencesOptions)
     plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
-    Assert.assertEquals(plugin.getStringList(listKey, sharedPreferencesOptions), testList)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, testList)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithSharedPreferencesRedirectsForLegacy() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setDeprecatedStringList(listKey, listOf(""), sharedPreferencesOptions)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.foundPlatformEncodedValue, true)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithSharedPreferencesReportsRawString() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setString(listKey, testString, sharedPreferencesOptions)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.foundPlatformEncodedValue, false)
   }
 
   @Test

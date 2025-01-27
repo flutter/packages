@@ -198,9 +198,13 @@ base class SharedPreferencesAsyncAndroid
         convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
     // Request JSON encoded string list.
-    final String? jsonEncodedStringList =
-        await _convertKnownExceptions<String?>(
+    final StringListResult? result =
+        await _convertKnownExceptions<StringListResult?>(
             () async => api.getStringList(key, pigeonOptions));
+    if (result == null) {
+      return null;
+    }
+    final String? jsonEncodedStringList = result.jsonEncodedValue;
     if (jsonEncodedStringList != null) {
       final String jsonEncodedString =
           jsonEncodedStringList.substring(jsonListPrefix.length);
@@ -213,10 +217,16 @@ base class SharedPreferencesAsyncAndroid
       }
     }
     // If no JSON encoded string list exists, check for platform encoded value.
-    final List<String>? stringList =
-        await _convertKnownExceptions<List<String>?>(
-            () async => api.getPlatformEncodedStringList(key, pigeonOptions));
-    return stringList?.cast<String>().toList();
+    if (result.foundPlatformEncodedValue) {
+      final List<String>? stringList =
+          await _convertKnownExceptions<List<String>?>(
+              () async => api.getPlatformEncodedStringList(key, pigeonOptions));
+      return stringList?.cast<String>().toList();
+    } else {
+      // A non-null result where foundPlatformEncodedValue is false means there
+      // was a raw string result, so the client is fetching the wrong type.
+      throw TypeError();
+    }
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {

@@ -24,6 +24,27 @@ class SharedPreferencesPigeonOptions {
   bool useDataStore;
 }
 
+class StringListResult {
+  StringListResult({
+    required this.jsonEncodedValue,
+    required this.foundPlatformEncodedValue,
+  });
+
+  /// The JSON-encoded stored value, or null if something else was found, in
+  /// which case [foundPlatformEncodedValue] will indicate its type.
+  String? jsonEncodedValue;
+
+  /// Whether value using the legacy platform-side encoding was found.
+  ///
+  /// This value is only meaningful if [jsonEncodedValue] is null.
+  /// - If true, the value should be fetched with
+  ///   getPlatformEncodedStringList(...) instead.
+  /// - If false, an unexpected string (one without any encoding prefix) was
+  ///   found. This will happen if a client uses getStringList with a key that
+  ///   was used with setString.
+  bool foundPlatformEncodedValue;
+}
+
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
 abstract class SharedPreferencesAsyncApi {
   /// Adds property to shared preferences data set of type bool.
@@ -107,9 +128,9 @@ abstract class SharedPreferencesAsyncApi {
     SharedPreferencesPigeonOptions options,
   );
 
-  /// Gets individual List<String> value stored with [key], if any.
+  /// Gets the JSON-encoded List<String> value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  String? getStringList(
+  StringListResult? getStringList(
     String key,
     SharedPreferencesPigeonOptions options,
   );
