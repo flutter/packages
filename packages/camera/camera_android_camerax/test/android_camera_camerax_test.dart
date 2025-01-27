@@ -2656,7 +2656,7 @@ void main() {
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verify(mockVideoCapture.setTargetRotation(defaultTargetRotation));
     });
-/*
+
     test('pauseVideoRecording pauses the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
@@ -2700,8 +2700,13 @@ void main() {
           .thenAnswer((_) async => true);
 
       // Simulate video recording being finalized so stopVideoRecording completes.
-      PendingRecording.videoRecordingEventStreamController
-          .add(VideoRecordEvent.finalize);
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventFinalize.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
 
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
@@ -2725,7 +2730,7 @@ void main() {
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
     });
-
+/*
     test(
         'stopVideoRecording throws a camera exception if '
         'videoOutputPath is null, and sets recording to null', () async {

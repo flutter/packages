@@ -1047,7 +1047,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     /// Stop the active recording and wait for the video recording to be finalized.
     await recording!.close();
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
-    while (event is VideoRecordEventFinalize) {
+    while (event is! VideoRecordEventFinalize) {
       event = await videoRecordingEventStreamQueue.next;
     }
     recording = null;
