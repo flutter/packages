@@ -2478,7 +2478,7 @@ void main() {
       expect(imageDataCompleter.future, isNotNull);
       await camera.cameraImageDataStreamController!.close();
     });
-/*
+
     test(
         'startVideoCapturing sets VideoCapture target rotation to current video orientation if orientation unlocked',
         () async {
@@ -2490,9 +2490,6 @@ void main() {
       final MockCameraInfo initialCameraInfo = MockCameraInfo();
       final MockCamera2CameraInfo mockCamera2CameraInfo =
           MockCamera2CameraInfo();
-      final TestSystemServicesHostApi mockSystemServicesApi =
-          MockTestSystemServicesHostApi();
-      TestSystemServicesHostApi.setup(mockSystemServicesApi);
       const int defaultTargetRotation = Surface.rotation270;
 
       // Set directly for test versus calling createCamera.
@@ -2505,31 +2502,103 @@ void main() {
       camera.cameraInfo = initialCameraInfo;
 
       // Tell plugin to mock call to get current video orientation and mock Camera2CameraInfo retrieval.
+      const String outputPath = '/temp/REC123.temp';
       camera.proxy = CameraXProxy(
-          getDefaultDisplayRotation: () =>
-              Future<int>.value(defaultTargetRotation),
-          getCamera2CameraInfo: (CameraInfo cameraInfo) async =>
-              cameraInfo == initialCameraInfo
-                  ? mockCamera2CameraInfo
-                  : MockCamera2CameraInfo());
+        newObserver: <T>({
+          required void Function(Observer<T>, T) onChanged,
+          BinaryMessenger? pigeon_binaryMessenger,
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return Observer<T>.detached(
+            onChanged: onChanged,
+            pigeon_instanceManager: PigeonInstanceManager(
+              onWeakReferenceRemoved: (_) {},
+            ),
+          );
+        },
+        fromCamera2CameraInfo: ({
+          required CameraInfo cameraInfo,
+          BinaryMessenger? pigeon_binaryMessenger,
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) =>
+            cameraInfo == initialCameraInfo
+                ? mockCamera2CameraInfo
+                : MockCamera2CameraInfo(),
+        newSystemServicesManager: ({
+          required void Function(
+            SystemServicesManager,
+            String,
+          ) onCameraError,
+          BinaryMessenger? pigeon_binaryMessenger,
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockSystemServicesManager mockSystemServicesManager =
+              MockSystemServicesManager();
+          when(mockSystemServicesManager.getTempFilePath(
+                  camera.videoPrefix, '.temp'))
+              .thenAnswer((_) async => outputPath);
+          return mockSystemServicesManager;
+        },
+        newDeviceOrientationManager: ({
+          required void Function(
+            DeviceOrientationManager,
+            String,
+          ) onDeviceOrientationChanged,
+          BinaryMessenger? pigeon_binaryMessenger,
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockDeviceOrientationManager mockDeviceOrientationManager =
+              MockDeviceOrientationManager();
+          when(mockDeviceOrientationManager.getDefaultDisplayRotation())
+              .thenAnswer(
+            (_) async => defaultTargetRotation,
+          );
+          return mockDeviceOrientationManager;
+        },
+        newVideoRecordEventListener: ({
+          required void Function(
+            VideoRecordEventListener,
+            VideoRecordEvent,
+          ) onEvent,
+          BinaryMessenger? pigeon_binaryMessenger,
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return VideoRecordEventListener.pigeon_detached(
+            onEvent: onEvent,
+            pigeon_instanceManager: PigeonInstanceManager(
+              onWeakReferenceRemoved: (_) {},
+            ),
+          );
+        },
+        infoSupportedHardwareLevelCameraCharacteristics: () {
+          return MockCameraCharacteristicsKey();
+        },
+      );
 
       const int cameraId = 87;
-      const String outputPath = '/temp/REC123.temp';
 
       // Mock method calls.
-      when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-          .thenReturn(outputPath);
       when(camera.recorder!.prepareRecording(outputPath))
           .thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+      when(mockPendingRecording.start(any)).thenAnswer(
+        (_) async => mockRecording,
+      );
       when(camera.processCameraProvider!.isBound(camera.videoCapture!))
           .thenAnswer((_) async => true);
       when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
           .thenAnswer((_) async => false);
+      when(mockCamera2CameraInfo.getCameraCharacteristic(any)).thenAnswer(
+        (_) async => InfoSupportedHardwareLevel.limited,
+      );
 
       // Simulate video recording being started so startVideoRecording completes.
-      PendingRecording.videoRecordingEventStreamController
-          .add(VideoRecordEvent.start);
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
 
       // Orientation is unlocked and plugin does not need to set default target
       // rotation manually.
@@ -2538,8 +2607,13 @@ void main() {
       verifyNever(mockVideoCapture.setTargetRotation(any));
 
       // Simulate video recording being started so startVideoRecording completes.
-      PendingRecording.videoRecordingEventStreamController
-          .add(VideoRecordEvent.start);
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
 
       // Orientation is locked and plugin does not need to set default target
       // rotation manually.
@@ -2549,8 +2623,13 @@ void main() {
       verifyNever(mockVideoCapture.setTargetRotation(any));
 
       // Simulate video recording being started so startVideoRecording completes.
-      PendingRecording.videoRecordingEventStreamController
-          .add(VideoRecordEvent.start);
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
 
       // Orientation is locked and plugin does need to set default target
       // rotation manually.
@@ -2561,8 +2640,13 @@ void main() {
       verifyNever(mockVideoCapture.setTargetRotation(any));
 
       // Simulate video recording being started so startVideoRecording completes.
-      PendingRecording.videoRecordingEventStreamController
-          .add(VideoRecordEvent.start);
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventStart.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
 
       // Orientation is unlocked and plugin does need to set default target
       // rotation manually.
@@ -2572,7 +2656,7 @@ void main() {
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verify(mockVideoCapture.setTargetRotation(defaultTargetRotation));
     });
-
+/*
     test('pauseVideoRecording pauses the recording', () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockRecording recording = MockRecording();
