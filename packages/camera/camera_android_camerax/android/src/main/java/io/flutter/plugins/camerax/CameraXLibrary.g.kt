@@ -9613,6 +9613,9 @@ public class CaptureRequestKeyProxyApiTest {
 abstract class PigeonApiCaptureRequestOptions(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(options: Map<android.hardware.camera2.CaptureRequest.Key<*>, Any?>): androidx.camera.camera2.interop.CaptureRequestOptions
 
+  /** Capture request option with specific `CaptureRequest.Key` setting. */
+  abstract fun options(pigeon_instance: androidx.camera.camera2.interop.CaptureRequestOptions): Map<android.hardware.camera2.CaptureRequest.Key<*>, Any?>
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiCaptureRequestOptions?) {
@@ -9654,11 +9657,12 @@ abstract class PigeonApiCaptureRequestOptions(open val pigeonRegistrar: CameraXL
       return
     }
     val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+    val optionsArg = options(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.camera_android_camerax.CaptureRequestOptions.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
+    channel.send(listOf(pigeon_identifierArg, optionsArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
@@ -9698,7 +9702,13 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
   @NonNull
   @Override
   public CaptureRequestOptions pigeon_defaultConstructor(@NonNull Map<android.hardware.camera2.CaptureRequest.Key<*>, Any?> options) {
-    return CaptureRequestOptions(options);
+    return CaptureRequestOptions();
+  }
+
+  @NonNull
+  @Override
+  public Map<android.hardware.camera2.CaptureRequest.Key<*>, Any?> options(CaptureRequestOptions pigeon_instance) {
+    return pigeon_instance.getOptions();
   }
 
 }
@@ -9729,7 +9739,18 @@ public class CaptureRequestOptionsProxyApiTest {
   public void pigeon_defaultConstructor() {
     final PigeonApiCaptureRequestOptions api = new TestProxyApiRegistrar().getPigeonApiCaptureRequestOptions();
 
-    assertTrue(api.pigeon_defaultConstructor(new HashMap<String, String>() {{put(mock(CaptureRequestKey.class), -1)}}) instanceof CaptureRequestOptionsProxyApi.CaptureRequestOptions);
+    assertTrue(api.pigeon_defaultConstructor() instanceof CaptureRequestOptionsProxyApi.CaptureRequestOptions);
+  }
+
+  @Test
+  public void options() {
+    final PigeonApiCaptureRequestOptions api = new TestProxyApiRegistrar().getPigeonApiCaptureRequestOptions();
+
+    final CaptureRequestOptions instance = mock(CaptureRequestOptions.class);
+    final Map<android.hardware.camera2.CaptureRequest.Key<*>, Any?> value = new HashMap<String, String>() {{put(mock(CaptureRequestKey.class), -1)}};
+    when(instance.getOptions()).thenReturn(value);
+
+    assertEquals(value, api.options(instance));
   }
 
 }

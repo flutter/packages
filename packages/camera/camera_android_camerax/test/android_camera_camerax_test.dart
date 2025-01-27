@@ -369,23 +369,23 @@ void main() {
 
     return proxy;
   }
-  //
-  // /// CameraXProxy for testing exposure and focus related controls.
-  // ///
-  // /// Modifies the creation of [MeteringPoint]s and [FocusMeteringAction]s to
-  // /// return objects detached from a native object.
-  // CameraXProxy getProxyForExposureAndFocus() => CameraXProxy(
-  //       createMeteringPoint:
-  //           (double x, double y, double? size, CameraInfo cameraInfo) =>
-  //               MeteringPoint.detached(
-  //                   x: x, y: y, size: size, cameraInfo: cameraInfo),
-  //       createFocusMeteringAction:
-  //           (List<(MeteringPoint, int?)> meteringPointInfos,
-  //                   bool? disableAutoCancel) =>
-  //               FocusMeteringAction.detached(
-  //                   meteringPointInfos: meteringPointInfos,
-  //                   disableAutoCancel: disableAutoCancel),
-  //     );
+
+  /// CameraXProxy for testing exposure and focus related controls.
+  ///
+  /// Modifies the creation of [MeteringPoint]s and [FocusMeteringAction]s to
+  /// return objects detached from a native object.
+  CameraXProxy getProxyForExposureAndFocus() => CameraXProxy(
+        createMeteringPoint:
+            (double x, double y, double? size, CameraInfo cameraInfo) =>
+                MeteringPoint.detached(
+                    x: x, y: y, size: size, cameraInfo: cameraInfo),
+        createFocusMeteringAction:
+            (List<(MeteringPoint, int?)> meteringPointInfos,
+                    bool? disableAutoCancel) =>
+                FocusMeteringAction.detached(
+                    meteringPointInfos: meteringPointInfos,
+                    disableAutoCancel: disableAutoCancel),
+      );
   //
   // /// CameraXProxy for testing setting focus and exposure points.
   // ///
@@ -3472,7 +3472,7 @@ void main() {
 
     await onStreamedFrameAvailableSubscription.cancel();
   });
-/*
+
   test(
       'onStreamedFrameAvailable returns stream that responds expectedly to being canceled',
       () async {
@@ -3490,7 +3490,17 @@ void main() {
     camera.captureOrientationLocked = true;
 
     // Tell plugin to create a detached analyzer for testing purposes.
-    camera.proxy = CameraXProxy(createAnalyzer: (_) => MockAnalyzer());
+    camera.proxy = CameraXProxy(
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          MockAnalyzer(),
+    );
 
     when(mockProcessCameraProvider.isBound(mockImageAnalysis))
         .thenAnswer((_) async => true);
@@ -3521,9 +3531,31 @@ void main() {
     // Tell plugin to create a detached analyzer for testing purposes and mock
     // call to get current photo orientation.
     camera.proxy = CameraXProxy(
-        createAnalyzer: (_) => MockAnalyzer(),
-        getDefaultDisplayRotation: () =>
-            Future<int>.value(defaultTargetRotation));
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          MockAnalyzer(),
+      newDeviceOrientationManager: ({
+        required void Function(
+          DeviceOrientationManager,
+          String,
+        ) onDeviceOrientationChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockDeviceOrientationManager manager =
+            MockDeviceOrientationManager();
+        when(manager.getDefaultDisplayRotation()).thenAnswer((_) async {
+          return defaultTargetRotation;
+        });
+        return manager;
+      },
+    );
 
     when(mockProcessCameraProvider.isBound(mockImageAnalysis))
         .thenAnswer((_) async => true);
@@ -3637,14 +3669,34 @@ void main() {
 
     // Tell plugin to create detached Camera2CameraControl and
     // CaptureRequestOptions instances for testing.
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final CaptureRequestKey controlAELockKey =
+        CaptureRequestKey.pigeon_detached(
+      pigeon_instanceManager: testInstanceManager,
+    );
     camera.proxy = CameraXProxy(
-      getCamera2CameraControl: (CameraControl cameraControl) =>
+      fromCamera2CameraControl: ({
+        required CameraControl cameraControl,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
           cameraControl == mockCameraControl
               ? mockCamera2CameraControl
-              : Camera2CameraControl.detached(cameraControl: cameraControl),
-      createCaptureRequestOptions:
-          (List<(CaptureRequestKeySupportedType, Object?)> options) =>
-              CaptureRequestOptions.detached(requestedOptions: options),
+              : Camera2CameraControl.pigeon_detached(
+                  pigeon_instanceManager: testInstanceManager,
+                ),
+      newCaptureRequestOptions: ({
+        required Map<CaptureRequestKey, Object?> options,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          CaptureRequestOptions.pigeon_detached(
+        options: options,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      controlAELockCaptureRequest: () => controlAELockKey,
     );
 
     // Test auto mode.
@@ -3654,12 +3706,10 @@ void main() {
         verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
     CaptureRequestOptions capturedCaptureRequestOptions =
         verificationResult.captured.single as CaptureRequestOptions;
-    List<(CaptureRequestKeySupportedType, Object?)> requestedOptions =
-        capturedCaptureRequestOptions.requestedOptions;
+    Map<CaptureRequestKey, Object?> requestedOptions =
+        capturedCaptureRequestOptions.options;
     expect(requestedOptions.length, equals(1));
-    expect(requestedOptions.first.$1,
-        equals(CaptureRequestKeySupportedType.controlAeLock));
-    expect(requestedOptions.first.$2, equals(false));
+    expect(requestedOptions, containsPair(controlAELockKey, false));
 
     // Test locked mode.
     clearInteractions(mockCamera2CameraControl);
@@ -3669,11 +3719,9 @@ void main() {
         verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
     capturedCaptureRequestOptions =
         verificationResult.captured.single as CaptureRequestOptions;
-    requestedOptions = capturedCaptureRequestOptions.requestedOptions;
+    requestedOptions = capturedCaptureRequestOptions.options;
     expect(requestedOptions.length, equals(1));
-    expect(requestedOptions.first.$1,
-        equals(CaptureRequestKeySupportedType.controlAeLock));
-    expect(requestedOptions.first.$2, equals(true));
+    expect(requestedOptions, containsPair(controlAELockKey, true));
   });
 
   test(
@@ -3739,7 +3787,7 @@ void main() {
 
     verify(mockCameraControl.cancelFocusAndMetering());
   });
-
+/*
   test('setExposurePoint throws CameraException if invalid point specified',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();

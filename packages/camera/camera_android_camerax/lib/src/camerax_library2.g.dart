@@ -7739,7 +7739,7 @@ class CaptureRequestOptions extends PigeonInternalProxyApiBaseClass {
   CaptureRequestOptions({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required Map<CaptureRequestKey, Object?> options,
+    required this.options,
   }) {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -7780,17 +7780,22 @@ class CaptureRequestOptions extends PigeonInternalProxyApiBaseClass {
   CaptureRequestOptions.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
+    required this.options,
   });
 
   late final _PigeonInternalProxyApiBaseCodec
       _pigeonVar_codecCaptureRequestOptions =
       _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
 
+  /// Capture request option with specific `CaptureRequest.Key` setting.
+  final Map<CaptureRequestKey, Object?> options;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    CaptureRequestOptions Function()? pigeon_newInstance,
+    CaptureRequestOptions Function(Map<CaptureRequestKey, Object?> options)?
+        pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
@@ -7813,13 +7818,19 @@ class CaptureRequestOptions extends PigeonInternalProxyApiBaseClass {
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(arg_pigeon_instanceIdentifier != null,
               'Argument for dev.flutter.pigeon.camera_android_camerax.CaptureRequestOptions.pigeon_newInstance was null, expected non-null int.');
+          final Map<CaptureRequestKey, Object?>? arg_options =
+              (args[1] as Map<Object?, Object?>?)
+                  ?.cast<CaptureRequestKey, Object?>();
+          assert(arg_options != null,
+              'Argument for dev.flutter.pigeon.camera_android_camerax.CaptureRequestOptions.pigeon_newInstance was null, expected non-null Map<CaptureRequestKey, Object?>.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
+              pigeon_newInstance?.call(arg_options!) ??
                   CaptureRequestOptions.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
+                    options: arg_options!,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -7840,6 +7851,7 @@ class CaptureRequestOptions extends PigeonInternalProxyApiBaseClass {
     return CaptureRequestOptions.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
+      options: options,
     );
   }
 }
