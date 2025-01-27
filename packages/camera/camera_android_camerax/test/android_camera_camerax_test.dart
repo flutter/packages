@@ -3106,20 +3106,27 @@ void main() {
     // Delta is included due to avoid catching rounding errors.
     expect(await camera.getMinExposureOffset(35), closeTo(0.6, 0.0000000001));
   });
-/*
+
   test('getMaxExposureOffset returns expected exposure offset', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
-        exposureCompensationStep: 0.2);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 3,
+        upper: 4,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0.2,
+      pigeon_instanceManager: testInstanceManager,
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
 
     // We expect the maximum exposure to be the maximum exposure compensation * exposure compensation step.
     expect(await camera.getMaxExposureOffset(35), 0.8);
@@ -3128,16 +3135,23 @@ void main() {
   test('getExposureOffsetStepSize returns expected exposure offset', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
-        exposureCompensationStep: 0.2);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 3,
+        upper: 4,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0.2,
+      pigeon_instanceManager: testInstanceManager,
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
 
     expect(await camera.getExposureOffsetStepSize(55), 0.2);
   });
@@ -3147,16 +3161,23 @@ void main() {
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 0, maxCompensation: 0),
-        exposureCompensationStep: 0);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 0,
+        upper: 0,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0,
+      pigeon_instanceManager: testInstanceManager,
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
 
     expect(await camera.getExposureOffsetStepSize(55), -1);
   });
@@ -3166,8 +3187,13 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const double maxZoomRatio = 1;
     final LiveData<ZoomState> mockLiveZoomState = MockLiveZoomState();
-    final ZoomState zoomState =
-        ZoomState.detached(maxZoomRatio: maxZoomRatio, minZoomRatio: 0);
+    final ZoomState zoomState = ZoomState.pigeon_detached(
+      maxZoomRatio: maxZoomRatio,
+      minZoomRatio: 0,
+      pigeon_instanceManager: PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      ),
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
@@ -3184,8 +3210,13 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     const double minZoomRatio = 0;
     final LiveData<ZoomState> mockLiveZoomState = MockLiveZoomState();
-    final ZoomState zoomState =
-        ZoomState.detached(maxZoomRatio: 1, minZoomRatio: minZoomRatio);
+    final ZoomState zoomState = ZoomState.pigeon_detached(
+      maxZoomRatio: 1,
+      minZoomRatio: minZoomRatio,
+      pigeon_instanceManager: PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      ),
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
@@ -3215,7 +3246,7 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     expect(camera.supportsImageStreaming(), true);
   });
-
+/*
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {
