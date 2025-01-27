@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/link.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import './text_linker.dart';
 
@@ -192,9 +192,9 @@ class LinkedText extends StatefulWidget {
   static final RegExp defaultUriRegExp = RegExp(r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)');
 
   // By default, launch the Uri in the browser.
-  static _defaultOnTapUri(Uri uri) async {
+  static Future<void> _defaultOnTapUri(Uri uri) async {
     if (!await launchUrl(uri)) {
-      throw 'Could not launch $uri.';
+      throw Exception('Could not launch $uri.');
     }
   }
 

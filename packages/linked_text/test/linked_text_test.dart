@@ -7,9 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:url_launcher/link.dart';
-
 import 'package:linked_text/linked_text.dart';
+import 'package:url_launcher/link.dart';
 
 import './text_utils.dart';
 
