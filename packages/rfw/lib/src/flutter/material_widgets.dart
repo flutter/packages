@@ -22,7 +22,7 @@ import 'runtime.dart';
 ///
 ///  * [AboutListTile]
 ///  * [AppBar]
-///  * [ButtonBar]
+///  * `ButtonBar`
 ///  * [Card]
 ///  * [CircularProgressIndicator]
 ///  * [Divider]
@@ -30,11 +30,14 @@ import 'runtime.dart';
 ///  * [DropdownButton]
 ///  * [ElevatedButton]
 ///  * [FloatingActionButton]
+///  * [InkResponse]
 ///  * [InkWell]
 ///  * [LinearProgressIndicator]
 ///  * [ListTile]
+///  * [Material]
 ///  * [OutlinedButton]
 ///  * [Scaffold]
+///  * [Slider]
 ///  * [TextButton]
 ///  * [VerticalDivider]
 ///  * [OverflowBar]
@@ -54,17 +57,23 @@ import 'runtime.dart';
 /// Some features have changed in the underlying Flutter's material library and are
 /// therefore no longer supported, including:
 ///
-///  * The [ButtonBar] widget in the Flutter's material library is planned to be
-///    deprecated in favor of the [OverflowBar] widget. The [ButtonBar] widget in
+///  * The `ButtonBar` widget in the Flutter's material library is planned to be
+///    deprecated in favor of the [OverflowBar] widget. The `ButtonBar` widget in
 ///    `rfw` package uses the [OverflowBar] widget internally for backward compatibility.
-///    The [ButtonBar] widget in `rfw` package is not deprecated and will continue to
-///    be supported. As a result, the following [ButtonBar] parameters are no longer
+///    The `ButtonBar` widget in `rfw` package is not deprecated and will continue to
+///    be supported. As a result, the following `ButtonBar` parameters are no longer
 ///    supported:
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///    * `buttonMinWidth`
 ///    * `buttonHeight`
 ///    * `buttonAlignedDropdown`
 ///
+// TODO(kallentu): Remove ignore and fix when stable is bumped.
+// https://github.com/flutter/flutter/issues/157620
+// ignore: missing_code_block_language_in_doc_comment
 ///    It is recommended to use the [OverflowBar] widget.
 ///
 /// Some features are not supported:
@@ -75,7 +84,7 @@ import 'runtime.dart';
 ///  * Theming in general is not currently supported.
 ///
 ///  * Properties whose values are [Animation]s or based on
-///    [MaterialStateProperty] are not supported.
+///    [WidgetStateProperty] are not supported.
 ///
 ///  * Features related to focus or configuring mouse support are not
 ///    implemented.
@@ -92,7 +101,7 @@ import 'runtime.dart';
 ///
 /// In general, the trend will all of these unsupported features is that this
 /// library doesn't support features that can't be trivially expressed using the
-/// JSON-like structures of RFW. For example, [MaterialStateProperty] is
+/// JSON-like structures of RFW. For example, [WidgetStateProperty] is
 /// designed to be used with code to select the values, which doesn't work well
 /// in the RFW structure.
 LocalWidgetLibrary createMaterialWidgets() => LocalWidgetLibrary(_materialWidgetsDefinitions);
@@ -140,12 +149,12 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
-  // The [ButtonBar] widget in Flutter's material library is planned to be deprecated
-  // in favor of the [OverflowBar] widget. This [ButtonBar] implementation uses the
-  // [OverflowBar] widget internally for backward compatibility. The [ButtonBar]
+  // The `ButtonBar` widget in Flutter's material library is planned to be deprecated
+  // in favor of the [OverflowBar] widget. This `ButtonBar` implementation uses the
+  // [OverflowBar] widget internally for backward compatibility. The `ButtonBar`
   // widget in `rfw` package is not deprecated and will continue to be supported.
   //
-  // The [ButtonBar] widget in Flutter's material library has changed over time.
+  // The `ButtonBar` widget in Flutter's material library has changed over time.
   // The following parameters are no longer supported:
   //  - `buttonMinWidth`
   //  - `buttonHeight`
@@ -337,14 +346,58 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
+  'InkResponse': (BuildContext context, DataSource source) {
+    // not implemented: mouseCursor, overlayColor, splashFactory, focusNode.
+    return InkResponse(
+      onTap: source.voidHandler(['onTap']),
+      onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onTapUp: source.handler(['onTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onTapCancel: source.voidHandler(['onTapCancel']),
+      onDoubleTap: source.voidHandler(['onDoubleTap']),
+      onLongPress: source.voidHandler(['onLongPress']),
+      onSecondaryTap: source.voidHandler(['onSecondaryTap']),
+      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
+      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
+      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+      containedInkWell: source.v<bool>(['containedInkWell']) ?? false,
+      highlightShape: ArgumentDecoders.enumValue<BoxShape>(BoxShape.values, source, ['highlightShape']) ?? BoxShape.circle,
+      radius: source.v<double>(['radius']),
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
+      customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
+      focusColor: ArgumentDecoders.color(source, ['focusColor']),
+      hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
+      highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
+      splashColor: ArgumentDecoders.color(source, ['splashColor']),
+      enableFeedback: source.v<bool>(['enableFeedback']) ?? true,
+      excludeFromSemantics: source.v<bool>(['excludeFromSemantics']) ?? false,
+      canRequestFocus: source.v<bool>(['canRequestFocus']) ?? true,
+      onFocusChange: source.handler(['onFocusChange'], (VoidCallback trigger) => (bool focus) => trigger()),
+      autofocus: source.v<bool>(['autofocus']) ?? false,
+      hoverDuration: ArgumentDecoders.duration(source, ['hoverDuration'], context),
+      child: source.optionalChild(['child']),
+    );
+  },
+
   'InkWell': (BuildContext context, DataSource source) {
-    // not implemented: onHighlightChanged, onHover; mouseCursor; focusColor, hoverColor, highlightColor, overlayColor, splashColor; splashFactory; focusNode, onFocusChange
+    // not implemented: mouseCursor; overlayColor, splashFactory; focusNode, onFocusChange
     return InkWell(
       onTap: source.voidHandler(['onTap']),
       onDoubleTap: source.voidHandler(['onDoubleTap']),
       onLongPress: source.voidHandler(['onLongPress']),
       onTapDown: source.handler(['onTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
       onTapCancel: source.voidHandler(['onTapCancel']),
+      onSecondaryTap: source.voidHandler(['onSecondaryTap']),
+      onSecondaryTapUp: source.handler(['onSecondaryTapUp'], (VoidCallback trigger) => (TapUpDetails details) => trigger()),
+      onSecondaryTapDown: source.handler(['onSecondaryTapDown'], (VoidCallback trigger) => (TapDownDetails details) => trigger()),
+      onSecondaryTapCancel: source.voidHandler(['onSecondaryTapCancel']),
+      onHighlightChanged: source.handler(['onHighlightChanged'], (VoidCallback trigger) => (bool highlighted) => trigger()),
+      onHover: source.handler(['onHover'], (VoidCallback trigger) => (bool hovered) => trigger()),
+      focusColor: ArgumentDecoders.color(source, ['focusColor']),
+      hoverColor: ArgumentDecoders.color(source, ['hoverColor']),
+      highlightColor: ArgumentDecoders.color(source, ['highlightColor']),
+      splashColor: ArgumentDecoders.color(source, ['splashColor']),
       radius: source.v<double>(['radius']),
       borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius'])?.resolve(Directionality.of(context)),
       customBorder: ArgumentDecoders.shapeBorder(source, ['customBorder']),
@@ -395,6 +448,23 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
     );
   },
 
+  'Material': (BuildContext context, DataSource source) {
+    return Material(
+      type: ArgumentDecoders.enumValue<MaterialType>(MaterialType.values,source, ['type']) ?? MaterialType.canvas,
+      elevation: source.v<double>(['elevation']) ?? 0.0,
+      color: ArgumentDecoders.color(source, ['color']),
+      shadowColor: ArgumentDecoders.color(source, ['shadowColor']),
+      surfaceTintColor: ArgumentDecoders.color(source, ['surfaceTintColor']),
+      textStyle: ArgumentDecoders.textStyle(source, ['textStyle']),
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']),
+      shape: ArgumentDecoders.shapeBorder(source, ['shape']),
+      borderOnForeground: source.v<bool>(['borderOnForeground']) ?? true,
+      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.none,
+      animationDuration: ArgumentDecoders.duration(source, ['animationDuration'], context),
+      child: source.child(['child']),
+    );
+  },
+
   'OutlinedButton': (BuildContext context, DataSource source) {
     // not implemented: buttonStyle, focusNode
     return OutlinedButton(
@@ -433,6 +503,39 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
       drawerEnableOpenDragGesture: source.v<bool>(['drawerEnableOpenDragGesture']) ?? true,
       endDrawerEnableOpenDragGesture: source.v<bool>(['endDrawerEnableOpenDragGesture']) ?? true,
       restorationId: source.v<String>(['restorationId']),
+    );
+  },
+
+  'Slider': (BuildContext context, DataSource source) {
+    // not implemented: overlayColor, mouseCursor, semanticFormatterCallback, focusNode, autofocus
+    final min = source.v<double>(['min']) ?? 0.0;
+    final value = source.v<double>(['value']) ?? min;
+    final labelText = source.v<String>(['label']);
+    final label = labelText != null ? '$labelText: ${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
+    return Slider(
+      value: value,
+      secondaryTrackValue: source.v<double>(['secondaryTrackValue']),
+      onChanged: source.handler(['onChanged'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      onChangeStart: source.handler(['onChangeStart'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      onChangeEnd: source.handler(['onChangeEnd'],
+          (HandlerTrigger trigger) => (double value) {
+            trigger({'value': value});
+          }),
+      min: min,
+      max: source.v<double>(['max']) ?? 1.0,
+      divisions: source.v<int>(['divisions']),
+      label: label,
+      activeColor: ArgumentDecoders.color(source, ['activeColor']),
+      inactiveColor: ArgumentDecoders.color(source, ['inactiveColor']),
+      secondaryActiveColor: ArgumentDecoders.color(source, ['secondaryActiveColor']),
+      thumbColor: ArgumentDecoders.color(source, ['thumbColor']),
+      allowedInteraction: ArgumentDecoders.enumValue<SliderInteraction>(SliderInteraction.values, source, ['allowedInteraction']),
     );
   },
 

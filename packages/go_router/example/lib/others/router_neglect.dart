@@ -22,8 +22,9 @@ class App extends StatelessWidget {
       );
 
   final GoRouter _router = GoRouter(
-    // turn off history tracking in the browser for this navigation
-    routerNeglect: true,
+    // To turn off history tracking in the browser for the entire application,
+    // set routerNeglect to true:
+    // routerNeglect: true,
     routes: <GoRoute>[
       GoRoute(
         path: '/',

@@ -1,5 +1,61 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.9.5
+
+* Converts `BitmapDescriptor` to typesafe structures.
+
+## 2.9.4
+
+* Converts `PatternItem` to typesafe structure.
+* Converts `Cap` to typesafe structure.
+
+## 2.9.3
+
+* Corrects an incorrect comment in polyline.dart file.
+
+## 2.9.2
+
+* Corrects JSON tag for `CameraUpdateNewLatLngBounds`.
+
+## 2.9.1
+
+* Splits CameraUpdate into dervied classes for different update cases.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 2.9.0
+
+* Adds support for heatmap layers.
+
+## 2.8.0
+
+* Deprecates `BitmapDescriptor.fromAssetImage` in favor of `BitmapDescriptor.asset` and `AssetMapBitmap.create`.
+* Deprecates `BitmapDescriptor.fromBytes` in favor of `BitmapDescriptor.bytes` and `BytesMapBitmap`
+
+## 2.7.1
+
+* Undeprecates `BitmapDescriptor.fromAssetImage`.
+* Undeprecates `BitmapDescriptor.fromBytes`.
+* Fixes issues with deprecation in version 2.7.0.
+
+## 2.7.0
+
+* Adds better support for marker size and scaling behaviour with `AssetMapBitmap` and `BytesMapBitmap`.
+* Deprecates `BitmapDescriptor.fromAssetImage` in favor of `BitmapDescriptor.asset` and `AssetMapBitmap.create`.
+* Deprecates `BitmapDescriptor.fromBytes` in favor of `BitmapDescriptor.bytes` and `BytesMapBitmap`
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.6.0
+
+* Adds support for marker clustering.
+
+## 2.5.0
+
+* Adds `style` to the `MapConfiguration` to allow setting style as part of
+  map creation.
+* Adds `getStyleError` to the platform interface, to allow asynchronous access
+  to style errors that occur during initialization.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 
 ## 2.4.3

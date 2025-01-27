@@ -1,6 +1,41 @@
-## NEXT
+## 0.8.12+2
+
+* Removes the need for user permissions to pick an image on iOS 14+.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.8.12+1
+
+* Updates Pigeon for non-nullable collection type support.
+* Updates UI test photo element query for iOS 18.
+
+## 0.8.12
+
+* Re-adds Swift Package Manager compatibility.
+
+## 0.8.11+2
+
+* Temporarily remove Swift Package Manager compatibility to resolve issues with Cocoapods builds.
+
+## 0.8.11+1
+
+* Makes all headers public with Swift Package Manager integration to keep inline with CocoaPods.
+
+## 0.8.11
+
+* Adds Swift Package Manager compatibility.
+
+## 0.8.10+1
+
+* Fixes a possible crash when calling a picker method UIGraphicsImageRenderer if imageToScale is nil.
+
+## 0.8.10
+
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` that sets a limit to how many media or image items can be selected.
+
+## 0.8.9+2
 
 * Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+* Replaces deprecated UIGraphicsBeginImageContextWithOptions with UIGraphicsImageRenderer.
 
 ## 0.8.9+1
 

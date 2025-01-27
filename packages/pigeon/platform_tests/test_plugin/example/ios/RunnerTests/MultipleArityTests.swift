@@ -16,7 +16,7 @@ class MockMultipleArityHostApi: MultipleArityHostApi {
 class MultipleArityTests: XCTestCase {
   var codec = FlutterStandardMessageCodec.sharedInstance()
   func testSimpleHost() throws {
-    let binaryMessenger = MockBinaryMessenger<Int64>(codec: EnumApi2HostCodec.shared)
+    let binaryMessenger = MockBinaryMessenger<Int64>(codec: EnumPigeonCodec.shared)
     MultipleArityHostApiSetup.setUp(
       binaryMessenger: binaryMessenger, api: MockMultipleArityHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract"

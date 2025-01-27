@@ -7,32 +7,17 @@
 /// This object holds metadata that is used to determine how the benchmark app
 /// should be built.
 class CompilationOptions {
-  /// Creates a [CompilationOptions] object.
-  const CompilationOptions({
-    this.renderer = WebRenderer.canvaskit,
-    this.useWasm = false,
-  });
+  /// Creates a [CompilationOptions] object that compiles to JavaScript.
+  const CompilationOptions.js() : useWasm = false;
 
-  /// The renderer to use for the build.
-  final WebRenderer renderer;
+  /// Creates a [CompilationOptions] object that compiles to WebAssembly.
+  const CompilationOptions.wasm() : useWasm = true;
 
   /// Whether to build the app with dart2wasm.
   final bool useWasm;
 
   @override
   String toString() {
-    return '(renderer: ${renderer.name}, compiler: ${useWasm ? 'dart2wasm' : 'dart2js'})';
+    return '(compiler: ${useWasm ? 'dart2wasm' : 'dart2js'})';
   }
-}
-
-/// The possible types of web renderers Flutter can build for.
-enum WebRenderer {
-  /// The HTML web renderer.
-  html,
-
-  /// The CanvasKit web renderer.
-  canvaskit,
-
-  /// The SKIA Wasm web renderer.
-  skwasm,
 }

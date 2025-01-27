@@ -1,6 +1,50 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.5.10
+
+* Adds support for heatmap layers.
+
+## 0.5.9+2
+
+* Restores support for Dart `^3.3.0` and Flutter `^3.19.0`.
+
+## 0.5.9+1
+
+* Fixes a typo in the formatting of the CHANGELOG.
+
+## 0.5.9
+
+* Updates `package:google_maps` dependency to latest (`^8.0.0`).
+* Adds support for `web: ^1.0.0`.
+* Updates SDK version to Dart `^3.4.0`. Flutter `^3.22.0`.
+
+## 0.5.8
+
+* Adds support for BitmapDescriptor classes `AssetMapBitmap` and `BytesMapBitmap`.
+
+## 0.5.7
+
+* Adds support for marker clustering.
+
+## 0.5.6+2
+
+* Uses `TrustedTypes` from `web: ^0.5.1`.
+
+## 0.5.6+1
+
+* Fixes an issue where `dart:js_interop` object literal factories did not
+  compile with dart2js.
+
+## 0.5.6
+
+* Adds support for `MapConfiguration.style`.
+* Adds support for `getStyleError`.
+
+## 0.5.5
+* Migrates to `dart:js_interop` and `package:web` APIs.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.5.4+3
 

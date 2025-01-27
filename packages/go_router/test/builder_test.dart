@@ -371,6 +371,7 @@ void main() {
           ),
         ],
       );
+      addTearDown(goRouter.dispose);
 
       await tester.pumpWidget(MaterialApp.router(
         routerConfig: goRouter,

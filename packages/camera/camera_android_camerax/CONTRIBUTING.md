@@ -32,9 +32,7 @@ to generate the communication layer between Flutter and native Android code, so 
 of these Dart-wrapped classes may also have Host API and Flutter API implementations
 that handle communication to the host native Android platform and from the host
 native Android platform, respectively. The communication interface is defined in
-the `pigeons/camerax_library.dart` file. After editing the communication interface,
-regenerate the communication layer by running
-`dart run pigeon --input pigeons/camerax_library.dart` from the plugin root.
+the `pigeons/camerax_library.dart` file.
 
 In the native Java Android code in `android/src/main/java/io/flutter/plugins/camerax/`,
 you'll find the Host API and Flutter API implementations of the same classes
@@ -54,7 +52,7 @@ annotated as `@immutable` to avoid lint errors with mock objects that are
 generated for them that you may use for testing.
 
 For more information, please see the [design document][2] or feel free
-to ask any questions on the #hackers-ecosystem channel on [Discord][6]. For
+to ask any questions on the #hackers-ecosystem channel on [Discord][4]. For
 more information on contributing packages in general, check out our
 [contribution guide][3].
 
@@ -65,14 +63,8 @@ wrapped native Android classes (Java & Dart) are tested. You can find the Java t
 `android/src/test/java/io/flutter/plugins/camerax/` and the Dart tests under `test/`. To
 run these tests, please see the instructions in the [running plugin tests guide][5].
 
-Besides [`pigeon`][1], this plugin also uses [`mockito`][4] to generate mock objects for
-testing purposes. To generate the mock objects, run
-`dart run build_runner build --delete-conflicting-outputs`.
-
-
 [1]: https://pub.dev/packages/pigeon
 [2]: https://docs.google.com/document/d/1wXB1zNzYhd2SxCu1_BK3qmNWRhonTB6qdv4erdtBQqo/edit?usp=sharing&resourcekey=0-WOBqqOKiO9SARnziBg28pg
 [3]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
-[4]: https://pub.dev/packages/mockito
-[5]: https://github.com/flutter/flutter/wiki/Plugin-Tests#running-tests
-[6]: https://github.com/flutter/flutter/wiki/Chat
+[4]: https://github.com/flutter/flutter/blob/master/docs/contributing/Chat.md
+[5]: https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md#running-tests

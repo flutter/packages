@@ -50,7 +50,11 @@ abstract class PackageCommand extends Command<void> {
     argParser.addMultiOption(
       _packagesArg,
       help:
-          'Specifies which packages the command should run on (before sharding).\n',
+          'Specifies which packages the command should run on (before sharding).\n'
+          'If a package name is the name of a plugin group, it will include '
+          'the entire group; to avoid this, use group/package as the name '
+          '(e.g., shared_preferences/shared_preferences), or pass '
+          '--$_exactMatchOnlyArg',
       valueHelp: 'package1,package2,...',
       aliases: <String>[_pluginsLegacyAliasArg],
     );
@@ -67,6 +71,9 @@ abstract class PackageCommand extends Command<void> {
       valueHelp: 'n',
       defaultsTo: '1',
     );
+    argParser.addFlag(_exactMatchOnlyArg,
+        help: 'Disables package group matching in package selection.',
+        negatable: false);
     argParser.addMultiOption(
       _excludeArg,
       abbr: 'e',
@@ -136,6 +143,7 @@ abstract class PackageCommand extends Command<void> {
   static const String _pluginsLegacyAliasArg = 'plugins';
   static const String _runOnChangedPackagesArg = 'run-on-changed-packages';
   static const String _runOnDirtyPackagesArg = 'run-on-dirty-packages';
+  static const String _exactMatchOnlyArg = 'exact-match-only';
   static const String _excludeArg = 'exclude';
   static const String _filterPackagesArg = 'filter-packages-to';
   // Diff base selection.
@@ -220,6 +228,11 @@ abstract class PackageCommand extends Command<void> {
   /// Convenience accessor for boolean arguments.
   bool getBoolArg(String key) {
     return (argResults![key] as bool?) ?? false;
+  }
+
+  /// Convenience accessor for boolean arguments.
+  bool? getNullableBoolArg(String key) {
+    return argResults![key] as bool?;
   }
 
   /// Convenience accessor for String arguments.
@@ -361,6 +374,15 @@ abstract class PackageCommand extends Command<void> {
       throw ToolExit(exitInvalidArguments);
     }
 
+    // Whether to require that a package name exactly match to be included,
+    // rather than allowing package groups for federated plugins. Any cases
+    // where the set of packages is determined programatically based on repo
+    // state should use exact matching.
+    final bool allowGroupMatching = !(getBoolArg(_exactMatchOnlyArg) ||
+        argResults!.wasParsed(_runOnChangedPackagesArg) ||
+        argResults!.wasParsed(_runOnDirtyPackagesArg) ||
+        argResults!.wasParsed(_packagesForBranchArg));
+
     Set<String> packages = Set<String>.from(getStringListArg(_packagesArg));
 
     final GitVersionFinder? changedFileFinder;
@@ -458,6 +480,30 @@ abstract class PackageCommand extends Command<void> {
           excludeAllButPackageNames.intersection(possibleNames).isEmpty;
     }
 
+    await for (final RepositoryPackage package in _everyTopLevelPackage()) {
+      if (packages.isEmpty ||
+          packages
+              .intersection(_possiblePackageIdentifiers(package,
+                  allowGroup: allowGroupMatching))
+              .isNotEmpty) {
+        // Exclusion is always human input, so groups should always be allowed
+        // unless they have been specifically forbidden.
+        final bool excluded = isExcluded(_possiblePackageIdentifiers(package,
+            allowGroup: !getBoolArg(_exactMatchOnlyArg)));
+        yield PackageEnumerationEntry(package, excluded: excluded);
+      }
+    }
+  }
+
+  /// Returns every top-level package in the repository, according to repository
+  /// conventions.
+  ///
+  /// In particular, it returns:
+  /// - Every package that is a direct child of one of the know "packages"
+  ///   directories.
+  /// - Every package that is a direct child of a non-package subdirectory of
+  ///   one of those directories (to cover federated plugin groups).
+  Stream<RepositoryPackage> _everyTopLevelPackage() async* {
     for (final Directory dir in <Directory>[
       packagesDir,
       if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
@@ -466,37 +512,41 @@ abstract class PackageCommand extends Command<void> {
           in dir.list(followLinks: false)) {
         // A top-level Dart package is a standard package.
         if (isPackage(entity)) {
-          if (packages.isEmpty || packages.contains(p.basename(entity.path))) {
-            yield PackageEnumerationEntry(
-                RepositoryPackage(entity as Directory),
-                excluded: isExcluded(<String>{entity.basename}));
-          }
+          yield RepositoryPackage(entity as Directory);
         } else if (entity is Directory) {
           // Look for Dart packages under this top-level directory; this is the
           // standard structure for federated plugins.
           await for (final FileSystemEntity subdir
               in entity.list(followLinks: false)) {
             if (isPackage(subdir)) {
-              // There are three ways for a federated plugin to match:
-              // - package name (path_provider_android)
-              // - fully specified name (path_provider/path_provider_android)
-              // - group name (path_provider), which matches all packages in
-              //   the group
-              final Set<String> possibleMatches = <String>{
-                path.basename(subdir.path), // package name
-                path.basename(entity.path), // group name
-                path.relative(subdir.path, from: dir.path), // fully specified
-              };
-              if (packages.isEmpty ||
-                  packages.intersection(possibleMatches).isNotEmpty) {
-                yield PackageEnumerationEntry(
-                    RepositoryPackage(subdir as Directory),
-                    excluded: isExcluded(possibleMatches));
-              }
+              yield RepositoryPackage(subdir as Directory);
             }
           }
         }
       }
+    }
+  }
+
+  Set<String> _possiblePackageIdentifiers(
+    RepositoryPackage package, {
+    required bool allowGroup,
+  }) {
+    final String packageName = path.basename(package.path);
+    if (package.isFederated) {
+      // There are three ways for a federated plugin to be identified:
+      // - package name (path_provider_android).
+      // - fully specified name (path_provider/path_provider_android).
+      // - group name (path_provider), which includes all packages in
+      //   the group.
+      final io.Directory parentDir = package.directory.parent;
+      return <String>{
+        packageName,
+        path.relative(package.path,
+            from: parentDir.parent.path), // fully specified
+        if (allowGroup) path.basename(parentDir.path), // group name
+      };
+    } else {
+      return <String>{packageName};
     }
   }
 
@@ -612,22 +662,30 @@ abstract class PackageCommand extends Command<void> {
   }
 
   String? _getCurrentDirectoryPackageName() {
-    // Ensure that the current directory is within the packages directory.
-    final Directory absolutePackagesDir = packagesDir.absolute;
+    final Set<Directory> absolutePackagesDirs = <Directory>{
+      packagesDir.absolute,
+      thirdPartyPackagesDir.absolute,
+    };
+    bool isATopLevelPackagesDir(Directory directory) =>
+        absolutePackagesDirs.any((Directory d) => d.path == directory.path);
+
     Directory currentDir = packagesDir.fileSystem.currentDirectory.absolute;
-    if (!currentDir.path.startsWith(absolutePackagesDir.path) ||
-        currentDir.path == packagesDir.path) {
+    // Ensure that the current directory is within one of the top-level packages
+    // directories.
+    if (isATopLevelPackagesDir(currentDir) ||
+        !absolutePackagesDirs
+            .any((Directory d) => currentDir.path.startsWith(d.path))) {
       return null;
     }
-    // If the current directory is a direct subdirectory of the packages
+    // If the current directory is a direct subdirectory of a packages
     // directory, then that's the target.
-    if (currentDir.parent.path == absolutePackagesDir.path) {
+    if (isATopLevelPackagesDir(currentDir.parent)) {
       return currentDir.basename;
     }
     // Otherwise, walk up until a package is found...
     while (!isPackage(currentDir)) {
       currentDir = currentDir.parent;
-      if (currentDir.path == absolutePackagesDir.path) {
+      if (isATopLevelPackagesDir(currentDir)) {
         return null;
       }
     }

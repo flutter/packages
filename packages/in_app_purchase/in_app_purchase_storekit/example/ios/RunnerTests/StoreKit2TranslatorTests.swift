@@ -1,0 +1,1 @@
+../../shared/RunnerTests/StoreKit2TranslatorTests.swift

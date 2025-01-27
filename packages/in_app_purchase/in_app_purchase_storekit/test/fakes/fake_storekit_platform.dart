@@ -5,19 +5,17 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
-import 'package:in_app_purchase_storekit/src/channel.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
+import 'package:in_app_purchase_storekit/src/sk2_pigeon.g.dart';
+import 'package:in_app_purchase_storekit/src/store_kit_2_wrappers/sk2_product_wrapper.dart';
+import 'package:in_app_purchase_storekit/src/store_kit_2_wrappers/sk2_transaction_wrapper.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
+import '../sk2_test_api.g.dart';
 import '../store_kit_wrappers/sk_test_stub_objects.dart';
 import '../test_api.g.dart';
 
 class FakeStoreKitPlatform implements TestInAppPurchaseApi {
-  FakeStoreKitPlatform() {
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, onMethodCall);
-  }
-
   // pre-configured store information
   String? receiptData;
   late Set<String> validProductIDs;
@@ -32,11 +30,14 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   SKError? testRestoredError;
   bool queueIsActive = false;
   Map<String, dynamic> discountReceived = <String, dynamic>{};
+  bool isPaymentQueueDelegateRegistered = false;
+  String _countryCode = 'USA';
+  String _countryIdentifier = 'LL';
 
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
     receiptData = 'dummy base64data';
-    validProductIDs = <String>{'123', '456'};
+    validProductIDs = <String>{'123', '456', '789'};
     validProducts = <String, SKProductWrapper>{};
     for (final String validID in validProductIDs) {
       final Map<String, dynamic> productWrapperMap =
@@ -44,6 +45,9 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
       productWrapperMap['productIdentifier'] = validID;
       if (validID == '456') {
         productWrapperMap['priceLocale'] = buildLocaleMap(noSymbolLocale);
+      }
+      if (validID == '789') {
+        productWrapperMap['localizedDescription'] = null;
       }
       validProducts[validID] = SKProductWrapper.fromJson(productWrapperMap);
     }
@@ -57,6 +61,9 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     testRestoredError = null;
     queueIsActive = false;
     discountReceived = <String, dynamic>{};
+    isPaymentQueueDelegateRegistered = false;
+    _countryCode = 'USA';
+    _countryIdentifier = 'LL';
   }
 
   SKPaymentTransactionWrapper createPendingTransaction(String id,
@@ -120,25 +127,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         transactionIdentifier: transactionId);
   }
 
-  Future<dynamic> onMethodCall(MethodCall call) {
-    switch (call.method) {
-      case '-[InAppPurchasePlugin retrieveReceiptData:result:]':
-        if (receiptData != null) {
-          return Future<String>.value(receiptData!);
-        } else {
-          throw PlatformException(code: 'no_receipt_data');
-        }
-      case '-[InAppPurchasePlugin refreshReceipt:result:]':
-        receiptData = 'refreshed receipt data';
-        return Future<void>.sync(() {});
-      case '-[SKPaymentQueue startObservingTransactionQueue]':
-        queueIsActive = true;
-      case '-[SKPaymentQueue stopObservingTransactionQueue]':
-        queueIsActive = false;
-    }
-    return Future<void>.sync(() {});
-  }
-
   @override
   bool canMakePayments() {
     return true;
@@ -186,20 +174,28 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     }
   }
 
+  void setStoreFrontInfo(
+      {required String countryCode, required String identifier}) {
+    _countryCode = countryCode;
+    _countryIdentifier = identifier;
+  }
+
   @override
   SKStorefrontMessage storefront() {
+    return SKStorefrontMessage(
+        countryCode: _countryCode, identifier: _countryIdentifier);
+  }
+
+  @override
+  List<SKPaymentTransactionMessage> transactions() {
     throw UnimplementedError();
   }
 
   @override
-  List<SKPaymentTransactionMessage?> transactions() {
-    throw UnimplementedError();
-  }
-
-  @override
-  void finishTransaction(Map<String?, String?> finishMap) {
+  void finishTransaction(Map<String?, Object?> finishMap) {
     finishedTransactions.add(createPurchasedTransaction(
-        finishMap['productIdentifier']!, finishMap['transactionIdentifier']!,
+        finishMap['productIdentifier']! as String,
+        finishMap['transactionIdentifier']! as String,
         quantity: transactionList.first.payment.quantity));
   }
 
@@ -246,4 +242,165 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     return Future<SKProductsResponseMessage>.value(
         SkProductResponseWrapper.convertToPigeon(response));
   }
+
+  @override
+  Future<void> refreshReceipt({Map<String?, dynamic>? receiptProperties}) {
+    receiptData = 'refreshed receipt data';
+    return Future<void>.sync(() {});
+  }
+
+  @override
+  void registerPaymentQueueDelegate() {
+    isPaymentQueueDelegateRegistered = true;
+  }
+
+  @override
+  void removePaymentQueueDelegate() {
+    isPaymentQueueDelegateRegistered = false;
+  }
+
+  @override
+  String retrieveReceiptData() {
+    if (receiptData != null) {
+      return receiptData!;
+    } else {
+      throw PlatformException(code: 'no_receipt_data');
+    }
+  }
+
+  @override
+  void showPriceConsentIfNeeded() {}
+
+  @override
+  void startObservingPaymentQueue() {
+    queueIsActive = true;
+  }
+
+  @override
+  void stopObservingPaymentQueue() {
+    queueIsActive = false;
+  }
+
+  @override
+  bool supportsStoreKit2() {
+    return true;
+  }
+}
+
+class FakeStoreKit2Platform implements TestInAppPurchase2Api {
+  late Set<String> validProductIDs;
+  late Map<String, SK2Product> validProducts;
+  late List<SK2TransactionMessage> transactionList = <SK2TransactionMessage>[];
+  late bool testTransactionFail;
+  late int testTransactionCancel;
+  late List<SK2Transaction> finishedTransactions;
+
+  PlatformException? queryProductException;
+  bool isListenerRegistered = false;
+
+  void reset() {
+    validProductIDs = <String>{'123', '456'};
+    validProducts = <String, SK2Product>{};
+    for (final String validID in validProductIDs) {
+      final SK2Product product = SK2Product(
+          id: validID,
+          displayName: 'test_product',
+          displayPrice: '0.99',
+          description: 'description',
+          price: 0.99,
+          type: SK2ProductType.consumable,
+          priceLocale:
+              SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
+      validProducts[validID] = product;
+    }
+  }
+
+  SK2TransactionMessage createRestoredTransaction(
+      String productId, String transactionId,
+      {int quantity = 1}) {
+    return SK2TransactionMessage(
+        id: 123,
+        originalId: 321,
+        productId: '',
+        purchaseDate: '',
+        appAccountToken: '',
+        restoring: true);
+  }
+
+  @override
+  bool canMakePayments() {
+    return true;
+  }
+
+  @override
+  Future<List<SK2ProductMessage>> products(List<String?> identifiers) {
+    if (queryProductException != null) {
+      throw queryProductException!;
+    }
+    final List<String?> productIDS = identifiers;
+    final List<SK2Product> products = <SK2Product>[];
+    for (final String? productID in productIDS) {
+      if (validProductIDs.contains(productID)) {
+        products.add(validProducts[productID]!);
+      }
+    }
+    final List<SK2ProductMessage> result = <SK2ProductMessage>[];
+    for (final SK2Product p in products) {
+      result.add(p.convertToPigeon());
+    }
+
+    return Future<List<SK2ProductMessage>>.value(result);
+  }
+
+  @override
+  Future<SK2ProductPurchaseResultMessage> purchase(String id,
+      {SK2ProductPurchaseOptionsMessage? options}) {
+    final SK2TransactionMessage transaction = createPendingTransaction(id);
+
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+        .onTransactionsUpdated(<SK2TransactionMessage>[transaction]);
+    return Future<SK2ProductPurchaseResultMessage>.value(
+        SK2ProductPurchaseResultMessage.success);
+  }
+
+  @override
+  Future<void> finish(int id) {
+    return Future<void>.value();
+  }
+
+  @override
+  Future<List<SK2TransactionMessage>> transactions() {
+    return Future<List<SK2TransactionMessage>>.value(<SK2TransactionMessage>[
+      SK2TransactionMessage(
+          id: 123,
+          originalId: 123,
+          productId: 'product_id',
+          purchaseDate: '12-12')
+    ]);
+  }
+
+  @override
+  void startListeningToTransactions() {
+    isListenerRegistered = true;
+  }
+
+  @override
+  void stopListeningToTransactions() {
+    isListenerRegistered = false;
+  }
+
+  @override
+  Future<void> restorePurchases() async {
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+        .onTransactionsUpdated(transactionList);
+  }
+}
+
+SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {
+  return SK2TransactionMessage(
+      id: 1,
+      originalId: 2,
+      productId: id,
+      purchaseDate: 'purchaseDate',
+      appAccountToken: 'appAccountToken');
 }

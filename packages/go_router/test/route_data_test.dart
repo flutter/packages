@@ -10,9 +10,18 @@ import 'package:go_router/go_router.dart';
 
 class _GoRouteDataBuild extends GoRouteData {
   const _GoRouteDataBuild();
+
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SizedBox(key: Key('build'));
+}
+
+class _ShellRouteDataRedirectPage extends ShellRouteData {
+  const _ShellRouteDataRedirectPage();
+
+  @override
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
+      '/build-page';
 }
 
 class _ShellRouteDataBuilder extends ShellRouteData {
@@ -49,7 +58,9 @@ class _ShellRouteDataWithKey extends ShellRouteData {
 
 class _GoRouteDataBuildWithKey extends GoRouteData {
   const _GoRouteDataBuildWithKey(this.key);
+
   final Key key;
+
   @override
   Widget build(BuildContext context, GoRouterState state) => SizedBox(key: key);
 }
@@ -71,6 +82,7 @@ final ShellRoute _shellRouteDataBuilder = ShellRouteData.$route(
 
 class _GoRouteDataBuildPage extends GoRouteData {
   const _GoRouteDataBuildPage();
+
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
       const MaterialPage<void>(
@@ -95,6 +107,14 @@ class _ShellRouteDataPageBuilder extends ShellRouteData {
       );
 }
 
+class _StatefulShellRouteDataRedirectPage extends StatefulShellRouteData {
+  const _StatefulShellRouteDataRedirectPage();
+
+  @override
+  FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
+      '/build-page';
+}
+
 final GoRoute _goRouteDataBuildPage = GoRouteData.$route(
   path: '/build-page',
   factory: (GoRouterState state) => const _GoRouteDataBuildPage(),
@@ -106,6 +126,21 @@ final ShellRoute _shellRouteDataPageBuilder = ShellRouteData.$route(
     GoRouteData.$route(
       path: '/child',
       factory: (GoRouterState state) => const _GoRouteDataBuild(),
+    ),
+  ],
+);
+
+final ShellRoute _shellRouteDataRedirect = ShellRouteData.$route(
+  factory: (GoRouterState state) => const _ShellRouteDataPageBuilder(),
+  routes: <RouteBase>[
+    ShellRouteData.$route(
+      factory: (GoRouterState state) => const _ShellRouteDataRedirectPage(),
+      routes: <RouteBase>[
+        GoRouteData.$route(
+          path: '/child',
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
+        ),
+      ],
     ),
   ],
 );
@@ -174,6 +209,7 @@ final StatefulShellRoute _statefulShellRouteDataPageBuilder =
 
 class _GoRouteDataRedirectPage extends GoRouteData {
   const _GoRouteDataRedirectPage();
+
   @override
   FutureOr<String> redirect(BuildContext context, GoRouterState state) =>
       '/build-page';
@@ -199,6 +235,7 @@ void main() {
           initialLocation: '/build',
           routes: _routes,
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('build')), findsOneWidget);
         expect(find.byKey(const Key('buildPage')), findsNothing);
@@ -212,6 +249,7 @@ void main() {
           initialLocation: '/build-page',
           routes: _routes,
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('build')), findsNothing);
         expect(find.byKey(const Key('buildPage')), findsOneWidget);
@@ -229,6 +267,7 @@ void main() {
             _shellRouteDataBuilder,
           ],
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsOneWidget);
         expect(find.byKey(const Key('page-builder')), findsNothing);
@@ -272,6 +311,7 @@ void main() {
             ),
           ],
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(MaterialApp.router(
           routerConfig: goRouter,
         ));
@@ -301,9 +341,27 @@ void main() {
             _shellRouteDataPageBuilder,
           ],
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsNothing);
         expect(find.byKey(const Key('page-builder')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'It should redirect using the overridden redirect method',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = GoRouter(
+          initialLocation: '/child',
+          routes: <RouteBase>[
+            _goRouteDataBuildPage,
+            _shellRouteDataRedirect,
+          ],
+        );
+        addTearDown(goRouter.dispose);
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+        expect(find.byKey(const Key('build')), findsNothing);
+        expect(find.byKey(const Key('buildPage')), findsOneWidget);
       },
     );
   });
@@ -318,6 +376,7 @@ void main() {
             _statefulShellRouteDataBuilder,
           ],
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsOneWidget);
         expect(find.byKey(const Key('page-builder')), findsNothing);
@@ -333,6 +392,7 @@ void main() {
             _statefulShellRouteDataPageBuilder,
           ],
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('builder')), findsNothing);
         expect(find.byKey(const Key('page-builder')), findsOneWidget);
@@ -367,6 +427,37 @@ void main() {
         initialLocation: '/redirect',
         routes: _routes,
       );
+      addTearDown(goRouter.dispose);
+      await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+      expect(find.byKey(const Key('build')), findsNothing);
+      expect(find.byKey(const Key('buildPage')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'It should redirect using the overridden StatefulShellRoute redirect method',
+    (WidgetTester tester) async {
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/child',
+        routes: <RouteBase>[
+          _goRouteDataBuildPage,
+          StatefulShellRouteData.$route(
+            factory: (GoRouterState state) =>
+                const _StatefulShellRouteDataRedirectPage(),
+            branches: <StatefulShellBranch>[
+              StatefulShellBranchData.$branch(
+                routes: <GoRoute>[
+                  GoRouteData.$route(
+                    path: '/child',
+                    factory: (GoRouterState state) => const _GoRouteDataBuild(),
+                  ),
+                ],
+              )
+            ],
+          )
+        ],
+      );
+      addTearDown(goRouter.dispose);
       await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsOneWidget);
@@ -380,6 +471,7 @@ void main() {
         initialLocation: '/redirect-with-state',
         routes: _routes,
       );
+      addTearDown(goRouter.dispose);
       await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       expect(find.byKey(const Key('build')), findsNothing);
       expect(find.byKey(const Key('buildPage')), findsNothing);

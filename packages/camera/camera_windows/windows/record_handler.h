@@ -9,20 +9,15 @@
 #include <mfcaptureengine.h>
 #include <wrl/client.h>
 
+#include <cassert>
 #include <memory>
+#include <optional>
 #include <string>
+
+#include "messages.g.h"
 
 namespace camera_windows {
 using Microsoft::WRL::ComPtr;
-
-enum class RecordingType {
-  // Camera is not recording.
-  kNone,
-  // Recording continues until it is stopped with a separate stop command.
-  kContinuous,
-  // Recording stops automatically after requested record time is passed.
-  kTimed
-};
 
 // States that the record handler can be in.
 //
@@ -35,7 +30,9 @@ enum class RecordState { kNotStarted, kStarting, kRunning, kStopping };
 // Handles record sink initialization and manages the state of video recording.
 class RecordHandler {
  public:
-  RecordHandler(bool record_audio) : record_audio_(record_audio) {}
+  explicit RecordHandler(const PlatformMediaSettings& media_settings)
+      : media_settings_(media_settings) {}
+
   virtual ~RecordHandler() = default;
 
   // Prevent copying.
@@ -47,14 +44,11 @@ class RecordHandler {
   // Sets record state to: starting.
   //
   // file_path:       A string that hold file path for video capture.
-  // max_duration:    A int64 value of maximun recording duration.
-  //                  If value is -1 video recording is considered as
-  //                  a continuous recording.
   // capture_engine:  A pointer to capture engine instance. Used to start
   //                  the actual recording.
   // base_media_type: A pointer to base media type used as a base
   //                  for the actual video capture media type.
-  HRESULT StartRecord(const std::string& file_path, int64_t max_duration,
+  HRESULT StartRecord(const std::string& file_path,
                       IMFCaptureEngine* capture_engine,
                       IMFMediaType* base_media_type);
 
@@ -71,14 +65,6 @@ class RecordHandler {
   // sets recording state to: not started.
   void OnRecordStopped();
 
-  // Returns true if recording type is continuous recording.
-  bool IsContinuousRecording() const {
-    return type_ == RecordingType::kContinuous;
-  }
-
-  // Returns true if recording type is timed recording.
-  bool IsTimedRecording() const { return type_ == RecordingType::kTimed; }
-
   // Returns true if new recording can be started.
   bool CanStart() const { return recording_state_ == RecordState::kNotStarted; }
 
@@ -94,22 +80,16 @@ class RecordHandler {
   // Calculates new recording time from capture timestamp.
   void UpdateRecordingTime(uint64_t timestamp);
 
-  // Returns true if recording time has exceeded the maximum duration for timed
-  // recordings.
-  bool ShouldStopTimedRecording() const;
-
  private:
   // Initializes record sink for video file capture.
   HRESULT InitRecordSink(IMFCaptureEngine* capture_engine,
                          IMFMediaType* base_media_type);
 
-  bool record_audio_ = false;
-  int64_t max_video_duration_ms_ = -1;
+  const PlatformMediaSettings media_settings_;
   int64_t recording_start_timestamp_us_ = -1;
   uint64_t recording_duration_us_ = 0;
   std::string file_path_;
   RecordState recording_state_ = RecordState::kNotStarted;
-  RecordingType type_ = RecordingType::kNone;
   ComPtr<IMFCaptureRecordSink> record_sink_;
 };
 

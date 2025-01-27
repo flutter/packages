@@ -7,13 +7,14 @@
 
 @interface FIAPPaymentQueueDelegate ()
 
-@property(strong, nonatomic, readonly) FlutterMethodChannel *callbackChannel;
+// The designated Flutter method channel that handles if a transaction should be continued
+@property(nonatomic, strong, readonly) id<FLTMethodChannelProtocol> callbackChannel;
 
 @end
 
 @implementation FIAPPaymentQueueDelegate
 
-- (id)initWithMethodChannel:(FlutterMethodChannel *)methodChannel {
+- (id)initWithMethodChannel:(id<FLTMethodChannelProtocol>)methodChannel {
   self = [super init];
   if (self) {
     _callbackChannel = methodChannel;

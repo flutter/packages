@@ -5,124 +5,165 @@
 package io.flutter.plugins.webviewflutter;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.webkit.WebSettings;
-import android.webkit.WebView;
-import io.flutter.plugins.webviewflutter.WebSettingsHostApiImpl.WebSettingsCreator;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class WebSettingsTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-  @Mock public WebSettings mockWebSettings;
-
-  @Mock WebSettingsCreator mockWebSettingsCreator;
-
-  InstanceManager testInstanceManager;
-  WebSettingsHostApiImpl testHostApiImpl;
-
-  @Before
-  public void setUp() {
-    testInstanceManager = InstanceManager.create(identifier -> {});
-
-    when(mockWebSettingsCreator.createWebSettings(any())).thenReturn(mockWebSettings);
-    testHostApiImpl = new WebSettingsHostApiImpl(testInstanceManager, mockWebSettingsCreator);
-
-    testInstanceManager.addDartCreatedInstance(mock(WebView.class), 1);
-    testHostApiImpl.create(0L, 1L);
-  }
-
-  @After
-  public void tearDown() {
-    testInstanceManager.stopFinalizationListener();
-  }
-
   @Test
   public void setDomStorageEnabled() {
-    testHostApiImpl.setDomStorageEnabled(0L, true);
-    verify(mockWebSettings).setDomStorageEnabled(true);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean flag = true;
+    api.setDomStorageEnabled(instance, flag);
+
+    verify(instance).setDomStorageEnabled(flag);
   }
 
   @Test
   public void setJavaScriptCanOpenWindowsAutomatically() {
-    testHostApiImpl.setJavaScriptCanOpenWindowsAutomatically(0L, false);
-    verify(mockWebSettings).setJavaScriptCanOpenWindowsAutomatically(false);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean flag = true;
+    api.setJavaScriptCanOpenWindowsAutomatically(instance, flag);
+
+    verify(instance).setJavaScriptCanOpenWindowsAutomatically(flag);
   }
 
   @Test
   public void setSupportMultipleWindows() {
-    testHostApiImpl.setSupportMultipleWindows(0L, true);
-    verify(mockWebSettings).setSupportMultipleWindows(true);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean support = true;
+    api.setSupportMultipleWindows(instance, support);
+
+    verify(instance).setSupportMultipleWindows(support);
   }
 
   @Test
   public void setJavaScriptEnabled() {
-    testHostApiImpl.setJavaScriptEnabled(0L, false);
-    verify(mockWebSettings).setJavaScriptEnabled(false);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean flag = true;
+    api.setJavaScriptEnabled(instance, flag);
+
+    verify(instance).setJavaScriptEnabled(flag);
   }
 
   @Test
   public void setUserAgentString() {
-    testHostApiImpl.setUserAgentString(0L, "hello");
-    verify(mockWebSettings).setUserAgentString("hello");
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final String userAgentString = "myString";
+    api.setUserAgentString(instance, userAgentString);
+
+    verify(instance).setUserAgentString(userAgentString);
   }
 
   @Test
   public void setMediaPlaybackRequiresUserGesture() {
-    testHostApiImpl.setMediaPlaybackRequiresUserGesture(0L, false);
-    verify(mockWebSettings).setMediaPlaybackRequiresUserGesture(false);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean require = true;
+    api.setMediaPlaybackRequiresUserGesture(instance, require);
+
+    verify(instance).setMediaPlaybackRequiresUserGesture(require);
   }
 
   @Test
   public void setSupportZoom() {
-    testHostApiImpl.setSupportZoom(0L, true);
-    verify(mockWebSettings).setSupportZoom(true);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean support = true;
+    api.setSupportZoom(instance, support);
+
+    verify(instance).setSupportZoom(support);
   }
 
   @Test
   public void setLoadWithOverviewMode() {
-    testHostApiImpl.setLoadWithOverviewMode(0L, false);
-    verify(mockWebSettings).setLoadWithOverviewMode(false);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean overview = true;
+    api.setLoadWithOverviewMode(instance, overview);
+
+    verify(instance).setLoadWithOverviewMode(overview);
   }
 
   @Test
   public void setUseWideViewPort() {
-    testHostApiImpl.setUseWideViewPort(0L, true);
-    verify(mockWebSettings).setUseWideViewPort(true);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean use = true;
+    api.setUseWideViewPort(instance, use);
+
+    verify(instance).setUseWideViewPort(use);
   }
 
   @Test
   public void setDisplayZoomControls() {
-    testHostApiImpl.setDisplayZoomControls(0L, false);
-    verify(mockWebSettings).setDisplayZoomControls(false);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean enabled = true;
+    api.setDisplayZoomControls(instance, enabled);
+
+    verify(instance).setDisplayZoomControls(enabled);
   }
 
   @Test
   public void setBuiltInZoomControls() {
-    testHostApiImpl.setBuiltInZoomControls(0L, true);
-    verify(mockWebSettings).setBuiltInZoomControls(true);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean enabled = true;
+    api.setBuiltInZoomControls(instance, enabled);
+
+    verify(instance).setBuiltInZoomControls(enabled);
+  }
+
+  @Test
+  public void setAllowFileAccess() {
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final boolean enabled = true;
+    api.setAllowFileAccess(instance, enabled);
+
+    verify(instance).setAllowFileAccess(enabled);
   }
 
   @Test
   public void setTextZoom() {
-    testHostApiImpl.setTextZoom(0L, 100L);
-    verify(mockWebSettings).setTextZoom(100);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final long textZoom = 0L;
+    api.setTextZoom(instance, textZoom);
+
+    verify(instance).setTextZoom((int) textZoom);
   }
 
   @Test
   public void getUserAgentString() {
-    final String userAgent = "str";
-    when(mockWebSettings.getUserAgentString()).thenReturn(userAgent);
-    assertEquals(testHostApiImpl.getUserAgentString(0L), userAgent);
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    final String value = "myString";
+    when(instance.getUserAgentString()).thenReturn(value);
+
+    assertEquals(value, api.getUserAgentString(instance));
   }
 }

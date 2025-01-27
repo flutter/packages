@@ -38,6 +38,9 @@ const String _flutterBuildTypeWindows = 'windows';
 
 const String _flutterBuildTypeAndroidAlias = 'android';
 
+/// Key for Swift Package Manager.
+const String _swiftPackageManagerFlag = 'swift-package-manager';
+
 /// A command to build the example applications for packages.
 class BuildExamplesCommand extends PackageLoopingCommand {
   /// Creates an instance of the build command.
@@ -58,6 +61,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       defaultsTo: '',
       help: 'Enables the given Dart SDK experiments.',
     );
+    argParser.addFlag(_swiftPackageManagerFlag, defaultsTo: null);
   }
 
   // Maps the switch this command uses to identify a platform to information
@@ -111,6 +115,24 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       'single key "$_pluginToolsConfigGlobalKey" containing a list of build '
       'arguments.';
 
+  /// Returns whether the Swift Package Manager feature should be enabled,
+  /// disabled, or left to the release channel's default value.
+  bool? get _swiftPackageManagerFeatureConfig {
+    final List<String> platformFlags = _platforms.keys.toList();
+    if (!platformFlags.contains(platformIOS) &&
+        !platformFlags.contains(platformMacOS)) {
+      return null;
+    }
+
+    // TODO(loic-sharma): Allow enabling on stable once Swift Package Manager
+    // feature is available on stable.
+    if (platform.environment['CHANNEL'] != 'master') {
+      return null;
+    }
+
+    return getNullableBoolArg(_swiftPackageManagerFlag);
+  }
+
   @override
   Future<void> initializeRun() async {
     final List<String> platformFlags = _platforms.keys.toList();
@@ -120,6 +142,23 @@ class BuildExamplesCommand extends PackageLoopingCommand {
           'None of ${platformFlags.map((String platform) => '--$platform').join(', ')} '
           'were specified. At least one platform must be provided.');
       throw ToolExit(_exitNoPlatformFlags);
+    }
+
+    switch (_swiftPackageManagerFeatureConfig) {
+      case true:
+        await processRunner.runAndStream(
+          flutterCommand,
+          <String>['config', '--enable-swift-package-manager'],
+          exitOnError: true,
+        );
+      case false:
+        await processRunner.runAndStream(
+          flutterCommand,
+          <String>['config', '--no-enable-swift-package-manager'],
+          exitOnError: true,
+        );
+      case null:
+        break;
     }
   }
 

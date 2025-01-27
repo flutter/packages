@@ -1,7 +1,55 @@
-## NEXT
+## 2.4.3
 
-* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Migrates `List<String>` value encoding to JSON.
+
+## 2.4.2
+
+* Bumps gradle-plugin to 2.1.0.
+
+## 2.4.1
+
+* Bumps kotlin version to 1.9.10 androidx.datastore:datastore from 1.0.0 to 1.1.1.
+
+## 2.4.0
+
+* Adds `SharedPreferences` support within `SharedPreferencesAsyncAndroid` API.
+
+## 2.3.4
+
+* Restrict types when decoding preferences.
+
+## 2.3.3
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.3.2
+
+* Bumps `com.android.tools.build:gradle` from 7.2.2 to 8.5.1.
+
+## 2.3.1
+
+* Fixes `getStringList` returning immutable list.
+
+## 2.3.0
+
+* Adds new `SharedPreferencesAsyncAndroid` API.
+
+## 2.2.4
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.2.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 2.2.2
+
+* Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
 * Updates compileSdk version to 34.
+* Updates mockito to 5.2.0.
 
 ## 2.2.1
 

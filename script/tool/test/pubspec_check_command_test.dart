@@ -1518,7 +1518,7 @@ ${_topicsSection()}
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Dart SDK version for Fluter SDK version 2.0.0 is unknown'),
+          contains('Dart SDK version for Flutter SDK version 2.0.0 is unknown'),
         ]),
       );
     });
@@ -1611,10 +1611,10 @@ ${_topicsSection()}
           output,
           containsAllInOrder(<Matcher>[
             contains(
-                'The following unexpected non-local dependencies were found:\n'
-                '  bad_dependency\n'
-                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-                'for more information and next steps.'),
+                '  The following unexpected non-local dependencies were found:\n'
+                '    bad_dependency\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
+                '  for more information and next steps.'),
           ]),
         );
       });
@@ -1643,10 +1643,10 @@ ${_topicsSection()}
           output,
           containsAllInOrder(<Matcher>[
             contains(
-                'The following unexpected non-local dependencies were found:\n'
-                '  bad_dependency\n'
-                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-                'for more information and next steps.'),
+                '  The following unexpected non-local dependencies were found:\n'
+                '    bad_dependency\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
+                '  for more information and next steps.'),
           ]),
         );
       });
@@ -1674,7 +1674,8 @@ ${_topicsSection()}
         );
       });
 
-      test('passes when a pinned dependency is on the pinned allow list',
+      test(
+          'passes when an exactly-pinned dependency is on the pinned allow list',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir);
@@ -1683,6 +1684,34 @@ ${_topicsSection()}
 ${_headerSection('a_package')}
 ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test(
+          'passes when an explicit-range-pinned dependency is on the pinned allow list',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
 
@@ -1727,10 +1756,93 @@ ${_topicsSection()}
           output,
           containsAllInOrder(<Matcher>[
             contains(
-                'The following unexpected non-local dependencies were found:\n'
-                '  allow_pinned\n'
-                'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-                'for more information and next steps.'),
+                '  The following unexpected non-local dependencies were found:\n'
+                '    allow_pinned\n'
+                '  Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies\n'
+                '  for more information and next steps.'),
+          ]),
+        );
+      });
+
+      group('dev dependencies', () {
+        const List<String> packages = <String>[
+          'build_runner',
+          'integration_test',
+          'flutter_test',
+          'leak_tracker_flutter_testing',
+          'mockito',
+          'pigeon',
+          'test',
+        ];
+        for (final String dependency in packages) {
+          test('fails when $dependency is used in non dev dependency',
+              () async {
+            final RepositoryPackage package = createFakePackage(
+                'a_package', packagesDir,
+                examples: <String>[]);
+
+            final String version =
+                dependency == 'integration_test' || dependency == 'flutter_test'
+                    ? '{ sdk: flutter }'
+                    : '1.0.0';
+            package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>[
+                  '$dependency: $version',
+                ])}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+            Error? commandError;
+            final List<String> output =
+                await runCapturingPrint(runner, <String>[
+              'pubspec-check',
+            ], errorHandler: (Error e) {
+              commandError = e;
+            });
+
+            expect(commandError, isA<ToolExit>());
+            expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains(
+                    '  The following dev dependencies were found in the dependencies section:\n'
+                    '    $dependency\n'
+                    '  Please move them to dev_dependencies.'),
+              ]),
+            );
+          });
+        }
+      });
+
+      test(
+          'passes when integration_test or flutter_test are used in non published package',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir, examples: <String>[]);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package', publishable: false)}
+${_environmentSection()}
+${_dependenciesSection(<String>[
+              'integration_test: \n    sdk: flutter',
+              'flutter_test: \n    sdk: flutter'
+            ])}
+${_devDependenciesSection()}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('Ran for'),
           ]),
         );
       });

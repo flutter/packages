@@ -1,4 +1,55 @@
-## NEXT
+## 2.2.15
+
+* Removes unnecessary native code.
+
+## 2.2.14
+
+* Updates annotations lib to 1.9.1.
+
+## 2.2.13
+
+* Updates annotations lib to 1.9.0.
+
+## 2.2.12
+
+* Updates Pigeon for non-nullable collection type support.
+
+## 2.2.11
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.2.10
+
+* Updates annotations lib to 1.8.2.
+
+## 2.2.9
+
+* Updates annotations lib to 1.8.1.
+
+## 2.2.8
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.2.7
+
+* Updates AGP version to 8.5.0.
+
+## 2.2.6
+
+* Updates annotations lib to 1.8.0.
+
+## 2.2.5
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 2.2.4
+
+* Updates minSdkVersion version to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.2.3
 
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates compileSdk version to 34.

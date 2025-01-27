@@ -8,7 +8,7 @@ import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 import '../web_helpers/web_helpers.dart';
 import 'base.dart';
@@ -133,22 +133,26 @@ class XFile extends XFileBase {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
 
+    final Completer<Blob> blobCompleter = Completer<Blob>();
+
     late XMLHttpRequest request;
-    try {
-      request = await HttpRequest.request(path, responseType: 'blob');
-    } on ProgressEvent catch (e) {
-      if (e.type == 'error') {
-        throw Exception(
-            'Could not load Blob from its URL. Has it been revoked?');
-      }
-      rethrow;
-    }
+    request = XMLHttpRequest()
+      ..open('get', path, true)
+      ..responseType = 'blob'
+      ..onLoad.listen((ProgressEvent e) {
+        assert(request.response != null,
+            'The Blob backing this XFile cannot be null!');
+        blobCompleter.complete(request.response! as Blob);
+      })
+      ..onError.listen((ProgressEvent e) {
+        if (e.type == 'error') {
+          blobCompleter.completeError(Exception(
+              'Could not load Blob from its URL. Has it been revoked?'));
+        }
+      })
+      ..send();
 
-    _browserBlob = request.response as Blob?;
-
-    assert(_browserBlob != null, 'The Blob backing this XFile cannot be null!');
-
-    return _browserBlob!;
+    return blobCompleter.future;
   }
 
   @override

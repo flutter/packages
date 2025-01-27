@@ -12,6 +12,7 @@ import 'test_helpers.dart';
 Future<GoRouter> createGoRouter(
   WidgetTester tester, {
   Listenable? refreshListenable,
+  bool dispose = true,
 }) async {
   final GoRouter router = GoRouter(
     initialLocation: '/',
@@ -25,6 +26,9 @@ Future<GoRouter> createGoRouter(
     ],
     refreshListenable: refreshListenable,
   );
+  if (dispose) {
+    addTearDown(router.dispose);
+  }
   await tester.pumpWidget(MaterialApp.router(
     routerConfig: router,
   ));
@@ -65,6 +69,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
       ], builder: mockStackedShellBuilder),
     ],
   );
+  addTearDown(router.dispose);
   await tester.pumpWidget(MaterialApp.router(
     routerConfig: router,
   ));
@@ -85,6 +90,44 @@ void main() {
       expect(
           goRouter.routerDelegate.currentConfiguration.matches.contains(last),
           false);
+    });
+
+    testWidgets('PopScope intercepts back button on root route',
+        (WidgetTester tester) async {
+      bool didPop = false;
+
+      final GoRouter goRouter = GoRouter(
+        initialLocation: '/',
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/',
+            builder: (_, __) => PopScope(
+              onPopInvokedWithResult: (bool result, _) {
+                didPop = true;
+              },
+              canPop: false,
+              child: const Text('Home'),
+            ),
+          ),
+        ],
+      );
+
+      addTearDown(goRouter.dispose);
+
+      await tester.pumpWidget(MaterialApp.router(
+        routerConfig: goRouter,
+      ));
+
+      expect(find.text('Home'), findsOneWidget);
+
+      // Simulate back button press
+      await tester.binding.handlePopRoute();
+
+      await tester.pumpAndSettle();
+
+      // Verify that PopScope intercepted the back button
+      expect(didPop, isTrue);
+      expect(find.text('Home'), findsOneWidget);
     });
 
     testWidgets('pops more than matches count should return false',
@@ -287,6 +330,7 @@ void main() {
           GoRoute(path: '/page-1', builder: (_, __) => const SizedBox()),
         ],
       );
+      addTearDown(goRouter.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: goRouter,
@@ -369,6 +413,7 @@ void main() {
                 builder: (_, __) => const SizedBox()),
           ],
         );
+        addTearDown(goRouter.dispose);
         await tester.pumpWidget(
           MaterialApp.router(
             routerConfig: goRouter,
@@ -418,6 +463,7 @@ void main() {
           GoRoute(path: '/page-1', builder: (_, __) => const SizedBox()),
         ],
       );
+      addTearDown(goRouter.dispose);
       await tester.pumpWidget(
         MaterialApp.router(
           routerConfig: goRouter,
@@ -535,6 +581,7 @@ void main() {
           ),
         ],
       );
+      addTearDown(router.dispose);
       await tester.pumpWidget(MaterialApp.router(
         routerConfig: router,
       ));
@@ -634,8 +681,13 @@ void main() {
   testWidgets('dispose unsubscribes from refreshListenable',
       (WidgetTester tester) async {
     final FakeRefreshListenable refreshListenable = FakeRefreshListenable();
-    final GoRouter goRouter =
-        await createGoRouter(tester, refreshListenable: refreshListenable);
+    addTearDown(refreshListenable.dispose);
+
+    final GoRouter goRouter = await createGoRouter(
+      tester,
+      refreshListenable: refreshListenable,
+      dispose: false,
+    );
     await tester.pumpWidget(Container());
     goRouter.dispose();
     expect(refreshListenable.unsubscribed, true);

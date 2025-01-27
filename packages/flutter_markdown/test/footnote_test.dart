@@ -158,7 +158,7 @@ void defineTests() {
     'superscript textstyle replacing',
     () {
       testWidgets(
-        'superscript has correct fontfeature',
+        'superscript has correct default fontfeature',
         (WidgetTester tester) async {
           const String data = 'Foo[^a]\n[^a]: Bar';
           await tester.pumpWidget(
@@ -181,6 +181,35 @@ void defineTests() {
           expect(children[1].style, isNotNull);
           expect(children[1].style!.fontFeatures?.length, 1);
           expect(children[1].style!.fontFeatures?.first.feature, 'sups');
+        },
+      );
+
+      testWidgets(
+        'superscript has correct custom fontfeature',
+        (WidgetTester tester) async {
+          const String data = 'Foo[^a]\n[^a]: Bar';
+          await tester.pumpWidget(
+            boilerplate(
+              MarkdownBody(
+                data: data,
+                styleSheet:
+                    MarkdownStyleSheet(superscriptFontFeatureTag: 'numr'),
+              ),
+            ),
+          );
+
+          final Iterable<Widget> widgets = tester.allWidgets;
+          final Text text =
+              widgets.firstWhere((Widget widget) => widget is Text) as Text;
+
+          final TextSpan span = text.textSpan! as TextSpan;
+          final List<InlineSpan>? children = span.children;
+
+          expect(children, isNotNull);
+          expect(children!.length, 2);
+          expect(children[1].style, isNotNull);
+          expect(children[1].style!.fontFeatures?.length, 2);
+          expect(children[1].style!.fontFeatures?[1].feature, 'numr');
         },
       );
 

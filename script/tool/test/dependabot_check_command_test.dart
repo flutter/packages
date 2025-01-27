@@ -38,21 +38,32 @@ void main() {
 
   void setDependabotCoverage({
     Iterable<String> gradleDirs = const <String>[],
+    bool useDirectoriesKey = false,
   }) {
-    final Iterable<String> gradleEntries =
-        gradleDirs.map((String directory) => '''
+    final String gradleEntries;
+    if (useDirectoriesKey) {
+      gradleEntries = '''
+  - package-ecosystem: "gradle"
+    directories:
+${gradleDirs.map((String directory) => '      - /$directory').join('\n')}
+    schedule:
+      interval: "daily"
+''';
+    } else {
+      gradleEntries = gradleDirs.map((String directory) => '''
   - package-ecosystem: "gradle"
     directory: "/$directory"
     schedule:
       interval: "daily"
-''');
+''').join('\n');
+    }
     final File configFile =
         root.childDirectory('.github').childFile('dependabot.yml');
     configFile.createSync(recursive: true);
     configFile.writeAsStringSync('''
 version: 2
 updates:
-${gradleEntries.join('\n')}
+$gradleEntries
 ''');
   }
 
@@ -121,11 +132,37 @@ ${gradleEntries.join('\n')}
         ]));
   });
 
-  test('passes for correct Gradle coverage', () async {
+  test('passes for correct Gradle coverage with single directory', () async {
     setDependabotCoverage(gradleDirs: <String>[
       'packages/a_plugin/android',
       'packages/a_plugin/example/android/app',
     ]);
+    final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
+    // Test the plugin.
+    plugin.directory.childDirectory('android').createSync(recursive: true);
+    // And its example app.
+    plugin.directory
+        .childDirectory('example')
+        .childDirectory('android')
+        .childDirectory('app')
+        .createSync(recursive: true);
+
+    final List<String> output =
+        await runCapturingPrint(runner, <String>['dependabot-check']);
+
+    expect(output,
+        containsAllInOrder(<Matcher>[contains('Ran for 2 package(s)')]));
+  });
+
+  test('passes for correct Gradle coverage with multiple directories',
+      () async {
+    setDependabotCoverage(
+      gradleDirs: <String>[
+        'packages/a_plugin/android',
+        'packages/a_plugin/example/android/app',
+      ],
+      useDirectoriesKey: true,
+    );
     final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir);
     // Test the plugin.
     plugin.directory.childDirectory('android').createSync(recursive: true);

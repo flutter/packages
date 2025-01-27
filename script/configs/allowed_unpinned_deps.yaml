@@ -1,5 +1,5 @@
 # The list of external dependencies that are allowed as unpinned dependencies.
-# See https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies
 #
 # All entries here should have an explanation for why they are here, either
 # via being part of one of the default-allowed groups, or a specific reason.
@@ -13,7 +13,6 @@
 # cautious about adding to this list.
 - build_verify
 - google_maps
-- win32
 
 ## Allowed by default
 
@@ -25,24 +24,34 @@
 - build_config
 - build_runner
 - build_test
+- code_builder
 - collection
 - convert
 - crypto
+- dart_style
+- devtools_app_shared
+- devtools_extensions
 - fake_async
 - ffi
 - gcloud
+- graphs
 - html
 - http
 - intl
 - io
 - js
 - json_serializable
+- leak_tracker_flutter_testing
 - lints
 - logging
 - markdown
 - meta
 - mime
+- mockito
 - path
+- package_config
+- platform
+- pub_semver
 - shelf
 - shelf_static
 - source_gen
@@ -57,6 +66,7 @@
 - _discoveryapis_commons
 - adaptive_navigation
 - file
+- file_testing
 - googleapis
 - googleapis_auth
 - json_annotation

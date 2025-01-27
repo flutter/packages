@@ -669,14 +669,22 @@ class MockWKWebsiteDataStore extends _i1.Mock
       ) as _i6.Future<void>);
 }
 
-/// A class which mocks [WKWebView].
+/// A class which mocks [WKWebViewIOS].
 ///
 /// See the documentation for Mockito's code generation for more information.
-// ignore: must_be_immutable
-class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
-  MockWKWebView() {
+class MockWKWebViewIOS extends _i1.Mock implements _i5.WKWebViewIOS {
+  MockWKWebViewIOS() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i4.UIScrollView get scrollView => (super.noSuchMethod(
+        Invocation.getter(#scrollView),
+        returnValue: _FakeUIScrollView_2(
+          this,
+          Invocation.getter(#scrollView),
+        ),
+      ) as _i4.UIScrollView);
 
   @override
   _i5.WKWebViewConfiguration get configuration => (super.noSuchMethod(
@@ -688,13 +696,39 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
       ) as _i5.WKWebViewConfiguration);
 
   @override
-  _i4.UIScrollView get scrollView => (super.noSuchMethod(
-        Invocation.getter(#scrollView),
-        returnValue: _FakeUIScrollView_2(
-          this,
-          Invocation.getter(#scrollView),
+  _i5.WKWebView copy() => (super.noSuchMethod(
+        Invocation.method(
+          #copy,
+          [],
         ),
-      ) as _i4.UIScrollView);
+        returnValue: _FakeWKWebView_9(
+          this,
+          Invocation.method(
+            #copy,
+            [],
+          ),
+        ),
+      ) as _i5.WKWebView);
+
+  @override
+  _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
+        Invocation.method(
+          #setBackgroundColor,
+          [color],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> setOpaque(bool? opaque) => (super.noSuchMethod(
+        Invocation.method(
+          #setOpaque,
+          [opaque],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
 
   @override
   _i6.Future<void> setUIDelegate(_i5.WKUIDelegate? delegate) =>
@@ -845,6 +879,15 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
       ) as _i6.Future<String?>);
 
   @override
+  _i6.Future<String?> getCustomUserAgent() => (super.noSuchMethod(
+        Invocation.method(
+          #getCustomUserAgent,
+          [],
+        ),
+        returnValue: _i6.Future<String?>.value(),
+      ) as _i6.Future<String?>);
+
+  @override
   _i6.Future<void> setAllowsBackForwardNavigationGestures(bool? allow) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -880,50 +923,6 @@ class MockWKWebView extends _i1.Mock implements _i5.WKWebView {
         Invocation.method(
           #setInspectable,
           [inspectable],
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
-
-  @override
-  _i6.Future<String?> getCustomUserAgent() => (super.noSuchMethod(
-        Invocation.method(
-          #getCustomUserAgent,
-          [],
-        ),
-        returnValue: _i6.Future<String?>.value(),
-      ) as _i6.Future<String?>);
-
-  @override
-  _i5.WKWebView copy() => (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [],
-        ),
-        returnValue: _FakeWKWebView_9(
-          this,
-          Invocation.method(
-            #copy,
-            [],
-          ),
-        ),
-      ) as _i5.WKWebView);
-
-  @override
-  _i6.Future<void> setBackgroundColor(_i7.Color? color) => (super.noSuchMethod(
-        Invocation.method(
-          #setBackgroundColor,
-          [color],
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
-
-  @override
-  _i6.Future<void> setOpaque(bool? opaque) => (super.noSuchMethod(
-        Invocation.method(
-          #setOpaque,
-          [opaque],
         ),
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),

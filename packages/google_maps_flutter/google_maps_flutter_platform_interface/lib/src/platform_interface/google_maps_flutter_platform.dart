@@ -49,13 +49,13 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('init() has not been implemented.');
   }
 
-  /// Updates configuration options of the map user interface - deprecated, use
-  /// updateMapConfiguration instead.
+  /// Updates configuration options of the map user interface.
   ///
   /// Change listeners are notified once the update has been made on the
   /// platform side.
   ///
   /// The returned [Future] completes after listeners have been notified.
+  @Deprecated('Use updateMapConfiguration instead.')
   Future<void> updateMapOptions(
     Map<String, dynamic> optionsUpdate, {
     required int mapId,
@@ -129,6 +129,19 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('updateCircles() has not been implemented.');
   }
 
+  /// Updates heatmap configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateHeatmaps(
+    HeatmapUpdates heatmapUpdates, {
+    required int mapId,
+  }) {
+    throw UnimplementedError('updateHeatmaps() has not been implemented.');
+  }
+
   /// Updates tile overlay configuration.
   ///
   /// Change listeners are notified once the update has been made on the
@@ -140,6 +153,20 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     required int mapId,
   }) {
     throw UnimplementedError('updateTileOverlays() has not been implemented.');
+  }
+
+  /// Updates cluster manager configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> updateClusterManagers(
+    ClusterManagerUpdates clusterManagerUpdates, {
+    required int mapId,
+  }) {
+    throw UnimplementedError(
+        'updateClusterManagers() has not been implemented.');
   }
 
   /// Clears the tile cache so that all tiles will be requested again from the
@@ -357,13 +384,24 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onLongPress() has not been implemented.');
   }
 
+  /// A marker icon managed by [ClusterManager] has been tapped.
+  Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
+    throw UnimplementedError('onClusterTap() has not been implemented.');
+  }
+
   /// Dispose of whatever resources the `mapId` is holding on to.
   void dispose({required int mapId}) {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
-  /// Returns a widget displaying the map view - deprecated, use
-  /// [buildViewWithConfiguration] instead.
+  /// If the last attempt to set the style via [MapConfiguration.style] failed,
+  /// returns the error information, otherwise returns null.
+  Future<String?> getStyleError({required int mapId}) async {
+    return null;
+  }
+
+  /// Returns a widget displaying the map view.
+  @Deprecated('Use buildViewWithConfiguration instead.')
   Widget buildView(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
@@ -382,8 +420,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('buildView() has not been implemented.');
   }
 
-  /// Returns a widget displaying the map view - deprecated, use
-  /// [buildViewWithConfiguration] instead.
+  /// Returns a widget displaying the map view.
   ///
   /// This method is similar to [buildView], but contains a parameter for
   /// platforms that require a text direction.
@@ -392,6 +429,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
   /// [buildView]. This is for backward compatibility with existing
   /// implementations. Platforms that use the text direction should override
   /// this as the primary implementation, and delegate to it from buildView.
+  @Deprecated('Use buildViewWithConfiguration instead.')
   Widget buildViewWithTextDirection(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {

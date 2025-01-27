@@ -1,5 +1,81 @@
-## NEXT
+## 4.3.1
 
+* Bumps gradle-plugin to 2.1.0.
+
+## 4.3.0
+
+* Adds support for disabling content URL access within WebView and disabling the Geolocation API.
+  See `AndroidWebViewController.setAllowContentAccess` and
+  `AndroidWebViewController.setGeolocationEnabled`.
+
+## 4.2.0
+
+* Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.
+
+## 4.1.0
+
+* Updates internal API wrapper to use `ProxyApi`s.
+
+## 4.0.3
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
+## 4.0.2
+
+* Updates README to remove contributor-focused documentation.
+
+## 4.0.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
+## 4.0.0
+
+* Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.
+* **Breaking Change** Bumps Android `minSdkVersion` from 19 to 21.
+
+## 3.16.9
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 3.16.8
+
+* Bumps androidx.webkit:webkit from 1.11.0 to 1.12.0.
+
+## 3.16.7
+
+* Bumps androidx.annotation:annotation from 1.8.1 to 1.8.2.
+
+## 3.16.6
+
+* Bumps androidx.annotation:annotation from 1.7.1 to 1.8.1.
+
+## 3.16.5
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 3.16.4
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 3.16.3
+
+* Bumps androidx.webkit:webkit from 1.10.0 to 1.11.0.
+
+## 3.16.2
+
+* Bumps androidx.webkit:webkit from 1.7.0 to 1.10.0.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 3.16.1
+
+* Fixes iframe navigation being handled in the main frame when `NavigationDelegate.onNavigationRequest` is present.
+
+## 3.16.0
+
+* Adds onReceivedHttpError WebViewClient callback to support
+  `PlatformNavigationDelegate.onHttpError`.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates compileSdk to 34.
 

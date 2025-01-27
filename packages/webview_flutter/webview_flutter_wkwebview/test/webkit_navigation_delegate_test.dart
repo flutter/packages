@@ -42,7 +42,7 @@ void main() {
       webKitDelegate.setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFinishNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         'https://www.google.com',
       );
 
@@ -64,11 +64,65 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didStartProvisionalNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         'https://www.google.com',
       );
 
       expect(callbackUrl, 'https://www.google.com');
+    });
+
+    test('setOnHttpError from decidePolicyForNavigationResponse', () {
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: CapturingUIDelegate.new,
+          ),
+        ),
+      );
+
+      late final HttpResponseError callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      webKitDelegate.setOnHttpError(onHttpError);
+
+      CapturingNavigationDelegate
+          .lastCreatedDelegate.decidePolicyForNavigationResponse!(
+        WKWebViewIOS.detached(),
+        const WKNavigationResponse(
+            response: NSHttpUrlResponse(statusCode: 401), forMainFrame: true),
+      );
+
+      expect(callbackError.response?.statusCode, 401);
+    });
+
+    test('setOnHttpError is not called for error codes < 400', () {
+      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+            createUIDelegate: CapturingUIDelegate.new,
+          ),
+        ),
+      );
+
+      HttpResponseError? callbackError;
+      void onHttpError(HttpResponseError error) {
+        callbackError = error;
+      }
+
+      webKitDelegate.setOnHttpError(onHttpError);
+
+      CapturingNavigationDelegate
+          .lastCreatedDelegate.decidePolicyForNavigationResponse!(
+        WKWebViewIOS.detached(),
+        const WKNavigationResponse(
+            response: NSHttpUrlResponse(statusCode: 399), forMainFrame: true),
+      );
+
+      expect(callbackError, isNull);
     });
 
     test('onWebResourceError from didFailNavigation', () {
@@ -89,7 +143,7 @@ void main() {
       webKitDelegate.setOnWebResourceError(onWebResourceError);
 
       CapturingNavigationDelegate.lastCreatedDelegate.didFailNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
@@ -128,7 +182,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.didFailProvisionalNavigation!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
         const NSError(
           code: WKErrorCode.webViewInvalidated,
           domain: 'domain',
@@ -167,7 +221,7 @@ void main() {
 
       CapturingNavigationDelegate
           .lastCreatedDelegate.webViewWebContentProcessDidTerminate!(
-        WKWebView.detached(),
+        WKWebViewIOS.detached(),
       );
 
       expect(callbackError.description, '');
@@ -202,7 +256,7 @@ void main() {
       expect(
         CapturingNavigationDelegate
             .lastCreatedDelegate.decidePolicyForNavigationAction!(
-          WKWebView.detached(),
+          WKWebViewIOS.detached(),
           const WKNavigationAction(
             request: NSUrlRequest(url: 'https://www.google.com'),
             targetFrame: WKFrameInfo(
@@ -241,12 +295,50 @@ void main() {
 
       CapturingNavigationDelegate
               .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
-          WKWebView.detached(),
+          WKWebViewIOS.detached(),
           NSUrlAuthenticationChallenge.detached(
             protectionSpace: NSUrlProtectionSpace.detached(
               host: expectedHost,
               realm: expectedRealm,
               authenticationMethod: NSUrlAuthenticationMethod.httpBasic,
+            ),
+          ),
+          (NSUrlSessionAuthChallengeDisposition disposition,
+              NSUrlCredential? credential) {});
+
+      expect(callbackHost, expectedHost);
+      expect(callbackRealm, expectedRealm);
+    });
+
+    test('onHttpNtlmAuthRequest emits host and realm', () {
+      final WebKitNavigationDelegate iosNavigationDelegate =
+          WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            createNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
+
+      String? callbackHost;
+      String? callbackRealm;
+
+      iosNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
+        callbackHost = request.host;
+        callbackRealm = request.realm;
+      });
+
+      const String expectedHost = 'expectedHost';
+      const String expectedRealm = 'expectedRealm';
+
+      CapturingNavigationDelegate
+              .lastCreatedDelegate.didReceiveAuthenticationChallenge!(
+          WKWebViewIOS.detached(),
+          NSUrlAuthenticationChallenge.detached(
+            protectionSpace: NSUrlProtectionSpace.detached(
+              host: expectedHost,
+              realm: expectedRealm,
+              authenticationMethod: NSUrlAuthenticationMethod.httpNtlm,
             ),
           ),
           (NSUrlSessionAuthChallengeDisposition disposition,
@@ -263,6 +355,7 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
   CapturingNavigationDelegate({
     super.didFinishNavigation,
     super.didStartProvisionalNavigation,
+    super.decidePolicyForNavigationResponse,
     super.didFailNavigation,
     super.didFailProvisionalNavigation,
     super.decidePolicyForNavigationAction,

@@ -79,6 +79,9 @@ class GoogleMapController {
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
     GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
         (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
+    GoogleMapsFlutterPlatform.instance
+        .onClusterTap(mapId: mapId)
+        .listen((ClusterTapEvent e) => _googleMapState.onClusterTap(e.value));
   }
 
   /// Updates configuration options of the map user interface.
@@ -101,6 +104,18 @@ class GoogleMapController {
   Future<void> _updateMarkers(MarkerUpdates markerUpdates) {
     return GoogleMapsFlutterPlatform.instance
         .updateMarkers(markerUpdates, mapId: mapId);
+  }
+
+  /// Updates cluster manager configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> _updateClusterManagers(
+      ClusterManagerUpdates clusterManagerUpdates) {
+    return GoogleMapsFlutterPlatform.instance
+        .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
   }
 
   /// Updates polygon configuration.
@@ -134,6 +149,17 @@ class GoogleMapController {
   Future<void> _updateCircles(CircleUpdates circleUpdates) {
     return GoogleMapsFlutterPlatform.instance
         .updateCircles(circleUpdates, mapId: mapId);
+  }
+
+  /// Updates heatmap configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> _updateHeatmaps(HeatmapUpdates heatmapUpdates) {
+    return GoogleMapsFlutterPlatform.instance
+        .updateHeatmaps(heatmapUpdates, mapId: mapId);
   }
 
   /// Updates tile overlays configuration.
@@ -190,9 +216,15 @@ class GoogleMapController {
   /// Also, refer [iOS](https://developers.google.com/maps/documentation/ios-sdk/style-reference)
   /// and [Android](https://developers.google.com/maps/documentation/android-sdk/style-reference)
   /// style reference for more information regarding the supported styles.
+  @Deprecated('Use GoogleMap.style instead.')
   Future<void> setMapStyle(String? mapStyle) {
     return GoogleMapsFlutterPlatform.instance
         .setMapStyle(mapStyle, mapId: mapId);
+  }
+
+  /// Returns the last style error, if any.
+  Future<String?> getStyleError() {
+    return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
   }
 
   /// Return [LatLngBounds] defining the region that is visible in a map.

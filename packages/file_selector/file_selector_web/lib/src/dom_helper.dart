@@ -8,7 +8,7 @@ import 'dart:js_interop';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 /// Class to manipulate the DOM with the intention of reading files from it.
 class DomHelper {

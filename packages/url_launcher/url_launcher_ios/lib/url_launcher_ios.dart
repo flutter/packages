@@ -82,11 +82,10 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
       // Intentionally treat any new values as platformDefault; support for any
       // new mode requires intentional opt-in, otherwise falling back is the
       // documented behavior.
-      // ignore: no_default_cases
+      // ignore: no_default_cases, unreachable_switch_default
       default:
         // By default, open web URLs in the application.
         inApp = url.startsWith('http:') || url.startsWith('https:');
-        break;
     }
 
     if (inApp) {
@@ -111,7 +110,7 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
       // Default is a desired behavior here since support for new modes is
       // always opt-in, and the enum lives in a different package, so silently
       // adding "false" for new values is the correct behavior.
-      // ignore: no_default_cases
+      // ignore: no_default_cases, unreachable_switch_default
       default:
         return false;
     }

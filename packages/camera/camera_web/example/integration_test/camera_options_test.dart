@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore: implementation_imports
+import 'dart:js_interop';
+
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -19,10 +22,10 @@ void main() {
       );
 
       expect(
-        cameraOptions.toJson(),
+        cameraOptions.toMediaStreamConstraints().dartify(),
         equals(<String, Object>{
-          'audio': cameraOptions.audio.toJson(),
-          'video': cameraOptions.video.toJson(),
+          'audio': cameraOptions.audio.toMediaStreamConstraints().dartify()!,
+          'video': cameraOptions.video.toMediaStreamConstraints().dartify()!,
         }),
       );
     });
@@ -60,8 +63,8 @@ void main() {
   group('AudioConstraints', () {
     testWidgets('serializes correctly', (WidgetTester tester) async {
       expect(
-        const AudioConstraints(enabled: true).toJson(),
-        equals(true),
+        const AudioConstraints(enabled: true).toMediaStreamConstraints(),
+        true.toJS,
       );
     });
 
@@ -83,7 +86,7 @@ void main() {
       );
 
       expect(
-        videoConstraints.toJson(),
+        videoConstraints.toMediaStreamConstraints().dartify(),
         equals(<String, Object>{
           'facingMode': videoConstraints.facingMode!.toJson(),
           'width': videoConstraints.width!.toJson(),

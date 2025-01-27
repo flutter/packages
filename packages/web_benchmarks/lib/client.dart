@@ -10,8 +10,10 @@ import 'dart:math' as math;
 import 'package:web/web.dart';
 
 import 'src/common.dart';
+import 'src/computations.dart';
 import 'src/recorder.dart';
 
+export 'src/computations.dart';
 export 'src/recorder.dart';
 
 /// Signature for a function that creates a [Recorder].
@@ -25,6 +27,15 @@ late Map<String, RecorderFactory> _benchmarks;
 
 final LocalBenchmarkServerClient _client = LocalBenchmarkServerClient();
 
+/// Adapts between web:0.5.1 and 1.0.0, so this package is compatible with both.
+extension on HTMLElement {
+  @JS('innerHTML')
+  external set innerHTMLString(String value);
+  @JS('insertAdjacentHTML')
+  external void insertAdjacentHTMLString(String position, String string);
+  void appendHtml(String input) => insertAdjacentHTMLString('beforeend', input);
+}
+
 /// Starts a local benchmark client to run [benchmarks].
 ///
 /// Usually used in combination with a benchmark server, which orders the
@@ -32,9 +43,12 @@ final LocalBenchmarkServerClient _client = LocalBenchmarkServerClient();
 ///
 /// When used without a server, prompts the user to select a benchmark to
 /// run next.
+///
+/// [benchmarkPath] specifies the path for the URL that will be loaded in Chrome
+/// when reloading the window for subsequent benchmark runs.
 Future<void> runBenchmarks(
   Map<String, RecorderFactory> benchmarks, {
-  String initialPage = defaultInitialPage,
+  String benchmarkPath = defaultInitialPath,
 }) async {
   // Set local benchmarks.
   _benchmarks = benchmarks;
@@ -51,14 +65,15 @@ Future<void> runBenchmarks(
   await _runBenchmark(nextBenchmark);
 
   final Uri currentUri = Uri.parse(window.location.href);
-  // Create a new URI with the current 'page' value set to [initialPage] to
-  // ensure the benchmark app is reloaded at the proper location.
-  final String newUri = Uri(
-    scheme: currentUri.scheme,
-    host: currentUri.host,
-    port: currentUri.port,
-    path: initialPage,
-  ).toString();
+  // Create a new URI with the parsed value of [benchmarkPath] to ensure the
+  // benchmark app is reloaded with the proper configuration.
+  final String newUri = Uri.parse(benchmarkPath)
+      .replace(
+        scheme: currentUri.scheme,
+        host: currentUri.host,
+        port: currentUri.port,
+      )
+      .toString();
 
   // Reloading the window will trigger the next benchmark to run.
   await _client.printToConsole(
@@ -152,7 +167,7 @@ void _fallbackToManual(String error) {
 void _printResultsToScreen(Profile profile) {
   final HTMLBodyElement body = document.body! as HTMLBodyElement;
 
-  body.innerHTML = '<h2>${profile.name}</h2>';
+  body.innerHTMLString = '<h2>${profile.name}</h2>';
 
   profile.scoreData.forEach((String scoreKey, Timeseries timeseries) {
     body.appendHtml('<h2>$scoreKey</h2>');
@@ -318,7 +333,7 @@ class LocalBenchmarkServerClient {
   /// DevTools Protocol.
   Future<void> startPerformanceTracing(String? benchmarkName) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/start-performance-tracing?label=$benchmarkName',
       method: 'POST',
       mimeType: 'application/json',
@@ -328,7 +343,7 @@ class LocalBenchmarkServerClient {
   /// Stops the performance tracing session started by [startPerformanceTracing].
   Future<void> stopPerformanceTracing() async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/stop-performance-tracing',
       method: 'POST',
       mimeType: 'application/json',
@@ -356,7 +371,7 @@ class LocalBenchmarkServerClient {
   /// The server will halt the devicelab task and log the error.
   Future<void> reportError(dynamic error, StackTrace stackTrace) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/on-error',
       method: 'POST',
       mimeType: 'application/json',
@@ -370,7 +385,7 @@ class LocalBenchmarkServerClient {
   /// Reports a message about the demo to the benchmark server.
   Future<void> printToConsole(String report) async {
     _checkNotManualMode();
-    await HttpRequest.request(
+    await _requestXhr(
       '/print-to-console',
       method: 'POST',
       mimeType: 'text/plain',
@@ -384,7 +399,7 @@ class LocalBenchmarkServerClient {
     String url, {
     required String method,
     required String mimeType,
-    required String sendData,
+    String? sendData,
   }) {
     final Completer<XMLHttpRequest> completer = Completer<XMLHttpRequest>();
     final XMLHttpRequest xhr = XMLHttpRequest();
@@ -394,11 +409,11 @@ class LocalBenchmarkServerClient {
       completer.complete(xhr);
     });
     xhr.onError.listen(completer.completeError);
-    xhr.send(sendData.toJS);
+    if (sendData != null) {
+      xhr.send(sendData.toJS);
+    } else {
+      xhr.send();
+    }
     return completer.future;
   }
-}
-
-extension on HTMLElement {
-  void appendHtml(String input) => insertAdjacentHTML('beforeend', input);
 }

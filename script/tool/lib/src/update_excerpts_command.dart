@@ -92,7 +92,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         'the resulting changes.\n'
         '\n'
         '${indentation}For more information, see '
-        'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#readme-code',
+        'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#readme-code',
       );
       return PackageResult.fail();
     }
@@ -149,7 +149,6 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
                     language = 'groovy';
                   default:
                     language = extension.substring(1);
-                    break;
                 }
                 final String section = match.namedGroup('section')!;
                 final String plaster = match.namedGroup('plaster') ?? '···';

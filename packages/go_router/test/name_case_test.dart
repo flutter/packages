@@ -25,6 +25,7 @@ void main() {
           ),
         ],
       );
+      addTearDown(router.dispose);
 
       // run MaterialApp, initial screen path is '/' -> ScreenA
       await tester.pumpWidget(

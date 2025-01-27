@@ -137,7 +137,7 @@ TEST(PigeonTests, CallSearch) {
   Writer writer;
   flutter::EncodableList args;
   args.push_back(flutter::CustomEncodableValue(request));
-  MessageApiCodecSerializer::GetInstance().WriteValue(args, &writer);
+  PigeonInternalCodecSerializer::GetInstance().WriteValue(args, &writer);
   handler(writer.data_.data(), writer.data_.size(), reply);
   EXPECT_TRUE(did_call_reply);
 }

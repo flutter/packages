@@ -44,6 +44,7 @@ class _MyAppState extends State<_MyApp> {
   final InAppPurchasePlatform _inAppPurchasePlatform =
       InAppPurchasePlatform.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
+  late StreamSubscription<GooglePlayUserChoiceDetails> _userChoiceDetailsStream;
   List<String> _notFoundIds = <String>[];
   List<ProductDetails> _products = <ProductDetails>[];
   List<PurchaseDetails> _purchases = <PurchaseDetails>[];
@@ -56,6 +57,7 @@ class _MyAppState extends State<_MyApp> {
   bool _purchasePending = false;
   bool _loading = true;
   String? _queryProductError;
+  final List<String> _userChoiceDetailsList = <String>[];
 
   @override
   void initState() {
@@ -70,6 +72,19 @@ class _MyAppState extends State<_MyApp> {
       // handle error here.
     });
     initStoreInfo();
+    final InAppPurchaseAndroidPlatformAddition addition =
+        InAppPurchasePlatformAddition.instance!
+            as InAppPurchaseAndroidPlatformAddition;
+    final Stream<GooglePlayUserChoiceDetails> userChoiceDetailsUpdated =
+        addition.userChoiceDetailsStream;
+    _userChoiceDetailsStream =
+        userChoiceDetailsUpdated.listen((GooglePlayUserChoiceDetails details) {
+      deliverUserChoiceDetails(details);
+    }, onDone: () {
+      _userChoiceDetailsStream.cancel();
+    }, onError: (Object error) {
+      // handle error here.
+    });
     super.initState();
   }
 
@@ -134,6 +149,8 @@ class _MyAppState extends State<_MyApp> {
   @override
   void dispose() {
     _subscription.cancel();
+    _userChoiceDetailsStream.cancel();
+    _userChoiceDetailsList.clear();
     super.dispose();
   }
 
@@ -149,6 +166,7 @@ class _MyAppState extends State<_MyApp> {
             _buildConsumableBox(),
             const _FeatureCard(),
             _buildFetchButtons(),
+            _buildUserChoiceDetailsDisplay(),
           ],
         ),
       );
@@ -241,10 +259,7 @@ class _MyAppState extends State<_MyApp> {
           foregroundColor: Colors.white,
         ),
         onPressed: () {
-          final InAppPurchaseAndroidPlatformAddition addition =
-              InAppPurchasePlatformAddition.instance!
-                  as InAppPurchaseAndroidPlatformAddition;
-          unawaited(deliverCountryCode(addition.getCountryCode()));
+          unawaited(deliverCountryCode(_inAppPurchasePlatform.countryCode()));
         },
         child: const Text('Fetch Country Code'),
       ),
@@ -326,6 +341,26 @@ class _MyAppState extends State<_MyApp> {
     );
   }
 
+  Card _buildUserChoiceDetailsDisplay() {
+    const ListTile header = ListTile(title: Text('UserChoiceDetails'));
+    final List<Widget> entries = <ListTile>[];
+    for (final String item in _userChoiceDetailsList) {
+      entries.add(ListTile(
+          title: Text(item,
+              style: TextStyle(color: ThemeData.light().colorScheme.primary)),
+          subtitle: Text(_countryCode)));
+    }
+    return Card(
+      child: Column(
+        children: <Widget>[
+          header,
+          const Divider(),
+          ...entries,
+        ],
+      ),
+    );
+  }
+
   Card _buildProductList() {
     if (_loading) {
       return const Card(
@@ -389,8 +424,8 @@ class _MyAppState extends State<_MyApp> {
                               changeSubscriptionParam: oldSubscription != null
                                   ? ChangeSubscriptionParam(
                                       oldPurchaseDetails: oldSubscription,
-                                      prorationMode: ProrationMode
-                                          .immediateWithTimeProration)
+                                      replacementMode:
+                                          ReplacementMode.withTimeProration)
                                   : null);
                       if (productDetails.id == _kConsumableId) {
                         _inAppPurchasePlatform.buyConsumable(
@@ -537,6 +572,15 @@ class _MyAppState extends State<_MyApp> {
     // handle invalid purchase here if  _verifyPurchase` failed.
   }
 
+  Future<void> deliverUserChoiceDetails(
+      GooglePlayUserChoiceDetails details) async {
+    final String detailDescription =
+        '${details.externalTransactionToken}, ${details.originalExternalTransactionId}, ${details.products.length}';
+    setState(() {
+      _userChoiceDetailsList.add(detailDescription);
+    });
+  }
+
   Future<void> _listenToPurchaseUpdated(
       List<PurchaseDetails> purchaseDetailsList) async {
     for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
@@ -636,19 +680,15 @@ class _FeatureCard extends StatelessWidget {
   }
 
   String _featureToString(BillingClientFeature feature) {
-    switch (feature) {
-      case BillingClientFeature.inAppItemsOnVR:
-        return 'inAppItemsOnVR';
-      case BillingClientFeature.priceChangeConfirmation:
-        return 'priceChangeConfirmation';
-      case BillingClientFeature.productDetails:
-        return 'productDetails';
-      case BillingClientFeature.subscriptions:
-        return 'subscriptions';
-      case BillingClientFeature.subscriptionsOnVR:
-        return 'subscriptionsOnVR';
-      case BillingClientFeature.subscriptionsUpdate:
-        return 'subscriptionsUpdate';
-    }
+    return switch (feature) {
+      BillingClientFeature.alternativeBillingOnly => 'alternativeBillingOnly',
+      BillingClientFeature.priceChangeConfirmation => 'priceChangeConfirmation',
+      BillingClientFeature.productDetails => 'productDetails',
+      BillingClientFeature.subscriptions => 'subscriptions',
+      BillingClientFeature.subscriptionsUpdate => 'subscriptionsUpdate',
+      BillingClientFeature.billingConfig => 'billingConfig',
+      BillingClientFeature.externalOffer => 'externalOffer',
+      BillingClientFeature.inAppMessaging => 'inAppMessaging',
+    };
   }
 }

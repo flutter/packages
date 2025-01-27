@@ -83,7 +83,6 @@ public class MeteringPointHostApiImpl implements MeteringPointHostApi {
      * Returns the default point size of the {@link MeteringPoint} width and height, which is a
      * normalized percentage of the sensor width/height.
      */
-    @NonNull
     public float getDefaultPointSize() {
       return MeteringPointFactory.getDefaultPointSize();
     }

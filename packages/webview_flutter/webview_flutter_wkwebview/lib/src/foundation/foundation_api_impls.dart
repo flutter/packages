@@ -100,16 +100,16 @@ class FoundationFlutterApis {
   /// Ensures all the Flutter APIs have been set up to receive calls from native code.
   void ensureSetUp() {
     if (!_hasBeenSetUp) {
-      NSObjectFlutterApi.setup(
+      NSObjectFlutterApi.setUp(
         object,
         binaryMessenger: _binaryMessenger,
       );
-      NSUrlFlutterApi.setup(url, binaryMessenger: _binaryMessenger);
-      NSUrlProtectionSpaceFlutterApi.setup(
+      NSUrlFlutterApi.setUp(url, binaryMessenger: _binaryMessenger);
+      NSUrlProtectionSpaceFlutterApi.setUp(
         urlProtectionSpace,
         binaryMessenger: _binaryMessenger,
       );
-      NSUrlAuthenticationChallengeFlutterApi.setup(
+      NSUrlAuthenticationChallengeFlutterApi.setUp(
         urlAuthenticationChallenge,
         binaryMessenger: _binaryMessenger,
       );

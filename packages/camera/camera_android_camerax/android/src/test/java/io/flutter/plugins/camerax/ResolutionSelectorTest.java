@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
+import androidx.camera.core.resolutionselector.ResolutionFilter;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
 import org.junit.After;
@@ -46,13 +47,21 @@ public class ResolutionSelectorTest {
     final long aspectRatioStrategyIdentifier = 15;
     instanceManager.addDartCreatedInstance(mockAspectRatioStrategy, aspectRatioStrategyIdentifier);
 
-    when(mockProxy.create(mockResolutionStrategy, mockAspectRatioStrategy))
+    final ResolutionFilter mockResolutionFilter = mock(ResolutionFilter.class);
+    final long resolutionFilterIdentifier = 33;
+    instanceManager.addDartCreatedInstance(mockResolutionFilter, resolutionFilterIdentifier);
+
+    when(mockProxy.create(mockResolutionStrategy, mockAspectRatioStrategy, mockResolutionFilter))
         .thenReturn(mockResolutionSelector);
     final ResolutionSelectorHostApiImpl hostApi =
         new ResolutionSelectorHostApiImpl(instanceManager, mockProxy);
 
     final long instanceIdentifier = 0;
-    hostApi.create(instanceIdentifier, resolutionStrategyIdentifier, aspectRatioStrategyIdentifier);
+    hostApi.create(
+        instanceIdentifier,
+        resolutionStrategyIdentifier,
+        resolutionFilterIdentifier,
+        aspectRatioStrategyIdentifier);
 
     assertEquals(instanceManager.getInstance(instanceIdentifier), mockResolutionSelector);
   }

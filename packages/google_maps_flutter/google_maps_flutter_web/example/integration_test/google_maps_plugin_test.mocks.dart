@@ -9,6 +9,7 @@ import 'package:google_maps/google_maps.dart' as _i5;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart'
     as _i2;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart' as _i4;
+import 'package:google_maps_flutter_web/src/marker_clustering.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 
 // ignore_for_file: type=lint
@@ -124,12 +125,22 @@ class MockGoogleMapController extends _i1.Mock
       ) as bool);
 
   @override
+  List<_i5.MapTypeStyle> get styles => (super.noSuchMethod(
+        Invocation.getter(#styles),
+        returnValue: <_i5.MapTypeStyle>[],
+        returnValueForMissingStub: <_i5.MapTypeStyle>[],
+      ) as List<_i5.MapTypeStyle>);
+
+  @override
   void debugSetOverrides({
     _i4.DebugCreateMapFunction? createMap,
+    _i4.DebugSetOptionsFunction? setOptions,
     _i4.MarkersController? markers,
     _i4.CirclesController? circles,
+    _i4.HeatmapsController? heatmaps,
     _i4.PolygonsController? polygons,
     _i4.PolylinesController? polylines,
+    _i6.ClusterManagersController? clusterManagers,
     _i4.TileOverlaysController? tileOverlays,
   }) =>
       super.noSuchMethod(
@@ -138,10 +149,13 @@ class MockGoogleMapController extends _i1.Mock
           [],
           {
             #createMap: createMap,
+            #setOptions: setOptions,
             #markers: markers,
             #circles: circles,
+            #heatmaps: heatmaps,
             #polygons: polygons,
             #polylines: polylines,
+            #clusterManagers: clusterManagers,
             #tileOverlays: tileOverlays,
           },
         ),
@@ -278,6 +292,15 @@ class MockGoogleMapController extends _i1.Mock
       );
 
   @override
+  void updateHeatmaps(_i2.HeatmapUpdates? updates) => super.noSuchMethod(
+        Invocation.method(
+          #updateHeatmaps,
+          [updates],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   void updatePolygons(_i2.PolygonUpdates? updates) => super.noSuchMethod(
         Invocation.method(
           #updatePolygons,
@@ -296,9 +319,21 @@ class MockGoogleMapController extends _i1.Mock
       );
 
   @override
-  void updateMarkers(_i2.MarkerUpdates? updates) => super.noSuchMethod(
+  _i3.Future<void> updateMarkers(_i2.MarkerUpdates? updates) =>
+      (super.noSuchMethod(
         Invocation.method(
           #updateMarkers,
+          [updates],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  void updateClusterManagers(_i2.ClusterManagerUpdates? updates) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #updateClusterManagers,
           [updates],
         ),
         returnValueForMissingStub: null,

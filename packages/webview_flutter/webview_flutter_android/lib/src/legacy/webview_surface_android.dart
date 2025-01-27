@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 // ignore: implementation_imports
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
-import '../android_webview.dart';
+import '../android_webkit.g.dart';
 import 'webview_android.dart';
 import 'webview_android_widget.dart';
 

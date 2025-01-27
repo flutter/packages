@@ -2,9 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore: implementation_imports
+import 'dart:js_interop';
+
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
 
@@ -15,7 +19,8 @@ void main() {
     testWidgets('sets all properties', (WidgetTester tester) async {
       const double minimum = 100.0;
       const double maximum = 400.0;
-      final MockMediaStreamTrack videoTrack = MockMediaStreamTrack();
+      final MediaStreamTrack videoTrack =
+          createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack;
 
       final ZoomLevelCapability capability = ZoomLevelCapability(
         minimum: minimum,
@@ -29,7 +34,8 @@ void main() {
     });
 
     testWidgets('supports value equality', (WidgetTester tester) async {
-      final MockMediaStreamTrack videoTrack = MockMediaStreamTrack();
+      final MediaStreamTrack videoTrack =
+          createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack;
 
       expect(
         ZoomLevelCapability(

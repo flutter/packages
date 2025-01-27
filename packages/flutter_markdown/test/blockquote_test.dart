@@ -26,6 +26,20 @@ void defineTests() {
     );
 
     testWidgets(
+      'soft wrapping in blockquote',
+      (WidgetTester tester) async {
+        await tester.pumpWidget(
+          boilerplate(
+            const MarkdownBody(data: '> soft\n> wrap'),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        expectTextStrings(widgets, <String>['soft wrap']);
+      },
+    );
+
+    testWidgets(
       'should work with styling',
       (WidgetTester tester) async {
         final ThemeData theme = ThemeData.light().copyWith(

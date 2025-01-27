@@ -3,8 +3,8 @@ description: Demonstrates how to use the path_provider plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.1.0
-  flutter: ">=3.13.0"
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
 
 dependencies:
   flutter:

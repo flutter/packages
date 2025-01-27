@@ -95,6 +95,13 @@ abstract class StructuredGenerator<T> extends Generator<T> {
       dartPackageName: dartPackageName,
     );
 
+    writeGeneralCodec(
+      generatorOptions,
+      root,
+      indent,
+      dartPackageName: dartPackageName,
+    );
+
     writeApis(
       generatorOptions,
       root,
@@ -205,6 +212,14 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     }
   }
 
+  /// Writes the custom codec to [indent].
+  void writeGeneralCodec(
+    T generatorOptions,
+    Root root,
+    Indent indent, {
+    required String dartPackageName,
+  });
+
   /// Writes a single data class to [indent].
   void writeDataClass(
     T generatorOptions,
@@ -261,6 +276,14 @@ abstract class StructuredGenerator<T> extends Generator<T> {
           );
         case AstProxyApi():
           writeProxyApi(
+            generatorOptions,
+            root,
+            indent,
+            api,
+            dartPackageName: dartPackageName,
+          );
+        case AstEventChannelApi():
+          writeEventChannelApi(
             generatorOptions,
             root,
             indent,
@@ -328,6 +351,15 @@ abstract class StructuredGenerator<T> extends Generator<T> {
     Root root,
     Indent indent,
     AstProxyApi api, {
+    required String dartPackageName,
+  }) {}
+
+  /// Writes a single event channel Api to [indent].
+  void writeEventChannelApi(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+    AstEventChannelApi api, {
     required String dartPackageName,
   }) {}
 }

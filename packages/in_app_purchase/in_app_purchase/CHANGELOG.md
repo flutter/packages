@@ -1,5 +1,11 @@
-## NEXT
+## 3.2.1
 
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+* Updates `in_app_purchase_android` to 0.4.0.
+
+## 3.2.0
+
+* Adds `countryCode` API.
 * Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
 * Updates support matrix in README to indicate that iOS 11 is no longer supported.
 * Clients on versions of Flutter that still support iOS 11 can continue to use this

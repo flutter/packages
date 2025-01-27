@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:web/helpers.dart';
+import 'package:web/web.dart';
 
 /// Create anchor element with download attribute
 HTMLAnchorElement createAnchorElement(String href, String? suggestedName) =>
@@ -20,11 +20,11 @@ void addElementToContainerAndClick(Element container, HTMLElement element) {
 
 /// Initializes a DOM container where elements can be injected.
 Element ensureInitialized(String id) {
-  Element? target = querySelector('#$id');
+  Element? target = document.querySelector('#$id');
   if (target == null) {
     final Element targetElement = document.createElement('flt-x-file')..id = id;
 
-    querySelector('body')!.appendChild(targetElement);
+    document.body!.appendChild(targetElement);
     target = targetElement;
   }
   return target;

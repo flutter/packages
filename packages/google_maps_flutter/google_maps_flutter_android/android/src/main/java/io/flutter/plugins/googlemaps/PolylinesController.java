@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.googlemaps;
 
+import android.content.res.AssetManager;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,14 +18,17 @@ class PolylinesController {
 
   private final Map<String, PolylineController> polylineIdToController;
   private final Map<String, String> googleMapsPolylineIdToDartPolylineId;
-  private final MethodChannel methodChannel;
+  private final @NonNull MapsCallbackApi flutterApi;
   private GoogleMap googleMap;
   private final float density;
+  private final AssetManager assetManager;
 
-  PolylinesController(MethodChannel methodChannel, float density) {
+  PolylinesController(
+      @NonNull MapsCallbackApi flutterApi, AssetManager assetManager, float density) {
+    this.assetManager = assetManager;
     this.polylineIdToController = new HashMap<>();
     this.googleMapsPolylineIdToDartPolylineId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
     this.density = density;
   }
 
@@ -31,31 +36,20 @@ class PolylinesController {
     this.googleMap = googleMap;
   }
 
-  void addPolylines(List<Object> polylinesToAdd) {
-    if (polylinesToAdd != null) {
-      for (Object polylineToAdd : polylinesToAdd) {
-        addPolyline(polylineToAdd);
-      }
+  void addPolylines(@NonNull List<Messages.PlatformPolyline> polylinesToAdd) {
+    for (Messages.PlatformPolyline polylineToAdd : polylinesToAdd) {
+      addPolyline(polylineToAdd);
     }
   }
 
-  void changePolylines(List<Object> polylinesToChange) {
-    if (polylinesToChange != null) {
-      for (Object polylineToChange : polylinesToChange) {
-        changePolyline(polylineToChange);
-      }
+  void changePolylines(@NonNull List<Messages.PlatformPolyline> polylinesToChange) {
+    for (Messages.PlatformPolyline polylineToChange : polylinesToChange) {
+      changePolyline(polylineToChange);
     }
   }
 
-  void removePolylines(List<Object> polylineIdsToRemove) {
-    if (polylineIdsToRemove == null) {
-      return;
-    }
-    for (Object rawPolylineId : polylineIdsToRemove) {
-      if (rawPolylineId == null) {
-        continue;
-      }
-      String polylineId = (String) rawPolylineId;
+  void removePolylines(@NonNull List<String> polylineIdsToRemove) {
+    for (String polylineId : polylineIdsToRemove) {
       final PolylineController polylineController = polylineIdToController.remove(polylineId);
       if (polylineController != null) {
         polylineController.remove();
@@ -69,7 +63,7 @@ class PolylinesController {
     if (polylineId == null) {
       return false;
     }
-    methodChannel.invokeMethod("polyline#onTap", Convert.polylineIdToJson(polylineId));
+    flutterApi.onPolylineTap(polylineId, new NoOpVoidResult());
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {
       return polylineController.consumeTapEvents();
@@ -77,12 +71,10 @@ class PolylinesController {
     return false;
   }
 
-  private void addPolyline(Object polyline) {
-    if (polyline == null) {
-      return;
-    }
+  private void addPolyline(@NonNull Messages.PlatformPolyline polyline) {
     PolylineBuilder polylineBuilder = new PolylineBuilder(density);
-    String polylineId = Convert.interpretPolylineOptions(polyline, polylineBuilder);
+    String polylineId =
+        Convert.interpretPolylineOptions(polyline, polylineBuilder, assetManager, density);
     PolylineOptions options = polylineBuilder.build();
     addPolyline(polylineId, options, polylineBuilder.consumeTapEvents());
   }
@@ -95,20 +87,15 @@ class PolylinesController {
     googleMapsPolylineIdToDartPolylineId.put(polyline.getId(), polylineId);
   }
 
-  private void changePolyline(Object polyline) {
-    if (polyline == null) {
-      return;
-    }
-    String polylineId = getPolylineId(polyline);
+  private void changePolyline(@NonNull Messages.PlatformPolyline polyline) {
+    String polylineId = polyline.getPolylineId();
     PolylineController polylineController = polylineIdToController.get(polylineId);
     if (polylineController != null) {
-      Convert.interpretPolylineOptions(polyline, polylineController);
+      Convert.interpretPolylineOptions(polyline, polylineController, assetManager, density);
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static String getPolylineId(Object polyline) {
-    Map<String, Object> polylineMap = (Map<String, Object>) polyline;
-    return (String) polylineMap.get("polylineId");
+  private static String getPolylineId(Map<String, ?> polyline) {
+    return (String) polyline.get("polylineId");
   }
 }

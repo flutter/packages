@@ -7,32 +7,23 @@ package io.flutter.plugins.camera;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.*;
 import android.hardware.camera2.params.SessionConfiguration;
+import android.media.CamcorderProfile;
 import android.media.ImageReader;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.util.Range;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
@@ -40,7 +31,6 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LifecycleObserver;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.plugin.common.EventChannel;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.camera.features.CameraFeatureFactory;
 import io.flutter.plugins.camera.features.CameraFeatures;
 import io.flutter.plugins.camera.features.Point;
@@ -61,21 +51,59 @@ import io.flutter.plugins.camera.features.sensororientation.DeviceOrientationMan
 import io.flutter.plugins.camera.features.sensororientation.SensorOrientationFeature;
 import io.flutter.plugins.camera.features.zoomlevel.ZoomLevelFeature;
 import io.flutter.plugins.camera.media.ImageStreamReader;
-import io.flutter.plugins.camera.utils.TestUtils;
 import io.flutter.view.TextureRegistry;
+import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatcher;
+import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+/**
+ * As Pigeon-generated class, including FlutterError, do not implement equality, this helper class
+ * simplifies matching arguments passed to Result/VoidResult.error in unit tests.
+ */
+class FlutterErrorMatcher implements ArgumentMatcher<Messages.FlutterError> {
+
+  FlutterErrorMatcher(String code, String message, Object details) {
+    this.code = code;
+    this.message = message;
+    this.details = details;
+  }
+
+  final String code;
+  final String message;
+  final Object details;
+
+  @Override
+  public boolean matches(Messages.FlutterError argument) {
+    return Objects.equals(code, argument.code)
+        && Objects.equals(message, argument.getMessage())
+        && Objects.equals(details, argument.details);
+  }
+}
 
 class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
   final List<CaptureRequest.Builder> captureRequests;
+  @Nullable final CameraCaptureSession session;
 
   FakeCameraDeviceWrapper(List<CaptureRequest.Builder> captureRequests) {
+    this(captureRequests, null);
+  }
+
+  FakeCameraDeviceWrapper(
+      List<CaptureRequest.Builder> captureRequests, CameraCaptureSession session) {
     this.captureRequests = captureRequests;
+    this.session = session;
   }
 
   @NonNull
@@ -85,13 +113,21 @@ class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
   }
 
   @Override
-  public void createCaptureSession(SessionConfiguration config) {}
+  public void createCaptureSession(SessionConfiguration config) {
+    if (session != null) {
+      config.getStateCallback().onConfigured(session);
+    }
+  }
 
   @Override
   public void createCaptureSession(
       @NonNull List<Surface> outputs,
       @NonNull CameraCaptureSession.StateCallback callback,
-      @Nullable Handler handler) {}
+      @Nullable Handler handler) {
+    if (session != null) {
+      callback.onConfigured(session);
+    }
+  }
 
   @Override
   public void close() {}
@@ -99,7 +135,7 @@ class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
 
 public class CameraTest {
   private CameraProperties mockCameraProperties;
-  private CameraFeatureFactory mockCameraFeatureFactory;
+  private TestCameraFeatureFactory mockCameraFeatureFactory;
   private DartMessenger mockDartMessenger;
   private Camera camera;
   private CameraCaptureSession mockCaptureSession;
@@ -109,10 +145,13 @@ public class CameraTest {
   private MockedStatic<Camera.HandlerFactory> mockHandlerFactory;
   private Handler mockHandler;
 
+  private RangeConstruction mockRangeConstruction;
+
   @Before
   public void before() {
+
+    mockRangeConstruction = new RangeConstruction();
     mockCameraProperties = mock(CameraProperties.class);
-    mockCameraFeatureFactory = new TestCameraFeatureFactory();
     mockDartMessenger = mock(DartMessenger.class);
     mockCaptureSession = mock(CameraCaptureSession.class);
     mockPreviewRequestBuilder = mock(CaptureRequest.Builder.class);
@@ -134,6 +173,19 @@ public class CameraTest {
         .when(() -> Camera.HandlerThreadFactory.create(any()))
         .thenReturn(mockHandlerThread);
 
+    // Use a wildcard, since `new Range<Integer>[] {...}`
+    // results in a 'Generic array creation' error.
+    @SuppressWarnings("unchecked")
+    final Range<Integer>[] mockRanges =
+        (Range<Integer>[]) new Range<?>[] {new Range<Integer>(10, 20)};
+
+    when(mockCameraProperties.getControlAutoExposureAvailableTargetFpsRanges())
+        .thenReturn(mockRanges);
+
+    final FpsRangeFeature fpsRangeFeature = new FpsRangeFeature(mockCameraProperties);
+
+    mockCameraFeatureFactory = new TestCameraFeatureFactory(fpsRangeFeature);
+
     camera =
         new Camera(
             mockActivity,
@@ -141,18 +193,22 @@ public class CameraTest {
             mockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            resolutionPreset,
-            enableAudio);
+            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio));
 
-    TestUtils.setPrivateField(camera, "captureSession", mockCaptureSession);
-    TestUtils.setPrivateField(camera, "previewRequestBuilder", mockPreviewRequestBuilder);
+    final CamcorderProfile mockProfileLegacy = mock(CamcorderProfile.class);
+    mockProfileLegacy.videoFrameRate = 15;
+    when(camera.getRecordingProfileLegacy()).thenReturn(mockProfileLegacy);
+
+    camera.captureSession = mockCaptureSession;
+    camera.previewRequestBuilder = mockPreviewRequestBuilder;
   }
 
   @After
-  public void after() {
+  public void after() throws IOException {
     SdkCapabilityChecker.SDK_VERSION = 0;
     mockHandlerThreadFactory.close();
     mockHandlerFactory.close();
+    mockRangeConstruction.close();
   }
 
   @Test
@@ -167,41 +223,41 @@ public class CameraTest {
     final Activity mockActivity = mock(Activity.class);
     final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
         mock(TextureRegistry.SurfaceTextureEntry.class);
-    final CameraFeatureFactory mockCameraFeatureFactory = mock(CameraFeatureFactory.class);
+    final CameraFeatureFactory spyMockCameraFeatureFactory = spy(mockCameraFeatureFactory);
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
 
     when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
     SensorOrientationFeature mockSensorOrientationFeature = mock(SensorOrientationFeature.class);
-    when(mockCameraFeatureFactory.createSensorOrientationFeature(any(), any(), any()))
+    when(spyMockCameraFeatureFactory.createSensorOrientationFeature(any(), any(), any()))
         .thenReturn(mockSensorOrientationFeature);
 
     Camera camera =
         new Camera(
             mockActivity,
             mockFlutterTexture,
-            mockCameraFeatureFactory,
+            spyMockCameraFeatureFactory,
             mockDartMessenger,
             mockCameraProperties,
-            resolutionPreset,
-            enableAudio);
+            new Camera.VideoCaptureSettings(resolutionPreset, enableAudio));
 
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1))
         .createSensorOrientationFeature(mockCameraProperties, mockActivity, mockDartMessenger);
-    verify(mockCameraFeatureFactory, times(1)).createAutoFocusFeature(mockCameraProperties, false);
-    verify(mockCameraFeatureFactory, times(1)).createExposureLockFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1))
+        .createAutoFocusFeature(mockCameraProperties, false);
+    verify(spyMockCameraFeatureFactory, times(1)).createExposureLockFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1))
         .createExposurePointFeature(eq(mockCameraProperties), eq(mockSensorOrientationFeature));
-    verify(mockCameraFeatureFactory, times(1)).createExposureOffsetFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1)).createFlashFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1)).createExposureOffsetFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1)).createFlashFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1))
         .createFocusPointFeature(eq(mockCameraProperties), eq(mockSensorOrientationFeature));
-    verify(mockCameraFeatureFactory, times(1)).createFpsRangeFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1)).createNoiseReductionFeature(mockCameraProperties);
-    verify(mockCameraFeatureFactory, times(1))
+    verify(spyMockCameraFeatureFactory, times(1)).createFpsRangeFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1)).createNoiseReductionFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1))
         .createResolutionFeature(mockCameraProperties, resolutionPreset, cameraName);
-    verify(mockCameraFeatureFactory, times(1)).createZoomLevelFeature(mockCameraProperties);
+    verify(spyMockCameraFeatureFactory, times(1)).createZoomLevelFeature(mockCameraProperties);
     assertNotNull("should create a camera", camera);
   }
 
@@ -294,21 +350,21 @@ public class CameraTest {
   public void setExposureMode_shouldUpdateExposureLockFeature() {
     ExposureLockFeature mockExposureLockFeature =
         mockCameraFeatureFactory.createExposureLockFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     ExposureMode exposureMode = ExposureMode.locked;
 
     camera.setExposureMode(mockResult, exposureMode);
 
     verify(mockExposureLockFeature, times(1)).setValue(exposureMode);
-    verify(mockResult, never()).error(any(), any(), any());
-    verify(mockResult, times(1)).success(null);
+    verify(mockResult, never()).error(any());
+    verify(mockResult, times(1)).success();
   }
 
   @Test
   public void setExposureMode_shouldUpdateBuilder() {
     ExposureLockFeature mockExposureLockFeature =
         mockCameraFeatureFactory.createExposureLockFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     ExposureMode exposureMode = ExposureMode.locked;
 
     camera.setExposureMode(mockResult, exposureMode);
@@ -319,16 +375,19 @@ public class CameraTest {
   @Test
   public void setExposureMode_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     ExposureMode exposureMode = ExposureMode.locked;
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
 
     camera.setExposureMode(mockResult, exposureMode);
 
-    verify(mockResult, never()).success(any());
+    verify(mockResult, never()).success();
     verify(mockResult, times(1))
-        .error("setExposureModeFailed", "Could not set exposure mode.", null);
+        .error(
+            argThat(
+                new FlutterErrorMatcher(
+                    "setExposureModeFailed", "Could not set exposure mode.", null)));
   }
 
   @Test
@@ -337,14 +396,14 @@ public class CameraTest {
     ExposurePointFeature mockExposurePointFeature =
         mockCameraFeatureFactory.createExposurePointFeature(
             mockCameraProperties, mockSensorOrientationFeature);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     Point point = new Point(42d, 42d);
 
     camera.setExposurePoint(mockResult, point);
 
     verify(mockExposurePointFeature, times(1)).setValue(point);
-    verify(mockResult, never()).error(any(), any(), any());
-    verify(mockResult, times(1)).success(null);
+    verify(mockResult, never()).error(any());
+    verify(mockResult, times(1)).success();
   }
 
   @Test
@@ -353,7 +412,7 @@ public class CameraTest {
     ExposurePointFeature mockExposurePointFeature =
         mockCameraFeatureFactory.createExposurePointFeature(
             mockCameraProperties, mockSensorOrientationFeature);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     Point point = new Point(42d, 42d);
 
     camera.setExposurePoint(mockResult, point);
@@ -364,37 +423,40 @@ public class CameraTest {
   @Test
   public void setExposurePoint_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     Point point = new Point(42d, 42d);
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
 
     camera.setExposurePoint(mockResult, point);
 
-    verify(mockResult, never()).success(any());
+    verify(mockResult, never()).success();
     verify(mockResult, times(1))
-        .error("setExposurePointFailed", "Could not set exposure point.", null);
+        .error(
+            argThat(
+                new FlutterErrorMatcher(
+                    "setExposurePointFailed", "Could not set exposure point.", null)));
   }
 
   @Test
   public void setFlashMode_shouldUpdateFlashFeature() {
     FlashFeature mockFlashFeature =
         mockCameraFeatureFactory.createFlashFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     FlashMode flashMode = FlashMode.always;
 
     camera.setFlashMode(mockResult, flashMode);
 
     verify(mockFlashFeature, times(1)).setValue(flashMode);
-    verify(mockResult, never()).error(any(), any(), any());
-    verify(mockResult, times(1)).success(null);
+    verify(mockResult, never()).error(any());
+    verify(mockResult, times(1)).success();
   }
 
   @Test
   public void setFlashMode_shouldUpdateBuilder() {
     FlashFeature mockFlashFeature =
         mockCameraFeatureFactory.createFlashFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     FlashMode flashMode = FlashMode.always;
 
     camera.setFlashMode(mockResult, flashMode);
@@ -405,15 +467,18 @@ public class CameraTest {
   @Test
   public void setFlashMode_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     FlashMode flashMode = FlashMode.always;
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
 
     camera.setFlashMode(mockResult, flashMode);
 
-    verify(mockResult, never()).success(any());
-    verify(mockResult, times(1)).error("setFlashModeFailed", "Could not set flash mode.", null);
+    verify(mockResult, never()).success();
+    verify(mockResult, times(1))
+        .error(
+            argThat(
+                new FlutterErrorMatcher("setFlashModeFailed", "Could not set flash mode.", null)));
   }
 
   @Test
@@ -424,15 +489,15 @@ public class CameraTest {
             mockCameraProperties, mockSensorOrientationFeature);
     AutoFocusFeature mockAutoFocusFeature =
         mockCameraFeatureFactory.createAutoFocusFeature(mockCameraProperties, false);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     Point point = new Point(42d, 42d);
     when(mockAutoFocusFeature.getValue()).thenReturn(FocusMode.auto);
 
     camera.setFocusPoint(mockResult, point);
 
     verify(mockFocusPointFeature, times(1)).setValue(point);
-    verify(mockResult, never()).error(any(), any(), any());
-    verify(mockResult, times(1)).success(null);
+    verify(mockResult, never()).error(any());
+    verify(mockResult, times(1)).success();
   }
 
   @Test
@@ -443,7 +508,7 @@ public class CameraTest {
             mockCameraProperties, mockSensorOrientationFeature);
     AutoFocusFeature mockAutoFocusFeature =
         mockCameraFeatureFactory.createAutoFocusFeature(mockCameraProperties, false);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     Point point = new Point(42d, 42d);
     when(mockAutoFocusFeature.getValue()).thenReturn(FocusMode.auto);
 
@@ -457,7 +522,7 @@ public class CameraTest {
       throws CameraAccessException {
     AutoFocusFeature mockAutoFocusFeature =
         mockCameraFeatureFactory.createAutoFocusFeature(mockCameraProperties, false);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     Point point = new Point(42d, 42d);
     when(mockAutoFocusFeature.getValue()).thenReturn(FocusMode.auto);
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
@@ -465,15 +530,19 @@ public class CameraTest {
 
     camera.setFocusPoint(mockResult, point);
 
-    verify(mockResult, never()).success(any());
-    verify(mockResult, times(1)).error("setFocusPointFailed", "Could not set focus point.", null);
+    verify(mockResult, never()).success();
+    verify(mockResult, times(1))
+        .error(
+            argThat(
+                new FlutterErrorMatcher(
+                    "setFocusPointFailed", "Could not set focus point.", null)));
   }
 
   @Test
   public void setZoomLevel_shouldUpdateZoomLevelFeature() throws CameraAccessException {
     ZoomLevelFeature mockZoomLevelFeature =
         mockCameraFeatureFactory.createZoomLevelFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     float zoomLevel = 1.0f;
 
     when(mockZoomLevelFeature.getValue()).thenReturn(zoomLevel);
@@ -483,15 +552,15 @@ public class CameraTest {
     camera.setZoomLevel(mockResult, zoomLevel);
 
     verify(mockZoomLevelFeature, times(1)).setValue(zoomLevel);
-    verify(mockResult, never()).error(any(), any(), any());
-    verify(mockResult, times(1)).success(null);
+    verify(mockResult, never()).error(any());
+    verify(mockResult, times(1)).success();
   }
 
   @Test
   public void setZoomLevel_shouldUpdateBuilder() throws CameraAccessException {
     ZoomLevelFeature mockZoomLevelFeature =
         mockCameraFeatureFactory.createZoomLevelFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     float zoomLevel = 1.0f;
 
     when(mockZoomLevelFeature.getValue()).thenReturn(zoomLevel);
@@ -508,7 +577,7 @@ public class CameraTest {
       throws CameraAccessException {
     ZoomLevelFeature mockZoomLevelFeature =
         mockCameraFeatureFactory.createZoomLevelFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    Messages.VoidResult mockResult = mock(Messages.VoidResult.class);
     float zoomLevel = 1.0f;
 
     when(mockZoomLevelFeature.getValue()).thenReturn(zoomLevel);
@@ -519,130 +588,100 @@ public class CameraTest {
 
     camera.setZoomLevel(mockResult, zoomLevel);
 
-    verify(mockResult, never()).success(any());
-    verify(mockResult, times(1)).error("setZoomLevelFailed", "Could not set zoom level.", null);
+    verify(mockResult, never()).success();
+    verify(mockResult, times(1))
+        .error(
+            argThat(
+                new FlutterErrorMatcher("setZoomLevelFailed", "Could not set zoom level.", null)));
   }
 
   @Test
-  public void pauseVideoRecording_shouldSendNullResultWhenNotRecording() {
-    TestUtils.setPrivateField(camera, "recordingVideo", false);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+  public void pauseVideoRecording_shouldNotThrowWhenNotRecording() {
+    camera.recordingVideo = false;
 
-    camera.pauseVideoRecording(mockResult);
-
-    verify(mockResult, times(1)).success(null);
-    verify(mockResult, never()).error(any(), any(), any());
+    camera.pauseVideoRecording();
   }
 
   @Test
   public void pauseVideoRecording_shouldCallPauseWhenRecordingAndOnAPIN() {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 24;
 
-    camera.pauseVideoRecording(mockResult);
+    camera.pauseVideoRecording();
 
     verify(mockMediaRecorder, times(1)).pause();
-    verify(mockResult, times(1)).success(null);
-    verify(mockResult, never()).error(any(), any(), any());
   }
 
   @Test
   public void pauseVideoRecording_shouldSendVideoRecordingFailedErrorWhenVersionCodeSmallerThenN() {
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
+    camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 23;
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
-    camera.pauseVideoRecording(mockResult);
-
-    verify(mockResult, times(1))
-        .error("videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null);
-    verify(mockResult, never()).success(any());
+    assertThrows(Messages.FlutterError.class, camera::pauseVideoRecording);
   }
 
   @Test
   public void
       pauseVideoRecording_shouldSendVideoRecordingFailedErrorWhenMediaRecorderPauseThrowsIllegalStateException() {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 24;
 
     IllegalStateException expectedException = new IllegalStateException("Test error message");
 
     doThrow(expectedException).when(mockMediaRecorder).pause();
 
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-
-    camera.pauseVideoRecording(mockResult);
-
-    verify(mockResult, times(1)).error("videoRecordingFailed", "Test error message", null);
-    verify(mockResult, never()).success(any());
+    assertThrows(Messages.FlutterError.class, camera::pauseVideoRecording);
   }
 
   @Test
-  public void resumeVideoRecording_shouldSendNullResultWhenNotRecording() {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    TestUtils.setPrivateField(camera, "recordingVideo", false);
+  public void resumeVideoRecording_shouldNotThrowWhenNotRecording() {
+    camera.recordingVideo = false;
 
-    camera.resumeVideoRecording(mockResult);
-
-    verify(mockResult, times(1)).success(null);
-    verify(mockResult, never()).error(any(), any(), any());
+    camera.resumeVideoRecording();
   }
 
   @Test
   public void resumeVideoRecording_shouldCallPauseWhenRecordingAndOnAPIN() {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 24;
 
-    camera.resumeVideoRecording(mockResult);
+    camera.resumeVideoRecording();
 
     verify(mockMediaRecorder, times(1)).resume();
-    verify(mockResult, times(1)).success(null);
-    verify(mockResult, never()).error(any(), any(), any());
   }
 
   @Test
   public void setDescriptionWhileRecording_errorsWhenUnsupported() {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setPrivateField(camera, "videoRenderer", mockVideoRenderer);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
+    camera.videoRenderer = mockVideoRenderer;
     SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.LOLLIPOP;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
-
-    verify(mockResult, times(1))
-        .error(
-            eq("setDescriptionWhileRecordingFailed"),
-            eq("Device does not support switching the camera while recording"),
-            eq(null));
+    assertThrows(
+        Messages.FlutterError.class,
+        () -> camera.setDescriptionWhileRecording(newCameraProperties));
   }
 
   @Test
   public void setDescriptionWhileRecording_succeedsWhenSupported() {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     VideoRenderer mockVideoRenderer = mock(VideoRenderer.class);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setPrivateField(camera, "videoRenderer", mockVideoRenderer);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
+    camera.videoRenderer = mockVideoRenderer;
     SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.O;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
-
-    verify(mockResult, times(1)).success(null);
-    verify(mockResult, never()).error(any(), any(), any());
+    camera.setDescriptionWhileRecording(newCameraProperties);
   }
 
   @Test
@@ -653,18 +692,15 @@ public class CameraTest {
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setPrivateField(camera, "videoRenderer", mockVideoRenderer);
+    camera.recordingVideo = true;
+    camera.videoRenderer = mockVideoRenderer;
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    camera.cameraDevice = fakeCamera;
     ImageReader mockPictureImageReader = mock(ImageReader.class);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
+    camera.pictureImageReader = mockPictureImageReader;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -682,16 +718,13 @@ public class CameraTest {
     SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
     ImageReader mockImageReader = mock(ImageReader.class);
-    TestUtils.setPrivateField(camera, "recordingVideo", false);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mockImageReader);
+    camera.recordingVideo = false;
+    camera.pictureImageReader = mockImageReader;
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    camera.cameraDevice = fakeCamera;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -709,19 +742,16 @@ public class CameraTest {
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
     Size mockSize = mock(Size.class);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setPrivateField(camera, "videoRenderer", mockVideoRenderer);
-    TestUtils.setPrivateField(camera, "initialCameraFacing", CameraMetadata.LENS_FACING_BACK);
+    camera.recordingVideo = true;
+    camera.videoRenderer = mockVideoRenderer;
+    camera.initialCameraFacing = CameraMetadata.LENS_FACING_BACK;
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    camera.cameraDevice = fakeCamera;
     ImageReader mockPictureImageReader = mock(ImageReader.class);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
+    camera.pictureImageReader = mockPictureImageReader;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -740,17 +770,14 @@ public class CameraTest {
     Size mockSize = mock(Size.class);
     ImageReader mockPictureImageReader = mock(ImageReader.class);
     ImageStreamReader mockImageStreamReader = mock(ImageStreamReader.class);
-    TestUtils.setPrivateField(camera, "recordingVideo", false);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
+    camera.recordingVideo = false;
+    camera.pictureImageReader = mockPictureImageReader;
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    camera.cameraDevice = fakeCamera;
     camera.imageStreamReader = mockImageStreamReader;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -766,78 +793,60 @@ public class CameraTest {
 
   @Test
   public void setDescriptionWhileRecording_shouldErrorWhenNotRecording() {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    TestUtils.setPrivateField(camera, "recordingVideo", false);
+    camera.recordingVideo = false;
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
-    camera.setDescriptionWhileRecording(mockResult, newCameraProperties);
-
-    verify(mockResult, times(1))
-        .error("setDescriptionWhileRecordingFailed", "Device was not recording", null);
-    verify(mockResult, never()).success(any());
+    assertThrows(
+        Messages.FlutterError.class,
+        () -> camera.setDescriptionWhileRecording(newCameraProperties));
   }
 
   @Test
   public void
       resumeVideoRecording_shouldSendVideoRecordingFailedErrorWhenVersionCodeSmallerThanN() {
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
+    camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 23;
 
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-
-    camera.resumeVideoRecording(mockResult);
-
-    verify(mockResult, times(1))
-        .error("videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null);
-    verify(mockResult, never()).success(any());
+    assertThrows(Messages.FlutterError.class, camera::resumeVideoRecording);
   }
 
   @Test
   public void
       resumeVideoRecording_shouldSendVideoRecordingFailedErrorWhenMediaRecorderPauseThrowsIllegalStateException() {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.recordingVideo = true;
     SdkCapabilityChecker.SDK_VERSION = 24;
 
     IllegalStateException expectedException = new IllegalStateException("Test error message");
 
     doThrow(expectedException).when(mockMediaRecorder).resume();
 
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-
-    camera.resumeVideoRecording(mockResult);
-
-    verify(mockResult, times(1)).error("videoRecordingFailed", "Test error message", null);
-    verify(mockResult, never()).success(any());
+    assertThrows(Messages.FlutterError.class, camera::resumeVideoRecording);
   }
 
   @Test
   public void setFocusMode_shouldUpdateAutoFocusFeature() {
     AutoFocusFeature mockAutoFocusFeature =
         mockCameraFeatureFactory.createAutoFocusFeature(mockCameraProperties, false);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
-    camera.setFocusMode(mockResult, FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
 
     verify(mockAutoFocusFeature, times(1)).setValue(FocusMode.auto);
-    verify(mockResult, never()).error(any(), any(), any());
-    verify(mockResult, times(1)).success(null);
   }
 
   @Test
   public void setFocusMode_shouldUpdateBuilder() {
     AutoFocusFeature mockAutoFocusFeature =
         mockCameraFeatureFactory.createAutoFocusFeature(mockCameraProperties, false);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
 
-    camera.setFocusMode(mockResult, FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
 
     verify(mockAutoFocusFeature, times(1)).updateBuilder(any());
   }
 
   @Test
   public void setFocusMode_shouldUnlockAutoFocusForAutoMode() {
-    camera.setFocusMode(mock(MethodChannel.Result.class), FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
     verify(mockPreviewRequestBuilder, times(1))
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
     verify(mockPreviewRequestBuilder, times(1))
@@ -846,8 +855,8 @@ public class CameraTest {
 
   @Test
   public void setFocusMode_shouldSkipUnlockAutoFocusWhenNullCaptureSession() {
-    TestUtils.setPrivateField(camera, "captureSession", null);
-    camera.setFocusMode(mock(MethodChannel.Result.class), FocusMode.auto);
+    camera.captureSession = null;
+    camera.setFocusMode(FocusMode.auto);
     verify(mockPreviewRequestBuilder, never())
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
     verify(mockPreviewRequestBuilder, never())
@@ -859,7 +868,7 @@ public class CameraTest {
       throws CameraAccessException {
     when(mockCaptureSession.capture(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
-    camera.setFocusMode(mock(MethodChannel.Result.class), FocusMode.auto);
+    camera.setFocusMode(FocusMode.auto);
     verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
   }
 
@@ -873,25 +882,20 @@ public class CameraTest {
     Size mockSize = mock(Size.class);
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     ImageReader mockPictureImageReader = mock(ImageReader.class);
-    TestUtils.setPrivateField(cameraSpy, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(cameraSpy, "recordingVideo", false);
-    TestUtils.setPrivateField(cameraSpy, "pictureImageReader", mockPictureImageReader);
+    cameraSpy.mediaRecorder = mockMediaRecorder;
+    cameraSpy.recordingVideo = false;
+    cameraSpy.pictureImageReader = mockPictureImageReader;
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(cameraSpy, "cameraDevice", fakeCamera);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    cameraSpy.cameraDevice = fakeCamera;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry)
-            TestUtils.getPrivateField(cameraSpy, "flutterTexture");
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = cameraSpy.flutterTexture;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
-    doNothing().when(cameraSpy).prepareRecording(mockResult);
+    doNothing().when(cameraSpy).prepareRecording();
 
-    cameraSpy.startVideoRecording(mockResult, null);
+    cameraSpy.startVideoRecording(null);
     verify(mockMediaRecorder, times(1))
         .getSurface(); // stream pulled from media recorder's surface.
     verify(
@@ -902,7 +906,7 @@ public class CameraTest {
 
   @Test
   public void setFocusMode_shouldLockAutoFocusForLockedMode() throws CameraAccessException {
-    camera.setFocusMode(mock(MethodChannel.Result.class), FocusMode.locked);
+    camera.setFocusMode(FocusMode.locked);
     verify(mockPreviewRequestBuilder, times(1))
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
     verify(mockCaptureSession, times(1)).capture(any(), any(), any());
@@ -911,8 +915,8 @@ public class CameraTest {
 
   @Test
   public void setFocusMode_shouldSkipLockAutoFocusWhenNullCaptureSession() {
-    TestUtils.setPrivateField(camera, "captureSession", null);
-    camera.setFocusMode(mock(MethodChannel.Result.class), FocusMode.locked);
+    camera.captureSession = null;
+    camera.setFocusMode(FocusMode.locked);
     verify(mockPreviewRequestBuilder, never())
         .set(CaptureRequest.CONTROL_AF_TRIGGER, CaptureRequest.CONTROL_AF_TRIGGER_START);
   }
@@ -922,36 +926,32 @@ public class CameraTest {
       throws CameraAccessException {
     when(mockCaptureSession.capture(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
-    camera.setFocusMode(mock(MethodChannel.Result.class), FocusMode.locked);
+    camera.setFocusMode(FocusMode.locked);
     verify(mockDartMessenger, times(1)).sendCameraErrorEvent(any());
   }
 
   @Test
   public void setFocusMode_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
 
-    camera.setFocusMode(mockResult, FocusMode.locked);
-
-    verify(mockResult, never()).success(any());
-    verify(mockResult, times(1))
-        .error("setFocusModeFailed", "Error setting focus mode: null", null);
+    assertThrows(Messages.FlutterError.class, () -> camera.setFocusMode(FocusMode.locked));
   }
 
   @Test
   public void setExposureOffset_shouldUpdateExposureOffsetFeature() {
     ExposureOffsetFeature mockExposureOffsetFeature =
         mockCameraFeatureFactory.createExposureOffsetFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    @SuppressWarnings("unchecked")
+    Messages.Result<Double> mockResult = mock(Messages.Result.class);
 
     when(mockExposureOffsetFeature.getValue()).thenReturn(1.0);
 
     camera.setExposureOffset(mockResult, 1.0);
 
     verify(mockExposureOffsetFeature, times(1)).setValue(1.0);
-    verify(mockResult, never()).error(any(), any(), any());
+    verify(mockResult, never()).error(any());
     verify(mockResult, times(1)).success(1.0);
   }
 
@@ -959,7 +959,8 @@ public class CameraTest {
   public void setExposureOffset_shouldAndUpdateBuilder() {
     ExposureOffsetFeature mockExposureOffsetFeature =
         mockCameraFeatureFactory.createExposureOffsetFeature(mockCameraProperties);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    @SuppressWarnings("unchecked")
+    Messages.Result<Double> mockResult = mock(Messages.Result.class);
 
     camera.setExposureOffset(mockResult, 1.0);
 
@@ -969,7 +970,8 @@ public class CameraTest {
   @Test
   public void setExposureOffset_shouldCallErrorOnResultOnCameraAccessException()
       throws CameraAccessException {
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
+    @SuppressWarnings("unchecked")
+    Messages.Result<Double> mockResult = mock(Messages.Result.class);
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
         .thenThrow(new CameraAccessException(0, ""));
 
@@ -977,7 +979,10 @@ public class CameraTest {
 
     verify(mockResult, never()).success(any());
     verify(mockResult, times(1))
-        .error("setExposureOffsetFailed", "Could not set exposure offset.", null);
+        .error(
+            argThat(
+                new FlutterErrorMatcher(
+                    "setExposureOffsetFailed", "Could not set exposure offset.", null)));
   }
 
   @Test
@@ -1009,7 +1014,7 @@ public class CameraTest {
   public void pausePreview_shouldPausePreview() throws CameraAccessException {
     camera.pausePreview();
 
-    assertEquals(TestUtils.getPrivateField(camera, "pausedPreview"), true);
+    camera.pausedPreview = true;
     verify(mockCaptureSession, times(1)).stopRepeating();
   }
 
@@ -1017,7 +1022,7 @@ public class CameraTest {
   public void resumePreview_shouldResumePreview() throws CameraAccessException {
     camera.resumePreview();
 
-    assertEquals(TestUtils.getPrivateField(camera, "pausedPreview"), false);
+    camera.pausedPreview = false;
     verify(mockCaptureSession, times(1)).setRepeatingRequest(any(), any(), any());
   }
 
@@ -1037,7 +1042,7 @@ public class CameraTest {
     camera.startBackgroundThread();
 
     verify(mockHandlerThread, times(1)).start();
-    assertEquals(mockHandler, TestUtils.getPrivateField(camera, "backgroundHandler"));
+    assertEquals(mockHandler, camera.backgroundHandler);
   }
 
   @Test
@@ -1063,8 +1068,8 @@ public class CameraTest {
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
     // Stub out other features used by the flow.
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mock(ImageReader.class));
+    camera.cameraDevice = fakeCamera;
+    camera.pictureImageReader = mock(ImageReader.class);
     SensorOrientationFeature mockSensorOrientationFeature =
         mockCameraFeatureFactory.createSensorOrientationFeature(mockCameraProperties, null, null);
     DeviceOrientationManager mockDeviceOrientationManager = mock(DeviceOrientationManager.class);
@@ -1089,15 +1094,11 @@ public class CameraTest {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    camera.cameraDevice = fakeCamera;
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
-    CameraFeatures cameraFeatures =
-        (CameraFeatures) TestUtils.getPrivateField(camera, "cameraFeatures");
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+    CameraFeatures cameraFeatures = camera.cameraFeatures;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -1119,17 +1120,13 @@ public class CameraTest {
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     CameraDeviceWrapper fakeCamera = spy(new FakeCameraDeviceWrapper(mockRequestBuilders));
     ImageReader mockPictureImageReader = mock(ImageReader.class);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
-    TestUtils.setPrivateField(camera, "pictureImageReader", mockPictureImageReader);
+    camera.cameraDevice = fakeCamera;
+    camera.pictureImageReader = mockPictureImageReader;
     CaptureRequest.Builder mockPreviewRequestBuilder = mock(CaptureRequest.Builder.class);
 
-    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture =
-        (TextureRegistry.SurfaceTextureEntry) TestUtils.getPrivateField(camera, "flutterTexture");
-    CameraFeatures cameraFeatures =
-        (CameraFeatures) TestUtils.getPrivateField(camera, "cameraFeatures");
-    ResolutionFeature resolutionFeature =
-        (ResolutionFeature)
-            TestUtils.getPrivateField(mockCameraFeatureFactory, "mockResolutionFeature");
+    TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+    CameraFeatures cameraFeatures = camera.cameraFeatures;
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
 
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
@@ -1158,7 +1155,7 @@ public class CameraTest {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    camera.cameraDevice = fakeCamera;
 
     camera.close();
 
@@ -1166,16 +1163,168 @@ public class CameraTest {
   }
 
   @Test
+  public void startVideoRecording_shouldApplySettingsToMediaRecorder()
+      throws InterruptedException, IOException, CameraAccessException {
+
+    final Activity mockActivity = mock(Activity.class);
+    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
+        mock(TextureRegistry.SurfaceTextureEntry.class);
+    final String cameraName = "1";
+    final ResolutionPreset resolutionPreset = ResolutionPreset.high;
+    final boolean enableAudio = true;
+
+    //region These parameters should be set in android MediaRecorder.
+    final int fps = 15;
+    final int videoBitrate = 200000;
+    final int audioBitrate = 32000;
+    //endregion
+
+    when(mockCameraProperties.getCameraName()).thenReturn(cameraName);
+
+    final Camera.VideoCaptureSettings parameters =
+        new Camera.VideoCaptureSettings(
+            resolutionPreset, enableAudio, fps, videoBitrate, audioBitrate);
+
+    // Use a wildcard, since `new Range<Integer>[] {...}`
+    // results in a 'Generic array creation' error.
+    @SuppressWarnings("unchecked")
+    final Range<Integer>[] mockRanges =
+        (Range<Integer>[]) new Range<?>[] {new Range<Integer>(10, 20)};
+
+    when(mockCameraProperties.getControlAutoExposureAvailableTargetFpsRanges())
+        .thenReturn(mockRanges);
+
+    final Context mockApplicationContext = mock(Context.class);
+    when(mockActivity.getApplicationContext()).thenReturn(mockApplicationContext);
+
+    try (final MockedStatic<File> mockFile = mockStatic(File.class);
+        final MockedConstruction<MediaRecorder> mockMediaRecorder =
+            Mockito.mockConstruction(MediaRecorder.class)) {
+
+      assertNotNull(mockMediaRecorder);
+
+      mockFile
+          .when(() -> File.createTempFile(any(), any(), any()))
+          .thenReturn(new File("/tmp/file.mp4"));
+
+      final FpsRangeFeature fpsRangeFeature = new FpsRangeFeature(mockCameraProperties);
+
+      final Camera camera =
+          spy(
+              new Camera(
+                  mockActivity,
+                  mockFlutterTexture,
+                  mockCameraFeatureFactory,
+                  mockDartMessenger,
+                  mockCameraProperties,
+                  parameters));
+
+      final CamcorderProfile mockProfileLegacy = mock(CamcorderProfile.class);
+      mockProfileLegacy.videoFrameRate = fps;
+      when(camera.getRecordingProfileLegacy()).thenReturn(mockProfileLegacy);
+
+      final SensorOrientationFeature mockSensorOrientationFeature =
+          mockCameraFeatureFactory.createSensorOrientationFeature(mockCameraProperties, null, null);
+      DeviceOrientationManager mockDeviceOrientationManager = mock(DeviceOrientationManager.class);
+
+      when(mockSensorOrientationFeature.getDeviceOrientationManager())
+          .thenReturn(mockDeviceOrientationManager);
+
+      camera.captureSession = mockCaptureSession;
+      camera.previewRequestBuilder = mockPreviewRequestBuilder;
+
+      final ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+      CaptureRequest.Builder mockRequestBuilder = mock(CaptureRequest.Builder.class);
+      mockRequestBuilders.add(mockRequestBuilder);
+      final SurfaceTexture mockSurfaceTexture = mock(SurfaceTexture.class);
+      final Size mockSize = mock(Size.class);
+      final ImageReader mockPictureImageReader = mock(ImageReader.class);
+      camera.pictureImageReader = mockPictureImageReader;
+      final CameraDeviceWrapper fakeCamera =
+          new FakeCameraDeviceWrapper(mockRequestBuilders, mockCaptureSession);
+
+      camera.cameraDevice = fakeCamera;
+
+      TextureRegistry.SurfaceTextureEntry cameraFlutterTexture = camera.flutterTexture;
+
+      ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
+
+      assertNotNull(cameraFlutterTexture);
+      when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
+
+      assertNotNull(resolutionFeature);
+      when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+
+      camera.startVideoRecording(null);
+
+      //region Check that FPS parameter affects AE range at which the camera captures frames.
+      assertEquals(camera.cameraFeatures.getFpsRange().getValue().getLower(), Integer.valueOf(fps));
+      assertEquals(camera.cameraFeatures.getFpsRange().getValue().getUpper(), Integer.valueOf(fps));
+
+      verify(mockRequestBuilder)
+          .set(
+              eq(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE),
+              argThat(
+                  (Range<Integer> range) -> range.getLower() == fps && range.getUpper() == fps));
+      //endregion
+
+      final MediaRecorder recorder = camera.mediaRecorder;
+
+      //region Check that parameters affects movies, written by MediaRecorder.
+      verify(recorder).setVideoFrameRate(fps);
+      verify(recorder).setAudioEncodingBitRate(audioBitrate);
+      verify(recorder).setVideoEncodingBitRate(videoBitrate);
+      //endregion
+    }
+  }
+
+  @Test
   public void pausePreview_doesNotCallStopRepeatingWhenCameraClosed() throws CameraAccessException {
     ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
     mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
     CameraDeviceWrapper fakeCamera = new FakeCameraDeviceWrapper(mockRequestBuilders);
-    TestUtils.setPrivateField(camera, "cameraDevice", fakeCamera);
+    camera.cameraDevice = fakeCamera;
 
     camera.close();
     camera.pausePreview();
 
     verify(mockCaptureSession, never()).stopRepeating();
+  }
+
+  /// Allow to use `new android.util.Range(Integer, Integer)`
+  private static class RangeConstruction implements Closeable {
+    final Map<Range<Integer>, Integer> lowers = new HashMap<>();
+    final Map<Range<Integer>, Integer> uppers = new HashMap<>();
+
+    @SuppressWarnings({"rawtypes"})
+    final MockedConstruction<Range> rangeMockedConstruction;
+
+    @SuppressWarnings({"unchecked"})
+    public RangeConstruction() {
+      this.rangeMockedConstruction =
+          Mockito.mockConstruction(
+              Range.class,
+              (mock, context) -> {
+                int lower = (int) context.arguments().get(0);
+                int upper = (int) context.arguments().get(1);
+                lowers.put((Range<Integer>) mock, lower);
+                uppers.put((Range<Integer>) mock, upper);
+                when(((Range<Integer>) mock).getUpper())
+                    .thenReturn(lowers.getOrDefault((Range<Integer>) mock, 15));
+                when(((Range<Integer>) mock).getLower())
+                    .thenReturn(uppers.getOrDefault((Range<Integer>) mock, 15));
+                when(mock.toString())
+                    .thenReturn(
+                        String.format(
+                            "mocked [%s, %s]",
+                            lowers.getOrDefault(mock, 15), uppers.getOrDefault(mock, 15)));
+              });
+    }
+
+    @Override
+    public void close() throws IOException {
+      rangeMockedConstruction.close();
+    }
   }
 
   private static class TestCameraFeatureFactory implements CameraFeatureFactory {
@@ -1191,14 +1340,14 @@ public class CameraTest {
     private final SensorOrientationFeature mockSensorOrientationFeature;
     private final ZoomLevelFeature mockZoomLevelFeature;
 
-    public TestCameraFeatureFactory() {
+    public TestCameraFeatureFactory(FpsRangeFeature fpsRangeFeature) {
       this.mockAutoFocusFeature = mock(AutoFocusFeature.class);
       this.mockExposureLockFeature = mock(ExposureLockFeature.class);
       this.mockExposureOffsetFeature = mock(ExposureOffsetFeature.class);
       this.mockExposurePointFeature = mock(ExposurePointFeature.class);
       this.mockFlashFeature = mock(FlashFeature.class);
       this.mockFocusPointFeature = mock(FocusPointFeature.class);
-      this.mockFpsRangeFeature = mock(FpsRangeFeature.class);
+      this.mockFpsRangeFeature = fpsRangeFeature;
       this.mockNoiseReductionFeature = mock(NoiseReductionFeature.class);
       this.mockResolutionFeature = mock(ResolutionFeature.class);
       this.mockSensorOrientationFeature = mock(SensorOrientationFeature.class);

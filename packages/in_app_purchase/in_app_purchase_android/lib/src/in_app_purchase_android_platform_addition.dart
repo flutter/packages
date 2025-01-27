@@ -2,45 +2,34 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 
 import '../billing_client_wrappers.dart';
 import '../in_app_purchase_android.dart';
 import 'billing_client_wrappers/billing_config_wrapper.dart';
+import 'types/translator.dart';
 
 /// Contains InApp Purchase features that are only available on PlayStore.
 class InAppPurchaseAndroidPlatformAddition
     extends InAppPurchasePlatformAddition {
   /// Creates a [InAppPurchaseAndroidPlatformAddition] which uses the supplied
   /// `BillingClientManager` to provide Android specific features.
-  InAppPurchaseAndroidPlatformAddition(this._billingClientManager);
-
-  /// Whether pending purchase is enabled.
-  ///
-  ///  **Deprecation warning:** it is no longer required to call
-  /// [enablePendingPurchases] when initializing your application. From now on
-  /// this is handled internally and the [enablePendingPurchase] property will
-  /// always return `true`.
-  ///
-  /// See also [enablePendingPurchases] for more on pending purchases.
-  @Deprecated(
-      'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
-  static bool get enablePendingPurchase => true;
-
-  /// Enable the [InAppPurchaseConnection] to handle pending purchases.
-  ///
-  /// **Deprecation warning:** it is no longer required to call
-  /// [enablePendingPurchases] when initializing your application.
-  @Deprecated(
-      'The requirement to call `enablePendingPurchases()` has become obsolete '
-      "since Google Play no longer accepts app submissions that don't support "
-      'pending purchases.')
-  static void enablePendingPurchases() {
-    // No-op, until it is time to completely remove this method from the API.
+  InAppPurchaseAndroidPlatformAddition(this._billingClientManager) {
+    _billingClientManager.userChoiceDetailsStream
+        .map(Translator.convertToUserChoiceDetails)
+        .listen(_userChoiceDetailsStreamController.add);
   }
+
+  final StreamController<GooglePlayUserChoiceDetails>
+      _userChoiceDetailsStreamController =
+      StreamController<GooglePlayUserChoiceDetails>.broadcast();
+
+  /// [GooglePlayUserChoiceDetails] emits each time user selects alternative billing.
+  late final Stream<GooglePlayUserChoiceDetails> userChoiceDetailsStream =
+      _userChoiceDetailsStreamController.stream;
 
   final BillingClientManager _billingClientManager;
 
@@ -152,6 +141,7 @@ class InAppPurchaseAndroidPlatformAddition
   ///
   /// See: https://developer.android.com/reference/com/android/billingclient/api/BillingConfig
   /// See: https://unicode.org/cldr/charts/latest/supplemental/territory_containment_un_m_49.html
+  @Deprecated('Use InAppPurchasePlatfrom.countryCode')
   Future<String> getCountryCode() async {
     final BillingConfigWrapper billingConfig = await _billingClientManager
         .runWithClient((BillingClient client) => client.getBillingConfig());

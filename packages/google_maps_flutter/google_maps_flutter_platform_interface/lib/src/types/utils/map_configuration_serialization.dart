@@ -59,5 +59,6 @@ Map<String, Object> jsonForMapConfiguration(MapConfiguration config) {
     if (config.buildingsEnabled != null)
       'buildingsEnabled': config.buildingsEnabled!,
     if (config.cloudMapId != null) 'cloudMapId': config.cloudMapId!,
+    if (config.style != null) 'style': config.style!,
   };
 }

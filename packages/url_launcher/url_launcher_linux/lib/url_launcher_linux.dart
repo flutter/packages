@@ -4,26 +4,32 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
-const MethodChannel _channel =
-    MethodChannel('plugins.flutter.io/url_launcher_linux');
+import 'src/messages.g.dart';
 
 /// An implementation of [UrlLauncherPlatform] for Linux.
 class UrlLauncherLinux extends UrlLauncherPlatform {
+  /// Creates a new URL launcher instance.
+  UrlLauncherLinux({@visibleForTesting UrlLauncherApi? api})
+      : _hostApi = api ?? UrlLauncherApi();
+
   /// Registers this class as the default instance of [UrlLauncherPlatform].
   static void registerWith() {
     UrlLauncherPlatform.instance = UrlLauncherLinux();
   }
+
+  final UrlLauncherApi _hostApi;
 
   @override
   final LinkDelegate? linkDelegate = null;
 
   @override
   Future<bool> canLaunch(String url) async {
-    return (await _channel.invokeMethod<bool>('canLaunch', url)) ?? false;
+    return _hostApi.canLaunchUrl(url);
   }
 
   @override
@@ -44,7 +50,15 @@ class UrlLauncherLinux extends UrlLauncherPlatform {
 
   @override
   Future<bool> launchUrl(String url, LaunchOptions options) async {
-    return (await _channel.invokeMethod<bool>('launch', url)) ?? false;
+    final String? error = await _hostApi.launchUrl(url);
+    if (error != null) {
+      // TODO(stuartmorgan): Standardize errors across the entire plugin,
+      // instead of using PlatformException. This preserves the pre-Pigeon
+      // behavior of the C code returning this error response.
+      throw PlatformException(
+          code: 'Launch Error', message: 'Failed to launch URL: $error');
+    }
+    return true;
   }
 
   @override

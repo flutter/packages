@@ -3,11 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
+// ignore: implementation_imports
+import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 
 /// Test Markers
@@ -55,7 +56,11 @@ void main() {
       MarkerController(marker: marker, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.Event.trigger(marker, 'click', <Object?>[gmaps.MapMouseEvent()]);
+      gmaps.event.trigger(
+        marker,
+        'click',
+        gmaps.MapMouseEvent(),
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -65,8 +70,11 @@ void main() {
       MarkerController(marker: marker, onDragStart: onDragStart);
 
       // Trigger a drag end event...
-      gmaps.Event.trigger(marker, 'dragstart',
-          <Object?>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)]);
+      gmaps.event.trigger(
+        marker,
+        'dragstart',
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+      );
 
       expect(await methodCalled, isTrue);
     });
@@ -75,10 +83,10 @@ void main() {
       MarkerController(marker: marker, onDrag: onDrag);
 
       // Trigger a drag end event...
-      gmaps.Event.trigger(
+      gmaps.event.trigger(
         marker,
         'drag',
-        <Object?>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)],
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
       );
 
       expect(await methodCalled, isTrue);
@@ -88,10 +96,10 @@ void main() {
       MarkerController(marker: marker, onDragEnd: onDragEnd);
 
       // Trigger a drag end event...
-      gmaps.Event.trigger(
+      gmaps.event.trigger(
         marker,
         'dragend',
-        <Object?>[gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0)],
+        gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
       );
 
       expect(await methodCalled, isTrue);
@@ -103,7 +111,7 @@ void main() {
         ..draggable = true
         ..position = gmaps.LatLng(42, 54);
 
-      expect(marker.draggable, isNull);
+      expect(marker.isDraggableDefined(), isFalse);
 
       controller.update(options);
 
@@ -123,7 +131,7 @@ void main() {
 
     testWidgets('showInfoWindow', (WidgetTester tester) async {
       final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.GMap map = gmaps.GMap(html.DivElement());
+      final gmaps.Map map = gmaps.Map(createDivElement());
       marker.set('map', map);
       final MarkerController controller = MarkerController(
         marker: marker,
@@ -138,7 +146,7 @@ void main() {
 
     testWidgets('hideInfoWindow', (WidgetTester tester) async {
       final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.GMap map = gmaps.GMap(html.DivElement());
+      final gmaps.Map map = gmaps.Map(createDivElement());
       marker.set('map', map);
       final MarkerController controller = MarkerController(
         marker: marker,
@@ -156,7 +164,7 @@ void main() {
 
       setUp(() {
         final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-        final gmaps.GMap map = gmaps.GMap(html.DivElement());
+        final gmaps.Map map = gmaps.Map(createDivElement());
         marker.set('map', map);
         controller = MarkerController(marker: marker, infoWindow: infoWindow);
       });
