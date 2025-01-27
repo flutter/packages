@@ -3,3 +3,7 @@
 # should be disabled when running their native tests.
 #
 # All entries here should have an explanation for why they are here.
+
+# TODO(loicsharma): Remove once AppAuth-iOS's warnings are fixed.
+# See: https://github.com/flutter/flutter/issues/162342
+- google_sign_in_ios
