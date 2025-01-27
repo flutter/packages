@@ -56,17 +56,7 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Adds property to shared preferences data set of type List<String>.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  void setEncodedStringList(
-    String key,
-    String value,
-    SharedPreferencesPigeonOptions options,
-  );
-
-  /// Adds property to shared preferences data set of type List<String>.
-  ///
-  /// Deprecated, this is only here for testing purposes.
-  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  void setDeprecatedStringList(
+  void setStringList(
     String key,
     List<String> value,
     SharedPreferencesPigeonOptions options,
@@ -102,14 +92,7 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Gets individual List<String> value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  List<String>? getPlatformEncodedStringList(
-    String key,
-    SharedPreferencesPigeonOptions options,
-  );
-
-  /// Gets individual List<String> value stored with [key], if any.
-  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  String? getStringList(
+  List<String>? getStringList(
     String key,
     SharedPreferencesPigeonOptions options,
   );

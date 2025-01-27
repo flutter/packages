@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
@@ -11,7 +9,6 @@ import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages.g.dart';
 import 'shared_preferences_async_android.dart';
-import 'strings.dart';
 
 /// The Android implementation of [SharedPreferencesStorePlatform].
 ///
@@ -20,11 +17,9 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   /// Creates a new plugin implementation instance.
   SharedPreferencesAndroid({
     @visibleForTesting SharedPreferencesApi? api,
-  }) : api = api ?? SharedPreferencesApi();
+  }) : _api = api ?? SharedPreferencesApi();
 
-  /// The pigeon API used to send messages to the platform.
-  @visibleForTesting
-  final SharedPreferencesApi api;
+  final SharedPreferencesApi _api;
 
   /// Registers this class as the default instance of [SharedPreferencesStorePlatform].
   static void registerWith() {
@@ -37,23 +32,22 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
 
   @override
   Future<bool> remove(String key) async {
-    return api.remove(key);
+    return _api.remove(key);
   }
 
   @override
   Future<bool> setValue(String valueType, String key, Object value) async {
     switch (valueType) {
       case 'String':
-        return api.setString(key, value as String);
+        return _api.setString(key, value as String);
       case 'Bool':
-        return api.setBool(key, value as bool);
+        return _api.setBool(key, value as bool);
       case 'Int':
-        return api.setInt(key, value as int);
+        return _api.setInt(key, value as int);
       case 'Double':
-        return api.setDouble(key, value as double);
+        return _api.setDouble(key, value as double);
       case 'StringList':
-        return api.setEncodedStringList(
-            key, '$jsonListPrefix${jsonEncode(value)}');
+        return _api.setStringList(key, value as List<String>);
     }
     // TODO(tarrinneal): change to ArgumentError across all platforms.
     throw PlatformException(
@@ -79,7 +73,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
   @override
   Future<bool> clearWithParameters(ClearParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
-    return api.clear(
+    return _api.clear(
       filter.prefix,
       filter.allowList?.toList(),
     );
@@ -105,17 +99,7 @@ class SharedPreferencesAndroid extends SharedPreferencesStorePlatform {
       GetAllParameters parameters) async {
     final PreferencesFilter filter = parameters.filter;
     final Map<String?, Object?> data =
-        await api.getAll(filter.prefix, filter.allowList?.toList());
-    data.forEach((String? key, Object? value) {
-      if (value.runtimeType == String &&
-          (value! as String).startsWith(jsonListPrefix)) {
-        data[key!] =
-            (jsonDecode((value as String).substring(jsonListPrefix.length))
-                    as List<dynamic>)
-                .cast<String>()
-                .toList();
-      }
-    });
+        await _api.getAll(filter.prefix, filter.allowList?.toList());
     return data.cast<String, Object>();
   }
 }

@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 import 'messages_async.g.dart';
-import 'strings.dart';
 
 const String _listPrefix = 'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu';
 
@@ -38,8 +35,7 @@ base class SharedPreferencesAsyncAndroid
   }
 
   /// Returns a SharedPreferencesPigeonOptions for sending to platform.
-  @visibleForTesting
-  SharedPreferencesPigeonOptions convertOptionsToPigeonOptions(
+  SharedPreferencesPigeonOptions _convertOptionsToPigeonOptions(
       SharedPreferencesOptions options) {
     if (options is SharedPreferencesAsyncAndroidOptions) {
       return SharedPreferencesPigeonOptions(
@@ -51,10 +47,7 @@ base class SharedPreferencesAsyncAndroid
     return SharedPreferencesPigeonOptions();
   }
 
-  /// Provides the backend (SharedPreferences or DataStore) required based on
-  /// the passed in [SharedPreferencesPigeonOptions].
-  @visibleForTesting
-  SharedPreferencesAsyncApi getApiForBackend(
+  SharedPreferencesAsyncApi _getApiForBackend(
       SharedPreferencesPigeonOptions options) {
     return options.useDataStore ? _dataStoreApi : _sharedPreferencesApi;
   }
@@ -66,8 +59,8 @@ base class SharedPreferencesAsyncAndroid
   ) async {
     final PreferencesFilters filter = parameters.filter;
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return (await api.getKeys(
       filter.allowList?.toList(),
       pigeonOptions,
@@ -86,8 +79,8 @@ base class SharedPreferencesAsyncAndroid
           'StorageError: This string cannot be stored as it clashes with special identifier prefixes');
     }
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
 
     return api.setString(key, value, pigeonOptions);
   }
@@ -99,8 +92,8 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return api.setInt(key, value, pigeonOptions);
   }
 
@@ -111,8 +104,8 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return api.setDouble(key, value, pigeonOptions);
   }
 
@@ -123,8 +116,8 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return api.setBool(key, value, pigeonOptions);
   }
 
@@ -135,10 +128,9 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
-    final String stringValue = '$jsonListPrefix${jsonEncode(value)}';
-    return api.setString(key, stringValue, pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
+    return api.setStringList(key, value, pigeonOptions);
   }
 
   @override
@@ -147,8 +139,8 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return _convertKnownExceptions<String>(
         () async => api.getString(key, pigeonOptions));
   }
@@ -159,8 +151,8 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return _convertKnownExceptions<bool>(
         () async => api.getBool(key, pigeonOptions));
   }
@@ -171,8 +163,8 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return _convertKnownExceptions<double>(
         () async => api.getDouble(key, pigeonOptions));
   }
@@ -183,8 +175,8 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return _convertKnownExceptions<int>(
         () async => api.getInt(key, pigeonOptions));
   }
@@ -195,28 +187,12 @@ base class SharedPreferencesAsyncAndroid
     SharedPreferencesOptions options,
   ) async {
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
-    // Request JSON encoded string list.
-    final String? jsonEncodedStringList =
-        await _convertKnownExceptions<String?>(
-            () async => api.getStringList(key, pigeonOptions));
-    if (jsonEncodedStringList != null) {
-      final String jsonEncodedString =
-          jsonEncodedStringList.substring(jsonListPrefix.length);
-      try {
-        final List<String> decodedList =
-            (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
-        return decodedList;
-      } catch (e) {
-        throw TypeError();
-      }
-    }
-    // If no JSON encoded string list exists, check for platform encoded value.
-    final List<String>? stringList =
-        await _convertKnownExceptions<List<String>?>(
-            () async => api.getPlatformEncodedStringList(key, pigeonOptions));
-    return stringList?.cast<String>().toList();
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
+    // TODO(tarrinneal): Remove cast once https://github.com/flutter/flutter/issues/97848
+    // is fixed. In practice, the values will never be null, and the native implementation assumes that.
+    return _convertKnownExceptions<List<String>>(() async =>
+        (await api.getStringList(key, pigeonOptions))?.cast<String>().toList());
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {
@@ -239,8 +215,8 @@ base class SharedPreferencesAsyncAndroid
   ) async {
     final PreferencesFilters filter = parameters.filter;
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     return api.clear(
       filter.allowList?.toList(),
       pigeonOptions,
@@ -254,19 +230,12 @@ base class SharedPreferencesAsyncAndroid
   ) async {
     final PreferencesFilters filter = parameters.filter;
     final SharedPreferencesPigeonOptions pigeonOptions =
-        convertOptionsToPigeonOptions(options);
-    final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
+        _convertOptionsToPigeonOptions(options);
+    final SharedPreferencesAsyncApi api = _getApiForBackend(pigeonOptions);
     final Map<String?, Object?> data = await api.getAll(
       filter.allowList?.toList(),
       pigeonOptions,
     );
-    data.forEach((String? key, Object? value) {
-      if (value is String && value.startsWith(jsonListPrefix)) {
-        data[key!] = (jsonDecode(value.substring(jsonListPrefix.length))
-                as List<dynamic>)
-            .cast<String>();
-      }
-    });
     return data.cast<String, Object>();
   }
 }

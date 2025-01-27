@@ -4,13 +4,10 @@
 
 // ignore_for_file: non_constant_identifier_names
 
-import 'dart:convert';
-
 import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages_async.g.dart';
-import 'package:shared_preferences_android/src/strings.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
@@ -86,10 +83,7 @@ void main() {
           getPreferences(useDataStore);
 
       await preferences.setStringList(listKey, testList, emptyOptions);
-      final List<String>? response =
-          await preferences.getStringList(listKey, emptyOptions);
-
-      expect(response, testList);
+      expect(await preferences.getStringList(listKey, emptyOptions), testList);
     });
 
     test('getPreferences with $backend', () async {
@@ -298,13 +292,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<String?> getStringList(
-      String key, SharedPreferencesPigeonOptions options) async {
-    return items[key] as String?;
-  }
-
-  @override
-  Future<List<String>?> getPlatformEncodedStringList(
+  Future<List<String>?> getStringList(
       String key, SharedPreferencesPigeonOptions options) async {
     return items[key] as List<String>?;
   }
@@ -338,14 +326,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
   }
 
   @override
-  Future<bool> setEncodedStringList(
-      String key, String value, SharedPreferencesPigeonOptions options) async {
-    items[key] = '$jsonListPrefix${jsonEncode(value)}';
-    return true;
-  }
-
-  @override
-  Future<bool> setDeprecatedStringList(String key, List<String> value,
+  Future<bool> setStringList(String key, List<String?> value,
       SharedPreferencesPigeonOptions options) async {
     items[key] = value;
     return true;
