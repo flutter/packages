@@ -3246,7 +3246,7 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     expect(camera.supportsImageStreaming(), true);
   });
-/*
+
   test(
       'onStreamedFrameAvailable emits CameraImageData when picked up from CameraImageData stream controller',
       () async {
@@ -3259,9 +3259,22 @@ void main() {
 
     // Tell plugin to create detached Analyzer for testing.
     camera.proxy = CameraXProxy(
-        createAnalyzer:
-            (Future<void> Function(ImageProxy imageProxy) analyze) =>
-                Analyzer.detached(analyze: analyze));
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Analyzer.pigeon_detached(
+          analyze: analyze,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+    );
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -3302,9 +3315,22 @@ void main() {
 
     // Tell plugin to create detached Analyzer for testing.
     camera.proxy = CameraXProxy(
-        createAnalyzer:
-            (Future<void> Function(ImageProxy imageProxy) analyze) =>
-                Analyzer.detached(analyze: analyze));
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Analyzer.pigeon_detached(
+          analyze: analyze,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+    );
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -3362,11 +3388,34 @@ void main() {
 
     // Tell plugin to create detached Analyzer for testing.
     camera.proxy = CameraXProxy(
-        createAnalyzer:
-            (Future<void> Function(ImageProxy imageProxy) analyze) =>
-                Analyzer.detached(analyze: analyze),
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged));
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Analyzer.pigeon_detached(
+          analyze: analyze,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+    );
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = mockProcessCameraProvider;
@@ -3408,7 +3457,7 @@ void main() {
         verify(mockImageAnalysis.setAnalyzer(captureAny)).captured.single
             as Analyzer;
 
-    await capturedAnalyzer.analyze(mockImageProxy);
+    capturedAnalyzer.analyze(MockAnalyzer(), mockImageProxy);
 
     final CameraImageData imageData = await imageDataCompleter.future;
 
@@ -3423,7 +3472,7 @@ void main() {
 
     await onStreamedFrameAvailableSubscription.cancel();
   });
-
+/*
   test(
       'onStreamedFrameAvailable returns stream that responds expectedly to being canceled',
       () async {
