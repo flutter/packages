@@ -15,6 +15,22 @@ import 'package:pigeon/pigeon.dart';
   dartOut: 'lib/src/messages_async.g.dart',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+
+/// Possible types found during a getStringList call.
+enum StringListLookupResultType {
+  /// A deprecated platform-side encoding string list.
+  platformEncoded,
+
+  /// A JSON-encoded string list.
+  jsonEncoded,
+
+  /// A string that doesn't have the expected encoding prefix.
+  unexpectedString,
+
+  // There is no type for non-string values, as those will throw an exception
+  // on the native side, so don't need a return value.
+}
+
 class SharedPreferencesPigeonOptions {
   SharedPreferencesPigeonOptions({
     this.fileName,
@@ -22,6 +38,19 @@ class SharedPreferencesPigeonOptions {
   });
   String? fileName;
   bool useDataStore;
+}
+
+class StringListResult {
+  StringListResult({
+    required this.jsonEncodedValue,
+    required this.type,
+  });
+
+  /// The JSON-encoded stored value, or null if something else was found.
+  String? jsonEncodedValue;
+
+  /// The type of value found.
+  StringListLookupResultType type;
 }
 
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
@@ -107,9 +136,9 @@ abstract class SharedPreferencesAsyncApi {
     SharedPreferencesPigeonOptions options,
   );
 
-  /// Gets individual List<String> value stored with [key], if any.
+  /// Gets the JSON-encoded List<String> value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  String? getStringList(
+  StringListResult? getStringList(
     String key,
     SharedPreferencesPigeonOptions options,
   );
