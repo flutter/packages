@@ -3,14 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
-
-// WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
-// below generated file. Run `flutter packages pub run build_runner watch` to
-// rebuild and watch for further changes.
-part 'billing_response_wrapper.g.dart';
 
 /// The error message shown when the map represents billing result is invalid from method channel.
 ///
@@ -20,27 +14,10 @@ const String kInvalidBillingResultErrorMessage =
     'Invalid billing result map from method channel.';
 
 /// Params containing the response code and the debug message from the Play Billing API response.
-@JsonSerializable()
-@BillingResponseConverter()
 @immutable
 class BillingResultWrapper implements HasBillingResponse {
   /// Constructs the object with [responseCode] and [debugMessage].
   const BillingResultWrapper({required this.responseCode, this.debugMessage});
-
-  /// Constructs an instance of this from a key value map of data.
-  ///
-  /// The map needs to have named string keys with values matching the names and
-  /// types of all of the members on this class.
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  factory BillingResultWrapper.fromJson(Map<String, dynamic>? map) {
-    if (map == null || map.isEmpty) {
-      return const BillingResultWrapper(
-          responseCode: BillingResponse.error,
-          debugMessage: kInvalidBillingResultErrorMessage);
-    }
-    return _$BillingResultWrapperFromJson(map);
-  }
 
   /// Response code returned in the Play Billing API calls.
   @override

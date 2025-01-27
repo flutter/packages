@@ -27,8 +27,9 @@ void main() {
   setUp(() {
     widgets.WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any)).thenAnswer(
-        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
+    when(mockApi.startConnection(any, any, any)).thenAnswer((_) async =>
+        PlatformBillingResult(
+            responseCode: PlatformBillingResponse.ok, debugMessage: ''));
     manager = BillingClientManager(
         billingClientFactory: (PurchasesUpdatedListener listener,
                 UserSelectedAlternativeBillingListener?
@@ -80,7 +81,7 @@ void main() {
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
-          verify(mockApi.startConnection(any, captureAny));
+          verify(mockApi.startConnection(any, captureAny, any));
       expect(result.callCount, equals(2));
       expect(result.captured.last,
           PlatformBillingChoiceMode.alternativeBillingOnly);
@@ -95,7 +96,7 @@ void main() {
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
-          verify(mockApi.startConnection(any, captureAny));
+          verify(mockApi.startConnection(any, captureAny, any));
       expect(result.callCount, equals(2));
       expect(result.captured.last, PlatformBillingChoiceMode.playBillingOnly);
     });
@@ -107,7 +108,8 @@ void main() {
           responseCode: BillingResponse.ok, debugMessage: 'dummy message');
       when(mockApi.isAlternativeBillingOnlyAvailableAsync()).thenAnswer(
           (_) async => PlatformBillingResult(
-              responseCode: 0, debugMessage: expected.debugMessage!));
+              responseCode: PlatformBillingResponse.ok,
+              debugMessage: expected.debugMessage!));
 
       final BillingResultWrapper result =
           await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
@@ -136,14 +138,12 @@ void main() {
     group('queryPurchaseDetails', () {
       test('returns ProductDetailsResponseWrapper', () async {
         const String debugMessage = 'dummy message';
-        const BillingResponse responseCode = BillingResponse.ok;
+        const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
 
         when(mockApi.queryPurchasesAsync(any))
             .thenAnswer((_) async => PlatformPurchasesResponse(
                   billingResult: PlatformBillingResult(
-                      responseCode:
-                          const BillingResponseConverter().toJson(responseCode),
-                      debugMessage: debugMessage),
+                      responseCode: responseCode, debugMessage: debugMessage),
                   purchases: <PlatformPurchase>[
                     convertToPigeonPurchase(dummyPurchase),
                   ],
@@ -179,7 +179,8 @@ void main() {
 
   group('isFeatureSupported', () {
     test('isFeatureSupported returns false', () async {
-      when(mockApi.isFeatureSupported('subscriptions'))
+      when(mockApi
+              .isFeatureSupported(PlatformBillingClientFeature.subscriptions))
           .thenAnswer((_) async => false);
       final bool isSupported = await iapAndroidPlatformAddition
           .isFeatureSupported(BillingClientFeature.subscriptions);
@@ -187,7 +188,8 @@ void main() {
     });
 
     test('isFeatureSupported returns true', () async {
-      when(mockApi.isFeatureSupported('subscriptions'))
+      when(mockApi
+              .isFeatureSupported(PlatformBillingClientFeature.subscriptions))
           .thenAnswer((_) async => true);
       final bool isSupported = await iapAndroidPlatformAddition
           .isFeatureSupported(BillingClientFeature.subscriptions);
