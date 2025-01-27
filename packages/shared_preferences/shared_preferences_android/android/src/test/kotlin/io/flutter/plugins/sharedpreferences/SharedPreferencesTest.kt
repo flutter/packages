@@ -98,15 +98,16 @@ internal class SharedPreferencesTest {
     plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
     val result = plugin.getStringList(listKey, dataStoreOptions)
     Assert.assertEquals(result?.jsonEncodedValue, testList)
+    Assert.assertEquals(result?.type, StringListLookupResultType.JSON_ENCODED)
   }
 
   @Test
-  fun testSetAndGetStringListWithDataStoreRedirectsForLegacy() {
+  fun testSetAndGetStringListWithDataStoreRedirectsForPlatformEncoded() {
     val plugin = pluginSetup(dataStoreOptions)
     plugin.setDeprecatedStringList(listKey, listOf(""), dataStoreOptions)
     val result = plugin.getStringList(listKey, dataStoreOptions)
     Assert.assertEquals(result?.jsonEncodedValue, null)
-    Assert.assertEquals(result?.foundPlatformEncodedValue, true)
+    Assert.assertEquals(result?.type, StringListLookupResultType.PLATFORM_ENCODED)
   }
 
   @Test
@@ -115,7 +116,7 @@ internal class SharedPreferencesTest {
     plugin.setString(listKey, testString, dataStoreOptions)
     val result = plugin.getStringList(listKey, dataStoreOptions)
     Assert.assertEquals(result?.jsonEncodedValue, null)
-    Assert.assertEquals(result?.foundPlatformEncodedValue, false)
+    Assert.assertEquals(result?.type, StringListLookupResultType.UNEXPECTED_STRING)
   }
 
   @Test
@@ -238,15 +239,16 @@ internal class SharedPreferencesTest {
     plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
     val result = plugin.getStringList(listKey, sharedPreferencesOptions)
     Assert.assertEquals(result?.jsonEncodedValue, testList)
+    Assert.assertEquals(result?.type, StringListLookupResultType.JSON_ENCODED)
   }
 
   @Test
-  fun testSetAndGetStringListWithSharedPreferencesRedirectsForLegacy() {
+  fun testSetAndGetStringListWithSharedPreferencesRedirectsForPlatformEncoded() {
     val plugin = pluginSetup(sharedPreferencesOptions)
     plugin.setDeprecatedStringList(listKey, listOf(""), sharedPreferencesOptions)
     val result = plugin.getStringList(listKey, sharedPreferencesOptions)
     Assert.assertEquals(result?.jsonEncodedValue, null)
-    Assert.assertEquals(result?.foundPlatformEncodedValue, true)
+    Assert.assertEquals(result?.type, StringListLookupResultType.PLATFORM_ENCODED)
   }
 
   @Test
@@ -255,7 +257,7 @@ internal class SharedPreferencesTest {
     plugin.setString(listKey, testString, sharedPreferencesOptions)
     val result = plugin.getStringList(listKey, sharedPreferencesOptions)
     Assert.assertEquals(result?.jsonEncodedValue, null)
-    Assert.assertEquals(result?.foundPlatformEncodedValue, false)
+    Assert.assertEquals(result?.type, StringListLookupResultType.UNEXPECTED_STRING)
   }
 
   @Test

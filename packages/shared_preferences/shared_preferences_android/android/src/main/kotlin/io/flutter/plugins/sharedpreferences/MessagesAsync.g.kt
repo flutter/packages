@@ -43,6 +43,22 @@ class SharedPreferencesError(
     val details: Any? = null
 ) : Throwable()
 
+/** Possible types found during a getStringList call. */
+enum class StringListLookupResultType(val raw: Int) {
+  /** A deprecated platform-side encoding string list. */
+  PLATFORM_ENCODED(0),
+  /** A JSON-encoded string list. */
+  JSON_ENCODED(1),
+  /** A string that doesn't have the expected encoding prefix. */
+  UNEXPECTED_STRING(2);
+
+  companion object {
+    fun ofRaw(raw: Int): StringListLookupResultType? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class SharedPreferencesPigeonOptions(val fileName: String? = null, val useDataStore: Boolean) {
   companion object {
@@ -63,33 +79,23 @@ data class SharedPreferencesPigeonOptions(val fileName: String? = null, val useD
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class StringListResult(
-    /**
-     * The JSON-encoded stored value, or null if there isn't one.
-     *
-     * This will be null if either there is no store value (in which case
-     * [foundPlatformEncodedValue] will be false), or if there was a platform-encoded value.
-     */
+    /** The JSON-encoded stored value, or null if something else was found. */
     val jsonEncodedValue: String? = null,
-    /**
-     * Whether value using the legacy platform-side encoding was found.
-     *
-     * If this is true, [jsonEncodedValue] will be null, and the value should be fetched with
-     * getPlatformEncodedStringList(...) instead.
-     */
-    val foundPlatformEncodedValue: Boolean
+    /** The type of value found. */
+    val type: StringListLookupResultType
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): StringListResult {
       val jsonEncodedValue = pigeonVar_list[0] as String?
-      val foundPlatformEncodedValue = pigeonVar_list[1] as Boolean
-      return StringListResult(jsonEncodedValue, foundPlatformEncodedValue)
+      val type = pigeonVar_list[1] as StringListLookupResultType
+      return StringListResult(jsonEncodedValue, type)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
         jsonEncodedValue,
-        foundPlatformEncodedValue,
+        type,
     )
   }
 }
@@ -98,11 +104,14 @@ private open class MessagesAsyncPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { StringListLookupResultType.ofRaw(it.toInt()) }
+      }
+      130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           SharedPreferencesPigeonOptions.fromList(it)
         }
       }
-      130.toByte() -> {
+      131.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { StringListResult.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -111,12 +120,16 @@ private open class MessagesAsyncPigeonCodec : StandardMessageCodec() {
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
-      is SharedPreferencesPigeonOptions -> {
+      is StringListLookupResultType -> {
         stream.write(129)
+        writeValue(stream, value.raw)
+      }
+      is SharedPreferencesPigeonOptions -> {
+        stream.write(130)
         writeValue(stream, value.toList())
       }
       is StringListResult -> {
-        stream.write(130)
+        stream.write(131)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

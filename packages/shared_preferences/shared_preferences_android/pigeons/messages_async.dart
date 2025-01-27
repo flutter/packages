@@ -15,6 +15,22 @@ import 'package:pigeon/pigeon.dart';
   dartOut: 'lib/src/messages_async.g.dart',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+
+/// Possible types found during a getStringList call.
+enum StringListLookupResultType {
+  /// A deprecated platform-side encoding string list.
+  platformEncoded,
+
+  /// A JSON-encoded string list.
+  jsonEncoded,
+
+  /// A string that doesn't have the expected encoding prefix.
+  unexpectedString,
+
+  // There is no type for non-string values, as those will throw an exception
+  // on the native side, so don't need a return value.
+}
+
 class SharedPreferencesPigeonOptions {
   SharedPreferencesPigeonOptions({
     this.fileName,
@@ -27,22 +43,14 @@ class SharedPreferencesPigeonOptions {
 class StringListResult {
   StringListResult({
     required this.jsonEncodedValue,
-    required this.foundPlatformEncodedValue,
+    required this.type,
   });
 
-  /// The JSON-encoded stored value, or null if something else was found, in
-  /// which case [foundPlatformEncodedValue] will indicate its type.
+  /// The JSON-encoded stored value, or null if something else was found.
   String? jsonEncodedValue;
 
-  /// Whether value using the legacy platform-side encoding was found.
-  ///
-  /// This value is only meaningful if [jsonEncodedValue] is null.
-  /// - If true, the value should be fetched with
-  ///   getPlatformEncodedStringList(...) instead.
-  /// - If false, an unexpected string (one without any encoding prefix) was
-  ///   found. This will happen if a client uses getStringList with a key that
-  ///   was used with setString.
-  bool foundPlatformEncodedValue;
+  /// The type of value found.
+  StringListLookupResultType type;
 }
 
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')

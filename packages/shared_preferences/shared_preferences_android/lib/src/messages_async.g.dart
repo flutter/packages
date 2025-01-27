@@ -18,6 +18,18 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+/// Possible types found during a getStringList call.
+enum StringListLookupResultType {
+  /// A deprecated platform-side encoding string list.
+  platformEncoded,
+
+  /// A JSON-encoded string list.
+  jsonEncoded,
+
+  /// A string that doesn't have the expected encoding prefix.
+  unexpectedString,
+}
+
 class SharedPreferencesPigeonOptions {
   SharedPreferencesPigeonOptions({
     this.fileName,
@@ -47,26 +59,19 @@ class SharedPreferencesPigeonOptions {
 class StringListResult {
   StringListResult({
     this.jsonEncodedValue,
-    required this.foundPlatformEncodedValue,
+    required this.type,
   });
 
-  /// The JSON-encoded stored value, or null if there isn't one.
-  ///
-  /// This will be null if either there is no store value (in which case
-  /// [foundPlatformEncodedValue] will be false), or if there was a
-  /// platform-encoded value.
+  /// The JSON-encoded stored value, or null if something else was found.
   String? jsonEncodedValue;
 
-  /// Whether value using the legacy platform-side encoding was found.
-  ///
-  /// If this is true, [jsonEncodedValue] will be null, and the value should be
-  /// fetched with getPlatformEncodedStringList(...) instead.
-  bool foundPlatformEncodedValue;
+  /// The type of value found.
+  StringListLookupResultType type;
 
   Object encode() {
     return <Object?>[
       jsonEncodedValue,
-      foundPlatformEncodedValue,
+      type,
     ];
   }
 
@@ -74,7 +79,7 @@ class StringListResult {
     result as List<Object?>;
     return StringListResult(
       jsonEncodedValue: result[0] as String?,
-      foundPlatformEncodedValue: result[1]! as bool,
+      type: result[1]! as StringListLookupResultType,
     );
   }
 }
@@ -86,11 +91,14 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is SharedPreferencesPigeonOptions) {
+    } else if (value is StringListLookupResultType) {
       buffer.putUint8(129);
+      writeValue(buffer, value.index);
+    } else if (value is SharedPreferencesPigeonOptions) {
+      buffer.putUint8(130);
       writeValue(buffer, value.encode());
     } else if (value is StringListResult) {
-      buffer.putUint8(130);
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -101,8 +109,11 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        return SharedPreferencesPigeonOptions.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : StringListLookupResultType.values[value];
       case 130:
+        return SharedPreferencesPigeonOptions.decode(readValue(buffer)!);
+      case 131:
         return StringListResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

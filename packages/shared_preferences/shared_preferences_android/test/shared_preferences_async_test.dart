@@ -305,7 +305,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
         ? null
         : StringListResult(
             jsonEncodedValue: value as String?,
-            foundPlatformEncodedValue: false);
+            type: StringListLookupResultType.jsonEncoded);
   }
 
   @override

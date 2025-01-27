@@ -212,11 +212,11 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
       // The JSON-encoded lists use an extended prefix to distinguish them from
       // lists that using listEncoder.
       return if (stringValue.startsWith(JSON_LIST_PREFIX)) {
-        StringListResult(stringValue, foundPlatformEncodedValue = false)
+        StringListResult(stringValue, StringListLookupResultType.JSON_ENCODED)
       } else if (stringValue.startsWith(LIST_PREFIX)) {
-        StringListResult(null, foundPlatformEncodedValue = true)
+        StringListResult(null, StringListLookupResultType.PLATFORM_ENCODED)
       } else {
-        StringListResult(null, foundPlatformEncodedValue = false)
+        StringListResult(null, StringListLookupResultType.UNEXPECTED_STRING)
       }
     }
     return null
@@ -425,11 +425,11 @@ class SharedPreferencesBackend(
       // The JSON-encoded lists use an extended prefix to distinguish them from
       // lists that using listEncoder.
       return if (value!!.startsWith(JSON_LIST_PREFIX)) {
-        StringListResult(value, foundPlatformEncodedValue = false)
+        StringListResult(value, StringListLookupResultType.JSON_ENCODED)
       } else if (value.startsWith(LIST_PREFIX)) {
-        StringListResult(null, foundPlatformEncodedValue = true)
+        StringListResult(null, StringListLookupResultType.PLATFORM_ENCODED)
       } else {
-        StringListResult(null, foundPlatformEncodedValue = false)
+        StringListResult(null, StringListLookupResultType.UNEXPECTED_STRING)
       }
     }
     return null

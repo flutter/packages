@@ -204,28 +204,26 @@ base class SharedPreferencesAsyncAndroid
     if (result == null) {
       return null;
     }
-    final String? jsonEncodedStringList = result.jsonEncodedValue;
-    if (jsonEncodedStringList != null) {
-      final String jsonEncodedString =
-          jsonEncodedStringList.substring(jsonListPrefix.length);
-      try {
-        final List<String> decodedList =
-            (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
-        return decodedList;
-      } catch (e) {
+    switch (result.type) {
+      case StringListLookupResultType.jsonEncoded:
+        // Force-unwrap is safe because a value is always set for this type.
+        final String jsonEncodedStringList = result.jsonEncodedValue!;
+        final String jsonEncodedString =
+            jsonEncodedStringList.substring(jsonListPrefix.length);
+        try {
+          final List<String> decodedList =
+              (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
+          return decodedList;
+        } catch (e) {
+          throw TypeError();
+        }
+      case StringListLookupResultType.platformEncoded:
+        final List<String>? stringList =
+            await _convertKnownExceptions<List<String>?>(() async =>
+                api.getPlatformEncodedStringList(key, pigeonOptions));
+        return stringList?.cast<String>().toList();
+      case StringListLookupResultType.unexpectedString:
         throw TypeError();
-      }
-    }
-    // If no JSON encoded string list exists, check for platform encoded value.
-    if (result.foundPlatformEncodedValue) {
-      final List<String>? stringList =
-          await _convertKnownExceptions<List<String>?>(
-              () async => api.getPlatformEncodedStringList(key, pigeonOptions));
-      return stringList?.cast<String>().toList();
-    } else {
-      // A non-null result where foundPlatformEncodedValue is false means there
-      // was a raw string result, so the client is fetching the wrong type.
-      throw TypeError();
     }
   }
 
