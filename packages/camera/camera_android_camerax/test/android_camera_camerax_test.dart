@@ -2904,7 +2904,7 @@ void main() {
 
     expect(imageFile.path, equals(testPicturePath));
   });
-/*
+
   test(
       'takePicture sets ImageCapture target rotation to currrent photo rotation when orientation unlocked',
       () async {
@@ -2922,8 +2922,23 @@ void main() {
 
     // Tell plugin to mock call to get current photo orientation.
     camera.proxy = CameraXProxy(
-        getDefaultDisplayRotation: () =>
-            Future<int>.value(defaultTargetRotation));
+      newDeviceOrientationManager: ({
+        required void Function(
+          DeviceOrientationManager,
+          String,
+        ) onDeviceOrientationChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockDeviceOrientationManager mockDeviceOrientationManager =
+            MockDeviceOrientationManager();
+        when(mockDeviceOrientationManager.getDefaultDisplayRotation())
+            .thenAnswer(
+          (_) async => defaultTargetRotation,
+        );
+        return mockDeviceOrientationManager;
+      },
+    );
 
     when(mockProcessCameraProvider.isBound(camera.imageCapture))
         .thenAnswer((_) async => true);
@@ -2976,7 +2991,7 @@ void main() {
 
     await camera.setFlashMode(cameraId, FlashMode.torch);
     await camera.takePicture(cameraId);
-    verify(camera.imageCapture!.setFlashMode(ImageCapture.flashModeOff));
+    verify(camera.imageCapture!.setFlashMode(CameraXFlashMode.off));
   });
 
   test(
@@ -3002,14 +3017,14 @@ void main() {
     for (final FlashMode flashMode in FlashMode.values) {
       await camera.setFlashMode(cameraId, flashMode);
 
-      int? expectedFlashMode;
+      CameraXFlashMode? expectedFlashMode;
       switch (flashMode) {
         case FlashMode.off:
-          expectedFlashMode = ImageCapture.flashModeOff;
+          expectedFlashMode = CameraXFlashMode.off;
         case FlashMode.auto:
-          expectedFlashMode = ImageCapture.flashModeAuto;
+          expectedFlashMode = CameraXFlashMode.auto;
         case FlashMode.always:
-          expectedFlashMode = ImageCapture.flashModeOn;
+          expectedFlashMode = CameraXFlashMode.on;
         case FlashMode.torch:
           expectedFlashMode = null;
       }
@@ -3069,22 +3084,29 @@ void main() {
   test('getMinExposureOffset returns expected exposure offset', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
-        exposureCompensationStep: 0.2);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 3,
+        upper: 4,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0.2,
+      pigeon_instanceManager: testInstanceManager,
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
 
     // We expect the minimum exposure to be the minimum exposure compensation * exposure compensation step.
     // Delta is included due to avoid catching rounding errors.
     expect(await camera.getMinExposureOffset(35), closeTo(0.6, 0.0000000001));
   });
-
+/*
   test('getMaxExposureOffset returns expected exposure offset', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
