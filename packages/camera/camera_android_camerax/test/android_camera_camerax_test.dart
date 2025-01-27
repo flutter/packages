@@ -2730,7 +2730,7 @@ void main() {
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
     });
-/*
+
     test(
         'stopVideoRecording throws a camera exception if '
         'videoOutputPath is null, and sets recording to null', () async {
@@ -2750,8 +2750,13 @@ void main() {
 
       await expectLater(() async {
         // Simulate video recording being finalized so stopVideoRecording completes.
-        PendingRecording.videoRecordingEventStreamController
-            .add(VideoRecordEvent.finalize);
+        AndroidCameraCameraX.videoRecordingEventStreamController.add(
+          VideoRecordEventFinalize.pigeon_detached(
+            pigeon_instanceManager: PigeonInstanceManager(
+              onWeakReferenceRemoved: (_) {},
+            ),
+          ),
+        );
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
       expect(camera.recording, null);
@@ -2774,8 +2779,13 @@ void main() {
       camera.videoOutputPath = videoOutputPath;
 
       // Simulate video recording being finalized so stopVideoRecording completes.
-      PendingRecording.videoRecordingEventStreamController
-          .add(VideoRecordEvent.finalize);
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventFinalize.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
 
       final XFile file = await camera.stopVideoRecording(0);
       expect(file.path, videoOutputPath);
@@ -2806,8 +2816,13 @@ void main() {
           .thenAnswer((_) async => true);
 
       // Simulate video recording being finalized so stopVideoRecording completes.
-      PendingRecording.videoRecordingEventStreamController
-          .add(VideoRecordEvent.finalize);
+      AndroidCameraCameraX.videoRecordingEventStreamController.add(
+        VideoRecordEventFinalize.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        ),
+      );
 
       await camera.stopVideoRecording(90);
       verify(processCameraProvider.unbind(<UseCase>[videoCapture]));
@@ -2838,9 +2853,8 @@ void main() {
       verifyNoMoreInteractions(camera.videoCapture);
       verifyNoMoreInteractions(camera.camera);
     });
-    */
   });
-/*
+
   test(
       'takePicture binds ImageCapture to lifecycle and makes call to take a picture',
       () async {
@@ -2861,8 +2875,19 @@ void main() {
 
     // Tell plugin to create detached camera state observers.
     camera.proxy = CameraXProxy(
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged));
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+    );
 
     when(mockProcessCameraProvider.isBound(camera.imageCapture))
         .thenAnswer((_) async => false);
@@ -2879,7 +2904,7 @@ void main() {
 
     expect(imageFile.path, equals(testPicturePath));
   });
-
+/*
   test(
       'takePicture sets ImageCapture target rotation to currrent photo rotation when orientation unlocked',
       () async {
