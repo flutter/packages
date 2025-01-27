@@ -245,6 +245,28 @@ class MockUIScrollView extends _i1.Mock implements _i4.UIScrollView {
       ) as _i6.Future<void>);
 
   @override
+  _i6.Future<void> verticalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #verticalScrollBarEnabled,
+          [enabled],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<void> horizontalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #horizontalScrollBarEnabled,
+          [enabled],
+        ),
+        returnValue: _i6.Future<void>.value(),
+        returnValueForMissingStub: _i6.Future<void>.value(),
+      ) as _i6.Future<void>);
+
+  @override
   _i6.Future<void> setContentOffset(_i3.Point<double>? offset) =>
       (super.noSuchMethod(
         Invocation.method(

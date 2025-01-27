@@ -229,6 +229,18 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'scrollBy is not implemented on the current platform');
   }
 
+  /// Define whether the vertical scrollbar should be drawn or not. The default value is true.
+  Future<void> verticalScrollBarEnabled(bool enabled) {
+    throw UnimplementedError(
+        'verticalScrollBarEnabled is not implemented on the current platform');
+  }
+
+  /// Define whether the horizontal scrollbar should be drawn or not. The default value is true.
+  Future<void> horizontalScrollBarEnabled(bool enabled) {
+    throw UnimplementedError(
+        'horizontalScrollBarEnabled is not implemented on the current platform');
+  }
+
   /// Return the current scroll position of this view.
   ///
   /// Scroll position is measured from the top left.
