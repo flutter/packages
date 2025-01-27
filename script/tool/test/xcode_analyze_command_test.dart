@@ -485,6 +485,174 @@ void main() {
 
         expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
       });
+
+      test('Xcode warnings exceptions list', () async {
+        final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline),
+              platformMacOS: const PlatformDetails(PlatformSupport.inline),
+            });
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        await runCapturingPrint(runner, <String>[
+          'xcode-analyze',
+          '--ios',
+          '--macos',
+          '--xcode-warnings-exceptions=plugin'
+        ]);
+
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  'xcrun',
+                  const <String>[
+                    'xcodebuild',
+                    'clean',
+                    'analyze',
+                    '-workspace',
+                    'ios/Runner.xcworkspace',
+                    '-scheme',
+                    'Runner',
+                    '-configuration',
+                    'Debug',
+                    '-destination',
+                    'generic/platform=iOS Simulator',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
+                  'xcrun',
+                  const <String>[
+                    'xcodebuild',
+                    'clean',
+                    'analyze',
+                    '-workspace',
+                    'macos/Runner.xcworkspace',
+                    '-scheme',
+                    'Runner',
+                    '-configuration',
+                    'Debug',
+                  ],
+                  pluginExampleDirectory.path),
+            ]));
+      });
+
+      test('Xcode warnings exceptions file', () async {
+        final File configFile = packagesDir.childFile('exceptions.yaml');
+        await configFile.writeAsString('- plugin');
+        final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline),
+              platformMacOS: const PlatformDetails(PlatformSupport.inline),
+            });
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        await runCapturingPrint(runner, <String>[
+          'xcode-analyze',
+          '--ios',
+          '--macos',
+          '--xcode-warnings-exceptions=${configFile.path}'
+        ]);
+
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  'xcrun',
+                  const <String>[
+                    'xcodebuild',
+                    'clean',
+                    'analyze',
+                    '-workspace',
+                    'ios/Runner.xcworkspace',
+                    '-scheme',
+                    'Runner',
+                    '-configuration',
+                    'Debug',
+                    '-destination',
+                    'generic/platform=iOS Simulator',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
+                  'xcrun',
+                  const <String>[
+                    'xcodebuild',
+                    'clean',
+                    'analyze',
+                    '-workspace',
+                    'macos/Runner.xcworkspace',
+                    '-scheme',
+                    'Runner',
+                    '-configuration',
+                    'Debug',
+                  ],
+                  pluginExampleDirectory.path),
+            ]));
+      });
+
+      test('treat warnings as errors if plugin not on exceptions list',
+          () async {
+        final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline),
+              platformMacOS: const PlatformDetails(PlatformSupport.inline),
+            });
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'xcode-analyze',
+          '--ios',
+          '--macos',
+          '--xcode-warnings-exceptions=foo,bar'
+        ]);
+
+        expect(
+            output,
+            containsAll(<Matcher>[
+              contains('plugin/example (iOS) passed analysis.'),
+              contains('plugin/example (macOS) passed analysis.'),
+            ]));
+
+        expect(
+            processRunner.recordedCalls,
+            orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  'xcrun',
+                  const <String>[
+                    'xcodebuild',
+                    'clean',
+                    'analyze',
+                    '-workspace',
+                    'ios/Runner.xcworkspace',
+                    '-scheme',
+                    'Runner',
+                    '-configuration',
+                    'Debug',
+                    '-destination',
+                    'generic/platform=iOS Simulator',
+                    'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
+                  'xcrun',
+                  const <String>[
+                    'xcodebuild',
+                    'clean',
+                    'analyze',
+                    '-workspace',
+                    'macos/Runner.xcworkspace',
+                    '-scheme',
+                    'Runner',
+                    '-configuration',
+                    'Debug',
+                    'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+                  ],
+                  pluginExampleDirectory.path),
+            ]));
+      });
     });
   });
 }

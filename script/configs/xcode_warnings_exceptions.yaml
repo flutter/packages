@@ -1,0 +1,3 @@
+# The list of plugins that are allowed to have Xcode warnings.
+#
+# All entries here should have an explanation for why they are here.
