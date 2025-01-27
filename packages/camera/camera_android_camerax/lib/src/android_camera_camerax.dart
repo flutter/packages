@@ -1481,17 +1481,25 @@ class AndroidCameraCameraX extends CameraPlatform {
         return false;
       }
 
-      late final List<MeteringPoint> newMeteringPoints;
-      switch (meteringMode) {
-        case MeteringMode.ae:
-          newMeteringPoints = currentFocusMeteringAction!.meteringPointsAe;
-        case MeteringMode.af:
-          newMeteringPoints = currentFocusMeteringAction!.meteringPointsAf;
-        case MeteringMode.awb:
-          newMeteringPoints = currentFocusMeteringAction!.meteringPointsAwb;
-      }
+      final Iterable<(MeteringPoint, MeteringMode)> originalMeteringPoints =
+          _combineMeteringPoints(
+        currentFocusMeteringAction!,
+      );
 
-      if (newMeteringPoints.isEmpty) {
+      // Remove metering point with specified meteringMode from current focus
+      // and metering action, as only one focus or exposure point may be set
+      // at once in this plugin.
+      final List<(MeteringPoint, MeteringMode)> newMeteringPointInfos =
+          originalMeteringPoints
+              .where(((MeteringPoint, MeteringMode) meteringPointInfo) =>
+                  // meteringPointInfo may technically include points without a
+                  // mode specified, but this logic is safe because this plugin
+                  // only uses points that explicitly have mode
+                  // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
+                  meteringPointInfo.$2 != meteringMode)
+              .toList();
+
+      if (newMeteringPointInfos.isEmpty) {
         // If no other metering points were specified, cancel any previously
         // started focus and metering actions.
         await cameraControl.cancelFocusAndMetering();
@@ -1501,48 +1509,92 @@ class AndroidCameraCameraX extends CameraPlatform {
       // Create builder to potentially add more MeteringPoints to.
       final FocusMeteringActionBuilder actionBuilder =
           proxy.withModeFocusMeteringActionBuilder(
-        point: newMeteringPoints.first,
-        mode: meteringMode,
+        point: newMeteringPointInfos.first.$1,
+        mode: newMeteringPointInfos.first.$2,
       );
-      unawaited(actionBuilder.disableAutoCancel());
+      if (disableAutoCancel) {
+        unawaited(actionBuilder.disableAutoCancel());
+      }
 
       // Add any additional metering points in order as specified by input lists.
-      newMeteringPoints.skip(1).forEach(actionBuilder.addPoint);
+      newMeteringPointInfos.skip(1).forEach(
+        ((MeteringPoint point, MeteringMode) info) {
+          actionBuilder.addPointWithMode(info.$1, info.$2);
+        },
+      );
       currentFocusMeteringAction = await actionBuilder.build();
     } else {
-      List<MeteringPoint> newMeteringPoints = <MeteringPoint>[];
+      // Add new metering point with specified meteringMode, which may involve
+      // replacing a metering point with the same specified meteringMode from
+      // the current focus and metering action.
+      List<(MeteringPoint, MeteringMode)> newMeteringPointInfos =
+          <(MeteringPoint, MeteringMode)>[];
 
       if (currentFocusMeteringAction != null) {
-        switch (meteringMode) {
-          case MeteringMode.ae:
-            newMeteringPoints = List<MeteringPoint>.from(
-              currentFocusMeteringAction!.meteringPointsAe,
-            );
-          case MeteringMode.af:
-            newMeteringPoints = List<MeteringPoint>.from(
-              currentFocusMeteringAction!.meteringPointsAf,
-            );
-          case MeteringMode.awb:
-            newMeteringPoints = List<MeteringPoint>.from(
-              currentFocusMeteringAction!.meteringPointsAwb,
-            );
-        }
+        final Iterable<(MeteringPoint, MeteringMode)> originalMeteringPoints =
+            _combineMeteringPoints(currentFocusMeteringAction!);
+
+        newMeteringPointInfos = originalMeteringPoints
+            .where(((MeteringPoint, MeteringMode) meteringPointInfo) =>
+                // meteringPointInfo may technically include points without a
+                // mode specified, but this logic is safe because this plugin
+                // only uses points that explicitly have mode
+                // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
+                meteringPointInfo.$2 != meteringMode)
+            .toList();
       }
-      newMeteringPoints.add(meteringPoint);
+
+      newMeteringPointInfos.add((meteringPoint, meteringMode));
 
       final FocusMeteringActionBuilder actionBuilder =
           proxy.withModeFocusMeteringActionBuilder(
-        point: newMeteringPoints.first,
-        mode: meteringMode,
+        point: newMeteringPointInfos.first.$1,
+        mode: newMeteringPointInfos.first.$2,
       );
-      unawaited(actionBuilder.disableAutoCancel());
-      newMeteringPoints.skip(1).forEach(actionBuilder.addPoint);
+
+      if (disableAutoCancel) {
+        unawaited(actionBuilder.disableAutoCancel());
+      }
+
+      newMeteringPointInfos.skip(1).forEach(
+        ((MeteringPoint point, MeteringMode mode) info) {
+          actionBuilder.addPointWithMode(info.$1, info.$2);
+        },
+      );
       currentFocusMeteringAction = await actionBuilder.build();
     }
 
     final FocusMeteringResult? result =
         await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
     return result?.isFocusSuccessful ?? false;
+  }
+
+  // Combines the metering points and metering modes of a `FocusMeteringAction`
+  // into a single list.
+  Iterable<(MeteringPoint, MeteringMode)> _combineMeteringPoints(
+    FocusMeteringAction focusMeteringAction,
+  ) {
+    Iterable<(MeteringPoint, MeteringMode)> toMeteringPointRecords(
+      Iterable<MeteringPoint> points,
+      MeteringMode mode,
+    ) {
+      return points.map((MeteringPoint point) => (point, mode));
+    }
+
+    return <(MeteringPoint, MeteringMode)>[
+      ...toMeteringPointRecords(
+        focusMeteringAction.meteringPointsAf,
+        MeteringMode.af,
+      ),
+      ...toMeteringPointRecords(
+        focusMeteringAction.meteringPointsAe,
+        MeteringMode.ae,
+      ),
+      ...toMeteringPointRecords(
+        focusMeteringAction.meteringPointsAwb,
+        MeteringMode.awb,
+      ),
+    ];
   }
 
   static DeviceOrientation _deserializeDeviceOrientation(String orientation) {
