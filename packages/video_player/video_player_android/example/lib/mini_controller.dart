@@ -219,7 +219,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   Completer<void>? _creatingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
 
-  /// The id of a texture that hasn't been initialized.
+  /// The id of a player that hasn't been initialized.
   @visibleForTesting
   static const int kUninitializedPlayerId = -1;
   int _playerId = kUninitializedPlayerId;
@@ -424,7 +424,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   void initState() {
     super.initState();
     _playerId = widget.controller.playerId;
-    // Need to listen for initialization events since the actual texture ID
+    // Need to listen for initialization events since the actual player ID
     // becomes available after asynchronous initialization finishes.
     widget.controller.addListener(_listener);
   }
