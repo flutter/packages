@@ -118,7 +118,7 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
   Iterable<String> classDeclarations() => <String>[
         '''
 extension $_extensionName on $_className {
-  static $_className _fromState(GoRouterState state) => const $_className();
+  static $_className _fromState(GoRouterState state) =>${routeDataClass.unnamedConstructor!.isConst ? ' const' : ''}   $_className();
 }
 '''
       ];

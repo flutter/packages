@@ -1,3 +1,6 @@
+## 2.7.4
+
+- Fixes an issue by removing unnecessary `const` in StatefulShellRouteData generation.
 
 ## 2.7.3
 
