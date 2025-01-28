@@ -31,7 +31,7 @@ jobs:
       # the change if it doesn't.
       run: |
         cd $HOME
-        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.27.3 _flutter
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.27.0 _flutter
         echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
     # Checks out a copy of the repo.
