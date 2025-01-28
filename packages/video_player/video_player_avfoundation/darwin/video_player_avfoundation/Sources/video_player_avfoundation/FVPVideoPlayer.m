@@ -469,14 +469,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 /// is useful for the case where the Engine is in the process of deconstruction
 /// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel {
-  // This check prevents the crash caused by removing the KVO observers twice.
-  // When performing a Hot Restart, the leftover players are disposed once directly
-  // by [FVPVideoPlayerPlugin initialize:] method and then disposed again by
-  // [FVPVideoPlayer onTextureUnregistered:] call leading to possible over-release.
-  if (_disposed) {
-    return;
-  }
-
   _disposed = YES;
   [self removeKeyValueObservers];
 

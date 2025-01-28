@@ -163,11 +163,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   upgradeAudioSessionCategory(AVAudioSessionCategoryPlayback, 0, 0);
 #endif
 
-  [self.playersById
-      enumerateKeysAndObjectsUsingBlock:^(NSNumber *textureId, FVPVideoPlayer *player, BOOL *stop) {
-        [self.registry unregisterTexture:textureId.unsignedIntegerValue];
-        [player dispose];
-      }];
+  [self.playersById.allValues makeObjectsPerformSelector:@selector(dispose)];
   [self.playersById removeAllObjects];
 }
 
