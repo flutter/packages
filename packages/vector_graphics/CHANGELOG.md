@@ -1,6 +1,6 @@
 ## 1.1.16
 
-* Fixes some memory leaks.
+* Fixes some memory leaks by disposing undisposed `ImageInfo`, `ui.Picture` and `Picture`.
 
 ## 1.1.15
 
