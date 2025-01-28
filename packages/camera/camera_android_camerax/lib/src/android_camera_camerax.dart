@@ -27,7 +27,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Proxy for creating `JavaObject`s and calling their methods that require
   /// testing.
   @visibleForTesting
-  CameraXProxy proxy = const CameraXProxy();
+  CameraXProxy proxy = CameraXProxy();
 
   /// The [ProcessCameraProvider] instance used to access camera functionality.
   @visibleForTesting

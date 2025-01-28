@@ -15,7 +15,7 @@ import 'camerax_library.dart';
 /// intends to return.
 class CameraXProxy {
   /// Constructs an [CameraXProxy].
-  const CameraXProxy({
+  CameraXProxy({
     this.setUpGenericsProxy = setUpGenerics,
     this.newCameraSize = CameraSize.new,
     this.newCameraIntegerRange = CameraIntegerRange.new,
@@ -269,14 +269,14 @@ class CameraXProxy {
   }) withModeFocusMeteringActionBuilder;
 
   /// Constructs [CaptureRequestOptions].
-  final CaptureRequestOptions Function({
+  CaptureRequestOptions Function({
     required Map<CaptureRequestKey, Object?> options,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) newCaptureRequestOptions;
 
   /// Constructs [Camera2CameraControl].
-  final Camera2CameraControl Function({
+  Camera2CameraControl Function({
     required CameraControl cameraControl,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -338,7 +338,7 @@ class CameraXProxy {
       ratio_4_3FallbackAutoStrategyAspectRatioStrategy;
 
   /// Calls to [CaptureRequest.controlAELock].
-  final CaptureRequestKey Function() controlAELockCaptureRequest;
+  CaptureRequestKey Function() controlAELockCaptureRequest;
 
   /// Calls to [CameraCharacteristics.infoSupportedHardwareLevel].
   final CameraCharacteristicsKey Function()

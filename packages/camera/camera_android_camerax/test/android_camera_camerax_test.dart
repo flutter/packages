@@ -446,28 +446,46 @@ void main() {
                   return mockBuilder;
                 },
       );
-  //
-  // /// CameraXProxy for testing setting focus and exposure points.
-  // ///
-  // /// Modifies the retrieval of a [Camera2CameraControl] instance to depend on
-  // /// interaction with expected [cameraControl] instance and modifies creation
-  // /// of [CaptureRequestOptions] to return objects detached from a native object.
-  // CameraXProxy getProxyForSettingFocusandExposurePoints(
-  //     CameraControl cameraControlForComparison,
-  //     Camera2CameraControl camera2cameraControl) {
-  //   final CameraXProxy proxy = getProxyForExposureAndFocus();
-  //
-  //   proxy.getCamera2CameraControl = (CameraControl cameraControl) =>
-  //       cameraControl == cameraControlForComparison
-  //           ? camera2cameraControl
-  //           : Camera2CameraControl.detached(cameraControl: cameraControl);
-  //
-  //   proxy.createCaptureRequestOptions =
-  //       (List<(CaptureRequestKeySupportedType, Object?)> options) =>
-  //           CaptureRequestOptions.detached(requestedOptions: options);
-  //
-  //   return proxy;
-  // }
+
+  /// CameraXProxy for testing setting focus and exposure points.
+  ///
+  /// Modifies the retrieval of a [Camera2CameraControl] instance to depend on
+  /// interaction with expected [cameraControl] instance and modifies creation
+  /// of [CaptureRequestOptions] to return objects detached from a native object.
+  CameraXProxy getProxyForSettingFocusandExposurePoints(
+      CameraControl cameraControlForComparison,
+      Camera2CameraControl camera2cameraControl) {
+    final CameraXProxy proxy = getProxyForExposureAndFocus();
+
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    proxy.fromCamera2CameraControl = ({
+      required CameraControl cameraControl,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) =>
+        cameraControl == cameraControlForComparison
+            ? camera2cameraControl
+            : Camera2CameraControl.pigeon_detached(
+                pigeon_instanceManager: testInstanceManager,
+              );
+    proxy.newCaptureRequestOptions = ({
+      required Map<CaptureRequestKey, Object?> options,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      return CaptureRequestOptions.pigeon_detached(
+        options: options,
+        pigeon_instanceManager: testInstanceManager,
+      );
+    };
+    proxy.controlAELockCaptureRequest = () => CaptureRequestKey.pigeon_detached(
+          pigeon_instanceManager: testInstanceManager,
+        );
+
+    return proxy;
+  }
 
   test('Should fetch CameraDescription instances for available cameras',
       () async {
@@ -4014,7 +4032,7 @@ void main() {
       mockActionBuilder.addPointWithMode(createdMeteringPoint, MeteringMode.ae),
     );
   });
-/*
+
   test(
       'setExposurePoint adds new exposure point to focus metering action to start as expected when no previous metering points have been set',
       () async {
@@ -4031,21 +4049,56 @@ void main() {
     camera.cameraInfo = MockCameraInfo();
     camera.currentFocusMeteringAction = null;
 
-    camera.proxy = getProxyForExposureAndFocus();
+    final PigeonInstanceManager testInstanceManager =
+        PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+    final MeteringPoint createdMeteringPoint = MeteringPoint.pigeon_detached(
+      pigeon_instanceManager: testInstanceManager,
+    );
+    MeteringMode? actionBuilderMeteringMode;
+    MeteringPoint? actionBuilderMeteringPoint;
+    final MockFocusMeteringActionBuilder mockActionBuilder =
+        MockFocusMeteringActionBuilder();
+    when(mockActionBuilder.build()).thenAnswer(
+      (_) async => FocusMeteringAction.pigeon_detached(
+        meteringPointsAe: const <MeteringPoint>[],
+        meteringPointsAf: const <MeteringPoint>[],
+        meteringPointsAwb: const <MeteringPoint>[],
+        isAutoCancelEnabled: false,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+    );
+    camera.proxy = getProxyForExposureAndFocus(
+      newDisplayOrientedMeteringPointFactory: ({
+        required CameraInfo cameraInfo,
+        required double width,
+        required double height,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockDisplayOrientedMeteringPointFactory mockFactory =
+            MockDisplayOrientedMeteringPointFactory();
+        when(mockFactory.createPoint(exposurePointX, exposurePointY))
+            .thenAnswer(
+          (_) async => createdMeteringPoint,
+        );
+        return mockFactory;
+      },
+      withModeFocusMeteringActionBuilder: ({
+        required MeteringMode mode,
+        required MeteringPoint point,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        actionBuilderMeteringMode = mode;
+        actionBuilderMeteringPoint = point;
+        return mockActionBuilder;
+      },
+    );
 
     await camera.setExposurePoint(cameraId, exposurePoint);
 
-    final VerificationResult verificationResult =
-        verify(mockCameraControl.startFocusAndMetering(captureAny));
-    final FocusMeteringAction capturedAction =
-        verificationResult.captured.single as FocusMeteringAction;
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(1));
-    expect(capturedMeteringPointInfos.first.$1.x, equals(exposurePointX));
-    expect(capturedMeteringPointInfos.first.$1.y, equals(exposurePointY));
-    expect(capturedMeteringPointInfos.first.$2,
-        equals(FocusMeteringAction.flagAe));
+    expect(actionBuilderMeteringPoint, createdMeteringPoint);
+    expect(actionBuilderMeteringMode, MeteringMode.ae);
   });
 
   test(
@@ -4066,8 +4119,7 @@ void main() {
         mockCameraControl, MockCamera2CameraControl());
 
     // Make setting focus and metering action successful for test.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -4079,7 +4131,7 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isFalse);
+    expect(capturedAction.isAutoCancelEnabled, isTrue);
 
     clearInteractions(mockCameraControl);
 
@@ -4090,9 +4142,9 @@ void main() {
     verificationResult =
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     capturedAction = verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
   });
-
+/*
   test(
       'setExposureOffset throws exception if exposure compensation not supported',
       () async {
