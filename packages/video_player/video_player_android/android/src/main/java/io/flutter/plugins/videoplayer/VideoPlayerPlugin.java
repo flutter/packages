@@ -46,7 +46,8 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     binding
         .getPlatformViewRegistry()
         .registerViewFactory(
-            "plugins.flutter.dev/video_player_android", new NativeVideoViewFactory(videoPlayers::get));
+            "plugins.flutter.dev/video_player_android",
+            new NativeVideoViewFactory(videoPlayers::get));
   }
 
   @Override
