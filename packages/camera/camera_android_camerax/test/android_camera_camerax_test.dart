@@ -4245,7 +4245,7 @@ void main() {
     expect(() => camera.setExposureOffset(cameraId, offset),
         throwsA(isA<CameraException>()));
   });
-/*
+
   test(
       'setExposureOffset behaves as expected to successful attempt to set exposure compensation index',
       () async {
@@ -4254,10 +4254,18 @@ void main() {
     const double offset = 3;
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final CameraControl mockCameraControl = MockCameraControl();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
-        exposureCompensationStep: 0.2);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 3,
+        upper: 4,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0.2,
+      pigeon_instanceManager: testInstanceManager,
+    );
     final int expectedExposureCompensationIndex =
         (offset / exposureState.exposureCompensationStep).round();
 
@@ -4265,8 +4273,7 @@ void main() {
     camera.cameraInfo = mockCameraInfo;
     camera.cameraControl = mockCameraControl;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
     when(mockCameraControl
             .setExposureCompensationIndex(expectedExposureCompensationIndex))
         .thenAnswer((_) async => Future<int>.value(
@@ -4290,7 +4297,32 @@ void main() {
     camera.cameraControl = mockCameraControl;
     camera.cameraInfo = mockCameraInfo;
 
-    camera.proxy = getProxyForExposureAndFocus();
+    final MockFocusMeteringActionBuilder mockActionBuilder =
+        MockFocusMeteringActionBuilder();
+    final PigeonInstanceManager testInstanceManager =
+        PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+    when(mockActionBuilder.build()).thenAnswer(
+      (_) async => FocusMeteringAction.pigeon_detached(
+        meteringPointsAe: const <MeteringPoint>[],
+        meteringPointsAf: const <MeteringPoint>[],
+        meteringPointsAwb: const <MeteringPoint>[],
+        isAutoCancelEnabled: false,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+    );
+    MeteringMode? actionBuilderMeteringMode;
+    MeteringPoint? actionBuilderMeteringPoint;
+    camera.proxy =
+        getProxyForExposureAndFocus(withModeFocusMeteringActionBuilder: ({
+      required MeteringMode mode,
+      required MeteringPoint point,
+      BinaryMessenger? pigeon_binaryMessenger,
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      actionBuilderMeteringMode = mode;
+      actionBuilderMeteringPoint = point;
+      return mockActionBuilder;
+    });
 
     // Verify nothing happens if no current focus and metering action has been
     // enabled.
@@ -4299,49 +4331,65 @@ void main() {
     verifyNever(mockCameraControl.cancelFocusAndMetering());
 
     // Verify current auto-exposure metering point is removed if previously set.
-    final (MeteringPoint, int?) autoexposureMeteringPointInfo = (
-      MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
-      FocusMeteringAction.flagAe
-    );
-    List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
-      (
-        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
-        FocusMeteringAction.flagAf
-      ),
-      autoexposureMeteringPointInfo
-    ];
+    // final (MeteringPoint, int?) autoexposureMeteringPointInfo = (
+    //   MeteringPoint.detached(x: 0.3, y: 0.7, cameraInfo: mockCameraInfo),
+    //   FocusMeteringAction.flagAe
+    // );
+    // List<(MeteringPoint, int?)> meteringPointInfos = <(MeteringPoint, int?)>[
+    //   (
+    //     MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
+    //     FocusMeteringAction.flagAf
+    //   ),
+    //   autoexposureMeteringPointInfo
+    // ];
 
-    camera.currentFocusMeteringAction =
-        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+    FocusMeteringAction originalMeteringAction =
+        FocusMeteringAction.pigeon_detached(
+      meteringPointsAe: <MeteringPoint>[
+        MeteringPoint.pigeon_detached(
+          pigeon_instanceManager: testInstanceManager,
+        ),
+      ],
+      meteringPointsAf: <MeteringPoint>[
+        MeteringPoint.pigeon_detached(
+          pigeon_instanceManager: testInstanceManager,
+        ),
+      ],
+      meteringPointsAwb: const <MeteringPoint>[],
+      isAutoCancelEnabled: false,
+      pigeon_instanceManager: testInstanceManager,
+    );
+    camera.currentFocusMeteringAction = originalMeteringAction;
 
     await camera.setFocusPoint(cameraId, null);
 
-    final VerificationResult verificationResult =
-        verify(mockCameraControl.startFocusAndMetering(captureAny));
-    final FocusMeteringAction capturedAction =
-        verificationResult.captured.single as FocusMeteringAction;
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(1));
-    expect(capturedMeteringPointInfos.first,
-        equals(autoexposureMeteringPointInfo));
+    expect(actionBuilderMeteringMode, MeteringMode.ae);
+    expect(
+      actionBuilderMeteringPoint,
+      originalMeteringAction.meteringPointsAe.single,
+    );
+    verifyNever(mockActionBuilder.addPoint(any));
+    verifyNever(mockActionBuilder.addPointWithMode(any, any));
 
     // Verify current focus and metering action is cleared if only previously
     // set metering point was for auto-exposure.
-    meteringPointInfos = <(MeteringPoint, int?)>[
-      (
-        MeteringPoint.detached(x: 0.2, y: 0.5, cameraInfo: mockCameraInfo),
-        FocusMeteringAction.flagAf
-      )
-    ];
-    camera.currentFocusMeteringAction =
-        FocusMeteringAction.detached(meteringPointInfos: meteringPointInfos);
+    camera.currentFocusMeteringAction = FocusMeteringAction.pigeon_detached(
+      meteringPointsAe: const <MeteringPoint>[],
+      meteringPointsAf: <MeteringPoint>[
+        MeteringPoint.pigeon_detached(
+          pigeon_instanceManager: testInstanceManager,
+        ),
+      ],
+      meteringPointsAwb: const <MeteringPoint>[],
+      isAutoCancelEnabled: false,
+      pigeon_instanceManager: testInstanceManager,
+    );
 
     await camera.setFocusPoint(cameraId, null);
 
     verify(mockCameraControl.cancelFocusAndMetering());
   });
-
+/*
   test('setFocusPoint throws CameraException if invalid point specified',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
