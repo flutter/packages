@@ -12,10 +12,10 @@ import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 import java.util.Objects;
 
-class NativeViewFactory extends PlatformViewFactory {
+class NativeVideoViewFactory extends PlatformViewFactory {
   private final VideoPlayerProvider videoPlayerProvider;
 
-  public NativeViewFactory(@NonNull VideoPlayerProvider videoPlayerProvider) {
+  public NativeVideoViewFactory(@NonNull VideoPlayerProvider videoPlayerProvider) {
     super(Messages.AndroidVideoPlayerApi.getCodec());
     this.videoPlayerProvider = videoPlayerProvider;
   }
@@ -30,6 +30,6 @@ class NativeViewFactory extends PlatformViewFactory {
     final VideoPlayer player = videoPlayerProvider.getVideoPlayer(playerId);
     final ExoPlayer exoPlayer = player.getExoPlayer();
 
-    return new NativeView(context, exoPlayer);
+    return new NativeVideoView(context, exoPlayer);
   }
 }

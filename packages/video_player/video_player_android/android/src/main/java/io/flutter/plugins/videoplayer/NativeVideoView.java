@@ -11,10 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugin.platform.PlatformView;
 
-class NativeView implements PlatformView {
+class NativeVideoView implements PlatformView {
   @NonNull private final SurfaceView surfaceView;
 
-  NativeView(@NonNull Context context, @NonNull ExoPlayer exoPlayer) {
+  NativeVideoView(@NonNull Context context, @NonNull ExoPlayer exoPlayer) {
     surfaceView = new SurfaceView(context);
     // The line below is needed to display the video correctly on older Android versions (blank
     // space instead of a video).
