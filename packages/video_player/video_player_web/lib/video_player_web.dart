@@ -12,6 +12,9 @@ import 'package:web/web.dart' as web;
 
 import 'src/video_player.dart';
 
+// TODO(FirentisTFW): Remove the ignore and rename parameters when adding support for platform views.
+// ignore_for_file: avoid_renaming_method_parameters
+
 /// The web implementation of [VideoPlayerPlatform].
 ///
 /// This class implements the `package:video_player` functionality for the web.
