@@ -8,7 +8,6 @@
 #endif
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
 
 @interface CameraPreviewPauseTests : XCTestCase
 @end
