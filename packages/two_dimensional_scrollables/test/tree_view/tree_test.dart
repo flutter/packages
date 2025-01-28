@@ -546,8 +546,7 @@ void main() {
       // Default
       expect(
         style,
-        // ignore: prefer_const_constructors
-        AnimationStyle(
+        const AnimationStyle(
           duration: TreeView.defaultAnimationDuration,
           curve: TreeView.defaultAnimationCurve,
         ),
@@ -575,10 +574,9 @@ void main() {
       await tester.pumpWidget(MaterialApp(
         home: TreeView<String>(
           tree: simpleNodeSet,
-          // ignore: prefer_const_constructors
-          toggleAnimationStyle: AnimationStyle(
+          toggleAnimationStyle: const AnimationStyle(
             curve: Curves.easeIn,
-            duration: const Duration(milliseconds: 200),
+            duration: Duration(milliseconds: 200),
           ),
           treeNodeBuilder: (
             BuildContext context,
@@ -759,8 +757,7 @@ void main() {
         home: TreeView<String>(
           tree: tree,
           controller: controller,
-          // ignore: prefer_const_constructors
-          toggleAnimationStyle: AnimationStyle(
+          toggleAnimationStyle: const AnimationStyle(
             curve: Curves.easeInOut,
             duration: Duration.zero,
           ),
@@ -846,10 +843,9 @@ void main() {
         home: TreeView<String>(
           tree: tree,
           controller: controller,
-          // ignore: prefer_const_constructors
-          toggleAnimationStyle: AnimationStyle(
+          toggleAnimationStyle: const AnimationStyle(
             curve: Curves.easeInOut,
-            duration: const Duration(milliseconds: 200),
+            duration: Duration(milliseconds: 200),
           ),
           treeNodeBuilder: (
             BuildContext context,
