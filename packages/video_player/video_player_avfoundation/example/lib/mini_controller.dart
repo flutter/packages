@@ -210,15 +210,15 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   Completer<void>? _creatingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
 
-  /// The id of a texture that hasn't been initialized.
+  /// The id of a player that hasn't been initialized.
   @visibleForTesting
-  static const int kUninitializedTextureId = -1;
-  int _textureId = kUninitializedTextureId;
+  static const int kUninitializedPlayerId = -1;
+  int _playerId = kUninitializedPlayerId;
 
   /// This is just exposed for testing. It shouldn't be used by anyone depending
   /// on the plugin.
   @visibleForTesting
-  int get textureId => _textureId;
+  int get playerId => _playerId;
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
@@ -254,8 +254,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       viewType: viewType,
     );
 
-    _textureId = (await _platform.createWithOptions(creationOptions)) ??
-        kUninitializedTextureId;
+    _playerId = (await _platform.createWithOptions(creationOptions)) ??
+        kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
@@ -268,8 +268,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
             isInitialized: event.duration != null,
           );
           initializingCompleter.complete(null);
-          _platform.setVolume(_textureId, 1.0);
-          _platform.setLooping(_textureId, true);
+          _platform.setVolume(_playerId, 1.0);
+          _platform.setLooping(_playerId, true);
           _applyPlayPause();
         case VideoEventType.completed:
           pause().then((void pauseResult) => seekTo(value.duration));
@@ -296,7 +296,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     }
 
     _eventSubscription = _platform
-        .videoEventsFor(_textureId)
+        .videoEventsFor(_playerId)
         .listen(eventListener, onError: errorListener);
     return initializingCompleter.future;
   }
@@ -307,7 +307,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       await _creatingCompleter!.future;
       _timer?.cancel();
       await _eventSubscription?.cancel();
-      await _platform.dispose(_textureId);
+      await _platform.dispose(_playerId);
     }
     super.dispose();
   }
@@ -327,7 +327,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
   Future<void> _applyPlayPause() async {
     _timer?.cancel();
     if (value.isPlaying) {
-      await _platform.play(_textureId);
+      await _platform.play(_playerId);
 
       _timer = Timer.periodic(
         const Duration(milliseconds: 500),
@@ -341,14 +341,14 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       );
       await _applyPlaybackSpeed();
     } else {
-      await _platform.pause(_textureId);
+      await _platform.pause(_playerId);
     }
   }
 
   Future<void> _applyPlaybackSpeed() async {
     if (value.isPlaying) {
       await _platform.setPlaybackSpeed(
-        _textureId,
+        _playerId,
         value.playbackSpeed,
       );
     }
@@ -356,7 +356,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   /// The position in the current video.
   Future<Duration?> get position async {
-    return _platform.getPosition(_textureId);
+    return _platform.getPosition(_playerId);
   }
 
   /// Sets the video's current timestamp to be at [position].
@@ -366,7 +366,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     } else if (position < Duration.zero) {
       position = Duration.zero;
     }
-    await _platform.seekTo(_textureId, position);
+    await _platform.seekTo(_playerId, position);
     _updatePosition(position);
   }
 
@@ -397,10 +397,10 @@ class VideoPlayer extends StatefulWidget {
 class _VideoPlayerState extends State<VideoPlayer> {
   _VideoPlayerState() {
     _listener = () {
-      final int newTextureId = widget.controller.textureId;
-      if (newTextureId != _textureId) {
+      final int newPlayerId = widget.controller.playerId;
+      if (newPlayerId != _playerId) {
         setState(() {
-          _textureId = newTextureId;
+          _playerId = newPlayerId;
         });
       }
     };
@@ -408,13 +408,13 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   late VoidCallback _listener;
 
-  late int _textureId;
+  late int _playerId;
 
   @override
   void initState() {
     super.initState();
-    _textureId = widget.controller.textureId;
-    // Need to listen for initialization events since the actual texture ID
+    _playerId = widget.controller.playerId;
+    // Need to listen for initialization events since the actual player ID
     // becomes available after asynchronous initialization finishes.
     widget.controller.addListener(_listener);
   }
@@ -423,7 +423,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   void didUpdateWidget(VideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.controller.removeListener(_listener);
-    _textureId = widget.controller.textureId;
+    _playerId = widget.controller.playerId;
     widget.controller.addListener(_listener);
   }
 
@@ -435,10 +435,10 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return _textureId == MiniController.kUninitializedTextureId
+    return _playerId == MiniController.kUninitializedPlayerId
         ? Container()
         : _platform.buildViewWithOptions(
-            VideoViewOptions(playerId: _textureId),
+            VideoViewOptions(playerId: _playerId),
           );
   }
 }
