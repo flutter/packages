@@ -4513,37 +4513,71 @@ void main() {
       mockActionBuilder.addPointWithMode(createdMeteringPoint, MeteringMode.af),
     );
   });
-/*
+
   test(
-      'setFocusPoint adds new exposure point to focus metering action to start as expected when no previous metering points have been set',
+      'setFocusPoint adds new focus point to focus metering action to start as expected when no previous metering points have been set',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 19;
     final MockCameraControl mockCameraControl = MockCameraControl();
     const double focusPointX = 0.8;
     const double focusPointY = 0.1;
-    const Point<double> exposurePoint = Point<double>(focusPointX, focusPointY);
+    const Point<double> focusPoint = Point<double>(focusPointX, focusPointY);
 
     // Set directly for test versus calling createCamera.
     camera.cameraControl = mockCameraControl;
     camera.cameraInfo = MockCameraInfo();
     camera.currentFocusMeteringAction = null;
 
-    camera.proxy = getProxyForExposureAndFocus();
+    final PigeonInstanceManager testInstanceManager =
+        PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+    final MeteringPoint createdMeteringPoint = MeteringPoint.pigeon_detached(
+      pigeon_instanceManager: testInstanceManager,
+    );
+    MeteringMode? actionBuilderMeteringMode;
+    MeteringPoint? actionBuilderMeteringPoint;
+    final MockFocusMeteringActionBuilder mockActionBuilder =
+        MockFocusMeteringActionBuilder();
+    when(mockActionBuilder.build()).thenAnswer(
+      (_) async => FocusMeteringAction.pigeon_detached(
+        meteringPointsAe: const <MeteringPoint>[],
+        meteringPointsAf: const <MeteringPoint>[],
+        meteringPointsAwb: const <MeteringPoint>[],
+        isAutoCancelEnabled: false,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+    );
+    camera.proxy = getProxyForExposureAndFocus(
+      newDisplayOrientedMeteringPointFactory: ({
+        required CameraInfo cameraInfo,
+        required double width,
+        required double height,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockDisplayOrientedMeteringPointFactory mockFactory =
+            MockDisplayOrientedMeteringPointFactory();
+        when(mockFactory.createPoint(focusPointX, focusPointY)).thenAnswer(
+          (_) async => createdMeteringPoint,
+        );
+        return mockFactory;
+      },
+      withModeFocusMeteringActionBuilder: ({
+        required MeteringMode mode,
+        required MeteringPoint point,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        actionBuilderMeteringMode = mode;
+        actionBuilderMeteringPoint = point;
+        return mockActionBuilder;
+      },
+    );
 
-    await camera.setFocusPoint(cameraId, exposurePoint);
+    await camera.setFocusPoint(cameraId, focusPoint);
 
-    final VerificationResult verificationResult =
-        verify(mockCameraControl.startFocusAndMetering(captureAny));
-    final FocusMeteringAction capturedAction =
-        verificationResult.captured.single as FocusMeteringAction;
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(1));
-    expect(capturedMeteringPointInfos.first.$1.x, equals(focusPointX));
-    expect(capturedMeteringPointInfos.first.$1.y, equals(focusPointY));
-    expect(capturedMeteringPointInfos.first.$2,
-        equals(FocusMeteringAction.flagAf));
+    expect(actionBuilderMeteringPoint, createdMeteringPoint);
+    expect(actionBuilderMeteringMode, MeteringMode.af);
   });
 
   test('setFocusPoint disables auto-cancel for focus and metering as expected',
@@ -4563,8 +4597,7 @@ void main() {
         mockCameraControl, MockCamera2CameraControl());
 
     // Make setting focus and metering action successful for test.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -4577,7 +4610,7 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isFalse);
+    expect(capturedAction.isAutoCancelEnabled, isTrue);
 
     clearInteractions(mockCameraControl);
 
@@ -4589,7 +4622,7 @@ void main() {
     verificationResult =
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     capturedAction = verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
   });
 
   test(
@@ -4609,8 +4642,7 @@ void main() {
         mockCameraControl, MockCamera2CameraControl());
 
     // Make setting focus and metering action successful for test.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -4634,7 +4666,7 @@ void main() {
 
     verifyNoMoreInteractions(mockCameraControl);
   });
-
+/*
   test(
       'setFocusMode removes default auto-focus point if previously set and setting auto-focus mode',
       () async {
