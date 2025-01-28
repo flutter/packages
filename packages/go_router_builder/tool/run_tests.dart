@@ -59,8 +59,7 @@ Future<void> main() async {
           .format(results.join('\n\n'))
           .trim()
           .replaceAll('\r\n', '\n');
-      expectFile.writeAsStringSync(generated);
-      // expect(generated, equals(expectResult.replaceAll('\r\n', '\n')));
+      expect(generated, equals(expectResult.replaceAll('\r\n', '\n')));
     }, timeout: const Timeout(Duration(seconds: 100)));
   }
 }
