@@ -77,10 +77,8 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         params.onContainerAdded(this);
       },
       layoutDirection: params.layoutDirection,
-      creationParams:
-          // ignore: invalid_use_of_protected_member
-          _controller.view.pigeon_instanceManager
-              .getIdentifier(_controller.view),
+      creationParams: _controller.view.pigeon_instanceManager
+          .getIdentifier(_controller.view),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }

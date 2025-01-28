@@ -1,7 +1,22 @@
-## NEXT
-
+## 0.9.19
 * Adds lensType in the PlatformCameraDescription
+
+## 0.9.18+1
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
+## 0.9.18
+
+* Adds API support query for image streaming.
+
+## 0.9.17+7
+
+* Fixes changing global audio session category to be collision free across plugins.
+
+## 0.9.17+6
+
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes OCMock usage from permission tests
 
 ## 0.9.17+5
 
@@ -11,7 +26,6 @@
 
 * Updates Pigeon for non-nullable collection type support.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Adds lensType in the PlatformCameraDescription
 
 ## 0.9.17+3
 

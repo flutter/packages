@@ -2104,6 +2104,12 @@ abstract class PigeonApiWebSettings(
   /** Enables or disables file access within WebView. */
   abstract fun setAllowFileAccess(pigeon_instance: android.webkit.WebSettings, enabled: Boolean)
 
+  /** Enables or disables content URL access within WebView. */
+  abstract fun setAllowContentAccess(pigeon_instance: android.webkit.WebSettings, enabled: Boolean)
+
+  /** Sets whether Geolocation is enabled within WebView. */
+  abstract fun setGeolocationEnabled(pigeon_instance: android.webkit.WebSettings, enabled: Boolean)
+
   /** Sets the text zoom of the page in percent. */
   abstract fun setTextZoom(pigeon_instance: android.webkit.WebSettings, textZoom: Long)
 
@@ -2392,6 +2398,54 @@ abstract class PigeonApiWebSettings(
             val wrapped: List<Any?> =
                 try {
                   api.setAllowFileAccess(pigeon_instanceArg, enabledArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowContentAccess",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebSettings
+            val enabledArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setAllowContentAccess(pigeon_instanceArg, enabledArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setGeolocationEnabled",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebSettings
+            val enabledArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setGeolocationEnabled(pigeon_instanceArg, enabledArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)

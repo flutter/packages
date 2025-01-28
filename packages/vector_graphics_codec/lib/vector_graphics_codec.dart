@@ -394,10 +394,10 @@ class VectorGraphicsCodec {
     buffer._putFloat32(centerY);
     buffer._putFloat32(radius);
 
-    if (focalX != null) {
+    if (focalX != null && focalY != null) {
       buffer._putUint8(1);
       buffer._putFloat32(focalX);
-      buffer._putFloat32(focalY!);
+      buffer._putFloat32(focalY);
     } else {
       buffer._putUint8(0);
     }
@@ -710,7 +710,7 @@ class VectorGraphicsCodec {
     return id;
   }
 
-  /// Write a new path to the [buffer], returing the identifier
+  /// Write a new path to the [buffer], returning the identifier
   /// assigned to it.
   ///
   /// The [fillType] argument is either `1` for a fill or `0` for a stroke.

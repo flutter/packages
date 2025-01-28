@@ -470,3 +470,22 @@ abstract class StreamEventsStreamHandler : PigeonEventChannelWrapper<PlatformEve
     }
   }
 }
+
+abstract class StreamConsistentNumbersStreamHandler : PigeonEventChannelWrapper<Long> {
+  companion object {
+    fun register(
+        messenger: BinaryMessenger,
+        streamHandler: StreamConsistentNumbersStreamHandler,
+        instanceName: String = ""
+    ) {
+      var channelName: String =
+          "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
+      if (instanceName.isNotEmpty()) {
+        channelName += ".$instanceName"
+      }
+      val internalStreamHandler = PigeonStreamHandler<Long>(streamHandler)
+      EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
+          .setStreamHandler(internalStreamHandler)
+    }
+  }
+}

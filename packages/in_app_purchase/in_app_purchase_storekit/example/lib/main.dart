@@ -12,12 +12,11 @@ import 'consumable_store.dart';
 import 'example_payment_queue_delegate.dart';
 
 void main() {
+  InAppPurchaseStoreKitPlatform.enableStoreKit2();
   WidgetsFlutterBinding.ensureInitialized();
-
   // When using the Android plugin directly it is mandatory to register
   // the plugin as default instance as part of initializing the app.
   InAppPurchaseStoreKitPlatform.registerPlatform();
-  InAppPurchaseStoreKitPlatform.enableStoreKit2();
 
   runApp(_MyApp());
 }

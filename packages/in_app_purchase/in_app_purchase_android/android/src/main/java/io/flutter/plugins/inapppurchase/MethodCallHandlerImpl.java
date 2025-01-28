@@ -10,8 +10,10 @@ import static io.flutter.plugins.inapppurchase.Translator.fromBillingResult;
 import static io.flutter.plugins.inapppurchase.Translator.fromProductDetailsList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchaseHistoryRecordList;
 import static io.flutter.plugins.inapppurchase.Translator.fromPurchasesList;
+import static io.flutter.plugins.inapppurchase.Translator.toBillingClientFeature;
 import static io.flutter.plugins.inapppurchase.Translator.toProductList;
 import static io.flutter.plugins.inapppurchase.Translator.toProductTypeString;
+import static io.flutter.plugins.inapppurchase.Translator.toReplacementMode;
 
 import android.app.Activity;
 import android.app.Application;
@@ -37,6 +39,7 @@ import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseApi;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetailsResponse;
@@ -44,6 +47,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
+import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
 import io.flutter.plugins.inapppurchase.Messages.Result;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,19 +55,10 @@ import java.util.List;
 
 /** Handles method channel for the plugin. */
 class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, InAppPurchaseApi {
-  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
-  // ReplacementMode enum values.
-  // https://github.com/flutter/flutter/issues/128957.
-  @SuppressWarnings(value = "deprecation")
   @VisibleForTesting
-  static final int PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
-      com.android.billingclient.api.BillingFlowParams.ProrationMode
-          .UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
-
-  @VisibleForTesting
-  static final int REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
-      com.android.billingclient.api.BillingFlowParams.SubscriptionUpdateParams.ReplacementMode
-          .UNKNOWN_REPLACEMENT_MODE;
+  static final PlatformReplacementMode
+      REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY =
+          PlatformReplacementMode.UNKNOWN_REPLACEMENT_MODE;
 
   private static final String TAG = "InAppPurchasePlugin";
   private static final String LOAD_PRODUCT_DOC_URL =
@@ -290,23 +285,12 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
       }
     }
 
-    if (params.getProrationMode() != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY
-        && params.getReplacementMode()
-            != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
-      throw new FlutterError(
-          "IN_APP_PURCHASE_CONFLICT_PRORATION_MODE_REPLACEMENT_MODE",
-          "launchBillingFlow failed because you provided both prorationMode and replacementMode. You can only provide one of them.",
-          null);
-    }
-
     if (params.getOldProduct() == null
-        && (params.getProrationMode()
-                != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY
-            || params.getReplacementMode()
-                != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)) {
+        && (params.getReplacementMode()
+            != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY)) {
       throw new FlutterError(
           "IN_APP_PURCHASE_REQUIRE_OLD_PRODUCT",
-          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a proration mode.",
+          "launchBillingFlow failed because oldProduct is null. You must provide a valid oldProduct in order to use a replacement mode.",
           null);
     } else if (params.getOldProduct() != null
         && !cachedProducts.containsKey(params.getOldProduct())) {
@@ -352,29 +336,14 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
         && !params.getOldProduct().isEmpty()
         && params.getPurchaseToken() != null) {
       subscriptionUpdateParamsBuilder.setOldPurchaseToken(params.getPurchaseToken());
-      if (params.getProrationMode()
-          != PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
-        setReplaceProrationMode(
-            subscriptionUpdateParamsBuilder, params.getProrationMode().intValue());
-      }
       if (params.getReplacementMode()
           != REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY) {
         subscriptionUpdateParamsBuilder.setSubscriptionReplacementMode(
-            params.getReplacementMode().intValue());
+            toReplacementMode(params.getReplacementMode()));
       }
       paramsBuilder.setSubscriptionUpdateParams(subscriptionUpdateParamsBuilder.build());
     }
     return fromBillingResult(billingClient.launchBillingFlow(activity, paramsBuilder.build()));
-  }
-
-  // TODO(gmackall): Replace uses of deprecated setReplaceProrationMode.
-  // https://github.com/flutter/flutter/issues/128957.
-  @SuppressWarnings(value = "deprecation")
-  private void setReplaceProrationMode(
-      BillingFlowParams.SubscriptionUpdateParams.Builder builder, int prorationMode) {
-    // The proration mode value has to match one of the following declared in
-    // https://developer.android.com/reference/com/android/billingclient/api/BillingFlowParams.ProrationMode
-    builder.setReplaceProrationMode(prorationMode);
   }
 
   @Override
@@ -428,6 +397,7 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   }
 
   @Override
+  @Deprecated
   public void queryPurchaseHistoryAsync(
       @NonNull PlatformProductType productType,
       @NonNull Result<Messages.PlatformPurchaseHistoryResponse> result) {
@@ -457,10 +427,12 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   public void startConnection(
       @NonNull Long handle,
       @NonNull PlatformBillingChoiceMode billingMode,
+      @NonNull Messages.PlatformPendingPurchasesParams pendingPurchasesParams,
       @NonNull Result<PlatformBillingResult> result) {
     if (billingClient == null) {
       billingClient =
-          billingClientFactory.createBillingClient(applicationContext, callbackApi, billingMode);
+          billingClientFactory.createBillingClient(
+              applicationContext, callbackApi, billingMode, pendingPurchasesParams);
     }
 
     try {
@@ -534,11 +506,11 @@ class MethodCallHandlerImpl implements Application.ActivityLifecycleCallbacks, I
   }
 
   @Override
-  public @NonNull Boolean isFeatureSupported(@NonNull String feature) {
+  public @NonNull Boolean isFeatureSupported(@NonNull PlatformBillingClientFeature feature) {
     if (billingClient == null) {
       throw getNullBillingClientError();
     }
-    BillingResult billingResult = billingClient.isFeatureSupported(feature);
+    BillingResult billingResult = billingClient.isFeatureSupported(toBillingClientFeature(feature));
     return billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK;
   }
 }

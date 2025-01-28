@@ -232,11 +232,11 @@ void main() {
           visualization.HeatmapLayerOptions()
             ..data = <gmaps.LatLng>[gmaps.LatLng(0, 0)].toJS;
 
-      expect(heatmap.data, hasLength(0));
+      expect(heatmap.data.array.toDart, hasLength(0));
 
       controller.update(options);
 
-      expect(heatmap.data, hasLength(1));
+      expect(heatmap.data.array.toDart, hasLength(1));
     });
 
     group('remove', () {

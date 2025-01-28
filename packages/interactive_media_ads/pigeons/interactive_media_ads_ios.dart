@@ -309,10 +309,31 @@ enum UIElementType {
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
 abstract class IMAAdDisplayContainer extends NSObject {
-  IMAAdDisplayContainer(
-    UIView adContainer,
-    UIViewController? adContainerViewController,
-  );
+  /// Initializes IMAAdDisplayContainer for rendering the ad and displaying the
+  /// sad UI.
+  IMAAdDisplayContainer(UIViewController? adContainerViewController);
+
+  /// View containing the video display and ad related UI.
+  ///
+  /// This view must be present in the view hierarchy in order to make ad or
+  /// stream requests.
+  late UIView adContainer;
+
+  /// List of companion ad slots.
+  late List<IMACompanionAdSlot>? companionSlots;
+
+  /// View controller containing the ad container.
+  void setAdContainerViewController(UIViewController? controller);
+
+  /// View controller containing the ad container.
+  UIViewController? getAdContainerViewController();
+
+  /// Registers a view that overlays or obstructs this container as “friendly”
+  /// for viewability measurement purposes.
+  void registerFriendlyObstruction(IMAFriendlyObstruction friendlyObstruction);
+
+  /// Unregisters all previously registered friendly obstructions.
+  void unregisterAllFriendlyObstructions();
 }
 
 /// An object that manages the content for a rectangular area on the screen.

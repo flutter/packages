@@ -1,6 +1,10 @@
-## NEXT
+## 2.4.0
 
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Enhances handling of out-of-order events.
+* Adds support for clicks with a modifier key (e.g. cmd+click).
+* Improves support for semantics.
+* Applies the `target` attribute to semantic links.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.3.3
 

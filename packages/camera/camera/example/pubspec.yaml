@@ -41,6 +41,7 @@ dependency_overrides:
     path: ../../../camera/camera_platform_interface
   camera_web:
     path: ../../camera_web
+  leak_tracker_flutter_testing: any
 
 flutter:
   uses-material-design: true

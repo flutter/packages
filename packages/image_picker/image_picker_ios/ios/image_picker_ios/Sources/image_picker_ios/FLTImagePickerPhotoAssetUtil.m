@@ -14,12 +14,6 @@
   return info[UIImagePickerControllerPHAsset];
 }
 
-+ (PHAsset *)getAssetFromPHPickerResult:(PHPickerResult *)result API_AVAILABLE(ios(14)) {
-  PHFetchResult *fetchResult = [PHAsset fetchAssetsWithLocalIdentifiers:@[ result.assetIdentifier ]
-                                                                options:nil];
-  return fetchResult.firstObject;
-}
-
 + (NSURL *)saveVideoFromURL:(NSURL *)videoURL {
   if (![[NSFileManager defaultManager] isReadableFileAtPath:[videoURL path]]) {
     return nil;

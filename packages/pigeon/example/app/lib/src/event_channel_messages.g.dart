@@ -93,8 +93,8 @@ Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamEventsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents',
+  final EventChannel streamEventsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_example_package.EventChannelMethods.streamEvents$instanceName',
       pigeonMethodCodec);
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;

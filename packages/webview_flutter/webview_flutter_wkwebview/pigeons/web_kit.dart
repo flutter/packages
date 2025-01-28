@@ -2,1007 +2,1100 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_unused_constructor_parameters
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/common/web_kit.g.dart',
-    dartTestOut: 'test/src/common/test_web_kit.g.dart',
-    objcHeaderOut:
-        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
-    objcSourceOut:
-        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/FWFGeneratedWebKitApis.m',
-    objcOptions: ObjcOptions(
-      headerIncludePath:
-          './include/webview_flutter_wkwebview/FWFGeneratedWebKitApis.h',
-      prefix: 'FWF',
-    ),
     copyrightHeader: 'pigeons/copyright.txt',
+    swiftOut:
+        'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/WebKitLibrary.g.swift',
   ),
 )
 
-/// Mirror of NSKeyValueObservingOptions.
+/// The values that can be returned in a change dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions?language=objc.
-enum NSKeyValueObservingOptionsEnum {
+/// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions.
+enum KeyValueObservingOptions {
+  /// Indicates that the change dictionary should provide the new attribute
+  /// value, if applicable.
   newValue,
+
+  /// Indicates that the change dictionary should contain the old attribute
+  /// value, if applicable.
   oldValue,
+
+  /// If specified, a notification should be sent to the observer immediately,
+  /// before the observer registration method even returns.
   initialValue,
+
+  /// Whether separate notifications should be sent to the observer before and
+  /// after each change, instead of a single notification after the change.
   priorNotification,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class NSKeyValueObservingOptionsEnumData {
-  late NSKeyValueObservingOptionsEnum value;
-}
-
-/// Mirror of NSKeyValueChange.
+/// The kinds of changes that can be observed.
 ///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange?language=objc.
-enum NSKeyValueChangeEnum {
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechange.
+enum KeyValueChange {
+  /// Indicates that the value of the observed key path was set to a new value.
   setting,
+
+  /// Indicates that an object has been inserted into the to-many relationship
+  /// that is being observed.
   insertion,
+
+  /// Indicates that an object has been removed from the to-many relationship
+  /// that is being observed.
   removal,
+
+  /// Indicates that an object has been replaced in the to-many relationship
+  /// that is being observed.
   replacement,
-}
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class NSKeyValueChangeEnumData {
-  late NSKeyValueChangeEnum value;
-}
-
-/// Mirror of NSKeyValueChangeKey.
-///
-/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey?language=objc.
-enum NSKeyValueChangeKeyEnum {
-  indexes,
-  kind,
-  newValue,
-  notificationIsPrior,
-  oldValue,
+  /// The value is not recognized by the wrapper.
   unknown,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class NSKeyValueChangeKeyEnumData {
-  late NSKeyValueChangeKeyEnum value;
+/// The keys that can appear in the change dictionary.
+///
+/// See https://developer.apple.com/documentation/foundation/nskeyvaluechangekey.
+enum KeyValueChangeKey {
+  /// If the value of the `KeyValueChangeKey.kind` entry is
+  /// `KeyValueChange.insertion`, `KeyValueChange.removal`, or
+  /// `KeyValueChange.replacement`, the value of this key is a Set object that
+  /// contains the indexes of the inserted, removed, or replaced objects.
+  indexes,
+
+  /// An object that contains a value corresponding to one of the
+  /// `KeyValueChange` enum, indicating what sort of change has occurred.
+  kind,
+
+  /// If the value of the `KeyValueChange.kind` entry is
+  /// `KeyValueChange.setting, and `KeyValueObservingOptions.newValue` was
+  /// specified when the observer was registered, the value of this key is the
+  /// new value for the attribute.
+  newValue,
+
+  /// If the `KeyValueObservingOptions.priorNotification` option was specified
+  /// when the observer was registered this notification is sent prior to a
+  /// change.
+  notificationIsPrior,
+
+  /// If the value of the `KeyValueChange.kind` entry is
+  /// `KeyValueChange.setting`, and `KeyValueObservingOptions.old` was specified
+  /// when the observer was registered, the value of this key is the value
+  /// before the attribute was changed.
+  oldValue,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
-/// Mirror of WKUserScriptInjectionTime.
+/// Constants for the times at which to inject script content into a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime?language=objc.
-enum WKUserScriptInjectionTimeEnum {
+/// See https://developer.apple.com/documentation/webkit/wkuserscriptinjectiontime.
+enum UserScriptInjectionTime {
+  /// A constant to inject the script after the creation of the webpage’s
+  /// document element, but before loading any other content.
   atDocumentStart,
+
+  /// A constant to inject the script after the document finishes loading, but
+  /// before loading any other subresources.
   atDocumentEnd,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class WKUserScriptInjectionTimeEnumData {
-  late WKUserScriptInjectionTimeEnum value;
-}
-
-/// Mirror of WKAudiovisualMediaTypes.
+/// The media types that require a user gesture to begin playing.
 ///
-/// See [WKAudiovisualMediaTypes](https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes?language=objc).
-enum WKAudiovisualMediaTypeEnum {
+/// See https://developer.apple.com/documentation/webkit/wkaudiovisualmediatypes.
+enum AudiovisualMediaType {
+  /// No media types require a user gesture to begin playing.
   none,
+
+  /// Media types that contain audio require a user gesture to begin playing.
   audio,
+
+  /// Media types that contain video require a user gesture to begin playing.
   video,
+
+  /// All media types require a user gesture to begin playing.
   all,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class WKAudiovisualMediaTypeEnumData {
-  late WKAudiovisualMediaTypeEnum value;
-}
-
-/// Mirror of WKWebsiteDataTypes.
+/// A `WKWebsiteDataRecord` object includes these constants in its dataTypes
+/// property.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types?language=objc.
-enum WKWebsiteDataTypeEnum {
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatarecord/data_store_record_types.
+enum WebsiteDataType {
+  /// Cookies.
   cookies,
+
+  /// In-memory caches.
   memoryCache,
+
+  /// On-disk caches.
   diskCache,
+
+  /// HTML offline web app caches.
   offlineWebApplicationCache,
+
+  /// HTML local storage.
   localStorage,
+
+  /// HTML session storage.
   sessionStorage,
+
+  /// WebSQL databases.
   webSQLDatabases,
+
+  /// IndexedDB databases.
   indexedDBDatabases,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class WKWebsiteDataTypeEnumData {
-  late WKWebsiteDataTypeEnum value;
-}
-
-/// Mirror of WKNavigationActionPolicy.
+/// Constants that indicate whether to allow or cancel navigation to a webpage
+/// from an action.
 ///
-/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
-enum WKNavigationActionPolicyEnum {
+/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy.
+enum NavigationActionPolicy {
+  /// Allow the navigation to continue.
   allow,
+
+  /// Cancel the navigation.
   cancel,
+
+  /// Allow the download to proceed.
+  download,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class WKNavigationActionPolicyEnumData {
-  late WKNavigationActionPolicyEnum value;
-}
-
-/// Mirror of WKNavigationResponsePolicy.
+/// Constants that indicate whether to allow or cancel navigation to a webpage
+/// from a response.
 ///
-/// See https://developer.apple.com/documentation/webkit/wknavigationactionpolicy?language=objc.
-enum WKNavigationResponsePolicyEnum {
+/// See https://developer.apple.com/documentation/webkit/wknavigationresponsepolicy.
+enum NavigationResponsePolicy {
+  /// Allow the navigation to continue.
   allow,
+
+  /// Cancel the navigation.
   cancel,
+
+  /// Allow the download to proceed.
+  download,
 }
 
-/// Mirror of NSHTTPCookiePropertyKey.
+/// Constants that define the supported keys in a cookie attributes dictionary.
 ///
-/// See https://developer.apple.com/documentation/foundation/nshttpcookiepropertykey.
-enum NSHttpCookiePropertyKeyEnum {
+/// See https://developer.apple.com/documentation/foundation/httpcookiepropertykey.
+enum HttpCookiePropertyKey {
+  /// A String object containing the comment for the cookie.
   comment,
+
+  /// An Uri object or String object containing the comment URL for the cookie.
   commentUrl,
+
+  /// Aa String object stating whether the cookie should be discarded at the end
+  /// of the session.
   discard,
+
+  /// An String object containing the domain for the cookie.
   domain,
+
+  /// An Date object or String object specifying the expiration date for the
+  /// cookie.
   expires,
+
+  /// An String object containing an integer value stating how long in seconds
+  /// the cookie should be kept, at most.
   maximumAge,
+
+  /// An String object containing the name of the cookie (required).
   name,
+
+  /// A URL or String object containing the URL that set this cookie.
   originUrl,
+
+  /// A String object containing the path for the cookie.
   path,
+
+  /// An String object containing comma-separated integer values specifying the
+  /// ports for the cookie.
   port,
+
+  /// A string indicating the same-site policy for the cookie.
   sameSitePolicy,
+
+  /// A String object indicating that the cookie should be transmitted only over
+  /// secure channels.
   secure,
+
+  /// A String object containing the value of the cookie.
   value,
+
+  /// A String object that specifies the version of the cookie.
   version,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class NSHttpCookiePropertyKeyEnumData {
-  late NSHttpCookiePropertyKeyEnum value;
-}
-
-/// An object that contains information about an action that causes navigation
-/// to occur.
+/// The type of action that triggered the navigation.
 ///
-/// Wraps [WKNavigationType](https://developer.apple.com/documentation/webkit/wknavigationaction?language=objc).
-enum WKNavigationType {
+/// See https://developer.apple.com/documentation/webkit/wknavigationtype.
+enum NavigationType {
   /// A link activation.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypelinkactivated?language=objc.
   linkActivated,
 
   /// A request to submit a form.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformsubmitted?language=objc.
-  submitted,
+  formSubmitted,
 
   /// A request for the frame’s next or previous item.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypebackforward?language=objc.
   backForward,
 
   /// A request to reload the webpage.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypereload?language=objc.
   reload,
 
   /// A request to resubmit a form.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeformresubmitted?language=objc.
   formResubmitted,
 
   /// A navigation request that originates for some other reason.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wknavigationtype/wknavigationtypeother?language=objc.
   other,
 
-  /// An unknown navigation type.
-  ///
-  /// This does not represent an actual value provided by the platform and only
-  /// indicates a value was provided that isn't currently supported.
+  /// The value is not recognized by the wrapper.
   unknown,
 }
 
 /// Possible permission decisions for device resource access.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision?language=objc.
-enum WKPermissionDecision {
+/// See https://developer.apple.com/documentation/webkit/wkpermissiondecision.
+enum PermissionDecision {
   /// Deny permission for the requested resource.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiondeny?language=objc.
   deny,
 
   /// Deny permission for the requested resource.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisiongrant?language=objc.
   grant,
 
   /// Prompt the user for permission for the requested resource.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wkpermissiondecision/wkpermissiondecisionprompt?language=objc.
   prompt,
-}
-
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class WKPermissionDecisionData {
-  late WKPermissionDecision value;
 }
 
 /// List of the types of media devices that can capture audio, video, or both.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype?language=objc.
-enum WKMediaCaptureType {
+/// See https://developer.apple.com/documentation/webkit/wkmediacapturetype.
+enum MediaCaptureType {
   /// A media device that can capture video.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecamera?language=objc.
   camera,
 
   /// A media device or devices that can capture audio and video.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypecameraandmicrophone?language=objc.
   cameraAndMicrophone,
 
   /// A media device that can capture audio.
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wkmediacapturetype/wkmediacapturetypemicrophone?language=objc.
   microphone,
 
-  /// An unknown media device.
-  ///
-  /// This does not represent an actual value provided by the platform and only
-  /// indicates a value was provided that isn't currently supported.
+  /// The value is not recognized by the wrapper.
   unknown,
-}
-
-// TODO(bparrishMines): Enums need be wrapped in a data class because they can't
-// be used as primitive arguments. See https://github.com/flutter/flutter/issues/87307
-class WKMediaCaptureTypeData {
-  late WKMediaCaptureType value;
 }
 
 /// Responses to an authentication challenge.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition?language=objc.
-enum NSUrlSessionAuthChallengeDisposition {
+/// See https://developer.apple.com/documentation/foundation/urlsession/authchallengedisposition.
+enum UrlSessionAuthChallengeDisposition {
   /// Use the specified credential, which may be nil.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeusecredential?language=objc.
   useCredential,
 
   /// Use the default handling for the challenge as though this delegate method
   /// were not implemented.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengeperformdefaulthandling?language=objc.
   performDefaultHandling,
 
   /// Cancel the entire request.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengecancelauthenticationchallenge?language=objc.
   cancelAuthenticationChallenge,
 
   /// Reject this challenge, and call the authentication delegate method again
   /// with the next authentication protection space.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlsessionauthchallengedisposition/nsurlsessionauthchallengerejectprotectionspace?language=objc.
   rejectProtectionSpace,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// Specifies how long a credential will be kept.
-enum NSUrlCredentialPersistence {
+///
+/// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence.
+enum UrlCredentialPersistence {
   /// The credential should not be stored.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencenone?language=objc.
   none,
 
   /// The credential should be stored only for this session.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistenceforsession?language=objc.
-  session,
+  forSession,
 
   /// The credential should be stored in the keychain.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencepermanent?language=objc.
   permanent,
 
   /// The credential should be stored permanently in the keychain, and in
   /// addition should be distributed to other devices based on the owning Apple
   /// ID.
-  ///
-  /// See https://developer.apple.com/documentation/foundation/nsurlcredentialpersistence/nsurlcredentialpersistencesynchronizable?language=objc.
   synchronizable,
 }
 
-/// Mirror of NSURLRequest.
+/// A URL load request that is independent of protocol or URL scheme.
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlrequest?language=objc.
-class NSUrlRequestData {
-  late String url;
-  late String? httpMethod;
-  late Uint8List? httpBody;
-  late Map<String?, String?> allHttpHeaderFields;
+/// See https://developer.apple.com/documentation/foundation/urlrequest.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URLRequestWrapper'))
+abstract class URLRequest extends NSObject {
+  URLRequest(String url);
+
+  /// The URL being requested.
+  String? getUrl();
+
+  /// The HTTP request method.
+  void setHttpMethod(String? method);
+
+  /// The HTTP request method.
+  String? getHttpMethod();
+
+  /// The request body.
+  void setHttpBody(Uint8List? body);
+
+  /// The request body.
+  Uint8List? getHttpBody();
+
+  /// A dictionary containing all of the HTTP header fields for a request.
+  void setAllHttpHeaderFields(Map<String, String>? fields);
+
+  /// A dictionary containing all of the HTTP header fields for a request.
+  Map<String, String>? getAllHttpHeaderFields();
 }
 
-/// Mirror of NSURLResponse.
+/// The metadata associated with the response to an HTTP protocol URL load
+/// request.
 ///
-/// See https://developer.apple.com/documentation/foundation/nshttpurlresponse?language=objc.
-class NSHttpUrlResponseData {
+/// See https://developer.apple.com/documentation/foundation/httpurlresponse.
+@ProxyApi()
+abstract class HTTPURLResponse extends URLResponse {
+  /// The response’s HTTP status code.
   late int statusCode;
 }
 
-/// Mirror of WKUserScript.
+/// The metadata associated with the response to a URL load request, independent
+/// of protocol and URL scheme.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuserscript?language=objc.
-class WKUserScriptData {
+/// See https://developer.apple.com/documentation/foundation/urlresponse.
+@ProxyApi()
+abstract class URLResponse extends NSObject {}
+
+/// A script that the web view injects into a webpage.
+///
+/// See https://developer.apple.com/documentation/webkit/wkuserscript.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKUserScript extends NSObject {
+  /// Creates a user script object that contains the specified source code and
+  /// attributes.
+  WKUserScript();
+
+  /// The script’s source code.
   late String source;
-  late WKUserScriptInjectionTimeEnumData? injectionTime;
-  late bool isMainFrameOnly;
+
+  /// The time at which to inject the script into the webpage.
+  late UserScriptInjectionTime injectionTime;
+
+  /// A Boolean value that indicates whether to inject the script into the main
+  /// frame or all frames.
+  late bool isForMainFrameOnly;
 }
 
-/// Mirror of WKNavigationAction.
+/// An object that contains information about an action that causes navigation
+/// to occur.
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationaction.
-class WKNavigationActionData {
-  late NSUrlRequestData request;
-  late WKFrameInfoData targetFrame;
-  late WKNavigationType navigationType;
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKNavigationAction extends NSObject {
+  /// The URL request object associated with the navigation action.
+  late URLRequest request;
+
+  /// The frame in which to display the new content.
+  ///
+  /// If the target of the navigation is a new window, this property is nil.
+  late WKFrameInfo? targetFrame;
+
+  /// The type of action that triggered the navigation.
+  late NavigationType navigationType;
 }
 
-/// Mirror of WKNavigationResponse.
+/// An object that contains the response to a navigation request, and which you
+/// use to make navigation-related policy decisions.
 ///
 /// See https://developer.apple.com/documentation/webkit/wknavigationresponse.
-class WKNavigationResponseData {
-  late NSHttpUrlResponseData response;
-  late bool forMainFrame;
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKNavigationResponse extends NSObject {
+  /// The frame’s response.
+  late URLResponse response;
+
+  /// A Boolean value that indicates whether the response targets the web view’s
+  /// main frame.
+  late bool isForMainFrame;
 }
 
-/// Mirror of WKFrameInfo.
+/// An object that contains information about a frame on a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkframeinfo?language=objc.
-class WKFrameInfoData {
+/// See https://developer.apple.com/documentation/webkit/wkframeinfo.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKFrameInfo extends NSObject {
+  /// A Boolean value indicating whether the frame is the web site's main frame
+  /// or a subframe.
   late bool isMainFrame;
-  late NSUrlRequestData request;
+
+  /// The frame’s current request.
+  late URLRequest request;
 }
 
-/// Mirror of NSError.
+/// Information about an error condition including a domain, a domain-specific
+/// error code, and application-specific information.
 ///
-/// See https://developer.apple.com/documentation/foundation/nserror?language=objc.
-class NSErrorData {
+/// See https://developer.apple.com/documentation/foundation/nserror.
+@ProxyApi()
+abstract class NSError extends NSObject {
+  /// The error code.
   late int code;
+
+  /// A string containing the error domain.
   late String domain;
-  late Map<String?, Object?>? userInfo;
+
+  /// The user info dictionary.
+  late Map<String, Object?> userInfo;
 }
 
-/// Mirror of WKScriptMessage.
+/// An object that encapsulates a message sent by JavaScript code from a
+/// webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkscriptmessage?language=objc.
-class WKScriptMessageData {
+/// See https://developer.apple.com/documentation/webkit/wkscriptmessage.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKScriptMessage extends NSObject {
+  /// The name of the message handler to which the message is sent.
   late String name;
+
+  /// The body of the message.
   late Object? body;
 }
 
-/// Mirror of WKSecurityOrigin.
+/// An object that identifies the origin of a particular resource.
 ///
-/// See https://developer.apple.com/documentation/webkit/wksecurityorigin?language=objc.
-class WKSecurityOriginData {
+/// See https://developer.apple.com/documentation/webkit/wksecurityorigin.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKSecurityOrigin extends NSObject {
+  /// The security origin’s host.
   late String host;
+
+  /// The security origin's port.
   late int port;
-  late String protocol;
+
+  /// The security origin's protocol.
+  late String securityProtocol;
 }
 
-/// Mirror of NSHttpCookieData.
+/// A representation of an HTTP cookie.
 ///
-/// See https://developer.apple.com/documentation/foundation/nshttpcookie?language=objc.
-class NSHttpCookieData {
-  // TODO(bparrishMines): Change to a map when Objective-C data classes conform
-  // to `NSCopying`. See https://github.com/flutter/flutter/issues/103383.
-  // `NSDictionary`s are unable to use data classes as keys because they don't
-  // conform to `NSCopying`. This splits the map of properties into a list of
-  // keys and values with the ordered maintained.
-  late List<NSHttpCookiePropertyKeyEnumData?> propertyKeys;
-  late List<Object?> propertyValues;
+/// See https://developer.apple.com/documentation/foundation/httpcookie.
+@ProxyApi()
+abstract class HTTPCookie extends NSObject {
+  HTTPCookie(Map<HttpCookiePropertyKey, Object> properties);
+
+  /// The cookie’s properties.
+  Map<HttpCookiePropertyKey, Object>? getProperties();
 }
 
-/// An object that can represent either a value supported by
-/// `StandardMessageCodec`, a data class in this pigeon file, or an identifier
-/// of an object stored in an `InstanceManager`.
-class ObjectOrIdentifier {
-  late Object? value;
-
-  /// Whether value is an int that is used to retrieve an instance stored in an
-  /// `InstanceManager`.
-  late bool isIdentifier;
-}
-
-class AuthenticationChallengeResponse {
-  late NSUrlSessionAuthChallengeDisposition disposition;
-  late int? credentialIdentifier;
-}
-
-/// Mirror of WKWebsiteDataStore.
+/// Response object used to return multiple values to an auth challenge received
+/// by a `WKNavigationDelegate` auth challenge.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKWebsiteDataStoreHostApi')
-abstract class WKWebsiteDataStoreHostApi {
-  @ObjCSelector(
-    'createFromWebViewConfigurationWithIdentifier:configurationIdentifier:',
-  )
-  void createFromWebViewConfiguration(
-    int identifier,
-    int configurationIdentifier,
-  );
+/// The `webView(_:didReceive:completionHandler:)` method in
+/// `WKNavigationDelegate` responds with a completion handler that takes two
+/// values. The wrapper returns this class instead to handle this scenario.
+@ProxyApi()
+abstract class AuthenticationChallengeResponse {
+  AuthenticationChallengeResponse();
 
-  @ObjCSelector('createDefaultDataStoreWithIdentifier:')
-  void createDefaultDataStore(int identifier);
+  /// The option to use to handle the challenge.
+  late UrlSessionAuthChallengeDisposition disposition;
 
-  @ObjCSelector(
-    'removeDataFromDataStoreWithIdentifier:ofTypes:modifiedSince:',
-  )
+  /// The credential to use for authentication when the disposition parameter
+  /// contains the value URLSession.AuthChallengeDisposition.useCredential.
+  late URLCredential? credential;
+}
+
+/// An object that manages cookies, disk and memory caches, and other types of
+/// data for a web view.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebsitedatastore.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKWebsiteDataStore extends NSObject {
+  /// The default data store, which stores data persistently to disk.
+  @static
+  late WKWebsiteDataStore defaultDataStore;
+
+  /// The object that manages the HTTP cookies for your website.
+  @attached
+  late WKHTTPCookieStore httpCookieStore;
+
+  /// Removes the specified types of website data from one or more data records.
   @async
   bool removeDataOfTypes(
-    int identifier,
-    List<WKWebsiteDataTypeEnumData> dataTypes,
+    List<WebsiteDataType> dataTypes,
     double modificationTimeInSecondsSinceEpoch,
   );
 }
 
-/// Mirror of UIView.
+/// An object that manages the content for a rectangular area on the screen.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiview?language=objc.
-@HostApi(dartHostTestHandler: 'TestUIViewHostApi')
-abstract class UIViewHostApi {
-  @ObjCSelector('setBackgroundColorForViewWithIdentifier:toValue:')
-  void setBackgroundColor(int identifier, int? value);
+/// See https://developer.apple.com/documentation/uikit/uiview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'UIKit', supportsMacos: false),
+)
+abstract class UIView extends NSObject {
+  /// The view’s background color.
+  void setBackgroundColor(int? value);
 
-  @ObjCSelector('setOpaqueForViewWithIdentifier:isOpaque:')
-  void setOpaque(int identifier, bool opaque);
+  /// A Boolean value that determines whether the view is opaque.
+  void setOpaque(bool opaque);
 }
 
-/// Mirror of UIScrollView.
+/// A view that allows the scrolling and zooming of its contained views.
 ///
-/// See https://developer.apple.com/documentation/uikit/uiscrollview?language=objc.
-@HostApi(dartHostTestHandler: 'TestUIScrollViewHostApi')
-abstract class UIScrollViewHostApi {
-  @ObjCSelector('createFromWebViewWithIdentifier:webViewIdentifier:')
-  void createFromWebView(int identifier, int webViewIdentifier);
+/// See https://developer.apple.com/documentation/uikit/uiscrollview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'UIKit', supportsMacos: false),
+)
+abstract class UIScrollView extends UIView {
+  /// The point at which the origin of the content view is offset from the
+  /// origin of the scroll view.
+  List<double> getContentOffset();
 
-  @ObjCSelector('contentOffsetForScrollViewWithIdentifier:')
-  List<double?> getContentOffset(int identifier);
+  /// Move the scrolled position of your view.
+  ///
+  /// Convenience method to synchronize change to the x and y scroll position.
+  void scrollBy(double x, double y);
 
-  @ObjCSelector('scrollByForScrollViewWithIdentifier:x:y:')
-  void scrollBy(int identifier, double x, double y);
+  /// The point at which the origin of the content view is offset from the
+  /// origin of the scroll view.
+  void setContentOffset(double x, double y);
 
-  @ObjCSelector('setContentOffsetForScrollViewWithIdentifier:toX:y:')
-  void setContentOffset(int identifier, double x, double y);
+  /// The delegate of the scroll view.
+  void setDelegate(UIScrollViewDelegate? delegate);
 
-  @ObjCSelector(
-      'setDelegateForScrollViewWithIdentifier:uiScrollViewDelegateIdentifier:')
-  void setDelegate(int identifier, int? uiScrollViewDelegateIdentifier);
+  /// Whether the scroll view bounces past the edge of content and back again.
+  void setBounces(bool value);
+
+  /// Whether the scroll view bounces when it reaches the ends of its horizontal
+  /// axis.
+  void setBouncesHorizontally(bool value);
+
+  /// Whether the scroll view bounces when it reaches the ends of its vertical
+  /// axis.
+  void setBouncesVertically(bool value);
+
+  /// Whether bouncing always occurs when vertical scrolling reaches the end of
+  /// the content.
+  ///
+  /// If the value of this property is true and `bouncesVertically` is true, the
+  /// scroll view allows vertical dragging even if the content is smaller than
+  /// the bounds of the scroll view.
+  void setAlwaysBounceVertical(bool value);
+
+  /// Whether bouncing always occurs when horizontal scrolling reaches the end
+  /// of the content view.
+  ///
+  /// If the value of this property is true and `bouncesHorizontally` is true,
+  /// the scroll view allows horizontal dragging even if the content is smaller
+  /// than the bounds of the scroll view.
+  void setAlwaysBounceHorizontal(bool value);
 }
 
-/// Mirror of WKWebViewConfiguration.
+/// A collection of properties that you use to initialize a web view..
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKWebViewConfigurationHostApi')
-abstract class WKWebViewConfigurationHostApi {
-  @ObjCSelector('createWithIdentifier:')
-  void create(int identifier);
+/// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKWebViewConfiguration extends NSObject {
+  WKWebViewConfiguration();
 
-  @ObjCSelector('createFromWebViewWithIdentifier:webViewIdentifier:')
-  void createFromWebView(int identifier, int webViewIdentifier);
+  /// The object that coordinates interactions between your app’s native code
+  /// and the webpage’s scripts and other content.
+  void setUserContentController(WKUserContentController controller);
 
-  @ObjCSelector(
-    'setAllowsInlineMediaPlaybackForConfigurationWithIdentifier:isAllowed:',
-  )
-  void setAllowsInlineMediaPlayback(int identifier, bool allow);
+  /// The object that coordinates interactions between your app’s native code
+  /// and the webpage’s scripts and other content.
+  WKUserContentController getUserContentController();
 
-  @ObjCSelector(
-    'setLimitsNavigationsToAppBoundDomainsForConfigurationWithIdentifier:isLimited:',
-  )
-  void setLimitsNavigationsToAppBoundDomains(int identifier, bool limit);
+  /// The object you use to get and set the site’s cookies and to track the
+  /// cached data objects.
+  void setWebsiteDataStore(WKWebsiteDataStore dataStore);
 
-  @ObjCSelector(
-    'setMediaTypesRequiresUserActionForConfigurationWithIdentifier:forTypes:',
-  )
-  void setMediaTypesRequiringUserActionForPlayback(
-    int identifier,
-    List<WKAudiovisualMediaTypeEnumData> types,
-  );
+  /// The object you use to get and set the site’s cookies and to track the
+  /// cached data objects.
+  WKWebsiteDataStore getWebsiteDataStore();
+
+  /// The object that manages the preference-related settings for the web view.
+  void setPreferences(WKPreferences preferences);
+
+  /// The object that manages the preference-related settings for the web view.
+  WKPreferences getPreferences();
+
+  /// A Boolean value that indicates whether HTML5 videos play inline or use the
+  /// native full-screen controller.
+  void setAllowsInlineMediaPlayback(bool allow);
+
+  /// A Boolean value that indicates whether the web view limits navigation to
+  /// pages within the app’s domain.
+  void setLimitsNavigationsToAppBoundDomains(bool limit);
+
+  /// The media types that require a user gesture to begin playing.
+  void setMediaTypesRequiringUserActionForPlayback(AudiovisualMediaType type);
 }
 
-/// Handles callbacks from a WKWebViewConfiguration instance.
+/// An object for managing interactions between JavaScript code and your web
+/// view, and for filtering content in your web view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkwebviewconfiguration?language=objc.
-@FlutterApi()
-abstract class WKWebViewConfigurationFlutterApi {
-  @ObjCSelector('createWithIdentifier:')
-  void create(int identifier);
+/// See https://developer.apple.com/documentation/webkit/wkusercontentcontroller.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKUserContentController extends NSObject {
+  /// Installs a message handler that you can call from your JavaScript code.
+  void addScriptMessageHandler(WKScriptMessageHandler handler, String name);
+
+  /// Uninstalls the custom message handler with the specified name from your
+  /// JavaScript code.
+  void removeScriptMessageHandler(String name);
+
+  /// Uninstalls all custom message handlers associated with the user content
+  /// controller.
+  void removeAllScriptMessageHandlers();
+
+  /// Injects the specified script into the webpage’s content.
+  void addUserScript(WKUserScript userScript);
+
+  /// Removes all user scripts from the web view.
+  void removeAllUserScripts();
 }
 
-/// Mirror of WKUserContentController.
+/// An object that encapsulates the standard behaviors to apply to websites.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkusercontentcontroller?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKUserContentControllerHostApi')
-abstract class WKUserContentControllerHostApi {
-  @ObjCSelector(
-    'createFromWebViewConfigurationWithIdentifier:configurationIdentifier:',
-  )
-  void createFromWebViewConfiguration(
-    int identifier,
-    int configurationIdentifier,
-  );
-
-  @ObjCSelector(
-    'addScriptMessageHandlerForControllerWithIdentifier:handlerIdentifier:ofName:',
-  )
-  void addScriptMessageHandler(
-    int identifier,
-    int handlerIdentifier,
-    String name,
-  );
-
-  @ObjCSelector('removeScriptMessageHandlerForControllerWithIdentifier:name:')
-  void removeScriptMessageHandler(int identifier, String name);
-
-  @ObjCSelector('removeAllScriptMessageHandlersForControllerWithIdentifier:')
-  void removeAllScriptMessageHandlers(int identifier);
-
-  @ObjCSelector('addUserScriptForControllerWithIdentifier:userScript:')
-  void addUserScript(int identifier, WKUserScriptData userScript);
-
-  @ObjCSelector('removeAllUserScriptsForControllerWithIdentifier:')
-  void removeAllUserScripts(int identifier);
+/// See https://developer.apple.com/documentation/webkit/wkpreferences.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKPreferences extends NSObject {
+  /// A Boolean value that indicates whether JavaScript is enabled.
+  void setJavaScriptEnabled(bool enabled);
 }
 
-/// Mirror of WKUserPreferences.
+/// An interface for receiving messages from JavaScript code running in a webpage.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkpreferences?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKPreferencesHostApi')
-abstract class WKPreferencesHostApi {
-  @ObjCSelector(
-    'createFromWebViewConfigurationWithIdentifier:configurationIdentifier:',
-  )
-  void createFromWebViewConfiguration(
-    int identifier,
-    int configurationIdentifier,
-  );
+/// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKScriptMessageHandler extends NSObject {
+  WKScriptMessageHandler();
 
-  @ObjCSelector('setJavaScriptEnabledForPreferencesWithIdentifier:isEnabled:')
-  void setJavaScriptEnabled(int identifier, bool enabled);
+  /// Tells the handler that a webpage sent a script message.
+  late void Function(
+    WKUserContentController controller,
+    WKScriptMessage message,
+  ) didReceiveScriptMessage;
 }
 
-/// Mirror of WKScriptMessageHandler.
+/// Methods for accepting or rejecting navigation changes, and for tracking the
+/// progress of navigation requests.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKScriptMessageHandlerHostApi')
-abstract class WKScriptMessageHandlerHostApi {
-  @ObjCSelector('createWithIdentifier:')
-  void create(int identifier);
-}
+/// See https://developer.apple.com/documentation/webkit/wknavigationdelegate.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKNavigationDelegate extends NSObject {
+  WKNavigationDelegate();
 
-/// Handles callbacks from a WKScriptMessageHandler instance.
-///
-/// See https://developer.apple.com/documentation/webkit/wkscriptmessagehandler?language=objc.
-@FlutterApi()
-abstract class WKScriptMessageHandlerFlutterApi {
-  @ObjCSelector(
-    'didReceiveScriptMessageForHandlerWithIdentifier:userContentControllerIdentifier:message:',
-  )
-  void didReceiveScriptMessage(
-    int identifier,
-    int userContentControllerIdentifier,
-    WKScriptMessageData message,
-  );
-}
+  /// Tells the delegate that navigation is complete.
+  late void Function(WKWebView webView, String? url)? didFinishNavigation;
 
-/// Mirror of WKNavigationDelegate.
-///
-/// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKNavigationDelegateHostApi')
-abstract class WKNavigationDelegateHostApi {
-  @ObjCSelector('createWithIdentifier:')
-  void create(int identifier);
-}
-
-/// Handles callbacks from a WKNavigationDelegate instance.
-///
-/// See https://developer.apple.com/documentation/webkit/wknavigationdelegate?language=objc.
-@FlutterApi()
-abstract class WKNavigationDelegateFlutterApi {
-  @ObjCSelector(
-    'didFinishNavigationForDelegateWithIdentifier:webViewIdentifier:URL:',
-  )
-  void didFinishNavigation(
-    int identifier,
-    int webViewIdentifier,
+  /// Tells the delegate that navigation from the main frame has started.
+  late void Function(
+    WKWebView webView,
     String? url,
-  );
+  )? didStartProvisionalNavigation;
 
-  @ObjCSelector(
-    'didStartProvisionalNavigationForDelegateWithIdentifier:webViewIdentifier:URL:',
-  )
-  void didStartProvisionalNavigation(
-    int identifier,
-    int webViewIdentifier,
-    String? url,
-  );
-
-  @ObjCSelector(
-    'decidePolicyForNavigationActionForDelegateWithIdentifier:webViewIdentifier:navigationAction:',
-  )
+  /// Asks the delegate for permission to navigate to new content based on the
+  /// specified action information.
   @async
-  WKNavigationActionPolicyEnumData decidePolicyForNavigationAction(
-    int identifier,
-    int webViewIdentifier,
-    WKNavigationActionData navigationAction,
-  );
+  NavigationActionPolicy Function(
+    WKWebView webView,
+    WKNavigationAction navigationAction,
+  )? decidePolicyForNavigationAction;
 
-  @ObjCSelector(
-    'decidePolicyForNavigationResponseForDelegateWithIdentifier:webViewIdentifier:navigationResponse:',
-  )
+  /// Asks the delegate for permission to navigate to new content after the
+  /// response to the navigation request is known.
   @async
-  WKNavigationResponsePolicyEnum decidePolicyForNavigationResponse(
-    int identifier,
-    int webViewIdentifier,
-    WKNavigationResponseData navigationResponse,
-  );
+  NavigationResponsePolicy Function(
+    WKWebView webView,
+    WKNavigationResponse navigationResponse,
+  )? decidePolicyForNavigationResponse;
 
-  @ObjCSelector(
-    'didFailNavigationForDelegateWithIdentifier:webViewIdentifier:error:',
-  )
-  void didFailNavigation(
-    int identifier,
-    int webViewIdentifier,
-    NSErrorData error,
-  );
+  /// Tells the delegate that an error occurred during navigation.
+  void Function(WKWebView webView, NSError error)? didFailNavigation;
 
-  @ObjCSelector(
-    'didFailProvisionalNavigationForDelegateWithIdentifier:webViewIdentifier:error:',
-  )
-  void didFailProvisionalNavigation(
-    int identifier,
-    int webViewIdentifier,
-    NSErrorData error,
-  );
+  /// Tells the delegate that an error occurred during the early navigation
+  /// process.
+  void Function(WKWebView webView, NSError error)? didFailProvisionalNavigation;
 
-  @ObjCSelector(
-    'webViewWebContentProcessDidTerminateForDelegateWithIdentifier:webViewIdentifier:',
-  )
-  void webViewWebContentProcessDidTerminate(
-    int identifier,
-    int webViewIdentifier,
-  );
+  /// Tells the delegate that the web view’s content process was terminated.
+  void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
+  /// Asks the delegate to respond to an authentication challenge.
   @async
-  @ObjCSelector(
-    'didReceiveAuthenticationChallengeForDelegateWithIdentifier:webViewIdentifier:challengeIdentifier:',
-  )
-  AuthenticationChallengeResponse didReceiveAuthenticationChallenge(
-    int identifier,
-    int webViewIdentifier,
-    int challengeIdentifier,
-  );
+  AuthenticationChallengeResponse Function(
+    WKWebView webView,
+    URLAuthenticationChallenge challenge,
+  )? didReceiveAuthenticationChallenge;
 }
 
-/// Mirror of NSObject.
+/// The root class of most Objective-C class hierarchies, from which subclasses
+/// inherit a basic interface to the runtime system and the ability to behave as
+/// Objective-C objects.
 ///
 /// See https://developer.apple.com/documentation/objectivec/nsobject.
-@HostApi(dartHostTestHandler: 'TestNSObjectHostApi')
-abstract class NSObjectHostApi {
-  @ObjCSelector('disposeObjectWithIdentifier:')
-  void dispose(int identifier);
+@ProxyApi()
+abstract class NSObject {
+  NSObject();
 
-  @ObjCSelector(
-    'addObserverForObjectWithIdentifier:observerIdentifier:keyPath:options:',
-  )
+  /// Informs the observing object when the value at the specified key path
+  /// relative to the observed object has changed.
+  late void Function(
+    String? keyPath,
+    NSObject? object,
+    Map<KeyValueChangeKey, Object?>? change,
+  )? observeValue;
+
+  /// Registers the observer object to receive KVO notifications for the key
+  /// path relative to the object receiving this message.
   void addObserver(
-    int identifier,
-    int observerIdentifier,
+    NSObject observer,
     String keyPath,
-    List<NSKeyValueObservingOptionsEnumData> options,
+    List<KeyValueObservingOptions> options,
   );
 
-  @ObjCSelector(
-    'removeObserverForObjectWithIdentifier:observerIdentifier:keyPath:',
-  )
-  void removeObserver(int identifier, int observerIdentifier, String keyPath);
+  /// Stops the observer object from receiving change notifications for the
+  /// property specified by the key path relative to the object receiving this
+  /// message.
+  void removeObserver(NSObject observer, String keyPath);
 }
 
-/// Handles callbacks from an NSObject instance.
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
 ///
-/// See https://developer.apple.com/documentation/objectivec/nsobject.
-@FlutterApi()
-abstract class NSObjectFlutterApi {
-  @ObjCSelector(
-    'observeValueForObjectWithIdentifier:keyPath:objectIdentifier:changeKeys:changeValues:',
-  )
-  void observeValue(
-    int identifier,
-    String keyPath,
-    int objectIdentifier,
-    // TODO(bparrishMines): Change to a map when Objective-C data classes conform
-    // to `NSCopying`. See https://github.com/flutter/flutter/issues/103383.
-    // `NSDictionary`s are unable to use data classes as keys because they don't
-    // conform to `NSCopying`. This splits the map of properties into a list of
-    // keys and values with the ordered maintained.
-    List<NSKeyValueChangeKeyEnumData?> changeKeys,
-    List<ObjectOrIdentifier> changeValues,
-  );
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+    supportsMacos: false,
+  ),
+)
+abstract class UIViewWKWebView extends UIView implements WKWebView {
+  UIViewWKWebView(WKWebViewConfiguration initialConfiguration);
 
-  @ObjCSelector('disposeObjectWithIdentifier:')
-  void dispose(int identifier);
-}
+  /// The object that contains the configuration details for the web view.
+  @attached
+  late WKWebViewConfiguration configuration;
 
-/// Mirror of WKWebView.
-///
-/// See https://developer.apple.com/documentation/webkit/wkwebview?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKWebViewHostApi')
-abstract class WKWebViewHostApi {
-  @ObjCSelector('createWithIdentifier:configurationIdentifier:')
-  void create(int identifier, int configurationIdentifier);
+  /// The scroll view associated with the web view.
+  @attached
+  late UIScrollView scrollView;
 
-  @ObjCSelector('setUIDelegateForWebViewWithIdentifier:delegateIdentifier:')
-  void setUIDelegate(int identifier, int? uiDelegateIdentifier);
+  /// The object you use to integrate custom user interface elements, such as
+  /// contextual menus or panels, into web view interactions.
+  void setUIDelegate(WKUIDelegate delegate);
 
-  @ObjCSelector(
-    'setNavigationDelegateForWebViewWithIdentifier:delegateIdentifier:',
-  )
-  void setNavigationDelegate(int identifier, int? navigationDelegateIdentifier);
+  /// The object you use to manage navigation behavior for the web view.
+  void setNavigationDelegate(WKNavigationDelegate delegate);
 
-  @ObjCSelector('URLForWebViewWithIdentifier:')
-  String? getUrl(int identifier);
+  /// The URL for the current webpage.
+  String? getUrl();
 
-  @ObjCSelector('estimatedProgressForWebViewWithIdentifier:')
-  double getEstimatedProgress(int identifier);
+  /// An estimate of what fraction of the current navigation has been loaded.
+  double getEstimatedProgress();
 
-  @ObjCSelector('loadRequestForWebViewWithIdentifier:request:')
-  void loadRequest(int identifier, NSUrlRequestData request);
+  /// Loads the web content that the specified URL request object references and
+  /// navigates to that content.
+  void load(URLRequest request);
 
-  @ObjCSelector('loadHTMLForWebViewWithIdentifier:HTMLString:baseURL:')
-  void loadHtmlString(int identifier, String string, String? baseUrl);
+  /// Loads the contents of the specified HTML string and navigates to it.
+  void loadHtmlString(String string, String? baseUrl);
 
-  @ObjCSelector('loadFileForWebViewWithIdentifier:fileURL:readAccessURL:')
-  void loadFileUrl(int identifier, String url, String readAccessUrl);
+  /// Loads the web content from the specified file and navigates to it.
+  void loadFileUrl(String url, String readAccessUrl);
 
-  @ObjCSelector('loadAssetForWebViewWithIdentifier:assetKey:')
-  void loadFlutterAsset(int identifier, String key);
+  /// Convenience method to load a Flutter asset.
+  void loadFlutterAsset(String key);
 
-  @ObjCSelector('canGoBackForWebViewWithIdentifier:')
-  bool canGoBack(int identifier);
+  /// A Boolean value that indicates whether there is a valid back item in the
+  /// back-forward list.
+  bool canGoBack();
 
-  @ObjCSelector('canGoForwardForWebViewWithIdentifier:')
-  bool canGoForward(int identifier);
+  /// A Boolean value that indicates whether there is a valid forward item in
+  /// the back-forward list.
+  bool canGoForward();
 
-  @ObjCSelector('goBackForWebViewWithIdentifier:')
-  void goBack(int identifier);
+  /// Navigates to the back item in the back-forward list.
+  void goBack();
 
-  @ObjCSelector('goForwardForWebViewWithIdentifier:')
-  void goForward(int identifier);
+  /// Navigates to the forward item in the back-forward list.
+  void goForward();
 
-  @ObjCSelector('reloadWebViewWithIdentifier:')
-  void reload(int identifier);
+  /// Reloads the current webpage.
+  void reload();
 
-  @ObjCSelector('titleForWebViewWithIdentifier:')
-  String? getTitle(int identifier);
+  /// The page title.
+  String? getTitle();
 
-  @ObjCSelector('setAllowsBackForwardForWebViewWithIdentifier:isAllowed:')
-  void setAllowsBackForwardNavigationGestures(int identifier, bool allow);
+  /// A Boolean value that indicates whether horizontal swipe gestures trigger
+  /// backward and forward page navigation.
+  void setAllowsBackForwardNavigationGestures(bool allow);
 
-  @ObjCSelector('setCustomUserAgentForWebViewWithIdentifier:userAgent:')
-  void setCustomUserAgent(int identifier, String? userAgent);
+  /// The custom user agent string.
+  void setCustomUserAgent(String? userAgent);
 
-  @ObjCSelector('evaluateJavaScriptForWebViewWithIdentifier:javaScriptString:')
+  /// Evaluates the specified JavaScript string.
   @async
-  Object? evaluateJavaScript(int identifier, String javaScriptString);
+  Object? evaluateJavaScript(String javaScriptString);
 
-  @ObjCSelector('setInspectableForWebViewWithIdentifier:inspectable:')
-  void setInspectable(int identifier, bool inspectable);
+  /// A Boolean value that indicates whether you can inspect the view with
+  /// Safari Web Inspector.
+  void setInspectable(bool inspectable);
 
-  @ObjCSelector('customUserAgentForWebViewWithIdentifier:')
-  String? getCustomUserAgent(int identifier);
+  /// The custom user agent string.
+  String? getCustomUserAgent();
 }
 
-/// Mirror of WKUIDelegate.
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKUIDelegateHostApi')
-abstract class WKUIDelegateHostApi {
-  @ObjCSelector('createWithIdentifier:')
-  void create(int identifier);
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+    supportsIos: false,
+  ),
+)
+abstract class NSViewWKWebView extends NSObject implements WKWebView {
+  NSViewWKWebView(WKWebViewConfiguration initialConfiguration);
+
+  /// The object that contains the configuration details for the web view.
+  @attached
+  late WKWebViewConfiguration configuration;
+
+  /// The object you use to integrate custom user interface elements, such as
+  /// contextual menus or panels, into web view interactions.
+  void setUIDelegate(WKUIDelegate delegate);
+
+  /// The object you use to manage navigation behavior for the web view.
+  void setNavigationDelegate(WKNavigationDelegate delegate);
+
+  /// The URL for the current webpage.
+  String? getUrl();
+
+  /// An estimate of what fraction of the current navigation has been loaded.
+  double getEstimatedProgress();
+
+  /// Loads the web content that the specified URL request object references and
+  /// navigates to that content.
+  void load(URLRequest request);
+
+  /// Loads the contents of the specified HTML string and navigates to it.
+  void loadHtmlString(String string, String? baseUrl);
+
+  /// Loads the web content from the specified file and navigates to it.
+  void loadFileUrl(String url, String readAccessUrl);
+
+  /// Convenience method to load a Flutter asset.
+  void loadFlutterAsset(String key);
+
+  /// A Boolean value that indicates whether there is a valid back item in the
+  /// back-forward list.
+  bool canGoBack();
+
+  /// A Boolean value that indicates whether there is a valid forward item in
+  /// the back-forward list.
+  bool canGoForward();
+
+  /// Navigates to the back item in the back-forward list.
+  void goBack();
+
+  /// Navigates to the forward item in the back-forward list.
+  void goForward();
+
+  /// Reloads the current webpage.
+  void reload();
+
+  /// The page title.
+  String? getTitle();
+
+  /// A Boolean value that indicates whether horizontal swipe gestures trigger
+  /// backward and forward page navigation.
+  void setAllowsBackForwardNavigationGestures(bool allow);
+
+  /// The custom user agent string.
+  void setCustomUserAgent(String? userAgent);
+
+  /// Evaluates the specified JavaScript string.
+  @async
+  Object? evaluateJavaScript(String javaScriptString);
+
+  /// A Boolean value that indicates whether you can inspect the view with
+  /// Safari Web Inspector.
+  void setInspectable(bool inspectable);
+
+  /// The custom user agent string.
+  String? getCustomUserAgent();
 }
 
-/// Handles callbacks from a WKUIDelegate instance.
+/// An object that displays interactive web content, such as for an in-app
+/// browser.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkuidelegate?language=objc.
-@FlutterApi()
-abstract class WKUIDelegateFlutterApi {
-  @ObjCSelector(
-    'onCreateWebViewForDelegateWithIdentifier:webViewIdentifier:configurationIdentifier:navigationAction:',
-  )
-  void onCreateWebView(
-    int identifier,
-    int webViewIdentifier,
-    int configurationIdentifier,
-    WKNavigationActionData navigationAction,
-  );
+/// See https://developer.apple.com/documentation/webkit/wkwebview.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+  ),
+)
+abstract class WKWebView extends NSObject {}
 
-  /// Callback to Dart function `WKUIDelegate.requestMediaCapturePermission`.
-  @ObjCSelector(
-    'requestMediaCapturePermissionForDelegateWithIdentifier:webViewIdentifier:origin:frame:type:',
-  )
-  @async
-  WKPermissionDecisionData requestMediaCapturePermission(
-    int identifier,
-    int webViewIdentifier,
-    WKSecurityOriginData origin,
-    WKFrameInfoData frame,
-    WKMediaCaptureTypeData type,
-  );
+/// The methods for presenting native user interface elements on behalf of a
+/// webpage.
+///
+/// See https://developer.apple.com/documentation/webkit/wkuidelegate.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKUIDelegate extends NSObject {
+  WKUIDelegate();
 
-  /// Callback to Dart function `WKUIDelegate.runJavaScriptAlertPanel`.
-  @ObjCSelector(
-    'runJavaScriptAlertPanelForDelegateWithIdentifier:message:frame:',
-  )
+  /// Creates a new web view.
+  void Function(
+    WKWebView webView,
+    WKWebViewConfiguration configuration,
+    WKNavigationAction navigationAction,
+  )? onCreateWebView;
+
+  /// Determines whether a web resource, which the security origin object
+  /// describes, can access to the device’s microphone audio and camera video.
   @async
-  void runJavaScriptAlertPanel(
-    int identifier,
+  PermissionDecision Function(
+    WKWebView webView,
+    WKSecurityOrigin origin,
+    WKFrameInfo frame,
+    MediaCaptureType type,
+  )? requestMediaCapturePermission;
+
+  /// Displays a JavaScript alert panel.
+  @async
+  void Function(
+    WKWebView webView,
     String message,
-    WKFrameInfoData frame,
-  );
+    WKFrameInfo frame,
+  )? runJavaScriptAlertPanel;
 
-  /// Callback to Dart function `WKUIDelegate.runJavaScriptConfirmPanel`.
-  @ObjCSelector(
-    'runJavaScriptConfirmPanelForDelegateWithIdentifier:message:frame:',
-  )
+  /// Displays a JavaScript confirm panel.
   @async
-  bool runJavaScriptConfirmPanel(
-    int identifier,
+  bool Function(
+    WKWebView webView,
     String message,
-    WKFrameInfoData frame,
-  );
+    WKFrameInfo frame,
+  )? runJavaScriptConfirmPanel;
 
-  /// Callback to Dart function `WKUIDelegate.runJavaScriptTextInputPanel`.
-  @ObjCSelector(
-    'runJavaScriptTextInputPanelForDelegateWithIdentifier:prompt:defaultText:frame:',
-  )
+  /// Displays a JavaScript text input panel.
   @async
-  String runJavaScriptTextInputPanel(
-    int identifier,
+  String? Function(
+    WKWebView webView,
     String prompt,
-    String defaultText,
-    WKFrameInfoData frame,
-  );
+    String? defaultText,
+    WKFrameInfo frame,
+  )? runJavaScriptTextInputPanel;
 }
 
-/// Mirror of WKHttpCookieStore.
+/// An object that manages the HTTP cookies associated with a particular web
+/// view.
 ///
-/// See https://developer.apple.com/documentation/webkit/wkhttpcookiestore?language=objc.
-@HostApi(dartHostTestHandler: 'TestWKHttpCookieStoreHostApi')
-abstract class WKHttpCookieStoreHostApi {
-  @ObjCSelector('createFromWebsiteDataStoreWithIdentifier:dataStoreIdentifier:')
-  void createFromWebsiteDataStore(
-    int identifier,
-    int websiteDataStoreIdentifier,
-  );
-
-  @ObjCSelector('setCookieForStoreWithIdentifier:cookie:')
+/// See https://developer.apple.com/documentation/webkit/wkhttpcookiestore.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'WebKit'))
+abstract class WKHTTPCookieStore extends NSObject {
+  /// Sets a cookie policy that indicates whether the cookie store allows cookie
+  /// storage.
   @async
-  void setCookie(int identifier, NSHttpCookieData cookie);
+  void setCookie(HTTPCookie cookie);
 }
 
-/// Host API for `NSUrl`.
+/// The interface for the delegate of a scroll view.
 ///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or method calls on the associated native
-/// class or an instance of the class.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
-@HostApi(dartHostTestHandler: 'TestNSUrlHostApi')
-abstract class NSUrlHostApi {
-  @ObjCSelector('absoluteStringForNSURLWithIdentifier:')
-  String? getAbsoluteString(int identifier);
-}
+/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'UIKit', supportsMacos: false),
+)
+abstract class UIScrollViewDelegate extends NSObject {
+  UIScrollViewDelegate();
 
-/// Flutter API for `NSUrl`.
-///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurl?language=objc.
-@FlutterApi()
-abstract class NSUrlFlutterApi {
-  @ObjCSelector('createWithIdentifier:')
-  void create(int identifier);
-}
-
-/// Host API for `UIScrollViewDelegate`.
-///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or method calls on the associated native
-/// class or an instance of the class.
-///
-/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
-@HostApi(dartHostTestHandler: 'TestUIScrollViewDelegateHostApi')
-abstract class UIScrollViewDelegateHostApi {
-  @ObjCSelector('createWithIdentifier:')
-  void create(int identifier);
-}
-
-/// Flutter API for `UIScrollViewDelegate`.
-///
-/// See https://developer.apple.com/documentation/uikit/uiscrollviewdelegate?language=objc.
-@FlutterApi()
-abstract class UIScrollViewDelegateFlutterApi {
-  @ObjCSelector(
-    'scrollViewDidScrollWithIdentifier:UIScrollViewIdentifier:x:y:',
-  )
-  void scrollViewDidScroll(
-    int identifier,
-    int uiScrollViewIdentifier,
+  /// Tells the delegate when the user scrolls the content view within the
+  /// scroll view.
+  ///
+  /// Note that this is a convenient method that includes the `contentOffset` of
+  /// the `scrollView`.
+  void Function(
+    UIScrollView scrollView,
     double x,
     double y,
-  );
+  )? scrollViewDidScroll;
 }
 
-/// Host API for `NSUrlCredential`.
+/// An authentication credential consisting of information specific to the type
+/// of credential and the type of persistent storage to use, if any.
 ///
-/// This class may handle instantiating and adding native object instances that
-/// are attached to a Dart instance or handle method calls on the associated
-/// native class or an instance of the class.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurlcredential?language=objc.
-@HostApi(dartHostTestHandler: 'TestNSUrlCredentialHostApi')
-abstract class NSUrlCredentialHostApi {
-  /// Create a new native instance and add it to the `InstanceManager`.
-  @ObjCSelector(
-    'createWithUserWithIdentifier:user:password:persistence:',
-  )
-  void createWithUser(
-    int identifier,
+/// See https://developer.apple.com/documentation/foundation/urlcredential.
+@ProxyApi()
+abstract class URLCredential extends NSObject {
+  /// Creates a URL credential instance for internet password authentication
+  /// with a given user name and password, using a given persistence setting.
+  URLCredential.withUser(
     String user,
     String password,
-    NSUrlCredentialPersistence persistence,
+    UrlCredentialPersistence persistence,
   );
 }
 
-/// Flutter API for `NSUrlProtectionSpace`.
+/// A server or an area on a server, commonly referred to as a realm, that
+/// requires authentication.
 ///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
-///
-/// See https://developer.apple.com/documentation/foundation/nsurlprotectionspace?language=objc.
-@FlutterApi()
-abstract class NSUrlProtectionSpaceFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  @ObjCSelector('createWithIdentifier:host:realm:authenticationMethod:')
-  void create(
-    int identifier,
-    String? host,
-    String? realm,
-    String? authenticationMethod,
-  );
+/// See https://developer.apple.com/documentation/foundation/urlprotectionspace.
+@ProxyApi()
+abstract class URLProtectionSpace extends NSObject {
+  /// The receiver’s host.
+  late String host;
+
+  /// The receiver’s port.
+  late int port;
+
+  /// The receiver’s authentication realm.
+  late String? realm;
+
+  /// The authentication method used by the receiver.
+  late String? authenticationMethod;
 }
 
-/// Flutter API for `NSUrlAuthenticationChallenge`.
+/// A challenge from a server requiring authentication from the client.
 ///
-/// This class may handle instantiating and adding Dart instances that are
-/// attached to a native instance or receiving callback methods from an
-/// overridden native class.
+/// See https://developer.apple.com/documentation/foundation/urlauthenticationchallenge.
+@ProxyApi()
+abstract class URLAuthenticationChallenge extends NSObject {
+  /// The receiver’s protection space.
+  URLProtectionSpace getProtectionSpace();
+}
+
+/// A value that identifies the location of a resource, such as an item on a
+/// remote server or the path to a local file..
 ///
-/// See https://developer.apple.com/documentation/foundation/nsurlauthenticationchallenge?language=objc.
-@FlutterApi()
-abstract class NSUrlAuthenticationChallengeFlutterApi {
-  /// Create a new Dart instance and add it to the `InstanceManager`.
-  @ObjCSelector('createWithIdentifier:protectionSpaceIdentifier:')
-  void create(int identifier, int protectionSpaceIdentifier);
+/// See https://developer.apple.com/documentation/foundation/url.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URL'))
+abstract class URL extends NSObject {
+  /// The absolute string for the URL.
+  String getAbsoluteString();
 }

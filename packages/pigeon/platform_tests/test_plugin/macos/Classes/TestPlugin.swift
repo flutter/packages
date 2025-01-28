@@ -27,6 +27,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "1",
+      streamHandler: SendConsistentNumbers(numberToSend: 1))
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "2",
+      streamHandler: SendConsistentNumbers(numberToSend: 2))
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -1263,6 +1269,33 @@ class SendEvents: StreamEventsStreamHandler {
           } else {
             sink.success(self.eventList[count])
             count += 1
+          }
+        }
+      }
+    }
+  }
+}
+
+class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
+  let numberToSend: Int64
+  init(numberToSend: Int64) {
+    self.numberToSend = numberToSend
+  }
+  var timerActive = false
+  var timer: Timer?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    let numberThatWillBeSent: Int64 = numberToSend
+    var count: Int64 = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          sink.success(numberThatWillBeSent)
+          count += 1
+          if count >= 10 {
+            sink.endOfStream()
+            self.timer?.invalidate()
           }
         }
       }

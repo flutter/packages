@@ -456,6 +456,16 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i3.PlatformWebViewControllerCreationParams);
 
   @override
+  _i8.Future<void> setAllowFileAccess(bool? allow) => (super.noSuchMethod(
+        Invocation.method(
+          #setAllowFileAccess,
+          [allow],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
   _i8.Future<void> loadFile(String? absoluteFilePath) => (super.noSuchMethod(
         Invocation.method(
           #loadFile,
@@ -784,6 +794,26 @@ class MockAndroidWebViewController extends _i1.Mock
         Invocation.method(
           #setTextZoom,
           [textZoom],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setAllowContentAccess(bool? enabled) => (super.noSuchMethod(
+        Invocation.method(
+          #setAllowContentAccess,
+          [enabled],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setGeolocationEnabled(bool? enabled) => (super.noSuchMethod(
+        Invocation.method(
+          #setGeolocationEnabled,
+          [enabled],
         ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
@@ -2632,6 +2662,26 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
   _i8.Future<void> setAllowFileAccess(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setAllowFileAccess,
+          [enabled],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setAllowContentAccess(bool? enabled) => (super.noSuchMethod(
+        Invocation.method(
+          #setAllowContentAccess,
+          [enabled],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setGeolocationEnabled(bool? enabled) => (super.noSuchMethod(
+        Invocation.method(
+          #setGeolocationEnabled,
           [enabled],
         ),
         returnValue: _i8.Future<void>.value(),

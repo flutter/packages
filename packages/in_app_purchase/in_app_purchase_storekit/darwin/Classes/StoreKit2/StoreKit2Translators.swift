@@ -200,7 +200,8 @@ extension Transaction {
       purchasedQuantity: Int64(purchasedQuantity),
       appAccountToken: appAccountToken?.uuidString,
       restoring: receipt != nil,
-      receiptData: receipt
+      receiptData: receipt,
+      jsonRepresentation: String(decoding: jsonRepresentation, as: UTF8.self)
     )
   }
 }

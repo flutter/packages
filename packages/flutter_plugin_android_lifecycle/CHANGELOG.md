@@ -1,3 +1,7 @@
+## 2.0.24
+
+* Updates annotation to 1.9.1.
+
 ## 2.0.23
 
 * Updates Java compatibility version to 11.

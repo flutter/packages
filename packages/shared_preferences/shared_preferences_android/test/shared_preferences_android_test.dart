@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_android/src/messages.g.dart';
+import 'package:shared_preferences_android/src/strings.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
@@ -38,11 +41,22 @@ void main() {
     'StringList': <String>['foo', 'bar'],
   };
 
-  final Map<String, Object> allTestValues = <String, Object>{};
+  final Map<String, Object> allTestValuesForComparison = <String, Object>{};
 
-  allTestValues.addAll(flutterTestValues);
-  allTestValues.addAll(prefixTestValues);
-  allTestValues.addAll(nonPrefixTestValues);
+  allTestValuesForComparison.addAll(flutterTestValues);
+  allTestValuesForComparison.addAll(prefixTestValues);
+  allTestValuesForComparison.addAll(nonPrefixTestValues);
+
+  final Map<String, Object> allTestValuesForAddingDirectlyToCache =
+      <String, Object>{...allTestValuesForComparison};
+
+  final String encodedListStringValue =
+      '$jsonListPrefix${jsonEncode(<String>['foo', 'bar'])}';
+  allTestValuesForAddingDirectlyToCache['flutter.StringList'] =
+      encodedListStringValue;
+  allTestValuesForAddingDirectlyToCache['prefix.StringList'] =
+      encodedListStringValue;
+  allTestValuesForAddingDirectlyToCache['StringList'] = encodedListStringValue;
 
   setUp(() {
     api = _FakeSharedPreferencesApi();
@@ -68,8 +82,8 @@ void main() {
   });
 
   test('clearWithPrefix', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
 
     Map<String?, Object?> all = await plugin.getAllWithPrefix('prefix.');
@@ -82,8 +96,8 @@ void main() {
   });
 
   test('clearWithParameters', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
 
     Map<String?, Object?> all = await plugin.getAllWithParameters(
@@ -108,8 +122,8 @@ void main() {
   });
 
   test('clearWithParameters with allow list', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
 
     Map<String?, Object?> all = await plugin.getAllWithParameters(
@@ -146,17 +160,17 @@ void main() {
   });
 
   test('getAllWithNoPrefix', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
     final Map<String?, Object?> all = await plugin.getAllWithPrefix('');
     expect(all.length, 15);
-    expect(all, allTestValues);
+    expect(all, allTestValuesForComparison);
   });
 
   test('clearWithNoPrefix', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
 
     Map<String?, Object?> all = await plugin.getAllWithPrefix('');
@@ -167,8 +181,8 @@ void main() {
   });
 
   test('getAllWithParameters', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
     final Map<String?, Object?> all = await plugin.getAllWithParameters(
       GetAllParameters(
@@ -180,8 +194,8 @@ void main() {
   });
 
   test('getAllWithParameters with allow list', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
     final Map<String?, Object?> all = await plugin.getAllWithParameters(
       GetAllParameters(
@@ -208,7 +222,8 @@ void main() {
         await plugin
             .setValue('StringList', 'flutter.StringList', <String>['hi']),
         isTrue);
-    expect(api.items['flutter.StringList'], <String>['hi']);
+    expect(api.items['flutter.StringList'],
+        '$jsonListPrefix${jsonEncode(<String>['hi'])}');
   });
 
   test('setValue with unsupported type', () async {
@@ -218,8 +233,8 @@ void main() {
   });
 
   test('getAllWithNoPrefix', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
     final Map<String?, Object?> all = await plugin.getAllWithParameters(
       GetAllParameters(
@@ -227,12 +242,12 @@ void main() {
       ),
     );
     expect(all.length, 15);
-    expect(all, allTestValues);
+    expect(all, allTestValuesForComparison);
   });
 
   test('clearWithNoPrefix', () async {
-    for (final String key in allTestValues.keys) {
-      api.items[key] = allTestValues[key]!;
+    for (final String key in allTestValuesForAddingDirectlyToCache.keys) {
+      api.items[key] = allTestValuesForAddingDirectlyToCache[key]!;
     }
 
     Map<String?, Object?> all = await plugin.getAllWithParameters(
@@ -259,7 +274,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
   final Map<String, Object> items = <String, Object>{};
 
   @override
-  Future<Map<String?, Object?>> getAll(
+  Future<Map<String, Object>> getAll(
     String prefix,
     List<String?>? allowList,
   ) async {
@@ -267,12 +282,23 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
     if (allowList != null) {
       allowSet = Set<String>.from(allowList);
     }
-    return <String?, Object?>{
+    final Map<String, Object> filteredItems = <String, Object>{
       for (final String key in items.keys)
         if (key.startsWith(prefix) &&
             (allowSet == null || allowSet.contains(key)))
-          key: items[key]
+          key: items[key]!
     };
+    filteredItems.forEach((String? key, Object? value) {
+      if (value.runtimeType == String &&
+          (value! as String).startsWith(jsonListPrefix)) {
+        filteredItems[key!] =
+            (jsonDecode((value as String).substring(jsonListPrefix.length))
+                    as List<dynamic>)
+                .cast<String>()
+                .toList();
+      }
+    });
+    return filteredItems;
   }
 
   @override
@@ -317,8 +343,22 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
   }
 
   @override
-  Future<bool> setStringList(String key, List<String?> value) async {
+  Future<bool> setEncodedStringList(String key, String value) async {
     items[key] = value;
     return true;
   }
+
+  @override
+  Future<bool> setDeprecatedStringList(String key, List<String> value) async {
+    items[key] = value;
+    return true;
+  }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => throw UnimplementedError();
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => throw UnimplementedError();
 }

@@ -432,8 +432,8 @@ Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamIntsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts',
+  final EventChannel streamIntsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName',
       pigeonMethodCodec);
   return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
@@ -444,10 +444,24 @@ Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamEventsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents',
+  final EventChannel streamEventsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName',
       pigeonMethodCodec);
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
+  });
+}
+
+Stream<int> streamConsistentNumbers({String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel streamConsistentNumbersChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
+      pigeonMethodCodec);
+  return streamConsistentNumbersChannel
+      .receiveBroadcastStream()
+      .map((dynamic event) {
+    return event as int;
   });
 }

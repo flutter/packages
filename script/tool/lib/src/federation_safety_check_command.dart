@@ -212,10 +212,11 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
   Future<bool> _changeIsCommentOnly(
       GitVersionFinder git, String repoPath) async {
     final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-    final RegExp changeLine = RegExp(r'^[+-] ');
+    final RegExp changeLine = RegExp(r'^[+-]');
     // This will not catch /**/-style comments, but false negatives are fine
     // (and in practice, we almost never use that comment style in Dart code).
     final RegExp commentLine = RegExp(r'^[+-]\s*//');
+    final RegExp blankLine = RegExp(r'^[+-]\s*$');
     bool foundComment = false;
     for (final String line in diff) {
       if (!changeLine.hasMatch(line) ||
@@ -223,7 +224,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
           line.startsWith('+++ ')) {
         continue;
       }
-      if (!commentLine.hasMatch(line)) {
+      if (!(commentLine.hasMatch(line) || blankLine.hasMatch(line))) {
         return false;
       }
       foundComment = true;

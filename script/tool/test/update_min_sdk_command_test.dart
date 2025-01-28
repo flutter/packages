@@ -50,7 +50,7 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     expect(dartVersion, '^3.1.0');
   });
 
@@ -65,7 +65,7 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     expect(dartVersion, '^3.1.0');
   });
 
@@ -80,7 +80,7 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     expect(dartVersion, '^3.2.0');
   });
 
@@ -98,9 +98,9 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     final String flutterVersion =
-        package.parsePubspec().environment?['flutter'].toString() ?? '';
+        package.parsePubspec().environment['flutter'].toString();
     expect(dartVersion, '^3.1.0');
     expect(flutterVersion, '>=3.13.0');
   });
@@ -119,9 +119,9 @@ void main() {
     ]);
 
     final String dartVersion =
-        package.parsePubspec().environment?['sdk'].toString() ?? '';
+        package.parsePubspec().environment['sdk'].toString();
     final String flutterVersion =
-        package.parsePubspec().environment?['flutter'].toString() ?? '';
+        package.parsePubspec().environment['flutter'].toString();
     expect(dartVersion, '^3.2.0');
     expect(flutterVersion, '>=3.16.0');
   });

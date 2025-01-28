@@ -447,7 +447,7 @@ class FLALocalAuthPluginTests: XCTestCase {
     XCTAssertNil(error)
   }
 
-  func testDeviceSupportsBiometrics_withNoBiometricHardware() {
+  func testDeviceSupportsBiometrics_withBiometryNotAvailable() {
     let stubAuthContext = StubAuthContext()
     let alertFactory = StubAlertFactory()
     let viewProvider = StubViewProvider()
@@ -456,11 +456,31 @@ class FLALocalAuthPluginTests: XCTestCase {
       alertFactory: alertFactory, viewProvider: viewProvider)
 
     stubAuthContext.expectBiometrics = true
-    stubAuthContext.canEvaluateError = NSError(domain: "error", code: 0)
+    stubAuthContext.canEvaluateError = NSError(
+      domain: "error", code: LAError.biometryNotAvailable.rawValue)
 
     var error: FlutterError?
     let result = plugin.deviceCanSupportBiometricsWithError(&error)
     XCTAssertFalse(result!.boolValue)
+    XCTAssertNil(error)
+  }
+
+  func testDeviceSupportsBiometrics_withBiometryNotAvailableLoadedBiometryType() {
+    let stubAuthContext = StubAuthContext()
+    let alertFactory = StubAlertFactory()
+    let viewProvider = StubViewProvider()
+    let plugin = FLALocalAuthPlugin(
+      contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
+      alertFactory: alertFactory, viewProvider: viewProvider)
+
+    stubAuthContext.expectBiometrics = true
+    stubAuthContext.biometryType = LABiometryType.touchID
+    stubAuthContext.canEvaluateError = NSError(
+      domain: "error", code: LAError.biometryNotAvailable.rawValue)
+
+    var error: FlutterError?
+    let result = plugin.deviceCanSupportBiometricsWithError(&error)
+    XCTAssertTrue(result!.boolValue)
     XCTAssertNil(error)
   }
 

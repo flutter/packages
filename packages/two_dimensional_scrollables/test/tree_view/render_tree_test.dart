@@ -505,6 +505,7 @@ void main() {
         // Customize the animation
         treeView = TreeView<String>(
           tree: treeNodes,
+          // ignore: prefer_const_constructors
           toggleAnimationStyle: AnimationStyle(
             duration: const Duration(milliseconds: 500),
             curve: Curves.bounceIn,

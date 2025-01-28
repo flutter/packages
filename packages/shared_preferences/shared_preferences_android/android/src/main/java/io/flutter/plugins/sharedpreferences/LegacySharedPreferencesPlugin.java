@@ -25,18 +25,22 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /** LegacySharedPreferencesPlugin */
 public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPreferencesApi {
   private static final String TAG = "SharedPreferencesPlugin";
   private static final String SHARED_PREFERENCES_NAME = "FlutterSharedPreferences";
+  // All identifiers must match the SharedPreferencesPlugin.kt file, as well as the strings.dart file.
   private static final String LIST_IDENTIFIER = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu";
+  // The symbol `!` was chosen as it cannot be created by the base 64 encoding used with LIST_IDENTIFIER.
+  private static final String JSON_LIST_IDENTIFIER = LIST_IDENTIFIER + "!";
   private static final String BIG_INTEGER_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBCaWdJbnRlZ2Vy";
   private static final String DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu";
 
   private SharedPreferences preferences;
-  private SharedPreferencesListEncoder listEncoder;
+  private final SharedPreferencesListEncoder listEncoder;
 
   public LegacySharedPreferencesPlugin() {
     this(new ListEncoder());
@@ -100,7 +104,15 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
   }
 
   @Override
-  public @NonNull Boolean setStringList(@NonNull String key, @NonNull List<String> value)
+  public @NonNull Boolean setEncodedStringList(@NonNull String key, @NonNull String value)
+      throws RuntimeException {
+    return preferences.edit().putString(key, value).commit();
+  }
+
+  // Deprecated, for testing purposes only.
+  @Deprecated
+  @Override
+  public @NonNull Boolean setDeprecatedStringList(@NonNull String key, @NonNull List<String> value)
       throws RuntimeException {
     return preferences.edit().putString(key, LIST_IDENTIFIER + listEncoder.encode(value)).commit();
   }
@@ -131,14 +143,13 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
 
   // Gets all shared preferences, filtered to only those set with the given prefix.
   // Optionally filtered also to only those items in the optional [allowList].
-  @SuppressWarnings("unchecked")
   private @NonNull Map<String, Object> getAllPrefs(
       @NonNull String prefix, @Nullable Set<String> allowList) throws RuntimeException {
     Map<String, ?> allPrefs = preferences.getAll();
     Map<String, Object> filteredPrefs = new HashMap<>();
     for (String key : allPrefs.keySet()) {
       if (key.startsWith(prefix) && (allowList == null || allowList.contains(key))) {
-        filteredPrefs.put(key, transformPref(key, allPrefs.get(key)));
+        filteredPrefs.put(key, transformPref(key, Objects.requireNonNull(allPrefs.get(key))));
       }
     }
 
@@ -149,7 +160,13 @@ public class LegacySharedPreferencesPlugin implements FlutterPlugin, SharedPrefe
     if (value instanceof String) {
       String stringValue = (String) value;
       if (stringValue.startsWith(LIST_IDENTIFIER)) {
-        return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
+        // The JSON-encoded lists use an extended prefix to distinguish them from
+        // lists that are encoded on the platform.
+        if (stringValue.startsWith(JSON_LIST_IDENTIFIER)) {
+          return value;
+        } else {
+          return listEncoder.decode(stringValue.substring(LIST_IDENTIFIER.length()));
+        }
       } else if (stringValue.startsWith(BIG_INTEGER_PREFIX)) {
         // TODO (tarrinneal): Remove all BigInt code.
         // https://github.com/flutter/flutter/issues/124420

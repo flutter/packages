@@ -306,6 +306,7 @@ class SK2TransactionMessage {
     this.restoring = false,
     this.receiptData,
     this.error,
+    this.jsonRepresentation,
   });
 
   int id;
@@ -328,6 +329,8 @@ class SK2TransactionMessage {
 
   SK2ErrorMessage? error;
 
+  String? jsonRepresentation;
+
   Object encode() {
     return <Object?>[
       id,
@@ -340,6 +343,7 @@ class SK2TransactionMessage {
       restoring,
       receiptData,
       error,
+      jsonRepresentation,
     ];
   }
 
@@ -356,6 +360,7 @@ class SK2TransactionMessage {
       restoring: result[7]! as bool,
       receiptData: result[8] as String?,
       error: result[9] as SK2ErrorMessage?,
+      jsonRepresentation: result[10] as String?,
     );
   }
 }

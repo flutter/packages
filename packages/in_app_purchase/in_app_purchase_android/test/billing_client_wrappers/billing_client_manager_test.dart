@@ -7,6 +7,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
 import 'package:mockito/mockito.dart';
 
@@ -21,8 +22,9 @@ void main() {
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any)).thenAnswer(
-        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
+    when(mockApi.startConnection(any, any, any)).thenAnswer((_) async =>
+        PlatformBillingResult(
+            responseCode: PlatformBillingResponse.ok, debugMessage: ''));
     manager = BillingClientManager(
         billingClientFactory: (PurchasesUpdatedListener listener,
                 UserSelectedAlternativeBillingListener?
@@ -32,14 +34,15 @@ void main() {
 
   group('BillingClientWrapper', () {
     test('connects on initialization', () {
-      verify(mockApi.startConnection(any, any)).called(1);
+      verify(mockApi.startConnection(any, any, any)).called(1);
     });
 
     test('waits for connection before executing the operations', () async {
       final Completer<void> connectedCompleter = Completer<void>();
-      when(mockApi.startConnection(any, any)).thenAnswer((_) async {
+      when(mockApi.startConnection(any, any, any)).thenAnswer((_) async {
         connectedCompleter.complete();
-        return PlatformBillingResult(responseCode: 0, debugMessage: '');
+        return PlatformBillingResult(
+            responseCode: PlatformBillingResponse.ok, debugMessage: '');
       });
 
       final Completer<void> calledCompleter1 = Completer<void>();
@@ -64,7 +67,7 @@ void main() {
       await manager.runWithClientNonRetryable((_) async {});
 
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
-      verify(mockApi.startConnection(any, any)).called(2);
+      verify(mockApi.startConnection(any, any, any)).called(2);
     });
 
     test('re-connects when host calls reconnectWithBillingChoiceMode',
@@ -83,9 +86,35 @@ void main() {
       manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
       // Verify that after connection ended reconnect was called.
       final VerificationResult result =
-          verify(mockApi.startConnection(any, captureAny));
+          verify(mockApi.startConnection(any, captureAny, any));
       expect(result.captured.single,
           PlatformBillingChoiceMode.alternativeBillingOnly);
+    });
+
+    test('re-connects when host calls reconnectWithPendingPurchasesParams',
+        () async {
+      // Ensures all asynchronous connected code finishes.
+      await manager.runWithClientNonRetryable((_) async {});
+
+      await manager.reconnectWithPendingPurchasesParams(
+          const PendingPurchasesParamsWrapper(enablePrepaidPlans: true));
+      // Verify that connection was ended.
+      verify(mockApi.endConnection()).called(1);
+
+      clearInteractions(mockApi);
+
+      /// Fake the disconnect that we would expect from a endConnectionCall.
+      manager.client.hostCallbackHandler.onBillingServiceDisconnected(0);
+      // Verify that after connection ended reconnect was called.
+      final VerificationResult result =
+          verify(mockApi.startConnection(any, any, captureAny));
+      expect(
+          result.captured.single,
+          isA<PlatformPendingPurchasesParams>().having(
+              (PlatformPendingPurchasesParams params) =>
+                  params.enablePrepaidPlans,
+              'enablePrepaidPlans',
+              true));
     });
 
     test(
@@ -104,7 +133,7 @@ void main() {
             );
           },
         );
-        verify(mockApi.startConnection(any, any)).called(1);
+        verify(mockApi.startConnection(any, any, any)).called(1);
         expect(timesCalled, equals(2));
         expect(result.responseCode, equals(BillingResponse.ok));
       },
@@ -113,7 +142,7 @@ void main() {
     test('does not re-connect when disposed', () {
       clearInteractions(mockApi);
       manager.dispose();
-      verifyNever(mockApi.startConnection(any, any));
+      verifyNever(mockApi.startConnection(any, any, any));
       verify(mockApi.endConnection()).called(1);
     });
 

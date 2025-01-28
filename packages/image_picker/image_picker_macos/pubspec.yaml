@@ -2,7 +2,7 @@ name: image_picker_macos
 description: macOS platform implementation of image_picker
 repository: https://github.com/flutter/packages/tree/main/packages/image_picker/image_picker_macos
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+image_picker%22
-version: 0.2.1+1
+version: 0.2.1+2
 
 environment:
   sdk: ^3.4.0
