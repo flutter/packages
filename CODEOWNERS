@@ -124,7 +124,3 @@ packages/local_auth/local_auth_windows/**                @cbracken
 packages/path_provider/path_provider_windows/**          @cbracken
 packages/shared_preferences/shared_preferences_windows/** @cbracken
 packages/url_launcher/url_launcher_windows/**            @cbracken
-
-# - DevTools extensions
-# @adsonpleal is the actual maintainer of shared_preferences_tool but is not yet a committer, so can't be listed as the owner.
-packages/shared_preferences/shared_preferences_tool/**  @tarrinneal
