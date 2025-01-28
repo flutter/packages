@@ -67,9 +67,9 @@ class TextLinker {
   /// Creates an instance of [TextLinker] with a [RegExp] and an [InlineLinkBuilder
   /// [InlineLinkBuilder].
   ///
-  /// Does not manage the lifecycle of any [GestureRecognizer]s created in the
-  /// [InlineLinkBuilder], so it's the responsibility of the caller to do so.
-  /// See [TextSpan.recognizer] for more.
+  /// Does not manage the lifecycle of any [GestureRecognizer]s created in
+  /// [linkBuilder], so it's the responsibility of the caller to do so. See
+  /// [TextSpan.recognizer] for more.
   TextLinker({
     required this.regExp,
     required this.linkBuilder,
