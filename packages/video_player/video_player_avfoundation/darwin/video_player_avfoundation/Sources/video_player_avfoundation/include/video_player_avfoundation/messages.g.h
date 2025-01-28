@@ -61,24 +61,24 @@ NSObject<FlutterMessageCodec> *FVPGetMessagesCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)createWithOptions:(FVPCreationOptions *)creationOptions
                                    error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)disposePlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)disposePlayer:(NSInteger)playerId error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setLooping:(BOOL)isLooping
-         forPlayer:(NSInteger)textureId
+         forPlayer:(NSInteger)playerId
              error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setVolume:(double)volume
-        forPlayer:(NSInteger)textureId
+        forPlayer:(NSInteger)playerId
             error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setPlaybackSpeed:(double)speed
-               forPlayer:(NSInteger)textureId
+               forPlayer:(NSInteger)playerId
                    error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)playPlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)playPlayer:(NSInteger)playerId error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)positionForPlayer:(NSInteger)textureId
+- (nullable NSNumber *)positionForPlayer:(NSInteger)playerId
                                    error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)seekTo:(NSInteger)position
-     forPlayer:(NSInteger)textureId
+     forPlayer:(NSInteger)playerId
     completion:(void (^)(FlutterError *_Nullable))completion;
-- (void)pausePlayer:(NSInteger)textureId error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)pausePlayer:(NSInteger)playerId error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setMixWithOthers:(BOOL)mixWithOthers error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 

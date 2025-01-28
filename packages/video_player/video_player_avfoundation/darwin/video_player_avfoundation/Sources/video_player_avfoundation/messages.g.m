@@ -251,9 +251,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        [api disposePlayer:arg_textureId error:&error];
+        [api disposePlayer:arg_playerId error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -276,9 +276,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         BOOL arg_isLooping = [GetNullableObjectAtIndex(args, 0) boolValue];
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 1) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api setLooping:arg_isLooping forPlayer:arg_textureId error:&error];
+        [api setLooping:arg_isLooping forPlayer:arg_playerId error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -301,9 +301,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         double arg_volume = [GetNullableObjectAtIndex(args, 0) doubleValue];
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 1) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api setVolume:arg_volume forPlayer:arg_textureId error:&error];
+        [api setVolume:arg_volume forPlayer:arg_playerId error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -326,9 +326,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         double arg_speed = [GetNullableObjectAtIndex(args, 0) doubleValue];
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 1) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 1) integerValue];
         FlutterError *error;
-        [api setPlaybackSpeed:arg_speed forPlayer:arg_textureId error:&error];
+        [api setPlaybackSpeed:arg_speed forPlayer:arg_playerId error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -350,9 +350,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
           api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        [api playPlayer:arg_textureId error:&error];
+        [api playPlayer:arg_playerId error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
@@ -374,9 +374,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        NSNumber *output = [api positionForPlayer:arg_textureId error:&error];
+        NSNumber *output = [api positionForPlayer:arg_playerId error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -399,9 +399,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSInteger arg_position = [GetNullableObjectAtIndex(args, 0) integerValue];
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 1) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 1) integerValue];
         [api seekTo:arg_position
-             forPlayer:arg_textureId
+             forPlayer:arg_playerId
             completion:^(FlutterError *_Nullable error) {
               callback(wrapResult(nil, error));
             }];
@@ -425,9 +425,9 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        NSInteger arg_textureId = [GetNullableObjectAtIndex(args, 0) integerValue];
+        NSInteger arg_playerId = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        [api pausePlayer:arg_textureId error:&error];
+        [api pausePlayer:arg_playerId error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {
