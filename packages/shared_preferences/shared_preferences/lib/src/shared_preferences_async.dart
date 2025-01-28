@@ -8,8 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-import 'shared_preferences_devtools_extension_data.dart';
-
 /// Provides a persistent store for simple data.
 ///
 /// Data is persisted to and fetched from the disk asynchronously.
@@ -403,10 +401,3 @@ class SharedPreferencesWithCache {
     return _cacheOptions.allowList?.contains(key) ?? true;
   }
 }
-
-// Include an unused import to ensure this library is included
-// when running `flutter run -d chrome`.
-// Check this discussion for more info: https://github.com/flutter/packages/pull/6749/files/6eb1b4fdce1eba107294770d581713658ff971e9#discussion_r1755375409
-// ignore: unused_element
-final bool _fieldToKeepDevtoolsExtensionReachable =
-    fieldToKeepDevtoolsExtensionLibraryAlive;

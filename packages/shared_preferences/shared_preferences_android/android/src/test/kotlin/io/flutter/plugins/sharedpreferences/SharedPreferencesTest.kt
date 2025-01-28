@@ -41,7 +41,7 @@ internal class SharedPreferencesTest {
 
   private val testDouble = 3.14159
 
-  private val testList = listOf("foo", "bar")
+  private val testList = JSON_LIST_PREFIX + listOf("foo", "bar").toString()
 
   private val dataStoreOptions = SharedPreferencesPigeonOptions(useDataStore = true)
   private val sharedPreferencesOptions = SharedPreferencesPigeonOptions(useDataStore = false)
@@ -95,8 +95,28 @@ internal class SharedPreferencesTest {
   @Test
   fun testSetAndGetStringListWithDataStore() {
     val plugin = pluginSetup(dataStoreOptions)
-    plugin.setStringList(listKey, testList, dataStoreOptions)
-    Assert.assertEquals(plugin.getStringList(listKey, dataStoreOptions), testList)
+    plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, testList)
+    Assert.assertEquals(result?.type, StringListLookupResultType.JSON_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithDataStoreRedirectsForPlatformEncoded() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setDeprecatedStringList(listKey, listOf(""), dataStoreOptions)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.PLATFORM_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithDataStoreReportsRawString() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setString(listKey, testString, dataStoreOptions)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.UNEXPECTED_STRING)
   }
 
   @Test
@@ -106,7 +126,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, dataStoreOptions)
     plugin.setInt(intKey, testInt, dataStoreOptions)
     plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
-    plugin.setStringList(listKey, testList, dataStoreOptions)
+    plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
     val keyList = plugin.getKeys(listOf(boolKey, stringKey), dataStoreOptions)
     Assert.assertEquals(keyList.size, 2)
     Assert.assertTrue(keyList.contains(stringKey))
@@ -120,7 +140,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, dataStoreOptions)
     plugin.setInt(intKey, testInt, dataStoreOptions)
     plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
-    plugin.setStringList(listKey, testList, dataStoreOptions)
+    plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
 
     plugin.clear(null, dataStoreOptions)
 
@@ -138,7 +158,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, dataStoreOptions)
     plugin.setInt(intKey, testInt, dataStoreOptions)
     plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
-    plugin.setStringList(listKey, testList, dataStoreOptions)
+    plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
 
     val all = plugin.getAll(null, dataStoreOptions)
 
@@ -156,7 +176,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, dataStoreOptions)
     plugin.setInt(intKey, testInt, dataStoreOptions)
     plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
-    plugin.setStringList(listKey, testList, dataStoreOptions)
+    plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
 
     plugin.clear(listOf(boolKey, stringKey), dataStoreOptions)
 
@@ -174,7 +194,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, dataStoreOptions)
     plugin.setInt(intKey, testInt, dataStoreOptions)
     plugin.setDouble(doubleKey, testDouble, dataStoreOptions)
-    plugin.setStringList(listKey, testList, dataStoreOptions)
+    plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
 
     val all = plugin.getAll(listOf(boolKey, stringKey), dataStoreOptions)
 
@@ -216,8 +236,28 @@ internal class SharedPreferencesTest {
   @Test
   fun testSetAndGetStringListWithSharedPreferences() {
     val plugin = pluginSetup(sharedPreferencesOptions)
-    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
-    Assert.assertEquals(plugin.getStringList(listKey, sharedPreferencesOptions), testList)
+    plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, testList)
+    Assert.assertEquals(result?.type, StringListLookupResultType.JSON_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithSharedPreferencesRedirectsForPlatformEncoded() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setDeprecatedStringList(listKey, listOf(""), sharedPreferencesOptions)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.PLATFORM_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithSharedPreferencesReportsRawString() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setString(listKey, testString, sharedPreferencesOptions)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.UNEXPECTED_STRING)
   }
 
   @Test
@@ -227,7 +267,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, sharedPreferencesOptions)
     plugin.setInt(intKey, testInt, sharedPreferencesOptions)
     plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
-    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+    plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
     val keyList = plugin.getKeys(listOf(boolKey, stringKey), sharedPreferencesOptions)
     Assert.assertEquals(keyList.size, 2)
     Assert.assertTrue(keyList.contains(stringKey))
@@ -241,7 +281,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, sharedPreferencesOptions)
     plugin.setInt(intKey, testInt, sharedPreferencesOptions)
     plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
-    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+    plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
 
     plugin.clear(null, sharedPreferencesOptions)
 
@@ -259,7 +299,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, sharedPreferencesOptions)
     plugin.setInt(intKey, testInt, sharedPreferencesOptions)
     plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
-    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+    plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
 
     val all = plugin.getAll(null, sharedPreferencesOptions)
 
@@ -277,7 +317,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, sharedPreferencesOptions)
     plugin.setInt(intKey, testInt, sharedPreferencesOptions)
     plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
-    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+    plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
 
     plugin.clear(listOf(boolKey, stringKey), sharedPreferencesOptions)
 
@@ -295,7 +335,7 @@ internal class SharedPreferencesTest {
     plugin.setString(stringKey, testString, sharedPreferencesOptions)
     plugin.setInt(intKey, testInt, sharedPreferencesOptions)
     plugin.setDouble(doubleKey, testDouble, sharedPreferencesOptions)
-    plugin.setStringList(listKey, testList, sharedPreferencesOptions)
+    plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
 
     val all = plugin.getAll(listOf(boolKey, stringKey), sharedPreferencesOptions)
 
@@ -342,7 +382,7 @@ internal class SharedPreferencesTest {
     // Inject the bad pref as a string, as that is how string lists are stored internally.
     plugin.setString(badListKey, badPref, dataStoreOptions)
     assertThrows(ClassNotFoundException::class.java) {
-      plugin.getStringList(badListKey, dataStoreOptions)
+      plugin.getPlatformEncodedStringList(badListKey, dataStoreOptions)
     }
   }
 }

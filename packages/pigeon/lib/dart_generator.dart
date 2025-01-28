@@ -556,8 +556,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         if (instanceName.isNotEmpty) {
           instanceName = '.\$instanceName';
         }
-        const EventChannel ${func.name}Channel =
-            EventChannel('${makeChannelName(api, func, dartPackageName)}', $_pigeonMethodChannelCodec);
+        final EventChannel ${func.name}Channel =
+            EventChannel('${makeChannelName(api, func, dartPackageName)}\$instanceName', $_pigeonMethodChannelCodec);
         return ${func.name}Channel.receiveBroadcastStream().map((dynamic event) {
           return event as ${func.returnType.baseName};
         });
