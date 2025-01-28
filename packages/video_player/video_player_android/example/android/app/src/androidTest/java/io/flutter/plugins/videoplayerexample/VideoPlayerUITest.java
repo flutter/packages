@@ -14,6 +14,8 @@ import static androidx.test.espresso.flutter.matcher.FlutterMatchers.withValueKe
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
