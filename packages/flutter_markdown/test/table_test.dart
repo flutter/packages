@@ -201,6 +201,50 @@ void defineTests() {
     );
 
     testWidgets(
+      'table scrollbar thumbVisibility should follow stylesheet',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const bool tableScrollbarThumbVisibility = true;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(
+                tableColumnWidth: const FixedColumnWidth(100),
+                tableScrollbarThumbVisibility: tableScrollbarThumbVisibility);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Scrollbar scrollbar = tester.widget(find.byType(Scrollbar));
+
+        expect(scrollbar.thumbVisibility, tableScrollbarThumbVisibility);
+      },
+    );
+
+    testWidgets(
+      'table scrollbar thumbVisibility should follow stylesheet',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const bool tableScrollbarThumbVisibility = false;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(
+                tableColumnWidth: const FixedColumnWidth(100),
+                tableScrollbarThumbVisibility: tableScrollbarThumbVisibility);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Scrollbar scrollbar = tester.widget(find.byType(Scrollbar));
+
+        expect(scrollbar.thumbVisibility, tableScrollbarThumbVisibility);
+      },
+    );
+
+    testWidgets(
       'table with last row of empty table cells',
       (WidgetTester tester) async {
         final ThemeData theme =
