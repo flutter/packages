@@ -6,8 +6,15 @@ package io.flutter.plugins.videoplayer;
 
 import androidx.annotation.NonNull;
 
+/** Functional interface for providing a VideoPlayer instance based on the player ID. */
 @FunctionalInterface
 interface VideoPlayerProvider {
+  /**
+   * Retrieves a VideoPlayer instance based on the provided player ID.
+   *
+   * @param playerId The unique identifier for the video player.
+   * @return A VideoPlayer instance associated with the given player ID.
+   */
   @NonNull
   VideoPlayer getVideoPlayer(@NonNull Long playerId);
 }

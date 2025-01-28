@@ -16,6 +16,10 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
 
+/**
+ * A class responsible for managing video playback using {@link ExoPlayer}. It provides methods to
+ * control playback, adjust volume, and handle seeking.
+ */
 class VideoPlayer {
   @NonNull private final ExoPlayerProvider exoPlayerProvider;
   @NonNull private final MediaItem mediaItem;

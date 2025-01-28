@@ -13,6 +13,11 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry;
 
+/**
+ * A subclass of {@link VideoPlayer} that adds functionality related to texture-based view as a way
+ * of displaying the video in the app. It manages the lifecycle of the texture and ensures that the
+ * video is properly displayed on the texture.
+ */
 final class TextureBasedVideoPlayer extends VideoPlayer
     implements TextureRegistry.SurfaceProducer.Callback {
   @NonNull private final TextureRegistry.SurfaceProducer surfaceProducer;
@@ -93,7 +98,7 @@ final class TextureBasedVideoPlayer extends VideoPlayer
     return Messages.PlatformVideoViewType.TEXTURE_VIEW;
   }
 
-  void dispose() {
+  public void dispose() {
     // Super must be called first to ensure the player is released before the surface.
     super.dispose();
 
