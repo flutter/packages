@@ -13,7 +13,7 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
   String get location => GoRouteData.$location(
         '/iterable-default-value-route',
         queryParams: {
-          if (!_$iterablesEquals(param, const <int>[0]))
+          if (!_$iterablesEqual(param, const <int>[0]))
             'param': param.map((e) => e.toString()).toList(),
         },
       );
@@ -28,7 +28,7 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-bool _$iterablesEquals<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+bool _$iterablesEqual<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
   if (identical(iterable1, iterable2)) return true;
   if (iterable1 == null || iterable2 == null) return false;
   final iterator1 = iterable1.iterator;

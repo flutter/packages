@@ -29,7 +29,7 @@ const String extraFieldName = r'$extra';
 const String likelyIssueMessage = 'Should never get here! File an issue!';
 
 /// The name of the generated, private helper for comparing iterables.
-const String iterableEqualsHelperName = r'_$iterablesEquals';
+const String iterablesEqualHelperName = r'_$iterablesEqual';
 
 const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperBigInt(),
@@ -277,7 +277,7 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
   const _TypeHelperIterable();
 
   @override
-  String helperName(DartType paramType) => iterableEqualsHelperName;
+  String helperName(DartType paramType) => iterablesEqualHelperName;
 
   @override
   String _decode(
@@ -351,7 +351,7 @@ $fieldName$nullAwareAccess.map((e) => e.toString()).toList()''';
 
   @override
   String _compare(String value1, String value2) =>
-      '!$iterableEqualsHelperName($value1, $value2)';
+      '!$iterablesEqualHelperName($value1, $value2)';
 }
 
 abstract class _TypeHelperWithHelper extends _TypeHelper {

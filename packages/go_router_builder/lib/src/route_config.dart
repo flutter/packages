@@ -736,7 +736,7 @@ const Map<String, String> helperNames = <String, String>{
   convertMapValueHelperName: _convertMapValueHelper,
   boolConverterHelperName: _boolConverterHelper,
   enumExtensionHelperName: _enumConverterHelper,
-  iterableEqualsHelperName: _iterableEqualsHelper,
+  iterablesEqualHelperName: _iterableEqualsHelper,
 };
 
 const String _convertMapValueHelper = '''
@@ -770,7 +770,7 @@ extension<T extends Enum> on Map<T, String> {
 }''';
 
 const String _iterableEqualsHelper = '''
-bool $iterableEqualsHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
   if (identical(iterable1, iterable2)) return true;
   if (iterable1 == null || iterable2 == null) return false;
   final iterator1 = iterable1.iterator;
