@@ -4144,7 +4144,7 @@ void main() {
     capturedAction = verificationResult.captured.single as FocusMeteringAction;
     expect(capturedAction.isAutoCancelEnabled, isFalse);
   });
-/*
+
   test(
       'setExposureOffset throws exception if exposure compensation not supported',
       () async {
@@ -4152,16 +4152,23 @@ void main() {
     const int cameraId = 6;
     const double offset = 2;
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
-        exposureCompensationStep: 0);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 3,
+        upper: 4,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0,
+      pigeon_instanceManager: testInstanceManager,
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
 
     expect(() => camera.setExposureOffset(cameraId, offset),
         throwsA(isA<CameraException>()));
@@ -4175,17 +4182,24 @@ void main() {
     const double offset = 3;
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final CameraControl mockCameraControl = MockCameraControl();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
-        exposureCompensationStep: 0.2);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 3,
+        upper: 4,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0.2,
+      pigeon_instanceManager: testInstanceManager,
+    );
 
     // Set directly for test versus calling createCamera.
     camera.cameraInfo = mockCameraInfo;
     camera.cameraControl = mockCameraControl;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
     when(mockCameraControl.setExposureCompensationIndex(15)).thenThrow(
         PlatformException(
             code: 'TEST_ERROR',
@@ -4204,10 +4218,18 @@ void main() {
     const double offset = 5;
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final CameraControl mockCameraControl = MockCameraControl();
-    final ExposureState exposureState = ExposureState.detached(
-        exposureCompensationRange:
-            ExposureCompensationRange(minCompensation: 3, maxCompensation: 4),
-        exposureCompensationStep: 0.1);
+    final PigeonInstanceManager testInstanceManager = PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final ExposureState exposureState = ExposureState.pigeon_detached(
+      exposureCompensationRange: CameraIntegerRange.pigeon_detached(
+        lower: 3,
+        upper: 4,
+        pigeon_instanceManager: testInstanceManager,
+      ),
+      exposureCompensationStep: 0.1,
+      pigeon_instanceManager: testInstanceManager,
+    );
     final int expectedExposureCompensationIndex =
         (offset / exposureState.exposureCompensationStep).round();
 
@@ -4215,8 +4237,7 @@ void main() {
     camera.cameraInfo = mockCameraInfo;
     camera.cameraControl = mockCameraControl;
 
-    when(mockCameraInfo.getExposureState())
-        .thenAnswer((_) async => exposureState);
+    when(mockCameraInfo.exposureState).thenReturn(exposureState);
     when(mockCameraControl
             .setExposureCompensationIndex(expectedExposureCompensationIndex))
         .thenAnswer((_) async => Future<int?>.value());
@@ -4224,7 +4245,7 @@ void main() {
     expect(() => camera.setExposureOffset(cameraId, offset),
         throwsA(isA<CameraException>()));
   });
-
+/*
   test(
       'setExposureOffset behaves as expected to successful attempt to set exposure compensation index',
       () async {
