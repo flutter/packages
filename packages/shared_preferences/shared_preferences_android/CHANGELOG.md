@@ -1,3 +1,8 @@
+## 2.4.4
+
+* Restores the behavior of throwing a `TypeError` when calling `getStringList`
+  on a value stored with `setString`.
+
 ## 2.4.3
 
 * Migrates `List<String>` value encoding to JSON.
