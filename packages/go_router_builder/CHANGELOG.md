@@ -1,3 +1,7 @@
+## 2.7.5
+
+- Fixes trailing `?` in the location when a go route has an empty default value.
+
 ## 2.7.4
 
 - Fixes an issue by removing unnecessary `const` in StatefulShellRouteData generation.
