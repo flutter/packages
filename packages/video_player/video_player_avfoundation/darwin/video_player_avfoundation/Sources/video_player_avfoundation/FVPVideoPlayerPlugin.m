@@ -174,9 +174,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   @try {
     FVPVideoPlayer *player;
     if (textureBased) {
-      player = [self createTextureBasedPlayerFromOptions:options];
+      player = [self createTextureBasedPlayerWithOptions:options];
     } else {
-      player = [self createRegularPlayerFromOptions:options];
+      player = [self createRegularPlayerWithOptions:options];
     }
 
     if (player == nil) {
@@ -191,7 +191,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   }
 }
 
-- (nullable FVPTextureBasedVideoPlayer *)createTextureBasedPlayerFromOptions:
+- (nullable FVPTextureBasedVideoPlayer *)createTextureBasedPlayerWithOptions:
     (nonnull FVPCreationOptions *)options {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
   FVPDisplayLink *displayLink =
@@ -225,7 +225,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   return nil;
 }
 
-- (nullable FVPVideoPlayer *)createRegularPlayerFromOptions:(nonnull FVPCreationOptions *)options {
+- (nullable FVPVideoPlayer *)createRegularPlayerWithOptions:(nonnull FVPCreationOptions *)options {
   if (options.asset) {
     NSString *assetPath = [self prepareAssetPathFromCreationOptions:options];
     return [[FVPVideoPlayer alloc] initWithAsset:assetPath
