@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 // #docregion migrate
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
 // #enddocregion migrate
-import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   runApp(const MyApp());
