@@ -2,13 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FIAPReceiptManager.h"
+#import "./include/in_app_purchase_storekit_objc/FIAPReceiptManager.h"
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
 #endif
-#import "FIAObjectTranslator.h"
+#import "./include/in_app_purchase_storekit_objc/FIAObjectTranslator.h"
 
 @interface FIAPReceiptManager ()
 // Gets the receipt file data from the location of the url. Can be nil if
