@@ -200,8 +200,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                  [frameUpdater displayLinkFired];
                                                }];
 
+  __weak typeof(self) weakSelf = self;
   void (^onDisposed)(int64_t) = ^(int64_t textureId) {
-    [self.registry unregisterTexture:textureId];
+    [weakSelf.registry unregisterTexture:textureId];
   };
 
   if (options.asset) {
