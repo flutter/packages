@@ -41,7 +41,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create(DataSource dataSource) async {
+  Future<int?> create(DataSource dataSource) {
     return createWithOptions(
       VideoCreationOptions(
         dataSource: dataSource,
