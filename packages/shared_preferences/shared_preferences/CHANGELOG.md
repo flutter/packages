@@ -1,6 +1,7 @@
 ## 2.4.0
 
-* Adds shared preferences devtools extension.
+* Adds migration tool to move from legacy `SharedPreferences` to `SharedPreferencesAsync`.
+* Adds clarifying comment about `allowList` handling with an updated prefix.
 
 ## 2.3.5
 

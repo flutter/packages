@@ -8,8 +8,6 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:shared_preferences_platform_interface/shared_preferences_platform_interface.dart';
 import 'package:shared_preferences_platform_interface/types.dart';
 
-import 'shared_preferences_devtools_extension_data.dart';
-
 /// Wraps NSUserDefaults (on iOS) and SharedPreferences (on Android), providing
 /// a persistent store for simple data.
 ///
@@ -45,6 +43,9 @@ class SharedPreferences {
   /// incompatible with shared_preferences. The optional parameter
   /// [allowList] will cause the plugin to only return preferences that
   /// are both contained in the list AND match the provided prefix.
+  ///
+  /// If [prefix] is changed, and an [allowList] is used, the prefix must be included
+  /// on the keys added to the [allowList].
   ///
   /// No migration of existing preferences is performed by this method.
   /// If you set a different prefix, and have previously stored preferences,
@@ -287,10 +288,3 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
     _completer = null;
   }
 }
-
-// Include an unused import to ensure this library is included
-// when running `flutter run -d chrome`.
-// Check this discussion for more info: https://github.com/flutter/packages/pull/6749/files/6eb1b4fdce1eba107294770d581713658ff971e9#discussion_r1755375409
-// ignore: unused_element
-final bool _fieldToKeepDevtoolsExtensionReachable =
-    fieldToKeepDevtoolsExtensionLibraryAlive;
