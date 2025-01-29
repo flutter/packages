@@ -222,29 +222,35 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
   /// [MapBitmap.bitmapScaling] must be set to [MapBitmapScaling.none].
   final MapBitmap image;
 
-  /// Geographical location to which the anchor will be fixed. The relative
-  /// location of the [position] on the overlay can be changed with the [anchor]
-  /// parameter, which is by default (0.5, 0.5) meaning that the [position] is
-  /// in the middle of the overlay image.
+  /// Geographical location to which the anchor will be fixed.
+  ///
+  /// The relative location of the [position] on the overlay can be changed
+  /// with the [anchor] parameter, which is by default (0.5, 0.5) meaning that
+  /// the [position] is in the middle of the overlay image.
   final LatLng? position;
 
-  /// Width of the ground overlay (in meters). This parameter is only available
-  /// with [position].
+  /// Width of the ground overlay in meters.
+  ///
+  /// This parameter is only available with [position].
   final double? width;
 
-  /// Height of the ground overlay (in meters). This parameter is only available
-  /// with [position]. If not provided, the image aspect ratio is automatically
-  /// preserved.
+  /// Height of the ground overlay in meters.
+  ///
+  /// This parameter is only available with [position]. If not provided,
+  /// the image aspect ratio is automatically preserved.
   final double? height;
 
-  /// Bounds which will contain the image. If [bounds] is specified, [position]
-  /// must be null.
+  /// Bounds which will contain the image.
+  ///
+  /// If [bounds] is specified, [position] must be null.
   final LatLngBounds? bounds;
 
   /// The [anchor] in normalized coordinates specifying the anchor point of the
-  /// overlay. When [position] is used, the overlay shifts so that this anchor
-  /// aligns with the given position. If [bounds] is specified, the anchor is
-  /// the internal anchor position inside the bounds.
+  /// overlay.
+  ///
+  /// When [position] is used, the overlay shifts so that this anchor aligns
+  /// with the given position. If [bounds] is specified, the anchor is the
+  /// internal anchor position inside the bounds.
   ///
   /// * An anchor of (0.0, 0.0) is the top-left corner.
   /// * An anchor of (1.0, 1.0) is the bottom-right corner.
@@ -253,24 +259,32 @@ class GroundOverlay implements MapsObject<GroundOverlay> {
   /// If [bearing] is set, the image rotates around this anchor.
   final Offset? anchor;
 
-  /// The amount that the image should be rotated in a clockwise direction. The
-  /// center of the rotation will be the image's [anchor].
+  /// The amount that the image should be rotated in a clockwise direction.
+  ///
+  /// The center of the rotation will be the image's [anchor].
   /// The default bearing is 0, i.e., the image is aligned so that up is north.
   final double bearing;
 
-  /// The transparency of the ground overlay. Defaults to 0 (opaque).
+  /// The transparency of the ground overlay.
+  ///
+  /// Defaults to 0 (opaque).
   final double transparency;
 
-  /// The ground overlay's zIndex, i.e., the order in which it will be drawn
-  /// where overlays with larger values are drawn above those with lower values.
+  /// The ground overlay's zIndex.
+  ///
+  /// It sets the order in which it will be drawn where overlays with larger
+  /// values are drawn above those with lower values.
+  ///
   /// Defaults to 0.
   final int zIndex;
 
   /// Whether the ground overlay is visible (true) or hidden (false).
+  ///
   /// Defaults to true.
   final bool visible;
 
   /// Controls if click events are handled for this ground overlay.
+  ///
   /// Defaults to true.
   final bool clickable;
 
