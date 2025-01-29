@@ -59,7 +59,6 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   @override
   Future<int> createWithOptions(VideoCreationOptions options) async {
     // Parameter options.viewType is ignored because web only supports platform views.
-    // If texture view type was passed in, it is just ignored.
 
     final DataSource dataSource = options.dataSource;
     final int playerId = _playerCounter++;
