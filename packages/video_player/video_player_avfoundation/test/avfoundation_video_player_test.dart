@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player_avfoundation/src/messages.g.dart';
@@ -269,7 +270,8 @@ void main() {
           const VideoPlayerTextureViewState(textureId: 3));
     });
 
-    test('createWithOptions with platform view', () async {
+    test('createWithOptions with platform view on iOS', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -283,6 +285,25 @@ void main() {
       expect(log.creationOptions?.viewType, PlatformVideoViewType.platformView);
       expect(playerId, 3);
       expect(player.playerViewStates[3], const VideoPlayerPlatformViewState());
+    });
+
+    test('createWithOptions with platform view uses texture view on MacOS',
+        () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.platformView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.viewType, PlatformVideoViewType.textureView);
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('setLooping', () async {

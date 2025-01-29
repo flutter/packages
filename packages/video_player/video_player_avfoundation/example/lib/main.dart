@@ -59,7 +59,7 @@ class _App extends StatelessWidget {
                         _ButterFlyAssetVideo(viewType),
                   ),
                 ]
-              // We don't support platform views on MacOS yet.
+              // Platform views are only supported on iOS as of now.
               : const <Widget>[
                   _BumbleBeeRemoteVideo(VideoViewType.textureView),
                   _BumbleBeeEncryptedLiveStream(VideoViewType.textureView),
