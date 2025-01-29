@@ -46,7 +46,7 @@ class GroundOverlayId extends MapsObjectId<GroundOverlay> {
 /// Platform behavior for sizing can vary, and not all sizing or positioning
 /// options may be supported equally across all platforms. Combining both
 /// [width] and [zoomLevel] can help achieve the desired effect across
-/// platforms. Using [bounds] is the most reliable way to position an ground
+/// platforms. Using [bounds] is the most reliable way to position a ground
 /// overlay precisely.
 ///
 /// Use either [GroundOverlay.fromBounds] or [GroundOverlay.fromPosition] to
