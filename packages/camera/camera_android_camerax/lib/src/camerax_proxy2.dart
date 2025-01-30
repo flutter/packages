@@ -261,7 +261,7 @@ class CameraXProxy {
   }) newFocusMeteringActionBuilder;
 
   /// Constructs [FocusMeteringActionBuilder].
-  final FocusMeteringActionBuilder Function({
+  FocusMeteringActionBuilder Function({
     required MeteringPoint point,
     required MeteringMode mode,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -297,7 +297,7 @@ class CameraXProxy {
   }) fromCamera2CameraInfo;
 
   /// Constructs [DisplayOrientedMeteringPointFactory].
-  final DisplayOrientedMeteringPointFactory Function({
+  DisplayOrientedMeteringPointFactory Function({
     required CameraInfo cameraInfo,
     required double width,
     required double height,
