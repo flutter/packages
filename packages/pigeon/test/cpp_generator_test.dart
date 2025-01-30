@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/cpp_generator.dart';
+import 'package:pigeon/cpp/cpp_generator.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart' show Error;
 import 'package:test/test.dart';

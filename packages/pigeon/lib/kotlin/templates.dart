@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import '../generator_tools.dart';
-import '../kotlin_generator.dart';
+import 'kotlin_generator.dart';
 
 /// Name of the Kotlin `InstanceManager`.
 String kotlinInstanceManagerClassName(KotlinOptions options) =>

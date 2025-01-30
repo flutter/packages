@@ -6,7 +6,7 @@ import 'dart:io' show Directory, File;
 
 import 'package:path/path.dart' as path;
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/dart_generator.dart';
+import 'package:pigeon/dart/dart_generator.dart';
 import 'package:pigeon/generator_tools.dart';
 import 'package:test/test.dart';
 

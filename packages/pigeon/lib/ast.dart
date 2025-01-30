@@ -6,9 +6,9 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 
 import 'generator_tools.dart';
-import 'kotlin_generator.dart' show KotlinProxyApiOptions;
+import 'kotlin/kotlin_generator.dart' show KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
-import 'swift_generator.dart' show SwiftProxyApiOptions;
+import 'swift/swift_generator.dart' show SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 

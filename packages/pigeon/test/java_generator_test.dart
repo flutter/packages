@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/java_generator.dart';
+import 'package:pigeon/java/java_generator.dart';
 import 'package:pigeon/pigeon.dart';
 import 'package:test/test.dart';
 

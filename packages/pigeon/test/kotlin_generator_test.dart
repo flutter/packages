@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/ast.dart';
-import 'package:pigeon/kotlin_generator.dart';
+import 'package:pigeon/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
