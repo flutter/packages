@@ -1,3 +1,7 @@
+## 23.0.0
+
+* Relocates `lib` files to `src` directory.
+
 ## 22.7.4
 
 * [dart] Fixes bug with multi-instance event channel support.
