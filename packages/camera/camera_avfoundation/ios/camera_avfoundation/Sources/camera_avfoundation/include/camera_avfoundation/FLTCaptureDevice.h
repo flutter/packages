@@ -11,8 +11,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// It exists to allow replacing AVCaptureDevice in tests.
 @protocol FLTCaptureDevice <NSObject>
 
-// Device
-- (NSString *)uniqueID;
+// Device identifier
+@property(nonatomic, readonly) NSString *uniqueID;
 
 // Position/Orientation
 - (AVCaptureDevicePosition)position;

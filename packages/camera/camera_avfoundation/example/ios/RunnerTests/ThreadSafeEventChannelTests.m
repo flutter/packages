@@ -11,33 +11,30 @@
 #import "MockEventChannel.h"
 
 @interface ThreadSafeEventChannelTests : XCTestCase
-@property(readonly, nonatomic) MockEventChannel *mockEventChannel;
-@property(readonly, nonatomic) FLTThreadSafeEventChannel *threadSafeEventChannel;
+
 @end
 
 @implementation ThreadSafeEventChannelTests
 
-- (void)setUp {
-  [super setUp];
-  _mockEventChannel = [[MockEventChannel alloc] init];
-  _threadSafeEventChannel =
-      [[FLTThreadSafeEventChannel alloc] initWithEventChannel:_mockEventChannel];
-}
 
 - (void)testSetStreamHandler_shouldStayOnMainThreadIfCalledFromMainThread {
+  MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
+  FLTThreadSafeEventChannel *threadSafeEventChannel =
+      [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
+  
   XCTestExpectation *mainThreadExpectation =
       [self expectationWithDescription:@"setStreamHandler must be called on the main thread"];
   XCTestExpectation *mainThreadCompletionExpectation =
       [self expectationWithDescription:
                 @"setStreamHandler's completion block must be called on the main thread"];
 
-  [_mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
+  [mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
     if (NSThread.isMainThread) {
       [mainThreadExpectation fulfill];
     }
   }];
 
-  [_threadSafeEventChannel setStreamHandler:nil
+  [threadSafeEventChannel setStreamHandler:nil
                                  completion:^{
                                    if (NSThread.isMainThread) {
                                      [mainThreadCompletionExpectation fulfill];
@@ -47,21 +44,24 @@
 }
 
 - (void)testSetStreamHandler_shouldDispatchToMainThreadIfCalledFromBackgroundThread {
+  MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
+  FLTThreadSafeEventChannel *threadSafeEventChannel =
+      [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
+  
   XCTestExpectation *mainThreadExpectation =
       [self expectationWithDescription:@"setStreamHandler must be called on the main thread"];
   XCTestExpectation *mainThreadCompletionExpectation =
       [self expectationWithDescription:
                 @"setStreamHandler's completion block must be called on the main thread"];
 
-  [_mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
+  [mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
     if (NSThread.isMainThread) {
       [mainThreadExpectation fulfill];
     }
   }];
 
-  __weak typeof(self) weakSelf = self;
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-    [weakSelf.threadSafeEventChannel setStreamHandler:nil
+    [threadSafeEventChannel setStreamHandler:nil
                                            completion:^{
                                              if (NSThread.isMainThread) {
                                                [mainThreadCompletionExpectation fulfill];
@@ -72,13 +72,16 @@
 }
 
 - (void)testEventChannel_shouldBeKeptAliveWhenDispatchingBackToMainThread {
+  MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
+  FLTThreadSafeEventChannel *threadSafeEventChannel =
+      [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
+  
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"Completion should be called."];
 
-  __weak typeof(self) weakSelf = self;
   dispatch_async(dispatch_queue_create("test", NULL), ^{
     FLTThreadSafeEventChannel *channel =
-        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:weakSelf.mockEventChannel];
+        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
 
     [channel setStreamHandler:nil
                    completion:^{

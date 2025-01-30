@@ -14,30 +14,29 @@
 #import "MockCaptureSession.h"
 
 @interface AvailableCamerasTest : XCTestCase
-@property(nonatomic, strong) MockCameraDeviceDiscoverer *mockDeviceDiscoverer;
-@property(nonatomic, strong) CameraPlugin *cameraPlugin;
+
 @end
 
 @implementation AvailableCamerasTest
 
-- (void)setUp {
-  [super setUp];
-
-  self.mockDeviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
-  self.cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
-      messenger:nil
-      globalAPI:nil
-      deviceDiscoverer:_mockDeviceDiscoverer
-      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
-        return [[MockCaptureDevice alloc] init];
-      }
-      captureSessionFactory:^id<FLTCaptureSession> {
-        return [[MockCaptureSession alloc] init];
-      }
-      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
+- (CameraPlugin*)createCameraPluginWithDeviceDiscoverer:(MockCameraDeviceDiscoverer*)deviceDiscoverer {
+  return [[CameraPlugin alloc] initWithRegistry:nil
+                                      messenger:nil
+                                      globalAPI:nil
+                               deviceDiscoverer:deviceDiscoverer
+                                  deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+                                    return [[MockCaptureDevice alloc] init];
+                                  }
+                          captureSessionFactory:^id<FLTCaptureSession> {
+                            return [[MockCaptureSession alloc] init];
+                          }
+                      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
 }
 
 - (void)testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone {
+  MockCameraDeviceDiscoverer *mockDeviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
+  CameraPlugin *cameraPlugin = [self createCameraPluginWithDeviceDiscoverer:mockDeviceDiscoverer];
+
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 13 Cameras:
@@ -70,7 +69,7 @@
     [cameras addObject:ultraWideCamera];
   }
 
-  _mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
+  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
       NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
       AVCaptureDevicePosition position) {
     XCTAssertEqualObjects(deviceTypes, requiredTypes);
@@ -80,7 +79,7 @@
   };
 
   __block NSArray<FCPPlatformCameraDescription *> *resultValue;
-  [_cameraPlugin
+  [cameraPlugin
       availableCamerasWithCompletion:^(NSArray<FCPPlatformCameraDescription *> *_Nullable result,
                                        FlutterError *_Nullable error) {
         XCTAssertNil(error);
@@ -97,6 +96,9 @@
   }
 }
 - (void)testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone {
+  MockCameraDeviceDiscoverer *mockDeviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
+  CameraPlugin *cameraPlugin = [self createCameraPluginWithDeviceDiscoverer:mockDeviceDiscoverer];
+  
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 8 Cameras:
@@ -118,7 +120,7 @@
   NSMutableArray *cameras = [NSMutableArray array];
   [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera ]];
 
-  _mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
+  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
       NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
       AVCaptureDevicePosition position) {
     XCTAssertEqualObjects(deviceTypes, requiredTypes);
@@ -128,7 +130,7 @@
   };
 
   __block NSArray<FCPPlatformCameraDescription *> *resultValue;
-  [_cameraPlugin
+  [cameraPlugin
       availableCamerasWithCompletion:^(NSArray<FCPPlatformCameraDescription *> *_Nullable result,
                                        FlutterError *_Nullable error) {
         XCTAssertNil(error);

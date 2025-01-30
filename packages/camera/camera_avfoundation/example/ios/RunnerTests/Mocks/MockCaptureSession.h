@@ -10,13 +10,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom implementation.
 @interface MockCaptureSession : NSObject <FLTCaptureSession>
+
+// Stubs that are called when the corresponding public method is called.
 @property(nonatomic, copy) void (^beginConfigurationStub)(void);
 @property(nonatomic, copy) void (^commitConfigurationStub)(void);
 @property(nonatomic, copy) void (^startRunningStub)(void);
 @property(nonatomic, copy) void (^stopRunningStub)(void);
 @property(nonatomic, copy) void (^setSessionPresetStub)(AVCaptureSessionPreset preset);
 
+// Properties re-declared as read/write so a mocked value can be set during testing.
 @property(nonatomic, strong) NSMutableArray<AVCaptureInput *> *inputs;
 @property(nonatomic, strong) NSMutableArray<AVCaptureOutput *> *outputs;
 @property(nonatomic, assign) BOOL canSetSessionPreset;

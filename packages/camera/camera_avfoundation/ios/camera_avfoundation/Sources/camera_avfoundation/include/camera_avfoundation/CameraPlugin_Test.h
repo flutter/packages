@@ -25,14 +25,14 @@ typedef id<FLTCaptureDevice> _Nonnull (^CaptureNamedDeviceFactory)(NSString *nam
 @property(nonatomic, strong) FLTCam *_Nullable camera;
 
 /// Inject @p FlutterTextureRegistry and @p FlutterBinaryMessenger for unit testing.
-- (nonnull instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *_Nullable)registry
-                               messenger:(NSObject<FlutterBinaryMessenger> *_Nullable)messenger;
+- (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
+                               messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
 /// Inject @p FlutterTextureRegistry, @p FlutterBinaryMessenger, and Pigeon callback handler for
 /// unit testing.
-- (nonnull instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *_Nullable)registry
-                               messenger:(NSObject<FlutterBinaryMessenger> *_Nullable)messenger
-                               globalAPI:(FCPCameraGlobalEventApi *_Nullable)globalAPI
+- (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
+                               messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                               globalAPI:(FCPCameraGlobalEventApi *)globalAPI
                         deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
                            deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
                    captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
@@ -40,7 +40,7 @@ typedef id<FLTCaptureDevice> _Nonnull (^CaptureNamedDeviceFactory)(NSString *nam
     NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.
-- (nonnull instancetype)init NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
 /// Called by the @c NSNotificationManager each time the device's orientation is changed.
 ///
@@ -52,7 +52,7 @@ typedef id<FLTCaptureDevice> _Nonnull (^CaptureNamedDeviceFactory)(NSString *nam
 /// @param name the name of the camera.
 /// @param settings the creation settings.
 /// @param completion the callback to inform the Dart side of the plugin of creation.
-- (void)createCameraOnSessionQueueWithName:(NSString *_Nullable)name
+- (void)createCameraOnSessionQueueWithName:(NSString *)name
                                   settings:(FCPPlatformMediaSettings *)settings
                                 completion:(void (^)(NSNumber *_Nullable,
                                                      FlutterError *_Nullable))completion;

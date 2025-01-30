@@ -10,8 +10,12 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// A mock implementation of `FLTEventChannel` that allows injecting a custom stream handler.
 @interface MockEventChannel : NSObject <FLTEventChannel>
+
+/// Overrides the default implementation of setting the stream handler.
 @property(nonatomic, copy) void (^setStreamHandlerStub)(NSObject<FlutterStreamHandler> *);
+
 @end
 
 NS_ASSUME_NONNULL_END
