@@ -4,11 +4,12 @@
 
 export 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-export 'cpp/cpp_generator.dart' show CppOptions;
-export 'dart/dart_generator.dart' show DartOptions;
-export 'gobject/gobject_generator.dart' show GObjectOptions;
-export 'java/java_generator.dart' show JavaOptions;
-export 'kotlin/kotlin_generator.dart' show KotlinOptions, KotlinProxyApiOptions;
-export 'objc/objc_generator.dart' show ObjcOptions;
-export 'pigeon_lib.dart';
-export 'swift/swift_generator.dart' show SwiftOptions, SwiftProxyApiOptions;
+export 'src/cpp/cpp_generator.dart' show CppOptions;
+export 'src/dart/dart_generator.dart' show DartOptions;
+export 'src/gobject/gobject_generator.dart' show GObjectOptions;
+export 'src/java/java_generator.dart' show JavaOptions;
+export 'src/kotlin/kotlin_generator.dart'
+    show KotlinOptions, KotlinProxyApiOptions;
+export 'src/objc/objc_generator.dart' show ObjcOptions;
+export 'src/pigeon_lib.dart';
+export 'src/swift/swift_generator.dart' show SwiftOptions, SwiftProxyApiOptions;
