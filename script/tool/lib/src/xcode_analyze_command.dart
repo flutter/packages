@@ -28,18 +28,10 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
             'Sets the minimum macOS deployment version to use when compiling, '
             'overriding the default minimum version. This can be used to find '
             'deprecation warnings that will affect the plugin in the future.');
-    argParser.addMultiOption(
-      _xcodeWarningsExceptionsArg,
-      help: 'A list of packages that are allowed to have Xcode warnings.\n\n'
-          'Alternately, a list of one or more YAML files that contain a list '
-          'of packages to allow Xcode warnings.',
-      defaultsTo: <String>[],
-    );
   }
 
   static const String _minIOSVersionArg = 'ios-min-version';
   static const String _minMacOSVersionArg = 'macos-min-version';
-  static const String _xcodeWarningsExceptionsArg = 'xcode-warnings-exceptions';
 
   final Xcode _xcode;
 
@@ -53,16 +45,12 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
   final String description =
       'Runs Xcode analysis on the iOS and/or macOS example apps.';
 
-  Set<String> _xcodeWarningsExceptions = <String>{};
-
   @override
   Future<void> initializeRun() async {
     if (!(getBoolArg(platformIOS) || getBoolArg(platformMacOS))) {
       printError('At least one platform flag must be provided.');
       throw ToolExit(exitInvalidArguments);
     }
-
-    _xcodeWarningsExceptions = getYamlListArg(_xcodeWarningsExceptionsArg);
   }
 
   @override
@@ -133,8 +121,7 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
         hostPlatform: platform,
         extraFlags: <String>[
           ...extraFlags,
-          if (!_xcodeWarningsExceptions.contains(plugin.directory.basename))
-            'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+          'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
         ],
       );
       if (exitCode == 0) {
