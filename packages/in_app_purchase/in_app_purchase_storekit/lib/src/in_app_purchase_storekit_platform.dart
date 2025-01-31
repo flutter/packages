@@ -283,6 +283,28 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @Deprecated('Use countryCode')
   Future<String?> getCountryCode() => countryCode();
 
+  /// Checks if the user is eligible for a specific win back offer (StoreKit2 only).
+  ///
+  /// Throws [PlatformException] if StoreKit2 is not enabled or if the check fails.
+  Future<bool> checkWinBackOfferEligibility(
+    String productId,
+    String offerId,
+  ) async {
+    if (!_useStoreKit2) {
+      throw PlatformException(
+        code: 'storekit2_not_enabled',
+        message: 'Win back offers require StoreKit2 which is not enabled.',
+      );
+    }
+
+    final bool eligibility = await SK2Product.checkWinBackOfferEligibility(
+      productId,
+      offerId,
+    );
+
+    return eligibility;
+  }
+
   /// Turns on StoreKit2. You cannot disable this after it is enabled.
   /// This can only be enabled if your device supports StoreKit 2.
   static Future<bool> enableStoreKit2() async {

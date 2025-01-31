@@ -223,6 +223,9 @@ abstract class InAppPurchase2API {
       {SK2ProductPurchaseOptionsMessage? options});
 
   @async
+  bool checkWinBackOfferEligibility(String productId, String offerId);
+
+  @async
   List<SK2TransactionMessage> transactions();
 
   @async

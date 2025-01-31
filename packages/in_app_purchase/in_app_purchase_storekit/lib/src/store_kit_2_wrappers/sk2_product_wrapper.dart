@@ -400,6 +400,19 @@ class SK2Product {
     return result.convertFromPigeon();
   }
 
+  /// Checks if the user is eligible for a specific win back offer.
+  static Future<bool> checkWinBackOfferEligibility(
+    String productId,
+    String offerId,
+  ) async {
+    final bool result = await _hostApi.checkWinBackOfferEligibility(
+      productId,
+      offerId,
+    );
+
+    return result;
+  }
+
   /// Converts this instance of [SK2Product] to it's pigeon representation [SK2ProductMessage]
   SK2ProductMessage convertToPigeon() {
     return SK2ProductMessage(

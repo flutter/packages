@@ -267,4 +267,135 @@ void main() {
       }
     });
   });
+
+  group('win back offers eligibility', () {
+    late FakeStoreKit2Platform fakeStoreKit2Platform;
+
+    setUp(() async {
+      fakeStoreKit2Platform = FakeStoreKit2Platform();
+      fakeStoreKit2Platform.reset();
+      TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
+      await InAppPurchaseStoreKitPlatform.enableStoreKit2();
+    });
+
+    test('should return true when offer is eligible', () async {
+      fakeStoreKit2Platform.validProductIDs = <String>{'sub1'};
+      fakeStoreKit2Platform.eligibleWinBackOffers['sub1'] = <String>{
+        'winback1'
+      };
+      fakeStoreKit2Platform.validProducts['sub1'] = SK2Product(
+        id: 'sub1',
+        displayName: 'Subscription',
+        displayPrice: r'$9.99',
+        description: 'Monthly subscription',
+        price: 9.99,
+        type: SK2ProductType.autoRenewable,
+        subscription: const SK2SubscriptionInfo(
+          subscriptionGroupID: 'group1',
+          promotionalOffers: <SK2SubscriptionOffer>[],
+          subscriptionPeriod: SK2SubscriptionPeriod(
+            value: 1,
+            unit: SK2SubscriptionPeriodUnit.month,
+          ),
+        ),
+        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+      );
+
+      final bool result =
+          await iapStoreKitPlatform.checkWinBackOfferEligibility(
+        'sub1',
+        'winback1',
+      );
+
+      expect(result, isTrue);
+    });
+
+    test('should return false when offer is not eligible', () async {
+      fakeStoreKit2Platform.validProductIDs = <String>{'sub1'};
+      fakeStoreKit2Platform.eligibleWinBackOffers = <String, Set<String>>{};
+      fakeStoreKit2Platform.validProducts['sub1'] = SK2Product(
+        id: 'sub1',
+        displayName: 'Subscription',
+        displayPrice: r'$9.99',
+        description: 'Monthly subscription',
+        price: 9.99,
+        type: SK2ProductType.autoRenewable,
+        subscription: const SK2SubscriptionInfo(
+          subscriptionGroupID: 'group1',
+          promotionalOffers: <SK2SubscriptionOffer>[],
+          subscriptionPeriod: SK2SubscriptionPeriod(
+            value: 1,
+            unit: SK2SubscriptionPeriodUnit.month,
+          ),
+        ),
+        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+      );
+
+      final bool result =
+          await iapStoreKitPlatform.checkWinBackOfferEligibility(
+        'sub1',
+        'winback1',
+      );
+
+      expect(result, isFalse);
+    });
+
+    test('should throw product not found error for invalid product', () async {
+      expect(
+        () => iapStoreKitPlatform.checkWinBackOfferEligibility(
+          'invalid_product',
+          'winback1',
+        ),
+        throwsA(isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'storekit2_failed_to_fetch_product',
+        )),
+      );
+    });
+
+    test('should throw subscription error for non-subscription product',
+        () async {
+      fakeStoreKit2Platform.validProductIDs = <String>{'consumable1'};
+      fakeStoreKit2Platform.validProducts['consumable1'] = SK2Product(
+        id: 'consumable1',
+        displayName: 'Coins',
+        displayPrice: r'$0.99',
+        description: 'Game currency',
+        price: 0.99,
+        type: SK2ProductType.consumable,
+        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+      );
+
+      expect(
+        () => iapStoreKitPlatform.checkWinBackOfferEligibility(
+          'consumable1',
+          'winback1',
+        ),
+        throwsA(isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'storekit2_not_subscription',
+        )),
+      );
+    });
+
+    test('should throw platform exception when StoreKit2 is not supported',
+        () async {
+      fakeStoreKitPlatform.enableStoreKit2Support = false;
+      await InAppPurchaseStoreKitPlatform.enableStoreKit2();
+
+      expect(
+        () => iapStoreKitPlatform.checkWinBackOfferEligibility(
+          'sub1',
+          'winback1',
+        ),
+        throwsA(isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'storekit2_not_enabled',
+        )),
+      );
+    });
+  });
 }
