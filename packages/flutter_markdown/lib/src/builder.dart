@@ -451,12 +451,14 @@ class MarkdownBuilder implements md.NodeVisitor {
           );
         }
       } else if (tag == 'table') {
-        if (styleSheet.tableColumnWidth is FixedColumnWidth) {
+        if (styleSheet.tableColumnWidth is FixedColumnWidth ||
+            styleSheet.tableColumnWidth is IntrinsicColumnWidth) {
           child = _ScrollControllerBuilder(
             builder: (BuildContext context,
                 ScrollController tableScrollController, Widget? child) {
               return Scrollbar(
                 controller: tableScrollController,
+                thumbVisibility: styleSheet.tableScrollbarThumbVisibility,
                 child: SingleChildScrollView(
                   controller: tableScrollController,
                   scrollDirection: Axis.horizontal,
