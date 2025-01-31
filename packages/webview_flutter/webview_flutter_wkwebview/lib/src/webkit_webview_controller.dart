@@ -749,6 +749,26 @@ window.addEventListener("error", function(e) {
     await controller.addUserScript(overrideScript);
   }
 
+  @override
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
+    switch (mode) {
+      case WebViewOverScrollMode.always:
+        return _webView.scrollView.setBounces(true);
+      case WebViewOverScrollMode.ifContentScrolls:
+        await Future.wait<void>(<Future<void>>[
+          _webView.scrollView.setBounces(true),
+          _webView.scrollView.setAlwaysBounceHorizontal(false),
+          _webView.scrollView.setAlwaysBounceVertical(false),
+        ]);
+      case WebViewOverScrollMode.never:
+        return _webView.scrollView.setBounces(false);
+      // This prevents future additions from causing a breaking change.
+      // ignore: unreachable_switch_case
+      case _:
+        throw UnsupportedError('Android does not support $mode.');
+    }
+  }
+
   // WKWebView does not support removing a single user script, so all user
   // scripts and all message handlers are removed instead. And the JavaScript
   // channels that shouldn't be removed are re-registered. Note that this

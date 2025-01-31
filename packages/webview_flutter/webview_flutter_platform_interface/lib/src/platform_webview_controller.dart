@@ -324,6 +324,13 @@ abstract class PlatformWebViewController extends PlatformInterface {
       'setOnJavaScriptTextInputDialog is not implemented on the current platform',
     );
   }
+
+  /// Sets the over-scroll mode for the WebView.
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
+    throw UnimplementedError(
+      'setOverScrollMode is not implemented on the current platform',
+    );
+  }
 }
 
 /// Describes the parameters necessary for registering a JavaScript channel.
