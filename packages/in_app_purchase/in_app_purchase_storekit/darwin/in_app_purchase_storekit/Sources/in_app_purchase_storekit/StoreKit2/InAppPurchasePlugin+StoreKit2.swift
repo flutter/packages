@@ -194,7 +194,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             completion(
               .failure(
                 PigeonError(
-                  code: "storekit2_eligibility_check_failed",  // Novo código de erro
+                  code: "storekit2_eligibility_check_failed",
                   message: "Failed to check offer eligibility: \(error.localizedDescription)",
                   details: "Product ID: \(productId), Error: \(error)")))
           }
