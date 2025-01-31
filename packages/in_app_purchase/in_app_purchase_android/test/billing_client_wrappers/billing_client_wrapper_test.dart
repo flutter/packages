@@ -7,7 +7,9 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:in_app_purchase_android/src/billing_client_wrappers/billing_config_wrapper.dart';
+import 'package:in_app_purchase_android/src/billing_client_wrappers/pending_purchases_params_wrapper.dart';
 import 'package:in_app_purchase_android/src/messages.g.dart';
+import 'package:in_app_purchase_android/src/pigeon_converters.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -39,8 +41,9 @@ void main() {
 
   setUp(() {
     mockApi = MockInAppPurchaseApi();
-    when(mockApi.startConnection(any, any)).thenAnswer(
-        (_) async => PlatformBillingResult(responseCode: 0, debugMessage: ''));
+    when(mockApi.startConnection(any, any, any)).thenAnswer((_) async =>
+        PlatformBillingResult(
+            responseCode: PlatformBillingResponse.ok, debugMessage: ''));
     billingClient = BillingClient(
         (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {},
         api: mockApi);
@@ -58,32 +61,13 @@ void main() {
     });
   });
 
-  // Make sure that the enum values are supported and that the converter call
-  // does not fail
-  test('response states', () async {
-    const BillingResponseConverter converter = BillingResponseConverter();
-    converter.fromJson(-3);
-    converter.fromJson(-2);
-    converter.fromJson(-1);
-    converter.fromJson(0);
-    converter.fromJson(1);
-    converter.fromJson(2);
-    converter.fromJson(3);
-    converter.fromJson(4);
-    converter.fromJson(5);
-    converter.fromJson(6);
-    converter.fromJson(7);
-    converter.fromJson(8);
-    converter.fromJson(12);
-  });
-
   group('startConnection', () {
     test('returns BillingResultWrapper', () async {
       const String debugMessage = 'dummy message';
       const BillingResponse responseCode = BillingResponse.developerError;
-      when(mockApi.startConnection(any, any)).thenAnswer(
+      when(mockApi.startConnection(any, any, any)).thenAnswer(
         (_) async => PlatformBillingResult(
-          responseCode: const BillingResponseConverter().toJson(responseCode),
+          responseCode: PlatformBillingResponse.developerError,
           debugMessage: debugMessage,
         ),
       );
@@ -100,9 +84,16 @@ void main() {
       await billingClient.startConnection(onBillingServiceDisconnected: () {});
 
       final VerificationResult result =
-          verify(mockApi.startConnection(captureAny, captureAny));
+          verify(mockApi.startConnection(captureAny, captureAny, captureAny));
       expect(result.captured[0], 0);
       expect(result.captured[1], PlatformBillingChoiceMode.playBillingOnly);
+      expect(
+          result.captured[2],
+          isA<PlatformPendingPurchasesParams>().having(
+              (PlatformPendingPurchasesParams params) =>
+                  params.enablePrepaidPlans,
+              'enablePrepaidPlans',
+              false));
     });
 
     test('passes billingChoiceMode alternativeBillingOnly when set', () async {
@@ -110,7 +101,8 @@ void main() {
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
 
-      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+      expect(
+          verify(mockApi.startConnection(any, captureAny, any)).captured.first,
           PlatformBillingChoiceMode.alternativeBillingOnly);
     });
 
@@ -125,7 +117,8 @@ void main() {
           onBillingServiceDisconnected: () {},
           billingChoiceMode: BillingChoiceMode.alternativeBillingOnly);
 
-      expect(verify(mockApi.startConnection(any, captureAny)).captured.first,
+      expect(
+          verify(mockApi.startConnection(any, captureAny, any)).captured.first,
           PlatformBillingChoiceMode.alternativeBillingOnly);
 
       const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
@@ -147,43 +140,20 @@ void main() {
       expect(await completer.future, expected);
     });
 
-    test('UserChoiceDetailsWrapper searilization check', () async {
-      // Test ensures that changes to UserChoiceDetailsWrapper#toJson are
-      // compatible with code in Translator.java.
-      const String transactionIdKey = 'originalExternalTransactionId';
-      const String transactionTokenKey = 'externalTransactionToken';
-      const String productsKey = 'products';
-      const String productIdKey = 'id';
-      const String productOfferTokenKey = 'offerToken';
-      const String productTypeKey = 'productType';
+    test('passes pendingPurchasesParams when set', () async {
+      await billingClient.startConnection(
+          onBillingServiceDisconnected: () {},
+          billingChoiceMode: BillingChoiceMode.alternativeBillingOnly,
+          pendingPurchasesParams:
+              const PendingPurchasesParamsWrapper(enablePrepaidPlans: true));
 
-      const UserChoiceDetailsProductWrapper expectedProduct1 =
-          UserChoiceDetailsProductWrapper(
-              id: 'id1',
-              offerToken: 'offerToken1',
-              productType: ProductType.inapp);
-      const UserChoiceDetailsProductWrapper expectedProduct2 =
-          UserChoiceDetailsProductWrapper(
-              id: 'id2',
-              offerToken: 'offerToken2',
-              productType: ProductType.inapp);
-      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
-        originalExternalTransactionId: 'TransactionId',
-        externalTransactionToken: 'TransactionToken',
-        products: <UserChoiceDetailsProductWrapper>[
-          expectedProduct1,
-          expectedProduct2,
-        ],
-      );
-      final Map<String, dynamic> detailsJson = expected.toJson();
-      expect(detailsJson.keys, contains(transactionIdKey));
-      expect(detailsJson.keys, contains(transactionTokenKey));
-      expect(detailsJson.keys, contains(productsKey));
-
-      final Map<String, dynamic> productJson = expectedProduct1.toJson();
-      expect(productJson, contains(productIdKey));
-      expect(productJson, contains(productOfferTokenKey));
-      expect(productJson, contains(productTypeKey));
+      expect(
+          verify(mockApi.startConnection(any, any, captureAny)).captured.first,
+          isA<PlatformPendingPurchasesParams>().having(
+              (PlatformPendingPurchasesParams params) =>
+                  params.enablePrepaidPlans,
+              'enablePrepaidPlans',
+              true));
     });
   });
 
@@ -200,8 +170,7 @@ void main() {
       when(mockApi.queryProductDetailsAsync(any))
           .thenAnswer((_) async => PlatformProductDetailsResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(responseCode),
+                    responseCode: PlatformBillingResponse.developerError,
                     debugMessage: debugMessage),
                 productDetails: <PlatformProductDetails>[],
               ));
@@ -224,8 +193,7 @@ void main() {
       when(mockApi.queryProductDetailsAsync(any))
           .thenAnswer((_) async => PlatformProductDetailsResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(responseCode),
+                    responseCode: PlatformBillingResponse.ok,
                     debugMessage: debugMessage),
                 productDetails: <PlatformProductDetails>[
                   convertToPigeonProductDetails(dummyOneTimeProductDetails)
@@ -343,8 +311,8 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeProratedPrice;
+      const ReplacementMode replacementMode =
+          ReplacementMode.chargeProratedPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -352,7 +320,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: replacementMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final VerificationResult result =
@@ -364,8 +332,10 @@ void main() {
       expect(params.oldProduct, equals(dummyOldPurchase.products.first));
       expect(params.obfuscatedProfileId, equals(profileId));
       expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
-      expect(params.prorationMode,
-          const ProrationModeConverter().toJson(prorationMode));
+      expect(
+        params.replacementMode,
+        replacementModeFromWrapper(replacementMode),
+      );
     });
 
     test(
@@ -380,8 +350,7 @@ void main() {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
       const String accountId = 'hashedAccountId';
       const String profileId = 'hashedProfileId';
-      const ProrationMode prorationMode =
-          ProrationMode.immediateAndChargeFullPrice;
+      const ReplacementMode replacementMode = ReplacementMode.chargeFullPrice;
 
       expect(
           await billingClient.launchBillingFlow(
@@ -389,7 +358,7 @@ void main() {
               accountId: accountId,
               obfuscatedProfileId: profileId,
               oldProduct: dummyOldPurchase.products.first,
-              prorationMode: prorationMode,
+              replacementMode: replacementMode,
               purchaseToken: dummyOldPurchase.purchaseToken),
           equals(expectedBillingResult));
       final VerificationResult result =
@@ -401,8 +370,10 @@ void main() {
       expect(params.oldProduct, equals(dummyOldPurchase.products.first));
       expect(params.obfuscatedProfileId, equals(profileId));
       expect(params.purchaseToken, equals(dummyOldPurchase.purchaseToken));
-      expect(params.prorationMode,
-          const ProrationModeConverter().toJson(prorationMode));
+      expect(
+        params.replacementMode,
+        replacementModeFromWrapper(replacementMode),
+      );
     });
 
     test('handles null accountId', () async {
@@ -439,8 +410,7 @@ void main() {
       when(mockApi.queryPurchasesAsync(any))
           .thenAnswer((_) async => PlatformPurchasesResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(expectedCode),
+                    responseCode: PlatformBillingResponse.ok,
                     debugMessage: debugMessage),
                 purchases: expectedList
                     .map((PurchaseWrapper purchase) =>
@@ -464,8 +434,7 @@ void main() {
       when(mockApi.queryPurchasesAsync(any))
           .thenAnswer((_) async => PlatformPurchasesResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(expectedCode),
+                    responseCode: PlatformBillingResponse.userCanceled,
                     debugMessage: debugMessage),
                 purchases: <PlatformPurchase>[],
               ));
@@ -482,32 +451,6 @@ void main() {
   });
 
   group('queryPurchaseHistory', () {
-    test('serializes and deserializes data', () async {
-      const BillingResponse expectedCode = BillingResponse.ok;
-      final List<PurchaseHistoryRecordWrapper> expectedList =
-          <PurchaseHistoryRecordWrapper>[
-        dummyPurchaseHistoryRecord,
-      ];
-      const String debugMessage = 'dummy message';
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
-          responseCode: expectedCode, debugMessage: debugMessage);
-      when(mockApi.queryPurchaseHistoryAsync(any))
-          .thenAnswer((_) async => PlatformPurchaseHistoryResponse(
-                billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(expectedCode),
-                    debugMessage: debugMessage),
-                purchases: expectedList
-                    .map(platformPurchaseHistoryRecordFromWrapper)
-                    .toList(),
-              ));
-
-      final PurchasesHistoryResult response =
-          await billingClient.queryPurchaseHistory(ProductType.inapp);
-      expect(response.billingResult, equals(expectedBillingResult));
-      expect(response.purchaseHistoryRecordList, equals(expectedList));
-    });
-
     test('handles empty purchases', () async {
       const BillingResponse expectedCode = BillingResponse.userCanceled;
       const String debugMessage = 'dummy message';
@@ -516,8 +459,7 @@ void main() {
       when(mockApi.queryPurchaseHistoryAsync(any))
           .thenAnswer((_) async => PlatformPurchaseHistoryResponse(
                 billingResult: PlatformBillingResult(
-                    responseCode:
-                        const BillingResponseConverter().toJson(expectedCode),
+                    responseCode: PlatformBillingResponse.userCanceled,
                     debugMessage: debugMessage),
                 purchases: <PlatformPurchaseHistoryRecord>[],
               ));
@@ -566,7 +508,8 @@ void main() {
 
   group('isFeatureSupported', () {
     test('isFeatureSupported returns false', () async {
-      when(mockApi.isFeatureSupported('subscriptions'))
+      when(mockApi
+              .isFeatureSupported(PlatformBillingClientFeature.subscriptions))
           .thenAnswer((_) async => false);
       final bool isSupported = await billingClient
           .isFeatureSupported(BillingClientFeature.subscriptions);
@@ -574,7 +517,8 @@ void main() {
     });
 
     test('isFeatureSupported returns true', () async {
-      when(mockApi.isFeatureSupported('subscriptions'))
+      when(mockApi
+              .isFeatureSupported(PlatformBillingClientFeature.subscriptions))
           .thenAnswer((_) async => true);
       final bool isSupported = await billingClient
           .isFeatureSupported(BillingClientFeature.subscriptions);
@@ -603,7 +547,8 @@ void main() {
           responseCode: BillingResponse.ok, debugMessage: 'message');
       when(mockApi.isAlternativeBillingOnlyAvailableAsync()).thenAnswer(
           (_) async => PlatformBillingResult(
-              responseCode: 0, debugMessage: expected.debugMessage!));
+              responseCode: PlatformBillingResponse.ok,
+              debugMessage: expected.debugMessage!));
       final BillingResultWrapper result =
           await billingClient.isAlternativeBillingOnlyAvailable();
       expect(result, expected);
@@ -633,7 +578,8 @@ void main() {
           responseCode: BillingResponse.ok, debugMessage: 'message');
       when(mockApi.showAlternativeBillingOnlyInformationDialog()).thenAnswer(
           (_) async => PlatformBillingResult(
-              responseCode: 0, debugMessage: expected.debugMessage!));
+              responseCode: PlatformBillingResponse.ok,
+              debugMessage: expected.debugMessage!));
       final BillingResultWrapper result =
           await billingClient.showAlternativeBillingOnlyInformationDialog();
       expect(result, expected);
@@ -645,8 +591,7 @@ PlatformBillingConfigResponse platformBillingConfigFromWrapper(
     BillingConfigWrapper original) {
   return PlatformBillingConfigResponse(
       billingResult: PlatformBillingResult(
-        responseCode:
-            const BillingResponseConverter().toJson(original.responseCode),
+        responseCode: billingResponseFromWrapper(original.responseCode),
         debugMessage: original.debugMessage!,
       ),
       countryCode: original.countryCode);
@@ -657,24 +602,8 @@ PlatformAlternativeBillingOnlyReportingDetailsResponse
         AlternativeBillingOnlyReportingDetailsWrapper original) {
   return PlatformAlternativeBillingOnlyReportingDetailsResponse(
       billingResult: PlatformBillingResult(
-        responseCode:
-            const BillingResponseConverter().toJson(original.responseCode),
+        responseCode: billingResponseFromWrapper(original.responseCode),
         debugMessage: original.debugMessage!,
       ),
       externalTransactionToken: original.externalTransactionToken);
-}
-
-PlatformPurchaseHistoryRecord platformPurchaseHistoryRecordFromWrapper(
-    PurchaseHistoryRecordWrapper wrapper) {
-  return PlatformPurchaseHistoryRecord(
-    // For some reason quantity is not currently exposed in
-    // PurchaseHistoryRecordWrapper.
-    quantity: 99,
-    purchaseTime: wrapper.purchaseTime,
-    originalJson: wrapper.originalJson,
-    purchaseToken: wrapper.purchaseToken,
-    signature: wrapper.signature,
-    products: wrapper.products,
-    developerPayload: wrapper.developerPayload,
-  );
 }

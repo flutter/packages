@@ -10,7 +10,9 @@ import com.android.billingclient.api.AccountIdentifiers;
 import com.android.billingclient.api.AlternativeBillingOnlyReportingDetails;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingConfig;
+import com.android.billingclient.api.BillingFlowParams;
 import com.android.billingclient.api.BillingResult;
+import com.android.billingclient.api.PendingPurchasesParams;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
@@ -19,9 +21,12 @@ import com.android.billingclient.api.UserChoiceDetails;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.PlatformAccountIdentifiers;
 import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
 import io.flutter.plugins.inapppurchase.Messages.PlatformOneTimePurchaseOfferDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformPendingPurchaseUpdate;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPricingPhase;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductDetails;
 import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
@@ -30,6 +35,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryRecord;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseState;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformRecurrenceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformSubscriptionOfferDetails;
 import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceDetails;
 import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceProduct;
@@ -146,6 +152,8 @@ import java.util.Locale;
         .setOfferTags(subscriptionOfferDetails.getOfferTags())
         .setOfferToken(subscriptionOfferDetails.getOfferToken())
         .setPricingPhases(fromPricingPhases(subscriptionOfferDetails.getPricingPhases()))
+        .setInstallmentPlanDetails(
+            fromInstallmentPlanDetails(subscriptionOfferDetails.getInstallmentPlanDetails()))
         .build();
   }
 
@@ -167,6 +175,20 @@ import java.util.Locale;
         .setBillingCycleCount((long) pricingPhase.getBillingCycleCount())
         .setBillingPeriod(pricingPhase.getBillingPeriod())
         .setRecurrenceMode(toPlatformRecurrenceMode(pricingPhase.getRecurrenceMode()))
+        .build();
+  }
+
+  static @Nullable Messages.PlatformInstallmentPlanDetails fromInstallmentPlanDetails(
+      @Nullable ProductDetails.InstallmentPlanDetails installmentPlanDetails) {
+    if (installmentPlanDetails == null) {
+      return null;
+    }
+
+    return new Messages.PlatformInstallmentPlanDetails.Builder()
+        .setCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getInstallmentPlanCommitmentPaymentsCount())
+        .setSubsequentCommitmentPaymentsCount(
+            (long) installmentPlanDetails.getSubsequentInstallmentPlanCommitmentPaymentsCount())
         .build();
   }
 
@@ -217,7 +239,25 @@ import java.util.Locale;
               .setObfuscatedProfileId(accountIdentifiers.getObfuscatedProfileId())
               .build());
     }
+
+    Purchase.PendingPurchaseUpdate pendingPurchaseUpdate = purchase.getPendingPurchaseUpdate();
+    if (pendingPurchaseUpdate != null) {
+      builder.setPendingPurchaseUpdate(fromPendingPurchaseUpdate(pendingPurchaseUpdate));
+    }
+
     return builder.build();
+  }
+
+  static @Nullable PlatformPendingPurchaseUpdate fromPendingPurchaseUpdate(
+      @Nullable Purchase.PendingPurchaseUpdate pendingPurchaseUpdate) {
+    if (pendingPurchaseUpdate == null) {
+      return null;
+    }
+
+    return new Messages.PlatformPendingPurchaseUpdate.Builder()
+        .setPurchaseToken(pendingPurchaseUpdate.getPurchaseToken())
+        .setProducts(pendingPurchaseUpdate.getProducts())
+        .build();
   }
 
   static @NonNull PlatformPurchaseHistoryRecord fromPurchaseHistoryRecord(
@@ -260,9 +300,39 @@ import java.util.Locale;
 
   static @NonNull PlatformBillingResult fromBillingResult(@NonNull BillingResult billingResult) {
     return new PlatformBillingResult.Builder()
-        .setResponseCode((long) billingResult.getResponseCode())
+        .setResponseCode(fromBillingResponseCode(billingResult.getResponseCode()))
         .setDebugMessage(billingResult.getDebugMessage())
         .build();
+  }
+
+  static @NonNull PlatformBillingResponse fromBillingResponseCode(int billingResponseCode) {
+    switch (billingResponseCode) {
+      case BillingClient.BillingResponseCode.FEATURE_NOT_SUPPORTED:
+        return PlatformBillingResponse.FEATURE_NOT_SUPPORTED;
+      case BillingClient.BillingResponseCode.SERVICE_DISCONNECTED:
+        return PlatformBillingResponse.SERVICE_DISCONNECTED;
+      case BillingClient.BillingResponseCode.OK:
+        return PlatformBillingResponse.OK;
+      case BillingClient.BillingResponseCode.USER_CANCELED:
+        return PlatformBillingResponse.USER_CANCELED;
+      case BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE:
+        return PlatformBillingResponse.SERVICE_UNAVAILABLE;
+      case BillingClient.BillingResponseCode.BILLING_UNAVAILABLE:
+        return PlatformBillingResponse.BILLING_UNAVAILABLE;
+      case BillingClient.BillingResponseCode.ITEM_UNAVAILABLE:
+        return PlatformBillingResponse.ITEM_UNAVAILABLE;
+      case BillingClient.BillingResponseCode.DEVELOPER_ERROR:
+        return PlatformBillingResponse.DEVELOPER_ERROR;
+      case BillingClient.BillingResponseCode.ERROR:
+        return PlatformBillingResponse.ERROR;
+      case BillingClient.BillingResponseCode.ITEM_ALREADY_OWNED:
+        return PlatformBillingResponse.ITEM_ALREADY_OWNED;
+      case BillingClient.BillingResponseCode.ITEM_NOT_OWNED:
+        return PlatformBillingResponse.ITEM_NOT_OWNED;
+      case BillingClient.BillingResponseCode.NETWORK_ERROR:
+        return PlatformBillingResponse.NETWORK_ERROR;
+    }
+    return PlatformBillingResponse.ERROR;
   }
 
   static @NonNull PlatformUserChoiceDetails fromUserChoiceDetails(
@@ -315,6 +385,57 @@ import java.util.Locale;
         .setBillingResult(fromBillingResult(result))
         .setExternalTransactionToken(details == null ? "" : details.getExternalTransactionToken())
         .build();
+  }
+
+  static @NonNull PendingPurchasesParams toPendingPurchasesParams(
+      @Nullable Messages.PlatformPendingPurchasesParams platformPendingPurchasesParams) {
+    PendingPurchasesParams.Builder pendingPurchasesBuilder =
+        PendingPurchasesParams.newBuilder().enableOneTimeProducts();
+    if (platformPendingPurchasesParams != null
+        && platformPendingPurchasesParams.getEnablePrepaidPlans()) {
+      pendingPurchasesBuilder.enablePrepaidPlans();
+    }
+    return pendingPurchasesBuilder.build();
+  }
+
+  static @NonNull String toBillingClientFeature(@NonNull PlatformBillingClientFeature feature) {
+    switch (feature) {
+      case ALTERNATIVE_BILLING_ONLY:
+        return BillingClient.FeatureType.ALTERNATIVE_BILLING_ONLY;
+      case BILLING_CONFIG:
+        return BillingClient.FeatureType.BILLING_CONFIG;
+      case EXTERNAL_OFFER:
+        return BillingClient.FeatureType.EXTERNAL_OFFER;
+      case IN_APP_MESSAGING:
+        return BillingClient.FeatureType.IN_APP_MESSAGING;
+      case PRICE_CHANGE_CONFIRMATION:
+        return BillingClient.FeatureType.PRICE_CHANGE_CONFIRMATION;
+      case PRODUCT_DETAILS:
+        return BillingClient.FeatureType.PRODUCT_DETAILS;
+      case SUBSCRIPTIONS:
+        return BillingClient.FeatureType.SUBSCRIPTIONS;
+      case SUBSCRIPTIONS_UPDATE:
+        return BillingClient.FeatureType.SUBSCRIPTIONS_UPDATE;
+    }
+    throw new FlutterError("UNKNOWN_FEATURE", "Unknown client feature: " + feature, null);
+  }
+
+  static int toReplacementMode(@NonNull PlatformReplacementMode replacementMode) {
+    switch (replacementMode) {
+      case CHARGE_FULL_PRICE:
+        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_FULL_PRICE;
+      case CHARGE_PRORATED_PRICE:
+        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
+      case DEFERRED:
+        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.DEFERRED;
+      case WITHOUT_PRORATION:
+        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITHOUT_PRORATION;
+      case WITH_TIME_PRORATION:
+        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.WITH_TIME_PRORATION;
+      case UNKNOWN_REPLACEMENT_MODE:
+        return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE;
+    }
+    return BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.UNKNOWN_REPLACEMENT_MODE;
   }
 
   /**
