@@ -1,6 +1,6 @@
 ## 23.0.0
 
-* **Breaking Change** [swift] Changes `PigeonError` class to conform to `Sendable`.
+* **Breaking Change** [swift] Fixes a compile error about PigeonError's sendability conformance in Swift 6.
 
 ## 22.7.4
 
