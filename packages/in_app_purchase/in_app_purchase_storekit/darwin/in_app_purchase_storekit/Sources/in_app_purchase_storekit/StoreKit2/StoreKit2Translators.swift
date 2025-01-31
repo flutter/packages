@@ -54,9 +54,11 @@ extension Product.SubscriptionInfo {
   var convertToPigeon: SK2SubscriptionInfoMessage {
     var allOffers: [SK2SubscriptionOfferMessage] = []
 
-    if #available(iOS 18.0, macOS 15.0, *) {
-      allOffers.append(contentsOf: winBackOffers.map { $0.convertToPigeon })
-    }
+    #if compiler(>=6.0)
+      if #available(iOS 18.0, macOS 15.0, *) {
+        allOffers.append(contentsOf: winBackOffers.map { $0.convertToPigeon })
+      }
+    #endif
 
     allOffers.append(contentsOf: promotionalOffers.map { $0.convertToPigeon })
 
@@ -105,22 +107,24 @@ extension SK2SubscriptionOfferMessage: Equatable {
 
 @available(iOS 17.4, macOS 14.4, *)
 extension SK2SubscriptionOfferSignatureMessage {
-  var convertToSignature: Product.SubscriptionOffer.Signature {
-    guard let uuid = UUID(uuidString: nonce) else {
-      fatalError("Invalid UUID format for nonce: \(nonce)")
-    }
+  #if compiler(>=6.0)
+    var convertToSignature: Product.SubscriptionOffer.Signature {
+      guard let uuid = UUID(uuidString: nonce) else {
+        fatalError("Invalid UUID format for nonce: \(nonce)")
+      }
 
-    guard let signatureData = Data(base64Encoded: signature) else {
-      fatalError("Invalid Base64 format for signature: \(signature)")
-    }
+      guard let signatureData = Data(base64Encoded: signature) else {
+        fatalError("Invalid Base64 format for signature: \(signature)")
+      }
 
-    return Product.SubscriptionOffer.Signature(
-      keyID: keyID,
-      nonce: uuid,
-      timestamp: Int(timestamp),
-      signature: signatureData
-    )
-  }
+      return Product.SubscriptionOffer.Signature(
+        keyID: keyID,
+        nonce: uuid,
+        timestamp: Int(timestamp),
+        signature: signatureData
+      )
+    }
+  #endif
 }
 
 @available(iOS 15.0, macOS 12.0, *)
@@ -132,11 +136,13 @@ extension Product.SubscriptionOffer.OfferType {
     case .promotional:
       return SK2SubscriptionOfferTypeMessage.promotional
     default:
-      if #available(iOS 18.0, macOS 15.0, *) {
-        if self == .winBack {
-          return SK2SubscriptionOfferTypeMessage.winBack
+      #if compiler(>=6.0)
+        if #available(iOS 18.0, macOS 15.0, *) {
+          if self == .winBack {
+            return SK2SubscriptionOfferTypeMessage.winBack
+          }
         }
-      }
+      #endif
       fatalError("An unknown or unsupported OfferType was passed in")
     }
   }

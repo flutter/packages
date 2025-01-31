@@ -62,16 +62,30 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           purchaseOptions.insert(.appAccountToken(accountTokenUUID))
         }
 
-        if #available(iOS 17.4, macOS 14.4, *) {
+        #if compiler(>=6.0)
+          if #available(iOS 17.4, macOS 14.4, *) {
+            if let promotionalOffer = options?.promotionalOffer {
+              purchaseOptions.insert(
+                .promotionalOffer(
+                  offerID: promotionalOffer.promotionalOfferId,
+                  signature: promotionalOffer.promotionalOfferSignature.convertToSignature
+                )
+              )
+            }
+          }
+        #else
           if let promotionalOffer = options?.promotionalOffer {
             purchaseOptions.insert(
               .promotionalOffer(
                 offerID: promotionalOffer.promotionalOfferId,
-                signature: promotionalOffer.promotionalOfferSignature.convertToSignature
+                keyID: promotionalOffer.keyID,
+                nonce: promotionalOffer.nonce,
+                signature: promotionalOffer.signature,
+                timestamp: promotionalOffer.timestamp
               )
             )
           }
-        }
+        #endif
 
         #if compiler(>=6.0)
           if #available(iOS 18.0, macOS 15.0, *) {
