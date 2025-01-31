@@ -1,6 +1,14 @@
 ## 23.0.0
 
-* [swift] Changes `PigeonError` class to conform to `Sendable`.
+* **Breaking Change** [swift] Changes `PigeonError` class to conform to `Sendable`.
+
+## 22.7.4
+
+* [dart] Fixes bug with multi-instance event channel support.
+
+## 22.7.3
+
+* Adds compatibility with `analyzer` 7.x.*.
 
 ## 22.7.2
 
