@@ -105,26 +105,35 @@ extension SK2SubscriptionOfferMessage: Equatable {
   }
 }
 
-@available(iOS 17.4, macOS 14.4, *)
 extension SK2SubscriptionOfferSignatureMessage {
   #if compiler(>=6.0)
-    var convertToSignature: Product.SubscriptionOffer.Signature {
-      guard let uuid = UUID(uuidString: nonce) else {
-        fatalError("Invalid UUID format for nonce: \(nonce)")
-      }
 
-      guard let signatureData = Data(base64Encoded: signature) else {
-        fatalError("Invalid Base64 format for signature: \(signature)")
-      }
+    @available(iOS 17.4, macOS 14.4, *)
+    var convertToSignature: Product.SubscriptionOffer.Signature {
 
       return Product.SubscriptionOffer.Signature(
         keyID: keyID,
-        nonce: uuid,
+        nonce: nonceAsUUID,
         timestamp: Int(timestamp),
-        signature: signatureData
+        signature: signatureAsData
       )
     }
   #endif
+
+  var nonceAsUUID: UUID {
+    guard let uuid = UUID(uuidString: nonce) else {
+      fatalError("Invalid UUID format for nonce: \(nonce)")
+    }
+    return uuid
+  }
+
+  var signatureAsData: Data {
+    guard let data = Data(base64Encoded: signature) else {
+      fatalError("Invalid Base64 format for signature: \(signature)")
+    }
+    return data
+  }
+
 }
 
 @available(iOS 15.0, macOS 12.0, *)

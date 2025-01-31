@@ -78,10 +78,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             purchaseOptions.insert(
               .promotionalOffer(
                 offerID: promotionalOffer.promotionalOfferId,
-                keyID: promotionalOffer.keyID,
-                nonce: promotionalOffer.nonce,
-                signature: promotionalOffer.signature,
-                timestamp: promotionalOffer.timestamp
+                keyID: promotionalOffer.promotionalOfferSignature.keyID,
+                nonce: promotionalOffer.promotionalOfferSignature.nonceAsUUID,
+                signature: promotionalOffer.promotionalOfferSignature.signatureAsData,
+                timestamp: Int(promotionalOffer.promotionalOfferSignature.timestamp)
               )
             )
           }
