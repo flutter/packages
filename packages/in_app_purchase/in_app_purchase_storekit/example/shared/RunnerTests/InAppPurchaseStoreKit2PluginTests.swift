@@ -524,7 +524,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         case .success:
           XCTFail("Should not succeed")
         case .failure(let error as PigeonError):
-          XCTAssertEqual(error.code, "storekit2_unsupported_platform_version")
+          XCTAssertEqual(error.code, "storekit2_unsupported_compiler")
           expectation.fulfill()
         case .failure(let error):
           XCTFail("Unexpected error type: \(error)")
