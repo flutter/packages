@@ -11,6 +11,7 @@
 #include <memory>
 #include <optional>
 #include <string>
+#include <thread>
 
 #include "pigeon/core_tests.gen.h"
 
@@ -77,7 +78,8 @@ TestPlugin::TestPlugin(flutter::BinaryMessenger* binary_messenger,
       host_small_api_one_(std::move(host_small_api_one)),
       host_small_api_two_(std::move(host_small_api_two)),
       flutter_api_(
-          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)) {}
+          std::make_unique<FlutterIntegrationCoreApi>(binary_messenger)),
+      main_thread_id_(std::this_thread::get_id()) {}
 
 TestPlugin::~TestPlugin() {}
 
@@ -709,6 +711,14 @@ void TestPlugin::EchoAnotherAsyncNullableEnum(
     std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)> result) {
   result(another_enum ? std::optional<AnotherEnum>(*another_enum)
                       : std::nullopt);
+}
+
+ErrorOr<bool> TestPlugin::DefaultIsMainThread() {
+  return std::this_thread::get_id() == main_thread_id_;
+}
+
+ErrorOr<bool> TestPlugin::TaskQueueIsBackgroundThread() {
+  return std::this_thread::get_id() != main_thread_id_;
 }
 
 void TestPlugin::CallFlutterNoop(

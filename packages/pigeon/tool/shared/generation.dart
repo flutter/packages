@@ -86,7 +86,6 @@ Future<int> generateTestPigeons(
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const Set<String> inputs = <String>{
-    'background_platform_channels',
     'core_tests',
     'enum',
     'event_channel_tests',
@@ -112,15 +111,13 @@ Future<int> generateTestPigeons(
     final Set<GeneratorLanguage> skipLanguages =
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
 
-    final bool kotlinErrorClassGenerationTestFiles =
-        input == 'core_tests' || input == 'background_platform_channels';
+    final bool kotlinErrorClassGenerationTestFiles = input == 'core_tests';
 
     final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
-    final bool swiftErrorUseDefaultErrorName =
-        input == 'core_tests' || input == 'background_platform_channels';
+    final bool swiftErrorUseDefaultErrorName = input == 'core_tests';
 
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
@@ -146,7 +143,6 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'background_platform_channels',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -178,7 +174,6 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'background_platform_channels',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',

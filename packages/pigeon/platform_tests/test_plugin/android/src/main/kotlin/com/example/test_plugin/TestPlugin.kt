@@ -526,6 +526,14 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     callback(Result.success(anotherEnum))
   }
 
+  override fun defaultIsMainThread(): Boolean {
+    return Thread.currentThread() == Looper.getMainLooper().getThread()
+  }
+
+  override fun taskQueueIsBackgroundThread(): Boolean {
+    return Thread.currentThread() != Looper.getMainLooper().getThread()
+  }
+
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
     flutterApi!!.noop { callback(Result.success(Unit)) }
   }

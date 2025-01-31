@@ -967,6 +967,9 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncNullable(
     _ anotherEnum: AnotherEnum?, completion: @escaping (Result<AnotherEnum?, Error>) -> Void)
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  func isBackgroundThread() throws -> Bool
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
@@ -3058,6 +3061,24 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAnotherAsyncNullableEnumChannel.setMessageHandler(nil)
+    }
+    /// Returns true if the handler is run on a non-main thread, which should be
+    /// true for any platform with TaskQueue support.
+    let isBackgroundThreadChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.isBackgroundThread\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isBackgroundThreadChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.isBackgroundThread()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      isBackgroundThreadChannel.setMessageHandler(nil)
     }
     let callFlutterNoopChannel = FlutterBasicMessageChannel(
       name:

@@ -3448,6 +3448,39 @@ CoreTestsPigeonTestHostIntegrationCoreApiEchoNamedNullableStringResponse*
 core_tests_pigeon_test_host_integration_core_api_echo_named_nullable_string_response_new_error(
     const gchar* code, const gchar* message, FlValue* details);
 
+G_DECLARE_FINAL_TYPE(
+    CoreTestsPigeonTestHostIntegrationCoreApiIsBackgroundThreadResponse,
+    core_tests_pigeon_test_host_integration_core_api_is_background_thread_response,
+    CORE_TESTS_PIGEON_TEST,
+    HOST_INTEGRATION_CORE_API_IS_BACKGROUND_THREAD_RESPONSE, GObject)
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_is_background_thread_response_new:
+ *
+ * Creates a new response to HostIntegrationCoreApi.isBackgroundThread.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiIsBackgroundThreadResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiIsBackgroundThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_is_background_thread_response_new(
+    gboolean return_value);
+
+/**
+ * core_tests_pigeon_test_host_integration_core_api_is_background_thread_response_new_error:
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Creates a new error response to HostIntegrationCoreApi.isBackgroundThread.
+ *
+ * Returns: a new
+ * #CoreTestsPigeonTestHostIntegrationCoreApiIsBackgroundThreadResponse
+ */
+CoreTestsPigeonTestHostIntegrationCoreApiIsBackgroundThreadResponse*
+core_tests_pigeon_test_host_integration_core_api_is_background_thread_response_new_error(
+    const gchar* code, const gchar* message, FlValue* details);
+
 /**
  * CoreTestsPigeonTestHostIntegrationCoreApiVTable:
  *
@@ -3753,6 +3786,8 @@ typedef struct {
       CoreTestsPigeonTestAnotherEnum* another_enum,
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);
+  CoreTestsPigeonTestHostIntegrationCoreApiIsBackgroundThreadResponse* (
+      *is_background_thread)(gpointer user_data);
   void (*call_flutter_noop)(
       CoreTestsPigeonTestHostIntegrationCoreApiResponseHandle* response_handle,
       gpointer user_data);

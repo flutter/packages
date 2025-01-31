@@ -2871,6 +2871,25 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(unused, unused);
   });
 
+  /// Task queues
+
+  const List<TargetGenerator> taskQueueSupported = <TargetGenerator>[
+    TargetGenerator.java,
+    TargetGenerator.kotlin,
+    TargetGenerator.objc,
+    TargetGenerator.swift,
+  ];
+
+  testWidgets('non-task-queue handlers run on a the main thread', (_) async {
+    final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    expect(await api.defaultIsMainThread(), true);
+  });
+
+  testWidgets('task queue handlers run on a background thread', (_) async {
+    final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    expect(await api.taskQueueIsBackgroundThread(), true);
+  }, skip: !taskQueueSupported.contains(targetGenerator));
+
   /// Event channels
 
   const List<TargetGenerator> eventChannelSupported = <TargetGenerator>[

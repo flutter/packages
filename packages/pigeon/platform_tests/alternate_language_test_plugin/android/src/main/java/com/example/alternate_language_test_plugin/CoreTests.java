@@ -3166,6 +3166,12 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAnotherAsyncNullableEnum(
         @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result);
+    /**
+     * Returns true if the handler is run on a non-main thread, which should be true for any
+     * platform with TaskQueue support.
+     */
+    @NonNull
+    Boolean isBackgroundThread();
 
     void callFlutterNoop(@NonNull VoidResult result);
 
@@ -6104,6 +6110,31 @@ public class CoreTests {
                     };
 
                 api.echoAnotherAsyncNullableEnum(anotherEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.isBackgroundThread"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  Boolean output = api.isBackgroundThread();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
