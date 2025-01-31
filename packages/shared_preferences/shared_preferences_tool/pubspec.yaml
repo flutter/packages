@@ -2,7 +2,7 @@ name: shared_preferences_tool
 description: "DevTools extension for package:shared_preferences. Manage SharedPreferences efficiently. Edit, search, and view keys."
 publish_to: 'none'
 
-version: 1.0.0+2
+version: 1.0.1
 
 environment:
   sdk: '>=3.6.0 <4.0.0'
