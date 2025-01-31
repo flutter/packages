@@ -213,7 +213,6 @@ class RenderVectorGraphic extends RenderBox {
 
     final ui.Image pending =
         rasterPicture.toImageSync(scaledWidth, scaledHeight);
-    rasterPicture.dispose();
     return RasterData(pending, 0, key);
   }
 

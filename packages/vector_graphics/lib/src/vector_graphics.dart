@@ -340,10 +340,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       return;
     }
     data.count -= 1;
-    if (data.count == 0) {
-      if (_livePictureCache.containsKey(data.key)) {
-        _livePictureCache.remove(data.key);
-      }
+    if (data.count == 0 && _livePictureCache.containsKey(data.key)) {
+      _livePictureCache.remove(data.key);
       data.pictureInfo.picture.dispose();
     }
   }
@@ -384,7 +382,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   }
 
   Future<void> _loadAssetBytes() async {
-    // First check if we have an available picture and use this immediately.
+    // First check if we have an avilable picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
     final _PictureKey key =
         _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
