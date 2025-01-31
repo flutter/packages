@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_example/main.dart';
 import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';
 
-import '../..//test/shared_preferences_async_test.dart';
+import '../../test/shared_preferences_async_test.dart';
 
 void main() {
   group('SharedPreferences example app', () {
