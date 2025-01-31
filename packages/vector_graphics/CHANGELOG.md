@@ -1,3 +1,7 @@
+## 1.1.17
+
+* Reverts leaker tracker changes that caused runtime exceptions.
+
 ## 1.1.16
 
 * Fixes some memory leaks by disposing undisposed `ImageInfo`, `ui.Picture` and `Picture`.
