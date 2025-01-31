@@ -52,7 +52,7 @@ void main() {
       reason: 'setWebOptions must be called exactly once.',
     );
     expect(
-      fakeVideoPlayerPlatform.webOptions[controller.textureId],
+      fakeVideoPlayerPlatform.webOptions[controller.playerId],
       expected,
       reason: 'web options must be passed to the platform',
     );
