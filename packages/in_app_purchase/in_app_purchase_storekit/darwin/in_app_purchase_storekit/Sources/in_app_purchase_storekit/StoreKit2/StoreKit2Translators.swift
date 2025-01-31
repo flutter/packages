@@ -107,10 +107,8 @@ extension SK2SubscriptionOfferMessage: Equatable {
 
 extension SK2SubscriptionOfferSignatureMessage {
   #if compiler(>=6.0)
-
     @available(iOS 17.4, macOS 14.4, *)
     var convertToSignature: Product.SubscriptionOffer.Signature {
-
       return Product.SubscriptionOffer.Signature(
         keyID: keyID,
         nonce: nonceAsUUID,
