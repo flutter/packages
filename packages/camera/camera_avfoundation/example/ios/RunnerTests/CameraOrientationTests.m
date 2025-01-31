@@ -13,27 +13,9 @@
 #import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
-
-@interface StubGlobalEventApi : FCPCameraGlobalEventApi
-@property(nonatomic) BOOL called;
-@property(nonatomic) FCPPlatformDeviceOrientation lastOrientation;
-@end
-
-@implementation StubGlobalEventApi
-- (void)deviceOrientationChangedOrientation:(FCPPlatformDeviceOrientation)orientation
-                                 completion:(void (^)(FlutterError *_Nullable))completion {
-  self.called = YES;
-  self.lastOrientation = orientation;
-  completion(nil);
-}
-
-- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
-                                          binaryMessageHandler:
-                                              (nullable FlutterBinaryMessageHandler)handler {
-  return 0;
-}
-
-@end
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
+#import "MockGlobalEventApi.h"
 
 @interface MockCamera : FLTCam
 @property(nonatomic, copy) void (^setDeviceOrientationStub)(UIDeviceOrientation orientation);
@@ -68,7 +50,7 @@
 @interface CameraOrientationTests : XCTestCase
 @property(readonly, nonatomic) MockCamera *camera;
 @property(readonly, nonatomic) MockCaptureDevice *mockDevice;
-@property(readonly, nonatomic) StubGlobalEventApi *eventAPI;
+@property(readonly, nonatomic) MockGlobalEventApi *eventAPI;
 @property(readonly, nonatomic) CameraPlugin *cameraPlugin;
 @property(readonly, nonatomic) MockCameraDeviceDiscoverer *deviceDiscoverer;
 @end
@@ -79,12 +61,12 @@
   [super setUp];
   MockCaptureDevice *mockDevice = [[MockCaptureDevice alloc] init];
   _camera = [[MockCamera alloc] init];
-  _eventAPI = [[StubGlobalEventApi alloc] init];
+  _eventAPI = [[MockGlobalEventApi alloc] init];
   _mockDevice = mockDevice;
   _deviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
 
-  _cameraPlugin = [[CameraPlugin alloc] initWithRegistry:nil
-      messenger:nil
+  _cameraPlugin = [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+      messenger:[[MockFlutterBinaryMessenger alloc] init]
       globalAPI:_eventAPI
       deviceDiscoverer:_deviceDiscoverer
       deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
@@ -128,20 +110,22 @@
 - (void)testOrientationNotificationsNotCalledForFaceUp {
   [self sendOrientation:UIDeviceOrientationFaceUp toCamera:_cameraPlugin];
 
-  XCTAssertFalse(_eventAPI.called);
+  XCTAssertFalse(_eventAPI.deviceOrientationChangedCalled);
 }
 
 - (void)testOrientationNotificationsNotCalledForFaceDown {
   [self sendOrientation:UIDeviceOrientationFaceDown toCamera:_cameraPlugin];
 
-  XCTAssertFalse(_eventAPI.called);
+  XCTAssertFalse(_eventAPI.deviceOrientationChangedCalled);
 }
 
 - (void)testOrientationUpdateMustBeOnCaptureSessionQueue {
   XCTestExpectation *queueExpectation = [self
       expectationWithDescription:@"Orientation update must happen on the capture session queue"];
 
-  CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  CameraPlugin *plugin =
+      [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+                                   messenger:[[MockFlutterBinaryMessenger alloc] init]];
   const char *captureSessionQueueSpecific = "capture_session_queue";
   dispatch_queue_set_specific(plugin.captureSessionQueue, captureSessionQueueSpecific,
                               (void *)captureSessionQueueSpecific, NULL);
@@ -165,17 +149,18 @@
   __weak MockCaptureDevice *weakDevice = _mockDevice;
 
   @autoreleasepool {
-    CameraPlugin *plugin = [[CameraPlugin alloc] initWithRegistry:nil
-        messenger:nil
-        globalAPI:_eventAPI
-        deviceDiscoverer:_deviceDiscoverer
-        deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
-          return weakDevice;
-        }
-        captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
-          return [[MockCaptureSession alloc] init];
-        }
-        captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
+    CameraPlugin *plugin =
+        [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+            messenger:[[MockFlutterBinaryMessenger alloc] init]
+            globalAPI:_eventAPI
+            deviceDiscoverer:_deviceDiscoverer
+            deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+              return weakDevice;
+            }
+            captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
+              return [[MockCaptureSession alloc] init];
+            }
+            captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
     weakPlugin = plugin;
     plugin.captureSessionQueue = captureSessionQueue;
     plugin.camera = _camera;
@@ -194,14 +179,14 @@
     }
   };
 
-  __weak StubGlobalEventApi *weakEventAPI = _eventAPI;
+  __weak MockGlobalEventApi *weakEventAPI = _eventAPI;
 
   // Must check in captureSessionQueue since orientationChanged dispatches to this queue.
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"Dispatched to capture session queue"];
   dispatch_async(captureSessionQueue, ^{
     XCTAssertFalse(setDeviceOrientationCalled);
-    XCTAssertFalse(weakEventAPI.called);
+    XCTAssertFalse(weakEventAPI.deviceOrientationChangedCalled);
     [expectation fulfill];
   });
 

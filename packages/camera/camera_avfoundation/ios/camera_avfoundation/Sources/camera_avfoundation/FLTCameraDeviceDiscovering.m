@@ -18,7 +18,8 @@
                                                               position:position];
 
   NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
-  NSMutableArray<id<FLTCaptureDevice>> *deviceControllers = [NSMutableArray arrayWithCapacity:devices.count];
+  NSMutableArray<id<FLTCaptureDevice>> *deviceControllers =
+      [NSMutableArray arrayWithCapacity:devices.count];
 
   for (AVCaptureDevice *device in devices) {
     [deviceControllers addObject:device];

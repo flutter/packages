@@ -105,7 +105,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// A mocked implementation of FLTCaptureDeviceInputFactory which allows injecting a custom implementation.
+/// A mocked implementation of FLTCaptureDeviceInputFactory which allows injecting a custom
+/// implementation.
 @interface MockCaptureInput : NSObject <FLTCaptureInput>
 
 /// This property is re-declared to be read/write to allow setting a mocked value for testing.
@@ -113,11 +114,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// A mocked implementation of FLTCaptureDeviceInputFactory which allows injecting a custom implementation.
+/// A mocked implementation of FLTCaptureDeviceInputFactory which allows injecting a custom
+/// implementation.
 @interface MockCaptureDeviceInputFactory : NSObject <FLTCaptureDeviceInputFactory>
 
-/// Initializes a new instance with the given mock device input. Whenever `deviceInputWithDevice` is called
-/// on this instance, it will return the mock device input.
+/// Initializes a new instance with the given mock device input. Whenever `deviceInputWithDevice` is
+/// called on this instance, it will return the mock device input.
 - (nonnull instancetype)initWithMockDeviceInput:(id<FLTCaptureInput>)mockDeviceInput;
 
 /// The mock device input to be returned by `deviceInputWithDevice`.

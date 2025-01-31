@@ -26,17 +26,17 @@ typedef id<FLTCaptureDevice> _Nonnull (^CaptureNamedDeviceFactory)(NSString *nam
 
 /// Inject @p FlutterTextureRegistry and @p FlutterBinaryMessenger for unit testing.
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
-                               messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
+                       messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
 /// Inject @p FlutterTextureRegistry, @p FlutterBinaryMessenger, and Pigeon callback handler for
 /// unit testing.
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
-                               messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                               globalAPI:(FCPCameraGlobalEventApi *)globalAPI
-                        deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
-                           deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
-                   captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
-               captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory
+                       messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                       globalAPI:(FCPCameraGlobalEventApi *)globalAPI
+                deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
+                   deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
+           captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
+       captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory
     NS_DESIGNATED_INITIALIZER;
 
 /// Hide the default public constructor.

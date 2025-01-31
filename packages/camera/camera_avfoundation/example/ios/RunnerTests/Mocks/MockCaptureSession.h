@@ -10,7 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom implementation.
+/// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom
+/// implementation.
 @interface MockCaptureSession : NSObject <FLTCaptureSession>
 
 // Stubs that are called when the corresponding public method is called.

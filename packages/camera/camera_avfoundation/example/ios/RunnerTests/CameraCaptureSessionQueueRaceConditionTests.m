@@ -11,6 +11,9 @@
 #import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
+#import "MockGlobalEventApi.h"
 
 @interface CameraCaptureSessionQueueRaceConditionTests : XCTestCase
 @end
@@ -20,17 +23,18 @@
 - (void)testFixForCaptureSessionQueueNullPointerCrashDueToRaceCondition {
   MockCaptureDevice *captureDevice = [[MockCaptureDevice alloc] init];
 
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil
-      messenger:nil
-      globalAPI:nil
-      deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
-      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
-        return captureDevice;
-      }
-      captureSessionFactory:^id<FLTCaptureSession> {
-        return [[MockCaptureSession alloc] init];
-      }
-      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
+  CameraPlugin *camera =
+      [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+          messenger:[[MockFlutterBinaryMessenger alloc] init]
+          globalAPI:[[MockGlobalEventApi alloc] init]
+          deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
+          deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+            return captureDevice;
+          }
+          captureSessionFactory:^id<FLTCaptureSession> {
+            return [[MockCaptureSession alloc] init];
+          }
+          captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
 
   XCTestExpectation *disposeExpectation =
       [self expectationWithDescription:@"dispose's result block must be called"];

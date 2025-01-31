@@ -16,12 +16,11 @@
 
 @implementation ThreadSafeEventChannelTests
 
-
 - (void)testSetStreamHandler_shouldStayOnMainThreadIfCalledFromMainThread {
   MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
   FLTThreadSafeEventChannel *threadSafeEventChannel =
       [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
-  
+
   XCTestExpectation *mainThreadExpectation =
       [self expectationWithDescription:@"setStreamHandler must be called on the main thread"];
   XCTestExpectation *mainThreadCompletionExpectation =
@@ -35,11 +34,11 @@
   }];
 
   [threadSafeEventChannel setStreamHandler:nil
-                                 completion:^{
-                                   if (NSThread.isMainThread) {
-                                     [mainThreadCompletionExpectation fulfill];
-                                   }
-                                 }];
+                                completion:^{
+                                  if (NSThread.isMainThread) {
+                                    [mainThreadCompletionExpectation fulfill];
+                                  }
+                                }];
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
@@ -47,7 +46,7 @@
   MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
   FLTThreadSafeEventChannel *threadSafeEventChannel =
       [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
-  
+
   XCTestExpectation *mainThreadExpectation =
       [self expectationWithDescription:@"setStreamHandler must be called on the main thread"];
   XCTestExpectation *mainThreadCompletionExpectation =
@@ -62,20 +61,18 @@
 
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     [threadSafeEventChannel setStreamHandler:nil
-                                           completion:^{
-                                             if (NSThread.isMainThread) {
-                                               [mainThreadCompletionExpectation fulfill];
-                                             }
-                                           }];
+                                  completion:^{
+                                    if (NSThread.isMainThread) {
+                                      [mainThreadCompletionExpectation fulfill];
+                                    }
+                                  }];
   });
   [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testEventChannel_shouldBeKeptAliveWhenDispatchingBackToMainThread {
   MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
-  FLTThreadSafeEventChannel *threadSafeEventChannel =
-      [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
-  
+
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"Completion should be called."];
 

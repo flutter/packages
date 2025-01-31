@@ -12,6 +12,9 @@
 #import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
+#import "MockGlobalEventApi.h"
 
 @interface AvailableCamerasTest : XCTestCase
 
@@ -19,18 +22,19 @@
 
 @implementation AvailableCamerasTest
 
-- (CameraPlugin*)createCameraPluginWithDeviceDiscoverer:(MockCameraDeviceDiscoverer*)deviceDiscoverer {
-  return [[CameraPlugin alloc] initWithRegistry:nil
-                                      messenger:nil
-                                      globalAPI:nil
-                               deviceDiscoverer:deviceDiscoverer
-                                  deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
-                                    return [[MockCaptureDevice alloc] init];
-                                  }
-                          captureSessionFactory:^id<FLTCaptureSession> {
-                            return [[MockCaptureSession alloc] init];
-                          }
-                      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
+- (CameraPlugin *)createCameraPluginWithDeviceDiscoverer:
+    (MockCameraDeviceDiscoverer *)deviceDiscoverer {
+  return [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+      messenger:[[MockFlutterBinaryMessenger alloc] init]
+      globalAPI:[[MockGlobalEventApi alloc] init]
+      deviceDiscoverer:deviceDiscoverer
+      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+        return [[MockCaptureDevice alloc] init];
+      }
+      captureSessionFactory:^id<FLTCaptureSession> {
+        return [[MockCaptureSession alloc] init];
+      }
+      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
 }
 
 - (void)testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone {
@@ -98,7 +102,7 @@
 - (void)testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone {
   MockCameraDeviceDiscoverer *mockDeviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
   CameraPlugin *cameraPlugin = [self createCameraPluginWithDeviceDiscoverer:mockDeviceDiscoverer];
-  
+
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 8 Cameras:
