@@ -4,7 +4,7 @@
 # These names are just suggestions. It is fine to have your changes
 # reviewed by someone else.
 
-packages/animations/**                                   @goderbauer
+packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
 packages/cross_file/**                                   @ditman
 packages/css_colors/**                                   @stuartmorgan
