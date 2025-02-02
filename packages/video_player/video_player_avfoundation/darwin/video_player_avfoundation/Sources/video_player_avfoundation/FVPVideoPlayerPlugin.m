@@ -629,7 +629,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       CFTimeInterval averageDuration = (currentTime - self.startTime) / windowSize;
       if (averageDuration < duration * durationThreshold) {
         NSLog(@"Warning: measured average duration between frames is unexpectedly short (%f/%f), "
-              "please report this to "
+              @"please report this to "
               @"https://github.com/flutter/flutter/issues.",
               averageDuration, duration);
         self.selfRefresh = false;
