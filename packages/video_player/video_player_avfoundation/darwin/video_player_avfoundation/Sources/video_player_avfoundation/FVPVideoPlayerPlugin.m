@@ -7,7 +7,6 @@
 
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
-#import <stdatomic.h>
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
@@ -24,7 +23,8 @@
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 // The display link that drives frameUpdater.
 @property(nonatomic) FVPDisplayLink *displayLink;
-// The time interval between screen refresh updates. Display link duration is in an undefined state until displayLinkFired is called at least once so it should not be used directly.
+// The time interval between screen refresh updates. Display link duration is in an undefined state
+// until displayLinkFired is called at least once so it should not be used directly.
 @property(atomic) CFTimeInterval frameDuration;
 @end
 
@@ -86,7 +86,9 @@
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
 // The display link that drives frameUpdater.
 @property(nonatomic) FVPDisplayLink *displayLink;
-// The latest buffer obtained from video output. This is stored so that it can be returned from copyPixelBuffer again if nothing new is available, since the engine has undefined behavior when returning NULL.
+// The latest buffer obtained from video output. This is stored so that it can be returned from
+// copyPixelBuffer again if nothing new is available, since the engine has undefined behavior when
+// returning NULL.
 @property(nonatomic) CVPixelBufferRef latestPixelBuffer;
 // The time that represents when the next frame displays.
 @property(nonatomic) CFTimeInterval targetTime;
@@ -565,7 +567,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
-  // If the difference between target time and current time is longer than this fraction of frame duration then reset target time.
+  // If the difference between target time and current time is longer than this fraction of frame
+  // duration then reset target time.
   const float resetThreshold = 0.5;
 
   // Ensure video sampling at regular intervals. This function is not called at exact time intervals
@@ -605,14 +608,16 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // Calling textureFrameAvailable only from within displayLinkFired would require a non-trivial
   // solution to minimize missed video frames due to race between displayLinkFired, copyPixelBuffer
   // and place where is _textureFrameAvailable reset to false in the flutter engine.
-  // TODO: Ideally FlutterTexture would support mode of operation where the copyPixelBuffer is called always or some other alternative, instead of on demand by calling textureFrameAvailable.
+  // TODO: Ideally FlutterTexture would support mode of operation where the copyPixelBuffer is
+  // called always or some other alternative, instead of on demand by calling textureFrameAvailable.
   // https://github.com/flutter/flutter/issues/159162
   if (self.displayLink.running && self.selfRefresh) {
     // The number of frames over which to measure average frame duration.
     const int windowSize = 10;
     // If duration changes by this fraction or more then reset average frame duration measurement.
     const float resetFraction = 0.01;
-    // If measured average frame duration is shorter than this fraction of frame duration obtained from display link then rely solely on refreshes from display link.
+    // If measured average frame duration is shorter than this fraction of frame duration obtained
+    // from display link then rely solely on refreshes from display link.
     const float durationThreshold = 0.5;
 
     if (fabs(duration - self.latestDuration) >= self.latestDuration * resetFraction) {
@@ -623,8 +628,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     if (self.framesCount == windowSize) {
       CFTimeInterval averageDuration = (currentTime - self.startTime) / windowSize;
       if (averageDuration < duration * durationThreshold) {
-        NSLog(@"Warning: measured average duration between frames is unexpectedly short (%f/%f), please report this to "
-              @"https://github.com/flutter/flutter/issues.", averageDuration, duration);
+        NSLog(@"Warning: measured average duration between frames is unexpectedly short (%f/%f), "
+              "please report this to "
+              @"https://github.com/flutter/flutter/issues.",
+              averageDuration, duration);
         self.selfRefresh = false;
       }
       self.startTime = currentTime;
@@ -637,7 +644,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     });
   }
 
-  // Add a retain for the engine, since the copyPixelBufferForItemTime has already been accounted for, and the engine expects an owning reference.
+  // Add a retain for the engine, since the copyPixelBufferForItemTime has already been accounted
+  // for, and the engine expects an owning reference.
   return CVBufferRetain(self.latestPixelBuffer);
 }
 
