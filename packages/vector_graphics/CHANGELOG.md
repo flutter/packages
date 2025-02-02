@@ -1,6 +1,10 @@
+## 1.1.17
+
+* Reverts leaker tracker changes that caused runtime exceptions.
+
 ## 1.1.16
 
-* Allow transition between placeholder and loaded image to have an animation.
+* Fixes some memory leaks by disposing undisposed `ImageInfo`, `ui.Picture` and `Picture`.
 
 ## 1.1.15
 
