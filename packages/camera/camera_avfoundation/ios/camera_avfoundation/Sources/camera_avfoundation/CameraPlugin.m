@@ -23,14 +23,14 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 }
 
 @interface CameraPlugin ()
-@property(readonly, nonatomic) id<FlutterTextureRegistry> registry;
+@property(readonly, nonatomic) NSObject<FlutterTextureRegistry> *registry;
 @property(readonly, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
 @property(nonatomic) FCPCameraGlobalEventApi *globalEventAPI;
 @property(readonly, nonatomic) FLTCameraPermissionManager *permissionManager;
-@property(readonly, nonatomic) id<FLTCameraDeviceDiscovering> deviceDiscoverer;
+@property(readonly, nonatomic) NSObject<FLTCameraDeviceDiscovering> *deviceDiscoverer;
 @property(readonly, nonatomic) CaptureNamedDeviceFactory captureDeviceFactory;
 @property(readonly, nonatomic) CaptureSessionFactory captureSessionFactory;
-@property(readonly, nonatomic) id<FLTCaptureDeviceInputFactory> captureDeviceInputFactory;
+@property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 @end
 
 @implementation CameraPlugin
@@ -47,11 +47,13 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       messenger:messenger
       globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
       deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]
-      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
-        return [AVCaptureDevice deviceWithUniqueID:name];
+      deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
+        return [[FLTDefaultCaptureDevice alloc]
+            initWithDevice:[AVCaptureDevice deviceWithUniqueID:name]];
       }
-      captureSessionFactory:^id<FLTCaptureSession>(void) {
-        return [[AVCaptureSession alloc] init];
+      captureSessionFactory:^NSObject<FLTCaptureSession> *(void) {
+        return [[FLTDefaultCaptureSession alloc]
+            initWithCaptureSession:[[AVCaptureSession alloc] init]];
       }
       captureDeviceInputFactory:[[FLTDefaultCaptureDeviceInputFactory alloc] init]];
 }
@@ -59,10 +61,11 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI
-                deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
+                deviceDiscoverer:(NSObject<FLTCameraDeviceDiscovering> *)deviceDiscoverer
                    deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
            captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
-       captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory {
+       captureDeviceInputFactory:
+           (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = registry;
@@ -137,13 +140,13 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     if (@available(iOS 13.0, *)) {
       [discoveryDevices addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
     }
-    NSArray<id<FLTCaptureDevice>> *devices =
+    NSArray<NSObject<FLTCaptureDevice> *> *devices =
         [self.deviceDiscoverer discoverySessionWithDeviceTypes:discoveryDevices
                                                      mediaType:AVMediaTypeVideo
                                                       position:AVCaptureDevicePositionUnspecified];
     NSMutableArray<FCPPlatformCameraDescription *> *reply =
         [[NSMutableArray alloc] initWithCapacity:devices.count];
-    for (id<FLTCaptureDevice> device in devices) {
+    for (NSObject<FLTCaptureDevice> *device in devices) {
       FCPPlatformCameraLensDirection lensFacing;
       switch (device.position) {
         case AVCaptureDevicePositionBack:
@@ -499,7 +502,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   FLTCamConfiguration *camConfiguration =
       [[FLTCamConfiguration alloc] initWithMediaSettings:settings
                                     mediaSettingsWrapper:mediaSettingsAVWrapper
-                                    captureDeviceFactory:^id<FLTCaptureDevice> _Nonnull {
+                                    captureDeviceFactory:^NSObject<FLTCaptureDevice> *_Nonnull {
                                       return self.captureDeviceFactory(name);
                                     }
                                    captureSessionFactory:_captureSessionFactory

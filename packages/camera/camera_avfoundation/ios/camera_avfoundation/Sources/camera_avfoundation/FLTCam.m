@@ -57,10 +57,10 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
-@property(readonly, nonatomic) id<FLTCaptureSession> videoCaptureSession;
-@property(readonly, nonatomic) id<FLTCaptureSession> audioCaptureSession;
+@property(readonly, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
+@property(readonly, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
 
-@property(readonly, nonatomic) id<FLTCaptureInput> captureVideoInput;
+@property(readonly, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
 /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
 /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
 @property(readwrite, nonatomic) CVPixelBufferRef latestPixelBuffer;
@@ -106,8 +106,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
-@property(readonly, nonatomic) id<FLTCaptureDeviceInputFactory> captureDeviceInputFactory;
-@property(readonly, nonatomic) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
+@property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
+@property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
 /// Reports the given error message to the Dart side of the plugin.
 ///
 /// Can be called from any thread.
@@ -139,7 +139,7 @@ static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targe
 // as activeFormat and also updates mediaSettings.framesPerSecond to value which
 // bestFrameRateForFormat returned for that format.
 static void selectBestFormatForRequestedFrameRate(
-    AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
+    NSObject<FLTCaptureDevice> *captureDevice, FCPPlatformMediaSettings *mediaSettings,
     VideoDimensionsForFormat videoDimensionsForFormat) {
   CMVideoDimensions targetResolution = videoDimensionsForFormat(captureDevice.activeFormat);
   double targetFrameRate = mediaSettings.framesPerSecond.doubleValue;
@@ -552,7 +552,7 @@ static void selectBestFormatForRequestedFrameRate(
 /// Finds the highest available resolution in terms of pixel count for the given device.
 /// Preferred are formats with the same subtype as current activeFormat.
 - (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
-    (AVCaptureDevice *)captureDevice {
+    (NSObject<FLTCaptureDevice> *)captureDevice {
   FourCharCode preferredSubType =
       CMFormatDescriptionGetMediaSubType(_captureDevice.activeFormat.formatDescription);
   AVCaptureDeviceFormat *bestFormat = nil;
@@ -799,13 +799,13 @@ static void selectBestFormatForRequestedFrameRate(
 - (void)close {
   [self stop];
   for (AVCaptureInput *input in [_videoCaptureSession inputs]) {
-    [_videoCaptureSession removeInput:input];
+    [_videoCaptureSession removeInput:[[FLTDefaultCaptureInput alloc] initWithInput:input]];
   }
   for (AVCaptureOutput *output in [_videoCaptureSession outputs]) {
     [_videoCaptureSession removeOutput:output];
   }
   for (AVCaptureInput *input in [_audioCaptureSession inputs]) {
-    [_audioCaptureSession removeInput:input];
+    [_audioCaptureSession removeInput:[[FLTDefaultCaptureInput alloc] initWithInput:input]];
   }
   for (AVCaptureOutput *output in [_audioCaptureSession outputs]) {
     [_audioCaptureSession removeOutput:output];
@@ -1004,7 +1004,7 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
-              onDevice:(id<FLTCaptureDevice>)captureDevice {
+              onDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:
@@ -1371,9 +1371,10 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   NSError *error = nil;
   // Create a device input with the device and add it to the session.
   // Setup the audio input.
-  AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-  id<FLTCaptureInput> audioInput = [_captureDeviceInputFactory deviceInputWithDevice:audioDevice
-                                                                               error:&error];
+  NSObject<FLTCaptureDevice> *audioDevice = [[FLTDefaultCaptureDevice alloc]
+      initWithDevice:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio]];
+  NSObject<FLTCaptureInput> *audioInput =
+      [_captureDeviceInputFactory deviceInputWithDevice:audioDevice error:&error];
   if (error) {
     [self reportErrorMessage:error.description];
   }

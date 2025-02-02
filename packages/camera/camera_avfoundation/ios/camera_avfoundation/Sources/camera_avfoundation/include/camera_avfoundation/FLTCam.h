@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// A class that manages camera's state and performs camera operations.
 @interface FLTCam : NSObject <FlutterTexture>
 
-@property(readonly, nonatomic) id<FLTCaptureDevice> captureDevice;
+@property(readonly, nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
 @property(readonly, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) BOOL isPreviewPaused;
 @property(nonatomic, copy) void (^onFrameAvailable)(void);
@@ -84,7 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param focusMode The focus mode that should be applied to the @captureDevice instance.
 /// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode onDevice:(id<FLTCaptureDevice>)captureDevice;
+- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
+              onDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
 - (void)pausePreview;
 - (void)resumePreview;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName

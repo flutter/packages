@@ -6,6 +6,7 @@
 @import Foundation;
 
 #import "FLTCaptureDevice.h"
+#import "FLTCaptureSession.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outError The optional error.
  * @result A BOOL indicating whether the device was successfully locked for configuration.
  */
-- (BOOL)lockDevice:(id<FLTCaptureDevice>)captureDevice
+- (BOOL)lockDevice:(NSObject<FLTCaptureDevice> *)captureDevice
              error:(NSError *_Nullable *_Nullable)outError;
 
 /**
@@ -35,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @abstract Release exclusive control over device hardware properties.
  * @param captureDevice The capture device.
  */
-- (void)unlockDevice:(id<FLTCaptureDevice>)captureDevice;
+- (void)unlockDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
 
 /**
  * @method beginConfigurationForSession:
@@ -43,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  * operations on a running session into atomic updates.
  * @param videoCaptureSession The video capture session.
  */
-- (void)beginConfigurationForSession:(AVCaptureSession *)videoCaptureSession;
+- (void)beginConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession;
 
 /**
  * @method commitConfigurationForSession:
@@ -51,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * operations on a running session into atomic updates.
  * @param videoCaptureSession The video capture session.
  */
-- (void)commitConfigurationForSession:(AVCaptureSession *)videoCaptureSession;
+- (void)commitConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession;
 
 /**
  * @method setMinFrameDuration:onDevice:
@@ -60,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMinFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDevice>)captureDevice;
+- (void)setMinFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
 
 /**
  * @method setMaxFrameDuration:onDevice:
@@ -69,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMaxFrameDuration:(CMTime)duration onDevice:(id<FLTCaptureDevice>)captureDevice;
+- (void)setMaxFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
 
 /**
  * @method assetWriterAudioInputWithOutputSettings:

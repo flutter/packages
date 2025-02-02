@@ -28,10 +28,10 @@
       messenger:[[MockFlutterBinaryMessenger alloc] init]
       globalAPI:[[MockGlobalEventApi alloc] init]
       deviceDiscoverer:deviceDiscoverer
-      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+      deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
         return [[MockCaptureDevice alloc] init];
       }
-      captureSessionFactory:^id<FLTCaptureSession> {
+      captureSessionFactory:^NSObject<FLTCaptureSession> * {
         return [[MockCaptureSession alloc] init];
       }
       captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
@@ -73,7 +73,7 @@
     [cameras addObject:ultraWideCamera];
   }
 
-  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
+  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<NSObject<FLTCaptureDevice> *> *_Nullable(
       NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
       AVCaptureDevicePosition position) {
     XCTAssertEqualObjects(deviceTypes, requiredTypes);
@@ -124,7 +124,7 @@
   NSMutableArray *cameras = [NSMutableArray array];
   [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera ]];
 
-  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<id<FLTCaptureDevice>> *_Nullable(
+  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<NSObject<FLTCaptureDevice> *> *_Nullable(
       NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
       AVCaptureDevicePosition position) {
     XCTAssertEqualObjects(deviceTypes, requiredTypes);

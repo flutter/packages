@@ -6,7 +6,7 @@
 
 @implementation MockCameraDeviceDiscoverer
 
-- (NSArray<id<FLTCaptureDevice>> *)
+- (NSArray<NSObject<FLTCaptureDevice> *> *)
     discoverySessionWithDeviceTypes:(NSArray<AVCaptureDeviceType> *)deviceTypes
                           mediaType:(AVMediaType)mediaType
                            position:(AVCaptureDevicePosition)position {

@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A stub that replaces the default implementation of
 /// `discoverySessionWithDeviceTypes:mediaType:position`.
-@property(nonatomic, copy) NSArray<id<FLTCaptureDevice>> *_Nullable (^discoverySessionStub)
+@property(nonatomic, copy) NSArray<NSObject<FLTCaptureDevice> *> *_Nullable (^discoverySessionStub)
     (NSArray<AVCaptureDeviceType> *deviceTypes, AVMediaType mediaType,
      AVCaptureDevicePosition position);
 

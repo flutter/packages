@@ -100,17 +100,13 @@
   return self.exposureModeSupported;
 }
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
-  if (self.createInputStub) {
-    return self.createInputStub(error);
-  }
-  return NULL;
-}
+@synthesize device;
 
 @end
 
 @implementation MockCaptureInput
 @synthesize ports;
+@synthesize input;
 @end
 
 @implementation MockCaptureDeviceInputFactory
@@ -123,7 +119,8 @@
   return self;
 }
 
-- (nonnull instancetype)initWithMockDeviceInput:(nonnull id<FLTCaptureInput>)mockDeviceInput {
+- (nonnull instancetype)initWithMockDeviceInput:
+    (nonnull NSObject<FLTCaptureInput> *)mockDeviceInput {
   self = [super init];
   if (self) {
     _mockDeviceInput = mockDeviceInput;
@@ -131,7 +128,8 @@
   return self;
 }
 
-- (id<FLTCaptureInput>)deviceInputWithDevice:(id<FLTCaptureDevice>)device error:(NSError **)error {
+- (NSObject<FLTCaptureInput> *)deviceInputWithDevice:(NSObject<FLTCaptureDevice> *)device
+                                               error:(NSError **)error {
   return _mockDeviceInput;
 }
 

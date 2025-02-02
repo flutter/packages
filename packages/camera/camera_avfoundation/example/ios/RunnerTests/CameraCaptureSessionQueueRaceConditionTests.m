@@ -28,10 +28,10 @@
           messenger:[[MockFlutterBinaryMessenger alloc] init]
           globalAPI:[[MockGlobalEventApi alloc] init]
           deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
-          deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+          deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
             return captureDevice;
           }
-          captureSessionFactory:^id<FLTCaptureSession> {
+          captureSessionFactory:^NSObject<FLTCaptureSession> * {
             return [[MockCaptureSession alloc] init];
           }
           captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];

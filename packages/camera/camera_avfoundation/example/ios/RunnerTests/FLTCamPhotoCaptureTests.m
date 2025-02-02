@@ -189,7 +189,7 @@
 
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
       captureSessionQueue, nil, nil,
-      ^id<FLTCaptureDevice>(void) {
+      ^NSObject<FLTCaptureDevice> *(void) {
         return captureDeviceMock;
       },
       nil);

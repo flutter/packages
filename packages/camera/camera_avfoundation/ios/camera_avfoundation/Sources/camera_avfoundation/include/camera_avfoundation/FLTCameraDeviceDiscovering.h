@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// A protocol which abstracts the discovery of camera devices.
 /// It is a thin wrapper around `AVCaptureDiscoverySession` and it exists to allow mocking in tests.
 @protocol FLTCameraDeviceDiscovering <NSObject>
-- (NSArray<id<FLTCaptureDevice>> *)
+- (NSArray<NSObject<FLTCaptureDevice> *> *)
     discoverySessionWithDeviceTypes:(NSArray<AVCaptureDeviceType> *)deviceTypes
                           mediaType:(AVMediaType)mediaType
                            position:(AVCaptureDevicePosition)position;

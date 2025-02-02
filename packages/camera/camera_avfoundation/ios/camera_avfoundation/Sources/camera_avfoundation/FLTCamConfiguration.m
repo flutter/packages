@@ -11,7 +11,8 @@
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-            captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory {
+            captureDeviceInputFactory:
+                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory {
   self = [super init];
   if (self) {
     _mediaSettings = mediaSettings;

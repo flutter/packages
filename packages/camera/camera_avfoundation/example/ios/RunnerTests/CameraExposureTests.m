@@ -25,7 +25,7 @@
 
   _camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
       nil, nil, nil,
-      ^id<FLTCaptureDevice>(void) {
+      ^NSObject<FLTCaptureDevice> *(void) {
         return mockDevice;
       },
       _mockDeviceOrientationProvider);

@@ -22,20 +22,23 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)startRunning;
 - (void)stopRunning;
 - (BOOL)canSetSessionPreset:(AVCaptureSessionPreset)preset;
-- (void)addInputWithNoConnections:(AVCaptureInput *)input;
+- (void)addInputWithNoConnections:(NSObject<FLTCaptureInput> *)input;
 - (void)addOutputWithNoConnections:(AVCaptureOutput *)output;
 - (void)addConnection:(AVCaptureConnection *)connection;
 - (void)addOutput:(AVCaptureOutput *)output;
-- (void)removeInput:(AVCaptureInput *)input;
+- (void)removeInput:(NSObject<FLTCaptureInput> *)input;
 - (void)removeOutput:(AVCaptureOutput *)output;
-- (BOOL)canAddInput:(AVCaptureInput *)input;
+- (BOOL)canAddInput:(NSObject<FLTCaptureInput> *)input;
 - (BOOL)canAddOutput:(AVCaptureOutput *)output;
 - (BOOL)canAddConnection:(AVCaptureConnection *)connection;
-- (void)addInput:(AVCaptureInput *)input;
+- (void)addInput:(NSObject<FLTCaptureInput> *)input;
 
 @end
 
-@interface AVCaptureSession (FLTCaptureSession) <FLTCaptureSession>
+/// A default implementation  of `FLTCaptureSession` which is a direct passthrough
+/// to the underlying `AVCaptureSession`.
+@interface FLTDefaultCaptureSession : NSObject <FLTCaptureSession>
+- (instancetype)initWithCaptureSession:(AVCaptureSession *)session;
 @end
 
 NS_ASSUME_NONNULL_END

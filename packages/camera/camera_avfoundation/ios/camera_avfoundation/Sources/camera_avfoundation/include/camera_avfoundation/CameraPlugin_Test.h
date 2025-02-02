@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef id<FLTCaptureDevice> _Nonnull (^CaptureNamedDeviceFactory)(NSString *name);
+typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureNamedDeviceFactory)(NSString *name);
 
 /// APIs exposed for unit testing.
 @interface CameraPlugin ()

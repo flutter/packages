@@ -28,7 +28,7 @@
   }
 }
 
-- (void)setCaptureDevice:(id<FLTCaptureDevice>)device {
+- (void)setCaptureDevice:(NSObject<FLTCaptureDevice> *)device {
   self.captureDevice = device;
 }
 
@@ -69,10 +69,10 @@
       messenger:[[MockFlutterBinaryMessenger alloc] init]
       globalAPI:_eventAPI
       deviceDiscoverer:_deviceDiscoverer
-      deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+      deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
         return mockDevice;
       }
-      captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
+      captureSessionFactory:^NSObject<FLTCaptureSession> *_Nonnull {
         return [[MockCaptureSession alloc] init];
       }
       captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
@@ -154,10 +154,10 @@
             messenger:[[MockFlutterBinaryMessenger alloc] init]
             globalAPI:_eventAPI
             deviceDiscoverer:_deviceDiscoverer
-            deviceFactory:^id<FLTCaptureDevice>(NSString *name) {
+            deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
               return weakDevice;
             }
-            captureSessionFactory:^id<FLTCaptureSession> _Nonnull {
+            captureSessionFactory:^NSObject<FLTCaptureSession> *_Nonnull {
               return [[MockCaptureSession alloc] init];
             }
             captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];

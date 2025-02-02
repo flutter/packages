@@ -16,9 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Factory block returning an AVCaptureDevice.
 /// Used in tests to inject a device into FLTCam.
-typedef id<FLTCaptureDevice> _Nonnull (^CaptureDeviceFactory)(void);
+typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(void);
 
-typedef id<FLTCaptureSession> _Nonnull (^CaptureSessionFactory)(void);
+typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
@@ -33,7 +33,8 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-            captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory;
+            captureDeviceInputFactory:
+                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory;
 
 @property(nonatomic, strong) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 @property(nonatomic, strong) dispatch_queue_t captureSessionQueue;
@@ -43,9 +44,9 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
 @property(nonatomic, copy) CaptureDeviceFactory audioCaptureDeviceFactory;
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 @property(nonatomic, assign) UIDeviceOrientation orientation;
-@property(nonatomic, strong) id<FLTCaptureSession> videoCaptureSession;
-@property(nonatomic, strong) id<FLTCaptureSession> audioCaptureSession;
-@property(nonatomic, strong) id<FLTCaptureDeviceInputFactory> captureDeviceInputFactory;
+@property(nonatomic, strong) NSObject<FLTCaptureSession> *videoCaptureSession;
+@property(nonatomic, strong) NSObject<FLTCaptureSession> *audioCaptureSession;
+@property(nonatomic, strong) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 
 @end
 
