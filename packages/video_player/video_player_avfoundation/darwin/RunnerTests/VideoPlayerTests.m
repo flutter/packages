@@ -125,7 +125,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 /** This display link to return. */
 @property(nonatomic, strong) FVPDisplayLink *displayLink;
-@property(nonatomic) void (^fireDisplayLink)(void);
+@property(nonatomic, copy) void (^fireDisplayLink)(void);
 
 - (instancetype)initWithDisplayLink:(FVPDisplayLink *)displayLink;
 

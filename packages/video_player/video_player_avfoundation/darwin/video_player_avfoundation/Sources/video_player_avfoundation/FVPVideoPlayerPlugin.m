@@ -24,8 +24,8 @@
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 // The display link that drives frameUpdater.
 @property(nonatomic) FVPDisplayLink *displayLink;
-// The time interval between screen refresh updates.
-@property(nonatomic) _Atomic CFTimeInterval duration;
+// The time interval between screen refresh updates. Display link duration is in an undefined state until displayLinkFired is called at least once so it should not be used directly.
+@property(atomic) CFTimeInterval frameDuration;
 @end
 
 @implementation FVPFrameUpdater
@@ -37,14 +37,8 @@
 }
 
 - (void)displayLinkFired {
-  // Display link duration is in an undefined state until displayLinkFired is called at least once
-  // so it should not be used directly.
-  atomic_store_explicit(&_duration, _displayLink.duration, memory_order_relaxed);
+  self.frameDuration = _displayLink.duration;
   [_registry textureFrameAvailable:_textureId];
-}
-
-- (CFTimeInterval)duration {
-  return atomic_load_explicit(&_duration, memory_order_relaxed);
 }
 @end
 
@@ -92,10 +86,18 @@
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
 // The display link that drives frameUpdater.
 @property(nonatomic) FVPDisplayLink *displayLink;
-// Latest copied pixel buffer.
+// The latest buffer obtained from video output. This is stored so that it can be returned from copyPixelBuffer again if nothing new is available, since the engine has undefined behavior when returning NULL.
 @property(nonatomic) CVPixelBufferRef latestPixelBuffer;
 // The time that represents when the next frame displays.
 @property(nonatomic) CFTimeInterval targetTime;
+// Whether to enqueue textureFrameAvailable from copyPixelBuffer.
+@property(nonatomic) BOOL selfRefresh;
+// The time that represents the start of average frame duration measurement.
+@property(nonatomic) CFTimeInterval startTime;
+// The number of frames since the start of average frame duration measurement.
+@property(nonatomic) int framesCount;
+// The latest frame duration since there was significant change.
+@property(nonatomic) CFTimeInterval latestDuration;
 // Whether a new frame needs to be provided to the engine regardless of the current play/pause state
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
@@ -249,7 +251,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else {
     NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "
           @"https://github.com/flutter/flutter/issues with input video attached.");
-    videoComposition.frameDuration = CMTimeMake(1, 120);
+    videoComposition.frameDuration = CMTimeMake(1, 30);
   }
 
   return videoComposition;
@@ -338,6 +340,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
   frameUpdater.videoOutput = _videoOutput;
   frameUpdater.displayLink = _displayLink;
+  _selfRefresh = true;
 
   [self addObserversForItem:item player:_player];
 
@@ -562,23 +565,29 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
+  // If the difference between target time and current time is longer than this fraction of frame duration then reset target time.
+  const float resetThreshold = 0.5;
+
   // Ensure video sampling at regular intervals. This function is not called at exact time intervals
   // so CACurrentMediaTime returns irregular timestamps which causes missed video frames. The range
   // outside of which targetTime is reset should be narrow enough to make possible lag as small as
   // possible and at the same time wide enough to avoid too frequent resets which would lead to
-  // irregular sampling. Ideally there would be a targetTimestamp of display link used by flutter
-  // engine (FlutterTexture can provide timestamp and duration or timestamp and targetTimestamp).
+  // irregular sampling.
+  // TODO: Ideally there would be a targetTimestamp of display link used by the flutter engine.
+  // https://github.com/flutter/flutter/issues/159087
   CFTimeInterval currentTime = CACurrentMediaTime();
-  if (fabs(self.targetTime - currentTime) > self.frameUpdater.duration / 2) {
+  CFTimeInterval duration = self.frameUpdater.frameDuration;
+  if (fabs(self.targetTime - currentTime) > duration * resetThreshold) {
     self.targetTime = currentTime;
   }
-  self.targetTime += self.frameUpdater.duration;
+  self.targetTime += duration;
 
   CVPixelBufferRef buffer = NULL;
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:self.targetTime];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
     buffer = [self.videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
     if (buffer) {
+      // Balance the owned reference from copyPixelBufferForItemTime.
       CVBufferRelease(self.latestPixelBuffer);
       self.latestPixelBuffer = buffer;
     }
@@ -595,16 +604,40 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   // Calling textureFrameAvailable only from within displayLinkFired would require a non-trivial
   // solution to minimize missed video frames due to race between displayLinkFired, copyPixelBuffer
-  // and place where is _textureFrameAvailable reset to false in the flutter engine. Ideally
-  // FlutterTexture would support mode of operation where the copyPixelBuffer is called always or
-  // some other alternative, instead of on demand by calling textureFrameAvailable.
-  if (self.displayLink.running) {
+  // and place where is _textureFrameAvailable reset to false in the flutter engine.
+  // TODO: Ideally FlutterTexture would support mode of operation where the copyPixelBuffer is called always or some other alternative, instead of on demand by calling textureFrameAvailable.
+  // https://github.com/flutter/flutter/issues/159162
+  if (self.displayLink.running && self.selfRefresh) {
+    // The number of frames over which to measure average frame duration.
+    const int windowSize = 10;
+    // If duration changes by this fraction or more then reset average frame duration measurement.
+    const float resetFraction = 0.01;
+    // If measured average frame duration is shorter than this fraction of frame duration obtained from display link then rely solely on refreshes from display link.
+    const float durationThreshold = 0.5;
+
+    if (fabs(duration - self.latestDuration) >= self.latestDuration * resetFraction) {
+      self.startTime = currentTime;
+      self.framesCount = 0;
+      self.latestDuration = duration;
+    }
+    if (self.framesCount == windowSize) {
+      CFTimeInterval averageDuration = (currentTime - self.startTime) / windowSize;
+      if (averageDuration < duration * durationThreshold) {
+        NSLog(@"Warning: measured average duration between frames is unexpectedly short (%f/%f), please report this to "
+              @"https://github.com/flutter/flutter/issues.", averageDuration, duration);
+        self.selfRefresh = false;
+      }
+      self.startTime = currentTime;
+      self.framesCount = 0;
+    }
+    self.framesCount++;
+
     dispatch_async(dispatch_get_main_queue(), ^{
       [self.frameUpdater.registry textureFrameAvailable:self.frameUpdater.textureId];
     });
   }
 
-  // Better to avoid returning NULL as it is unspecified what should be displayed in such a case.
+  // Add a retain for the engine, since the copyPixelBufferForItemTime has already been accounted for, and the engine expects an owning reference.
   return CVBufferRetain(self.latestPixelBuffer);
 }
 

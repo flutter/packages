@@ -86,7 +86,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
   if (CVDisplayLinkGetCurrentTime(self.displayLink, &timestamp) != kCVReturnSuccess) {
     return 0;
   }
-  return 1.0 * timestamp.videoRefreshPeriod / timestamp.videoTimeScale;
+  return (CFTimeInterval)timestamp.videoRefreshPeriod / timestamp.videoTimeScale;
 }
 
 @end
