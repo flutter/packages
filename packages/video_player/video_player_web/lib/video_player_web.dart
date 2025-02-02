@@ -12,9 +12,6 @@ import 'package:web/web.dart' as web;
 
 import 'src/video_player.dart';
 
-// TODO(FirentisTFW): Remove the ignore and rename parameters when adding support for platform views.
-// ignore_for_file: avoid_renaming_method_parameters
-
 /// The web implementation of [VideoPlayerPlatform].
 ///
 /// This class implements the `package:video_player` functionality for the web.
@@ -24,11 +21,10 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
     VideoPlayerPlatform.instance = VideoPlayerPlugin();
   }
 
-  // Map of textureId -> VideoPlayer instances
+  // Map of playerId -> VideoPlayer instances.
   final Map<int, VideoPlayer> _videoPlayers = <int, VideoPlayer>{};
 
-  // Simulate the native "textureId".
-  int _textureCounter = 1;
+  int _playerCounter = 1;
 
   @override
   Future<void> init() async {
@@ -36,9 +32,9 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> dispose(int textureId) async {
-    _player(textureId).dispose();
-    _videoPlayers.remove(textureId);
+  Future<void> dispose(int playerId) async {
+    _player(playerId).dispose();
+    _videoPlayers.remove(playerId);
     return;
   }
 
@@ -50,8 +46,22 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int> create(DataSource dataSource) async {
-    final int textureId = _textureCounter++;
+  Future<int> create(DataSource dataSource) {
+    return createWithOptions(
+      VideoCreationOptions(
+        dataSource: dataSource,
+        // Web only supports platform views.
+        viewType: VideoViewType.platformView,
+      ),
+    );
+  }
+
+  @override
+  Future<int> createWithOptions(VideoCreationOptions options) async {
+    // Parameter options.viewType is ignored because web only supports platform views.
+
+    final DataSource dataSource = options.dataSource;
+    final int playerId = _playerCounter++;
 
     late String uri;
     switch (dataSource.sourceType) {
@@ -75,68 +85,68 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
     }
 
     final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
-      ..id = 'videoElement-$textureId'
+      ..id = 'videoElement-$playerId'
       ..style.border = 'none'
       ..style.height = '100%'
       ..style.width = '100%';
 
     // TODO(hterkelsen): Use initialization parameters once they are available
     ui_web.platformViewRegistry.registerViewFactory(
-        'videoPlayer-$textureId', (int viewId) => videoElement);
+        'videoPlayer-$playerId', (int viewId) => videoElement);
 
     final VideoPlayer player = VideoPlayer(videoElement: videoElement)
       ..initialize(
         src: uri,
       );
 
-    _videoPlayers[textureId] = player;
+    _videoPlayers[playerId] = player;
 
-    return textureId;
+    return playerId;
   }
 
   @override
-  Future<void> setLooping(int textureId, bool looping) async {
-    return _player(textureId).setLooping(looping);
+  Future<void> setLooping(int playerId, bool looping) async {
+    return _player(playerId).setLooping(looping);
   }
 
   @override
-  Future<void> play(int textureId) async {
-    return _player(textureId).play();
+  Future<void> play(int playerId) async {
+    return _player(playerId).play();
   }
 
   @override
-  Future<void> pause(int textureId) async {
-    return _player(textureId).pause();
+  Future<void> pause(int playerId) async {
+    return _player(playerId).pause();
   }
 
   @override
-  Future<void> setVolume(int textureId, double volume) async {
-    return _player(textureId).setVolume(volume);
+  Future<void> setVolume(int playerId, double volume) async {
+    return _player(playerId).setVolume(volume);
   }
 
   @override
-  Future<void> setPlaybackSpeed(int textureId, double speed) async {
-    return _player(textureId).setPlaybackSpeed(speed);
+  Future<void> setPlaybackSpeed(int playerId, double speed) async {
+    return _player(playerId).setPlaybackSpeed(speed);
   }
 
   @override
-  Future<void> seekTo(int textureId, Duration position) async {
-    return _player(textureId).seekTo(position);
+  Future<void> seekTo(int playerId, Duration position) async {
+    return _player(playerId).seekTo(position);
   }
 
   @override
-  Future<Duration> getPosition(int textureId) async {
-    return _player(textureId).getPosition();
+  Future<Duration> getPosition(int playerId) async {
+    return _player(playerId).getPosition();
   }
 
   @override
-  Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _player(textureId).events;
+  Stream<VideoEvent> videoEventsFor(int playerId) {
+    return _player(playerId).events;
   }
 
   @override
-  Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
-    return _player(textureId).setOptions(options);
+  Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
+    return _player(playerId).setOptions(options);
   }
 
   // Retrieves a [VideoPlayer] by its internal `id`.
@@ -146,11 +156,11 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId) {
-    return HtmlElementView(viewType: 'videoPlayer-$textureId');
+  Widget buildView(int playerId) {
+    return HtmlElementView(viewType: 'videoPlayer-$playerId');
   }
 
-  /// Sets the audio mode to mix with other sources (ignored)
+  /// Sets the audio mode to mix with other sources (ignored).
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
 }

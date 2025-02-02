@@ -3,6 +3,10 @@
 - Adds new top level `onEnter` callback with access to current and next route states.
 - Deprecates top level `redirect` in favor of `onEnter`.
 
+## 14.7.2
+
+- Add missing `await` keyword to `onTap` callback in `navigation.md`.
+
 ## 14.7.1
 
 - Fixes return type of current state getter on `GoRouter` and `GoRouterDelegate` to be non-nullable.
