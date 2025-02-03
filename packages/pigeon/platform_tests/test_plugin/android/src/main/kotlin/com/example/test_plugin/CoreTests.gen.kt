@@ -891,10 +891,15 @@ interface HostIntegrationCoreApi {
       callback: (Result<AnotherEnum?>) -> Unit
   )
   /**
+   * Returns true if the handler is run on a main thread, which should be true since there is no
+   * TaskQueue annotation.
+   */
+  fun defaultIsMainThread(): Boolean
+  /**
    * Returns true if the handler is run on a non-main thread, which should be true for any platform
    * with TaskQueue support.
    */
-  fun isBackgroundThread(): Boolean
+  fun taskQueueIsBackgroundThread(): Boolean
 
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
 
@@ -3379,18 +3384,38 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.defaultIsMainThread())
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.isBackgroundThread$separatedMessageChannelSuffix",
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread$separatedMessageChannelSuffix",
                 codec,
                 taskQueue)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.isBackgroundThread())
+                  listOf(api.taskQueueIsBackgroundThread())
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }

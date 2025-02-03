@@ -6052,7 +6052,7 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
   {
     BasicMessageChannel<> channel(binary_messenger,
                                   "dev.flutter.pigeon.pigeon_integration_tests."
-                                  "HostIntegrationCoreApi.isBackgroundThread" +
+                                  "HostIntegrationCoreApi.defaultIsMainThread" +
                                       prepended_suffix,
                                   &GetCodec());
     if (api != nullptr) {
@@ -6060,7 +6060,35 @@ void HostIntegrationCoreApi::SetUp(flutter::BinaryMessenger* binary_messenger,
           [api](const EncodableValue& message,
                 const flutter::MessageReply<EncodableValue>& reply) {
             try {
-              ErrorOr<bool> output = api->IsBackgroundThread();
+              ErrorOr<bool> output = api->DefaultIsMainThread();
+              if (output.has_error()) {
+                reply(WrapError(output.error()));
+                return;
+              }
+              EncodableList wrapped;
+              wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+              reply(EncodableValue(std::move(wrapped)));
+            } catch (const std::exception& exception) {
+              reply(WrapError(exception.what()));
+            }
+          });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
+    BasicMessageChannel<> channel(
+        binary_messenger,
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi."
+        "taskQueueIsBackgroundThread" +
+            prepended_suffix,
+        &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler(
+          [api](const EncodableValue& message,
+                const flutter::MessageReply<EncodableValue>& reply) {
+            try {
+              ErrorOr<bool> output = api->TaskQueueIsBackgroundThread();
               if (output.has_error()) {
                 reply(WrapError(output.error()));
                 return;
