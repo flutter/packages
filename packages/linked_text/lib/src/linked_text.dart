@@ -269,6 +269,8 @@ class _LinkedTextState extends State<LinkedText> {
            return WidgetSpan(
              child: Link(
                uri: Uri.parse(linkString),
+               // TODO(justinmc): target should probably be a parameter too? Or users can do it themselves if they want via TextLinker?
+               //target: LinkTarget.blank,
                builder: (BuildContext context, FollowLink? followLink) {
                  final TapGestureRecognizer recognizer = TapGestureRecognizer()
                      ..onTap = () => widget.onTap!(linkString);
