@@ -7,11 +7,11 @@ import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
 
-import 'ast.dart';
-import 'dart/templates.dart';
-import 'functional.dart';
-import 'generator.dart';
-import 'generator_tools.dart';
+import '../ast.dart';
+import '../functional.dart';
+import '../generator.dart';
+import '../generator_tools.dart';
+import 'templates.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';

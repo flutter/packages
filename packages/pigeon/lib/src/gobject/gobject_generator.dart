@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'ast.dart';
-import 'generator.dart';
-import 'generator_tools.dart';
+import '../ast.dart';
+import '../generator.dart';
+import '../generator_tools.dart';
 
 /// Documentation comment spec.
 const DocumentCommentSpecification _docCommentSpec =

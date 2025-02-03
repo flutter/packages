@@ -5,11 +5,11 @@
 import 'package:graphs/graphs.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import 'ast.dart';
-import 'functional.dart';
-import 'generator.dart';
-import 'generator_tools.dart';
-import 'swift/templates.dart';
+import '../ast.dart';
+import '../functional.dart';
+import '../generator.dart';
+import '../generator_tools.dart';
+import 'templates.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
