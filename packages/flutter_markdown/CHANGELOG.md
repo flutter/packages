@@ -1,3 +1,8 @@
+## 0.7.6
+
+* Adds horizontal scrolling for table when using `tableColumnWidth: IntrinsicColumnWidth()`.
+* Adds styleSheet option `tableScrollbarThumbVisibility` for setting the `thumbVisibility` on tables' `ScrollBar`.
+
 ## 0.7.5
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

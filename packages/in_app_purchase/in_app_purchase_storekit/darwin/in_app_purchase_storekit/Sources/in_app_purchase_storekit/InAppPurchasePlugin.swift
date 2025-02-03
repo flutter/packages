@@ -5,6 +5,10 @@
 import Foundation
 import StoreKit
 
+#if canImport(in_app_purchase_storekit_objc)
+  import in_app_purchase_storekit_objc
+#endif
+
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -241,7 +245,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
 
     // TODO(louisehsu): This is a workaround for objc pigeon's NSNull support. Once we move to swift pigeon, this can be removed.
     let castedFinishMap: [String: String] = finishMap.compactMapValues { value in
-      if let _ = value as? NSNull {
+      if value as? NSNull != nil {
         return nil
       } else if let stringValue = value as? String {
         return stringValue

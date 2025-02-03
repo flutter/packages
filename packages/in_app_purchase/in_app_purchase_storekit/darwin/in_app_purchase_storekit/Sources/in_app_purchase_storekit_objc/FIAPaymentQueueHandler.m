@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FIAPaymentQueueHandler.h"
-#import "FIAPPaymentQueueDelegate.h"
-#import "FIATransactionCache.h"
+#import "./include/in_app_purchase_storekit_objc/FIAPaymentQueueHandler.h"
+#import "./include/in_app_purchase_storekit_objc/FIAPPaymentQueueDelegate.h"
+#import "./include/in_app_purchase_storekit_objc/FIATransactionCache.h"
 
 @interface FIAPaymentQueueHandler ()
 
