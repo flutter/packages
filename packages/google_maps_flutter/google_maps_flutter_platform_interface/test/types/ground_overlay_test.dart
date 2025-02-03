@@ -8,7 +8,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('$GroundOverlay', () {
+  group('GroundOverlay', () {
     const GroundOverlayId kID = GroundOverlayId('groundOverlay');
     final LatLngBounds kBounds = LatLngBounds(
       southwest: const LatLng(37.42, -122.08),
