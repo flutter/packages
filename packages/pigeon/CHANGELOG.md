@@ -1,6 +1,6 @@
 ## 23.0.0
 
-* Relocates `lib` files to `src` directory.
+* **Breaking Change** Relocates some files in `lib` that were not intended for direct client use to `lib/src`.
 
 ## 22.7.4
 
