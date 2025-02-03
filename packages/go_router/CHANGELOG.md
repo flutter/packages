@@ -1,6 +1,9 @@
-## 14.7.2
+## 14.7.3
 
 - Fix issue 150312.
+
+## 14.7.2
+
 - Add missing `await` keyword to `onTap` callback in `navigation.md`.
 
 ## 14.7.1
