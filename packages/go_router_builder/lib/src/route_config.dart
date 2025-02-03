@@ -595,16 +595,16 @@ extension $_extensionName on $_className {
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
   String get relativeLocation => './\$location';
 
-  void go(BuildContext context) =>
+  void goRelative(BuildContext context) =>
       context.go(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  Future<T?> push<T>(BuildContext context) =>
+  Future<T?> pushRelative<T>(BuildContext context) =>
       context.push<T>(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  void pushReplacement(BuildContext context) =>
+  void pushReplacementRelative(BuildContext context) =>
       context.pushReplacement(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
 
-  void replace(BuildContext context) =>
+  void replaceRelative(BuildContext context) =>
       context.replace(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
 }
 ''';

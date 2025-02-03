@@ -35,22 +35,38 @@ extension $Route1Extension on Route1 {
 extension $RelativeRouteExtension on RelativeRoute {
   static RelativeRoute _fromState(GoRouterState state) => const RelativeRoute();
 
-  String get location => './${GoRouteData.$location(
+  String get location => GoRouteData.$location(
         'relative-route',
-      )}';
+      );
+  String get relativeLocation => './$location';
 
-  void go(BuildContext context) => context.go(location);
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
 }
 
 extension $InnerRelativeRouteExtension on InnerRelativeRoute {
   static InnerRelativeRoute _fromState(GoRouterState state) =>
       const InnerRelativeRoute();
 
-  String get location => './${GoRouteData.$location(
+  String get location => GoRouteData.$location(
         'inner-relative-route',
-      )}';
+      );
+  String get relativeLocation => './$location';
 
-  void go(BuildContext context) => context.go(location);
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
 }
 
 RouteBase get $route2 => GoRouteData.$route(
