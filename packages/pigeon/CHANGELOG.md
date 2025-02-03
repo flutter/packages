@@ -1,3 +1,8 @@
+## 23.0.0
+
+* **Breaking Change** [swift] Fixes a compile error about PigeonError's sendability conformance in Swift 6.
+  * PigeonError's init now requires the "details" argument to be Sendable.
+
 ## 22.7.4
 
 * [dart] Fixes bug with multi-instance event channel support.

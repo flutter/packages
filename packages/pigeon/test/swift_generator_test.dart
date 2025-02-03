@@ -258,6 +258,27 @@ void main() {
     expect(code, contains('var aFloat64List: FlutterStandardTypedData? = nil'));
   });
 
+  test('gen pigeon error type', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const SwiftOptions swiftOptions = SwiftOptions();
+    const SwiftGenerator generator = SwiftGenerator();
+
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('class PigeonError: Error'));
+    expect(code, contains('let code: String'));
+    expect(code, contains('let message: String?'));
+    expect(code, contains('let details: Sendable?'));
+    expect(code,
+        contains('init(code: String, message: String?, details: Sendable?)'));
+  });
+
   test('gen one flutter api', () {
     final Root root = Root(apis: <Api>[
       AstFlutterApi(name: 'Api', methods: <Method>[
