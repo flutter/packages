@@ -36,6 +36,7 @@ class MyHomePage extends StatelessWidget {
   });
 
   final String title;
+  // TODO(justinmc): Only the full URL works perfectly with Link! The other ones don't show the URL in the bottom of the browser and "open in new tab" doesn't work either.
   static const String _text = 'Check out https://www.flutter.dev, or maybe just flutter.dev or www.flutter.dev.';
 
   @override
