@@ -28,6 +28,9 @@ const String extraFieldName = r'$extra';
 /// Shared start of error message related to a likely code issue.
 const String likelyIssueMessage = 'Should never get here! File an issue!';
 
+/// The name of the generated, private helper for comparing iterables.
+const String iterablesEqualHelperName = r'_$iterablesEqual';
+
 const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperBigInt(),
   _TypeHelperBool(),
@@ -86,6 +89,22 @@ String encodeField(PropertyAccessorElement element) {
   );
 }
 
+/// Returns the comparison of a parameter with its default value.
+///
+/// Otherwise, throws an [InvalidGenerationSourceError].
+String compareField(ParameterElement param, String value1, String value2) {
+  for (final _TypeHelper helper in _helpers) {
+    if (helper._matchesType(param.type)) {
+      return helper._compare(param.name, param.defaultValueCode!);
+    }
+  }
+
+  throw InvalidGenerationSourceError(
+    'The type `${param.type}` is not supported.',
+    element: param,
+  );
+}
+
 /// Gets the name of the `const` map generated to help encode [Enum] types.
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
@@ -119,6 +138,8 @@ abstract class _TypeHelper {
   String _encode(String fieldName, DartType type);
 
   bool _matchesType(DartType type);
+
+  String _compare(String value1, String value2) => '$value1 != $value2';
 }
 
 class _TypeHelperBigInt extends _TypeHelperWithHelper {
@@ -252,8 +273,11 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
       const TypeChecker.fromRuntime(Uri).isAssignableFromType(type);
 }
 
-class _TypeHelperIterable extends _TypeHelper {
+class _TypeHelperIterable extends _TypeHelperWithHelper {
   const _TypeHelperIterable();
+
+  @override
+  String helperName(DartType paramType) => iterablesEqualHelperName;
 
   @override
   String _decode(
@@ -324,6 +348,10 @@ $fieldName$nullAwareAccess.map((e) => e.toString()).toList()''';
   @override
   bool _matchesType(DartType type) =>
       const TypeChecker.fromRuntime(Iterable).isAssignableFromType(type);
+
+  @override
+  String _compare(String value1, String value2) =>
+      '!$iterablesEqualHelperName($value1, $value2)';
 }
 
 abstract class _TypeHelperWithHelper extends _TypeHelper {

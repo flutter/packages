@@ -1,3 +1,7 @@
+## 2.5.1
+
+* Exposes `SharedPreferencesOptions`.
+
 ## 2.5.0
 
 * Adds shared preferences devtools extension.

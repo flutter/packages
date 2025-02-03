@@ -11,7 +11,6 @@ import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
 import 'package:shared_preferences_foundation/shared_preferences_foundation.dart';
 import 'package:shared_preferences_linux/shared_preferences_linux.dart';
-import 'package:shared_preferences_platform_interface/types.dart';
 import 'package:shared_preferences_windows/shared_preferences_windows.dart';
 
 const String stringKey = 'testString';

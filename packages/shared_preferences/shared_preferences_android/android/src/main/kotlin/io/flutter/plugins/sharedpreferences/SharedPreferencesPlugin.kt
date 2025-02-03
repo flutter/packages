@@ -203,13 +203,20 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
+  override fun getStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): StringListResult? {
     val stringValue = getString(key, options)
     stringValue?.let {
       // The JSON-encoded lists use an extended prefix to distinguish them from
       // lists that using listEncoder.
-      if (stringValue.startsWith(JSON_LIST_PREFIX)) {
-        return stringValue
+      return if (stringValue.startsWith(JSON_LIST_PREFIX)) {
+        StringListResult(stringValue, StringListLookupResultType.JSON_ENCODED)
+      } else if (stringValue.startsWith(LIST_PREFIX)) {
+        StringListResult(null, StringListLookupResultType.PLATFORM_ENCODED)
+      } else {
+        StringListResult(null, StringListLookupResultType.UNEXPECTED_STRING)
       }
     }
     return null
@@ -408,12 +415,21 @@ class SharedPreferencesBackend(
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
+  override fun getStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): StringListResult? {
     val preferences = createSharedPreferences(options)
     if (preferences.contains(key)) {
       val value = preferences.getString(key, "")
-      if (value!!.startsWith(JSON_LIST_PREFIX)) {
-        return value
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that using listEncoder.
+      return if (value!!.startsWith(JSON_LIST_PREFIX)) {
+        StringListResult(value, StringListLookupResultType.JSON_ENCODED)
+      } else if (value.startsWith(LIST_PREFIX)) {
+        StringListResult(null, StringListLookupResultType.PLATFORM_ENCODED)
+      } else {
+        StringListResult(null, StringListLookupResultType.UNEXPECTED_STRING)
       }
     }
     return null
