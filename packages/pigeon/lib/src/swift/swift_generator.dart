@@ -125,6 +125,18 @@ class SwiftProxyApiOptions {
   final bool supportsMacos;
 }
 
+/// Options for Swift implementation of Event Channels.
+class SwiftEventChannelOptions {
+  /// Constructs a [SwiftEventChannelOptions].
+  const SwiftEventChannelOptions({this.includeSharedClasses = true});
+
+  /// Whether to include the error class in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Swift file with Event Channels in the same directory.
+  final bool includeSharedClasses;
+}
+
 /// Class that manages all Swift code generation.
 class SwiftGenerator extends StructuredGenerator<SwiftOptions> {
   /// Instantiates a Swift Generator.
@@ -1340,7 +1352,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required String dartPackageName,
   }) {
     indent.newln();
-    indent.format('''
+    if (api.swiftOptions?.includeSharedClasses ?? true) {
+      indent.format('''
       private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
         private let wrapper: PigeonEventChannelWrapper<ReturnType>
         private var pigeonSink: PigeonEventSink<ReturnType>? = nil
@@ -1390,6 +1403,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       
       }
       ''');
+    }
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {

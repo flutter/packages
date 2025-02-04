@@ -115,6 +115,18 @@ class KotlinProxyApiOptions {
   final int? minAndroidApi;
 }
 
+/// Options for Kotlin implementation of Event Channels.
+class KotlinEventChannelOptions {
+  /// Construct a [KotlinEventChannelOptions].
+  const KotlinEventChannelOptions({this.includeSharedClasses = true});
+
+  /// Whether to include the shared Event Channel classes in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Kotlin file with Event Channels in the same directory.
+  final bool includeSharedClasses;
+}
+
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   /// Instantiates a Kotlin Generator.
@@ -1017,7 +1029,8 @@ if (wrapped == null) {
     required String dartPackageName,
   }) {
     indent.newln();
-    indent.format('''
+    if (api.kotlinOptions?.includeSharedClasses ?? true) {
+      indent.format('''
         private class PigeonStreamHandler<T>(
             val wrapper: PigeonEventChannelWrapper<T>
         ) : EventChannel.StreamHandler {
@@ -1054,6 +1067,7 @@ if (wrapped == null) {
           }
         }
       ''');
+    }
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
