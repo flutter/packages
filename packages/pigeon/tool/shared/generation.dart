@@ -5,8 +5,8 @@
 import 'dart:io' show Platform;
 
 import 'package:path/path.dart' as p;
-import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart';
+import 'package:pigeon/src/generator_tools.dart';
 
 import 'process_utils.dart';
 

@@ -4,12 +4,12 @@
 
 import 'package:graphs/graphs.dart';
 
-import 'ast.dart';
-import 'functional.dart';
-import 'generator.dart';
-import 'generator_tools.dart';
-import 'kotlin/templates.dart';
-import 'pigeon_lib.dart' show TaskQueueType;
+import '../ast.dart';
+import '../functional.dart';
+import '../generator.dart';
+import '../generator_tools.dart';
+import '../pigeon_lib.dart' show TaskQueueType;
+import 'templates.dart';
 
 /// Documentation open symbol.
 const String _docCommentPrefix = '/**';
