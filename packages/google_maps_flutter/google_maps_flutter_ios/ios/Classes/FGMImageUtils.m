@@ -39,7 +39,8 @@ static UIImage *scaledImageWithSize(UIImage *image, CGSize size);
 /// @param height The target height to scale the image to.
 /// @param screenScale The current screen scale.
 /// @return UIImage Returns the scaled UIImage.
-static UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height, CGFloat screenScale);
+static UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height,
+                                           CGFloat screenScale);
 
 UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
                            NSObject<FlutterPluginRegistrar> *registrar, CGFloat screenScale) {
@@ -188,7 +189,8 @@ UIImage *scaledImageWithSize(UIImage *image, CGSize size) {
   }
 }
 
-UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height, CGFloat screenScale) {
+UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height,
+                                    CGFloat screenScale) {
   if (!width && !height) {
     return image;
   }
