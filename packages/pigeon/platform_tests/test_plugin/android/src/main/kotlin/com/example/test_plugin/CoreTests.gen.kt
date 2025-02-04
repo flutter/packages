@@ -1109,6 +1109,7 @@ interface HostIntegrationCoreApi {
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -3404,7 +3405,6 @@ interface HostIntegrationCoreApi {
         }
       }
       run {
-        val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,

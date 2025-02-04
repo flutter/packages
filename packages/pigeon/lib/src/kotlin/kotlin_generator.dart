@@ -654,6 +654,14 @@ if (wrapped == null) {
         indent.addScoped('{', '}', () {
           indent.writeln(
               r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
+          String? serialBackgroundQueue;
+          if (api.methods.any((Method m) =>
+              m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+            serialBackgroundQueue = 'taskQueue';
+            serialBackgroundQueue = 'taskQueue';
+            indent.writeln(
+                'val $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue()');
+          }
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
@@ -664,6 +672,10 @@ if (wrapped == null) {
               parameters: method.parameters,
               returnType: method.returnType,
               isAsynchronous: method.isAsynchronous,
+              serialBackgroundQueue:
+                  method.taskQueueType == TaskQueueType.serialBackgroundThread
+                      ? serialBackgroundQueue
+                      : null,
             );
           }
         });
@@ -1071,8 +1083,8 @@ if (wrapped == null) {
           fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
             sink.error(errorCode, errorMessage, errorDetails)
           }
-  
-          fun endOfStream() { 
+
+          fun endOfStream() {
             sink.endOfStream()
           }
         }
@@ -1249,24 +1261,18 @@ if (wrapped == null) {
     required TypeDeclaration returnType,
     String setHandlerCondition = 'api != null',
     bool isAsynchronous = false,
+    String? serialBackgroundQueue,
     String Function(List<String> safeArgNames, {required String apiVarName})?
         onCreateCall,
   }) {
     indent.write('run ');
     indent.addScoped('{', '}', () {
-      String? taskQueue;
-      if (taskQueueType != TaskQueueType.serial) {
-        taskQueue = 'taskQueue';
-        indent.writeln(
-            'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
-      }
-
       indent.write(
         'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec',
       );
 
-      if (taskQueue != null) {
-        indent.addln(', $taskQueue)');
+      if (serialBackgroundQueue != null) {
+        indent.addln(', $serialBackgroundQueue)');
       } else {
         indent.addln(')');
       }

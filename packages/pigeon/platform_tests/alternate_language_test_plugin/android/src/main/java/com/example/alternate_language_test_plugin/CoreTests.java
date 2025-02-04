@@ -3352,6 +3352,7 @@ public class CoreTests {
         @NonNull String messageChannelSuffix,
         @Nullable HostIntegrationCoreApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
+      BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -6145,7 +6146,6 @@ public class CoreTests {
         }
       }
       {
-        BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
