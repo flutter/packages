@@ -765,7 +765,7 @@ window.addEventListener("error", function(e) {
       // This prevents future additions from causing a breaking change.
       // ignore: unreachable_switch_case
       case _:
-        throw UnsupportedError('Android does not support $mode.');
+        throw UnsupportedError('This platform does not support $mode.');
     }
   }
 
