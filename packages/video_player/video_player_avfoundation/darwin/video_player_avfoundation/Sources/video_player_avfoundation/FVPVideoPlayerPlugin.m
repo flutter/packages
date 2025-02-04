@@ -614,11 +614,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   if (self.displayLink.running && self.selfRefresh) {
     // The number of frames over which to measure average frame duration.
     const int windowSize = 10;
-    // If duration changes by this fraction or more then reset average frame duration measurement.
-    const float resetFraction = 0.01;
     // If measured average frame duration is shorter than this fraction of frame duration obtained
     // from display link then rely solely on refreshes from display link.
     const float durationThreshold = 0.5;
+    // If duration changes by this fraction or more then reset average frame duration measurement.
+    const float resetFraction = 0.01;
 
     if (fabs(duration - self.latestDuration) >= self.latestDuration * resetFraction) {
       self.startTime = currentTime;
