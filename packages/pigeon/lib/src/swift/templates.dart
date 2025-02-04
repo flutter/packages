@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import '../../pigeon.dart';
 import '../generator_tools.dart';
-import '../pigeon.dart';
 
 /// Name of delegate that handles the callback when an object is deallocated
 /// in an `InstanceManager`.

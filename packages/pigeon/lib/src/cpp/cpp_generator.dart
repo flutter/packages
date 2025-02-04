@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'ast.dart';
-import 'functional.dart';
-import 'generator.dart';
-import 'generator_tools.dart';
-import 'pigeon_lib.dart' show Error;
+import '../ast.dart';
+import '../functional.dart';
+import '../generator.dart';
+import '../generator_tools.dart';
+import '../pigeon_lib.dart' show Error;
 
 /// General comment opening token.
 const String _commentPrefix = '//';

@@ -5,11 +5,11 @@
 import 'package:graphs/graphs.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import 'ast.dart';
-import 'functional.dart';
-import 'generator.dart';
-import 'generator_tools.dart';
-import 'swift/templates.dart';
+import '../ast.dart';
+import '../functional.dart';
+import '../generator.dart';
+import '../generator_tools.dart';
+import 'templates.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -2463,10 +2463,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         () {
       indent.writeln('let code: String');
       indent.writeln('let message: String?');
-      indent.writeln('let details: Any?');
+      indent.writeln('let details: Sendable?');
       indent.newln();
       indent.writeScoped(
-          'init(code: String, message: String?, details: Any?) {', '}', () {
+          'init(code: String, message: String?, details: Sendable?) {', '}',
+          () {
         indent.writeln('self.code = code');
         indent.writeln('self.message = message');
         indent.writeln('self.details = details');
