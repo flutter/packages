@@ -468,6 +468,9 @@ private class ProxyApiTestsPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         let identifier = self.readValue()
         let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
           forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+        if instance == nil {
+          print("Failed to find instance with identifier: \(identifier!)")
+        }
         return instance
       default:
         return super.readValue(ofType: type)
@@ -640,42 +643,6 @@ protocol PigeonApiDelegateProxyApiTestClass {
   func attachedField(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
     throws -> ProxyApiSuperClass
   func staticAttachedField(pigeonApi: PigeonApiProxyApiTestClass) throws -> ProxyApiSuperClass
-  func aBool(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Bool
-  func anInt(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Int64
-  func aDouble(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Double
-  func aString(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> String
-  func aUint8List(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> FlutterStandardTypedData
-  func aList(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> [Any?]
-  func aMap(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> [String?: Any?]
-  func anEnum(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> ProxyApiTestEnum
-  func aProxyApi(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> ProxyApiSuperClass
-  func aNullableBool(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> Bool?
-  func aNullableInt(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Int64?
-  func aNullableDouble(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> Double?
-  func aNullableString(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> String?
-  func aNullableUint8List(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> FlutterStandardTypedData?
-  func aNullableList(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> [Any?]?
-  func aNullableMap(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> [String?: Any?]?
-  func aNullableEnum(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> ProxyApiTestEnum?
-  func aNullableProxyApi(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> ProxyApiSuperClass?
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   func noop(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
@@ -2853,64 +2820,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-      pigeonInstance as AnyObject)
-    let aBoolArg = try! pigeonDelegate.aBool(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let anIntArg = try! pigeonDelegate.anInt(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aDoubleArg = try! pigeonDelegate.aDouble(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aStringArg = try! pigeonDelegate.aString(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aUint8ListArg = try! pigeonDelegate.aUint8List(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aListArg = try! pigeonDelegate.aList(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aMapArg = try! pigeonDelegate.aMap(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let anEnumArg = try! pigeonDelegate.anEnum(pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aProxyApiArg = try! pigeonDelegate.aProxyApi(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableBoolArg = try! pigeonDelegate.aNullableBool(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableIntArg = try! pigeonDelegate.aNullableInt(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableDoubleArg = try! pigeonDelegate.aNullableDouble(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableStringArg = try! pigeonDelegate.aNullableString(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableUint8ListArg = try! pigeonDelegate.aNullableUint8List(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableListArg = try! pigeonDelegate.aNullableList(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableMapArg = try! pigeonDelegate.aNullableMap(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableEnumArg = try! pigeonDelegate.aNullableEnum(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let aNullableProxyApiArg = try! pigeonDelegate.aNullableProxyApi(
-      pigeonApi: self, pigeonInstance: pigeonInstance)
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(
-      [
-        pigeonIdentifierArg, aBoolArg, anIntArg, aDoubleArg, aStringArg, aUint8ListArg, aListArg,
-        aMapArg, anEnumArg, aProxyApiArg, aNullableBoolArg, aNullableIntArg, aNullableDoubleArg,
-        aNullableStringArg, aNullableUint8ListArg, aNullableListArg, aNullableMapArg,
-        aNullableEnumArg, aNullableProxyApiArg,
-      ] as [Any?]
-    ) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(Void()))
-      }
-    }
+    print(
+      "Error: Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method."
+    )
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.

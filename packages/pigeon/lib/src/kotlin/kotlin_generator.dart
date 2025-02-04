@@ -835,7 +835,13 @@ if (wrapped == null) {
           override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
             return when (type) {
               $proxyApiCodecInstanceManagerKey.toByte() -> {
-                return registrar.instanceManager.getInstance(readValue(buffer) as Long)
+                val identifier: Long = readValue(buffer) as Long
+                val instance: Any? = registrar.instanceManager.getInstance(identifier)
+                Log.e(
+                  "${proxyApiCodecName(const KotlinOptions())}",
+                  "Failed to find instance with identifier: \$identifier"
+                )
+                return instance
               }
               else -> super.readValueOfType(type, buffer)
             }

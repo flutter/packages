@@ -632,6 +632,9 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         let identifier = self.readValue()
         let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
           forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+        if instance == nil {
+          print("Failed to find instance with identifier: \(identifier!)")
+                            }
         return instance
       default:
         return super.readValue(ofType: type)

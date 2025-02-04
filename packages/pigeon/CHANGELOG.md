@@ -1,3 +1,10 @@
+## 24.0.1
+
+* [swift, kotlin] Adds an error message when a ProxyAPI callback that returns a non-null value is
+  nullable.
+* [swift, kotlin] Adds an error message in the `ProxyApiBaseCodec` when an instance could not be
+  retrieved when reading a value.
+
 ## 24.0.0
 
 * **Breaking Change** Relocates some files in `lib` that were not intended for direct client use to `lib/src`.
