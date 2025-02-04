@@ -64,6 +64,7 @@ If you need marker clustering support, modify the <head> tag to load the [js-mar
 ```
 
 ## Heatmaps
+
 To use heatmaps, add `&libraries=visualization` to the end of the URL. See [the documentation](https://developers.google.com/maps/documentation/javascript/libraries) for more information.
 
 ## Limitations of the web version
