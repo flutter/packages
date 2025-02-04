@@ -86,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            const DetailsRoute(detailId: 'DetailsId').go(context);
+            const DetailsRoute(detailId: 'DetailsId').goRelative(context);
           },
           child: const Text('Go to the Details screen'),
         ),
@@ -119,7 +119,7 @@ class DetailsScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () => const SettingsRoute(
                 settingId: 'SettingsId',
-              ).go(context),
+              ).goRelative(context),
               child: const Text('Go to the Settings screen'),
             ),
           ],

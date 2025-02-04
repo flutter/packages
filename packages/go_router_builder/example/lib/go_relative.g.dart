@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: always_specify_types, public_member_api_docs
-
 part of 'go_relative.dart';
 
 // **************************************************************************
@@ -51,11 +49,21 @@ extension $DetailsRouteExtension on DetailsRoute {
         detailId: state.pathParameters['detailId']!,
       );
 
-  String get location => './${GoRouteData.$location(
+  String get location => GoRouteData.$location(
         'details/${Uri.encodeComponent(detailId)}',
-      )}';
+      );
+  String get relativeLocation => './$location';
 
-  void go(BuildContext context) => context.go(location);
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
 }
 
 extension $SettingsRouteExtension on SettingsRoute {
@@ -63,9 +71,19 @@ extension $SettingsRouteExtension on SettingsRoute {
         settingId: state.pathParameters['settingId']!,
       );
 
-  String get location => './${GoRouteData.$location(
+  String get location => GoRouteData.$location(
         'settings/${Uri.encodeComponent(settingId)}',
-      )}';
+      );
+  String get relativeLocation => './$location';
 
-  void go(BuildContext context) => context.go(location);
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
 }
