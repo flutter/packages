@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
 
@@ -54,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns true if a ground overlay with the given identifier exists on the map.
 - (bool)hasGroundOverlaysWithIdentifier:(NSString *)identifier;
 
-/// Returns FGMPlatformGroundOverlay for identifier.
+/// Returns the ground overlay with the given identifier.
 - (nullable FGMPlatformGroundOverlay *)groundOverlayWithIdentifier:(NSString *)identifier;
 @end
 

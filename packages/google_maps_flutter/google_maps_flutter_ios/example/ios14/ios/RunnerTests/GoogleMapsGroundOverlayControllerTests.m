@@ -2,15 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import <google_maps_flutter_ios/FGMGroundOverlayController_Test.h>
+#import <google_maps_flutter_ios/messages.g.h>
+
 @import google_maps_flutter_ios;
 @import google_maps_flutter_ios.Test;
 @import XCTest;
 @import GoogleMaps;
-
-#import <google_maps_flutter_ios/FGMGroundOverlayController_Test.h>
-
 #import <OCMock/OCMock.h>
-#import <google_maps_flutter_ios/messages.g.h>
+
 #import "PartiallyMockedMapView.h"
 
 @interface GoogleMapsGroundOverlayControllerTests : XCTestCase

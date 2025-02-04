@@ -5,10 +5,41 @@
 #import "FGMImageUtils.h"
 #import "Foundation/Foundation.h"
 
-static UIImage *scaleImage(UIImage *image, double scale);
+/// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
+/// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'
+/// message handling. It will be removed when the deprecated image bitmap description type
+/// 'fromBytes' is removed from the platform interface.
+static UIImage *scaledImage(UIImage *image, double scale);
+
+/// Creates a scaled version of the provided UIImage based on a specified scale factor. If the
+/// scale factor differs from the image's current scale by more than a small epsilon-delta (to
+/// account for minor floating-point inaccuracies), a new UIImage object is created with the
+/// specified scale. Otherwise, the original image is returned.
+///
+/// @param image The UIImage to scale.
+/// @param scale The factor by which to scale the image.
+/// @return UIImage Returns the scaled UIImage.
 static UIImage *scaledImageWithScale(UIImage *image, CGFloat scale);
+
+/// Scales an input UIImage to a specified size. If the aspect ratio of the input image
+/// closely matches the target size, indicated by a small epsilon-delta, the image's scale
+/// property is updated instead of resizing the image. If the aspect ratios differ beyond this
+/// threshold, the method redraws the image at the target size.
+///
+/// @param image The UIImage to scale.
+/// @param size The target CGSize to scale the image to.
+/// @return UIImage Returns the scaled UIImage.
 static UIImage *scaledImageWithSize(UIImage *image, CGSize size);
-static UIImage *scaledImage(UIImage *image, NSNumber *width, NSNumber *height, CGFloat screenScale);
+
+/// Scales an input UIImage to a specified width and height preserving aspect ratio if both
+/// widht and height are not given..
+///
+/// @param image The UIImage to scale.
+/// @param width The target width to scale the image to.
+/// @param height The target height to scale the image to.
+/// @param screenScale The current screen scale.
+/// @return UIImage Returns the scaled UIImage.
+static UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height, CGFloat screenScale);
 
 UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
                            NSObject<FlutterPluginRegistrar> *registrar, CGFloat screenScale) {
@@ -39,7 +70,7 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     FGMPlatformBitmapAssetImage *bitmapAssetImage = bitmap;
     image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAssetImage.name]];
-    image = scaleImage(image, bitmapAssetImage.scale);
+    image = scaledImage(image, bitmapAssetImage.scale);
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapBytes class]]) {
     // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
@@ -62,7 +93,7 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
       NSNumber *height = bitmapAssetMap.height;
       if (width || height) {
         image = scaledImageWithScale(image, screenScale);
-        image = scaledImage(image, width, height, screenScale);
+        image = scaledImageWithWidthHeight(image, width, height, screenScale);
       } else {
         image = scaledImageWithScale(image, bitmapAssetMap.imagePixelRatio);
       }
@@ -80,7 +111,7 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
         if (width || height) {
           // Before scaling the image, image must be in screenScale.
           image = scaledImageWithScale(image, screenScale);
-          image = scaledImage(image, width, height, screenScale);
+          image = scaledImageWithWidthHeight(image, width, height, screenScale);
         } else {
           image = scaledImageWithScale(image, bitmapBytesMap.imagePixelRatio);
         }
@@ -98,11 +129,7 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
   return image;
 }
 
-/// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
-/// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'
-/// message handling. It will be removed when the deprecated image bitmap description type
-/// 'fromBytes' is removed from the platform interface.
-UIImage *scaleImage(UIImage *image, double scale) {
+UIImage *scaledImage(UIImage *image, double scale) {
   if (fabs(scale - 1) > 1e-3) {
     return [UIImage imageWithCGImage:[image CGImage]
                                scale:(image.scale * scale)
@@ -111,14 +138,6 @@ UIImage *scaleImage(UIImage *image, double scale) {
   return image;
 }
 
-/// Creates a scaled version of the provided UIImage based on a specified scale factor. If the
-/// scale factor differs from the image's current scale by more than a small epsilon-delta (to
-/// account for minor floating-point inaccuracies), a new UIImage object is created with the
-/// specified scale. Otherwise, the original image is returned.
-///
-/// @param image The UIImage to scale.
-/// @param scale The factor by which to scale the image.
-/// @return UIImage Returns the scaled UIImage.
 UIImage *scaledImageWithScale(UIImage *image, CGFloat scale) {
   if (fabs(scale - image.scale) > DBL_EPSILON) {
     return [UIImage imageWithCGImage:[image CGImage]
@@ -128,14 +147,6 @@ UIImage *scaledImageWithScale(UIImage *image, CGFloat scale) {
   return image;
 }
 
-/// Scales an input UIImage to a specified size. If the aspect ratio of the input image
-/// closely matches the target size, indicated by a small epsilon-delta, the image's scale
-/// property is updated instead of resizing the image. If the aspect ratios differ beyond this
-/// threshold, the method redraws the image at the target size.
-///
-/// @param image The UIImage to scale.
-/// @param size The target CGSize to scale the image to.
-/// @return UIImage Returns the scaled UIImage.
 UIImage *scaledImageWithSize(UIImage *image, CGSize size) {
   CGFloat originalPixelWidth = image.size.width * image.scale;
   CGFloat originalPixelHeight = image.size.height * image.scale;
@@ -177,15 +188,7 @@ UIImage *scaledImageWithSize(UIImage *image, CGSize size) {
   }
 }
 
-/// Scales an input UIImage to a specified width and height preserving aspect ratio if both
-/// widht and height are not given..
-///
-/// @param image The UIImage to scale.
-/// @param width The target width to scale the image to.
-/// @param height The target height to scale the image to.
-/// @param screenScale The current screen scale.
-/// @return UIImage Returns the scaled UIImage.
-UIImage *scaledImage(UIImage *image, NSNumber *width, NSNumber *height, CGFloat screenScale) {
+UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNumber *height, CGFloat screenScale) {
   if (!width && !height) {
     return image;
   }

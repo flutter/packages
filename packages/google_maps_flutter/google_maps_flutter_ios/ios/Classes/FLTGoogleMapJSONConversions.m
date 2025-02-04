@@ -118,12 +118,12 @@ FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOver
                                                     NSNumber *zoomLevel) {
   /// Dummy image is used as image is required field of FGMPlatformGroundOverlay and converting
   /// image back to bitmap image is not currently supported.
-  FGMPlatformBitmap *mockImage =
+  FGMPlatformBitmap *placeholderImage =
       [FGMPlatformBitmap makeWithBitmap:[FGMPlatformBitmapDefaultMarker makeWithHue:0]];
   if (isCreatedWithBounds) {
     return [FGMPlatformGroundOverlay
         makeWithGroundOverlayId:overlayId
-                          image:mockImage
+                          image:placeholderImage
                        position:nil
                          bounds:[FGMPlatformLatLngBounds
                                     makeWithNortheast:[FGMPlatformLatLng
@@ -148,7 +148,7 @@ FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOver
   } else {
     return [FGMPlatformGroundOverlay
         makeWithGroundOverlayId:overlayId
-                          image:mockImage
+                          image:placeholderImage
                        position:[FGMPlatformLatLng
                                     makeWithLatitude:groundOverlay.position.latitude
                                            longitude:groundOverlay.position.longitude]
