@@ -1,7 +1,7 @@
 ## 24.0.1
 
-* [swift, kotlin] Adds an error message when a ProxyAPI callback that returns a non-null value is
-  nullable.
+* [swift, kotlin] Adds an error message when a ProxyAPI callback method that returns a non-null
+  value is nullable.
 * [swift, kotlin] Adds an error message in the `ProxyApiBaseCodec` when an instance could not be
   retrieved when reading a value.
 

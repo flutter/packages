@@ -1612,7 +1612,7 @@ abstract class MyClass {
       expect(
         parseResult.errors[0].message,
         contains(
-          'Callback methods that return a non-null value must be non-null: aCallbackMethod',
+          'Callback methods that return a non-null value must be non-null: aCallbackMethod.',
         ),
       );
     });
