@@ -424,7 +424,9 @@ private class ProxyApiTestsPigeonProxyApiBaseCodec(
       128.toByte() -> {
         val identifier: Long = readValue(buffer) as Long
         val instance: Any? = registrar.instanceManager.getInstance(identifier)
-        Log.e("PigeonProxyApiBaseCodec", "Failed to find instance with identifier: $identifier")
+        if (instance == null) {
+          Log.e("PigeonProxyApiBaseCodec", "Failed to find instance with identifier: $identifier")
+        }
         return instance
       }
       else -> super.readValueOfType(type, buffer)
