@@ -1600,7 +1600,7 @@ abstract class MyClass {
       );
     });
 
-    test('callback methods will non-null return types must be non-null', () {
+    test('callback methods with non-null return types must be non-null', () {
       const String code = '''
 @ProxyApi()
 abstract class MyClass {
