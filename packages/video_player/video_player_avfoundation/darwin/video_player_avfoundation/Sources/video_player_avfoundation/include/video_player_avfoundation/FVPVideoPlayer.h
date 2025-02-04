@@ -72,8 +72,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
 /// The plugin registrar, to obtain view information from.
 @property(nonatomic, readonly) NSObject<FlutterPluginRegistrar> *registrar;
-/// The CALayer associated with the Flutter view this plugin is associated with, if any.
-@property(nonatomic, readonly, nullable) CALayer *flutterViewLayer;
 /// The Flutter event sink used to send events to the Flutter engine.
 @property(nonatomic) FlutterEventSink eventSink;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.
