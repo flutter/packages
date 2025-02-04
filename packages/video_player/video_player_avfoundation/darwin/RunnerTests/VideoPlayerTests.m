@@ -8,13 +8,10 @@
 
 #import <OCMock/OCMock.h>
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
+#import <video_player_avfoundation/FVPNativeVideoViewFactory.h>
 #import <video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h>
 #import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
 #import <video_player_avfoundation/FVPVideoPlayer_Test.h>
-
-#if TARGET_OS_IOS
-#import <video_player_avfoundation/FVPNativeVideoViewFactory.h>
-#endif
 
 // TODO(stuartmorgan): Convert to using mock registrars instead.
 NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
@@ -887,7 +884,6 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                                handler:nil];  // No assertions needed. Lack of crash is a success.
 }
 
-#if TARGET_OS_IOS
 - (void)testNativeVideoViewFactoryRegistration {
   NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
   NSObject<FlutterPluginRegistrar> *registrar =
@@ -901,7 +897,6 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
   OCMVerifyAll(mockRegistrar);
 }
-#endif
 
 - (void)testPublishesInRegistration {
   NSString *pluginKey = @"TestRegistration";

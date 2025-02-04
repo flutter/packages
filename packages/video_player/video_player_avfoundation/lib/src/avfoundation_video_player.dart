@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
@@ -53,10 +52,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     final DataSource dataSource = options.dataSource;
-    // Platform views are not supported on macOS yet. Use texture view instead.
-    final VideoViewType viewType = defaultTargetPlatform == TargetPlatform.macOS
-        ? VideoViewType.textureView
-        : options.viewType;
+    final VideoViewType viewType = options.viewType;
 
     String? asset;
     String? packageName;

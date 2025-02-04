@@ -10,16 +10,12 @@
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
+#import "./include/video_player_avfoundation/FVPNativeVideoViewFactory.h"
 #import "./include/video_player_avfoundation/FVPTextureBasedVideoPlayer.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
 // Relative path is needed for messages.g.h. See
 // https://github.com/flutter/packages/pull/6675/#discussion_r1591210702
 #import "./include/video_player_avfoundation/messages.g.h"
-
-#if TARGET_OS_IOS
-// Platform views are only supported on iOS as of now.
-#import "./include/video_player_avfoundation/FVPNativeVideoViewFactory.h"
-#endif
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -53,15 +49,12 @@
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FVPVideoPlayerPlugin *instance = [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   [registrar publish:instance];
-#if TARGET_OS_IOS
-  // Platform views are only supported on iOS as of now.
   FVPNativeVideoViewFactory *factory =
       [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
                                         playerByIdProvider:^FVPVideoPlayer *(NSNumber *playerId) {
                                           return instance->_playersById[playerId];
                                         }];
   [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
-#endif
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
 }
 
