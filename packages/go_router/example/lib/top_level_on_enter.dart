@@ -55,8 +55,12 @@ class App extends StatelessWidget {
       /// 1. Block navigation and perform actions (return false)
       /// 2. Allow navigation to proceed (return true)
       /// 3. Show loading states during async operations
-      onEnter: (BuildContext context, GoRouterState currentState,
-          GoRouterState nextState) {
+      onEnter: (
+        BuildContext context,
+        GoRouterState currentState,
+        GoRouterState nextState,
+        GoRouter goRouter,
+      ) {
         // Track analytics for deep links
         if (nextState.uri.hasQuery || nextState.uri.hasFragment) {
           _handleDeepLinkTracking(nextState.uri);

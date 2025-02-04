@@ -27,6 +27,7 @@ typedef OnEnter = bool Function(
   BuildContext context,
   GoRouterState currentState,
   GoRouterState nextState,
+  GoRouter goRouter,
 );
 
 /// The route configuration for GoRouter configured by the app.

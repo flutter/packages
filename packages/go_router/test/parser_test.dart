@@ -647,8 +647,12 @@ void main() {
 
       final GoRouter router = GoRouter(
         initialLocation: '/',
-        onEnter:
-            (BuildContext context, GoRouterState current, GoRouterState next) {
+        onEnter: (
+          BuildContext context,
+          GoRouterState current,
+          GoRouterState next,
+          GoRouter goRouter,
+        ) {
           onEnterCallCount++;
           capturedCurrentState = current;
           capturedNextState = next;

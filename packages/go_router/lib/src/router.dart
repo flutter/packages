@@ -282,6 +282,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       onParserException: parserExceptionHandler,
       configuration: configuration,
       initialLocation: initialLocation,
+      fallbackRouter: this,
     );
 
     routeInformationProvider = GoRouteInformationProvider(

@@ -32,8 +32,10 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   GoRouteInformationParser({
     required this.configuration,
     required String? initialLocation,
+    required GoRouter fallbackRouter,
     required this.onParserException,
-  })  : _routeMatchListCodec = RouteMatchListCodec(configuration),
+  })  : _fallbackRouter = fallbackRouter,
+        _routeMatchListCodec = RouteMatchListCodec(configuration),
         _initialLocation = initialLocation;
 
   /// The route configuration used for parsing [RouteInformation]s.
@@ -51,6 +53,25 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   /// Store the last successful match list so we can truly "stay" on the same route.
   RouteMatchList? _lastMatchList;
+
+  /// The fallback [GoRouter] instance used during route information parsing.
+  ///
+  /// During initial app launch or deep linking, route parsing may occur before the
+  /// [InheritedGoRouter] is built in the widget tree. This makes [GoRouter.of] or
+  /// [GoRouter.maybeOf] unavailable through [BuildContext].
+  ///
+  /// When route parsing happens in these early stages, [_fallbackRouter] ensures that
+  /// navigation APIs remain accessible to features like [OnEnter], which may need to
+  /// perform navigation before the widget tree is fully built.
+  ///
+  /// This is used internally by [GoRouter] to pass its own instance as
+  /// the fallback. You typically don't need to provide this when constructing a
+  /// [GoRouteInformationParser] directly.
+  ///
+  /// See also:
+  ///  * [parseRouteInformationWithDependencies], which uses this fallback router
+  ///    when [BuildContext]-based router access is unavailable.
+  final GoRouter _fallbackRouter;
 
   /// The future of current route parsing.
   ///
@@ -116,6 +137,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         context,
         currentState,
         nextState,
+        GoRouter.maybeOf(context) ?? _fallbackRouter,
       );
 
       // If navigation was intercepted (canEnter == false):
