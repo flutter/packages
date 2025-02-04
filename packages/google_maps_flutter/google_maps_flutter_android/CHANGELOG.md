@@ -1,3 +1,7 @@
+## 2.15.0
+
+* Adds support for ground overlay.
+
 ## 2.14.12
 
 * Updates androidx.annotation:annotation to 1.9.1.

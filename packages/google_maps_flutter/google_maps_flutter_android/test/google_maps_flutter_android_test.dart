@@ -625,6 +625,161 @@ void main() {
     expectTileOverlay(toAdd.first, object3);
   });
 
+  test('updateGroundOverlays passes expected arguments', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final AssetMapBitmap image = AssetMapBitmap(
+      'assets/red_square.png',
+      imagePixelRatio: 1.0,
+      bitmapScaling: MapBitmapScaling.none,
+    );
+
+    final GroundOverlay object1 = GroundOverlay.fromBounds(
+        groundOverlayId: const GroundOverlayId('1'),
+        bounds: LatLngBounds(
+            southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)),
+        image: image);
+    final GroundOverlay object2old = GroundOverlay.fromBounds(
+        groundOverlayId: const GroundOverlayId('2'),
+        bounds: LatLngBounds(
+            southwest: const LatLng(10, 20), northeast: const LatLng(30, 40)),
+        image: image);
+    final GroundOverlay object2new = object2old.copyWith(
+      visibleParam: false,
+      bearingParam: 10,
+      clickableParam: false,
+      transparencyParam: 0.5,
+      zIndexParam: 100,
+    );
+    final GroundOverlay object3 = GroundOverlay.fromPosition(
+      groundOverlayId: const GroundOverlayId('3'),
+      position: const LatLng(10, 20),
+      width: 100,
+      image: image,
+    );
+    await maps.updateGroundOverlays(
+        GroundOverlayUpdates.from(<GroundOverlay>{object1, object2old},
+            <GroundOverlay>{object2new, object3}),
+        mapId: mapId);
+
+    final VerificationResult verification =
+        verify(api.updateGroundOverlays(captureAny, captureAny, captureAny));
+
+    final List<PlatformGroundOverlay> toAdd =
+        verification.captured[0] as List<PlatformGroundOverlay>;
+    final List<PlatformGroundOverlay> toChange =
+        verification.captured[1] as List<PlatformGroundOverlay>;
+    final List<String> toRemove = verification.captured[2] as List<String>;
+    // Object one should be removed.
+    expect(toRemove.length, 1);
+    expect(toRemove.first, object1.groundOverlayId.value);
+    // Object two should be changed.
+    {
+      expect(toChange.length, 1);
+      final PlatformGroundOverlay firstChanged = toChange.first;
+      expect(firstChanged.anchor?.x, object2new.anchor?.dx);
+      expect(firstChanged.anchor?.y, object2new.anchor?.dy);
+      expect(firstChanged.bearing, object2new.bearing);
+      expect(firstChanged.bounds?.northeast.latitude,
+          object2new.bounds?.northeast.latitude);
+      expect(firstChanged.bounds?.northeast.longitude,
+          object2new.bounds?.northeast.longitude);
+      expect(firstChanged.bounds?.southwest.latitude,
+          object2new.bounds?.southwest.latitude);
+      expect(firstChanged.bounds?.southwest.longitude,
+          object2new.bounds?.southwest.longitude);
+      expect(firstChanged.visible, object2new.visible);
+      expect(firstChanged.clickable, object2new.clickable);
+      expect(firstChanged.zIndex, object2new.zIndex);
+      expect(firstChanged.position?.latitude, object2new.position?.latitude);
+      expect(firstChanged.position?.longitude, object2new.position?.longitude);
+      expect(firstChanged.width, object2new.width);
+      expect(firstChanged.height, object2new.height);
+      expect(firstChanged.transparency, object2new.transparency);
+      expect(
+          firstChanged.image.bitmap.runtimeType,
+          GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+                  object2new.image)
+              .bitmap
+              .runtimeType);
+    }
+    // Object three should be added.
+    {
+      expect(toAdd.length, 1);
+      final PlatformGroundOverlay firstAdded = toAdd.first;
+      expect(firstAdded.anchor?.x, object3.anchor?.dx);
+      expect(firstAdded.anchor?.y, object3.anchor?.dy);
+      expect(firstAdded.bearing, object3.bearing);
+      expect(firstAdded.bounds?.northeast.latitude,
+          object3.bounds?.northeast.latitude);
+      expect(firstAdded.bounds?.northeast.longitude,
+          object3.bounds?.northeast.longitude);
+      expect(firstAdded.bounds?.southwest.latitude,
+          object3.bounds?.southwest.latitude);
+      expect(firstAdded.bounds?.southwest.longitude,
+          object3.bounds?.southwest.longitude);
+      expect(firstAdded.visible, object3.visible);
+      expect(firstAdded.clickable, object3.clickable);
+      expect(firstAdded.zIndex, object3.zIndex);
+      expect(firstAdded.position?.latitude, object3.position?.latitude);
+      expect(firstAdded.position?.longitude, object3.position?.longitude);
+      expect(firstAdded.width, object3.width);
+      expect(firstAdded.height, object3.height);
+      expect(firstAdded.transparency, object3.transparency);
+      expect(
+          firstAdded.image.bitmap.runtimeType,
+          GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(
+                  object3.image)
+              .bitmap
+              .runtimeType);
+    }
+  });
+
+  test(
+      'updateGroundOverlays throws assertion error on unsupported ground overlays',
+      () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    final AssetMapBitmap image = AssetMapBitmap(
+      'assets/red_square.png',
+      imagePixelRatio: 1.0,
+      bitmapScaling: MapBitmapScaling.none,
+    );
+
+    final GroundOverlay groundOverlay = GroundOverlay.fromPosition(
+      groundOverlayId: const GroundOverlayId('1'),
+      position: const LatLng(10, 20),
+      // Assert should be thrown because width is not set for position-based
+      // ground overlay on Android.
+      // ignore: avoid_redundant_argument_values
+      width: null,
+      image: image,
+    );
+
+    expect(
+      () async => maps.updateGroundOverlays(
+          GroundOverlayUpdates.from(
+              const <GroundOverlay>{}, <GroundOverlay>{groundOverlay}),
+          mapId: mapId),
+      throwsAssertionError,
+    );
+
+    expect(
+      () async => maps.buildViewWithConfiguration(1, (int _) {},
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: CameraPosition(target: LatLng(0, 0)),
+            textDirection: TextDirection.ltr,
+          ),
+          mapObjects:
+              MapObjects(groundOverlays: <GroundOverlay>{groundOverlay})),
+      throwsAssertionError,
+    );
+  });
+
   test('markers send drag event to correct streams', () async {
     const int mapId = 1;
     const String dragStartId = 'drag-start-marker';
@@ -757,6 +912,24 @@ void main() {
 
     // Simulate message from the native side.
     callbackHandler.onPolylineTap(objectId);
+
+    expect((await stream.next).value.value, equals(objectId));
+  });
+
+  test('ground overlays send tap events to correct stream', () async {
+    const int mapId = 1;
+    const String objectId = 'object-id';
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
+
+    final StreamQueue<GroundOverlayTapEvent> stream =
+        StreamQueue<GroundOverlayTapEvent>(
+            maps.onGroundOverlayTap(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onGroundOverlayTap(objectId);
 
     expect((await stream.next).value.value, equals(objectId));
   });

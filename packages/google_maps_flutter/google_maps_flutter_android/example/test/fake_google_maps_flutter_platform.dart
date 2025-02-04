@@ -104,6 +104,15 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.groundOverlayUpdates.add(groundOverlayUpdates);
+    await _fakeDelay();
+  }
+
+  @override
   Future<void> clearTileCache(
     TileOverlayId tileOverlayId, {
     required int mapId,
@@ -241,6 +250,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return mapEventStreamController.stream.whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   Stream<MapTapEvent> onTap({required int mapId}) {
     return mapEventStreamController.stream.whereType<MapTapEvent>();
   }
@@ -298,6 +312,8 @@ class PlatformMapStateRecorder {
   }) {
     clusterManagerUpdates.add(ClusterManagerUpdates.from(
         const <ClusterManager>{}, mapObjects.clusterManagers));
+    groundOverlayUpdates.add(GroundOverlayUpdates.from(
+        const <GroundOverlay>{}, mapObjects.groundOverlays));
     markerUpdates.add(MarkerUpdates.from(const <Marker>{}, mapObjects.markers));
     polygonUpdates
         .add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
@@ -318,4 +334,6 @@ class PlatformMapStateRecorder {
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
   final List<ClusterManagerUpdates> clusterManagerUpdates =
       <ClusterManagerUpdates>[];
+  final List<GroundOverlayUpdates> groundOverlayUpdates =
+      <GroundOverlayUpdates>[];
 }
