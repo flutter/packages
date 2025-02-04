@@ -78,16 +78,16 @@ class WebKitProxy {
       WKWebView,
       String?,
     )? didStartProvisionalNavigation,
-    Future<NavigationActionPolicy> Function(
+    required Future<NavigationActionPolicy> Function(
       WKNavigationDelegate,
       WKWebView,
       WKNavigationAction,
-    )? decidePolicyForNavigationAction,
-    Future<NavigationResponsePolicy> Function(
+    ) decidePolicyForNavigationAction,
+    required Future<NavigationResponsePolicy> Function(
       WKNavigationDelegate,
       WKWebView,
       WKNavigationResponse,
-    )? decidePolicyForNavigationResponse,
+    ) decidePolicyForNavigationResponse,
     void Function(
       WKNavigationDelegate,
       WKWebView,
@@ -102,11 +102,11 @@ class WebKitProxy {
       WKNavigationDelegate,
       WKWebView,
     )? webViewWebContentProcessDidTerminate,
-    Future<AuthenticationChallengeResponse> Function(
+    required Future<AuthenticationChallengeResponse> Function(
       WKNavigationDelegate,
       WKWebView,
       URLAuthenticationChallenge,
-    )? didReceiveAuthenticationChallenge,
+    ) didReceiveAuthenticationChallenge,
   }) newWKNavigationDelegate;
 
   /// Constructs [NSObject].
@@ -137,25 +137,25 @@ class WebKitProxy {
       WKWebViewConfiguration,
       WKNavigationAction,
     )? onCreateWebView,
-    Future<PermissionDecision> Function(
+    required Future<PermissionDecision> Function(
       WKUIDelegate,
       WKWebView,
       WKSecurityOrigin,
       WKFrameInfo,
       MediaCaptureType,
-    )? requestMediaCapturePermission,
+    ) requestMediaCapturePermission,
     Future<void> Function(
       WKUIDelegate,
       WKWebView,
       String,
       WKFrameInfo,
     )? runJavaScriptAlertPanel,
-    Future<bool> Function(
+    required Future<bool> Function(
       WKUIDelegate,
       WKWebView,
       String,
       WKFrameInfo,
-    )? runJavaScriptConfirmPanel,
+    ) runJavaScriptConfirmPanel,
     Future<String?> Function(
       WKUIDelegate,
       WKWebView,

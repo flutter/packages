@@ -92,25 +92,25 @@ void main() {
               WKWebViewConfiguration,
               WKNavigationAction,
             )? onCreateWebView,
-            Future<PermissionDecision> Function(
+            required Future<PermissionDecision> Function(
               WKUIDelegate,
               WKWebView,
               WKSecurityOrigin,
               WKFrameInfo,
               MediaCaptureType,
-            )? requestMediaCapturePermission,
+            ) requestMediaCapturePermission,
             Future<void> Function(
               WKUIDelegate,
               WKWebView,
               String,
               WKFrameInfo,
             )? runJavaScriptAlertPanel,
-            Future<bool> Function(
+            required Future<bool> Function(
               WKUIDelegate,
               WKWebView,
               String,
               WKFrameInfo,
-            )? runJavaScriptConfirmPanel,
+            ) runJavaScriptConfirmPanel,
             Future<String?> Function(
               WKUIDelegate,
               WKWebView,
@@ -1146,7 +1146,14 @@ void main() {
 
     test('Requests to open a new window loads request in same window', () {
       // Reset last created delegate.
-      CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate();
+      CapturingUIDelegate.lastCreatedDelegate = CapturingUIDelegate(
+        requestMediaCapturePermission: (_, __, ___, ____, _____) async {
+          return PermissionDecision.deny;
+        },
+        runJavaScriptConfirmPanel: (_, __, ___, ____) async {
+          return false;
+        },
+      );
 
       // Create a new WebKitWebViewController that sets
       // CapturingUIDelegate.lastCreatedDelegate.
@@ -1383,8 +1390,8 @@ void main() {
         WKSecurityOrigin origin,
         WKFrameInfo frame,
         MediaCaptureType type,
-      ) onPermissionRequestCallback = CapturingUIDelegate
-          .lastCreatedDelegate.requestMediaCapturePermission!;
+      ) onPermissionRequestCallback =
+          CapturingUIDelegate.lastCreatedDelegate.requestMediaCapturePermission;
 
       final PermissionDecision decision = await onPermissionRequestCallback(
         CapturingUIDelegate.lastCreatedDelegate,
@@ -1464,7 +1471,7 @@ void main() {
           String message,
           WKFrameInfo frame,
         ) onJavaScriptConfirmPanel =
-            CapturingUIDelegate.lastCreatedDelegate.runJavaScriptConfirmPanel!;
+            CapturingUIDelegate.lastCreatedDelegate.runJavaScriptConfirmPanel;
 
         final MockURLRequest mockRequest = MockURLRequest();
         when(mockRequest.getUrl()).thenAnswer(
@@ -1835,31 +1842,51 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
   CapturingNavigationDelegate({
     super.didFinishNavigation,
     super.didStartProvisionalNavigation,
-    super.decidePolicyForNavigationResponse,
+    required super.decidePolicyForNavigationResponse,
     super.didFailNavigation,
     super.didFailProvisionalNavigation,
-    super.decidePolicyForNavigationAction,
+    required super.decidePolicyForNavigationAction,
     super.webViewWebContentProcessDidTerminate,
-    super.didReceiveAuthenticationChallenge,
+    required super.didReceiveAuthenticationChallenge,
   }) : super.pigeon_detached(pigeon_instanceManager: TestInstanceManager()) {
     lastCreatedDelegate = this;
   }
   static CapturingNavigationDelegate lastCreatedDelegate =
-      CapturingNavigationDelegate();
+      CapturingNavigationDelegate(
+    decidePolicyForNavigationAction: (_, __, ___) async {
+      return NavigationActionPolicy.cancel;
+    },
+    decidePolicyForNavigationResponse: (_, __, ___) async {
+      return NavigationResponsePolicy.cancel;
+    },
+    didReceiveAuthenticationChallenge: (_, __, ___) async {
+      return AuthenticationChallengeResponse.pigeon_detached(
+        disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
+        pigeon_instanceManager: TestInstanceManager(),
+      );
+    },
+  );
 }
 
 // Records the last created instance of itself.
 class CapturingUIDelegate extends WKUIDelegate {
   CapturingUIDelegate({
     super.onCreateWebView,
-    super.requestMediaCapturePermission,
+    required super.requestMediaCapturePermission,
     super.runJavaScriptAlertPanel,
-    super.runJavaScriptConfirmPanel,
+    required super.runJavaScriptConfirmPanel,
     super.runJavaScriptTextInputPanel,
   }) : super.pigeon_detached(pigeon_instanceManager: TestInstanceManager()) {
     lastCreatedDelegate = this;
   }
-  static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate();
+  static CapturingUIDelegate lastCreatedDelegate = CapturingUIDelegate(
+    requestMediaCapturePermission: (_, __, ___, ____, _____) async {
+      return PermissionDecision.deny;
+    },
+    runJavaScriptConfirmPanel: (_, __, ___, ____) async {
+      return false;
+    },
+  );
 }
 
 class CapturingUIScrollViewDelegate extends UIScrollViewDelegate {

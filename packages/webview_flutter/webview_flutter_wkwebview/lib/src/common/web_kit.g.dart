@@ -3963,12 +3963,12 @@ class WKNavigationDelegate extends NSObject {
     super.observeValue,
     this.didFinishNavigation,
     this.didStartProvisionalNavigation,
-    this.decidePolicyForNavigationAction,
-    this.decidePolicyForNavigationResponse,
+    required this.decidePolicyForNavigationAction,
+    required this.decidePolicyForNavigationResponse,
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
-    this.didReceiveAuthenticationChallenge,
+    required this.didReceiveAuthenticationChallenge,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -4011,12 +4011,12 @@ class WKNavigationDelegate extends NSObject {
     super.observeValue,
     this.didFinishNavigation,
     this.didStartProvisionalNavigation,
-    this.decidePolicyForNavigationAction,
-    this.decidePolicyForNavigationResponse,
+    required this.decidePolicyForNavigationAction,
+    required this.decidePolicyForNavigationResponse,
     this.didFailNavigation,
     this.didFailProvisionalNavigation,
     this.webViewWebContentProcessDidTerminate,
-    this.didReceiveAuthenticationChallenge,
+    required this.didReceiveAuthenticationChallenge,
   }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec
@@ -4097,7 +4097,7 @@ class WKNavigationDelegate extends NSObject {
     WKNavigationDelegate pigeon_instance,
     WKWebView webView,
     WKNavigationAction navigationAction,
-  )? decidePolicyForNavigationAction;
+  ) decidePolicyForNavigationAction;
 
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
@@ -4123,7 +4123,7 @@ class WKNavigationDelegate extends NSObject {
     WKNavigationDelegate pigeon_instance,
     WKWebView webView,
     WKNavigationResponse navigationResponse,
-  )? decidePolicyForNavigationResponse;
+  ) decidePolicyForNavigationResponse;
 
   /// Tells the delegate that an error occurred during navigation.
   ///
@@ -4223,13 +4223,12 @@ class WKNavigationDelegate extends NSObject {
     WKNavigationDelegate pigeon_instance,
     WKWebView webView,
     URLAuthenticationChallenge challenge,
-  )? didReceiveAuthenticationChallenge;
+  ) didReceiveAuthenticationChallenge;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    WKNavigationDelegate Function()? pigeon_newInstance,
     void Function(
       WKNavigationDelegate pigeon_instance,
       WKWebView webView,
@@ -4274,44 +4273,6 @@ class WKNavigationDelegate extends NSObject {
         _PigeonInternalProxyApiBaseCodec(
             pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.pigeon_newInstance was null, expected non-null int.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WKNavigationDelegate.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-
     {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
@@ -4411,10 +4372,10 @@ class WKNavigationDelegate extends NSObject {
           assert(arg_navigationAction != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.decidePolicyForNavigationAction was null, expected non-null WKNavigationAction.');
           try {
-            final NavigationActionPolicy? output =
+            final NavigationActionPolicy output =
                 await (decidePolicyForNavigationAction ??
                         arg_pigeon_instance!.decidePolicyForNavigationAction)
-                    ?.call(arg_pigeon_instance!, arg_webView!,
+                    .call(arg_pigeon_instance!, arg_webView!,
                         arg_navigationAction!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -4453,10 +4414,10 @@ class WKNavigationDelegate extends NSObject {
           assert(arg_navigationResponse != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.decidePolicyForNavigationResponse was null, expected non-null WKNavigationResponse.');
           try {
-            final NavigationResponsePolicy? output =
+            final NavigationResponsePolicy output =
                 await (decidePolicyForNavigationResponse ??
                         arg_pigeon_instance!.decidePolicyForNavigationResponse)
-                    ?.call(arg_pigeon_instance!, arg_webView!,
+                    .call(arg_pigeon_instance!, arg_webView!,
                         arg_navigationResponse!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -4608,10 +4569,10 @@ class WKNavigationDelegate extends NSObject {
           assert(arg_challenge != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didReceiveAuthenticationChallenge was null, expected non-null URLAuthenticationChallenge.');
           try {
-            final AuthenticationChallengeResponse? output =
+            final AuthenticationChallengeResponse output =
                 await (didReceiveAuthenticationChallenge ??
                         arg_pigeon_instance!.didReceiveAuthenticationChallenge)
-                    ?.call(arg_pigeon_instance!, arg_webView!, arg_challenge!);
+                    .call(arg_pigeon_instance!, arg_webView!, arg_challenge!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
@@ -6447,9 +6408,9 @@ class WKUIDelegate extends NSObject {
     super.pigeon_instanceManager,
     super.observeValue,
     this.onCreateWebView,
-    this.requestMediaCapturePermission,
+    required this.requestMediaCapturePermission,
     this.runJavaScriptAlertPanel,
-    this.runJavaScriptConfirmPanel,
+    required this.runJavaScriptConfirmPanel,
     this.runJavaScriptTextInputPanel,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
@@ -6492,9 +6453,9 @@ class WKUIDelegate extends NSObject {
     super.pigeon_instanceManager,
     super.observeValue,
     this.onCreateWebView,
-    this.requestMediaCapturePermission,
+    required this.requestMediaCapturePermission,
     this.runJavaScriptAlertPanel,
-    this.runJavaScriptConfirmPanel,
+    required this.runJavaScriptConfirmPanel,
     this.runJavaScriptTextInputPanel,
   }) : super.pigeon_detached();
 
@@ -6553,7 +6514,7 @@ class WKUIDelegate extends NSObject {
     WKSecurityOrigin origin,
     WKFrameInfo frame,
     MediaCaptureType type,
-  )? requestMediaCapturePermission;
+  ) requestMediaCapturePermission;
 
   /// Displays a JavaScript alert panel.
   ///
@@ -6605,7 +6566,7 @@ class WKUIDelegate extends NSObject {
     WKWebView webView,
     String message,
     WKFrameInfo frame,
-  )? runJavaScriptConfirmPanel;
+  ) runJavaScriptConfirmPanel;
 
   /// Displays a JavaScript text input panel.
   ///
@@ -6638,7 +6599,6 @@ class WKUIDelegate extends NSObject {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    WKUIDelegate Function()? pigeon_newInstance,
     void Function(
       WKUIDelegate pigeon_instance,
       WKWebView webView,
@@ -6676,44 +6636,6 @@ class WKUIDelegate extends NSObject {
         _PigeonInternalProxyApiBaseCodec(
             pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final BasicMessageChannel<
-          Object?> pigeonVar_channel = BasicMessageChannel<
-              Object?>(
-          'dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.pigeon_newInstance was null, expected non-null int.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call() ??
-                  WKUIDelegate.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-
     {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
@@ -6789,10 +6711,10 @@ class WKUIDelegate extends NSObject {
           assert(arg_type != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.requestMediaCapturePermission was null, expected non-null MediaCaptureType.');
           try {
-            final PermissionDecision? output =
+            final PermissionDecision output =
                 await (requestMediaCapturePermission ??
                         arg_pigeon_instance!.requestMediaCapturePermission)
-                    ?.call(arg_pigeon_instance!, arg_webView!, arg_origin!,
+                    .call(arg_pigeon_instance!, arg_webView!, arg_origin!,
                         arg_frame!, arg_type!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
@@ -6874,9 +6796,9 @@ class WKUIDelegate extends NSObject {
           assert(arg_frame != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel was null, expected non-null WKFrameInfo.');
           try {
-            final bool? output = await (runJavaScriptConfirmPanel ??
+            final bool output = await (runJavaScriptConfirmPanel ??
                     arg_pigeon_instance!.runJavaScriptConfirmPanel)
-                ?.call(arg_pigeon_instance!, arg_webView!, arg_message!,
+                .call(arg_pigeon_instance!, arg_webView!, arg_message!,
                     arg_frame!);
             return wrapResponse(result: output);
           } on PlatformException catch (e) {

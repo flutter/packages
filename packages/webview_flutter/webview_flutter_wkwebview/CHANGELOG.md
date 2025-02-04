@@ -1,3 +1,8 @@
+## 3.18.1
+
+* Updates internal API wrapper to make all Flutter methods with a non-null return value be required
+  to implement.
+
 ## 3.18.0
 
 * Updates internal API wrapper to use ProxyApis.

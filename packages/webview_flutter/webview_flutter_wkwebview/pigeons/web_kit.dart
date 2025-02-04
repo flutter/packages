@@ -719,18 +719,18 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Asks the delegate for permission to navigate to new content based on the
   /// specified action information.
   @async
-  NavigationActionPolicy Function(
+  late NavigationActionPolicy Function(
     WKWebView webView,
     WKNavigationAction navigationAction,
-  )? decidePolicyForNavigationAction;
+  ) decidePolicyForNavigationAction;
 
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
   @async
-  NavigationResponsePolicy Function(
+  late NavigationResponsePolicy Function(
     WKWebView webView,
     WKNavigationResponse navigationResponse,
-  )? decidePolicyForNavigationResponse;
+  ) decidePolicyForNavigationResponse;
 
   /// Tells the delegate that an error occurred during navigation.
   void Function(WKWebView webView, NSError error)? didFailNavigation;
@@ -744,10 +744,10 @@ abstract class WKNavigationDelegate extends NSObject {
 
   /// Asks the delegate to respond to an authentication challenge.
   @async
-  AuthenticationChallengeResponse Function(
+  late AuthenticationChallengeResponse Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
-  )? didReceiveAuthenticationChallenge;
+  ) didReceiveAuthenticationChallenge;
 }
 
 /// The root class of most Objective-C class hierarchies, from which subclasses
@@ -981,12 +981,12 @@ abstract class WKUIDelegate extends NSObject {
   /// Determines whether a web resource, which the security origin object
   /// describes, can access to the device’s microphone audio and camera video.
   @async
-  PermissionDecision Function(
+  late PermissionDecision Function(
     WKWebView webView,
     WKSecurityOrigin origin,
     WKFrameInfo frame,
     MediaCaptureType type,
-  )? requestMediaCapturePermission;
+  ) requestMediaCapturePermission;
 
   /// Displays a JavaScript alert panel.
   @async
@@ -998,11 +998,11 @@ abstract class WKUIDelegate extends NSObject {
 
   /// Displays a JavaScript confirm panel.
   @async
-  bool Function(
+  late bool Function(
     WKWebView webView,
     String message,
     WKFrameInfo frame,
-  )? runJavaScriptConfirmPanel;
+  ) runJavaScriptConfirmPanel;
 
   /// Displays a JavaScript text input panel.
   @async

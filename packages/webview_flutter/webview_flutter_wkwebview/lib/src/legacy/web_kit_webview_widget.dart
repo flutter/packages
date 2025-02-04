@@ -699,7 +699,15 @@ class WebViewWidgetProxy {
       WKNavigationAction navigationAction,
     )? onCreateWebView,
   }) {
-    return WKUIDelegate(onCreateWebView: onCreateWebView);
+    return WKUIDelegate(
+      onCreateWebView: onCreateWebView,
+      requestMediaCapturePermission: (_, __, ___, ____, _____) async {
+        return PermissionDecision.deny;
+      },
+      runJavaScriptConfirmPanel: (_, __, ___, ____) async {
+        return false;
+      },
+    );
   }
 
   /// Constructs a [WKNavigationDelegate].

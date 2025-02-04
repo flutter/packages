@@ -4025,28 +4025,9 @@ final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-      pigeonInstance as AnyObject)
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-    let channelName: String =
-      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(PigeonError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(Void()))
-      }
-    }
+    print(
+      "Error: Attempting to create a new Dart instance of WKNavigationDelegate, but the class has a nonnull callback method."
+    )
   }
   /// Tells the delegate that navigation is complete.
   func didFinishNavigation(
@@ -5978,28 +5959,9 @@ final class PigeonApiWKUIDelegate: PigeonApiProtocolWKUIDelegate {
       completion(.success(Void()))
       return
     }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-      pigeonInstance as AnyObject)
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-    let channelName: String =
-      "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(PigeonError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(Void()))
-      }
-    }
+    print(
+      "Error: Attempting to create a new Dart instance of WKUIDelegate, but the class has a nonnull callback method."
+    )
   }
   /// Creates a new web view.
   func onCreateWebView(
