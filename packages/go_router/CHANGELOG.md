@@ -1,7 +1,3 @@
-## 14.7.3
-
-- Fixes lack of elements in currentConfiguration's matches of pop method
-  
 ## 14.7.2
 
 - Add missing `await` keyword to `onTap` callback in `navigation.md`.
