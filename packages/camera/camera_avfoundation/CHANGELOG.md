@@ -1,3 +1,6 @@
+## 0.9.19
+* Adds lensType in the PlatformCameraDescription
+
 ## 0.9.18+1
 
 * Refactors implementations to reduce usage of OCMock in internal testing.
