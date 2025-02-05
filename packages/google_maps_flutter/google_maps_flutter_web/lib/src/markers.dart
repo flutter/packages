@@ -63,15 +63,23 @@ abstract class MarkersController<T, O> extends GeometryController {
     final MarkerController<T, O>? markerController =
         _markerIdToController[marker.markerId];
     final T? currentMarker = markerController?.marker;
+    final O markerOptions =
+        await _markerOptionsFromMarker(marker, currentMarker);
     final MarkerController<T, O> controller =
-        await createMarkerController(marker, currentMarker, gmInfoWindow);
+        await createMarkerController(marker, markerOptions, gmInfoWindow);
     _markerIdToController[marker.markerId] = controller;
   }
 
-  /// Creates a [MarkerController] for a [Marker] object.
+  /// Creates a [MarkerController] for the given [marker].
+  ///
+  /// [markerOptions] contains configuration that should be used to create
+  /// a [gmaps.Marker] or [gmaps.AdvancedMarkerElement] object. [markersOptions]
+  /// is either [gmaps.MarkerOptions] or [gmaps.AdvancedMarkerElementOptions].
+  ///
+  /// [gmInfoWindow] is marker's info window to show on tap.
   Future<MarkerController<T, O>> createMarkerController(
     Marker marker,
-    T? currentMarker,
+    O markerOptions,
     gmaps.InfoWindow? gmInfoWindow,
   );
 
@@ -212,13 +220,9 @@ class LegacyMarkersController
   @override
   Future<LegacyMarkerController> createMarkerController(
     Marker marker,
-    gmaps.Marker? currentMarker,
+    gmaps.MarkerOptions markerOptions,
     gmaps.InfoWindow? gmInfoWindow,
   ) async {
-    final gmaps.MarkerOptions markerOptions =
-        await _markerOptionsFromMarker<gmaps.Marker, gmaps.MarkerOptions>(
-            marker, currentMarker);
-
     final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
     gmMarker.set('markerId', marker.markerId.value.toJS);
 
@@ -263,13 +267,11 @@ class AdvancedMarkersController extends MarkersController<
   @override
   Future<AdvancedMarkerController> createMarkerController(
     Marker marker,
-    gmaps.AdvancedMarkerElement? currentMarker,
+    gmaps.AdvancedMarkerElementOptions markerOptions,
     gmaps.InfoWindow? gmInfoWindow,
   ) async {
     assert(marker is AdvancedMarker, 'Marker must be an AdvancedMarker.');
 
-    final gmaps.AdvancedMarkerElementOptions markerOptions =
-        await _markerOptionsFromMarker(marker, currentMarker);
     final gmaps.AdvancedMarkerElement gmMarker =
         gmaps.AdvancedMarkerElement(markerOptions);
     gmMarker.setAttribute('id', marker.markerId.value);
