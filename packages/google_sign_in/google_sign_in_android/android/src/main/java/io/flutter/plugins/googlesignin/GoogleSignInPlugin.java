@@ -259,6 +259,11 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           optionsBuilder.setHostedDomain(params.getHostedDomain());
         }
 
+        String forceAccountName = params.getForceAccountName();
+        if (!Strings.isNullOrEmpty(forceAccountName)) {
+          optionsBuilder.setAccountName(forceAccountName);
+        }
+
         signInClient = googleSignInWrapper.getClient(context, optionsBuilder.build());
       } catch (Exception e) {
         throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
