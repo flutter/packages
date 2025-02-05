@@ -2820,9 +2820,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       completion(.success(Void()))
       return
     }
-    print(
-      "Error: Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method."
-    )
+    completion(
+      .failure(
+        ProxyApiTestsError(
+          code: "new-instance-error",
+          message:
+            "Error: Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method.",
+          details: "")))
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.

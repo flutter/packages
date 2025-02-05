@@ -3060,8 +3060,12 @@ abstract class PigeonApiProxyApiTestClass(
       Result.success(Unit)
       return
     }
-    throw IllegalStateException(
-        "Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method.")
+    callback(
+        Result.failure(
+            ProxyApiTestsError(
+                "new-instance-error",
+                "Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method.",
+                "")))
   }
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */

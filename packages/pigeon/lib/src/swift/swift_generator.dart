@@ -2359,8 +2359,13 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           ),
         );
       } else {
-        indent.writeln(
-          'print("Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
+        indent.format(
+          '''
+            completion(
+              .failure(
+                ${_getErrorClassName(generatorOptions)}(
+                  code: "new-instance-error",
+                  message: "Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", details: "")))''',
         );
       }
     });

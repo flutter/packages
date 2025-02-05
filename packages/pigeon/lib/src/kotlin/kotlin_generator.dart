@@ -1952,8 +1952,11 @@ if (wrapped == null) {
             ],
           );
         } else {
-          indent.writeln(
-            'throw IllegalStateException("Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
+          indent.format(
+            '''
+              callback(
+                  Result.failure(
+                      $errorClassName("new-instance-error", "Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", "")))''',
           );
         }
       },

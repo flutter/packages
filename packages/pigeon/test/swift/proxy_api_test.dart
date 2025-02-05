@@ -627,6 +627,47 @@ void main() {
           ),
         );
       });
+
+      test(
+          'host platform constructor calls new instance error for required callbacks',
+          () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'aCallbackMethod',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.flutter,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const SwiftOptions(errorClassName: 'TestError'),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains(
+            r'completion( .failure( TestError( code: "new-instance-error"',
+          ),
+        );
+      });
     });
 
     group('Fields', () {

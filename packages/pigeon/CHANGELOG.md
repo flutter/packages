@@ -4,6 +4,7 @@
   value is nullable.
 * [swift, kotlin] Adds an error message in the `ProxyApiBaseCodec` when an instance could not be
   retrieved when reading a value.
+* [swift, kotlin] Fixes ProxyAPI platform APIs not calling completion when creating a new instance.
 
 ## 24.0.0
 
