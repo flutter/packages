@@ -62,7 +62,7 @@ extern FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
 extern FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOverlay,
                                                            NSString *overlayId,
                                                            BOOL isCreatedWithBounds,
-                                                           NSNumber *zoomLevel);
+                                                           NSNumber *_Nullable zoomLevel);
 
 /// Creates a GMSCameraUpdate from its Pigeon equivalent.
 extern GMSCameraUpdate *_Nullable FGMGetCameraUpdateForPigeonCameraUpdate(

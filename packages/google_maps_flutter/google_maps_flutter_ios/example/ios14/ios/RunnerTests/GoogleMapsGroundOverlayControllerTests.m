@@ -90,7 +90,7 @@
                                                   image:bitmap
                                                position:position
                                                  bounds:nil
-                                                 anchor:nil
+                                                 anchor:[FGMPlatformPoint makeWithX:0.5 y:0.5]
                                            transparency:0.5
                                                 bearing:65.0
                                                  zIndex:2.0
@@ -103,10 +103,29 @@
                                                screenScale:1.0];
 
   XCTAssertNotNil(groundOverlayController.groundOverlay.icon);
-  XCTAssertEqual(groundOverlayController.groundOverlay.position.latitude, position.latitude);
-  XCTAssertEqual(groundOverlayController.groundOverlay.position.longitude, position.longitude);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.position.latitude,
+                             position.latitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.position.longitude,
+                             position.longitude, DBL_EPSILON);
   XCTAssertEqual(groundOverlayController.groundOverlay.opacity, platformGroundOverlay.transparency);
   XCTAssertEqual(groundOverlayController.groundOverlay.bearing, platformGroundOverlay.bearing);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.anchor.x, 0.5, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.anchor.y, 0.5, DBL_EPSILON);
+  XCTAssertEqual(groundOverlayController.groundOverlay.zIndex, platformGroundOverlay.zIndex);
+
+  FGMPlatformGroundOverlay *convertedPlatformGroundOverlay =
+      FGMGetPigeonGroundOverlay(groundOverlayController.groundOverlay, @"id_1", NO, @14.0);
+  XCTAssertEqualObjects(convertedPlatformGroundOverlay.groundOverlayId, @"id_1");
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.position.latitude, position.latitude,
+                             DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.position.longitude, position.longitude,
+                             DBL_EPSILON);
+  XCTAssertEqual(convertedPlatformGroundOverlay.zoomLevel.doubleValue, 14.0);
+  XCTAssertEqual(convertedPlatformGroundOverlay.transparency, platformGroundOverlay.transparency);
+  XCTAssertEqual(convertedPlatformGroundOverlay.bearing, platformGroundOverlay.bearing);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.anchor.x, 0.5, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.anchor.y, 0.5, DBL_EPSILON);
+  XCTAssertEqual(convertedPlatformGroundOverlay.zIndex, platformGroundOverlay.zIndex);
 }
 
 - (void)testUpdatingGroundOverlayWithBounds {
@@ -127,7 +146,7 @@
                                                   image:bitmap
                                                position:nil
                                                  bounds:bounds
-                                                 anchor:nil
+                                                 anchor:[FGMPlatformPoint makeWithX:0.5 y:0.5]
                                            transparency:0.5
                                                 bearing:65.0
                                                  zIndex:2.0
@@ -140,16 +159,36 @@
                                                screenScale:1.0];
 
   XCTAssertNotNil(groundOverlayController.groundOverlay.icon);
-  XCTAssertEqual(groundOverlayController.groundOverlay.bounds.northEast.latitude,
-                 bounds.northeast.latitude);
-  XCTAssertEqual(groundOverlayController.groundOverlay.bounds.northEast.longitude,
-                 bounds.northeast.longitude);
-  XCTAssertEqual(groundOverlayController.groundOverlay.bounds.southWest.latitude,
-                 bounds.southwest.latitude);
-  XCTAssertEqual(groundOverlayController.groundOverlay.bounds.southWest.longitude,
-                 bounds.southwest.longitude);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.bounds.northEast.latitude,
+                             bounds.northeast.latitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.bounds.northEast.longitude,
+                             bounds.northeast.longitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.bounds.southWest.latitude,
+                             bounds.southwest.latitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.bounds.southWest.longitude,
+                             bounds.southwest.longitude, DBL_EPSILON);
   XCTAssertEqual(groundOverlayController.groundOverlay.opacity, platformGroundOverlay.transparency);
   XCTAssertEqual(groundOverlayController.groundOverlay.bearing, platformGroundOverlay.bearing);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.anchor.x, 0.5, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(groundOverlayController.groundOverlay.anchor.y, 0.5, DBL_EPSILON);
+  XCTAssertEqual(groundOverlayController.groundOverlay.zIndex, platformGroundOverlay.zIndex);
+
+  FGMPlatformGroundOverlay *convertedPlatformGroundOverlay =
+      FGMGetPigeonGroundOverlay(groundOverlayController.groundOverlay, @"id_1", YES, nil);
+  XCTAssertEqualObjects(convertedPlatformGroundOverlay.groundOverlayId, @"id_1");
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.bounds.northeast.latitude,
+                             bounds.northeast.latitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.bounds.northeast.longitude,
+                             bounds.northeast.longitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.bounds.southwest.latitude,
+                             bounds.southwest.latitude, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.bounds.southwest.longitude,
+                             bounds.southwest.longitude, DBL_EPSILON);
+  XCTAssertEqual(convertedPlatformGroundOverlay.transparency, platformGroundOverlay.transparency);
+  XCTAssertEqual(convertedPlatformGroundOverlay.bearing, platformGroundOverlay.bearing);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.anchor.x, 0.5, DBL_EPSILON);
+  XCTAssertEqualWithAccuracy(convertedPlatformGroundOverlay.anchor.y, 0.5, DBL_EPSILON);
+  XCTAssertEqual(convertedPlatformGroundOverlay.zIndex, platformGroundOverlay.zIndex);
 }
 
 @end
