@@ -16,7 +16,7 @@
 @implementation FVPNativeVideoViewFactory
 
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-               playerByIdProvider:(FVPVideoPlayer * (^)(NSNumber *))playerByIdProvider {
+       playerByIdentifierProvider:(FVPVideoPlayer * (^)(NSNumber *))playerByIdProvider {
   self = [super init];
   if (self) {
     _messenger = messenger;
@@ -26,10 +26,10 @@
 }
 
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
-                                    viewIdentifier:(int64_t)viewId
+                                    viewIdentifier:(int64_t)viewIdentifier
                                          arguments:(FVPPlatformVideoViewCreationParams *)args {
-  NSNumber *playerId = @(args.playerId);
-  FVPVideoPlayer *player = self.playerByIdProvider(playerId);
+  NSNumber *playerIdentifier = @(args.playerId);
+  FVPVideoPlayer *player = self.playerByIdProvider(playerIdentifier);
   return [[FVPNativeVideoView alloc] initWithPlayer:player.player];
 }
 

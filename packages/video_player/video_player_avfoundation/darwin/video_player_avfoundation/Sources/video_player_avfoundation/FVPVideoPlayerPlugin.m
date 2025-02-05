@@ -45,8 +45,8 @@
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
 @property(nonatomic, strong) id<FVPAVFactory> avFactory;
-// TODO(stuartmorgan): Decouple IDs for platform views and texture views.
-@property(nonatomic, assign) int64_t nextNonTexturePlayerId;
+// TODO(stuartmorgan): Decouple identifiers for platform views and texture views.
+@property(nonatomic, assign) int64_t nextNonTexturePlayerIdentifier;
 @end
 
 @implementation FVPVideoPlayerPlugin
@@ -55,11 +55,11 @@
   [registrar publish:instance];
 #if TARGET_OS_IOS
   // Platform views are only supported on iOS as of now.
-  FVPNativeVideoViewFactory *factory =
-      [[FVPNativeVideoViewFactory alloc] initWithMessenger:registrar.messenger
-                                        playerByIdProvider:^FVPVideoPlayer *(NSNumber *playerId) {
-                                          return instance->_playersById[playerId];
-                                        }];
+  FVPNativeVideoViewFactory *factory = [[FVPNativeVideoViewFactory alloc]
+               initWithMessenger:registrar.messenger
+      playerByIdentifierProvider:^FVPVideoPlayer *(NSNumber *playerIdentifier) {
+        return instance->_playersByIdentifier[playerIdentifier];
+      }];
   [registrar registerViewFactory:factory withId:@"plugins.flutter.dev/video_player_ios"];
 #endif
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, instance);
@@ -81,36 +81,37 @@
   _registrar = registrar;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
   _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
-  _playersById = [NSMutableDictionary dictionaryWithCapacity:1];
-  // Initialized to a high number to avoid collisions with texture IDs (which are generated
+  _playersByIdentifier = [NSMutableDictionary dictionaryWithCapacity:1];
+  // Initialized to a high number to avoid collisions with texture identifiers (which are generated
   // separately).
-  _nextNonTexturePlayerId = INT_MAX;
+  _nextNonTexturePlayerIdentifier = INT_MAX;
   return self;
 }
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self.playersById.allValues makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
-  [self.playersById removeAllObjects];
+  [self.playersByIdentifier.allValues
+      makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
+  [self.playersByIdentifier removeAllObjects];
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player {
   BOOL textureBased = [player isKindOfClass:[FVPTextureBasedVideoPlayer class]];
-  int64_t playerId;
+  int64_t playerIdentifier;
   if (textureBased) {
-    playerId = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
-    [(FVPTextureBasedVideoPlayer *)player setTextureId:playerId];
+    playerIdentifier = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
+    [(FVPTextureBasedVideoPlayer *)player setTextureIdentifier:playerIdentifier];
   } else {
-    playerId = self.nextNonTexturePlayerId--;
+    playerIdentifier = self.nextNonTexturePlayerIdentifier--;
   }
 
   FlutterEventChannel *eventChannel = [FlutterEventChannel
-      eventChannelWithName:[NSString
-                               stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld", playerId]
+      eventChannelWithName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld",
+                                                      playerIdentifier]
            binaryMessenger:_messenger];
   [eventChannel setStreamHandler:player];
   player.eventChannel = eventChannel;
-  self.playersById[@(playerId)] = player;
+  self.playersByIdentifier[@(playerIdentifier)] = player;
 
   if (textureBased) {
     // Ensure that the first frame is drawn once available, even if the video isn't played, since
@@ -118,7 +119,7 @@
     [(FVPTextureBasedVideoPlayer *)player expectFrame];
   }
 
-  return playerId;
+  return playerIdentifier;
 }
 
 // This function, although slightly modified, is also in camera_avfoundation.
@@ -163,8 +164,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   upgradeAudioSessionCategory(AVAudioSessionCategoryPlayback, 0, 0);
 #endif
 
-  [self.playersById.allValues makeObjectsPerformSelector:@selector(dispose)];
-  [self.playersById removeAllObjects];
+  [self.playersByIdentifier.allValues makeObjectsPerformSelector:@selector(dispose)];
+  [self.playersByIdentifier removeAllObjects];
 }
 
 - (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
@@ -201,8 +202,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                }];
 
   __weak typeof(self) weakSelf = self;
-  void (^onDisposed)(int64_t) = ^(int64_t textureId) {
-    [weakSelf.registry unregisterTexture:textureId];
+  void (^onDisposed)(int64_t) = ^(int64_t textureIdentifier) {
+    [weakSelf.registry unregisterTexture:textureIdentifier];
   };
 
   if (options.asset) {
@@ -254,42 +255,48 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   return assetPath;
 }
 
-- (void)disposePlayer:(NSInteger)playerId error:(FlutterError **)error {
-  NSNumber *playerKey = @(playerId);
-  FVPVideoPlayer *player = self.playersById[playerKey];
-  [self.playersById removeObjectForKey:playerKey];
+- (void)disposePlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {
+  NSNumber *playerKey = @(playerIdentifier);
+  FVPVideoPlayer *player = self.playersByIdentifier[playerKey];
+  [self.playersByIdentifier removeObjectForKey:playerKey];
   [player dispose];
 }
 
-- (void)setLooping:(BOOL)isLooping forPlayer:(NSInteger)playerId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersById[@(playerId)];
+- (void)setLooping:(BOOL)isLooping
+         forPlayer:(NSInteger)playerIdentifier
+             error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   player.isLooping = isLooping;
 }
 
-- (void)setVolume:(double)volume forPlayer:(NSInteger)playerId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersById[@(playerId)];
+- (void)setVolume:(double)volume
+        forPlayer:(NSInteger)playerIdentifier
+            error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   [player setVolume:volume];
 }
 
-- (void)setPlaybackSpeed:(double)speed forPlayer:(NSInteger)playerId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersById[@(playerId)];
+- (void)setPlaybackSpeed:(double)speed
+               forPlayer:(NSInteger)playerIdentifier
+                   error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   [player setPlaybackSpeed:speed];
 }
 
-- (void)playPlayer:(NSInteger)playerId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersById[@(playerId)];
+- (void)playPlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   [player play];
 }
 
-- (nullable NSNumber *)positionForPlayer:(NSInteger)playerId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersById[@(playerId)];
+- (nullable NSNumber *)positionForPlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   return @([player position]);
 }
 
 - (void)seekTo:(NSInteger)position
-     forPlayer:(NSInteger)playerId
+     forPlayer:(NSInteger)playerIdentifier
     completion:(nonnull void (^)(FlutterError *_Nullable))completion {
-  FVPVideoPlayer *player = self.playersById[@(playerId)];
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   [player seekTo:position
       completionHandler:^(BOOL finished) {
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -298,8 +305,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
       }];
 }
 
-- (void)pausePlayer:(NSInteger)playerId error:(FlutterError **)error {
-  FVPVideoPlayer *player = self.playersById[@(playerId)];
+- (void)pausePlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   [player pause];
 }
 

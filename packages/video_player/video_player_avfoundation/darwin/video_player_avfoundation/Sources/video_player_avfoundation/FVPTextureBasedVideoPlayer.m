@@ -80,8 +80,8 @@
   return self;
 }
 
-- (void)setTextureId:(int64_t)textureId {
-  self.frameUpdater.textureId = textureId;
+- (void)setTextureIdentifier:(int64_t)textureIdentifier {
+  self.frameUpdater.textureIdentifier = textureIdentifier;
 }
 
 - (void)expectFrame {
@@ -154,7 +154,7 @@
 - (void)dispose {
   [super dispose];
 
-  _onDisposed(self.frameUpdater.textureId);
+  _onDisposed(self.frameUpdater.textureIdentifier);
 }
 
 #pragma mark - FlutterTexture

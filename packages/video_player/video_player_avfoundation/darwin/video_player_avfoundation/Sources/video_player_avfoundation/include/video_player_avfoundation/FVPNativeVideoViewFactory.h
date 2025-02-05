@@ -18,7 +18,7 @@
 /// Flutter app.
 @interface FVPNativeVideoViewFactory : NSObject <FlutterPlatformViewFactory>
 /// Initializes a new instance of FVPNativeVideoViewFactory with the given messenger and
-/// a block that provides video players associated with their IDs.
+/// a block that provides video players associated with their identifiers.
 - (instancetype)initWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-               playerByIdProvider:(FVPVideoPlayer * (^)(NSNumber *))playerByIdProvider;
+       playerByIdentifierProvider:(FVPVideoPlayer * (^)(NSNumber *))playerByIdentifierProvider;
 @end

@@ -187,9 +187,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                                viewType:FVPPlatformVideoViewTypeTextureView];
 
   FlutterError *createError;
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&createError];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
-  XCTAssertNil(playerId);
+  XCTAssertNil(playerIdentifier);
   XCTAssertNotNil(createError);
   XCTAssertEqualObjects(createError.code, @"video_player");
 }
@@ -216,11 +216,11 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
          formatHint:nil
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
-  XCTAssertNotNil(playerId);
+  XCTAssertNotNil(playerIdentifier);
   FVPTextureBasedVideoPlayer *player =
-      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[playerId];
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertNotNil(player);
 
   XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");
@@ -292,15 +292,15 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&createError];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
   // Ensure that the video playback is paused before seeking.
   FlutterError *pauseError;
-  [videoPlayerPlugin pausePlayer:playerId.integerValue error:&pauseError];
+  [videoPlayerPlugin pausePlayer:playerIdentifier.integerValue error:&pauseError];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
   [videoPlayerPlugin seekTo:1234
-                  forPlayer:playerId.integerValue
+                  forPlayer:playerIdentifier.integerValue
                  completion:^(FlutterError *_Nullable error) {
                    [initializedExpectation fulfill];
                  }];
@@ -309,7 +309,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // Seeking to a new position should start the display link temporarily.
   OCMVerify([mockDisplayLink setRunning:YES]);
   FVPTextureBasedVideoPlayer *player =
-      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[playerId];
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   // Wait for the player's position to update, it shouldn't take long.
   XCTestExpectation *positionExpectation =
       [self expectationForPredicate:[NSPredicate predicateWithFormat:@"position == 1234"]
@@ -364,7 +364,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&createError];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
   // Init should start the display link temporarily.
   OCMVerify([mockDisplayLink setRunning:YES]);
@@ -380,7 +380,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
       .andReturn(fakeBufferRef);
   // Simulate a callback from the engine to request a new frame.
   FVPTextureBasedVideoPlayer *player =
-      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[playerId];
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   [player copyPixelBuffer];
   // Since a frame was found, and the video is paused, the display link should be paused again.
   OCMVerify([mockDisplayLink setRunning:NO]);
@@ -416,15 +416,15 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&createError];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
   // Ensure that the video is playing before seeking.
   FlutterError *playError;
-  [videoPlayerPlugin playPlayer:playerId.integerValue error:&playError];
+  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&playError];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
   [videoPlayerPlugin seekTo:1234
-                  forPlayer:playerId.integerValue
+                  forPlayer:playerIdentifier.integerValue
                  completion:^(FlutterError *_Nullable error) {
                    [initializedExpectation fulfill];
                  }];
@@ -432,7 +432,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   OCMVerify([mockDisplayLink setRunning:YES]);
 
   FVPTextureBasedVideoPlayer *player =
-      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[playerId];
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertEqual([player position], 1234);
 
   // Simulate a buffer being available.
@@ -480,12 +480,12 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&createError];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
   // Run a play/pause cycle to force the pause codepath to run completely.
   FlutterError *playPauseError;
-  [videoPlayerPlugin playPlayer:playerId.integerValue error:&playPauseError];
-  [videoPlayerPlugin pausePlayer:playerId.integerValue error:&playPauseError];
+  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&playPauseError];
+  [videoPlayerPlugin pausePlayer:playerIdentifier.integerValue error:&playPauseError];
 
   // Since a buffer hasn't been available yet, the pause should not have stopped the display link.
   OCMVerify(never(), [mockDisplayLink setRunning:NO]);
@@ -508,17 +508,17 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
          formatHint:nil
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
-  XCTAssertNotNil(playerId);
-  FVPVideoPlayer *player = videoPlayerPlugin.playersById[playerId];
+  XCTAssertNotNil(playerIdentifier);
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertNotNil(player);
   AVPlayer *avPlayer = player.player;
 
   [self keyValueObservingExpectationForObject:avPlayer keyPath:@"currentItem" expectedValue:nil];
 
-  [videoPlayerPlugin disposePlayer:playerId.integerValue error:&error];
-  XCTAssertEqual(videoPlayerPlugin.playersById.count, 0);
+  [videoPlayerPlugin disposePlayer:playerIdentifier.integerValue error:&error];
+  XCTAssertEqual(videoPlayerPlugin.playersByIdentifier.count, 0);
   XCTAssertNil(error);
 
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
@@ -541,10 +541,10 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
          formatHint:nil
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
-  XCTAssertNotNil(playerId);
-  FVPVideoPlayer *player = videoPlayerPlugin.playersById[playerId];
+  XCTAssertNotNil(playerIdentifier);
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertNotNil(player);
   AVPlayer *avPlayer = player.player;
   [avPlayer play];
@@ -668,12 +668,12 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
-  NSNumber *playerId = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
+  NSNumber *playerIdentifier = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
   XCTestExpectation *initializedExpectation =
       [self expectationWithDescription:@"seekTo has zero tolerance when seeking not to end"];
   [pluginWithMockAVPlayer seekTo:1234
-                       forPlayer:playerId.integerValue
+                       forPlayer:playerIdentifier.integerValue
                       completion:^(FlutterError *_Nullable error) {
                         [initializedExpectation fulfill];
                       }];
@@ -707,13 +707,13 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
-  NSNumber *playerId = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
+  NSNumber *playerIdentifier = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
   XCTestExpectation *initializedExpectation =
       [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
   // The duration of this video is "0" due to the non standard initiliatazion process.
   [pluginWithMockAVPlayer seekTo:0
-                       forPlayer:playerId.integerValue
+                       forPlayer:playerIdentifier.integerValue
                       completion:^(FlutterError *_Nullable error) {
                         [initializedExpectation fulfill];
                       }];
@@ -735,9 +735,9 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                              formatHint:nil
                             httpHeaders:@{}
                                viewType:FVPPlatformVideoViewTypeTextureView];
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
 
-  FVPVideoPlayer *player = videoPlayerPlugin.playersById[playerId];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -759,15 +759,15 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   XCTAssertEqual(avPlayer.timeControlStatus, AVPlayerTimeControlStatusPaused);
 
   // Change playback speed.
-  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:playerId.integerValue error:&error];
+  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:playerIdentifier.integerValue error:&error];
   XCTAssertNil(error);
-  [videoPlayerPlugin playPlayer:playerId.integerValue error:&error];
+  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&error];
   XCTAssertNil(error);
   XCTAssertEqual(avPlayer.rate, 2);
   XCTAssertEqual(avPlayer.timeControlStatus, AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate);
 
   // Volume
-  [videoPlayerPlugin setVolume:0.1 forPlayer:playerId.integerValue error:&error];
+  [videoPlayerPlugin setVolume:0.1 forPlayer:playerIdentifier.integerValue error:&error];
   XCTAssertNil(error);
   XCTAssertEqual(avPlayer.volume, 0.1f);
 
@@ -803,16 +803,16 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
            formatHint:nil
           httpHeaders:@{}
              viewType:FVPPlatformVideoViewTypeTextureView];
-    NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
+    NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
-    XCTAssertNotNil(playerId);
+    XCTAssertNotNil(playerIdentifier);
 
-    FVPVideoPlayer *player = videoPlayerPlugin.playersById[playerId];
+    FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
     XCTAssertNotNil(player);
     weakPlayer = player;
     avPlayer = player.player;
 
-    [videoPlayerPlugin disposePlayer:playerId.integerValue error:&error];
+    [videoPlayerPlugin disposePlayer:playerIdentifier.integerValue error:&error];
     XCTAssertNil(error);
   }
 
@@ -858,12 +858,12 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
            formatHint:nil
           httpHeaders:@{}
              viewType:FVPPlatformVideoViewTypeTextureView];
-    NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
+    NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
-    XCTAssertNotNil(playerId);
+    XCTAssertNotNil(playerIdentifier);
 
     FVPTextureBasedVideoPlayer *player =
-        (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersById[playerId];
+        (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
     XCTAssertNotNil(player);
     weakPlayer = player;
 
@@ -938,8 +938,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                              formatHint:nil
                             httpHeaders:@{}
                                viewType:FVPPlatformVideoViewTypeTextureView];
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
-  FVPVideoPlayer *player = videoPlayerPlugin.playersById[playerId];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertNotNil(player);
 
   [self keyValueObservingExpectationForObject:(id)player.player.currentItem
@@ -976,8 +976,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
          formatHint:nil
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
-  NSNumber *playerId = [videoPlayerPlugin createWithOptions:create error:&error];
-  FVPVideoPlayer *player = videoPlayerPlugin.playersById[playerId];
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   [player onListenWithArguments:nil
@@ -988,8 +988,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
                       }];
   [self waitForExpectationsWithTimeout:10 handler:nil];
 
-  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:playerId.integerValue error:&error];
-  [videoPlayerPlugin playPlayer:playerId.integerValue error:&error];
+  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:playerIdentifier.integerValue error:&error];
+  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&error];
   XCTAssertEqual(player.player.rate, 2);
 }
 
