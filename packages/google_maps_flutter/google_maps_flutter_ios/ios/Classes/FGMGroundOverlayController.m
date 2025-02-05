@@ -75,7 +75,6 @@
                               registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                             screenScale:(CGFloat)screenScale {
   [self setConsumeTapEvents:groundOverlay.clickable];
-  [self setVisible:groundOverlay.visible];
   [self setZIndex:(int)groundOverlay.zIndex];
   [self setAnchor:CGPointMake(groundOverlay.anchor.x, groundOverlay.anchor.y)];
   UIImage *image = FGMIconFromBitmap(groundOverlay.image, registrar, screenScale);
@@ -95,6 +94,7 @@
     [self setPositionFromCoordinates:CLLocationCoordinate2DMake(groundOverlay.position.latitude,
                                                                 groundOverlay.position.longitude)];
   }
+  [self setVisible:groundOverlay.visible];
 }
 
 @end
@@ -196,9 +196,6 @@
 }
 
 - (void)didTapGroundOverlayWithIdentifier:(NSString *)identifier {
-  if (!identifier) {
-    return;
-  }
   FGMGroundOverlayController *controller = self.groundOverlayControllerByIdentifier[identifier];
   if (!controller) {
     return;
