@@ -929,7 +929,7 @@ class Convert {
             .setGroundOverlayId(groundOverlayId)
             .setImage(dummyImage)
             .setWidth((double) groundOverlay.getWidth())
-            .setHeight((double) groundOverlay.getWidth())
+            .setHeight((double) groundOverlay.getHeight())
             .setBearing((double) groundOverlay.getBearing())
             .setTransparency((double) groundOverlay.getTransparency())
             .setZIndex((long) groundOverlay.getZIndex())
@@ -953,7 +953,7 @@ class Convert {
    * @return the PlatformDoublePair representing the anchor point.
    */
   @VisibleForTesting
-  private static @NonNull Messages.PlatformDoublePair buildGroundOverlayAnchorForPigeon(
+  public static @NonNull Messages.PlatformDoublePair buildGroundOverlayAnchorForPigeon(
       GroundOverlay groundOverlay) {
     Messages.PlatformDoublePair.Builder anchorBuilder = new Messages.PlatformDoublePair.Builder();
 
@@ -966,20 +966,17 @@ class Convert {
     double normalizedLatitude = 1.0 - ((position.latitude - bounds.southwest.latitude) / height);
 
     // Calculate normalized longitude.
+    // For longitude, if the bounds cross the antimeridian (west > east),
+    // adjust the width accordingly.
     double west = bounds.southwest.longitude;
     double east = bounds.northeast.longitude;
-    double longitudeOffset = 0;
-    if (west <= east) {
-      longitudeOffset = position.longitude - west;
-    } else {
-      longitudeOffset = position.longitude - west;
-      if (position.longitude < west) {
-        // If bounds cross the antimeridian add 360 to the offset.
-        longitudeOffset += 360;
-      }
-    }
-    double width = (west <= east) ? east - west : 360.0 - (west - east);
-    double normalizedLongitude = longitudeOffset / width;
+    double width = (west <= east) ? (east - west) : (360.0 - (west - east));
+
+    // Adjust the position longitude if it is less than west by adding 360,
+    // then compute the normalized value.
+    double normalizedLongitude =
+        ((position.longitude < west ? position.longitude + 360.0 : position.longitude) - west)
+            / width;
 
     anchorBuilder.setX(normalizedLongitude);
     anchorBuilder.setY(normalizedLatitude);

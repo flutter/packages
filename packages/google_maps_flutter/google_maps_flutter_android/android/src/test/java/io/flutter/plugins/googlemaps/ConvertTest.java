@@ -16,6 +16,7 @@ import static io.flutter.plugins.googlemaps.Convert.HEATMAP_OPACITY_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_RADIUS_KEY;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,6 +32,7 @@ import android.os.Build;
 import android.util.Base64;
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.clustering.algo.StaticCluster;
@@ -663,6 +665,118 @@ public class ConvertTest {
     Assert.assertEquals(opacity, builder.getOpacity(), 0);
     Assert.assertEquals(radius, builder.getRadius());
     Assert.assertEquals(idData, id);
+  }
+
+  @Test
+  public void buildGroundOverlayAnchorForPigeonWithNonCrossingMeridian() {
+    LatLng position = new LatLng(10, 20);
+    LatLng southwest = new LatLng(5, 15);
+    LatLng northeast = new LatLng(15, 25);
+    LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+    GroundOverlay groundOverlay = mock(GroundOverlay.class);
+    when(groundOverlay.getPosition()).thenReturn(position);
+    when(groundOverlay.getBounds()).thenReturn(bounds);
+
+    Messages.PlatformDoublePair anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay);
+
+    Assert.assertEquals(0.5, anchor.getX(), 1e-15);
+    Assert.assertEquals(0.5, anchor.getY(), 1e-15);
+  }
+
+  @Test
+  public void buildGroundOverlayAnchorForPigeonWithCrossingMeridian() {
+    LatLng position = new LatLng(10, -175);
+    LatLng southwest = new LatLng(5, 170);
+    LatLng northeast = new LatLng(15, -160);
+    LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+    GroundOverlay groundOverlay = mock(GroundOverlay.class);
+    when(groundOverlay.getPosition()).thenReturn(position);
+    when(groundOverlay.getBounds()).thenReturn(bounds);
+
+    Messages.PlatformDoublePair anchor = Convert.buildGroundOverlayAnchorForPigeon(groundOverlay);
+
+    Assert.assertEquals(0.5, anchor.getX(), 1e-15);
+    Assert.assertEquals(0.5, anchor.getY(), 1e-15);
+  }
+
+  @Test
+  public void groundOverlayToPigeonWithPosition() {
+    GroundOverlay mockGroundOverlay = mock(GroundOverlay.class);
+    LatLng position = new LatLng(10, 20);
+    LatLng southwest = new LatLng(5, 15);
+    LatLng northeast = new LatLng(15, 25);
+    LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+    when(mockGroundOverlay.getPosition()).thenReturn(position);
+    when(mockGroundOverlay.getBounds()).thenReturn(bounds);
+    when(mockGroundOverlay.getWidth()).thenReturn(30f);
+    when(mockGroundOverlay.getHeight()).thenReturn(40f);
+    when(mockGroundOverlay.getBearing()).thenReturn(50f);
+    when(mockGroundOverlay.getTransparency()).thenReturn(0.6f);
+    when(mockGroundOverlay.getZIndex()).thenReturn(7f);
+    when(mockGroundOverlay.isVisible()).thenReturn(true);
+    when(mockGroundOverlay.isClickable()).thenReturn(false);
+
+    Messages.PlatformGroundOverlay result =
+        Convert.groundOverlayToPigeon(mockGroundOverlay, "overlay_1", false);
+
+    Assert.assertEquals("overlay_1", result.getGroundOverlayId());
+    Assert.assertEquals(position.latitude, result.getPosition().getLatitude(), 1e-15);
+    Assert.assertEquals(position.longitude, result.getPosition().getLongitude(), 1e-15);
+    Assert.assertEquals(30.0, result.getWidth(), 1e-15);
+    Assert.assertEquals(40.0, result.getHeight(), 1e-15);
+    Assert.assertEquals(50.0, result.getBearing(), 1e-15);
+    Assert.assertEquals(0.6, result.getTransparency(), 1e-6);
+    Assert.assertEquals(7, result.getZIndex().intValue());
+    Assert.assertTrue(result.getVisible());
+    Assert.assertFalse(result.getClickable());
+    Assert.assertNull(result.getBounds());
+
+    Messages.PlatformDoublePair anchor = result.getAnchor();
+    Assert.assertEquals(0.5, anchor.getX(), 1e-6);
+    Assert.assertEquals(0.5, anchor.getY(), 1e-6);
+  }
+
+  @Test
+  public void groundOverlayToPigeonWithBounds() {
+    GroundOverlay mockGroundOverlay = mock(GroundOverlay.class);
+    LatLng position = new LatLng(10, 20);
+    LatLng southwest = new LatLng(5, 15);
+    LatLng northeast = new LatLng(15, 25);
+    LatLngBounds bounds = new LatLngBounds(southwest, northeast);
+    when(mockGroundOverlay.getPosition()).thenReturn(position);
+    when(mockGroundOverlay.getBounds()).thenReturn(bounds);
+    when(mockGroundOverlay.getWidth()).thenReturn(30f);
+    when(mockGroundOverlay.getHeight()).thenReturn(40f);
+    when(mockGroundOverlay.getBearing()).thenReturn(50f);
+    when(mockGroundOverlay.getTransparency()).thenReturn(0.6f);
+    when(mockGroundOverlay.getZIndex()).thenReturn(7f);
+    when(mockGroundOverlay.isVisible()).thenReturn(true);
+    when(mockGroundOverlay.isClickable()).thenReturn(false);
+
+    Messages.PlatformGroundOverlay result =
+        Convert.groundOverlayToPigeon(mockGroundOverlay, "overlay_2", true);
+
+    Assert.assertEquals("overlay_2", result.getGroundOverlayId());
+    Assert.assertEquals(
+        bounds.southwest.latitude, result.getBounds().getSouthwest().getLatitude(), 1e-15);
+    Assert.assertEquals(
+        bounds.southwest.longitude, result.getBounds().getSouthwest().getLongitude(), 1e-15);
+    Assert.assertEquals(
+        bounds.northeast.latitude, result.getBounds().getNortheast().getLatitude(), 1e-15);
+    Assert.assertEquals(
+        bounds.northeast.longitude, result.getBounds().getNortheast().getLongitude(), 1e-15);
+    Assert.assertEquals(30.0, result.getWidth(), 1e-15);
+    Assert.assertEquals(40.0, result.getHeight(), 1e-15);
+    Assert.assertEquals(50.0, result.getBearing(), 1e-15);
+    Assert.assertEquals(0.6, result.getTransparency(), 1e-6);
+    Assert.assertEquals(7, result.getZIndex().intValue());
+    Assert.assertTrue(result.getVisible());
+    Assert.assertFalse(result.getClickable());
+    Assert.assertNull(result.getPosition());
+
+    Messages.PlatformDoublePair anchor = result.getAnchor();
+    Assert.assertEquals(0.5, anchor.getX(), 1e-6);
+    Assert.assertEquals(0.5, anchor.getY(), 1e-6);
   }
 
   private InputStream buildImageInputStream() {
