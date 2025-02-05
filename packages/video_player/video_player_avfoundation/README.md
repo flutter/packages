@@ -16,4 +16,4 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Platform limitations
 
-On macOS, the plugin does not support platform views. Instead, a texture view is always used to display the video player, even if `VideoViewType.platformView` is specified as a parameter.
+On macOS, the plugin does not currently support platform views. Instead, a texture view is always used to display the video player, even if `VideoViewType.platformView` is specified as a parameter.
