@@ -25,15 +25,7 @@
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                    onDisposed:(void (^)(int64_t))onDisposed {
-  NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-#if TARGET_OS_OSX
-  // See https://github.com/flutter/flutter/issues/135302
-  // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
-  if (!path) {
-    path = [NSURL URLWithString:asset relativeToURL:NSBundle.mainBundle.bundleURL].path;
-  }
-#endif
-  return [self initWithURL:[NSURL fileURLWithPath:path]
+  return [self initWithURL:[NSURL fileURLWithPath:[self getAbsoluteAssetPath:asset]]
               frameUpdater:frameUpdater
                displayLink:displayLink
                httpHeaders:@{}

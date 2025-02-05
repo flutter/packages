@@ -20,15 +20,7 @@ static void *rateContext = &rateContext;
 - (instancetype)initWithAsset:(NSString *)asset
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-#if TARGET_OS_OSX
-  // See https://github.com/flutter/flutter/issues/135302
-  // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
-  if (!path) {
-    path = [NSURL URLWithString:asset relativeToURL:NSBundle.mainBundle.bundleURL].path;
-  }
-#endif
-  return [self initWithURL:[NSURL fileURLWithPath:path]
+  return [self initWithURL:[NSURL fileURLWithPath:[self getAbsoluteAssetPath:asset]]
                httpHeaders:@{}
                  avFactory:avFactory
                  registrar:registrar];
@@ -105,6 +97,19 @@ static void *rateContext = &rateContext;
   if (!_disposed) {
     [self removeKeyValueObservers];
   }
+}
+
+- (NSString *)getAbsoluteAssetPath:(NSString *)asset {
+  NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
+#if TARGET_OS_OSX
+  // See https://github.com/flutter/flutter/issues/135302
+  // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
+  if (!path) {
+    path = [NSURL URLWithString:asset relativeToURL:NSBundle.mainBundle.bundleURL].path;
+  }
+#endif
+
+  return path;
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
