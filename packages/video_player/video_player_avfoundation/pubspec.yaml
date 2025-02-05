@@ -24,7 +24,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  video_player_platform_interface: ">=6.3.0 <7.0.0"
+  video_player_platform_interface: ^6.3.0
 
 dev_dependencies:
   flutter_test:
