@@ -6,13 +6,13 @@
 
 #import <TargetConditionals.h>
 
+#import "FVPVideoPlayer.h"
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
 #endif
-
-#import "FVPVideoPlayer.h"
 
 /// A factory class responsible for creating native video views that can be embedded in a
 /// Flutter app.

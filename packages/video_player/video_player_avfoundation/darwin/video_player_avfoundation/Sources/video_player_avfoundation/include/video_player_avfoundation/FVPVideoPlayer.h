@@ -2,17 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
-#else
-#import <Flutter/Flutter.h>
-#endif
-
 #import <AVFoundation/AVFoundation.h>
 
 #import "FVPAVFactory.h"
 #import "FVPDisplayLink.h"
 #import "FVPFrameUpdater.h"
+
+#if TARGET_OS_OSX
+#import <FlutterMacOS/FlutterMacOS.h>
+#else
+#import <Flutter/Flutter.h>
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 

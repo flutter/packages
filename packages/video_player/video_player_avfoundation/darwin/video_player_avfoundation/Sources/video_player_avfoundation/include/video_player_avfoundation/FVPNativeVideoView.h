@@ -4,15 +4,13 @@
 
 // Platform views are only supported on iOS as of now. Ifdefs are used to avoid compilation errors.
 
-#import <TargetConditionals.h>
+#import <AVFoundation/AVFoundation.h>
 
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
 #endif
-
-#import <AVFoundation/AVFoundation.h>
 
 /// A class used to create a native video view that can be embedded in a Flutter app.
 /// This class wraps an AVPlayer instance and displays its video content.
