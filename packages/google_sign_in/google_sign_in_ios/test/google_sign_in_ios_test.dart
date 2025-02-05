@@ -52,6 +52,20 @@ void main() {
             (PlatformException e) => e.code, 'code', 'unsupported-options')));
   });
 
+  test('init throws for forceAccountName', () async {
+    expect(
+        () => googleSignIn.initWithParams(
+              SignInInitParameters(
+                hostedDomain: 'example.com',
+                signInOption: SignInOption.games,
+                clientId: 'fakeClientId',
+//                 forceAccountName: 'fakeEmailAddress@google.com',
+              ),
+            ),
+        throwsA(isInstanceOf<PlatformException>().having(
+            (PlatformException e) => e.code, 'code', 'unsupported-options')));
+  });
+
   test('signInSilently transforms platform data to GoogleSignInUserData',
       () async {
     when(api.signInSilently()).thenAnswer((_) async => UserData(

@@ -46,6 +46,11 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
           code: 'unsupported-options',
           message: 'Games sign in is not supported on iOS');
     }
+    if (params.forceAccountName != null) {
+      throw PlatformException(
+          code: 'unsupported-options',
+          message: 'Force account name is not supported on iOS');
+    }
     return _api.init(InitParams(
       scopes: params.scopes,
       hostedDomain: params.hostedDomain,

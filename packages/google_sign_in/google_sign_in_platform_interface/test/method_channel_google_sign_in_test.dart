@@ -102,7 +102,8 @@ void main() {
               hostedDomain: 'example.com',
               scopes: <String>['two', 'scopes'],
               signInOption: SignInOption.games,
-              clientId: 'fakeClientId');
+              clientId: 'fakeClientId',
+              forceAccountName: 'fakeEmailAddress@google.com');
         }: isMethodCall('init', arguments: <String, dynamic>{
           'hostedDomain': 'example.com',
           'scopes': <String>['two', 'scopes'],
@@ -110,6 +111,7 @@ void main() {
           'clientId': 'fakeClientId',
           'serverClientId': null,
           'forceCodeForRefreshToken': false,
+          'forceAccountName': 'fakeEmailAddress@google.com',
         }),
         () {
           googleSignIn.getTokens(
@@ -158,7 +160,8 @@ void main() {
           signInOption: SignInOption.games,
           clientId: 'fakeClientId',
           serverClientId: 'fakeServerClientId',
-          forceCodeForRefreshToken: true));
+          forceCodeForRefreshToken: true,
+          forceAccountName: 'fakeEmailAddress@google.com'));
       expect(log, <Matcher>[
         isMethodCall('init', arguments: <String, dynamic>{
           'hostedDomain': 'example.com',
@@ -167,6 +170,7 @@ void main() {
           'clientId': 'fakeClientId',
           'serverClientId': 'fakeServerClientId',
           'forceCodeForRefreshToken': true,
+          'forceAccountName': 'fakeEmailAddress@google.com',
         }),
       ]);
     });

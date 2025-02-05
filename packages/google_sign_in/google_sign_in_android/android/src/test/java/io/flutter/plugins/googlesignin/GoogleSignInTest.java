@@ -284,6 +284,13 @@ public class GoogleSignInTest {
     initAndAssertForceCodeForRefreshToken(params, true);
   }
 
+  @Test
+  public void init_PassesForceAccountName() {
+    InitParams params = buildInitParams("fakeClientId", "fakeServerClientId", 'fakeEmailAddress@google.com');
+
+    initAndAssertForceAccountName(params, 'fakeEmailAddress@google.com');
+  }
+
   public void initAndAssertServerClientId(InitParams params, String serverClientId) {
     ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
         ArgumentCaptor.forClass(GoogleSignInOptions.class);
@@ -304,9 +311,20 @@ public class GoogleSignInTest {
         forceCodeForRefreshToken, optionsCaptor.getValue().isForceCodeForRefreshToken());
   }
 
+  public void initAndAssertForceAccountName(
+          InitParams params, String forceAccountName) {
+    ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
+            ArgumentCaptor.forClass(GoogleSignInOptions.class);
+    when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
+            .thenReturn(mockClient);
+    plugin.init(params);
+    Assert.assertEquals(
+            forceAccountName, optionsCaptor.getValue().isForceAccountName());
+  }
+
   private static InitParams buildInitParams(String clientId, String serverClientId) {
     return buildInitParams(
-        Messages.SignInType.STANDARD, Collections.emptyList(), clientId, serverClientId, false);
+        Messages.SignInType.STANDARD, Collections.emptyList(), clientId, serverClientId, false, null);
   }
 
   private static InitParams buildInitParams(
@@ -316,7 +334,19 @@ public class GoogleSignInTest {
         Collections.emptyList(),
         clientId,
         serverClientId,
-        forceCodeForRefreshToken);
+        forceCodeForRefreshToken,
+            null);
+  }
+
+  private static InitParams buildInitParams(
+          String clientId, String serverClientId, String forceAccountName) {
+    return buildInitParams(
+            Messages.SignInType.STANDARD,
+            Collections.emptyList(),
+            clientId,
+            serverClientId,
+            false,
+            forceAccountName);
   }
 
   private static InitParams buildInitParams(
@@ -324,7 +354,8 @@ public class GoogleSignInTest {
       List<String> scopes,
       String clientId,
       String serverClientId,
-      boolean forceCodeForRefreshToken) {
+      boolean forceCodeForRefreshToken,
+      String forceAccountName) {
     InitParams.Builder builder = new InitParams.Builder();
     builder.setSignInType(signInType);
     builder.setScopes(scopes);
@@ -335,6 +366,9 @@ public class GoogleSignInTest {
       builder.setServerClientId(serverClientId);
     }
     builder.setForceCodeForRefreshToken(forceCodeForRefreshToken);
+    if (forceAccountName != null) {
+      builder.setForceAccountName(forceAccountName);
+    }
     return builder.build();
   }
 }
