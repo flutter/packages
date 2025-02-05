@@ -103,8 +103,7 @@
                    initialPolylines:@[]
                     initialHeatmaps:@[]
                 initialTileOverlays:@[]
-             initialClusterManagers:@[]
-                         markerType:FGMPlatformMarkerTypeMarker];
+             initialClusterManagers:@[]];
 }
 
 @end
