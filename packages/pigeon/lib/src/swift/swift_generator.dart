@@ -1352,8 +1352,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required String dartPackageName,
   }) {
     indent.newln();
-    if (api.swiftOptions?.includeSharedClasses ?? true) {
-      indent.format('''
+    indent.format('''
       private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
         private let wrapper: PigeonEventChannelWrapper<ReturnType>
         private var pigeonSink: PigeonEventSink<ReturnType>? = nil
@@ -1375,7 +1374,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           wrapper.onCancel(withArguments: arguments)
           return nil
         }
-      }
+      }''');
+    if (api.swiftOptions?.includeSharedClasses ?? true) {
+      indent.format('''
 
       class PigeonEventChannelWrapper<ReturnType> {
         func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
