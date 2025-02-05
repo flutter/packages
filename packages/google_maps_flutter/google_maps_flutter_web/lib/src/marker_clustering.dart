@@ -17,7 +17,10 @@ import 'types.dart';
 /// This class maps [ClusterManager] objects to javascript [MarkerClusterer]
 /// objects and provides an interface for adding and removing markers from
 /// clusters.
-class ClusterManagersController<T extends JSObject> extends GeometryController {
+///
+/// [T] must extend [JSObject]. It's not specified in code because our mocking
+/// framework does not support mocking JSObjects.
+class ClusterManagersController<T> extends GeometryController {
   /// Creates a new [ClusterManagersController] instance.
   ///
   /// The [stream] parameter is a required [StreamController] used for

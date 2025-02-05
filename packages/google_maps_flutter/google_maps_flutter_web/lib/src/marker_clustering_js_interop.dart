@@ -13,7 +13,7 @@ import 'dart:js_interop';
 import 'package:google_maps/google_maps.dart' as gmaps;
 
 /// A typedef representing a callback function for handling cluster tap events.
-typedef ClusterClickHandler<T extends JSObject> = void Function(
+typedef ClusterClickHandler<T> = void Function(
   gmaps.MapMouseEvent,
   MarkerClustererCluster<T>,
   gmaps.Map,
@@ -24,8 +24,7 @@ typedef ClusterClickHandler<T extends JSObject> = void Function(
 /// See: https://googlemaps.github.io/js-markerclusterer/interfaces/MarkerClustererOptions.html
 @JS()
 @anonymous
-extension type MarkerClustererOptions<T extends JSObject>._(JSObject _)
-    implements JSObject {
+extension type MarkerClustererOptions<T>._(JSObject _) implements JSObject {
   /// Constructs a new [MarkerClustererOptions] object.
   factory MarkerClustererOptions({
     gmaps.Map? map,
@@ -69,8 +68,7 @@ extension type MarkerClustererOptions<T extends JSObject>._(JSObject _)
 ///
 /// https://googlemaps.github.io/js-markerclusterer/classes/Cluster.html
 @JS('markerClusterer.Cluster')
-extension type MarkerClustererCluster<T extends JSObject>._(JSObject _)
-    implements JSObject {
+extension type MarkerClustererCluster<T>._(JSObject _) implements JSObject {
   /// Getter for the cluster marker.
   T get marker => _marker as T;
   @JS('marker')
@@ -107,8 +105,7 @@ extension type MarkerClustererCluster<T extends JSObject>._(JSObject _)
 ///
 /// https://googlemaps.github.io/js-markerclusterer/classes/MarkerClusterer.html
 @JS('markerClusterer.MarkerClusterer')
-extension type MarkerClusterer<T extends JSObject>._(JSObject _)
-    implements JSObject {
+extension type MarkerClusterer<T>._(JSObject _) implements JSObject {
   /// Constructs a new [MarkerClusterer] object.
   external MarkerClusterer(MarkerClustererOptions<T> options);
 
@@ -156,7 +153,7 @@ extension type MarkerClusterer<T extends JSObject>._(JSObject _)
 
 /// Creates [MarkerClusterer] object with given [gmaps.Map] and
 /// [ClusterClickHandler].
-MarkerClusterer<T> createMarkerClusterer<T extends JSObject>(
+MarkerClusterer<T> createMarkerClusterer<T>(
     gmaps.Map map, ClusterClickHandler<T> onClusterClickHandler) {
   final MarkerClustererOptions<T> options = MarkerClustererOptions<T>(
     map: map,
