@@ -722,8 +722,13 @@ void main() {
           <String, Object>{
             'backgroundColor': Colors.green.value,
             'borderColor': Colors.blue.value,
-            'glyphText': 'Hello',
-            'glyphTextColor': Colors.red.value,
+            'glyph': <Object>[
+              'textGlyph',
+              <Object, Object>{
+                'text': 'Hello',
+                'textColor': Colors.red.value,
+              }
+            ],
           },
         ],
       );
@@ -744,9 +749,17 @@ void main() {
         <Object>[
           PinConfig.type,
           <String, Object>{
+            'glyph': <Object>[
+              'bitmapGlyph',
+              <Object, Object>{
+                'bitmap': <Object>[
+                  'fromAsset',
+                  'red_square.png',
+                ],
+              },
+            ],
             'backgroundColor': Colors.black.value,
             'borderColor': Colors.red.value,
-            'glyphBitmapDescriptor': bitmap.toJson(),
           },
         ],
       );

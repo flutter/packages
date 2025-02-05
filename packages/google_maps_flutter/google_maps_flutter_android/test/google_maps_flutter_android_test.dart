@@ -1224,7 +1224,7 @@ void main() {
   });
 
   test(
-    'Correct marker type is padded to platform view',
+    'Correct marker type is passed to platform view',
     () async {
       final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
       final Widget widget = maps.buildViewWithConfiguration(
@@ -1233,6 +1233,9 @@ void main() {
         widgetConfiguration: const MapWidgetConfiguration(
           initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
           textDirection: TextDirection.ltr,
+        ),
+        mapConfiguration: const MapConfiguration(
+          markerType: MarkerType.advancedMarker,
         ),
       );
 
@@ -1252,6 +1255,9 @@ void main() {
         widgetConfiguration: const MapWidgetConfiguration(
           initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
           textDirection: TextDirection.ltr,
+        ),
+        mapConfiguration: const MapConfiguration(
+          markerType: MarkerType.marker,
         ),
       );
       expect(widget2, isA<AndroidView>());
