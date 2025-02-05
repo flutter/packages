@@ -4,7 +4,7 @@
 
 #import "FVPDisplayLink.h"
 #import "FVPFrameUpdater.h"
-#import "FVPVideoPlayer.h"
+#import "FVPVideoPlayer_Internal.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

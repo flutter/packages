@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FVPTextureBasedVideoPlayer_Test.h"
+#import "./include/video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h"
 
 @interface FVPTextureBasedVideoPlayer ()
 // The CALayer associated with the Flutter view this plugin is associated with, if any.
