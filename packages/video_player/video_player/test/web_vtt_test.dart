@@ -34,7 +34,8 @@ void main() {
     });
 
     test('with Multiline without identifier', () {
-      parsedFile = WebVTTCaptionFile(_valid_vtt_with_multiline_without_identifier);
+      parsedFile =
+          WebVTTCaptionFile(_valid_vtt_with_multiline_without_identifier);
       expect(parsedFile.captions.length, 1);
 
       expect(parsedFile.captions[0].number, 1);
