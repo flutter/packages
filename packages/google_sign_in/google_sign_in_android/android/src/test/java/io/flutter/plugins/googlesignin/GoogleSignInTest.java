@@ -289,7 +289,7 @@ public class GoogleSignInTest {
     InitParams params = buildInitParams(
             "fakeClientId", "fakeServerClientId", "fakeEmailAddress@google.com");
 
-    initAndAssertForceAccountName(params, 'fakeEmailAddress@google.com');
+    initAndAssertForceAccountName(params, "fakeEmailAddress@google.com");
   }
 
   public void initAndAssertServerClientId(InitParams params, String serverClientId) {
