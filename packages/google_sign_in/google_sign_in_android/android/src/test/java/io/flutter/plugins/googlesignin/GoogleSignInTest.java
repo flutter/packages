@@ -287,7 +287,7 @@ public class GoogleSignInTest {
   @Test
   public void init_PassesForceAccountName() {
     InitParams params = buildInitParams(
-            "fakeClientId", "fakeServerClientId", 'fakeEmailAddress@google.com');
+            "fakeClientId", "fakeServerClientId", "fakeEmailAddress@google.com");
 
     initAndAssertForceAccountName(params, 'fakeEmailAddress@google.com');
   }
