@@ -61,15 +61,18 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     String? webOnlyWindowName,
   }) async {
     return launchUrl(
-        url,
-        LaunchOptions(
-            mode: useWebView
-                ? PreferredLaunchMode.inAppWebView
-                : PreferredLaunchMode.externalApplication,
-            webViewConfiguration: InAppWebViewConfiguration(
-                enableDomStorage: enableDomStorage,
-                enableJavaScript: enableJavaScript,
-                headers: headers)));
+      url,
+      LaunchOptions(
+        mode: useWebView
+            ? PreferredLaunchMode.inAppWebView
+            : PreferredLaunchMode.externalApplication,
+        webViewConfiguration: InAppWebViewConfiguration(
+          enableDomStorage: enableDomStorage,
+          enableJavaScript: enableJavaScript,
+          headers: headers,
+        ),
+      ),
+    );
   }
 
   @override
