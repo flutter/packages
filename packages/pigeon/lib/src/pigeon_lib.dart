@@ -27,15 +27,15 @@ import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
-import 'cpp_generator.dart';
-import 'dart_generator.dart';
+import 'cpp/cpp_generator.dart';
+import 'dart/dart_generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
-import 'gobject_generator.dart';
-import 'java_generator.dart';
-import 'kotlin_generator.dart';
-import 'objc_generator.dart';
-import 'swift_generator.dart';
+import 'gobject/gobject_generator.dart';
+import 'java/java_generator.dart';
+import 'kotlin/kotlin_generator.dart';
+import 'objc/objc_generator.dart';
+import 'swift/swift_generator.dart';
 
 class _Asynchronous {
   const _Asynchronous();
