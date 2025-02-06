@@ -20,7 +20,6 @@
   NSArray<AVCaptureDevice *> *devices = discoverySession.devices;
   NSMutableArray<NSObject<FLTCaptureDevice> *> *deviceControllers =
       [NSMutableArray arrayWithCapacity:devices.count];
-
   for (AVCaptureDevice *device in devices) {
     [deviceControllers addObject:[[FLTDefaultCaptureDevice alloc] initWithDevice:device]];
   }
