@@ -98,7 +98,7 @@ public class GoogleSignInTest {
     plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
 
     verify(mockGoogleSignIn)
-        .requestPermissions(mockActivity, 53295, account, new Scope[] {requestedScope});
+            .requestPermissions(mockActivity, 53295, account, new Scope[] {requestedScope});
   }
 
   @Test
@@ -111,9 +111,9 @@ public class GoogleSignInTest {
 
     plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
     plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE,
-        Activity.RESULT_CANCELED,
-        new Intent());
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE,
+            Activity.RESULT_CANCELED,
+            new Intent());
 
     verify(boolResult).success(false);
   }
@@ -128,7 +128,7 @@ public class GoogleSignInTest {
 
     plugin.requestScopes(Collections.singletonList("requestedScope"), boolResult);
     plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
     verify(boolResult).success(true);
   }
@@ -144,10 +144,10 @@ public class GoogleSignInTest {
 
     plugin.requestScopes(requestedScopes, boolResult);
     plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
     plugin.requestScopes(requestedScopes, boolResult);
     plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
     verify(boolResult, times(2)).success(true);
   }
@@ -160,10 +160,10 @@ public class GoogleSignInTest {
 
     plugin.requestScopes(requestedScopes, boolResult);
     plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
     plugin.requestScopes(requestedScopes, boolResult);
     plugin.onActivityResult(
-        GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
+            GoogleSignInPlugin.Delegate.REQUEST_CODE_REQUEST_SCOPE, Activity.RESULT_OK, new Intent());
 
     ArgumentCaptor<Throwable> resultCaptor = ArgumentCaptor.forClass(Throwable.class);
     verify(boolResult, times(2)).error(resultCaptor.capture());
@@ -180,20 +180,20 @@ public class GoogleSignInTest {
   @Test(expected = IllegalStateException.class)
   public void signInThrowsWithoutActivity() {
     final GoogleSignInPlugin.Delegate plugin =
-        new GoogleSignInPlugin.Delegate(mock(Context.class), mock(GoogleSignInWrapper.class));
+            new GoogleSignInPlugin.Delegate(mock(Context.class), mock(GoogleSignInWrapper.class));
 
     plugin.signIn(userDataResult);
   }
 
   @Test
   public void signInSilentlyThatImmediatelyCompletesWithoutResultFinishesWithError()
-      throws ApiException {
+          throws ApiException {
     final String clientId = "fakeClientId";
     InitParams params = buildInitParams(clientId, null);
     initAndAssertServerClientId(params, clientId);
 
     ApiException exception =
-        new ApiException(new Status(CommonStatusCodes.SIGN_IN_REQUIRED, "Error text"));
+            new ApiException(new Status(CommonStatusCodes.SIGN_IN_REQUIRED, "Error text"));
     when(mockClient.silentSignIn()).thenReturn(mockSignInTask);
     when(mockSignInTask.isComplete()).thenReturn(true);
     when(mockSignInTask.getResult(ApiException.class)).thenThrow(exception);
@@ -204,7 +204,7 @@ public class GoogleSignInTest {
     FlutterError error = (FlutterError) resultCaptor.getValue();
     Assert.assertEquals("sign_in_required", error.code);
     Assert.assertEquals(
-        "com.google.android.gms.common.api.ApiException: 4: Error text", error.getMessage());
+            "com.google.android.gms.common.api.ApiException: 4: Error text", error.getMessage());
   }
 
   @Test
@@ -215,7 +215,7 @@ public class GoogleSignInTest {
     InitParams params = buildInitParams(null, null);
     when(mockContext.getPackageName()).thenReturn(packageName);
     when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
-        .thenReturn(resourceId);
+            .thenReturn(resourceId);
     when(mockContext.getString(resourceId)).thenReturn(serverClientId);
     initAndAssertServerClientId(params, serverClientId);
   }
@@ -264,7 +264,7 @@ public class GoogleSignInTest {
     InitParams params = buildInitParams(null, null, false);
     when(mockContext.getPackageName()).thenReturn(packageName);
     when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
-        .thenReturn(resourceId);
+            .thenReturn(resourceId);
     when(mockContext.getString(resourceId)).thenReturn(serverClientId);
 
     initAndAssertForceCodeForRefreshToken(params, false);
@@ -278,7 +278,7 @@ public class GoogleSignInTest {
     InitParams params = buildInitParams(null, null, true);
     when(mockContext.getPackageName()).thenReturn(packageName);
     when(mockResources.getIdentifier("default_web_client_id", "string", packageName))
-        .thenReturn(resourceId);
+            .thenReturn(resourceId);
     when(mockContext.getString(resourceId)).thenReturn(serverClientId);
 
     initAndAssertForceCodeForRefreshToken(params, true);
@@ -286,56 +286,59 @@ public class GoogleSignInTest {
 
   @Test
   public void init_PassesForceAccountName() {
-    InitParams params = buildInitParams(
-            "fakeClientId", "fakeServerClientId", "fakeEmailAddress@google.com");
+    InitParams params =
+            buildInitParams("fakeClientId", "fakeServerClientId", "fakeEmailAddress@google.com");
 
     initAndAssertForceAccountName(params, "fakeEmailAddress@google.com");
   }
 
   public void initAndAssertServerClientId(InitParams params, String serverClientId) {
     ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
-        ArgumentCaptor.forClass(GoogleSignInOptions.class);
+            ArgumentCaptor.forClass(GoogleSignInOptions.class);
     when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
-        .thenReturn(mockClient);
+            .thenReturn(mockClient);
     plugin.init(params);
     Assert.assertEquals(serverClientId, optionsCaptor.getValue().getServerClientId());
   }
 
   public void initAndAssertForceCodeForRefreshToken(
-      InitParams params, boolean forceCodeForRefreshToken) {
-    ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
-        ArgumentCaptor.forClass(GoogleSignInOptions.class);
-    when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
-        .thenReturn(mockClient);
-    plugin.init(params);
-    Assert.assertEquals(
-        forceCodeForRefreshToken, optionsCaptor.getValue().isForceCodeForRefreshToken());
-  }
-
-  public void initAndAssertForceAccountName(
-          InitParams params, String forceAccountName) {
+          InitParams params, boolean forceCodeForRefreshToken) {
     ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
             ArgumentCaptor.forClass(GoogleSignInOptions.class);
     when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
             .thenReturn(mockClient);
     plugin.init(params);
     Assert.assertEquals(
-            forceAccountName, optionsCaptor.getValue().isForceAccountName());
+            forceCodeForRefreshToken, optionsCaptor.getValue().isForceCodeForRefreshToken());
+  }
+
+  public void initAndAssertForceAccountName(InitParams params, String forceAccountName) {
+    ArgumentCaptor<GoogleSignInOptions> optionsCaptor =
+            ArgumentCaptor.forClass(GoogleSignInOptions.class);
+    when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
+            .thenReturn(mockClient);
+    plugin.init(params);
+    Assert.assertEquals(forceAccountName, optionsCaptor.getValue().isForceAccountName());
   }
 
   private static InitParams buildInitParams(String clientId, String serverClientId) {
     return buildInitParams(
-        Messages.SignInType.STANDARD, Collections.emptyList(), clientId, serverClientId, false, null);
+            Messages.SignInType.STANDARD,
+            Collections.emptyList(),
+            clientId,
+            serverClientId,
+            false,
+            null);
   }
 
   private static InitParams buildInitParams(
-      String clientId, String serverClientId, boolean forceCodeForRefreshToken) {
+          String clientId, String serverClientId, boolean forceCodeForRefreshToken) {
     return buildInitParams(
-        Messages.SignInType.STANDARD,
-        Collections.emptyList(),
-        clientId,
-        serverClientId,
-        forceCodeForRefreshToken,
+            Messages.SignInType.STANDARD,
+            Collections.emptyList(),
+            clientId,
+            serverClientId,
+            forceCodeForRefreshToken,
             null);
   }
 
@@ -351,12 +354,12 @@ public class GoogleSignInTest {
   }
 
   private static InitParams buildInitParams(
-      Messages.SignInType signInType,
-      List<String> scopes,
-      String clientId,
-      String serverClientId,
-      boolean forceCodeForRefreshToken,
-      String forceAccountName) {
+          Messages.SignInType signInType,
+          List<String> scopes,
+          String clientId,
+          String serverClientId,
+          boolean forceCodeForRefreshToken,
+          String forceAccountName) {
     InitParams.Builder builder = new InitParams.Builder();
     builder.setSignInType(signInType);
     builder.setScopes(scopes);

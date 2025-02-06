@@ -22,6 +22,7 @@ PlatformException _createConnectionError(String channelName) {
 enum SignInType {
   /// Default configuration.
   standard,
+
   /// Recommended configuration for game sign in.
   games,
 }
@@ -129,7 +130,6 @@ class UserData {
   }
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -137,13 +137,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is SignInType) {
+    } else if (value is SignInType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is InitParams) {
+    } else if (value is InitParams) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    }    else if (value is UserData) {
+    } else if (value is UserData) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -154,12 +154,12 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SignInType.values[value];
-      case 130: 
+      case 130:
         return InitParams.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return UserData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -171,9 +171,11 @@ class GoogleSignInApi {
   /// Constructor for [GoogleSignInApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  GoogleSignInApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  GoogleSignInApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -182,8 +184,10 @@ class GoogleSignInApi {
 
   /// Initializes a sign in request with the given parameters.
   Future<void> init(InitParams params) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.init$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.init$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -205,8 +209,10 @@ class GoogleSignInApi {
 
   /// Starts a silent sign in.
   Future<UserData> signInSilently() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signInSilently$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signInSilently$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -233,8 +239,10 @@ class GoogleSignInApi {
 
   /// Starts a sign in with user interaction.
   Future<UserData> signIn() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signIn$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signIn$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -261,14 +269,16 @@ class GoogleSignInApi {
 
   /// Requests the access token for the current sign in.
   Future<String> getAccessToken(String email, bool shouldRecoverAuth) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getAccessToken$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getAccessToken$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[email, shouldRecoverAuth]) as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[email, shouldRecoverAuth]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -289,8 +299,10 @@ class GoogleSignInApi {
 
   /// Signs out the current user.
   Future<void> signOut() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signOut$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signOut$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -312,8 +324,10 @@ class GoogleSignInApi {
 
   /// Revokes scope grants to the application.
   Future<void> disconnect() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.disconnect$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.disconnect$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -335,8 +349,10 @@ class GoogleSignInApi {
 
   /// Returns whether the user is currently signed in.
   Future<bool> isSignedIn() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.isSignedIn$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.isSignedIn$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -364,8 +380,10 @@ class GoogleSignInApi {
   /// Clears the authentication caching for the given token, requiring a
   /// new sign in.
   Future<void> clearAuthCache(String token) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthCache$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthCache$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -387,8 +405,10 @@ class GoogleSignInApi {
 
   /// Requests access to the given scopes.
   Future<bool> requestScopes(List<String> scopes) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.requestScopes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.requestScopes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
