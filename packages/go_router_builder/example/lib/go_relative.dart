@@ -38,12 +38,25 @@ const TypedRelativeGoRoute<DetailsRoute> detailRoute =
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
-  routes: <TypedRoute<RouteData>>[detailRoute],
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<DashboardRoute>(
+      path: '/dashboard',
+      routes: <TypedRoute<RouteData>>[detailRoute],
+    ),
+    detailRoute,
+  ],
 )
 class HomeRoute extends GoRouteData {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const HomeScreen();
+  }
+}
+
+class DashboardRoute extends GoRouteData {
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return const DashboardScreen();
   }
 }
 
@@ -70,26 +83,57 @@ class SettingsRoute extends GoRouteData {
 }
 
 /// The home screen
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   /// Constructs a [HomeScreen]
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Home Screen')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            const DetailsRoute(detailId: 'DetailsId').goRelative(context);
-          },
-          child: const Text('Go to the Details screen'),
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {
+              const DetailsRoute(detailId: 'DetailsId').goRelative(context);
+            },
+            child: const Text('Go to the Details screen'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              DashboardRoute().go(context);
+            },
+            child: const Text('Go to the Dashboard screen'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The home screen
+class DashboardScreen extends StatelessWidget {
+  /// Constructs a [DashboardScreen]
+  const DashboardScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Dashboard Screen')),
+      body: Column(
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () {
+              const DetailsRoute(detailId: 'DetailsId').goRelative(context);
+            },
+            child: const Text('Go to the Details screen'),
+          ),
+          ElevatedButton(
+            onPressed: () => context.pop(),
+            child: const Text('Go back'),
+          ),
+        ],
       ),
     );
   }
@@ -113,7 +157,7 @@ class DetailsScreen extends StatelessWidget {
         child: Column(
           children: <Widget>[
             ElevatedButton(
-              onPressed: () => HomeRoute().go(context),
+              onPressed: () => context.pop(),
               child: const Text('Go back'),
             ),
             ElevatedButton(
@@ -145,9 +189,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(title: Text('Settings Screen $id')),
       body: Center(
         child: TextButton(
-          onPressed: () {
-            context.pop();
-          },
+          onPressed: () => context.pop(),
           child: const Text('Go back'),
         ),
       ),
