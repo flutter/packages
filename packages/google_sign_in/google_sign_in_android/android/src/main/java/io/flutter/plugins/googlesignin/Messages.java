@@ -56,7 +56,7 @@ public class Messages {
       errorList.add(exception.toString());
       errorList.add(exception.getClass().getSimpleName());
       errorList.add(
-              "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
+          "Cause: " + exception.getCause() + ", Stacktrace: " + Log.getStackTraceString(exception));
     }
     return errorList;
   }
@@ -179,24 +179,24 @@ public class Messages {
       }
       InitParams that = (InitParams) o;
       return scopes.equals(that.scopes)
-              && signInType.equals(that.signInType)
-              && Objects.equals(hostedDomain, that.hostedDomain)
-              && Objects.equals(clientId, that.clientId)
-              && Objects.equals(serverClientId, that.serverClientId)
-              && forceCodeForRefreshToken.equals(that.forceCodeForRefreshToken)
-              && Objects.equals(forceAccountName, that.forceAccountName);
+          && signInType.equals(that.signInType)
+          && Objects.equals(hostedDomain, that.hostedDomain)
+          && Objects.equals(clientId, that.clientId)
+          && Objects.equals(serverClientId, that.serverClientId)
+          && forceCodeForRefreshToken.equals(that.forceCodeForRefreshToken)
+          && Objects.equals(forceAccountName, that.forceAccountName);
     }
 
     @Override
     public int hashCode() {
       return Objects.hash(
-              scopes,
-              signInType,
-              hostedDomain,
-              clientId,
-              serverClientId,
-              forceCodeForRefreshToken,
-              forceAccountName);
+          scopes,
+          signInType,
+          hostedDomain,
+          clientId,
+          serverClientId,
+          forceCodeForRefreshToken,
+          forceAccountName);
     }
 
     public static final class Builder {
@@ -390,11 +390,11 @@ public class Messages {
       }
       UserData that = (UserData) o;
       return Objects.equals(displayName, that.displayName)
-              && email.equals(that.email)
-              && id.equals(that.id)
-              && Objects.equals(photoUrl, that.photoUrl)
-              && Objects.equals(idToken, that.idToken)
-              && Objects.equals(serverAuthCode, that.serverAuthCode);
+          && email.equals(that.email)
+          && id.equals(that.id)
+          && Objects.equals(photoUrl, that.photoUrl)
+          && Objects.equals(idToken, that.idToken)
+          && Objects.equals(serverAuthCode, that.serverAuthCode);
     }
 
     @Override
@@ -503,10 +503,10 @@ public class Messages {
     protected Object readValueOfType(byte type, @NonNull ByteBuffer buffer) {
       switch (type) {
         case (byte) 129:
-        {
-          Object value = readValue(buffer);
-          return value == null ? null : SignInType.values()[((Long) value).intValue()];
-        }
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : SignInType.values()[((Long) value).intValue()];
+          }
         case (byte) 130:
           return InitParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 131:
@@ -573,7 +573,7 @@ public class Messages {
 
     /** Requests the access token for the current sign in. */
     void getAccessToken(
-            @NonNull String email, @NonNull Boolean shouldRecoverAuth, @NonNull Result<String> result);
+        @NonNull String email, @NonNull Boolean shouldRecoverAuth, @NonNull Result<String> result);
 
     /** Signs out the current user. */
     void signOut(@NonNull VoidResult result);
@@ -604,271 +604,271 @@ public class Messages {
     }
 
     static void setUp(
-            @NonNull BinaryMessenger binaryMessenger,
-            @NonNull String messageChannelSuffix,
-            @Nullable GoogleSignInApi api) {
+        @NonNull BinaryMessenger binaryMessenger,
+        @NonNull String messageChannelSuffix,
+        @Nullable GoogleSignInApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.init"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.init"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    ArrayList<Object> args = (ArrayList<Object>) message;
-                    InitParams paramsArg = (InitParams) args.get(0);
-                    try {
-                      api.init(paramsArg);
-                      wrapped.add(0, null);
-                    } catch (Throwable exception) {
-                      wrapped = wrapError(exception);
-                    }
-                    reply.reply(wrapped);
-                  });
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                InitParams paramsArg = (InitParams) args.get(0);
+                try {
+                  api.init(paramsArg);
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signInSilently"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signInSilently"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    Result<UserData> resultCallback =
-                            new Result<UserData>() {
-                              public void success(UserData result) {
-                                wrapped.add(0, result);
-                                reply.reply(wrapped);
-                              }
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                Result<UserData> resultCallback =
+                    new Result<UserData>() {
+                      public void success(UserData result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
 
-                              public void error(Throwable error) {
-                                ArrayList<Object> wrappedError = wrapError(error);
-                                reply.reply(wrappedError);
-                              }
-                            };
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
 
-                    api.signInSilently(resultCallback);
-                  });
+                api.signInSilently(resultCallback);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signIn"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signIn"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    Result<UserData> resultCallback =
-                            new Result<UserData>() {
-                              public void success(UserData result) {
-                                wrapped.add(0, result);
-                                reply.reply(wrapped);
-                              }
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                Result<UserData> resultCallback =
+                    new Result<UserData>() {
+                      public void success(UserData result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
 
-                              public void error(Throwable error) {
-                                ArrayList<Object> wrappedError = wrapError(error);
-                                reply.reply(wrappedError);
-                              }
-                            };
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
 
-                    api.signIn(resultCallback);
-                  });
+                api.signIn(resultCallback);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getAccessToken"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getAccessToken"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    ArrayList<Object> args = (ArrayList<Object>) message;
-                    String emailArg = (String) args.get(0);
-                    Boolean shouldRecoverAuthArg = (Boolean) args.get(1);
-                    Result<String> resultCallback =
-                            new Result<String>() {
-                              public void success(String result) {
-                                wrapped.add(0, result);
-                                reply.reply(wrapped);
-                              }
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String emailArg = (String) args.get(0);
+                Boolean shouldRecoverAuthArg = (Boolean) args.get(1);
+                Result<String> resultCallback =
+                    new Result<String>() {
+                      public void success(String result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
 
-                              public void error(Throwable error) {
-                                ArrayList<Object> wrappedError = wrapError(error);
-                                reply.reply(wrappedError);
-                              }
-                            };
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
 
-                    api.getAccessToken(emailArg, shouldRecoverAuthArg, resultCallback);
-                  });
+                api.getAccessToken(emailArg, shouldRecoverAuthArg, resultCallback);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signOut"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.signOut"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    VoidResult resultCallback =
-                            new VoidResult() {
-                              public void success() {
-                                wrapped.add(0, null);
-                                reply.reply(wrapped);
-                              }
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
 
-                              public void error(Throwable error) {
-                                ArrayList<Object> wrappedError = wrapError(error);
-                                reply.reply(wrappedError);
-                              }
-                            };
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
 
-                    api.signOut(resultCallback);
-                  });
+                api.signOut(resultCallback);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.disconnect"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.disconnect"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    VoidResult resultCallback =
-                            new VoidResult() {
-                              public void success() {
-                                wrapped.add(0, null);
-                                reply.reply(wrapped);
-                              }
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
 
-                              public void error(Throwable error) {
-                                ArrayList<Object> wrappedError = wrapError(error);
-                                reply.reply(wrappedError);
-                              }
-                            };
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
 
-                    api.disconnect(resultCallback);
-                  });
+                api.disconnect(resultCallback);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.isSignedIn"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.isSignedIn"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    try {
-                      Boolean output = api.isSignedIn();
-                      wrapped.add(0, output);
-                    } catch (Throwable exception) {
-                      wrapped = wrapError(exception);
-                    }
-                    reply.reply(wrapped);
-                  });
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  Boolean output = api.isSignedIn();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthCache"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearAuthCache"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    ArrayList<Object> args = (ArrayList<Object>) message;
-                    String tokenArg = (String) args.get(0);
-                    VoidResult resultCallback =
-                            new VoidResult() {
-                              public void success() {
-                                wrapped.add(0, null);
-                                reply.reply(wrapped);
-                              }
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String tokenArg = (String) args.get(0);
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
 
-                              public void error(Throwable error) {
-                                ArrayList<Object> wrappedError = wrapError(error);
-                                reply.reply(wrappedError);
-                              }
-                            };
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
 
-                    api.clearAuthCache(tokenArg, resultCallback);
-                  });
+                api.clearAuthCache(tokenArg, resultCallback);
+              });
         } else {
           channel.setMessageHandler(null);
         }
       }
       {
         BasicMessageChannel<Object> channel =
-                new BasicMessageChannel<>(
-                        binaryMessenger,
-                        "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.requestScopes"
-                                + messageChannelSuffix,
-                        getCodec());
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.requestScopes"
+                    + messageChannelSuffix,
+                getCodec());
         if (api != null) {
           channel.setMessageHandler(
-                  (message, reply) -> {
-                    ArrayList<Object> wrapped = new ArrayList<>();
-                    ArrayList<Object> args = (ArrayList<Object>) message;
-                    List<String> scopesArg = (List<String>) args.get(0);
-                    Result<Boolean> resultCallback =
-                            new Result<Boolean>() {
-                              public void success(Boolean result) {
-                                wrapped.add(0, result);
-                                reply.reply(wrapped);
-                              }
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                List<String> scopesArg = (List<String>) args.get(0);
+                Result<Boolean> resultCallback =
+                    new Result<Boolean>() {
+                      public void success(Boolean result) {
+                        wrapped.add(0, result);
+                        reply.reply(wrapped);
+                      }
 
-                              public void error(Throwable error) {
-                                ArrayList<Object> wrappedError = wrapError(error);
-                                reply.reply(wrappedError);
-                              }
-                            };
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
 
-                    api.requestScopes(scopesArg, resultCallback);
-                  });
+                api.requestScopes(scopesArg, resultCallback);
+              });
         } else {
           channel.setMessageHandler(null);
         }
