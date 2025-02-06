@@ -5,11 +5,11 @@
 import 'package:graphs/graphs.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-import 'ast.dart';
-import 'functional.dart';
-import 'generator.dart';
-import 'generator_tools.dart';
-import 'swift/templates.dart';
+import '../ast.dart';
+import '../functional.dart';
+import '../generator.dart';
+import '../generator_tools.dart';
+import 'templates.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -123,6 +123,18 @@ class SwiftProxyApiOptions {
   ///
   /// Defaults to true.
   final bool supportsMacos;
+}
+
+/// Options for Swift implementation of Event Channels.
+class SwiftEventChannelOptions {
+  /// Constructs a [SwiftEventChannelOptions].
+  const SwiftEventChannelOptions({this.includeSharedClasses = true});
+
+  /// Whether to include the error class in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Swift file with Event Channels in the same directory.
+  final bool includeSharedClasses;
 }
 
 /// Class that manages all Swift code generation.
@@ -1362,7 +1374,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           wrapper.onCancel(withArguments: arguments)
           return nil
         }
-      }
+      }''');
+    if (api.swiftOptions?.includeSharedClasses ?? true) {
+      indent.format('''
 
       class PigeonEventChannelWrapper<ReturnType> {
         func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
@@ -1390,6 +1404,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       
       }
       ''');
+    }
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
@@ -2463,10 +2478,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         () {
       indent.writeln('let code: String');
       indent.writeln('let message: String?');
-      indent.writeln('let details: Any?');
+      indent.writeln('let details: Sendable?');
       indent.newln();
       indent.writeScoped(
-          'init(code: String, message: String?, details: Any?) {', '}', () {
+          'init(code: String, message: String?, details: Sendable?) {', '}',
+          () {
         indent.writeln('self.code = code');
         indent.writeln('self.message = message');
         indent.writeln('self.details = details');

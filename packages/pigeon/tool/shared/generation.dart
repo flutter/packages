@@ -5,8 +5,8 @@
 import 'dart:io' show Platform;
 
 import 'package:path/path.dart' as p;
-import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart';
+import 'package:pigeon/src/generator_tools.dart';
 
 import 'process_utils.dart';
 
@@ -25,6 +25,12 @@ enum GeneratorLanguage {
 const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
     <String, Set<GeneratorLanguage>>{
   'event_channel_tests': <GeneratorLanguage>{
+    GeneratorLanguage.cpp,
+    GeneratorLanguage.gobject,
+    GeneratorLanguage.java,
+    GeneratorLanguage.objc,
+  },
+  'event_channel_without_classes_tests': <GeneratorLanguage>{
     GeneratorLanguage.cpp,
     GeneratorLanguage.gobject,
     GeneratorLanguage.java,
@@ -84,6 +90,7 @@ Future<int> generateTestPigeons(
     'core_tests',
     'enum',
     'event_channel_tests',
+    'event_channel_without_classes_tests',
     'flutter_unittests', // Only for Dart unit tests in shared_test_plugin_code
     'message',
     'multiple_arity',

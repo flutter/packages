@@ -27,15 +27,15 @@ import 'package:pub_semver/pub_semver.dart';
 
 import 'ast.dart';
 import 'ast_generator.dart';
-import 'cpp_generator.dart';
-import 'dart_generator.dart';
+import 'cpp/cpp_generator.dart';
+import 'dart/dart_generator.dart';
 import 'generator_tools.dart';
 import 'generator_tools.dart' as generator_tools;
-import 'gobject_generator.dart';
-import 'java_generator.dart';
-import 'kotlin_generator.dart';
-import 'objc_generator.dart';
-import 'swift_generator.dart';
+import 'gobject/gobject_generator.dart';
+import 'java/java_generator.dart';
+import 'kotlin/kotlin_generator.dart';
+import 'objc/objc_generator.dart';
+import 'swift/swift_generator.dart';
 
 class _Asynchronous {
   const _Asynchronous();
@@ -169,7 +169,13 @@ class ProxyApi {
 /// defined return type of the method definition.
 class EventChannelApi {
   /// Constructor.
-  const EventChannelApi();
+  const EventChannelApi({this.kotlinOptions, this.swiftOptions});
+
+  /// Options for Kotlin generated code for Event Channels.
+  final KotlinEventChannelOptions? kotlinOptions;
+
+  /// Options for Swift generated code for Event Channels.
+  final SwiftEventChannelOptions? swiftOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -1082,6 +1088,8 @@ List<Error> _validateAst(Root root, String source) {
     }
   }
 
+  bool containsEventChannelApi = false;
+
   for (final Api api in root.apis) {
     final String? matchingPrefix = _findMatchingPrefixOrNull(
       api.name,
@@ -1092,6 +1100,15 @@ List<Error> _validateAst(Root root, String source) {
         message:
             'API name must not begin with "$matchingPrefix" in API "${api.name}"',
       ));
+    }
+    if (api is AstEventChannelApi) {
+      if (containsEventChannelApi) {
+        result.add(Error(
+          message:
+              'Event Channel methods must all be included in a single EventChannelApi',
+        ));
+      }
+      containsEventChannelApi = true;
     }
     if (api is AstProxyApi) {
       result.addAll(_validateProxyApi(
@@ -1885,9 +1902,43 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'EventChannelApi')) {
+        final dart_ast.Annotation annotation = node.metadata.firstWhere(
+          (dart_ast.Annotation element) =>
+              element.name.name == 'EventChannelApi',
+        );
+
+        final Map<String, Object?> annotationMap = <String, Object?>{};
+        for (final dart_ast.Expression expression
+            in annotation.arguments!.arguments) {
+          if (expression is dart_ast.NamedExpression) {
+            annotationMap[expression.name.label.name] =
+                _expressionToMap(expression.expression);
+          }
+        }
+
+        SwiftEventChannelOptions? swiftOptions;
+        KotlinEventChannelOptions? kotlinOptions;
+        final Map<String, Object?>? swiftOptionsMap =
+            annotationMap['swiftOptions'] as Map<String, Object?>?;
+        if (swiftOptionsMap != null) {
+          swiftOptions = SwiftEventChannelOptions(
+            includeSharedClasses:
+                swiftOptionsMap['includeSharedClasses'] as bool? ?? true,
+          );
+        }
+        final Map<String, Object?>? kotlinOptionsMap =
+            annotationMap['kotlinOptions'] as Map<String, Object?>?;
+        if (kotlinOptionsMap != null) {
+          kotlinOptions = KotlinEventChannelOptions(
+            includeSharedClasses:
+                kotlinOptionsMap['includeSharedClasses'] as bool? ?? true,
+          );
+        }
         _currentApi = AstEventChannelApi(
           name: node.name.lexeme,
           methods: <Method>[],
+          swiftOptions: swiftOptions,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
