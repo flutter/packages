@@ -4299,7 +4299,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
-        completion(.success(()))
+        completion(.success(Void()))
       }
     }
   }
@@ -4342,7 +4342,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
-        completion(.success(()))
+        completion(.success(Void()))
       }
     }
   }
@@ -5659,7 +5659,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
-        completion(.success(()))
+        completion(.success(Void()))
       }
     }
   }
