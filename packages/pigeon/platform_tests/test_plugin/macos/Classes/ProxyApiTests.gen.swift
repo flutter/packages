@@ -362,7 +362,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -2817,7 +2817,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       return
     }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(Void()))
+      completion(.success(()))
       return
     }
     completion(
@@ -2859,7 +2859,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -2930,7 +2930,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -3756,7 +3756,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -3885,7 +3885,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
       return
     }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(Void()))
+      completion(.success(()))
       return
     }
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
@@ -3907,7 +3907,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -3945,7 +3945,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
       return
     }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(Void()))
+      completion(.success(()))
       return
     }
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
@@ -3967,7 +3967,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -4000,7 +4000,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -4131,7 +4131,7 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       return
     }
     if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(Void()))
+      completion(.success(()))
       return
     }
     let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
@@ -4153,7 +4153,7 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }

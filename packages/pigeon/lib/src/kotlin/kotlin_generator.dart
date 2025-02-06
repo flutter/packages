@@ -1913,7 +1913,11 @@ if (wrapped == null) {
           'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
           '}',
           () {
-            indent.writeln('Result.success(Unit)');
+            indent.format(
+              '''
+              callback(Result.success(Unit))
+              return''',
+            );
             indent.writeln('return');
           },
         );

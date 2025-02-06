@@ -3057,7 +3057,8 @@ abstract class PigeonApiProxyApiTestClass(
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
-      Result.success(Unit)
+      callback(Result.success(Unit))
+      return
       return
     }
     callback(
@@ -4049,7 +4050,8 @@ abstract class PigeonApiProxyApiSuperClass(
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
-      Result.success(Unit)
+      callback(Result.success(Unit))
+      return
       return
     }
     val pigeon_identifierArg =
@@ -4089,7 +4091,8 @@ open class PigeonApiProxyApiInterface(
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
-      Result.success(Unit)
+      callback(Result.success(Unit))
+      return
       return
     }
     val pigeon_identifierArg =
@@ -4259,7 +4262,8 @@ abstract class PigeonApiClassWithApiRequirement(
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
-      Result.success(Unit)
+      callback(Result.success(Unit))
+      return
       return
     }
     val pigeon_identifierArg =
