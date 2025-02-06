@@ -3054,19 +3054,17 @@ abstract class PigeonApiProxyApiTestClass(
       callback(
           Result.failure(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-      return
-    }
-    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
       return
-      return
+    } else {
+      callback(
+          Result.failure(
+              ProxyApiTestsError(
+                  "new-instance-error",
+                  "Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method.",
+                  "")))
     }
-    callback(
-        Result.failure(
-            ProxyApiTestsError(
-                "new-instance-error",
-                "Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method.",
-                "")))
   }
 
   /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
@@ -4047,31 +4045,29 @@ abstract class PigeonApiProxyApiSuperClass(
       callback(
           Result.failure(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-      return
-    }
-    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
       return
-      return
-    }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val binaryMessenger = pigeonRegistrar.binaryMessenger
-    val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
-      if (it is List<*>) {
-        if (it.size > 1) {
-          callback(
-              Result.failure(
-                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(
+                    ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
         } else {
-          callback(Result.success(Unit))
+          callback(Result.failure(createConnectionError(channelName)))
         }
-      } else {
-        callback(Result.failure(createConnectionError(channelName)))
       }
     }
   }
@@ -4088,31 +4084,29 @@ open class PigeonApiProxyApiInterface(
       callback(
           Result.failure(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-      return
-    }
-    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
       return
-      return
-    }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val binaryMessenger = pigeonRegistrar.binaryMessenger
-    val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
-      if (it is List<*>) {
-        if (it.size > 1) {
-          callback(
-              Result.failure(
-                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(
+                    ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
         } else {
-          callback(Result.success(Unit))
+          callback(Result.failure(createConnectionError(channelName)))
         }
-      } else {
-        callback(Result.failure(createConnectionError(channelName)))
       }
     }
   }
@@ -4259,31 +4253,29 @@ abstract class PigeonApiClassWithApiRequirement(
       callback(
           Result.failure(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-      return
-    }
-    if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
       return
-      return
-    }
-    val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-    val binaryMessenger = pigeonRegistrar.binaryMessenger
-    val codec = pigeonRegistrar.codec
-    val channelName =
-        "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance"
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-    channel.send(listOf(pigeon_identifierArg)) {
-      if (it is List<*>) {
-        if (it.size > 1) {
-          callback(
-              Result.failure(
-                  ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(
+                    ProxyApiTestsError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
         } else {
-          callback(Result.success(Unit))
+          callback(Result.failure(createConnectionError(channelName)))
         }
-      } else {
-        callback(Result.failure(createConnectionError(channelName)))
       }
     }
   }

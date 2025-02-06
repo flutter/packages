@@ -2313,7 +2313,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped(
         'if pigeonRegistrar.ignoreCallsToDart {',
-        '}',
+        '} ',
         () {
           indent.format(
             '''
@@ -2321,68 +2321,70 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
               .failure(
                 ${_getErrorClassName(generatorOptions)}(
                   code: "ignore-calls-error",
-                  message: "Calls to Dart are being ignored.", details: "")))
-            return''',
+                  message: "Calls to Dart are being ignored.", details: "")))''',
           );
         },
+        addTrailingNewline: false,
       );
 
       indent.writeScoped(
-        'if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
-        '}',
+        'else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
+        '} ',
         () {
           indent.writeln('completion(.success(()))');
-          indent.writeln('return');
         },
+        addTrailingNewline: false,
       );
-      if (api.hasCallbackConstructor()) {
-        indent.writeln(
-          'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
-        );
-        enumerate(api.unattachedFields, (int index, ApiField field) {
-          final String argName = _getSafeArgumentName(index, field);
+      indent.writeScoped('else {', '}', () {
+        if (api.hasCallbackConstructor()) {
           indent.writeln(
-            'let $argName = try! pigeonDelegate.${field.name}(pigeonApi: self, pigeonInstance: pigeonInstance)',
+            'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
           );
-        });
-        indent.writeln(
-          'let binaryMessenger = pigeonRegistrar.binaryMessenger',
-        );
-        indent.writeln('let codec = pigeonRegistrar.codec');
-        _writeFlutterMethodMessageCall(
-          indent,
-          generatorOptions: generatorOptions,
-          parameters: <Parameter>[
-            Parameter(
-              name: 'pigeonIdentifier',
-              type: const TypeDeclaration(
-                baseName: 'int',
-                isNullable: false,
+          enumerate(api.unattachedFields, (int index, ApiField field) {
+            final String argName = _getSafeArgumentName(index, field);
+            indent.writeln(
+              'let $argName = try! pigeonDelegate.${field.name}(pigeonApi: self, pigeonInstance: pigeonInstance)',
+            );
+          });
+          indent.writeln(
+            'let binaryMessenger = pigeonRegistrar.binaryMessenger',
+          );
+          indent.writeln('let codec = pigeonRegistrar.codec');
+          _writeFlutterMethodMessageCall(
+            indent,
+            generatorOptions: generatorOptions,
+            parameters: <Parameter>[
+              Parameter(
+                name: 'pigeonIdentifier',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
               ),
+              ...api.unattachedFields.map(
+                (ApiField field) {
+                  return Parameter(name: field.name, type: field.type);
+                },
+              ),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            channelName: makeChannelNameWithStrings(
+              apiName: api.name,
+              methodName: newInstanceMethodName,
+              dartPackageName: dartPackageName,
             ),
-            ...api.unattachedFields.map(
-              (ApiField field) {
-                return Parameter(name: field.name, type: field.type);
-              },
-            ),
-          ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-          channelName: makeChannelNameWithStrings(
-            apiName: api.name,
-            methodName: newInstanceMethodName,
-            dartPackageName: dartPackageName,
-          ),
-        );
-      } else {
-        indent.format(
-          '''
+          );
+        } else {
+          indent.format(
+            '''
             completion(
               .failure(
                 ${_getErrorClassName(generatorOptions)}(
                   code: "new-instance-error",
                   message: "Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", details: "")))''',
-        );
-      }
+          );
+        }
+      });
     });
 
     if (unsupportedPlatforms != null) {

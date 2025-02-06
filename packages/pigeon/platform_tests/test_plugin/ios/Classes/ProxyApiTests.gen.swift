@@ -2814,19 +2814,17 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-      return
-    }
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-      return
+    } else {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "new-instance-error",
+            message:
+              "Error: Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method.",
+            details: "")))
     }
-    completion(
-      .failure(
-        ProxyApiTestsError(
-          code: "new-instance-error",
-          message:
-            "Error: Attempting to create a new Dart instance of ProxyApiTestClass, but the class has a nonnull callback method.",
-          details: "")))
   }
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
@@ -3882,32 +3880,30 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-      return
-    }
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-      return
-    }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-      pigeonInstance as AnyObject)
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(()))
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
       }
     }
   }
@@ -3942,32 +3938,30 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-      return
-    }
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-      return
-    }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-      pigeonInstance as AnyObject)
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(()))
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String =
+        "dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
       }
     }
   }
@@ -4128,32 +4122,30 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-      return
-    }
-    if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-      return
-    }
-    let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-      pigeonInstance as AnyObject)
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-    let channelName: String =
-      "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(()))
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String =
+        "dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
       }
     }
   }

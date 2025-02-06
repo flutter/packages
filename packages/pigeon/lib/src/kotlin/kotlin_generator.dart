@@ -1914,71 +1914,70 @@ if (wrapped == null) {
       }) {
         indent.writeScoped(
           'if (pigeonRegistrar.ignoreCallsToDart) {',
-          '}',
+          '} ',
           () {
             indent.format(
               '''
               callback(
                   Result.failure(
-                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-              return''',
+                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))''',
             );
           },
+          addTrailingNewline: false,
         );
         indent.writeScoped(
-          'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
-          '}',
+          'else if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+          '} ',
           () {
-            indent.format(
-              '''
-              callback(Result.success(Unit))
-              return''',
-            );
+            indent.writeln('callback(Result.success(Unit))');
             indent.writeln('return');
           },
+          addTrailingNewline: false,
         );
-        if (api.hasCallbackConstructor()) {
-          indent.writeln(
-            'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
-          );
-          enumerate(api.unattachedFields, (int index, ApiField field) {
-            final String argName = _getSafeArgumentName(index, field);
+        indent.writeScoped('else {', '}', () {
+          if (api.hasCallbackConstructor()) {
             indent.writeln(
-              'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
             );
-          });
+            enumerate(api.unattachedFields, (int index, ApiField field) {
+              final String argName = _getSafeArgumentName(index, field);
+              indent.writeln(
+                'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              );
+            });
 
-          indent
-              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
-          indent.writeln('val codec = pigeonRegistrar.codec');
-          _writeFlutterMethodMessageCall(
-            indent,
-            returnType: returnType,
-            channelName: channelName,
-            errorClassName: errorClassName,
-            parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}identifier',
-                type: const TypeDeclaration(
-                  baseName: 'int',
-                  isNullable: false,
+            indent.writeln(
+                'val binaryMessenger = pigeonRegistrar.binaryMessenger');
+            indent.writeln('val codec = pigeonRegistrar.codec');
+            _writeFlutterMethodMessageCall(
+              indent,
+              returnType: returnType,
+              channelName: channelName,
+              errorClassName: errorClassName,
+              parameters: <Parameter>[
+                Parameter(
+                  name: '${classMemberNamePrefix}identifier',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
                 ),
-              ),
-              ...api.unattachedFields.map(
-                (ApiField field) {
-                  return Parameter(name: field.name, type: field.type);
-                },
-              ),
-            ],
-          );
-        } else {
-          indent.format(
-            '''
+                ...api.unattachedFields.map(
+                  (ApiField field) {
+                    return Parameter(name: field.name, type: field.type);
+                  },
+                ),
+              ],
+            );
+          } else {
+            indent.format(
+              '''
               callback(
                   Result.failure(
                       $errorClassName("new-instance-error", "Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", "")))''',
-          );
-        }
+            );
+          }
+        });
       },
     );
     indent.newln();
