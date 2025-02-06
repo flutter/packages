@@ -1505,7 +1505,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       }
       indent.addScoped('else {', '}', () {
         if (returnType.isVoid) {
-          indent.writeln('completion(.success(Void()))');
+          indent.writeln('completion(.success(()))');
         } else {
           final String fieldType = _swiftTypeForDartType(returnType);
           _writeGenericCasting(
