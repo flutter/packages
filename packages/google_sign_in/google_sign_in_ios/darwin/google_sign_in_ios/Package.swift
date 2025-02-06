@@ -16,17 +16,9 @@ let package = Package(
     .library(name: "google-sign-in-ios", targets: ["google_sign_in_ios"])
   ],
   dependencies: [
-    // AppAuth and GTMSessionFetcher are GoogleSignIn transitive dependencies.
-    // Depend on versions which define modules.
-    .package(
-      url: "https://github.com/openid/AppAuth-iOS.git",
-      from: "1.7.6"),
-    .package(
-      url: "https://github.com/google/gtm-session-fetcher.git",
-      from: "3.4.0"),
     .package(
       url: "https://github.com/google/GoogleSignIn-iOS.git",
-      from: "7.1.0"),
+      from: "7.1.0")
   ],
   targets: [
     .target(

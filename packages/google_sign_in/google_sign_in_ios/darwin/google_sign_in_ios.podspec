@@ -18,7 +18,7 @@ Enables Google Sign-In in Flutter apps.
 
   # AppAuth and GTMSessionFetcher are GoogleSignIn transitive dependencies.
   # Depend on versions which defines modules.
-  s.dependency 'AppAuth', '>= 1.7.6'
+  s.dependency 'AppAuth', '>= 1.7.4'
   s.dependency 'GTMSessionFetcher', '>= 3.4.0'
   s.dependency 'GoogleSignIn', '~> 7.1'
   s.static_framework = true
