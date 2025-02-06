@@ -75,8 +75,9 @@ class UrlLauncherMacOS extends UrlLauncherPlatform {
     // return the same thing; currently it throws a PlatformException to
     // preserve existing behavior.
     return PlatformException(
-        code: 'argument_error',
-        message: 'Unable to parse URL',
-        details: 'Provided URL: $url');
+      code: 'argument_error',
+      message: 'Unable to parse URL',
+      details: 'Provided URL: $url',
+    );
   }
 }
