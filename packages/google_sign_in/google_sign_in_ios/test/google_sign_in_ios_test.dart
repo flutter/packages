@@ -55,11 +55,10 @@ void main() {
   test('init throws for forceAccountName', () async {
     expect(
         () => googleSignIn.initWithParams(
-              SignInInitParameters(
+              const SignInInitParameters(
                 hostedDomain: 'example.com',
-                signInOption: SignInOption.games,
                 clientId: 'fakeClientId',
-//                 forceAccountName: 'fakeEmailAddress@google.com',
+                forceAccountName: 'fakeEmailAddress@google.com',
               ),
             ),
         throwsA(isInstanceOf<PlatformException>().having(
