@@ -330,7 +330,7 @@ void main() {
         expect(goRouter.routerDelegate.currentConfiguration.matches.length, 0);
         expect(goRouter.routerDelegate.canPop(), false);
       },
-    );    
+    );
   });
 
   group('pushReplacement', () {
