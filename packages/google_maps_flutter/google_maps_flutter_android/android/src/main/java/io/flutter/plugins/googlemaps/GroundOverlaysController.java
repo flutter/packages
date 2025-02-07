@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 class GroundOverlaysController {
-  @VisibleForTesting final Map<String, GroundOverlayController> groundOverlayIdToController;
+  private final Map<String, GroundOverlayController> groundOverlayIdToController;
   private final HashMap<String, String> googleMapsGroundOverlayIdToDartGroundOverlayId;
   private final MapsCallbackApi flutterApi;
   private GoogleMap googleMap;
@@ -25,16 +25,17 @@ class GroundOverlaysController {
   private final float density;
   private final Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
 
-  GroundOverlaysController(MapsCallbackApi flutterApi, AssetManager assetManager, float density) {
+  GroundOverlaysController(
+      @NonNull MapsCallbackApi flutterApi, @NonNull AssetManager assetManager, float density) {
     this(flutterApi, assetManager, density, new Convert.BitmapDescriptorFactoryWrapper());
   }
 
   @VisibleForTesting
   GroundOverlaysController(
-      MapsCallbackApi flutterApi,
-      AssetManager assetManager,
+      @NonNull MapsCallbackApi flutterApi,
+      @NonNull AssetManager assetManager,
       float density,
-      Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper) {
+      @NonNull Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper) {
     this.groundOverlayIdToController = new HashMap<>();
     this.googleMapsGroundOverlayIdToDartGroundOverlayId = new HashMap<>();
     this.flutterApi = flutterApi;

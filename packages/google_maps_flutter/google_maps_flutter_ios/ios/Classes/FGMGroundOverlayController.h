@@ -25,10 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong, nullable) NSNumber *zoomLevel;
 
 /// Initializes an instance of this class with a GMSGroundOverlay, a map view, and identifier.
-- (instancetype _Nullable)initWithGroundOverlay:(GMSGroundOverlay *)groundOverlay
-                                     identifier:(NSString *)identifier
-                                        mapView:(GMSMapView *)mapView
-                            isCreatedWithBounds:(BOOL)isCreatedWithBounds;
+- (instancetype)initWithGroundOverlay:(GMSGroundOverlay *)groundOverlay
+                           identifier:(NSString *)identifier
+                              mapView:(GMSMapView *)mapView
+                  isCreatedWithBounds:(BOOL)isCreatedWithBounds;
 
 /// Removes this ground overlay from the map.
 - (void)removeGroundOverlay;
@@ -38,9 +38,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTGroundOverlaysController : NSObject
 
 /// Initializes the controller with a GMSMapView, callback handler and registrar.
-- (instancetype _Nullable)initWithMapView:(GMSMapView *)mapView
-                          callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                                registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 /// Adds ground overlays to the map.
 - (void)addGroundOverlays:(NSArray<FGMPlatformGroundOverlay *> *)groundOverlaysToAdd;

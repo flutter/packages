@@ -124,11 +124,13 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       bitmapScaling: MapBitmapScaling.none,
     );
 
-    if (groundOverlayInfo.position != null) {
+    final PlatformLatLng? position = groundOverlayInfo.position;
+    final PlatformLatLngBounds? bounds = groundOverlayInfo.bounds;
+
+    if (position != null) {
       return GroundOverlay.fromPosition(
         groundOverlayId: groundOverlayId,
-        position: LatLng(groundOverlayInfo.position!.latitude,
-            groundOverlayInfo.position!.longitude),
+        position: LatLng(position.latitude, position.longitude),
         image: dummyImage,
         zIndex: groundOverlayInfo.zIndex,
         bearing: groundOverlayInfo.bearing,
@@ -139,14 +141,14 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
             Offset(groundOverlayInfo.anchor!.x, groundOverlayInfo.anchor!.y),
         zoomLevel: groundOverlayInfo.zoomLevel,
       );
-    } else if (groundOverlayInfo.bounds != null) {
+    } else if (bounds != null) {
       return GroundOverlay.fromBounds(
         groundOverlayId: groundOverlayId,
         bounds: LatLngBounds(
-            southwest: LatLng(groundOverlayInfo.bounds!.southwest.latitude,
-                groundOverlayInfo.bounds!.southwest.longitude),
-            northeast: LatLng(groundOverlayInfo.bounds!.northeast.latitude,
-                groundOverlayInfo.bounds!.northeast.longitude)),
+            southwest:
+                LatLng(bounds.southwest.latitude, bounds.southwest.longitude),
+            northeast:
+                LatLng(bounds.northeast.latitude, bounds.northeast.longitude)),
         image: dummyImage,
         zIndex: groundOverlayInfo.zIndex,
         bearing: groundOverlayInfo.bearing,

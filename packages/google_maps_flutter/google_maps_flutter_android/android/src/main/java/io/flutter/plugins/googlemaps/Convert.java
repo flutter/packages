@@ -863,12 +863,12 @@ class Convert {
    * @return the identifier of the ground overlay.
    * @throws IllegalArgumentException if required fields are missing or invalid.
    */
-  static String interpretGroundOverlayOptions(
-      Messages.PlatformGroundOverlay groundOverlay,
-      GroundOverlaySink sink,
-      AssetManager assetManager,
+  static @NonNull String interpretGroundOverlayOptions(
+      @NonNull Messages.PlatformGroundOverlay groundOverlay,
+      @NonNull GroundOverlaySink sink,
+      @NonNull AssetManager assetManager,
       float density,
-      BitmapDescriptorFactoryWrapper wrapper) {
+      @NonNull BitmapDescriptorFactoryWrapper wrapper) {
     sink.setTransparency(groundOverlay.getTransparency().floatValue());
     sink.setZIndex(groundOverlay.getZIndex().floatValue());
     sink.setVisible(groundOverlay.getVisible());
@@ -954,7 +954,7 @@ class Convert {
    */
   @VisibleForTesting
   public static @NonNull Messages.PlatformDoublePair buildGroundOverlayAnchorForPigeon(
-      GroundOverlay groundOverlay) {
+      @NonNull GroundOverlay groundOverlay) {
     Messages.PlatformDoublePair.Builder anchorBuilder = new Messages.PlatformDoublePair.Builder();
 
     // Position is overlays anchor point. Calculate normalized anchor point based on position and bounds.
