@@ -96,11 +96,15 @@
 }
 
 - (int64_t)onPlayerSetup:(FVPVideoPlayer *)player {
-  BOOL textureBased = [player isKindOfClass:[FVPTextureBasedVideoPlayer class]];
+  FVPTextureBasedVideoPlayer *textureBasedPlayer =
+      [player isKindOfClass:[FVPTextureBasedVideoPlayer class]]
+          ? (FVPTextureBasedVideoPlayer *)player
+          : nil;
+
   int64_t playerIdentifier;
-  if (textureBased) {
+  if (textureBasedPlayer) {
     playerIdentifier = [self.registry registerTexture:(FVPTextureBasedVideoPlayer *)player];
-    [(FVPTextureBasedVideoPlayer *)player setTextureIdentifier:playerIdentifier];
+    [textureBasedPlayer setTextureIdentifier:playerIdentifier];
   } else {
     playerIdentifier = self.nextNonTexturePlayerIdentifier--;
   }
@@ -113,11 +117,9 @@
   player.eventChannel = eventChannel;
   self.playersByIdentifier[@(playerIdentifier)] = player;
 
-  if (textureBased) {
-    // Ensure that the first frame is drawn once available, even if the video isn't played, since
-    // the engine is now expecting the texture to be populated.
-    [(FVPTextureBasedVideoPlayer *)player expectFrame];
-  }
+  // Ensure that the first frame is drawn once available, even if the video isn't played, since
+  // the engine is now expecting the texture to be populated.
+  [textureBasedPlayer expectFrame];
 
   return playerIdentifier;
 }
