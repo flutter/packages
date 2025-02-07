@@ -21,7 +21,7 @@ static void *rateContext = &rateContext;
 - (instancetype)initWithAsset:(NSString *)asset
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithURL:[NSURL fileURLWithPath:[self absolutePathForAssetName:asset]]
+  return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
                httpHeaders:@{}
                  avFactory:avFactory
                  registrar:registrar];
@@ -100,13 +100,13 @@ static void *rateContext = &rateContext;
   }
 }
 
-- (NSString *)absolutePathForAssetName:(NSString *)assetName {
++ (NSString *)absolutePathForAssetName:(NSString *)assetName {
   NSString *path = [[NSBundle mainBundle] pathForResource:assetName ofType:nil];
 #if TARGET_OS_OSX
   // See https://github.com/flutter/flutter/issues/135302
   // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
   if (!path) {
-    path = [NSURL URLWithString:asset relativeToURL:NSBundle.mainBundle.bundleURL].path;
+    path = [NSURL URLWithString:assetName relativeToURL:NSBundle.mainBundle.bundleURL].path;
   }
 #endif
 
