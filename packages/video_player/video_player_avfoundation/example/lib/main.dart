@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'mini_controller.dart';
 
@@ -42,9 +43,18 @@ class _App extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            _BumbleBeeRemoteVideo(),
-            _BumbleBeeEncryptedLiveStream(),
-            _ButterFlyAssetVideo(),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeEncryptedLiveStream(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideo(viewType),
+            ),
           ],
         ),
       ),
@@ -52,7 +62,70 @@ class _App extends StatelessWidget {
   }
 }
 
+class _ViewTypeTabBar extends StatefulWidget {
+  const _ViewTypeTabBar({
+    required this.builder,
+  });
+
+  final Widget Function(VideoViewType) builder;
+
+  @override
+  State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
+}
+
+class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: const <Widget>[
+            Tab(
+              icon: Icon(Icons.texture),
+              text: 'Texture view',
+            ),
+            Tab(
+              icon: Icon(Icons.construction),
+              text: 'Platform view',
+            ),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              widget.builder(VideoViewType.textureView),
+              widget.builder(VideoViewType.platformView),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ButterFlyAssetVideo extends StatefulWidget {
+  const _ButterFlyAssetVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
 }
@@ -63,7 +136,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = MiniController.asset('assets/Butterfly-209.mp4');
+    _controller = MiniController.asset(
+      'assets/Butterfly-209.mp4',
+      viewType: widget.viewType,
+    );
 
     _controller.addListener(() {
       setState(() {});
@@ -108,6 +184,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
 }
 
 class _BumbleBeeRemoteVideo extends StatefulWidget {
+  const _BumbleBeeRemoteVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _BumbleBeeRemoteVideoState createState() => _BumbleBeeRemoteVideoState();
 }
@@ -120,6 +200,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     super.initState();
     _controller = MiniController.network(
       'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+      viewType: widget.viewType,
     );
 
     _controller.addListener(() {
@@ -162,6 +243,10 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
 }
 
 class _BumbleBeeEncryptedLiveStream extends StatefulWidget {
+  const _BumbleBeeEncryptedLiveStream(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _BumbleBeeEncryptedLiveStreamState createState() =>
       _BumbleBeeEncryptedLiveStreamState();
@@ -176,6 +261,7 @@ class _BumbleBeeEncryptedLiveStreamState
     super.initState();
     _controller = MiniController.network(
       'https://flutter.github.io/assets-for-api-docs/assets/videos/hls/encrypted_bee.m3u8',
+      viewType: widget.viewType,
     );
 
     _controller.addListener(() {
