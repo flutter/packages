@@ -1,3 +1,7 @@
+## 14.7.3
+
+- Secured canPop method for the lack of matches in routerDelegate's configuration.
+
 ## 14.7.2
 
 - Add missing `await` keyword to `onTap` callback in `navigation.md`.
