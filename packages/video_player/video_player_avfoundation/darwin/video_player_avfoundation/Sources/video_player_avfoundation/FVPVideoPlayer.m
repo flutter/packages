@@ -100,8 +100,8 @@ static void *rateContext = &rateContext;
   }
 }
 
-- (NSString *)absolutePathForAssetName:(NSString *)asset {
-  NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
+- (NSString *)absolutePathForAssetName:(NSString *)assetName {
+  NSString *path = [[NSBundle mainBundle] pathForResource:assetName ofType:nil];
 #if TARGET_OS_OSX
   // See https://github.com/flutter/flutter/issues/135302
   // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
