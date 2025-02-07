@@ -4,7 +4,7 @@
 
 // Platform views are only supported on iOS as of now. Ifdef is used to avoid compilation errors.
 
-#import <TargetConditionals.h>
+#import <Foundation/Foundation.h>
 
 #import "FVPVideoPlayer.h"
 
