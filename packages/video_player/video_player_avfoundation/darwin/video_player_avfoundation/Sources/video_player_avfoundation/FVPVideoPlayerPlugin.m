@@ -175,8 +175,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   BOOL textureBased = options.viewType == FVPPlatformVideoViewTypeTextureView;
 
   @try {
-    FVPVideoPlayer *player = textureBased ? [self createTexturePlayerWithOptions:options]
-                                          : [self createPlatformViewPlayerWithOptions:options];
+    FVPVideoPlayer *player = textureBased ? [self texturePlayerWithOptions:options]
+                                          : [self platformViewPlayerWithOptions:options];
 
     if (player == nil) {
       *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
@@ -190,7 +190,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   }
 }
 
-- (nullable FVPTextureBasedVideoPlayer *)createTexturePlayerWithOptions:
+- (nullable FVPTextureBasedVideoPlayer *)texturePlayerWithOptions:
     (nonnull FVPCreationOptions *)options {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
   FVPDisplayLink *displayLink =
@@ -205,7 +205,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   };
 
   if (options.asset) {
-    NSString *assetPath = [self prepareAssetPathFromCreationOptions:options];
+    NSString *assetPath = [self assetPathFromCreationOptions:options];
     return [[FVPTextureBasedVideoPlayer alloc] initWithAsset:assetPath
                                                 frameUpdater:frameUpdater
                                                  displayLink:displayLink
@@ -225,11 +225,11 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   return nil;
 }
 
-- (nullable FVPVideoPlayer *)createPlatformViewPlayerWithOptions:
+- (nullable FVPVideoPlayer *)platformViewPlayerWithOptions:
     (nonnull FVPCreationOptions *)options {
   // FVPVideoPlayer contains all required logic for platform views.
   if (options.asset) {
-    NSString *assetPath = [self prepareAssetPathFromCreationOptions:options];
+    NSString *assetPath = [self assetPathFromCreationOptions:options];
     return [[FVPVideoPlayer alloc] initWithAsset:assetPath
                                        avFactory:_avFactory
                                        registrar:self.registrar];
@@ -243,7 +243,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   return nil;
 }
 
-- (NSString *)prepareAssetPathFromCreationOptions:(nonnull FVPCreationOptions *)options {
+- (NSString *)assetPathFromCreationOptions:(nonnull FVPCreationOptions *)options {
   NSString *assetPath;
   if (options.packageName) {
     assetPath = [self.registrar lookupKeyForAsset:options.asset fromPackage:options.packageName];
