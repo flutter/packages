@@ -25,7 +25,7 @@
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                    onDisposed:(void (^)(int64_t))onDisposed {
-  return [self initWithURL:[NSURL fileURLWithPath:[self getAbsoluteAssetPath:asset]]
+  return [self initWithURL:[NSURL fileURLWithPath:[self absolutePathForAssetName:asset]]
               frameUpdater:frameUpdater
                displayLink:displayLink
                httpHeaders:@{}

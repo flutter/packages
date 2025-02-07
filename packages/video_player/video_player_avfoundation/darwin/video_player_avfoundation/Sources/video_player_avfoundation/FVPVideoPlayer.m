@@ -20,7 +20,7 @@ static void *rateContext = &rateContext;
 - (instancetype)initWithAsset:(NSString *)asset
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithURL:[NSURL fileURLWithPath:[self getAbsoluteAssetPath:asset]]
+  return [self initWithURL:[NSURL fileURLWithPath:[self absolutePathForAssetName:asset]]
                httpHeaders:@{}
                  avFactory:avFactory
                  registrar:registrar];
@@ -99,7 +99,7 @@ static void *rateContext = &rateContext;
   }
 }
 
-- (NSString *)getAbsoluteAssetPath:(NSString *)asset {
+- (NSString *)absolutePathForAssetName:(NSString *)asset {
   NSString *path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
 #if TARGET_OS_OSX
   // See https://github.com/flutter/flutter/issues/135302

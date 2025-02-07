@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Returns the absolute file path for a given asset name.
 /// This method attempts to locate the specified asset within the app bundle.
-- (NSString *)getAbsoluteAssetPath:(NSString *)asset;
+- (NSString *)absolutePathForAssetName:(NSString *)assetName;
 @end
 
 NS_ASSUME_NONNULL_END
