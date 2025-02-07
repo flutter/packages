@@ -10,13 +10,21 @@
 @import AVFoundation;
 #import <OCMock/OCMock.h>
 
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
+
 @interface CameraMethodChannelTests : XCTestCase
 @end
 
 @implementation CameraMethodChannelTests
 
+- (CameraPlugin *)createCameraPlugin {
+  return [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+                                      messenger:[[MockFlutterBinaryMessenger alloc] init]];
+}
+
 - (void)testCreate_ShouldCallResultOnMainThread {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  CameraPlugin *camera = [self createCameraPlugin];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
@@ -51,7 +59,7 @@
 }
 
 - (void)testDisposeShouldDeallocCamera {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  CameraPlugin *camera = [self createCameraPlugin];
 
   id avCaptureDeviceInputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([avCaptureDeviceInputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg anyObjectRef]])

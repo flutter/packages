@@ -3,17 +3,9 @@
 // found in the LICENSE file.
 
 #import "FLTCam.h"
-#import "FLTCaptureDeviceControlling.h"
+#import "FLTCaptureDevice.h"
 #import "FLTDeviceOrientationProviding.h"
 #import "FLTSavePhotoDelegate.h"
-
-/// Determines the video dimensions (width and height) for a given capture device format.
-/// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
-typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
-
-/// Factory block returning an AVCaptureDevice.
-/// Used in tests to inject a device into FLTCam.
-typedef id<FLTCaptureDeviceControlling> (^CaptureDeviceFactory)(void);
 
 @interface FLTImageStreamHandler : NSObject <FlutterStreamHandler>
 
@@ -53,31 +45,6 @@ typedef id<FLTCaptureDeviceControlling> (^CaptureDeviceFactory)(void);
 - (void)captureOutput:(AVCaptureOutput *)output
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
            fromConnection:(AVCaptureConnection *)connection;
-
-/// Initializes a camera instance.
-/// Allows for injecting dependencies that are usually internal.
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                       orientation:(UIDeviceOrientation)orientation
-               videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-               audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error;
-
-///  Initializes a camera instance.
-///  Allows for testing with specified resolution, audio preference, orientation,
-///  and direct access to capture sessions and blocks.
-- (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-               mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                          orientation:(UIDeviceOrientation)orientation
-                  videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-                  audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                 captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
-             videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
-            deviceOrientationProvider:(id<FLTDeviceOrientationProviding>)deviceOrientationProvider
-                                error:(NSError **)error;
 
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
