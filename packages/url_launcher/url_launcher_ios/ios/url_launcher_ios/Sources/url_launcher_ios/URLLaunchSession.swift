@@ -12,6 +12,7 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
 
   private let completion: OpenInSafariCompletionHandler
   private let url: URL
+  private var isLoadCompleted: Bool?
 
   /// The Safari view controller used for displaying the URL.
   let safariViewController: SFSafariViewController
@@ -46,12 +47,16 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
     } else {
       completion(.success(.failedToLoad))
     }
+    isLoadCompleted = didLoadSuccessfully;
   }
 
   /// Called when the user finishes using the Safari view controller.
   ///
   /// - Parameter controller: The Safari view controller.
   func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+    if isLoadCompleted == nil {
+      completion(.success(.failedToLoad))
+    }
     controller.dismiss(animated: true, completion: nil)
     didFinish?()
   }
