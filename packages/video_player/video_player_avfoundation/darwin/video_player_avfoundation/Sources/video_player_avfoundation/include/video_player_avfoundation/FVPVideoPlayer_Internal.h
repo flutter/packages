@@ -14,6 +14,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Interface intended for use by subclasses, but not other callers.
 @interface FVPVideoPlayer ()
 /// The AVPlayerItemVideoOutput associated with this video player.
 @property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
