@@ -1,3 +1,7 @@
+## 24.1.0
+
+* [kotlin, swift] Adds annotation options to omit shared classes used in Event Channels.
+
 ## 24.0.0
 
 * **Breaking Change** Relocates some files in `lib` that were not intended for direct client use to `lib/src`.

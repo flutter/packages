@@ -10,25 +10,25 @@
 @import AVFoundation;
 
 #import "CameraTestUtils.h"
-#import "MockCaptureDeviceController.h"
+#import "MockCaptureDevice.h"
 #import "MockDeviceOrientationProvider.h"
 
 @interface CameraFocusTests : XCTestCase
 @property(readonly, nonatomic) FLTCam *camera;
-@property(readonly, nonatomic) MockCaptureDeviceController *mockDevice;
+@property(readonly, nonatomic) MockCaptureDevice *mockDevice;
 @property(readonly, nonatomic) MockDeviceOrientationProvider *mockDeviceOrientationProvider;
 @end
 
 @implementation CameraFocusTests
 
 - (void)setUp {
-  MockCaptureDeviceController *mockDevice = [[MockCaptureDeviceController alloc] init];
+  MockCaptureDevice *mockDevice = [[MockCaptureDevice alloc] init];
   _mockDevice = mockDevice;
   _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
 
   _camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
       nil, nil, nil,
-      ^id<FLTCaptureDeviceControlling>(void) {
+      ^NSObject<FLTCaptureDevice> *(void) {
         return mockDevice;
       },
       _mockDeviceOrientationProvider);

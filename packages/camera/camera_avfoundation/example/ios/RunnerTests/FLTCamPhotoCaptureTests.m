@@ -177,7 +177,7 @@
       [self expectationWithDescription:
                 @"Must send file path to result if save photo delegate completes with file path."];
 
-  id captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
+  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDevice));
   OCMStub([captureDeviceMock hasTorch]).andReturn(YES);
   OCMStub([captureDeviceMock isTorchAvailable]).andReturn(YES);
   OCMStub([captureDeviceMock torchMode]).andReturn(AVCaptureTorchModeAuto);
@@ -189,8 +189,8 @@
 
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
       captureSessionQueue, nil, nil,
-      ^id<FLTCaptureDeviceControlling>(void) {
-        return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:captureDeviceMock];
+      ^NSObject<FLTCaptureDevice> *(void) {
+        return captureDeviceMock;
       },
       nil);
 
