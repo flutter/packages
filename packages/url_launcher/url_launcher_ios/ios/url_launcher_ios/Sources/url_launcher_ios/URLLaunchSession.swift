@@ -47,7 +47,7 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
     } else {
       completion(.success(.failedToLoad))
     }
-    isLoadCompleted = didLoadSuccessfully;
+    isLoadCompleted = didLoadSuccessfully
   }
 
   /// Called when the user finishes using the Safari view controller.
