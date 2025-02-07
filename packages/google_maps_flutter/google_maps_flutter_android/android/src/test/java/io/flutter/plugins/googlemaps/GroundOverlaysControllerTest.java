@@ -12,10 +12,6 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Build;
 import android.util.Base64;
 import androidx.annotation.NonNull;
@@ -26,7 +22,6 @@ import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
-import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import org.junit.After;
 import org.junit.Before;
@@ -50,7 +45,7 @@ public class GroundOverlaysControllerTest {
   private GoogleMap googleMap;
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
-  private final String base64Image = generateBase64Image();
+  private final String base64Image = TestImageUtils.generateBase64Image();
 
   @NonNull
   private Messages.PlatformGroundOverlay.Builder defaultGroundOverlayBuilder() {
@@ -125,26 +120,5 @@ public class GroundOverlaysControllerTest {
     controller.removeGroundOverlays(Collections.singletonList(googleGroundOverlayId));
 
     Mockito.verify(groundOverlay, times(1)).remove();
-  }
-
-  // Helper method to generate 1x1 pixel base64 encoded png test image
-  private String generateBase64Image() {
-    int width = 1;
-    int height = 1;
-    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-    Canvas canvas = new Canvas(bitmap);
-
-    // Draw on the Bitmap
-    Paint paint = new Paint();
-    paint.setColor(Color.parseColor("#FF8080FF"));
-    canvas.drawRect(0, 0, width, height, paint);
-
-    // Convert the Bitmap to PNG format
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-    byte[] pngBytes = outputStream.toByteArray();
-
-    // Encode the PNG bytes as a base64 string
-    return Base64.encodeToString(pngBytes, Base64.DEFAULT);
   }
 }

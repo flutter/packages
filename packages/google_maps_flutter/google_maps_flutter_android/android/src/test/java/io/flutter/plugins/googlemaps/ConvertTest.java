@@ -24,10 +24,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import android.content.res.AssetManager;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Build;
 import android.util.Base64;
 import androidx.annotation.NonNull;
@@ -42,9 +38,6 @@ import com.google.maps.android.heatmaps.WeightedLatLng;
 import com.google.maps.android.projection.SphericalMercatorProjection;
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +67,7 @@ public class ConvertTest {
   AutoCloseable mockCloseable;
 
   // A 1x1 pixel (#8080ff) PNG image encoded in base64
-  private final String base64Image = generateBase64Image();
+  private final String base64Image = TestImageUtils.generateBase64Image();
 
   @Before
   public void before() {
@@ -144,7 +137,7 @@ public class ConvertTest {
 
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
-    when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
+    when(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
     Messages.PlatformBitmapAssetMap bitmap =
@@ -170,7 +163,7 @@ public class ConvertTest {
 
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
-    when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
+    when(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
     Messages.PlatformBitmapAssetMap bitmap =
@@ -195,7 +188,7 @@ public class ConvertTest {
 
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
-    when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
+    when(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
     Messages.PlatformBitmapAssetMap bitmap =
@@ -220,7 +213,7 @@ public class ConvertTest {
 
     when(flutterInjectorWrapper.getLookupKeyForAsset(fakeAssetName)).thenReturn(fakeAssetKey);
 
-    when(assetManager.open(fakeAssetKey)).thenReturn(buildImageInputStream());
+    when(assetManager.open(fakeAssetKey)).thenReturn(TestImageUtils.buildImageInputStream());
 
     when(bitmapDescriptorFactoryWrapper.fromAsset(any())).thenReturn(mockBitmapDescriptor);
 
@@ -720,8 +713,11 @@ public class ConvertTest {
         Convert.groundOverlayToPigeon(mockGroundOverlay, "overlay_1", false);
 
     Assert.assertEquals("overlay_1", result.getGroundOverlayId());
+    Assert.assertNotNull(result.getPosition());
     Assert.assertEquals(position.latitude, result.getPosition().getLatitude(), 1e-15);
     Assert.assertEquals(position.longitude, result.getPosition().getLongitude(), 1e-15);
+    Assert.assertNotNull(result.getWidth());
+    Assert.assertNotNull(result.getHeight());
     Assert.assertEquals(30.0, result.getWidth(), 1e-15);
     Assert.assertEquals(40.0, result.getHeight(), 1e-15);
     Assert.assertEquals(50.0, result.getBearing(), 1e-15);
@@ -732,6 +728,7 @@ public class ConvertTest {
     Assert.assertNull(result.getBounds());
 
     Messages.PlatformDoublePair anchor = result.getAnchor();
+    Assert.assertNotNull(anchor);
     Assert.assertEquals(0.5, anchor.getX(), 1e-6);
     Assert.assertEquals(0.5, anchor.getY(), 1e-6);
   }
@@ -757,6 +754,7 @@ public class ConvertTest {
         Convert.groundOverlayToPigeon(mockGroundOverlay, "overlay_2", true);
 
     Assert.assertEquals("overlay_2", result.getGroundOverlayId());
+    Assert.assertNotNull(result.getBounds());
     Assert.assertEquals(
         bounds.southwest.latitude, result.getBounds().getSouthwest().getLatitude(), 1e-15);
     Assert.assertEquals(
@@ -765,6 +763,8 @@ public class ConvertTest {
         bounds.northeast.latitude, result.getBounds().getNortheast().getLatitude(), 1e-15);
     Assert.assertEquals(
         bounds.northeast.longitude, result.getBounds().getNortheast().getLongitude(), 1e-15);
+    Assert.assertNotNull(result.getWidth());
+    Assert.assertNotNull(result.getHeight());
     Assert.assertEquals(30.0, result.getWidth(), 1e-15);
     Assert.assertEquals(40.0, result.getHeight(), 1e-15);
     Assert.assertEquals(50.0, result.getBearing(), 1e-15);
@@ -775,37 +775,9 @@ public class ConvertTest {
     Assert.assertNull(result.getPosition());
 
     Messages.PlatformDoublePair anchor = result.getAnchor();
+    Assert.assertNotNull(anchor);
     Assert.assertEquals(0.5, anchor.getX(), 1e-6);
     Assert.assertEquals(0.5, anchor.getY(), 1e-6);
-  }
-
-  private InputStream buildImageInputStream() {
-    Bitmap fakeBitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
-    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-    fakeBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-    byte[] byteArray = byteArrayOutputStream.toByteArray();
-    return new ByteArrayInputStream(byteArray);
-  }
-
-  // Helper method to generate 1x1 pixel base64 encoded png test image
-  private String generateBase64Image() {
-    int width = 1;
-    int height = 1;
-    Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-    Canvas canvas = new Canvas(bitmap);
-
-    // Draw on the Bitmap
-    Paint paint = new Paint();
-    paint.setColor(Color.parseColor("#FF8080FF"));
-    canvas.drawRect(0, 0, width, height, paint);
-
-    // Convert the Bitmap to PNG format
-    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-    bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-    byte[] pngBytes = outputStream.toByteArray();
-
-    // Encode the PNG bytes as a base64 string
-    return Base64.encodeToString(pngBytes, Base64.DEFAULT);
   }
 }
 
