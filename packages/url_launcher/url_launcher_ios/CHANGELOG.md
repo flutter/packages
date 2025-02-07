@@ -1,4 +1,4 @@
-## NEXT
+## 6.3.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * Fixes When not fully loaded, clicking close causes the callback to not be triggered correctly.
