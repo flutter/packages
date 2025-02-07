@@ -225,8 +225,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   return nil;
 }
 
-- (nullable FVPVideoPlayer *)platformViewPlayerWithOptions:
-    (nonnull FVPCreationOptions *)options {
+- (nullable FVPVideoPlayer *)platformViewPlayerWithOptions:(nonnull FVPCreationOptions *)options {
   // FVPVideoPlayer contains all required logic for platform views.
   if (options.asset) {
     NSString *assetPath = [self assetPathFromCreationOptions:options];
