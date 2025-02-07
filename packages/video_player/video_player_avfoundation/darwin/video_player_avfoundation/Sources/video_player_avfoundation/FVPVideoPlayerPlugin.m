@@ -175,12 +175,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   BOOL textureBased = options.viewType == FVPPlatformVideoViewTypeTextureView;
 
   @try {
-    FVPVideoPlayer *player;
-    if (textureBased) {
-      player = [self createTexturePlayerWithOptions:options];
-    } else {
-      player = [self createPlatformViewPlayerWithOptions:options];
-    }
+    FVPVideoPlayer *player = textureBased ? [self createTexturePlayerWithOptions:options]
+                                          : [self createPlatformViewPlayerWithOptions:options];
 
     if (player == nil) {
       *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
