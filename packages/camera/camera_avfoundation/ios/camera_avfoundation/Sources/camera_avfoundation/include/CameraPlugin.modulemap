@@ -10,6 +10,7 @@ framework module camera_avfoundation {
     header "FLTCaptureSession.h"
     header "FLTDeviceOrientationProviding.h"
     header "FLTEventChannel.h"
+    header "FLTFileWriting.h"
     header "FLTPermissionServicing.h"
     header "CameraPlugin_Test.h"
     header "CameraProperties.h"
