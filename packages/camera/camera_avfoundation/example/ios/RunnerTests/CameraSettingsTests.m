@@ -180,8 +180,6 @@ static const BOOL gTestEnableAudio = YES;
   id avCaptureDeviceInputMock = OCMClassMock([AVCaptureDeviceInput class]);
   OCMStub([avCaptureDeviceInputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg anyObjectRef]])
       .andReturn([AVCaptureInput alloc]);
-  
-  
 
   id avCaptureSessionMock = OCMClassMock([AVCaptureSession class]);
   OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
