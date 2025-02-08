@@ -119,7 +119,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 NSString *const errorMethod = @"error";
 
 // Returns frame rate supported by format closest to targetFrameRate.
-static double bestFrameRateForFormat(NSObject<FLTCaptureDeviceFormat> *format, double targetFrameRate) {
+static double bestFrameRateForFormat(NSObject<FLTCaptureDeviceFormat> *format,
+                                     double targetFrameRate) {
   double bestFrameRate = 0;
   double minDistance = DBL_MAX;
   for (NSObject<FLTFrameRateRange> *range in format.videoSupportedFrameRateRanges) {

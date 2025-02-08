@@ -16,15 +16,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// A protocol which is a direct passthrough to `AVCaptureDeviceFormat`. It exists to allow replacing
-/// `AVCaptureDeviceFormat` in tests as it has no public initializer.
+/// A protocol which is a direct passthrough to `AVCaptureDeviceFormat`. It exists to allow
+/// replacing `AVCaptureDeviceFormat` in tests as it has no public initializer.
 @protocol FLTCaptureDeviceFormat <NSObject>
 
 /// The underlying `AVCaptureDeviceFormat` instance that this object wraps.
 @property(nonatomic, readonly) AVCaptureDeviceFormat *format;
 
 @property(nonatomic, readonly) CMFormatDescriptionRef formatDescription;
-@property(nonatomic, readonly) NSArray<NSObject<FLTFrameRateRange> *> *videoSupportedFrameRateRanges;
+@property(nonatomic, readonly)
+    NSArray<NSObject<FLTFrameRateRange> *> *videoSupportedFrameRateRanges;
 
 @end
 
@@ -37,11 +38,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// A default implementation of `FLTCaptureDeviceFormat` that wraps an `AVCaptureDeviceFormat` instance.
+/// A default implementation of `FLTCaptureDeviceFormat` that wraps an `AVCaptureDeviceFormat`
+/// instance.
 @interface FLTDefaultCaptureDeviceFormat : NSObject <FLTCaptureDeviceFormat>
 
-/// Initializes the object with an `AVCaptureDeviceFormat` instance. All method and property calls are
-/// forwarded to this wrapped instance.
+/// Initializes the object with an `AVCaptureDeviceFormat` instance. All method and property calls
+/// are forwarded to this wrapped instance.
 - (instancetype)initWithFormat:(AVCaptureDeviceFormat *)format;
 
 @end

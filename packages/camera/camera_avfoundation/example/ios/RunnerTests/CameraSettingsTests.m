@@ -10,9 +10,9 @@
 @import AVFoundation;
 
 #import "CameraTestUtils.h"
+#import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
-#import "MockCameraDeviceDiscoverer.h"
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
 #import "MockGlobalEventApi.h"
@@ -148,12 +148,12 @@ static const BOOL gTestEnableAudio = YES;
                                              enableAudio:gTestEnableAudio];
   TestMediaSettingsAVWrapper *injectedWrapper =
       [[TestMediaSettingsAVWrapper alloc] initWithTestCase:self];
-  
+
   FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
   configuration.mediaSettingsWrapper = injectedWrapper;
   configuration.mediaSettings = settings;
   FLTCam *camera = FLTCreateCamWithConfiguration(configuration);
-  
+
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
     injectedWrapper.lockExpectation, injectedWrapper.beginConfigurationExpectation,
@@ -178,18 +178,19 @@ static const BOOL gTestEnableAudio = YES;
   MockCaptureDevice *mockDevice = [[MockCaptureDevice alloc] init];
   MockCaptureSession *mockSession = [[MockCaptureSession alloc] init];
   mockSession.canSetSessionPreset = YES;
-  
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
-                                                      messenger:[[MockFlutterBinaryMessenger alloc] init]
-                                                      globalAPI:[[MockGlobalEventApi alloc] init]
-                                               deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
-                                                  deviceFactory:^NSObject<FLTCaptureDevice> * (NSString *name) {
-                                                    return mockDevice;
-                                                  }
-                                          captureSessionFactory:^NSObject<FLTCaptureSession> * _Nonnull{
-                                                    return mockSession;
-                                                  }
-                                      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
+
+  CameraPlugin *camera =
+      [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+          messenger:[[MockFlutterBinaryMessenger alloc] init]
+          globalAPI:[[MockGlobalEventApi alloc] init]
+          deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
+          deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
+            return mockDevice;
+          }
+          captureSessionFactory:^NSObject<FLTCaptureSession> *_Nonnull {
+            return mockSession;
+          }
+          captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
@@ -227,7 +228,8 @@ static const BOOL gTestEnableAudio = YES;
   configuration.mediaSettings = settings;
   FLTCam *camera = FLTCreateCamWithConfiguration(configuration);
 
-  NSObject<FLTFrameRateRange> *range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
+  NSObject<FLTFrameRateRange> *range =
+      camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
   XCTAssertLessThanOrEqual(range.minFrameRate, 60);
   XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60);
 }

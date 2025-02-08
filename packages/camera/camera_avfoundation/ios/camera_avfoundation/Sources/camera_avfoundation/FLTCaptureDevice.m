@@ -36,7 +36,8 @@
 }
 
 - (NSArray<NSObject<FLTCaptureDeviceFormat> *> *)formats {
-  NSMutableArray<id<FLTCaptureDeviceFormat>> *wrappedFormats = [NSMutableArray arrayWithCapacity:self.device.formats.count];
+  NSMutableArray<id<FLTCaptureDeviceFormat>> *wrappedFormats =
+      [NSMutableArray arrayWithCapacity:self.device.formats.count];
   for (AVCaptureDeviceFormat *format in self.device.formats) {
     [wrappedFormats addObject:[[FLTDefaultCaptureDeviceFormat alloc] initWithFormat:format]];
   }

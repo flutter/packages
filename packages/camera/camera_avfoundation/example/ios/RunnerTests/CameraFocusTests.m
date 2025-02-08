@@ -25,11 +25,9 @@
   MockCaptureDevice *mockDevice = [[MockCaptureDevice alloc] init];
   _mockDevice = mockDevice;
   _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
-  
+
   FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
-  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> * _Nonnull{
-    return mockDevice;
-  };
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> *_Nonnull { return mockDevice; };
   configuration.deviceOrientationProvider = _mockDeviceOrientationProvider;
   _camera = FLTCreateCamWithConfiguration(configuration);
 }

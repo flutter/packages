@@ -9,7 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(FCPPlatformResolutionPreset resolutionPreset);
+extern FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
+    FCPPlatformResolutionPreset resolutionPreset);
 
 /// Creates a test `FLTCamConfiguration` with a default mock setup.
 extern FLTCamConfiguration *FLTCreateTestCameraConfiguration(void);

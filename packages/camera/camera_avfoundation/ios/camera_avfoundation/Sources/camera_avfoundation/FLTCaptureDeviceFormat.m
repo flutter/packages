@@ -47,7 +47,8 @@
 }
 
 - (NSArray<NSObject<FLTFrameRateRange> *> *)videoSupportedFrameRateRanges {
-  NSMutableArray<id<FLTFrameRateRange>> *ranges = [NSMutableArray arrayWithCapacity:_format.videoSupportedFrameRateRanges.count];
+  NSMutableArray<id<FLTFrameRateRange>> *ranges =
+      [NSMutableArray arrayWithCapacity:_format.videoSupportedFrameRateRanges.count];
   for (AVFrameRateRange *range in _format.videoSupportedFrameRateRanges) {
     FLTDefaultFrameRateRange *wrapper = [[FLTDefaultFrameRateRange alloc] initWithRange:range];
     [ranges addObject:wrapper];

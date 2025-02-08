@@ -192,12 +192,10 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
-  
+
   FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
   configuration.captureSessionQueue = captureSessionQueue;
-  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> *{
-    return captureDeviceMock;
-  };
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> * { return captureDeviceMock; };
   FLTCam *cam = FLTCreateCamWithConfiguration(configuration);
 
   AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];

@@ -10,7 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// A mock implementation of `FLTDeviceOrientationProviding` that allows mocking the class properties.
+/// A mock implementation of `FLTDeviceOrientationProviding` that allows mocking the class
+/// properties.
 @interface MockCaptureDeviceFormat : NSObject <FLTCaptureDeviceFormat>
 
 /// Initializes a `MockCaptureDeviceFormat` with the given dimensions.

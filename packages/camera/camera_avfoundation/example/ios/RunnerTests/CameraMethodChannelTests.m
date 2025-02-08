@@ -38,7 +38,7 @@
 - (void)testCreate_ShouldCallResultOnMainThread {
   MockCaptureSession *avCaptureSessionMock = [[MockCaptureSession alloc] init];
   avCaptureSessionMock.canSetSessionPreset = YES;
-  
+
   CameraPlugin *camera = [self createCameraPluginWithSession:avCaptureSessionMock];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
@@ -67,7 +67,7 @@
 - (void)testDisposeShouldDeallocCamera {
   MockCaptureSession *avCaptureSessionMock = [[MockCaptureSession alloc] init];
   avCaptureSessionMock.canSetSessionPreset = YES;
-  
+
   CameraPlugin *camera = [self createCameraPluginWithSession:avCaptureSessionMock];
 
   XCTestExpectation *createExpectation =
