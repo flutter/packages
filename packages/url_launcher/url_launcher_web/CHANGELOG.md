@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Fixes when click on `Link` widget without calling `followLink` function still takes browser to that link.
+
 ## 2.4.0
 
 * Enhances handling of out-of-order events.

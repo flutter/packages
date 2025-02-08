@@ -499,6 +499,7 @@ class LinkViewController extends PlatformViewController {
 
     _element.setAttribute('aria-hidden', 'true');
     _element.setAttribute('tabIndex', '-1');
+    _element.setAttribute('onclick', 'event.preventDefault();');
 
     final Map<String, dynamic> args = <String, dynamic>{
       'id': viewId,
