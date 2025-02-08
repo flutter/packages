@@ -318,7 +318,7 @@ public class GoogleSignInTest {
     when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
         .thenReturn(mockClient);
     plugin.init(params);
-    Assert.assertEquals(forceAccountName, optionsCaptor.getValue().isForceAccountName());
+    Assert.assertEquals(forceAccountName, optionsCaptor.getValue().getAccount().name);
   }
 
   private static InitParams buildInitParams(String clientId, String serverClientId) {
