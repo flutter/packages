@@ -10,7 +10,11 @@
 @import AVFoundation;
 @import XCTest;
 #import <OCMock/OCMock.h>
+
 #import "CameraTestUtils.h"
+#import "MockCaptureDevice.h"
+#import "MockCaptureDeviceFormat.h"
+#import "MockCaptureSession.h"
 
 /// Includes test cases related to resolution presets setting  operations for FLTCam class.
 @interface FLTCamSessionPresetsTest : XCTestCase
@@ -20,62 +24,95 @@
 
 - (void)testResolutionPresetWithBestFormat_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPresetInputPriority;
+  XCTestExpectation *presetExpectation = [self expectationWithDescription:@"Expected preset set"];
+  XCTestExpectation *lockForConfigurationExpectation = [self expectationWithDescription:@"Expected lockForConfiguration called"];
 
-  id videoSessionMock = OCMProtocolMock(@protocol(FLTCaptureSession));
-  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
+  MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
+  videoSessionMock.setSessionPresetStub = ^(NSString *preset) {
+    if (preset == expectedPreset) {
+      [presetExpectation fulfill];
+    }
+  };
+  
+  MockCaptureDeviceFormat *captureFormatMock = [[MockCaptureDeviceFormat alloc] init];
+  
+  
+  MockCaptureDevice *captureDeviceMock = [[MockCaptureDevice alloc] init];
+  captureDeviceMock.formats = @[ captureFormatMock ];
+  captureDeviceMock.activeFormat = captureFormatMock;
+  captureDeviceMock.lockForConfigurationStub = ^BOOL(NSError *__autoreleasing  _Nullable * _Nullable error) {
+    [lockForConfigurationExpectation fulfill];
+    return YES;
+  };
+  
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> * _Nonnull{
+    return captureDeviceMock;
+  };
+  configuration.videoDimensionsForFormat = ^CMVideoDimensions(NSObject<FLTCaptureDeviceFormat> *format) {
+    CMVideoDimensions videoDimensions;
+    videoDimensions.width = 1;
+    videoDimensions.height = 1;
+    return videoDimensions;
+  };
+  configuration.videoCaptureSession = videoSessionMock;
+  configuration.mediaSettings = FCPGetDefaultMediaSettings(FCPPlatformResolutionPresetMax);
+  
+  FLTCreateCamWithConfiguration(configuration);
 
-  id captureFormatMock = OCMClassMock([AVCaptureDeviceFormat class]);
-  id captureDeviceMock = OCMProtocolMock(@protocol(FLTCaptureDevice));
-  OCMStub([captureDeviceMock formats]).andReturn(@[ captureFormatMock ]);
-
-  OCMExpect([captureDeviceMock activeFormat]).andReturn(captureFormatMock);
-  OCMExpect([captureDeviceMock lockForConfiguration:NULL]).andReturn(YES);
-  OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
-
-  FLTCreateCamWithVideoDimensionsForFormat(videoSessionMock, FCPPlatformResolutionPresetMax,
-                                           captureDeviceMock,
-                                           ^CMVideoDimensions(AVCaptureDeviceFormat *format) {
-                                             CMVideoDimensions videoDimensions;
-                                             videoDimensions.width = 1;
-                                             videoDimensions.height = 1;
-                                             return videoDimensions;
-                                           });
-
-  OCMVerifyAll(captureDeviceMock);
-  OCMVerifyAll(videoSessionMock);
+  [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testResolutionPresetWithCanSetSessionPresetMax_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPreset3840x2160;
-
-  id videoSessionMock = OCMProtocolMock(@protocol(FLTCaptureSession));
-  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
-
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Expected preset set"];
+  
+  MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
+  
   // Make sure that setting resolution preset for session always succeeds.
-  OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
+  videoSessionMock.canSetSessionPreset = YES;
+  
+  videoSessionMock.setSessionPresetStub = ^(NSString *preset) {
+    if (preset == expectedPreset) {
+      [expectation fulfill];
+    }
+  };
+  
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.videoCaptureSession = videoSessionMock;
+  configuration.mediaSettings = FCPGetDefaultMediaSettings(FCPPlatformResolutionPresetMax);
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> * {
+    return [[MockCaptureDevice alloc] init];
+  };
 
-  OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
+  FLTCreateCamWithConfiguration(configuration);
 
-  FLTCreateCamWithVideoCaptureSession(videoSessionMock, FCPPlatformResolutionPresetMax);
-
-  OCMVerifyAll(videoSessionMock);
+  [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void)testResolutionPresetWithCanSetSessionPresetUltraHigh_mustUpdateCaptureSessionPreset {
   NSString *expectedPreset = AVCaptureSessionPreset3840x2160;
-
-  id videoSessionMock = OCMProtocolMock(@protocol(FLTCaptureSession));
-  OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
-
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Expected preset set"];
+  
+  MockCaptureSession *videoSessionMock = [[MockCaptureSession alloc] init];
+  
   // Make sure that setting resolution preset for session always succeeds.
-  OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
+  videoSessionMock.canSetSessionPreset = YES;
 
   // Expect that setting "ultraHigh" resolutionPreset correctly updates videoCaptureSession.
-  OCMExpect([videoSessionMock setSessionPreset:expectedPreset]);
+  videoSessionMock.setSessionPresetStub = ^(NSString *preset) {
+    if (preset == expectedPreset) {
+      [expectation fulfill];
+    }
+  };
+    
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.videoCaptureSession = videoSessionMock;
+  configuration.mediaSettings = FCPGetDefaultMediaSettings(FCPPlatformResolutionPresetUltraHigh);
+  
+  FLTCreateCamWithConfiguration(configuration);
 
-  FLTCreateCamWithVideoCaptureSession(videoSessionMock, FCPPlatformResolutionPresetUltraHigh);
-
-  OCMVerifyAll(videoSessionMock);
+  [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 @end

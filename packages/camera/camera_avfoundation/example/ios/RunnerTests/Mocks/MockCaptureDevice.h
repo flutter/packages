@@ -18,11 +18,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) AVCaptureDevicePosition position;
 
 // Format/Configuration
-@property(nonatomic, strong) AVCaptureDeviceFormat *activeFormat;
-@property(nonatomic, strong) NSArray<AVCaptureDeviceFormat *> *formats;
+@property(nonatomic, strong) NSArray<NSObject<FLTCaptureDeviceFormat> *> *formats;
+@property(nonatomic, copy) NSObject<FLTCaptureDeviceFormat> * (^activeFormatStub)(void);
 /// Overrides the default implementation of setting active format.
 /// @param format The format being set
-@property(nonatomic, copy) void (^setActiveFormatStub)(AVCaptureDeviceFormat *format);
+@property(nonatomic, copy) void (^setActiveFormatStub)(NSObject<FLTCaptureDeviceFormat> *format);
 
 // Flash/Torch
 @property(nonatomic, assign) BOOL hasFlash;

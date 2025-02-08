@@ -25,13 +25,13 @@
   MockCaptureDevice *mockDevice = [[MockCaptureDevice alloc] init];
   _mockDevice = mockDevice;
   _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
-
-  _camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      nil, nil, nil,
-      ^NSObject<FLTCaptureDevice> *(void) {
-        return mockDevice;
-      },
-      _mockDeviceOrientationProvider);
+  
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> * _Nonnull{
+    return mockDevice;
+  };
+  configuration.deviceOrientationProvider = _mockDeviceOrientationProvider;
+  _camera = FLTCreateCamWithConfiguration(configuration);
 }
 
 - (void)testAutoFocusWithContinuousModeSupported_ShouldSetContinuousAutoFocus {

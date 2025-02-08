@@ -20,7 +20,10 @@
 
 - (void)setUp {
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
-  _camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCamConfiguration *configuration   = FLTCreateTestCameraConfiguration();
+  configuration.captureSessionQueue = captureSessionQueue;
+  
+  _camera = FLTCreateCamWithConfiguration(configuration);
   _sampleBuffer = FLTCreateTestSampleBuffer();
 }
 
