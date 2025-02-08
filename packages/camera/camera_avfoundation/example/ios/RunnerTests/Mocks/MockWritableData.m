@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "MockFileWriter.h"
+#import "MockWritableData.h"
 
-@implementation MockFileWriter
+@implementation MockWritableData
 
 - (BOOL)writeToFile:(NSString *)path
             options:(NSDataWritingOptions)writeOptionsMask

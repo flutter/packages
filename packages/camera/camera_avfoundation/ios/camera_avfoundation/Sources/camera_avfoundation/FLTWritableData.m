@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/camera_avfoundation/FLTFileWriting.h"
+#import "./include/camera_avfoundation/FLTWritableData.h"
 
-@implementation FLTDefaultFileWriter
+@implementation FLTDefaultWritableData
 
 - (instancetype)initWithData:(NSData *)data {
   self = [super init];
