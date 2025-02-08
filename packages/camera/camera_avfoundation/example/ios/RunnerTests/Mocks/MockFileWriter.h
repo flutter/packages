@@ -5,7 +5,12 @@
 @import camera_avfoundation;
 @import AVFoundation;
 
+/// A mock implementation of `FLTFileWriting` that allows injecting a custom implementation
+/// for writing to a file.
 @interface MockFileWriter : NSObject <FLTFileWriting>
+
+/// A stub that replaces the default implementation of `writeToFile:options:error:`.
 @property(nonatomic, copy) BOOL (^writeToFileStub)
     (NSString *path, NSDataWritingOptions options, NSError **error);
+
 @end
