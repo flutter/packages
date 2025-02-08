@@ -9,7 +9,10 @@
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
+
 #import "CameraTestUtils.h"
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
 
 static const FCPPlatformResolutionPreset gTestResolutionPreset = FCPPlatformResolutionPresetMedium;
 static const int gTestFramesPerSecond = 15;
@@ -167,7 +170,9 @@ static const BOOL gTestEnableAudio = YES;
 }
 
 - (void)testSettings_ShouldBeSupportedByMethodCall {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  CameraPlugin *camera =
+      [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+                                   messenger:[[MockFlutterBinaryMessenger alloc] init]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 

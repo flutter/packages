@@ -30,6 +30,12 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
     GeneratorLanguage.java,
     GeneratorLanguage.objc,
   },
+  'event_channel_without_classes_tests': <GeneratorLanguage>{
+    GeneratorLanguage.cpp,
+    GeneratorLanguage.gobject,
+    GeneratorLanguage.java,
+    GeneratorLanguage.objc,
+  },
   'proxy_api_tests': <GeneratorLanguage>{
     GeneratorLanguage.cpp,
     GeneratorLanguage.gobject,
@@ -84,6 +90,7 @@ Future<int> generateTestPigeons(
     'core_tests',
     'enum',
     'event_channel_tests',
+    'event_channel_without_classes_tests',
     'flutter_unittests', // Only for Dart unit tests in shared_test_plugin_code
     'message',
     'multiple_arity',

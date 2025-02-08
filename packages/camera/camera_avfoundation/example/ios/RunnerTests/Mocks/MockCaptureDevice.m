@@ -1,9 +1,8 @@
-
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "MockCaptureDeviceController.h"
+#import "MockCaptureDevice.h"
 
 @import camera_avfoundation;
 #if __has_include(<camera_avfoundation/camera_avfoundation-umbrella.h>)
@@ -11,7 +10,7 @@
 #endif
 @import AVFoundation;
 
-@implementation MockCaptureDeviceController
+@implementation MockCaptureDevice
 
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
   if (self.setActiveFormatStub) {
@@ -101,11 +100,37 @@
   return self.exposureModeSupported;
 }
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
-  if (self.createInputStub) {
-    return self.createInputStub(error);
+@synthesize device;
+
+@end
+
+@implementation MockCaptureInput
+@synthesize ports;
+@synthesize input;
+@end
+
+@implementation MockCaptureDeviceInputFactory
+
+- (nonnull instancetype)init {
+  self = [super init];
+  if (self) {
+    _mockDeviceInput = [[MockCaptureInput alloc] init];
   }
-  return NULL;
+  return self;
+}
+
+- (nonnull instancetype)initWithMockDeviceInput:
+    (nonnull NSObject<FLTCaptureInput> *)mockDeviceInput {
+  self = [super init];
+  if (self) {
+    _mockDeviceInput = mockDeviceInput;
+  }
+  return self;
+}
+
+- (NSObject<FLTCaptureInput> *)deviceInputWithDevice:(NSObject<FLTCaptureDevice> *)device
+                                               error:(NSError **)error {
+  return _mockDeviceInput;
 }
 
 @end
