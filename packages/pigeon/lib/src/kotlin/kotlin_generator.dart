@@ -115,6 +115,18 @@ class KotlinProxyApiOptions {
   final int? minAndroidApi;
 }
 
+/// Options for Kotlin implementation of Event Channels.
+class KotlinEventChannelOptions {
+  /// Construct a [KotlinEventChannelOptions].
+  const KotlinEventChannelOptions({this.includeSharedClasses = true});
+
+  /// Whether to include the shared Event Channel classes in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Kotlin file with Event Channels in the same directory.
+  final bool includeSharedClasses;
+}
+
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   /// Instantiates a Kotlin Generator.
@@ -1018,8 +1030,8 @@ if (wrapped == null) {
   }) {
     indent.newln();
     indent.format('''
-        private class PigeonStreamHandler<T>(
-            val wrapper: PigeonEventChannelWrapper<T>
+        private class ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<T>(
+            val wrapper: ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T>
         ) : EventChannel.StreamHandler {
           var pigeonSink: PigeonEventSink<T>? = null
 
@@ -1034,12 +1046,15 @@ if (wrapped == null) {
           }
         }
 
-        interface PigeonEventChannelWrapper<T> {
+        interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
           open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
           open fun onCancel(p0: Any?) {}
         }
+        ''');
 
+    if (api.kotlinOptions?.includeSharedClasses ?? true) {
+      indent.format('''
         class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
           fun success(value: T) {
             sink.success(value)
@@ -1054,18 +1069,19 @@ if (wrapped == null) {
           }
         }
       ''');
+    }
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-        abstract class ${toUpperCamelCase(func.name)}StreamHandler : PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
+        abstract class ${toUpperCamelCase(func.name)}StreamHandler : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
           companion object {
             fun register(messenger: BinaryMessenger, streamHandler: ${toUpperCamelCase(func.name)}StreamHandler, instanceName: String = "") {
               var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
               if (instanceName.isNotEmpty()) {
                 channelName += ".\$instanceName"
               }
-              val internalStreamHandler = PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
+              val internalStreamHandler = ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
               EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(internalStreamHandler)
             }
           }
