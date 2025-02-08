@@ -26,7 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-/// A default implementation of `FLTCapturePhotoOutput` which wraps an instance of `AVCapturePhotoOutput`.
+/// A default implementation of `FLTCapturePhotoOutput` which wraps an instance of
+/// `AVCapturePhotoOutput`.
 @interface FLTDefaultCapturePhotoOutput : NSObject <FLTCapturePhotoOutput>
 
 /// Initializes an instance of `FLTDefaultCapturePhotoOutput` with the given `AVCapturePhotoOutput`.

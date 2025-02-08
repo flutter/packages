@@ -16,6 +16,7 @@
 @property(nonatomic, strong) NSArray<NSNumber *> *supportedFlashModes;
 
 // Stub that is called when the corresponding public method is called.
-@property(nonatomic, copy) void (^capturePhotoWithSettingsStub)(AVCapturePhotoSettings *, NSObject<AVCapturePhotoCaptureDelegate> *);
+@property(nonatomic, copy) void (^capturePhotoWithSettingsStub)
+    (AVCapturePhotoSettings *, NSObject<AVCapturePhotoCaptureDelegate> *);
 
 @end

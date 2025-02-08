@@ -57,11 +57,12 @@
       }];
 
   MockFileWriter *mockFileWriter = [[MockFileWriter alloc] init];
-  mockFileWriter.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
-    *error = ioError;
-    return NO;
-  };
-  
+  mockFileWriter.writeToFileStub =
+      ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
+        *error = ioError;
+        return NO;
+      };
+
   [delegate handlePhotoCaptureResultWithError:nil
                             photoDataProvider:^NSObject<FLTFileWriting> * {
                               return mockFileWriter;
@@ -85,9 +86,10 @@
       }];
 
   MockFileWriter *mockFileWriter = [[MockFileWriter alloc] init];
-  mockFileWriter.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
-    return YES;
-  };
+  mockFileWriter.writeToFileStub =
+      ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
+        return YES;
+      };
 
   [delegate handlePhotoCaptureResultWithError:nil
                             photoDataProvider:^NSObject<FLTFileWriting> * {
@@ -109,12 +111,13 @@
   dispatch_queue_set_specific(ioQueue, ioQueueSpecific, (void *)ioQueueSpecific, NULL);
 
   MockFileWriter *mockFileWriter = [[MockFileWriter alloc] init];
-  mockFileWriter.writeToFileStub = ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
-    if (dispatch_get_specific(ioQueueSpecific)) {
-      [writeFileQueueExpectation fulfill];
-    }
-    return YES;
-  };
+  mockFileWriter.writeToFileStub =
+      ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
+        if (dispatch_get_specific(ioQueueSpecific)) {
+          [writeFileQueueExpectation fulfill];
+        }
+        return YES;
+      };
 
   NSString *filePath = @"test";
   FLTSavePhotoDelegate *delegate = [[FLTSavePhotoDelegate alloc]
