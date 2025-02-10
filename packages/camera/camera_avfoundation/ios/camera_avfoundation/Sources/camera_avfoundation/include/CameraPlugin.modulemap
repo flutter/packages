@@ -7,9 +7,11 @@ framework module camera_avfoundation {
   explicit module Test {
     header "FLTCameraDeviceDiscovering.h"
     header "FLTCaptureDevice.h"
+    header "FLTCapturePhotoOutput.h"
     header "FLTCaptureSession.h"
     header "FLTDeviceOrientationProviding.h"
     header "FLTEventChannel.h"
+    header "FLTWritableData.h"
     header "FLTPermissionServicing.h"
     header "CameraPlugin_Test.h"
     header "CameraProperties.h"

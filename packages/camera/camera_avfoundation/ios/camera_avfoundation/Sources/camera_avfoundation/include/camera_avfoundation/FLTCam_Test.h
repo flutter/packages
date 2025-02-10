@@ -4,6 +4,7 @@
 
 #import "FLTCam.h"
 #import "FLTCaptureDevice.h"
+#import "FLTCapturePhotoOutput.h"
 #import "FLTDeviceOrientationProviding.h"
 #import "FLTSavePhotoDelegate.h"
 
@@ -27,7 +28,7 @@
 @property(readonly, nonatomic) AVCaptureVideoDataOutput *captureVideoOutput;
 
 /// The output for photo capturing. Exposed setter for unit tests.
-@property(strong, nonatomic) AVCapturePhotoOutput *capturePhotoOutput;
+@property(strong, nonatomic) NSObject<FLTCapturePhotoOutput> *capturePhotoOutput;
 
 /// True when images from the camera are being streamed.
 @property(assign, nonatomic) BOOL isStreamingImages;
