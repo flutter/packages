@@ -9,7 +9,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A protocol which is a direct passthrough to AVCaptureDevice.
 /// It exists to allow replacing AVCaptureDevice in tests.
-@protocol FLTCaptureDeviceControlling <NSObject>
+@protocol FLTCaptureDevice <NSObject>
+
+/// Underlying `AVCaptureDevice` instance. This is should not be used directly
+/// in the plugin implementation code, but it exists so that other protocol default
+/// implementation can pass the raw device to AVFoundation methods.
+@property(nonatomic, readonly) AVCaptureDevice *device;
+
+// Device identifier
+@property(nonatomic, readonly) NSString *uniqueID;
 
 // Position/Orientation
 - (AVCaptureDevicePosition)position;
@@ -63,17 +71,41 @@ NS_ASSUME_NONNULL_BEGIN
 - (CMTime)activeVideoMaxFrameDuration;
 - (void)setActiveVideoMaxFrameDuration:(CMTime)duration;
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error;
-
 @end
 
-/// A default implementation of FLTCaptureDeviceControlling protocol which
-/// wraps an instance of AVCaptureDevice.
-@interface FLTDefaultCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
+/// A protocol which is a direct passthrough to AVCaptureInput.
+/// It exists to allow replacing AVCaptureInput in tests.
+@protocol FLTCaptureInput <NSObject>
 
-/// Initializes the controller with the given device.
+/// Underlying input instance. It is exposed as raw AVCaptureInput has to be passed to some
+/// AVFoundation methods. The plugin implementation code shouldn't use it though.
+@property(nonatomic, readonly) AVCaptureInput *input;
+
+@property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *ports;
+@end
+
+/// A protocol which wraps the creation of AVCaptureDeviceInput.
+/// It exists to allow mocking instances of AVCaptureDeviceInput in tests.
+@protocol FLTCaptureDeviceInputFactory <NSObject>
+- (nullable NSObject<FLTCaptureInput> *)deviceInputWithDevice:(NSObject<FLTCaptureDevice> *)device
+                                                        error:(NSError **)error;
+@end
+
+/// A default implementation of `FLTCaptureDevice` which is a direct passthrough to the underlying
+/// `AVCaptureDevice`.
+@interface FLTDefaultCaptureDevice : NSObject <FLTCaptureDevice>
 - (instancetype)initWithDevice:(AVCaptureDevice *)device;
+@end
 
+/// A default implementation of `FLTCaptureInput` which is a direct passthrough to the underlying
+/// `AVCaptureInput`.
+@interface FLTDefaultCaptureInput : NSObject <FLTCaptureInput>
+- (instancetype)initWithInput:(AVCaptureInput *)input;
+@end
+
+/// A default implementation of FLTCaptureDeviceInputFactory protocol which
+/// wraps a call to AVCaptureInput static method `deviceInputWithDevice`.
+@interface FLTDefaultCaptureDeviceInputFactory : NSObject <FLTCaptureDeviceInputFactory>
 @end
 
 NS_ASSUME_NONNULL_END

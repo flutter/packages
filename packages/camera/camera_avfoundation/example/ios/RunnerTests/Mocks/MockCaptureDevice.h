@@ -10,7 +10,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MockCaptureDeviceController : NSObject <FLTCaptureDeviceControlling>
+@interface MockCaptureDevice : NSObject <FLTCaptureDevice>
+
+@property(nonatomic, assign) NSString *uniqueID;
+
 // Position/Orientation
 @property(nonatomic, assign) AVCaptureDevicePosition position;
 
@@ -95,10 +98,27 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param duration The maximum frame duration being set
 @property(nonatomic, copy) void (^setActiveVideoMaxFrameDurationStub)(CMTime duration);
 
-// Input Creation
-/// Overrides the default implementation of creating capture input.
-/// @param error Error pointer to be set if creation fails
-@property(nonatomic, copy) AVCaptureInput * (^createInputStub)(NSError **error);
+@end
+
+/// A mocked implementation of FLTCaptureDeviceInputFactory which allows injecting a custom
+/// implementation.
+@interface MockCaptureInput : NSObject <FLTCaptureInput>
+
+/// This property is re-declared to be read/write to allow setting a mocked value for testing.
+@property(nonatomic, strong) NSArray<AVCaptureInputPort *> *ports;
+
+@end
+
+/// A mocked implementation of FLTCaptureDeviceInputFactory which allows injecting a custom
+/// implementation.
+@interface MockCaptureDeviceInputFactory : NSObject <FLTCaptureDeviceInputFactory>
+
+/// Initializes a new instance with the given mock device input. Whenever `deviceInputWithDevice` is
+/// called on this instance, it will return the mock device input.
+- (nonnull instancetype)initWithMockDeviceInput:(NSObject<FLTCaptureInput> *)mockDeviceInput;
+
+/// The mock device input to be returned by `deviceInputWithDevice`.
+@property(nonatomic, strong) NSObject<FLTCaptureInput> *mockDeviceInput;
 
 @end
 

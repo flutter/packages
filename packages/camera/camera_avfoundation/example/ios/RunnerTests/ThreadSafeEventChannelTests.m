@@ -7,15 +7,17 @@
 @import camera_avfoundation.Test;
 #endif
 @import XCTest;
-#import <OCMock/OCMock.h>
+
+#import "MockEventChannel.h"
 
 @interface ThreadSafeEventChannelTests : XCTestCase
+
 @end
 
 @implementation ThreadSafeEventChannelTests
 
 - (void)testSetStreamHandler_shouldStayOnMainThreadIfCalledFromMainThread {
-  FlutterEventChannel *mockEventChannel = OCMClassMock([FlutterEventChannel class]);
+  MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
   FLTThreadSafeEventChannel *threadSafeEventChannel =
       [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
 
@@ -24,11 +26,12 @@
   XCTestExpectation *mainThreadCompletionExpectation =
       [self expectationWithDescription:
                 @"setStreamHandler's completion block must be called on the main thread"];
-  OCMStub([mockEventChannel setStreamHandler:[OCMArg any]]).andDo(^(NSInvocation *invocation) {
+
+  [mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
     if (NSThread.isMainThread) {
       [mainThreadExpectation fulfill];
     }
-  });
+  }];
 
   [threadSafeEventChannel setStreamHandler:nil
                                 completion:^{
@@ -40,7 +43,7 @@
 }
 
 - (void)testSetStreamHandler_shouldDispatchToMainThreadIfCalledFromBackgroundThread {
-  FlutterEventChannel *mockEventChannel = OCMClassMock([FlutterEventChannel class]);
+  MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
   FLTThreadSafeEventChannel *threadSafeEventChannel =
       [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
 
@@ -49,11 +52,12 @@
   XCTestExpectation *mainThreadCompletionExpectation =
       [self expectationWithDescription:
                 @"setStreamHandler's completion block must be called on the main thread"];
-  OCMStub([mockEventChannel setStreamHandler:[OCMArg any]]).andDo(^(NSInvocation *invocation) {
+
+  [mockEventChannel setSetStreamHandlerStub:^(NSObject<FlutterStreamHandler> *handler) {
     if (NSThread.isMainThread) {
       [mainThreadExpectation fulfill];
     }
-  });
+  }];
 
   dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
     [threadSafeEventChannel setStreamHandler:nil
@@ -67,13 +71,16 @@
 }
 
 - (void)testEventChannel_shouldBeKeptAliveWhenDispatchingBackToMainThread {
+  MockEventChannel *mockEventChannel = [[MockEventChannel alloc] init];
+
   XCTestExpectation *expectation =
       [self expectationWithDescription:@"Completion should be called."];
-  dispatch_async(dispatch_queue_create("test", NULL), ^{
-    FLTThreadSafeEventChannel *channel = [[FLTThreadSafeEventChannel alloc]
-        initWithEventChannel:OCMClassMock([FlutterEventChannel class])];
 
-    [channel setStreamHandler:OCMOCK_ANY
+  dispatch_async(dispatch_queue_create("test", NULL), ^{
+    FLTThreadSafeEventChannel *channel =
+        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:mockEventChannel];
+
+    [channel setStreamHandler:nil
                    completion:^{
                      [expectation fulfill];
                    }];
