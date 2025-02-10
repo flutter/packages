@@ -6,7 +6,7 @@ import AVFoundation
 import camera_avfoundation
 import XCTest
 
-class CameraExposureTests: XCTestCase {
+final class CameraExposureTests: XCTestCase {
   var camera: FLTCam!
   var mockDevice: MockCaptureDevice!
   var mockDeviceOrientationProvider: MockDeviceOrientationProvider!
@@ -15,11 +15,6 @@ class CameraExposureTests: XCTestCase {
     mockDevice = MockCaptureDevice()
     mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 
-    camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      nil, nil, nil,
-      { self.mockDevice },
-      mockDeviceOrientationProvider
-    )
     let configuration = FLTCreateTestCameraConfiguration()
     configuration.captureDeviceFactory = { self.mockDevice }
     configuration.deviceOrientationProvider = mockDeviceOrientationProvider
