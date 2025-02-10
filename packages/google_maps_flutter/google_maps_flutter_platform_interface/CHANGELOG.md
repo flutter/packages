@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates API doc comments.
-
 ## 2.10.0
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
