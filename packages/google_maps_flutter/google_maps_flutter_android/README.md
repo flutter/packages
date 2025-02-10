@@ -78,9 +78,9 @@ Google Play the latest renderer will not be available and the legacy renderer wi
 WARNING: `AndroidMapRenderer.legacy` is known to crash apps and is no longer supported by the Google Maps team
 and therefore cannot be supported by the Flutter team.
 
-#### Cloud-based map styling
+### Cloud-based map styling
 
-Cloud-based map styling works on Android only if `AndroidMapRenderer.latest` map renderer has been initialized.
+Cloud-based map styling is not supported with the `AndroidMapRenderer.legacy` renderer.
 
 ## Supported Heatmap Options
 
