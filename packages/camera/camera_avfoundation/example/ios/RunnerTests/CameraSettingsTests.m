@@ -9,7 +9,10 @@
 @import XCTest;
 @import AVFoundation;
 #import <OCMock/OCMock.h>
+
 #import "CameraTestUtils.h"
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
 
 static const FCPPlatformResolutionPreset gTestResolutionPreset = FCPPlatformResolutionPresetMedium;
 static const int gTestFramesPerSecond = 15;
@@ -144,7 +147,7 @@ static const BOOL gTestEnableAudio = YES;
       [[TestMediaSettingsAVWrapper alloc] initWithTestCase:self];
 
   FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, injectedWrapper, nil);
+      dispatch_queue_create("test", NULL), settings, injectedWrapper, nil, nil);
 
   // Expect FPS configuration is passed to camera device.
   [self waitForExpectations:@[
@@ -167,7 +170,9 @@ static const BOOL gTestEnableAudio = YES;
 }
 
 - (void)testSettings_ShouldBeSupportedByMethodCall {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  CameraPlugin *camera =
+      [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+                                   messenger:[[MockFlutterBinaryMessenger alloc] init]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
@@ -211,7 +216,7 @@ static const BOOL gTestEnableAudio = YES;
                                              enableAudio:gTestEnableAudio];
 
   FLTCam *camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      dispatch_queue_create("test", NULL), settings, nil, nil);
+      dispatch_queue_create("test", NULL), settings, nil, nil, nil);
 
   AVFrameRateRange *range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0];
   XCTAssertLessThanOrEqual(range.minFrameRate, 60);
