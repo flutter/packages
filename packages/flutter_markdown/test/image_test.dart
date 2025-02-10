@@ -459,7 +459,7 @@ void defineTests() {
       },
       skip: kIsWeb, // Goldens are platform-specific.
     );
-  
+
     testWidgets(
       'custom image builder test width and height',
       (WidgetTester tester) async {
@@ -467,7 +467,8 @@ void defineTests() {
         const double width = 100;
         const String data = '![alt](https://img.png#${width}x$height)';
         Widget builder(MarkdownImageConfig config) =>
-            Image.asset('assets/logo.png', width: config.width, height: config.height);
+            Image.asset('assets/logo.png',
+                width: config.width, height: config.height);
 
         await tester.pumpWidget(
           boilerplate(
