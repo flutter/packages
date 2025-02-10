@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates README.
+
 ## 2.14.12
 
 * Updates androidx.annotation:annotation to 1.9.1.

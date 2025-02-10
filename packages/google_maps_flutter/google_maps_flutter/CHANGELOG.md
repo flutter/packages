@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates documentation and adds links to all endorsed packages from README. 
 
 ## 2.10.0
 
