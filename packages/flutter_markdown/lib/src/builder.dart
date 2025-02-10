@@ -52,7 +52,6 @@ class _TableElement {
 
 /// Holds configuration data for an image in a Markdown document.
 class MarkdownImageConfig {
-
   /// Creates a new [MarkdownImageConfig] instance.
   MarkdownImageConfig({
     required this.uri,
@@ -61,6 +60,7 @@ class MarkdownImageConfig {
     this.width,
     this.height,
   });
+
   /// The URI of the image.
   final Uri uri;
 
@@ -651,8 +651,11 @@ class MarkdownBuilder implements md.NodeVisitor {
 
     Widget child;
     if (imageBuilder != null || sizedImageBuilder != null) {
-      final MarkdownImageConfig config = MarkdownImageConfig(uri: uri, alt: alt, title: title, height: height, width: width);
-      child = sizedImageBuilder != null ? sizedImageBuilder!(config) : imageBuilder!(uri, alt, title);
+      final MarkdownImageConfig config = MarkdownImageConfig(
+          uri: uri, alt: alt, title: title, height: height, width: width);
+      child = sizedImageBuilder != null
+          ? sizedImageBuilder!(config)
+          : imageBuilder!(uri, alt, title);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }
