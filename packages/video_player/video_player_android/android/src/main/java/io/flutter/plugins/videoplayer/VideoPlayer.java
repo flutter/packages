@@ -87,14 +87,14 @@ class VideoPlayer {
 
     exoPlayer.addListener(
         new ExoPlayerEventListener(
-            exoPlayer, videoPlayerEvents, getViewType(), wasPlayerInitialized()));
+            exoPlayer, videoPlayerEvents, getViewType(), playerHasBeenSuspended()));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     return exoPlayer;
   }
 
-  protected boolean wasPlayerInitialized() {
-    // Can be overridden in subclasses.
+  protected boolean playerHasBeenSuspended() {
+    // The base implementation never suspends and re-creates the exoPlayer, but subclasses may.
     return false;
   }
 

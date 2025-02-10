@@ -90,7 +90,7 @@ final class TextureBasedVideoPlayer extends VideoPlayer
   }
 
   @Override
-  protected boolean wasPlayerInitialized() {
+  protected boolean playerHasBeenSuspended() {
     return savedStateDuring != null;
   }
 
