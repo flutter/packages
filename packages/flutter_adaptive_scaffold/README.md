@@ -453,6 +453,10 @@ return AdaptiveLayout(
               selectedNavigation = newIndex;
             });
           },
+          selectedIconTheme: navBarTheme.selectedIconTheme,
+          unselectedIconTheme: navBarTheme.unselectedIconTheme,
+          selectedLabelTextStyle: navBarTheme.selectedLabelStyle,
+          unSelectedLabelTextStyle: navBarTheme.unselectedLabelStyle,
         ),
       )
     },
