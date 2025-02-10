@@ -342,6 +342,7 @@ abstract class StatefulShellBranchData {
     List<NavigatorObserver>? observers,
     String? initialLocation,
     String? restorationScopeId,
+    bool preload = false,
   }) {
     return StatefulShellBranch(
       routes: routes,
@@ -349,6 +350,7 @@ abstract class StatefulShellBranchData {
       observers: observers,
       initialLocation: initialLocation,
       restorationScopeId: restorationScopeId,
+      preload: preload,
     );
   }
 }

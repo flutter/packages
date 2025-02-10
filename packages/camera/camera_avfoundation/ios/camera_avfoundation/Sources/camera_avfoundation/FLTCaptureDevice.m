@@ -2,13 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
+@import Flutter;
 
-@interface FLTDefaultCaptureDeviceController ()
+#import "FLTCaptureDevice.h"
+
+@interface FLTDefaultCaptureDevice ()
 @property(nonatomic, strong) AVCaptureDevice *device;
 @end
 
-@implementation FLTDefaultCaptureDeviceController
+@implementation FLTDefaultCaptureDevice
 
 - (instancetype)initWithDevice:(AVCaptureDevice *)device {
   self = [super init];
@@ -18,18 +20,28 @@
   return self;
 }
 
+// Device identifier
+- (NSString *)uniqueID {
+  return self.device.uniqueID;
+}
+
 // Position/Orientation
 - (AVCaptureDevicePosition)position {
   return self.device.position;
 }
 
 // Format/Configuration
-- (AVCaptureDeviceFormat *)activeFormat {
-  return self.device.activeFormat;
+- (NSObject<FLTCaptureDeviceFormat> *)activeFormat {
+  return [[FLTDefaultCaptureDeviceFormat alloc] initWithFormat:self.device.activeFormat];
 }
 
-- (NSArray<AVCaptureDeviceFormat *> *)formats {
-  return self.device.formats;
+- (NSArray<NSObject<FLTCaptureDeviceFormat> *> *)formats {
+  NSMutableArray<id<FLTCaptureDeviceFormat>> *wrappedFormats =
+      [NSMutableArray arrayWithCapacity:self.device.formats.count];
+  for (AVCaptureDeviceFormat *format in self.device.formats) {
+    [wrappedFormats addObject:[[FLTDefaultCaptureDeviceFormat alloc] initWithFormat:format]];
+  }
+  return wrappedFormats;
 }
 
 - (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
@@ -165,8 +177,38 @@
   self.device.activeVideoMaxFrameDuration = duration;
 }
 
-- (AVCaptureInput *)createInput:(NSError *_Nullable *_Nullable)error {
-  return [AVCaptureDeviceInput deviceInputWithDevice:_device error:error];
+@end
+
+@interface FLTDefaultCaptureInput ()
+@property(nonatomic, strong) AVCaptureInput *input;
+@end
+
+@implementation FLTDefaultCaptureInput
+
+- (instancetype)initWithInput:(AVCaptureInput *)input {
+  self = [super init];
+  if (self) {
+    _input = input;
+  }
+  return self;
+}
+
+- (AVCaptureInput *)input {
+  return _input;
+}
+
+- (NSArray<AVCaptureInputPort *> *)ports {
+  return self.input.ports;
+}
+
+@end
+
+@implementation FLTDefaultCaptureDeviceInputFactory
+
+- (NSObject<FLTCaptureInput> *)deviceInputWithDevice:(NSObject<FLTCaptureDevice> *)device
+                                               error:(NSError **)error {
+  return [[FLTDefaultCaptureInput alloc]
+      initWithInput:[AVCaptureDeviceInput deviceInputWithDevice:device.device error:error]];
 }
 
 @end

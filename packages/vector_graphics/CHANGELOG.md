@@ -1,3 +1,7 @@
+## 1.1.18
+
+* Allow transition between placeholder and loaded image to have an animation.
+
 ## 1.1.17
 
 * Reverts leaker tracker changes that caused runtime exceptions.

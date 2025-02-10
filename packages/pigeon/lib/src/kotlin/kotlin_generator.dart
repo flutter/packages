@@ -115,6 +115,18 @@ class KotlinProxyApiOptions {
   final int? minAndroidApi;
 }
 
+/// Options for Kotlin implementation of Event Channels.
+class KotlinEventChannelOptions {
+  /// Construct a [KotlinEventChannelOptions].
+  const KotlinEventChannelOptions({this.includeSharedClasses = true});
+
+  /// Whether to include the shared Event Channel classes in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Kotlin file with Event Channels in the same directory.
+  final bool includeSharedClasses;
+}
+
 /// Class that manages all Kotlin code generation.
 class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
   /// Instantiates a Kotlin Generator.
@@ -835,7 +847,15 @@ if (wrapped == null) {
           override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
             return when (type) {
               $proxyApiCodecInstanceManagerKey.toByte() -> {
-                return registrar.instanceManager.getInstance(readValue(buffer) as Long)
+                val identifier: Long = readValue(buffer) as Long
+                val instance: Any? = registrar.instanceManager.getInstance(identifier)
+                if (instance == null) {
+                  Log.e(
+                    "${proxyApiCodecName(const KotlinOptions())}",
+                    "Failed to find instance with identifier: \$identifier"
+                  )
+                }
+                return instance
               }
               else -> super.readValueOfType(type, buffer)
             }
@@ -1018,8 +1038,8 @@ if (wrapped == null) {
   }) {
     indent.newln();
     indent.format('''
-        private class PigeonStreamHandler<T>(
-            val wrapper: PigeonEventChannelWrapper<T>
+        private class ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<T>(
+            val wrapper: ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T>
         ) : EventChannel.StreamHandler {
           var pigeonSink: PigeonEventSink<T>? = null
 
@@ -1034,12 +1054,15 @@ if (wrapped == null) {
           }
         }
 
-        interface PigeonEventChannelWrapper<T> {
+        interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
           open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
           open fun onCancel(p0: Any?) {}
         }
+        ''');
 
+    if (api.kotlinOptions?.includeSharedClasses ?? true) {
+      indent.format('''
         class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
           fun success(value: T) {
             sink.success(value)
@@ -1054,18 +1077,19 @@ if (wrapped == null) {
           }
         }
       ''');
+    }
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-        abstract class ${toUpperCamelCase(func.name)}StreamHandler : PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
+        abstract class ${toUpperCamelCase(func.name)}StreamHandler : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
           companion object {
             fun register(messenger: BinaryMessenger, streamHandler: ${toUpperCamelCase(func.name)}StreamHandler, instanceName: String = "") {
               var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
               if (instanceName.isNotEmpty()) {
                 channelName += ".\$instanceName"
               }
-              val internalStreamHandler = PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
+              val internalStreamHandler = ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
               EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(internalStreamHandler)
             }
           }
@@ -1896,58 +1920,63 @@ if (wrapped == null) {
               '''
               callback(
                   Result.failure(
-                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-              return''',
+                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))''',
             );
           },
+          addTrailingNewline: false,
         );
         indent.writeScoped(
-          'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+          ' else if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
           '}',
           () {
-            indent.writeln('Result.success(Unit)');
-            indent.writeln('return');
+            indent.writeln('callback(Result.success(Unit))');
           },
+          addTrailingNewline: false,
         );
-        if (api.hasCallbackConstructor()) {
-          indent.writeln(
-            'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
-          );
-          enumerate(api.unattachedFields, (int index, ApiField field) {
-            final String argName = _getSafeArgumentName(index, field);
+        indent.writeScoped(' else {', '}', () {
+          if (api.hasCallbackConstructor()) {
             indent.writeln(
-              'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
             );
-          });
+            enumerate(api.unattachedFields, (int index, ApiField field) {
+              final String argName = _getSafeArgumentName(index, field);
+              indent.writeln(
+                'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              );
+            });
 
-          indent
-              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
-          indent.writeln('val codec = pigeonRegistrar.codec');
-          _writeFlutterMethodMessageCall(
-            indent,
-            returnType: returnType,
-            channelName: channelName,
-            errorClassName: errorClassName,
-            parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}identifier',
-                type: const TypeDeclaration(
-                  baseName: 'int',
-                  isNullable: false,
+            indent.writeln(
+                'val binaryMessenger = pigeonRegistrar.binaryMessenger');
+            indent.writeln('val codec = pigeonRegistrar.codec');
+            _writeFlutterMethodMessageCall(
+              indent,
+              returnType: returnType,
+              channelName: channelName,
+              errorClassName: errorClassName,
+              parameters: <Parameter>[
+                Parameter(
+                  name: '${classMemberNamePrefix}identifier',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
                 ),
-              ),
-              ...api.unattachedFields.map(
-                (ApiField field) {
-                  return Parameter(name: field.name, type: field.type);
-                },
-              ),
-            ],
-          );
-        } else {
-          indent.writeln(
-            'throw IllegalStateException("Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
-          );
-        }
+                ...api.unattachedFields.map(
+                  (ApiField field) {
+                    return Parameter(name: field.name, type: field.type);
+                  },
+                ),
+              ],
+            );
+          } else {
+            indent.format(
+              '''
+              callback(
+                  Result.failure(
+                      $errorClassName("new-instance-error", "Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", "")))''',
+            );
+          }
+        });
       },
     );
     indent.newln();
