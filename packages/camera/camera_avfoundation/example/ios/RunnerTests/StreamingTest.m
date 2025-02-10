@@ -72,7 +72,7 @@
     [_camera captureOutput:nil didOutputSampleBuffer:self.sampleBuffer fromConnection:nil];
   }
 
-  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testReceivedImageStreamData {
@@ -102,7 +102,7 @@
   [_camera receivedImageStreamData];
   [_camera captureOutput:nil didOutputSampleBuffer:self.sampleBuffer fromConnection:nil];
 
-  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end

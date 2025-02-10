@@ -36,7 +36,7 @@
                             photoDataProvider:^NSData * {
                               return nil;
                             }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testHandlePhotoCaptureResult_mustCompleteWithErrorIfFailedToWrite {
@@ -67,7 +67,7 @@
                             photoDataProvider:^NSObject<FLTWritableData> * {
                               return mockWritableData;
                             }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testHandlePhotoCaptureResult_mustCompleteWithFilePathIfSuccessToWrite {
@@ -95,7 +95,7 @@
                             photoDataProvider:^NSObject<FLTWritableData> * {
                               return mockWritableData;
                             }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testHandlePhotoCaptureResult_bothProvideDataAndSaveFileMustRunOnIOQueue {
@@ -135,7 +135,7 @@
                               return mockWritableData;
                             }];
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end

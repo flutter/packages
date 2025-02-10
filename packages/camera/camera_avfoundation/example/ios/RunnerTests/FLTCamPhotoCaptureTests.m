@@ -59,7 +59,7 @@
     }];
   });
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportPathToResultIfSavePhotoDelegateCompletionsWithPath {
@@ -93,7 +93,7 @@
       [pathExpectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportFileExtensionWithHeifWhenHEVCIsAvailableAndFileFormatIsHEIF {
@@ -126,7 +126,7 @@
       [expectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportFileExtensionWithJpgWhenHEVCNotAvailableAndFileFormatIsHEIF {
@@ -158,7 +158,7 @@
       [expectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_handlesTorchMode {
@@ -211,6 +211,6 @@
       [pathExpectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 @end

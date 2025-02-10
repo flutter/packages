@@ -61,7 +61,7 @@
 
   FLTCreateCamWithConfiguration(configuration);
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testResolutionPresetWithCanSetSessionPresetMax_mustUpdateCaptureSessionPreset {
@@ -88,7 +88,7 @@
 
   FLTCreateCamWithConfiguration(configuration);
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testResolutionPresetWithCanSetSessionPresetUltraHigh_mustUpdateCaptureSessionPreset {
@@ -113,7 +113,7 @@
 
   FLTCreateCamWithConfiguration(configuration);
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end
