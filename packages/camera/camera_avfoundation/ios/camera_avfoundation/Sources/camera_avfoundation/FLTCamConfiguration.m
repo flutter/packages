@@ -23,7 +23,7 @@
     _captureDeviceFactory = captureDeviceFactory;
     _orientation = [[UIDevice currentDevice] orientation];
     _deviceOrientationProvider = [[FLTDefaultDeviceOrientationProvider alloc] init];
-    _videoDimensionsForFormat = ^CMVideoDimensions(AVCaptureDeviceFormat *format) {
+    _videoDimensionsForFormat = ^CMVideoDimensions(NSObject<FLTCaptureDeviceFormat> *format) {
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
     };
     _captureDeviceInputFactory = captureDeviceInputFactory;

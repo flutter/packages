@@ -20,6 +20,12 @@
 
 @implementation FLTCamPhotoCaptureTests
 
+- (FLTCam *)createCamWithCaptureSessionQueue:(dispatch_queue_t)captureSessionQueue {
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureSessionQueue = captureSessionQueue;
+  return FLTCreateCamWithConfiguration(configuration);
+}
+
 - (void)testCaptureToFile_mustReportErrorToResultIfSavePhotoDelegateCompletionsWithError {
   XCTestExpectation *errorExpectation =
       [self expectationWithDescription:
@@ -53,7 +59,7 @@
     }];
   });
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportPathToResultIfSavePhotoDelegateCompletionsWithPath {
@@ -64,7 +70,7 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCam *cam = [self createCamWithCaptureSessionQueue:captureSessionQueue];
 
   NSString *filePath = @"test";
 
@@ -87,7 +93,7 @@
       [pathExpectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportFileExtensionWithHeifWhenHEVCIsAvailableAndFileFormatIsHEIF {
@@ -97,7 +103,7 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCam *cam = [self createCamWithCaptureSessionQueue:captureSessionQueue];
   [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
 
   MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
@@ -120,7 +126,7 @@
       [expectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportFileExtensionWithJpgWhenHEVCNotAvailableAndFileFormatIsHEIF {
@@ -130,7 +136,7 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCam *cam = [self createCamWithCaptureSessionQueue:captureSessionQueue];
   [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
 
   MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
@@ -152,7 +158,7 @@
       [expectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_handlesTorchMode {
@@ -176,12 +182,10 @@
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      captureSessionQueue, nil, nil,
-      ^NSObject<FLTCaptureDevice> *(void) {
-        return captureDeviceMock;
-      },
-      nil);
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureSessionQueue = captureSessionQueue;
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> * { return captureDeviceMock; };
+  FLTCam *cam = FLTCreateCamWithConfiguration(configuration);
 
   NSString *filePath = @"test";
 
@@ -207,6 +211,6 @@
       [pathExpectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 @end

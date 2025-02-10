@@ -2,6 +2,10 @@
 
 * Introduces `MarkdownImageConfig` for `sizedImageBuilder` builder.
 
+## 0.7.6+2
+
+* Updates README to indicate that this package will be discontinued.
+
 ## 0.7.6+1
 
 * Adds horizontal scrolling for table when using `tableColumnWidth: IntrinsicColumnWidth()`.
