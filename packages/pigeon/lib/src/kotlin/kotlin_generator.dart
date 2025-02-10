@@ -1914,7 +1914,7 @@ if (wrapped == null) {
       }) {
         indent.writeScoped(
           'if (pigeonRegistrar.ignoreCallsToDart) {',
-          '} ',
+          '}',
           () {
             indent.format(
               '''
@@ -1926,14 +1926,14 @@ if (wrapped == null) {
           addTrailingNewline: false,
         );
         indent.writeScoped(
-          'else if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
-          '} ',
+          ' else if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+          '}',
           () {
             indent.writeln('callback(Result.success(Unit))');
           },
           addTrailingNewline: false,
         );
-        indent.writeScoped('else {', '}', () {
+        indent.writeScoped(' else {', '}', () {
           if (api.hasCallbackConstructor()) {
             indent.writeln(
               'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',

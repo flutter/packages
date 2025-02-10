@@ -2313,7 +2313,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     indent.writeScoped('$methodSignature {', '}', () {
       indent.writeScoped(
         'if pigeonRegistrar.ignoreCallsToDart {',
-        '} ',
+        '}',
         () {
           indent.format(
             '''
@@ -2328,14 +2328,14 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       );
 
       indent.writeScoped(
-        'else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
-        '} ',
+        ' else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
+        '}',
         () {
           indent.writeln('completion(.success(()))');
         },
         addTrailingNewline: false,
       );
-      indent.writeScoped('else {', '}', () {
+      indent.writeScoped(' else {', '}', () {
         if (api.hasCallbackConstructor()) {
           indent.writeln(
             'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
