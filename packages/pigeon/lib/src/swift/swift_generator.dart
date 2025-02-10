@@ -949,6 +949,9 @@ if (wrapped == nil) {
                     let identifier = self.readValue()
                     let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
                       forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+                    if instance == nil {
+                      print("Failed to find instance with identifier: \\(identifier!)")
+                    }
                     return instance
                   default:
                     return super.readValue(ofType: type)
@@ -1502,7 +1505,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       }
       indent.addScoped('else {', '}', () {
         if (returnType.isVoid) {
-          indent.writeln('completion(.success(Void()))');
+          indent.writeln('completion(.success(()))');
         } else {
           final String fieldType = _swiftTypeForDartType(returnType);
           _writeGenericCasting(
@@ -2318,63 +2321,70 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
               .failure(
                 ${_getErrorClassName(generatorOptions)}(
                   code: "ignore-calls-error",
-                  message: "Calls to Dart are being ignored.", details: "")))
-            return''',
+                  message: "Calls to Dart are being ignored.", details: "")))''',
           );
         },
+        addTrailingNewline: false,
       );
 
       indent.writeScoped(
-        'if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
+        ' else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
         '}',
         () {
-          indent.writeln('completion(.success(Void()))');
-          indent.writeln('return');
+          indent.writeln('completion(.success(()))');
         },
+        addTrailingNewline: false,
       );
-      if (api.hasCallbackConstructor()) {
-        indent.writeln(
-          'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
-        );
-        enumerate(api.unattachedFields, (int index, ApiField field) {
-          final String argName = _getSafeArgumentName(index, field);
+      indent.writeScoped(' else {', '}', () {
+        if (api.hasCallbackConstructor()) {
           indent.writeln(
-            'let $argName = try! pigeonDelegate.${field.name}(pigeonApi: self, pigeonInstance: pigeonInstance)',
+            'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
           );
-        });
-        indent.writeln(
-          'let binaryMessenger = pigeonRegistrar.binaryMessenger',
-        );
-        indent.writeln('let codec = pigeonRegistrar.codec');
-        _writeFlutterMethodMessageCall(
-          indent,
-          generatorOptions: generatorOptions,
-          parameters: <Parameter>[
-            Parameter(
-              name: 'pigeonIdentifier',
-              type: const TypeDeclaration(
-                baseName: 'int',
-                isNullable: false,
+          enumerate(api.unattachedFields, (int index, ApiField field) {
+            final String argName = _getSafeArgumentName(index, field);
+            indent.writeln(
+              'let $argName = try! pigeonDelegate.${field.name}(pigeonApi: self, pigeonInstance: pigeonInstance)',
+            );
+          });
+          indent.writeln(
+            'let binaryMessenger = pigeonRegistrar.binaryMessenger',
+          );
+          indent.writeln('let codec = pigeonRegistrar.codec');
+          _writeFlutterMethodMessageCall(
+            indent,
+            generatorOptions: generatorOptions,
+            parameters: <Parameter>[
+              Parameter(
+                name: 'pigeonIdentifier',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
               ),
+              ...api.unattachedFields.map(
+                (ApiField field) {
+                  return Parameter(name: field.name, type: field.type);
+                },
+              ),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            channelName: makeChannelNameWithStrings(
+              apiName: api.name,
+              methodName: newInstanceMethodName,
+              dartPackageName: dartPackageName,
             ),
-            ...api.unattachedFields.map(
-              (ApiField field) {
-                return Parameter(name: field.name, type: field.type);
-              },
-            ),
-          ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-          channelName: makeChannelNameWithStrings(
-            apiName: api.name,
-            methodName: newInstanceMethodName,
-            dartPackageName: dartPackageName,
-          ),
-        );
-      } else {
-        indent.writeln(
-          'print("Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
-        );
-      }
+          );
+        } else {
+          indent.format(
+            '''
+            completion(
+              .failure(
+                ${_getErrorClassName(generatorOptions)}(
+                  code: "new-instance-error",
+                  message: "Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", details: "")))''',
+          );
+        }
+      });
     });
 
     if (unsupportedPlatforms != null) {
