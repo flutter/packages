@@ -1930,7 +1930,6 @@ if (wrapped == null) {
           '} ',
           () {
             indent.writeln('callback(Result.success(Unit))');
-            indent.writeln('return');
           },
           addTrailingNewline: false,
         );

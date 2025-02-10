@@ -3056,7 +3056,6 @@ abstract class PigeonApiProxyApiTestClass(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
-      return
     } else {
       callback(
           Result.failure(
@@ -4047,7 +4046,6 @@ abstract class PigeonApiProxyApiSuperClass(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
-      return
     } else {
       val pigeon_identifierArg =
           pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
@@ -4086,7 +4084,6 @@ open class PigeonApiProxyApiInterface(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
-      return
     } else {
       val pigeon_identifierArg =
           pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
@@ -4255,7 +4252,6 @@ abstract class PigeonApiClassWithApiRequirement(
               ProxyApiTestsError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
     } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
       callback(Result.success(Unit))
-      return
     } else {
       val pigeon_identifierArg =
           pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
