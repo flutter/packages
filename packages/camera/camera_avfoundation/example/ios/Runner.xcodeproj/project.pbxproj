@@ -29,6 +29,7 @@
 		7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA99E582D22C75300582559 /* CameraExposureTests.m */; };
 		7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */; };
 		7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */; };
+		7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */; };
 		7FD582122D579650003B1200 /* MockWritableData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582112D579650003B1200 /* MockWritableData.m */; };
 		7FD582202D579ECC003B1200 /* MockCapturePhotoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
@@ -104,6 +105,8 @@
 		7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDevice.m; sourceTree = "<group>"; };
 		7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockDeviceOrientationProvider.h; sourceTree = "<group>"; };
 		7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockDeviceOrientationProvider.m; sourceTree = "<group>"; };
+		7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceFormat.m; sourceTree = "<group>"; };
+		7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceFormat.h; sourceTree = "<group>"; };
 		7FD582112D579650003B1200 /* MockWritableData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockWritableData.m; sourceTree = "<group>"; };
 		7FD582132D57965A003B1200 /* MockWritableData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockWritableData.h; sourceTree = "<group>"; };
 		7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCapturePhotoOutput.m; sourceTree = "<group>"; };
@@ -205,6 +208,8 @@
 				7F8FD2272D4BFA8D001AF2C1 /* MockGlobalEventApi.h */,
 				7FCEDD312D43C2B900EA1CA8 /* MockCaptureDevice.h */,
 				7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */,
+				7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */,
+				7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */,
 				7FD582212D579ED9003B1200 /* MockCapturePhotoOutput.h */,
 				7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */,
 				7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */,
@@ -516,6 +521,7 @@
 				7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */,
 				E487C86026D686A10034AC92 /* CameraPreviewPauseTests.m in Sources */,
 				E071CF7427B31DE4006EF3BA /* FLTCamSampleBufferTests.m in Sources */,
+				7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */,
 				7F29EB222D269ED500740257 /* MockEventChannel.m in Sources */,
 				7F8FD22F2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m in Sources */,
 				E04F108627A87CA600573D0C /* FLTSavePhotoDelegateTests.m in Sources */,

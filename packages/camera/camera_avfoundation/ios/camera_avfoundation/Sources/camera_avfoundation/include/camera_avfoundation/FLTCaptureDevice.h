@@ -5,6 +5,8 @@
 @import AVFoundation;
 @import Foundation;
 
+#import "FLTCaptureDeviceFormat.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// A protocol which is a direct passthrough to AVCaptureDevice.
@@ -23,9 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (AVCaptureDevicePosition)position;
 
 // Format/Configuration
-- (AVCaptureDeviceFormat *)activeFormat;
-- (NSArray<AVCaptureDeviceFormat *> *)formats;
-- (void)setActiveFormat:(AVCaptureDeviceFormat *)format;
+- (NSObject<FLTCaptureDeviceFormat> *)activeFormat;
+- (NSArray<NSObject<FLTCaptureDeviceFormat> *> *)formats;
+- (void)setActiveFormat:(NSObject<FLTCaptureDeviceFormat> *)format;
 
 // Flash/Torch
 - (BOOL)hasFlash;
