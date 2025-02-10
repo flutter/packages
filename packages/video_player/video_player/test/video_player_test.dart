@@ -956,6 +956,7 @@ void main() {
       });
     });
   });
+  
   test('updates position', () async {
     final VideoPlayerController controller = VideoPlayerController.networkUrl(
       _localhostUri,
