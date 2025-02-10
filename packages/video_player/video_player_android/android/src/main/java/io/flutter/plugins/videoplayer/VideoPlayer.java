@@ -18,7 +18,10 @@ import androidx.media3.exoplayer.ExoPlayer;
 
 /**
  * A class responsible for managing video playback using {@link ExoPlayer}. It provides methods to
- * control playback, adjust volume, and handle seeking.
+ * control playback, adjust volume, and handle seeking. This class contains all functionalities
+ * needed to manage video playback in platform views and is typically used alongside {@link
+ * NativeVideoViewFactory}. If you need to display a video using a texture, use {@link
+ * TextureBasedVideoPlayer} instead.
  */
 class VideoPlayer {
   @NonNull private final ExoPlayerProvider exoPlayerProvider;
