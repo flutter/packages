@@ -19,10 +19,16 @@
 		788A065A27B0E02900533D74 /* StreamingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 788A065927B0E02900533D74 /* StreamingTest.m */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		7D5FCCD42AEF9D0200FB7108 /* CameraSettingsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D5FCCD32AEF9D0200FB7108 /* CameraSettingsTests.m */; };
+		7F29EB222D269ED500740257 /* MockEventChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F29EB212D269ED500740257 /* MockEventChannel.m */; };
+		7F29EB292D26A59000740257 /* MockCameraDeviceDiscoverer.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F29EB282D26A59000740257 /* MockCameraDeviceDiscoverer.m */; };
+		7F29EB412D281C7E00740257 /* MockCaptureSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F29EB402D281C7E00740257 /* MockCaptureSession.m */; };
 		7F56D0382D1EDDCE005676A5 /* CameraPermissionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = E0B0D2BA27DFF2AF00E71E4B /* CameraPermissionTests.m */; };
-		7F87E8022D01FD6F00A3549C /* MockCaptureDeviceController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F87E8012D01FD5600A3549C /* MockCaptureDeviceController.m */; };
-		7F87E80C2D0325D900A3549C /* MockDeviceOrientationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F87E80B2D0325D700A3549C /* MockDeviceOrientationProvider.m */; };
+		7F8FD2292D4BFABF001AF2C1 /* MockGlobalEventApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8FD2282D4BFABF001AF2C1 /* MockGlobalEventApi.m */; };
+		7F8FD22C2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8FD22B2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m */; };
+		7F8FD22F2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8FD22E2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m */; };
 		7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA99E582D22C75300582559 /* CameraExposureTests.m */; };
+		7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */; };
+		7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -79,11 +85,23 @@
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7D5FCCD32AEF9D0200FB7108 /* CameraSettingsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSettingsTests.m; sourceTree = "<group>"; };
-		7F87E8012D01FD5600A3549C /* MockCaptureDeviceController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceController.m; sourceTree = "<group>"; };
-		7F87E8032D02FF8C00A3549C /* MockCaptureDeviceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceController.h; sourceTree = "<group>"; };
-		7F87E80A2D0325B200A3549C /* MockDeviceOrientationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockDeviceOrientationProvider.h; sourceTree = "<group>"; };
-		7F87E80B2D0325D700A3549C /* MockDeviceOrientationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockDeviceOrientationProvider.m; sourceTree = "<group>"; };
+		7F29EB202D269E4300740257 /* MockEventChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockEventChannel.h; sourceTree = "<group>"; };
+		7F29EB212D269ED500740257 /* MockEventChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockEventChannel.m; sourceTree = "<group>"; };
+		7F29EB272D26A55300740257 /* MockCameraDeviceDiscoverer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCameraDeviceDiscoverer.h; sourceTree = "<group>"; };
+		7F29EB282D26A59000740257 /* MockCameraDeviceDiscoverer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCameraDeviceDiscoverer.m; sourceTree = "<group>"; };
+		7F29EB3E2D281C5800740257 /* MockCaptureSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureSession.h; sourceTree = "<group>"; };
+		7F29EB402D281C7E00740257 /* MockCaptureSession.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureSession.m; sourceTree = "<group>"; };
+		7F8FD2272D4BFA8D001AF2C1 /* MockGlobalEventApi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockGlobalEventApi.h; sourceTree = "<group>"; };
+		7F8FD2282D4BFABF001AF2C1 /* MockGlobalEventApi.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockGlobalEventApi.m; sourceTree = "<group>"; };
+		7F8FD22A2D4D07A6001AF2C1 /* MockFlutterTextureRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockFlutterTextureRegistry.h; sourceTree = "<group>"; };
+		7F8FD22B2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockFlutterTextureRegistry.m; sourceTree = "<group>"; };
+		7F8FD22D2D4D0B73001AF2C1 /* MockFlutterBinaryMessenger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockFlutterBinaryMessenger.h; sourceTree = "<group>"; };
+		7F8FD22E2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockFlutterBinaryMessenger.m; sourceTree = "<group>"; };
 		7FA99E582D22C75300582559 /* CameraExposureTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraExposureTests.m; sourceTree = "<group>"; };
+		7FCEDD312D43C2B900EA1CA8 /* MockCaptureDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDevice.h; sourceTree = "<group>"; };
+		7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDevice.m; sourceTree = "<group>"; };
+		7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockDeviceOrientationProvider.h; sourceTree = "<group>"; };
+		7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockDeviceOrientationProvider.m; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -136,10 +154,7 @@
 		03BB76692665316900CE5A93 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				7F87E80B2D0325D700A3549C /* MockDeviceOrientationProvider.m */,
-				7F87E80A2D0325B200A3549C /* MockDeviceOrientationProvider.h */,
-				7F87E8032D02FF8C00A3549C /* MockCaptureDeviceController.h */,
-				7F87E8012D01FD5600A3549C /* MockCaptureDeviceController.m */,
+				7F29EB3F2D281C6D00740257 /* Mocks */,
 				7D5FCCD32AEF9D0200FB7108 /* CameraSettingsTests.m */,
 				03BB766A2665316900CE5A93 /* CameraFocusTests.m */,
 				7FA99E582D22C75300582559 /* CameraExposureTests.m */,
@@ -171,6 +186,29 @@
 				9DDC4CE84A8B378AE4A8CD9C /* libPods-RunnerTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7F29EB3F2D281C6D00740257 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				7F8FD22D2D4D0B73001AF2C1 /* MockFlutterBinaryMessenger.h */,
+				7F8FD22E2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m */,
+				7F8FD22A2D4D07A6001AF2C1 /* MockFlutterTextureRegistry.h */,
+				7F8FD22B2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m */,
+				7F8FD2282D4BFABF001AF2C1 /* MockGlobalEventApi.m */,
+				7F8FD2272D4BFA8D001AF2C1 /* MockGlobalEventApi.h */,
+				7FCEDD312D43C2B900EA1CA8 /* MockCaptureDevice.h */,
+				7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */,
+				7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */,
+				7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */,
+				7F29EB282D26A59000740257 /* MockCameraDeviceDiscoverer.m */,
+				7F29EB272D26A55300740257 /* MockCameraDeviceDiscoverer.h */,
+				7F29EB202D269E4300740257 /* MockEventChannel.h */,
+				7F29EB212D269ED500740257 /* MockEventChannel.m */,
+				7F29EB3E2D281C5800740257 /* MockCaptureSession.h */,
+				7F29EB402D281C7E00740257 /* MockCaptureSession.m */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
@@ -463,21 +501,27 @@
 				7F56D0382D1EDDCE005676A5 /* CameraPermissionTests.m in Sources */,
 				E0F95E3D27A32AB900699390 /* CameraPropertiesTests.m in Sources */,
 				03BB766B2665316900CE5A93 /* CameraFocusTests.m in Sources */,
-				7F87E8022D01FD6F00A3549C /* MockCaptureDeviceController.m in Sources */,
 				7D5FCCD42AEF9D0200FB7108 /* CameraSettingsTests.m in Sources */,
+				7F8FD2292D4BFABF001AF2C1 /* MockGlobalEventApi.m in Sources */,
 				7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */,
 				E487C86026D686A10034AC92 /* CameraPreviewPauseTests.m in Sources */,
-				7F87E80C2D0325D900A3549C /* MockDeviceOrientationProvider.m in Sources */,
 				E071CF7427B31DE4006EF3BA /* FLTCamSampleBufferTests.m in Sources */,
+				7F29EB222D269ED500740257 /* MockEventChannel.m in Sources */,
+				7F8FD22F2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m in Sources */,
 				E04F108627A87CA600573D0C /* FLTSavePhotoDelegateTests.m in Sources */,
 				43ED1537282570DE00EB00DE /* AvailableCamerasTest.m in Sources */,
 				E0CDBAC227CD9729002561D9 /* CameraTestUtils.m in Sources */,
 				334733EA2668111C00DCC49E /* CameraOrientationTests.m in Sources */,
 				CEF6611A2B5E36A500D33FD4 /* CameraSessionPresetsTests.m in Sources */,
 				E032F250279F5E94009E9028 /* CameraCaptureSessionQueueRaceConditionTests.m in Sources */,
+				7F29EB292D26A59000740257 /* MockCameraDeviceDiscoverer.m in Sources */,
 				788A065A27B0E02900533D74 /* StreamingTest.m in Sources */,
 				E0C6E2022770F01A00EA6AA3 /* ThreadSafeEventChannelTests.m in Sources */,
+				7F29EB412D281C7E00740257 /* MockCaptureSession.m in Sources */,
 				E01EE4A82799F3A5008C1950 /* QueueUtilsTests.m in Sources */,
+				7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */,
+				7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */,
+				7F8FD22C2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

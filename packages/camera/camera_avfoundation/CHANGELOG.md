@@ -1,3 +1,7 @@
+## 0.9.18+2
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
 ## 0.9.18+1
 
 * Refactors implementations to reduce usage of OCMock in internal testing.

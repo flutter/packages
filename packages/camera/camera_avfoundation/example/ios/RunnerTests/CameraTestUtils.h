@@ -29,7 +29,7 @@ extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessi
 /// @param captureSession AVCaptureSession for video
 /// @param resolutionPreset preset for camera's captureSession resolution
 /// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
+extern FLTCam *FLTCreateCamWithVideoCaptureSession(NSObject<FLTCaptureSession> *captureSession,
                                                    FCPPlatformResolutionPreset resolutionPreset);
 
 /// Creates an `FLTCam` with a given captureSession and resolutionPreset.
