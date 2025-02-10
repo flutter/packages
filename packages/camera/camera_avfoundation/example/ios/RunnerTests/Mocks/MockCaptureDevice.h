@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Format/Configuration
 @property(nonatomic, strong) NSArray<NSObject<FLTCaptureDeviceFormat> *> *formats;
+/// Overrides the default implementation of getting the active format.
 @property(nonatomic, copy) NSObject<FLTCaptureDeviceFormat> * (^activeFormatStub)(void);
 /// Overrides the default implementation of setting active format.
 /// @param format The format being set

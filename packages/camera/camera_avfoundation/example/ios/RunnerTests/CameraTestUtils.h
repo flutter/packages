@@ -9,6 +9,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// This method provides a convenient way to create media settings with minimal configuration.
+/// Audio is enabled by default, while other parameters use platform-specific defaults.
 extern FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
     FCPPlatformResolutionPreset resolutionPreset);
 
