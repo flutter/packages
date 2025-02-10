@@ -956,7 +956,7 @@ void main() {
       });
     });
   });
-  
+
   test('updates position', () async {
     final VideoPlayerController controller = VideoPlayerController.networkUrl(
       _localhostUri,
@@ -965,8 +965,7 @@ void main() {
 
     await controller.initialize();
 
-    // Set a custom interval
-    const Duration customInterval = Duration(milliseconds: 100);
+    const Duration updatesInterval = Duration(milliseconds: 100);
 
     final List<Duration> positions = <Duration>[];
     final Completer<void> intervalUpdateCompleter = Completer<void>();
@@ -980,17 +979,17 @@ void main() {
     });
     await controller.play();
     for (int i = 0; i < 3; i++) {
-      await Future<void>.delayed(customInterval);
+      await Future<void>.delayed(updatesInterval);
       fakeVideoPlayerPlatform._positions[controller.textureId] =
-          Duration(milliseconds: i * customInterval.inMilliseconds);
+          Duration(milliseconds: i * updatesInterval.inMilliseconds);
     }
 
     // Wait for at least 3 position updates
     await intervalUpdateCompleter.future.timeout(const Duration(seconds: 5));
 
     // Verify that the intervals between updates are approximately correct
-    expect(positions[1] - positions[0], greaterThanOrEqualTo(customInterval));
-    expect(positions[2] - positions[1], greaterThanOrEqualTo(customInterval));
+    expect(positions[1] - positions[0], greaterThanOrEqualTo(updatesInterval));
+    expect(positions[2] - positions[1], greaterThanOrEqualTo(updatesInterval));
   });
 
   group('DurationRange', () {
