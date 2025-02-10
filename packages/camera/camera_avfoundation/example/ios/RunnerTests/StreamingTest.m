@@ -8,8 +8,26 @@
 #endif
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
+
 #import "CameraTestUtils.h"
+#import "MockFlutterBinaryMessenger.h"
+
+@interface MockImageStreamHandler : FLTImageStreamHandler
+@property(nonatomic, copy) void (^eventSinkStub)(id event);
+@end
+
+@implementation MockImageStreamHandler
+
+- (FlutterEventSink)eventSink {
+  if (self.eventSinkStub) {
+    return ^(id event) {
+      self.eventSinkStub(event);
+    };
+  }
+  return nil;
+}
+
+@end
 
 @interface StreamingTests : XCTestCase
 @property(readonly, nonatomic) FLTCam *camera;
@@ -32,12 +50,12 @@
   XCTestExpectation *streamingExpectation = [self
       expectationWithDescription:@"Must not call handler over maxStreamingPendingFramesCount"];
 
-  id handlerMock = OCMClassMock([FLTImageStreamHandler class]);
-  OCMStub([handlerMock eventSink]).andReturn(^(id event) {
+  MockImageStreamHandler *handlerMock = [[MockImageStreamHandler alloc] init];
+  handlerMock.eventSinkStub = ^(id event) {
     [streamingExpectation fulfill];
-  });
+  };
 
-  id messenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
+  MockFlutterBinaryMessenger *messenger = [[MockFlutterBinaryMessenger alloc] init];
   [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock];
 
   XCTKVOExpectation *expectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isStreamingImages"
@@ -59,12 +77,12 @@
       [self expectationWithDescription:
                 @"Must be able to call the handler again when receivedImageStreamData is called"];
 
-  id handlerMock = OCMClassMock([FLTImageStreamHandler class]);
-  OCMStub([handlerMock eventSink]).andReturn(^(id event) {
+  MockImageStreamHandler *handlerMock = [[MockImageStreamHandler alloc] init];
+  handlerMock.eventSinkStub = ^(id event) {
     [streamingExpectation fulfill];
-  });
+  };
 
-  id messenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
+  MockFlutterBinaryMessenger *messenger = [[MockFlutterBinaryMessenger alloc] init];
   [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock];
 
   XCTKVOExpectation *expectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isStreamingImages"
