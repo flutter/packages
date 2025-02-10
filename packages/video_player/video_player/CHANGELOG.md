@@ -1,7 +1,7 @@
 ## 2.9.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* Added `setVideoPositionUpdatesInterval` to allow setting position updates periodic intervals
+* Reduces the update interval from 500ms to 100ms.
 
 ## 2.9.2
 
