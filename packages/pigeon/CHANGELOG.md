@@ -1,3 +1,24 @@
+## 24.1.0
+
+* [kotlin, swift] Adds annotation options to omit shared classes used in Event Channels.
+
+## 24.0.0
+
+* **Breaking Change** Relocates some files in `lib` that were not intended for direct client use to `lib/src`.
+
+## 23.0.0
+
+* **Breaking Change** [swift] Fixes a compile error about PigeonError's sendability conformance in Swift 6.
+  * PigeonError's init now requires the "details" argument to be Sendable.
+
+## 22.7.4
+
+* [dart] Fixes bug with multi-instance event channel support.
+
+## 22.7.3
+
+* Adds compatibility with `analyzer` 7.x.*.
+
 ## 22.7.2
 
 * Updates README to discuss best practices for using Pigeon-generated code.

@@ -31,6 +31,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
     StreamEventsStreamHandler.register(binding.binaryMessenger, SendClass)
     StreamIntsStreamHandler.register(binding.binaryMessenger, SendInts)
+    StreamConsistentNumbersStreamHandler.register(
+        binding.binaryMessenger, SendConsistentNumbers(1), "1")
+    StreamConsistentNumbersStreamHandler.register(
+        binding.binaryMessenger, SendConsistentNumbers(2), "2")
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -918,6 +922,30 @@ object SendClass : StreamEventsStreamHandler() {
             } else {
               handler.post {
                 sink.success(eventList[count])
+                count++
+              }
+              handler.postDelayed(this, 10)
+            }
+          }
+        }
+    handler.postDelayed(r, 10)
+  }
+}
+
+class SendConsistentNumbers(private val numberToSend: Long) :
+    StreamConsistentNumbersStreamHandler() {
+  private val handler = Handler(Looper.getMainLooper())
+
+  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
+    var count: Int = 0
+    val r: Runnable =
+        object : Runnable {
+          override fun run() {
+            if (count >= 10) {
+              sink.endOfStream()
+            } else {
+              handler.post {
+                sink.success(numberToSend)
                 count++
               }
               handler.postDelayed(this, 10)

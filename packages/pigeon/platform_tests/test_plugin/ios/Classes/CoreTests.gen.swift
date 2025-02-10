@@ -19,9 +19,9 @@ import Foundation
 final class PigeonError: Error {
   let code: String
   let message: String?
-  let details: Any?
+  let details: Sendable?
 
-  init(code: String, message: String?, details: Any?) {
+  init(code: String, message: String?, details: Sendable?) {
     self.code = code
     self.message = message
     self.details = details

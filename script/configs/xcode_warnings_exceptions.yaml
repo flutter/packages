@@ -1,0 +1,5 @@
+# The list of plugins that are known to produce Xcode warnings.
+# These should be excluded from Xcode analysis and "treat warnings as errors"
+# should be disabled when running their native tests.
+#
+# All entries here should have an explanation for why they are here.

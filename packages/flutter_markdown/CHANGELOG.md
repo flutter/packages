@@ -1,11 +1,18 @@
-## NEXT
-
 ## 0.8.0
 
 * Introduce `MarkdownImageConfig` for `sizedImageBuilder` builder.
 
+## 0.7.6+1
+
+* Adds horizontal scrolling for table when using `tableColumnWidth: IntrinsicColumnWidth()`.
+
+## 0.7.6
+
+* Adds styleSheet option `tableScrollbarThumbVisibility` for setting the `thumbVisibility` on tables' `ScrollBar`.
+
 ## 0.7.5
 
+* Makes table column custom alignment work even when text wraps.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * Fixes some memory leaks.
 
