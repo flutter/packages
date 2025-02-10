@@ -19,9 +19,9 @@ import Foundation
 final class PigeonError: Error {
   let code: String
   let message: String?
-  let details: Any?
+  let details: Sendable?
 
-  init(code: String, message: String?, details: Any?) {
+  init(code: String, message: String?, details: Sendable?) {
     self.code = code
     self.message = message
     self.details = details
@@ -4299,7 +4299,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -4342,7 +4342,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }
@@ -5659,7 +5659,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else {
-        completion(.success(Void()))
+        completion(.success(()))
       }
     }
   }

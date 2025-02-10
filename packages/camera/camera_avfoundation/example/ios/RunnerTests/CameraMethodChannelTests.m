@@ -8,26 +8,40 @@
 #endif
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
+
+#import "MockCameraDeviceDiscoverer.h"
+#import "MockCaptureDevice.h"
+#import "MockCaptureSession.h"
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
+#import "MockGlobalEventApi.h"
 
 @interface CameraMethodChannelTests : XCTestCase
 @end
 
 @implementation CameraMethodChannelTests
 
+- (CameraPlugin *)createCameraPluginWithSession:(MockCaptureSession *)mockSession {
+  return [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+      messenger:[[MockFlutterBinaryMessenger alloc] init]
+      globalAPI:[[MockGlobalEventApi alloc] init]
+      deviceDiscoverer:[[MockCameraDeviceDiscoverer alloc] init]
+      deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
+        return [[MockCaptureDevice alloc] init];
+      }
+      captureSessionFactory:^NSObject<FLTCaptureSession> *_Nonnull {
+        return mockSession;
+      }
+      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
+}
+
 - (void)testCreate_ShouldCallResultOnMainThread {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  MockCaptureSession *avCaptureSessionMock = [[MockCaptureSession alloc] init];
+  avCaptureSessionMock.canSetSessionPreset = YES;
+
+  CameraPlugin *camera = [self createCameraPluginWithSession:avCaptureSessionMock];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
-
-  // Set up mocks for initWithCameraName method
-  id avCaptureDeviceInputMock = OCMClassMock([AVCaptureDeviceInput class]);
-  OCMStub([avCaptureDeviceInputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg anyObjectRef]])
-      .andReturn([AVCaptureInput alloc]);
-
-  id avCaptureSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
-  OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
 
   // Set up method call
   __block NSNumber *resultValue;
@@ -51,15 +65,10 @@
 }
 
 - (void)testDisposeShouldDeallocCamera {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  MockCaptureSession *avCaptureSessionMock = [[MockCaptureSession alloc] init];
+  avCaptureSessionMock.canSetSessionPreset = YES;
 
-  id avCaptureDeviceInputMock = OCMClassMock([AVCaptureDeviceInput class]);
-  OCMStub([avCaptureDeviceInputMock deviceInputWithDevice:[OCMArg any] error:[OCMArg anyObjectRef]])
-      .andReturn([AVCaptureInput alloc]);
-
-  id avCaptureSessionMock = OCMClassMock([AVCaptureSession class]);
-  OCMStub([avCaptureSessionMock alloc]).andReturn(avCaptureSessionMock);
-  OCMStub([avCaptureSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
+  CameraPlugin *camera = [self createCameraPluginWithSession:avCaptureSessionMock];
 
   XCTestExpectation *createExpectation =
       [self expectationWithDescription:@"create's result block must be called"];

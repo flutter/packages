@@ -313,7 +313,9 @@ class GoRouteConfig extends RouteBaseConfig {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
         }
-        conditions.add('$parameterName != ${param.defaultValueCode!}');
+        conditions.add(
+          compareField(param, parameterName, param.defaultValueCode!),
+        );
       } else if (param.type.isNullableType) {
         conditions.add('$parameterName != null');
       }
@@ -734,6 +736,7 @@ const Map<String, String> helperNames = <String, String>{
   convertMapValueHelperName: _convertMapValueHelper,
   boolConverterHelperName: _boolConverterHelper,
   enumExtensionHelperName: _enumConverterHelper,
+  iterablesEqualHelperName: _iterableEqualsHelper,
 };
 
 const String _convertMapValueHelper = '''
@@ -764,4 +767,19 @@ const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
   T $enumExtensionHelperName(String value) =>
       entries.singleWhere((element) => element.value == value).key;
+}''';
+
+const String _iterableEqualsHelper = '''
+bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+  if (identical(iterable1, iterable2)) return true;
+  if (iterable1 == null || iterable2 == null) return false;
+  final iterator1 = iterable1.iterator;
+  final iterator2 = iterable2.iterator;
+  while (true) {
+    final hasNext1 = iterator1.moveNext();
+    final hasNext2 = iterator2.moveNext();
+    if (hasNext1 != hasNext2) return false;
+    if (!hasNext1) return true;
+    if (iterator1.current != iterator2.current) return false;
+  }
 }''';
