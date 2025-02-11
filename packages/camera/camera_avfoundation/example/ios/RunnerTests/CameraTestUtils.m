@@ -8,6 +8,7 @@
 @import AVFoundation;
 @import camera_avfoundation;
 
+#import "MockAssetWriter.h"
 #import "MockCaptureDevice.h"
 #import "MockCaptureDeviceFormat.h"
 #import "MockCaptureSession.h"
@@ -68,6 +69,14 @@ FLTCamConfiguration *FLTCreateTestCameraConfiguration(void) {
   configuration.videoCaptureSession = videoSessionMock;
   configuration.audioCaptureSession = audioSessionMock;
   configuration.orientation = UIDeviceOrientationPortrait;
+  configuration.assetWriterFactory = ^NSObject<FLTAssetWriter> *(
+      NSURL *url, AVFileType fileType, NSError **error) {
+    return assetWriter;
+  };
+  configuration.pixelBufferAdaptorFactory = ^NSObject<FLTPixelBufferAdaptor> *(
+      NSObject<FLTAssetWriterInput> *input, NSDictionary<NSString *, id> *settings) {
+    return pixelBufferAdaptor;
+  };
 
   return configuration;
 }
@@ -86,6 +95,8 @@ FLTCam *FLTCreateCamWithConfiguration(FLTCamConfiguration *configuration) {
       .andReturn(@{});
   OCMStub([captureVideoDataOutputMock sampleBufferCallbackQueue])
       .andReturn(configuration.captureSessionQueue);
+  
+
 
   id videoMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
   OCMStub([videoMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY

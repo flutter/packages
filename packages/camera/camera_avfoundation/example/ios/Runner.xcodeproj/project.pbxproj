@@ -29,9 +29,10 @@
 		7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA99E582D22C75300582559 /* CameraExposureTests.m */; };
 		7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */; };
 		7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */; };
-		7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */; };
 		7FD582122D579650003B1200 /* MockWritableData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582112D579650003B1200 /* MockWritableData.m */; };
 		7FD582202D579ECC003B1200 /* MockCapturePhotoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */; };
+		7FD582272D57C020003B1200 /* MockAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582262D57C020003B1200 /* MockAssetWriter.m */; };
+		7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
@@ -105,12 +106,14 @@
 		7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDevice.m; sourceTree = "<group>"; };
 		7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockDeviceOrientationProvider.h; sourceTree = "<group>"; };
 		7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockDeviceOrientationProvider.m; sourceTree = "<group>"; };
-		7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceFormat.m; sourceTree = "<group>"; };
-		7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceFormat.h; sourceTree = "<group>"; };
 		7FD582112D579650003B1200 /* MockWritableData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockWritableData.m; sourceTree = "<group>"; };
 		7FD582132D57965A003B1200 /* MockWritableData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockWritableData.h; sourceTree = "<group>"; };
 		7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCapturePhotoOutput.m; sourceTree = "<group>"; };
 		7FD582212D579ED9003B1200 /* MockCapturePhotoOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCapturePhotoOutput.h; sourceTree = "<group>"; };
+		7FD582262D57C020003B1200 /* MockAssetWriter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockAssetWriter.m; sourceTree = "<group>"; };
+		7FD582282D57C02B003B1200 /* MockAssetWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockAssetWriter.h; sourceTree = "<group>"; };
+		7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceFormat.m; sourceTree = "<group>"; };
+		7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceFormat.h; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -200,6 +203,8 @@
 		7F29EB3F2D281C6D00740257 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				7FD582282D57C02B003B1200 /* MockAssetWriter.h */,
+				7FD582262D57C020003B1200 /* MockAssetWriter.m */,
 				7F8FD22D2D4D0B73001AF2C1 /* MockFlutterBinaryMessenger.h */,
 				7F8FD22E2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m */,
 				7F8FD22A2D4D07A6001AF2C1 /* MockFlutterTextureRegistry.h */,
@@ -533,6 +538,7 @@
 				E032F250279F5E94009E9028 /* CameraCaptureSessionQueueRaceConditionTests.m in Sources */,
 				7F29EB292D26A59000740257 /* MockCameraDeviceDiscoverer.m in Sources */,
 				788A065A27B0E02900533D74 /* StreamingTest.m in Sources */,
+				7FD582272D57C020003B1200 /* MockAssetWriter.m in Sources */,
 				E0C6E2022770F01A00EA6AA3 /* ThreadSafeEventChannelTests.m in Sources */,
 				7F29EB412D281C7E00740257 /* MockCaptureSession.m in Sources */,
 				E01EE4A82799F3A5008C1950 /* QueueUtilsTests.m in Sources */,

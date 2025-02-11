@@ -5,6 +5,7 @@ framework module camera_avfoundation {
   module * { export * }
 
   explicit module Test {
+    header "FLTAssetWriter.h"
     header "FLTCameraDeviceDiscovering.h"
     header "FLTCaptureDevice.h"
     header "FLTCaptureDeviceFormat.h"
