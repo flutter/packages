@@ -18,6 +18,7 @@ double computeRotation(
     DeviceOrientation.landscapeLeft => 270, // FIXME: Should this be -90?
   };
   final double preAppliedRotation = deviceOrientationDegrees / 90;
+  debugPrint('>>>>> deviceOrientationDegrees: $deviceOrientationDegrees');
   debugPrint('>>>>> preAppliedRotation: $preAppliedRotation');
   return ((sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
       360) - preAppliedRotation;
