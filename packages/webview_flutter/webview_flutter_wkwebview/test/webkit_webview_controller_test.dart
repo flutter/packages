@@ -30,6 +30,7 @@ import 'webkit_webview_controller_test.mocks.dart';
   MockSpec<WKUserScript>(),
   MockSpec<WKWebView>(),
   MockSpec<WKWebViewConfiguration>(),
+  MockSpec<WKWebpagePreferences>(),
   MockSpec<UIViewWKWebView>(),
   MockSpec<WKWebsiteDataStore>(),
 ])
@@ -56,6 +57,7 @@ void main() {
       MockWKWebViewConfiguration? mockWebViewConfiguration,
       MockURLRequest Function({required String url})? createURLRequest,
       PigeonInstanceManager? instanceManager,
+      MockWKWebpagePreferences? mockWebpagePreferences,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
@@ -184,6 +186,10 @@ void main() {
         (_) => Future<MockWKPreferences>.value(
           mockPreferences ?? MockWKPreferences(),
         ),
+      );
+      when(nonNullMockWebViewConfiguration.getDefaultWebpagePreferences())
+          .thenAnswer(
+        (_) async => mockWebpagePreferences ?? MockWKWebpagePreferences(),
       );
       when(nonNullMockWebViewConfiguration.getUserContentController())
           .thenAnswer(
@@ -735,27 +741,49 @@ void main() {
     });
 
     test('enable JavaScript', () async {
+      final MockWKWebpagePreferences mockWebpagePreferences =
+          MockWKWebpagePreferences();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockWebpagePreferences: mockWebpagePreferences,
+      );
+
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+
+      verify(mockWebpagePreferences.setAllowsContentJavaScript(true));
+    });
+
+    test('disable JavaScript', () async {
+      final MockWKWebpagePreferences mockWebpagePreferences =
+          MockWKWebpagePreferences();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockWebpagePreferences: mockWebpagePreferences,
+      );
+
+      await controller.setJavaScriptMode(JavaScriptMode.disabled);
+
+      verify(mockWebpagePreferences.setAllowsContentJavaScript(false));
+    });
+
+    test(
+        'enable JavaScript calls WKPreferences.setJavaScriptEnabled for lower versions',
+        () async {
       final MockWKPreferences mockPreferences = MockWKPreferences();
+      final MockWKWebpagePreferences mockWebpagePreferences =
+          MockWKWebpagePreferences();
+      when(mockWebpagePreferences.setAllowsContentJavaScript(any)).thenThrow(
+        PlatformException(code: 'PigeonUnsupportedOperationError'),
+      );
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockPreferences: mockPreferences,
+        mockWebpagePreferences: mockWebpagePreferences,
       );
 
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
       verify(mockPreferences.setJavaScriptEnabled(true));
-    });
-
-    test('disable JavaScript', () async {
-      final MockWKPreferences mockPreferences = MockWKPreferences();
-
-      final WebKitWebViewController controller = createControllerWithMocks(
-        mockPreferences: mockPreferences,
-      );
-
-      await controller.setJavaScriptMode(JavaScriptMode.disabled);
-
-      verify(mockPreferences.setJavaScriptEnabled(false));
     });
 
     test('clearCache', () {
