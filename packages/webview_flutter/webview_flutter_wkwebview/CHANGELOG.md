@@ -2,6 +2,8 @@
 
 * Updates internal API wrapper to make all Flutter methods with a non-null return value be required
   to implement.
+* Changes default method to enable JavaScript for web content to
+  `WKWebpagePreferences.allowsContentJavaScript`. 
 
 ## 3.18.0
 
