@@ -1687,3 +1687,66 @@ class MockWebViewWidgetProxy extends _i1.Mock
           )
           as _i2.WKNavigationDelegate);
 }
+
+/// A class which mocks [WKWebpagePreferences].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockWKWebpagePreferences extends _i1.Mock
+    implements _i2.WKWebpagePreferences {
+  MockWKWebpagePreferences() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
+
+  @override
+  _i4.Future<void> setAllowsContentJavaScript(bool? allow) =>
+      (super.noSuchMethod(
+            Invocation.method(#setAllowsContentJavaScript, [allow]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i2.WKWebpagePreferences pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeWKWebpagePreferences_12(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.WKWebpagePreferences);
+
+  @override
+  _i4.Future<void> addObserver(
+    _i2.NSObject? observer,
+    String? keyPath,
+    List<_i2.KeyValueObservingOptions>? options,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addObserver, [observer, keyPath, options]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeObserver, [observer, keyPath]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+}
