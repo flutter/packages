@@ -1,3 +1,15 @@
+## 2.5.2
+
+* Fixes `setState` returning `Future` on `example/main.dart` error in example code.
+
+## 2.5.1
+
+* Exposes `SharedPreferencesOptions`.
+
+## 2.5.0
+
+* Adds shared preferences devtools extension.
+
 ## 2.4.0
 
 * Adds migration tool to move from legacy `SharedPreferences` to `SharedPreferencesAsync`.

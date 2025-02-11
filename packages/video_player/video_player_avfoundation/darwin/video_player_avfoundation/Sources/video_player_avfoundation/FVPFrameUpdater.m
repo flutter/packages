@@ -25,7 +25,7 @@
   CMTime outputItemTime = [self.videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([self.videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
     _lastKnownAvailableTime = outputItemTime;
-    [_registry textureFrameAvailable:_textureId];
+    [_registry textureFrameAvailable:_textureIdentifier];
   }
 }
 @end
