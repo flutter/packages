@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 60;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -29,10 +29,11 @@
 		7FA99E592D22C75300582559 /* CameraExposureTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FA99E582D22C75300582559 /* CameraExposureTests.m */; };
 		7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */; };
 		7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */; };
-		7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */; };
 		7FD582122D579650003B1200 /* MockWritableData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582112D579650003B1200 /* MockWritableData.m */; };
 		7FD582202D579ECC003B1200 /* MockCapturePhotoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */; };
+		7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
+		979B3DFE2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -105,14 +106,16 @@
 		7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDevice.m; sourceTree = "<group>"; };
 		7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockDeviceOrientationProvider.h; sourceTree = "<group>"; };
 		7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockDeviceOrientationProvider.m; sourceTree = "<group>"; };
-		7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceFormat.m; sourceTree = "<group>"; };
-		7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceFormat.h; sourceTree = "<group>"; };
 		7FD582112D579650003B1200 /* MockWritableData.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockWritableData.m; sourceTree = "<group>"; };
 		7FD582132D57965A003B1200 /* MockWritableData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockWritableData.h; sourceTree = "<group>"; };
 		7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCapturePhotoOutput.m; sourceTree = "<group>"; };
 		7FD582212D579ED9003B1200 /* MockCapturePhotoOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCapturePhotoOutput.h; sourceTree = "<group>"; };
+		7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceFormat.m; sourceTree = "<group>"; };
+		7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceFormat.h; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
+		979B3DFC2D5B985B009BDE1A /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureSessionQueueRaceConditionTests.swift; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97C146F21CF9000F007C117D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		97C146FB1CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -184,6 +187,8 @@
 				788A065927B0E02900533D74 /* StreamingTest.m */,
 				43ED1536282570DE00EB00DE /* AvailableCamerasTest.m */,
 				CEF661192B5E36A500D33FD4 /* CameraSessionPresetsTests.m */,
+				979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */,
+				979B3DFC2D5B985B009BDE1A /* RunnerTests-Bridging-Header.h */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -354,6 +359,7 @@
 				TargetAttributes = {
 					03BB76672665316900CE5A93 = {
 						CreatedOnToolsVersion = 12.5;
+						LastSwiftMigration = 1540;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 97C146ED1CF9000F007C117D;
 					};
@@ -522,6 +528,7 @@
 				E487C86026D686A10034AC92 /* CameraPreviewPauseTests.m in Sources */,
 				E071CF7427B31DE4006EF3BA /* FLTCamSampleBufferTests.m in Sources */,
 				7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */,
+				979B3DFE2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift in Sources */,
 				7F29EB222D269ED500740257 /* MockEventChannel.m in Sources */,
 				7F8FD22F2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m in Sources */,
 				E04F108627A87CA600573D0C /* FLTSavePhotoDelegateTests.m in Sources */,
@@ -590,6 +597,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
@@ -607,6 +615,9 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.flutter.plugins.cameraExample.camera-exampleTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
@@ -619,6 +630,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;
@@ -635,6 +647,8 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "dev.flutter.plugins.cameraExample.camera-exampleTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "RunnerTests/RunnerTests-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
