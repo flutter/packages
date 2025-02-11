@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import Foundation
 import XCTest
 import camera_avfoundation
 
@@ -19,8 +20,12 @@ final class CameraPropertiesTests: XCTestCase {
     XCTAssertEqual(
       AVCaptureDevice.FlashMode.on,
       FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode.always))
-    // FIXME: Migrate implementation to Swift error to test this
-    //    XCTAssertThrowsError(FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode.torch))
+
+    // TODO(FirentisTFW): Migrate implementation to throw Swift error in this case
+    let exception = ExceptionCatcher.catchException {
+      _ = FCPGetAVCaptureFlashModeForPigeonFlashMode(.torch)
+    }
+    XCTAssertNotNil(exception)
   }
 
   // MARK: - Video Format Tests
