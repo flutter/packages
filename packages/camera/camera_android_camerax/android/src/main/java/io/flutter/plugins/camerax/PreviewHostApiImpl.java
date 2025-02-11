@@ -179,6 +179,14 @@ public class PreviewHostApiImpl implements PreviewHostApi {
     preview.setTargetRotation(rotation.intValue());
   }
 
+  @NonNull 
+  public Boolean surfaceProducerHandlesCropAndRotation() {
+    if (flutterSurfaceProducer != null) {
+      return flutterSurfaceProducer.handlesCropAndRotation();
+    }
+    throw new IllegalStateException("surfaceProducerHandlesCropAndRotation() cannot be called when the flutterSurfaceProducer for the camera preview has not yet been initialized.");
+  }
+
   /** Retrieves the {@link Preview} instance associated with the specified {@code identifier}. */
   private Preview getPreviewInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));

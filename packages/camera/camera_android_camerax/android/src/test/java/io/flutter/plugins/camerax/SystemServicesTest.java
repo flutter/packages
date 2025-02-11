@@ -136,28 +136,4 @@ public class SystemServicesTest {
 
     mockedStaticFile.close();
   }
-
-  @Test
-  @Config(sdk = 28)
-  public void isPreviewPreTransformed_returnsTrueWhenRunningBelowSdk29() {
-    final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertTrue(systemServicesHostApi.isPreviewPreTransformed());
-  }
-
-  @Test
-  @Config(sdk = 28)
-  public void isPreviewPreTransformed_returnsTrueWhenRunningSdk28() {
-    final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertTrue(systemServicesHostApi.isPreviewPreTransformed());
-  }
-
-  @Test
-  @Config(sdk = 29)
-  public void isPreviewPreTransformed_returnsFalseWhenRunningAboveSdk28() {
-    final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertFalse(systemServicesHostApi.isPreviewPreTransformed());
-  }
 }

@@ -17,8 +17,10 @@ double computeRotation(
     DeviceOrientation.portraitDown => 180,
     DeviceOrientation.landscapeLeft => 270, // FIXME: Should this be -90?
   };
-  return (sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
-      360;
+  final double preAppliedRotation = deviceOrientationDegrees / 90;
+  debugPrint('>>>>> preAppliedRotation: $preAppliedRotation');
+  return ((sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
+      360) - preAppliedRotation;
 }
 
 final class PreviewRotation extends StatefulWidget {
@@ -61,6 +63,7 @@ final class _PreviewRotationState extends State<PreviewRotation> {
   void initState() {
     widget.deviceOrientation.listen((DeviceOrientation event) {
       setState(() {
+        debugPrint('>>>> deviceOrientation changed to: $event');
         deviceOrientation = event;
       });
     });
@@ -69,6 +72,7 @@ final class _PreviewRotationState extends State<PreviewRotation> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('>>>> PreviewRotation build called!');
     final double rotation = computeRotation(
       deviceOrientation,
       sensorOrientationDegrees: widget.sensorOrientationDegrees,

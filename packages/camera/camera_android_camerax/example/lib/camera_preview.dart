@@ -32,8 +32,7 @@ class CameraPreview extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
-                    /*FIXME: _wrapInRotatedBox(child: controller.buildPreview())*/
-                    controller.buildPreview(),
+                    _wrapInRotatedBox(child: controller.buildPreview()),
                     child ?? Container(),
                   ],
                 ),

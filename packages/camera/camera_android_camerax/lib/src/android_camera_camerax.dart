@@ -250,13 +250,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late int sensorOrientation;
 
-  /// FIXME: Document.
-  late DeviceOrientation currentDeviceOrientation;
-  late Stream<DeviceOrientationChangedEvent> _deviceOrientationChanges;
-
   /// Subscription for listening to changes in device orientation.
   StreamSubscription<DeviceOrientationChangedEvent>?
       _subscriptionForDeviceOrientationChanges;
+
+  /// Whether or not the Impeller backend handles correcting the rotation
+  /// of camera previews for the device this plugin runs on.
+  late bool _handlesCropAndRotation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -393,12 +393,11 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
-
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
 
     sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
-    _deviceOrientationChanges = onDeviceOrientationChanged();
+    _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
 
     return flutterSurfaceTextureId;
   }
@@ -836,11 +835,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _bindUseCaseToLifecycle(preview!, cameraId);
   }
 
-  /// FIXME: Actually fetch this.
-  static final bool _handlesCropAndRotation = () {
-    return false;
-  }();
-
   /// Returns a widget showing a live camera preview.
   ///
   /// [createCamera] must be called before attempting to build this preview.
@@ -858,6 +852,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     Widget result = Texture(textureId: cameraId);
     debugPrint('>>> buildPreview()');
+    debugPrint('>>>> _handlesCropAndRotation: $_handlesCropAndRotation');
 
     if (!_handlesCropAndRotation) {
       // FIXME: This is bad, will cause a flash/frame in the wrong rotation if started in another rotation.
