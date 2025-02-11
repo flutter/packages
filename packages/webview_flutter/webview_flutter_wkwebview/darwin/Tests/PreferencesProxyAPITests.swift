@@ -8,7 +8,11 @@ import XCTest
 @testable import webview_flutter_wkwebview
 
 class PreferencesProxyAPITests: XCTestCase {
-  @MainActor func testSetJavaScriptEnabled() {
+  @MainActor func testSetJavaScriptEnabled() throws {
+    guard #unavailable(iOS 14.0, macOS 11.0) else {
+      throw XCTSkip("Required API is not available for this test.")
+    }
+
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiWKPreferences(registrar)
 

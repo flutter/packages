@@ -488,6 +488,10 @@ protocol WebKitLibraryPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiURL] used to add a new Dart instance of
   /// `URL` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiURL(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURL
+  /// An implementation of [PigeonApiWKWebpagePreferences] used to add a new Dart instance of
+  /// `WKWebpagePreferences` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiWKWebpagePreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKWebpagePreferences
 }
 
 extension WebKitLibraryPigeonProxyApiDelegate {
@@ -585,6 +589,8 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLAuthenticationChallenge(self))
     PigeonApiURL.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURL(self))
+    PigeonApiWKWebpagePreferences.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebpagePreferences(self))
   }
   func tearDown() {
     WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
@@ -613,6 +619,7 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
     PigeonApiURLAuthenticationChallenge.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: nil)
     PigeonApiURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiWKWebpagePreferences.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
@@ -1004,6 +1011,18 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         pigeonRegistrar.apiDelegate.pigeonApiURL(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if #available(iOS 13.0.0, macOS 10.15.0, *), let instance = value as? WKWebpagePreferences {
+        pigeonRegistrar.apiDelegate.pigeonApiWKWebpagePreferences(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
           pigeonRegistrar.instanceManager.identifierWithStrongReference(
@@ -3224,6 +3243,11 @@ protocol PigeonApiDelegateWKWebViewConfiguration {
   func setMediaTypesRequiringUserActionForPlayback(
     pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
     type: AudiovisualMediaType) throws
+  /// The default preferences to use when loading and rendering content.
+  @available(iOS 13.0.0, macOS 10.15.0, *)
+  func getDefaultWebpagePreferences(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKWebpagePreferences
 }
 
 protocol PigeonApiProtocolWKWebViewConfiguration {
@@ -3447,6 +3471,46 @@ final class PigeonApiWKWebViewConfiguration: PigeonApiProtocolWKWebViewConfigura
       }
     } else {
       setMediaTypesRequiringUserActionForPlaybackChannel.setMessageHandler(nil)
+    }
+    if #available(iOS 13.0.0, macOS 10.15.0, *) {
+      let getDefaultWebpagePreferencesChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getDefaultWebpagePreferences",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getDefaultWebpagePreferencesChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
+          do {
+            let result = try api.pigeonDelegate.getDefaultWebpagePreferences(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getDefaultWebpagePreferencesChannel.setMessageHandler(nil)
+      }
+    } else {
+      let getDefaultWebpagePreferencesChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getDefaultWebpagePreferences",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if api != nil {
+        getDefaultWebpagePreferencesChannel.setMessageHandler { message, reply in
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message:
+                  "Call to getDefaultWebpagePreferences requires @available(iOS 13.0.0, macOS 10.15.0, *).",
+                details: nil
+              )))
+        }
+      } else {
+        getDefaultWebpagePreferencesChannel.setMessageHandler(nil)
+      }
     }
   }
 
@@ -6722,6 +6786,124 @@ final class PigeonApiURL: PigeonApiProtocolURL {
       let codec = pigeonRegistrar.codec
       let channelName: String =
         "dev.flutter.pigeon.webview_flutter_wkwebview.URL.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(PigeonError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
+      }
+    }
+  }
+}
+protocol PigeonApiDelegateWKWebpagePreferences {
+  /// A Boolean value that indicates whether JavaScript from web content is
+  /// allowed to run.
+  @available(iOS 13.0.0, macOS 10.15.0, *)
+  func setAllowsContentJavaScript(
+    pigeonApi: PigeonApiWKWebpagePreferences, pigeonInstance: WKWebpagePreferences, allow: Bool)
+    throws
+}
+
+protocol PigeonApiProtocolWKWebpagePreferences {
+}
+
+final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences {
+  unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateWKWebpagePreferences
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKWebpagePreferences
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKWebpagePreferences?
+  ) {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    if #available(iOS 13.0.0, macOS 10.15.0, *) {
+      let setAllowsContentJavaScriptChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.setAllowsContentJavaScript",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setAllowsContentJavaScriptChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebpagePreferences
+          let allowArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setAllowsContentJavaScript(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setAllowsContentJavaScriptChannel.setMessageHandler(nil)
+      }
+    } else {
+      let setAllowsContentJavaScriptChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.setAllowsContentJavaScript",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if api != nil {
+        setAllowsContentJavaScriptChannel.setMessageHandler { message, reply in
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message:
+                  "Call to setAllowsContentJavaScript requires @available(iOS 13.0.0, macOS 10.15.0, *).",
+                details: nil
+              )))
+        }
+      } else {
+        setAllowsContentJavaScriptChannel.setMessageHandler(nil)
+      }
+    }
+  }
+
+  ///Creates a Dart instance of WKWebpagePreferences and attaches it to [pigeonInstance].
+  @available(iOS 13.0.0, macOS 10.15.0, *)
+  func pigeonNewInstance(
+    pigeonInstance: WKWebpagePreferences, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(()))
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.pigeon_newInstance"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in

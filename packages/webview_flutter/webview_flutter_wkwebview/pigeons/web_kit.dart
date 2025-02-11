@@ -650,6 +650,9 @@ abstract class WKWebViewConfiguration extends NSObject {
 
   /// The media types that require a user gesture to begin playing.
   void setMediaTypesRequiringUserActionForPlayback(AudiovisualMediaType type);
+
+  /// The default preferences to use when loading and rendering content.
+  WKWebpagePreferences getDefaultWebpagePreferences();
 }
 
 /// An object for managing interactions between JavaScript code and your web
@@ -1091,11 +1094,28 @@ abstract class URLAuthenticationChallenge extends NSObject {
 }
 
 /// A value that identifies the location of a resource, such as an item on a
-/// remote server or the path to a local file..
+/// remote server or the path to a local file.
 ///
 /// See https://developer.apple.com/documentation/foundation/url.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URL'))
 abstract class URL extends NSObject {
   /// The absolute string for the URL.
   String getAbsoluteString();
+}
+
+/// An object that specifies the behaviors to use when loading and rendering
+/// page content.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebpagepreferences.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    minIosApi: '13.0.0',
+    minMacosApi: '10.15.0',
+  ),
+)
+abstract class WKWebpagePreferences extends NSObject {
+  /// A Boolean value that indicates whether JavaScript from web content is
+  /// allowed to run.
+  void setAllowsContentJavaScript(bool allow);
 }

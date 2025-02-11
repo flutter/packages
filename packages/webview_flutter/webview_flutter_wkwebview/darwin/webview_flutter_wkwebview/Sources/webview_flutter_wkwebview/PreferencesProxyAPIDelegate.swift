@@ -12,6 +12,13 @@ class PreferencesProxyAPIDelegate: PigeonApiDelegateWKPreferences {
   func setJavaScriptEnabled(
     pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool
   ) throws {
-    pigeonInstance.javaScriptEnabled = enabled
+    if #unavailable(iOS 14.0, macOS 11.0) {
+      pigeonInstance.javaScriptEnabled = enabled
+    } else {
+      throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
+        .createUnsupportedVersionError(
+          method: "WKPreferences.javaScriptEnabled",
+          versionRequirements: "< iOS 14.0, macOS 11.0")
+    }
   }
 }

@@ -28,6 +28,7 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		6FBECA2F94D9B352000B75D7 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 418FB4EA49104BADE288A967 /* Pods_RunnerTests.framework */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		8FC45F732D5C0C37004E03E8 /* WebpagePreferencesProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC45F722D5C0C37004E03E8 /* WebpagePreferencesProxyAPITests.swift */; };
 		8FF1FEA22D37201300A5E400 /* NSObjectProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF1FE8E2D37201300A5E400 /* NSObjectProxyAPITests.swift */; };
 		8FF1FEA32D37201300A5E400 /* ScrollViewProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF1FE932D37201300A5E400 /* ScrollViewProxyAPITests.swift */; };
 		8FF1FEA42D37201300A5E400 /* URLAuthenticationChallengeProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FF1FE992D37201300A5E400 /* URLAuthenticationChallengeProxyAPITests.swift */; };
@@ -112,6 +113,7 @@
 		69E635CFAEEB8242654D4BBC /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		7D83F970E1160B09690C7723 /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
+		8FC45F722D5C0C37004E03E8 /* WebpagePreferencesProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebpagePreferencesProxyAPITests.swift; sourceTree = "<group>"; };
 		8FF1FE842D37201300A5E400 /* AuthenticationChallengeResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthenticationChallengeResponseProxyAPITests.swift; path = ../../darwin/Tests/AuthenticationChallengeResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FF1FE852D37201300A5E400 /* ErrorProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ErrorProxyAPITests.swift; path = ../../darwin/Tests/ErrorProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8FF1FE862D37201300A5E400 /* FrameInfoProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FrameInfoProxyAPITests.swift; path = ../../darwin/Tests/FrameInfoProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
@@ -174,6 +176,7 @@
 		331C80D6294CF71000263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				8FC45F722D5C0C37004E03E8 /* WebpagePreferencesProxyAPITests.swift */,
 				8FF1FE842D37201300A5E400 /* AuthenticationChallengeResponseProxyAPITests.swift */,
 				8FF1FE852D37201300A5E400 /* ErrorProxyAPITests.swift */,
 				8FF1FE862D37201300A5E400 /* FrameInfoProxyAPITests.swift */,
@@ -525,6 +528,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FC45F732D5C0C37004E03E8 /* WebpagePreferencesProxyAPITests.swift in Sources */,
 				8FF1FEA22D37201300A5E400 /* NSObjectProxyAPITests.swift in Sources */,
 				8FF1FEA32D37201300A5E400 /* ScrollViewProxyAPITests.swift in Sources */,
 				8FF1FEA42D37201300A5E400 /* URLAuthenticationChallengeProxyAPITests.swift in Sources */,
