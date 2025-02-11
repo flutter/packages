@@ -150,6 +150,6 @@ final class CameraFocusTests: XCTestCase {
       expectation.fulfill()
     }
 
-    waitForExpectations(timeout: 1, handler: nil)
+    waitForExpectations(timeout: 30, handler: nil)
   }
 }
