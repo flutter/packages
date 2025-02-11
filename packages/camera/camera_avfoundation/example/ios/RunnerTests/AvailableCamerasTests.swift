@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import AVFoundation
-import camera_avfoundation
 import XCTest
+import camera_avfoundation
 
 final class AvailableCamerasTest: XCTestCase {
   func createCameraPlugin(_ deviceDiscoverer: MockCameraDeviceDiscoverer) -> CameraPlugin {
@@ -42,7 +42,9 @@ final class AvailableCamerasTest: XCTestCase {
     telephotoCamera.uniqueID = "3"
     telephotoCamera.position = .back
 
-    var requiredTypes: [AVCaptureDevice.DeviceType] = [.builtInWideAngleCamera, .builtInTelephotoCamera]
+    var requiredTypes: [AVCaptureDevice.DeviceType] = [
+      .builtInWideAngleCamera, .builtInTelephotoCamera,
+    ]
     if #available(iOS 13.0, *) {
       requiredTypes.append(.builtInUltraWideCamera)
     }
@@ -90,7 +92,9 @@ final class AvailableCamerasTest: XCTestCase {
     frontFacingCamera.uniqueID = "1"
     frontFacingCamera.position = .front
 
-    var requiredTypes: [AVCaptureDevice.DeviceType] = [.builtInWideAngleCamera, .builtInTelephotoCamera]
+    var requiredTypes: [AVCaptureDevice.DeviceType] = [
+      .builtInWideAngleCamera, .builtInTelephotoCamera,
+    ]
     if #available(iOS 13.0, *) {
       requiredTypes.append(.builtInUltraWideCamera)
     }

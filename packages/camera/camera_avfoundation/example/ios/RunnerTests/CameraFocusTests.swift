@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 import AVFoundation
-import camera_avfoundation
 import XCTest
+import camera_avfoundation
 
 final class CameraFocusTests: XCTestCase {
   var camera: FLTCam!
