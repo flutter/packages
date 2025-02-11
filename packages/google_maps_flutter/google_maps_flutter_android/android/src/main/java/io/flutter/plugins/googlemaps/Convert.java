@@ -881,18 +881,12 @@ class Convert {
     sink.setClickable(groundOverlay.getClickable());
     sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
     if (groundOverlay.getPosition() != null) {
-      assert groundOverlay.getWidth() != null;
-      if (groundOverlay.getHeight() != null) {
-        sink.setPosition(
-            latLngFromPigeon(groundOverlay.getPosition()),
-            groundOverlay.getWidth().floatValue(),
-            groundOverlay.getHeight().floatValue());
-      } else {
-        sink.setPosition(
-            latLngFromPigeon(groundOverlay.getPosition()),
-            groundOverlay.getWidth().floatValue(),
-            null);
-      }
+      assert groundOverlay.getWidth() != null
+          : "Width is required when using a ground overlay with a position.";
+      sink.setPosition(
+          latLngFromPigeon(groundOverlay.getPosition()),
+          groundOverlay.getWidth().floatValue(),
+          groundOverlay.getHeight() != null ? groundOverlay.getHeight().floatValue() : null);
     } else if (groundOverlay.getBounds() != null) {
       sink.setPositionFromBounds(latLngBoundsFromPigeon(groundOverlay.getBounds()));
     }
@@ -965,17 +959,21 @@ class Convert {
     double height = bounds.northeast.latitude - bounds.southwest.latitude;
     double normalizedLatitude = 1.0 - ((position.latitude - bounds.southwest.latitude) / height);
 
+    // Constant for full circle degrees.
+    final double FULL_CIRCLE_DEGREES = 360.0;
+
     // Calculate normalized longitude.
     // For longitude, if the bounds cross the antimeridian (west > east),
     // adjust the width accordingly.
     double west = bounds.southwest.longitude;
     double east = bounds.northeast.longitude;
-    double width = (west <= east) ? (east - west) : (360.0 - (west - east));
+    double width = (west <= east) ? (east - west) : (FULL_CIRCLE_DEGREES - (west - east));
 
-    // Adjust the position longitude if it is less than west by adding 360,
-    // then compute the normalized value.
+    // Normalize the longitude of the anchor position relative to the western boundary.
+    // Handles cases where the ground overlay crosses the antimeridian.
     double normalizedLongitude =
-        ((position.longitude < west ? position.longitude + 360.0 : position.longitude) - west)
+        ((position.longitude < west ? position.longitude + FULL_CIRCLE_DEGREES : position.longitude)
+                - west)
             / width;
 
     anchorBuilder.setX(normalizedLongitude);
