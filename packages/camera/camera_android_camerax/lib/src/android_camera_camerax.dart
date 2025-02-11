@@ -10,7 +10,15 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show Size, Texture, Widget, visibleForTesting;
+    show
+        AsyncSnapshot,
+        BuildContext,
+        Size,
+        StreamBuilder,
+        Texture,
+        Widget,
+        debugPrint,
+        visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
@@ -40,6 +48,7 @@ import 'observer.dart';
 import 'pending_recording.dart';
 import 'plane_proxy.dart';
 import 'preview.dart';
+import 'preview_rotation.dart';
 import 'process_camera_provider.dart';
 import 'quality_selector.dart';
 import 'recorder.dart';
@@ -241,6 +250,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late int sensorOrientation;
 
+  /// FIXME: Document.
+  late DeviceOrientation currentDeviceOrientation;
+  late Stream<DeviceOrientationChangedEvent> _deviceOrientationChanges;
+
   /// Subscription for listening to changes in device orientation.
   StreamSubscription<DeviceOrientationChangedEvent>?
       _subscriptionForDeviceOrientationChanges;
@@ -383,7 +396,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
+
     sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
+    _deviceOrientationChanges = onDeviceOrientationChanged();
 
     return flutterSurfaceTextureId;
   }
@@ -821,6 +836,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     await _bindUseCaseToLifecycle(preview!, cameraId);
   }
 
+  /// FIXME: Actually fetch this.
+  static final bool _handlesCropAndRotation = () {
+    return false;
+  }();
+
   /// Returns a widget showing a live camera preview.
   ///
   /// [createCamera] must be called before attempting to build this preview.
@@ -836,7 +856,30 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    return Texture(textureId: cameraId);
+    Widget result = Texture(textureId: cameraId);
+    debugPrint('>>> buildPreview()');
+
+    if (!_handlesCropAndRotation) {
+      // FIXME: This is bad, will cause a flash/frame in the wrong rotation if started in another rotation.
+      final double sensorOrientationDegrees = sensorOrientation.toDouble();
+      if (cameraIsFrontFacing) {
+        result = PreviewRotation.frontFacingCamera(
+          onDeviceOrientationChanged()
+              .map((DeviceOrientationChangedEvent e) => e.orientation),
+          sensorOrientationDegrees: sensorOrientationDegrees,
+          child: result,
+        );
+      } else {
+        result = PreviewRotation.backFacingCamera(
+          onDeviceOrientationChanged()
+              .map((DeviceOrientationChangedEvent e) => e.orientation),
+          sensorOrientationDegrees: sensorOrientationDegrees,
+          child: result,
+        );
+      }
+    }
+
+    return result;
   }
 
   /// Captures an image and returns the file where it was saved.
