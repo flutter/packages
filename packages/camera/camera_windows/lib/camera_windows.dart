@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import 'src/messages.g.dart';
-import 'type_conversion.dart';
+import 'src/type_conversion.dart';
 
 /// An implementation of [CameraPlatform] for Windows.
 class CameraWindows extends CameraPlatform {
