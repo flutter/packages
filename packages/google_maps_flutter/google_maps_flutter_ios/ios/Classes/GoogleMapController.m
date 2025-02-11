@@ -64,21 +64,12 @@
 
 #pragma mark -
 
-/// Implementation of the Pigeon maps API.
-///
-/// This is a separate object from the maps controller because the Pigeon API registration keeps a
-/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
-/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
-/// the target of the registration.
-@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+/// Private declarations of the FGMMapCallHandler.
+@interface FGMMapCallHandler ()
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
                             messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                          pigeonSuffix:(NSString *)suffix;
-@end
 
-/// Private declarations.
-// This is separate in case the above is made public in the future (e.g., for unit testing).
-@interface FGMMapCallHandler ()
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.

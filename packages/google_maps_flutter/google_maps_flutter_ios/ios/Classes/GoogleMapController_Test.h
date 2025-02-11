@@ -4,11 +4,14 @@
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
+
 #import "FGMCATransactionWrapper.h"
+#import "GoogleMapController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+/// Exposes internal properties of FGMMapCallHandler for unit testing.
+@interface FGMMapCallHandler (Test)
 
 /// Transaction wrapper for CATransaction to allow mocking in tests.
 @property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
