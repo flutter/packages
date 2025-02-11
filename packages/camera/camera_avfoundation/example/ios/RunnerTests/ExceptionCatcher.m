@@ -9,9 +9,10 @@
 + (nullable NSException *)catchException:(void (^)(void))tryBlock {
   @try {
     tryBlock();
-    return nil;  // No exception occurred
+    // No exception occurred.
+    return nil;
   } @catch (NSException *exception) {
-    return exception;  // Return the caught exception
+    return exception;
   }
 }
 
