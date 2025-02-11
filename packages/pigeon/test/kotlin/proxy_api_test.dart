@@ -434,6 +434,86 @@ void main() {
           ),
         );
       });
+
+      test('host platform constructor callback method', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'aCallbackMethod',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.flutter,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const KotlinGenerator generator = KotlinGenerator();
+        generator.generate(
+          const KotlinOptions(errorClassName: 'TestError'),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains(
+            'if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) { callback(Result.success(Unit))',
+          ),
+        );
+      });
+
+      test(
+          'host platform constructor calls new instance error for required callbacks',
+          () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'aCallbackMethod',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.flutter,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const KotlinGenerator generator = KotlinGenerator();
+        generator.generate(
+          const KotlinOptions(errorClassName: 'TestError'),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains(
+            r'Result.failure( TestError("new-instance-error"',
+          ),
+        );
+      });
     });
 
     group('Fields', () {

@@ -1397,11 +1397,22 @@ List<Error> _validateProxyApi(
       }
     }
 
-    if (method.location == ApiLocation.flutter && method.isStatic) {
-      result.add(Error(
-        message: 'Static callback methods are not supported: ${method.name}.',
-        lineNumber: _calculateLineNumberNullable(source, method.offset),
-      ));
+    if (method.location == ApiLocation.flutter) {
+      if (!method.returnType.isVoid &&
+          !method.returnType.isNullable &&
+          !method.isRequired) {
+        result.add(Error(
+          message:
+              'Callback methods that return a non-null value must be non-null: ${method.name}.',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (method.isStatic) {
+        result.add(Error(
+          message: 'Static callback methods are not supported: ${method.name}.',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
     }
   }
 
