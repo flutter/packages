@@ -8,6 +8,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// #docregion migrate
+import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
+// #enddocregion migrate
 
 void main() {
   runApp(const MyApp());
@@ -56,19 +59,34 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   /// or via some native system.
   Future<void> _getExternalCounter() async {
     final SharedPreferencesAsync prefs = SharedPreferencesAsync();
-    setState(() async {
-      _externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
+    final int externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
+    setState(() {
+      _externalCounter = externalCounter;
     });
+  }
+
+  Future<void> _migratePreferences() async {
+    // #docregion migrate
+    const SharedPreferencesOptions sharedPreferencesOptions =
+        SharedPreferencesOptions();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
+      legacySharedPreferencesInstance: prefs,
+      sharedPreferencesAsyncOptions: sharedPreferencesOptions,
+      migrationCompletedKey: 'migrationCompleted',
+    );
+    // #enddocregion migrate
   }
 
   @override
   void initState() {
     super.initState();
-    _counter = _prefs.then((SharedPreferencesWithCache prefs) {
-      return prefs.getInt('counter') ?? 0;
+    _migratePreferences().then((_) {
+      _counter = _prefs.then((SharedPreferencesWithCache prefs) {
+        return prefs.getInt('counter') ?? 0;
+      });
+      _getExternalCounter();
     });
-
-    _getExternalCounter();
   }
 
   @override

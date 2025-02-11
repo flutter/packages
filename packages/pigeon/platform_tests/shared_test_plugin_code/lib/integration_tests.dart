@@ -2183,6 +2183,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         aMap: const <String?, Object?>{},
         anEnum: ProxyApiTestEnum.one,
         aProxyApi: ProxyApiSuperClass(),
+        flutterEchoBool: (ProxyApiTestClass instance, bool aBool) => true,
+        flutterEchoInt: (_, __) => 3,
+        flutterEchoDouble: (_, __) => 1.0,
+        flutterEchoString: (_, __) => '',
+        flutterEchoUint8List: (_, __) => Uint8List(0),
+        flutterEchoList: (_, __) => <Object?>[],
+        flutterEchoProxyApiList: (_, __) => <ProxyApiTestClass?>[],
+        flutterEchoMap: (_, __) => <String?, Object?>{},
+        flutterEchoEnum: (_, __) => ProxyApiTestEnum.one,
+        flutterEchoProxyApi: (_, __) => ProxyApiSuperClass(),
+        flutterEchoAsyncString: (_, __) async => '',
+        flutterEchoProxyApiMap: (_, __) => <String?, ProxyApiTestClass?>{},
       );
       // Ensure no error calling method on instance.
       await instance.noop();
@@ -2865,6 +2877,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     TargetGenerator.kotlin,
     TargetGenerator.swift
   ];
+
   testWidgets('event channel sends continuous ints', (_) async {
     final Stream<int> events = streamInts();
     final List<int> listEvents = await events.toList();
@@ -2911,6 +2924,24 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       }
     });
     await completer.future;
+  }, skip: !eventChannelSupported.contains(targetGenerator));
+
+  testWidgets('event channels handle multiple instances', (_) async {
+    final Completer<void> completer1 = Completer<void>();
+    final Completer<void> completer2 = Completer<void>();
+    final Stream<int> events1 = streamConsistentNumbers(instanceName: '1');
+    final Stream<int> events2 = streamConsistentNumbers(instanceName: '2');
+
+    events1.listen((int event) {
+      expect(event, 1);
+    }).onDone(() => completer1.complete());
+
+    events2.listen((int event) {
+      expect(event, 2);
+    }).onDone(() => completer2.complete());
+
+    await completer1.future;
+    await completer2.future;
   }, skip: !eventChannelSupported.contains(targetGenerator));
 }
 
@@ -3264,17 +3295,18 @@ ProxyApiTestClass _createGenericProxyApiTestClass({
     flutterNoop: flutterNoop,
     flutterThrowError: flutterThrowError,
     flutterThrowErrorFromVoid: flutterThrowErrorFromVoid,
-    flutterEchoBool: flutterEchoBool,
-    flutterEchoInt: flutterEchoInt,
-    flutterEchoDouble: flutterEchoDouble,
-    flutterEchoString: flutterEchoString,
-    flutterEchoUint8List: flutterEchoUint8List,
-    flutterEchoList: flutterEchoList,
-    flutterEchoProxyApiList: flutterEchoProxyApiList,
-    flutterEchoMap: flutterEchoMap,
-    flutterEchoProxyApiMap: flutterEchoProxyApiMap,
-    flutterEchoEnum: flutterEchoEnum,
-    flutterEchoProxyApi: flutterEchoProxyApi,
+    flutterEchoBool:
+        flutterEchoBool ?? (ProxyApiTestClass instance, bool aBool) => true,
+    flutterEchoInt: flutterEchoInt ?? (_, __) => 3,
+    flutterEchoDouble: flutterEchoDouble ?? (_, __) => 1.0,
+    flutterEchoString: flutterEchoString ?? (_, __) => '',
+    flutterEchoUint8List: flutterEchoUint8List ?? (_, __) => Uint8List(0),
+    flutterEchoList: flutterEchoList ?? (_, __) => <Object?>[],
+    flutterEchoProxyApiList:
+        flutterEchoProxyApiList ?? (_, __) => <ProxyApiTestClass?>[],
+    flutterEchoMap: flutterEchoMap ?? (_, __) => <String?, Object?>{},
+    flutterEchoEnum: flutterEchoEnum ?? (_, __) => ProxyApiTestEnum.one,
+    flutterEchoProxyApi: flutterEchoProxyApi ?? (_, __) => ProxyApiSuperClass(),
     flutterEchoNullableBool: flutterEchoNullableBool,
     flutterEchoNullableInt: flutterEchoNullableInt,
     flutterEchoNullableDouble: flutterEchoNullableDouble,
@@ -3285,6 +3317,8 @@ ProxyApiTestClass _createGenericProxyApiTestClass({
     flutterEchoNullableEnum: flutterEchoNullableEnum,
     flutterEchoNullableProxyApi: flutterEchoNullableProxyApi,
     flutterNoopAsync: flutterNoopAsync,
-    flutterEchoAsyncString: flutterEchoAsyncString,
+    flutterEchoAsyncString: flutterEchoAsyncString ?? (_, __) async => '',
+    flutterEchoProxyApiMap:
+        flutterEchoProxyApiMap ?? (_, __) => <String?, ProxyApiTestClass?>{},
   );
 }

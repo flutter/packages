@@ -31,6 +31,12 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
     StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "1",
+      streamHandler: SendConsistentNumbers(numberToSend: 1))
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "2",
+      streamHandler: SendConsistentNumbers(numberToSend: 2))
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
@@ -1272,6 +1278,33 @@ class SendEvents: StreamEventsStreamHandler {
   }
 }
 
+class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
+  let numberToSend: Int64
+  init(numberToSend: Int64) {
+    self.numberToSend = numberToSend
+  }
+  var timerActive = false
+  var timer: Timer?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    let numberThatWillBeSent: Int64 = numberToSend
+    var count: Int64 = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          sink.success(numberThatWillBeSent)
+          count += 1
+          if count >= 10 {
+            sink.endOfStream()
+            self.timer?.invalidate()
+          }
+        }
+      }
+    }
+  }
+}
+
 class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
   func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
     -> PigeonApiProxyApiTestClass
@@ -1319,134 +1352,6 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
         -> ProxyApiSuperClass
       {
         return ProxyApiSuperClass()
-      }
-
-      func aBool(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws
-        -> Bool
-      {
-        return true
-      }
-
-      func anInt(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws
-        -> Int64
-      {
-        return 0
-      }
-
-      func aDouble(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws
-        -> Double
-      {
-        return 0.0
-      }
-
-      func aString(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws
-        -> String
-      {
-        return ""
-      }
-
-      func aUint8List(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws -> FlutterStandardTypedData
-      {
-        return FlutterStandardTypedData(bytes: Data())
-      }
-
-      func aList(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws
-        -> [Any?]
-      {
-        return []
-      }
-
-      func aMap(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-        -> [String?: Any?]
-      {
-        return [:]
-      }
-
-      func anEnum(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws
-        -> ProxyApiTestEnum
-      {
-        return ProxyApiTestEnum.one
-      }
-
-      func aProxyApi(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws -> ProxyApiSuperClass
-      {
-        return ProxyApiSuperClass()
-      }
-
-      func aNullableBool(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      )
-        throws -> Bool?
-      {
-        return nil
-      }
-
-      func aNullableInt(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      )
-        throws -> Int64?
-      {
-        return nil
-      }
-
-      func aNullableDouble(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      )
-        throws -> Double?
-      {
-        return nil
-      }
-
-      func aNullableString(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      )
-        throws -> String?
-      {
-        return nil
-      }
-
-      func aNullableUint8List(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      ) throws -> FlutterStandardTypedData? {
-        return nil
-      }
-
-      func aNullableList(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      )
-        throws -> [Any?]?
-      {
-        return nil
-      }
-
-      func aNullableMap(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      )
-        throws -> [String?: Any?]?
-      {
-        return nil
-      }
-
-      func aNullableEnum(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      )
-        throws -> ProxyApiTestEnum?
-      {
-        return nil
-      }
-
-      func aNullableProxyApi(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      ) throws -> ProxyApiSuperClass? {
-        return nil
       }
 
       func noop(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws {

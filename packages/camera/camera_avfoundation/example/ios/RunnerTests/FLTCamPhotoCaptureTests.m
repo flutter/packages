@@ -8,8 +8,10 @@
 #endif
 @import AVFoundation;
 @import XCTest;
-#import <OCMock/OCMock.h>
+
 #import "CameraTestUtils.h"
+#import "MockCaptureDevice.h"
+#import "MockCapturePhotoOutput.h"
 
 /// Includes test cases related to photo capture operations for FLTCam class.
 @interface FLTCamPhotoCaptureTests : XCTestCase
@@ -17,6 +19,12 @@
 @end
 
 @implementation FLTCamPhotoCaptureTests
+
+- (FLTCam *)createCamWithCaptureSessionQueue:(dispatch_queue_t)captureSessionQueue {
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureSessionQueue = captureSessionQueue;
+  return FLTCreateCamWithConfiguration(configuration);
+}
 
 - (void)testCaptureToFile_mustReportErrorToResultIfSavePhotoDelegateCompletionsWithError {
   XCTestExpectation *errorExpectation =
@@ -27,22 +35,19 @@
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  OCMStub([mockSettings photoSettings]).andReturn(settings);
 
   NSError *error = [NSError errorWithDomain:@"test" code:0 userInfo:nil];
 
-  id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
-  OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
-      .andDo(^(NSInvocation *invocation) {
+  MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
+  mockOutput.capturePhotoWithSettingsStub =
+      ^(AVCapturePhotoSettings *settings, NSObject<AVCapturePhotoCaptureDelegate> *photoDelegate) {
         FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
         // Completion runs on IO queue.
         dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
         dispatch_async(ioQueue, ^{
           delegate.completionHandler(nil, error);
         });
-      });
+      };
   cam.capturePhotoOutput = mockOutput;
 
   // `FLTCam::captureToFile` runs on capture session queue.
@@ -54,7 +59,7 @@
     }];
   });
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportPathToResultIfSavePhotoDelegateCompletionsWithPath {
@@ -65,24 +70,20 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
-
-  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  OCMStub([mockSettings photoSettings]).andReturn(settings);
+  FLTCam *cam = [self createCamWithCaptureSessionQueue:captureSessionQueue];
 
   NSString *filePath = @"test";
 
-  id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
-  OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
-      .andDo(^(NSInvocation *invocation) {
+  MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
+  mockOutput.capturePhotoWithSettingsStub =
+      ^(AVCapturePhotoSettings *settings, NSObject<AVCapturePhotoCaptureDelegate> *photoDelegate) {
         FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
         // Completion runs on IO queue.
         dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
         dispatch_async(ioQueue, ^{
           delegate.completionHandler(filePath, nil);
         });
-      });
+      };
   cam.capturePhotoOutput = mockOutput;
 
   // `FLTCam::captureToFile` runs on capture session queue.
@@ -92,7 +93,7 @@
       [pathExpectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportFileExtensionWithHeifWhenHEVCIsAvailableAndFileFormatIsHEIF {
@@ -102,30 +103,22 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCam *cam = [self createCamWithCaptureSessionQueue:captureSessionQueue];
   [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
 
-  AVCapturePhotoSettings *settings =
-      [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-
-  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  OCMStub([mockSettings photoSettingsWithFormat:OCMOCK_ANY]).andReturn(settings);
-
-  id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
-  // Set availablePhotoCodecTypes to HEVC
-  NSArray *codecTypes = @[ AVVideoCodecTypeHEVC ];
-  OCMStub([mockOutput availablePhotoCodecTypes]).andReturn(codecTypes);
-
-  OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
-      .andDo(^(NSInvocation *invocation) {
+  MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
+  mockOutput.availablePhotoCodecTypes = @[ AVVideoCodecTypeHEVC ];
+  mockOutput.capturePhotoWithSettingsStub =
+      ^(AVCapturePhotoSettings *settings, NSObject<AVCapturePhotoCaptureDelegate> *photoDelegate) {
         FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
         // Completion runs on IO queue.
         dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
         dispatch_async(ioQueue, ^{
           delegate.completionHandler(delegate.filePath, nil);
         });
-      });
+      };
   cam.capturePhotoOutput = mockOutput;
+
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
     [cam captureToFileWithCompletion:^(NSString *filePath, FlutterError *error) {
@@ -133,7 +126,7 @@
       [expectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_mustReportFileExtensionWithJpgWhenHEVCNotAvailableAndFileFormatIsHEIF {
@@ -143,25 +136,21 @@
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCam *cam = [self createCamWithCaptureSessionQueue:captureSessionQueue];
   [cam setImageFileFormat:FCPPlatformImageFileFormatHeif];
 
-  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  OCMStub([mockSettings photoSettings]).andReturn(settings);
-
-  id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
-
-  OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
-      .andDo(^(NSInvocation *invocation) {
+  MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
+  mockOutput.capturePhotoWithSettingsStub =
+      ^(AVCapturePhotoSettings *settings, NSObject<AVCapturePhotoCaptureDelegate> *photoDelegate) {
         FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
         // Completion runs on IO queue.
         dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
         dispatch_async(ioQueue, ^{
           delegate.completionHandler(delegate.filePath, nil);
         });
-      });
+      };
   cam.capturePhotoOutput = mockOutput;
+
   // `FLTCam::captureToFile` runs on capture session queue.
   dispatch_async(captureSessionQueue, ^{
     [cam captureToFileWithCompletion:^(NSString *filePath, FlutterError *error) {
@@ -169,45 +158,47 @@
       [expectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testCaptureToFile_handlesTorchMode {
   XCTestExpectation *pathExpectation =
       [self expectationWithDescription:
                 @"Must send file path to result if save photo delegate completes with file path."];
+  XCTestExpectation *setTorchExpectation =
+      [self expectationWithDescription:@"Should set torch mode to AVCaptureTorchModeOn."];
 
-  id captureDeviceMock = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([captureDeviceMock hasTorch]).andReturn(YES);
-  OCMStub([captureDeviceMock isTorchAvailable]).andReturn(YES);
-  OCMStub([captureDeviceMock torchMode]).andReturn(AVCaptureTorchModeAuto);
-  OCMExpect([captureDeviceMock setTorchMode:AVCaptureTorchModeOn]);
+  MockCaptureDevice *captureDeviceMock = [[MockCaptureDevice alloc] init];
+  captureDeviceMock.hasTorch = YES;
+  captureDeviceMock.isTorchAvailable = YES;
+  captureDeviceMock.torchMode = AVCaptureTorchModeAuto;
+  captureDeviceMock.setTorchModeStub = ^(AVCaptureTorchMode mode) {
+    if (mode == AVCaptureTorchModeOn) {
+      [setTorchExpectation fulfill];
+    }
+  };
 
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("capture_session_queue", NULL);
   dispatch_queue_set_specific(captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
 
-  FLTCam *cam = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(captureSessionQueue, nil, nil,
-                                                                    ^AVCaptureDevice *(void) {
-                                                                      return captureDeviceMock;
-                                                                    });
-
-  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-  id mockSettings = OCMClassMock([AVCapturePhotoSettings class]);
-  OCMStub([mockSettings photoSettings]).andReturn(settings);
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureSessionQueue = captureSessionQueue;
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> * { return captureDeviceMock; };
+  FLTCam *cam = FLTCreateCamWithConfiguration(configuration);
 
   NSString *filePath = @"test";
 
-  id mockOutput = OCMClassMock([AVCapturePhotoOutput class]);
-  OCMStub([mockOutput capturePhotoWithSettings:OCMOCK_ANY delegate:OCMOCK_ANY])
-      .andDo(^(NSInvocation *invocation) {
+  MockCapturePhotoOutput *mockOutput = [[MockCapturePhotoOutput alloc] init];
+  mockOutput.capturePhotoWithSettingsStub =
+      ^(AVCapturePhotoSettings *settings, NSObject<AVCapturePhotoCaptureDelegate> *photoDelegate) {
         FLTSavePhotoDelegate *delegate = cam.inProgressSavePhotoDelegates[@(settings.uniqueID)];
         // Completion runs on IO queue.
         dispatch_queue_t ioQueue = dispatch_queue_create("io_queue", NULL);
         dispatch_async(ioQueue, ^{
           delegate.completionHandler(filePath, nil);
         });
-      });
+      };
   cam.capturePhotoOutput = mockOutput;
 
   // `FLTCam::captureToFile` runs on capture session queue.
@@ -220,7 +211,6 @@
       [pathExpectation fulfill];
     }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
-  OCMVerifyAll(captureDeviceMock);
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 @end
