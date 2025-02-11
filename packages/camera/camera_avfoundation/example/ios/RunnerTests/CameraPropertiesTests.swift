@@ -5,7 +5,8 @@
 import AVFoundation
 import Foundation
 import XCTest
-import camera_avfoundation
+
+@testable import camera_avfoundation
 
 final class CameraPropertiesTests: XCTestCase {
   // MARK: - Flash Mode Tests
@@ -21,7 +22,7 @@ final class CameraPropertiesTests: XCTestCase {
       AVCaptureDevice.FlashMode.on,
       FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMode.always))
 
-    // TODO(FirentisTFW): Migrate implementation to throw Swift error in this case
+    // TODO(FirentisTFW): Migrate implementation to throw Swift error in this case.
     let exception = ExceptionCatcher.catchException {
       _ = FCPGetAVCaptureFlashModeForPigeonFlashMode(.torch)
     }

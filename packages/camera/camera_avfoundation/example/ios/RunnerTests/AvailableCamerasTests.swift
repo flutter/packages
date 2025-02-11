@@ -4,10 +4,11 @@
 
 import AVFoundation
 import XCTest
-import camera_avfoundation
+
+@testable import camera_avfoundation
 
 final class AvailableCamerasTest: XCTestCase {
-  func createCameraPlugin(_ deviceDiscoverer: MockCameraDeviceDiscoverer) -> CameraPlugin {
+  func createCameraPlugin(with deviceDiscoverer: MockCameraDeviceDiscoverer) -> CameraPlugin {
     return CameraPlugin(
       registry: MockFlutterTextureRegistry(),
       messenger: MockFlutterBinaryMessenger(),
@@ -21,7 +22,7 @@ final class AvailableCamerasTest: XCTestCase {
 
   func testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone() {
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
-    let cameraPlugin = createCameraPlugin(mockDeviceDiscoverer)
+    let cameraPlugin = createCameraPlugin(with: mockDeviceDiscoverer)
 
     let expectation = self.expectation(description: "Result finished")
 
@@ -79,7 +80,7 @@ final class AvailableCamerasTest: XCTestCase {
 
   func testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone() {
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
-    let cameraPlugin = createCameraPlugin(mockDeviceDiscoverer)
+    let cameraPlugin = createCameraPlugin(with: mockDeviceDiscoverer)
 
     let expectation = self.expectation(description: "Result finished")
 

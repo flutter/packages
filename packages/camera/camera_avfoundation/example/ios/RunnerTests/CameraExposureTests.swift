@@ -4,7 +4,8 @@
 
 import AVFoundation
 import XCTest
-import camera_avfoundation
+
+@testable import camera_avfoundation
 
 final class CameraExposureTests: XCTestCase {
   var camera: FLTCam!

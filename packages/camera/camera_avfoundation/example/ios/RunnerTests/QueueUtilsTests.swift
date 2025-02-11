@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import XCTest
-import camera_avfoundation
+
+@testable import camera_avfoundation
 
 final class QueueUtilsTests: XCTestCase {
   func testShouldStayOnMainQueueIfCalledFromMainQueue() {

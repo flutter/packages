@@ -5,7 +5,6 @@
 #import "ExceptionCatcher.h"
 
 @implementation ExceptionCatcher
-
 + (nullable NSException *)catchException:(void (^)(void))tryBlock {
   @try {
     tryBlock();
@@ -15,5 +14,4 @@
     return exception;
   }
 }
-
 @end

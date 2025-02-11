@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(FirentisTFW): Remove this file when the plugin code using it is migrated to Swift.
+// TODO(FirentisTFW): Remove this file when the plugin code that uses it is migrated to Swift.
 
 #import <Foundation/Foundation.h>
 
