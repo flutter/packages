@@ -124,7 +124,7 @@ final class CameraFocusTests: XCTestCase {
 
     var setFocusPointOfInterestCalled = false
     mockDevice.setFocusPointOfInterestStub = { point in
-      if point.x == 1 && point.y == 1 {
+      if point == CGPoint(x: 1.0, y: 1.0) {
         setFocusPointOfInterestCalled = true
       }
     }

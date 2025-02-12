@@ -43,8 +43,7 @@ final class CameraExposureTests: XCTestCase {
     }
 
     waitForExpectations(timeout: 30, handler: nil)
-    XCTAssertEqual(setPoint.x, 1.0)
-    XCTAssertEqual(setPoint.y, 1.0)
+    XCTAssertEqual(setPoint, CGPoint(x: 1.0, y: 1.0))
   }
 
   func testSetExposurePoint_WhenNotSupported_ReturnsError() {
