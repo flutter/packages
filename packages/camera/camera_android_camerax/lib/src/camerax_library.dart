@@ -1,9 +1,18 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'camerax_library2.g.dart' as camerax;
 
 export 'camerax_library2.g.dart' hide CameraInfo, LiveData, Observer;
 
+/// Handles adding support for generics to the API wrapper.
+///
+/// APIs wrapped with the pigeon ProxyAPI system doesn't support generics, so
+/// this handles using subclasses to add support.
 void setUpGenerics({
   BinaryMessenger? pigeonBinaryMessenger,
   camerax.PigeonInstanceManager? pigeonInstanceManager,
@@ -65,6 +74,9 @@ class Surface {
   static const int rotation270 = 3;
 }
 
+/// An interface for retrieving camera information.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraInfo.
 class CameraInfo extends camerax.CameraInfo {
   CameraInfo.detached({
     required super.sensorRotationDegrees,
@@ -94,7 +106,19 @@ class CameraInfo extends camerax.CameraInfo {
   }
 }
 
+/// LiveData is a data holder class that can be observed within a given
+/// lifecycle.
+///
+/// This is a wrapper around the native class to better support the generic
+/// type. Java has type erasure;
+///
+/// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
 class LiveData<T> extends camerax.LiveData {
+  /// Constructs [LiveData] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
   LiveData.detached({
     required super.type,
     super.pigeon_binaryMessenger,
@@ -121,7 +145,11 @@ class LiveData<T> extends camerax.LiveData {
   }
 }
 
+/// A simple callback that can receive from LiveData.
+///
+/// See https://developer.android.com/reference/androidx/lifecycle/Observer.
 class Observer<T> extends camerax.Observer {
+  /// Constructs an [Observer].
   Observer({
     required void Function(Observer<T> instance, T value) onChanged,
     super.pigeon_binaryMessenger,

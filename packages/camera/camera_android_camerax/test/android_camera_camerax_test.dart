@@ -12,7 +12,7 @@ import 'package:camera_android_camerax/src/camerax_proxy2.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show BinaryMessenger, DeviceOrientation, PlatformException, Uint8List;
-import 'package:flutter/widgets.dart' show BuildContext, Size, Texture, Widget;
+import 'package:flutter/widgets.dart' show Texture, Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -113,18 +113,24 @@ void main() {
     MockProcessCameraProvider mockProcessCameraProvider, {
     ResolutionFilter Function({
       required CameraSize preferredSize,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? createWithOnePreferredSizeResolutionFilter,
     FallbackStrategy Function({
       required VideoQuality quality,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? lowerQualityOrHigherThanFallbackStrategy,
     QualitySelector Function({
       required VideoQuality quality,
       FallbackStrategy? fallbackStrategy,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? fromQualitySelector,
   }) {
@@ -135,14 +141,18 @@ void main() {
         MockResolutionStrategy();
     proxy = CameraXProxy(
       getInstanceProcessCameraProvider: ({
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) async {
         return mockProcessCameraProvider;
       },
       newCameraSelector: ({
         LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         switch (requireLensFacing) {
@@ -159,7 +169,9 @@ void main() {
       newPreview: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockPreview mockPreview = MockPreview();
@@ -170,7 +182,9 @@ void main() {
         int? targetRotation,
         CameraXFlashMode? flashMode,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockImageCapture mockImageCapture = MockImageCapture();
@@ -182,7 +196,9 @@ void main() {
         int? aspectRatio,
         int? targetVideoEncodingBitRate,
         QualitySelector? qualitySelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockRecorder mockRecorder = MockRecorder();
@@ -193,7 +209,9 @@ void main() {
       },
       withOutputVideoCapture: ({
         required VideoOutput videoOutput,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockVideoCapture();
@@ -201,7 +219,9 @@ void main() {
       newImageAnalysis: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockImageAnalysis mockImageAnalysis = MockImageAnalysis();
@@ -212,7 +232,9 @@ void main() {
       newResolutionStrategy: ({
         required CameraSize boundSize,
         required ResolutionStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockResolutionStrategy resolutionStrategy =
@@ -229,7 +251,9 @@ void main() {
         AspectRatioStrategy? aspectRatioStrategy,
         ResolutionStrategy? resolutionStrategy,
         ResolutionFilter? resolutionFilter,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockResolutionSelector mockResolutionSelector =
@@ -251,14 +275,18 @@ void main() {
           ({
             required VideoQuality quality,
             FallbackStrategy? fallbackStrategy,
+            // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) {
             return MockQualitySelector();
           },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -273,7 +301,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockSystemServicesManager();
@@ -283,7 +313,9 @@ void main() {
           DeviceOrientationManager,
           String,
         ) onDeviceOrientationChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDeviceOrientationManager manager =
@@ -296,7 +328,9 @@ void main() {
       newAspectRatioStrategy: ({
         required AspectRatio preferredAspectRatio,
         required AspectRatioStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockAspectRatioStrategy mockAspectRatioStrategy =
@@ -313,14 +347,18 @@ void main() {
           createWithOnePreferredSizeResolutionFilter ??
               ({
                 required CameraSize preferredSize,
+                // ignore: non_constant_identifier_names
                 BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
                 PigeonInstanceManager? pigeon_instanceManager,
               }) {
                 return MockResolutionFilter();
               },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockCamera2CameraInfo camera2cameraInfo = MockCamera2CameraInfo();
@@ -332,7 +370,9 @@ void main() {
       newCameraSize: ({
         required int width,
         required int height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return CameraSize.pigeon_detached(
@@ -350,7 +390,9 @@ void main() {
           lowerQualityOrHigherThanFallbackStrategy ??
               ({
                 required VideoQuality quality,
+                // ignore: non_constant_identifier_names
                 BinaryMessenger? pigeon_binaryMessenger,
+                // ignore: non_constant_identifier_names
                 PigeonInstanceManager? pigeon_instanceManager,
               }) {
                 return MockFallbackStrategy();
@@ -362,7 +404,9 @@ void main() {
           ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
       lowerQualityThanFallbackStrategy: ({
         required VideoQuality quality,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockFallbackStrategy();
@@ -380,14 +424,18 @@ void main() {
     FocusMeteringActionBuilder Function({
       required MeteringPoint point,
       required MeteringMode mode,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? withModeFocusMeteringActionBuilder,
     DisplayOrientedMeteringPointFactory Function({
       required CameraInfo cameraInfo,
       required double width,
       required double height,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? newDisplayOrientedMeteringPointFactory,
   }) =>
@@ -398,13 +446,13 @@ void main() {
                   required CameraInfo cameraInfo,
                   required double width,
                   required double height,
+                  // ignore: non_constant_identifier_names
                   BinaryMessenger? pigeon_binaryMessenger,
+                  // ignore: non_constant_identifier_names
                   PigeonInstanceManager? pigeon_instanceManager,
                 }) {
                   final MockDisplayOrientedMeteringPointFactory mockFactory =
                       MockDisplayOrientedMeteringPointFactory();
-                  final PigeonInstanceManager testInstanceManager =
-                      PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
                   when(mockFactory.createPoint(any, any)).thenAnswer(
                     (Invocation invocation) async => TestMeteringPoint.detached(
                       x: invocation.positionalArguments[0]! as double,
@@ -426,7 +474,9 @@ void main() {
                 ({
                   required MeteringPoint point,
                   required MeteringMode mode,
+                  // ignore: non_constant_identifier_names
                   BinaryMessenger? pigeon_binaryMessenger,
+                  // ignore: non_constant_identifier_names
                   PigeonInstanceManager? pigeon_instanceManager,
                 }) {
                   final PigeonInstanceManager testInstanceManager =
@@ -499,14 +549,18 @@ void main() {
     FocusMeteringActionBuilder Function({
       required MeteringPoint point,
       required MeteringMode mode,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? withModeFocusMeteringActionBuilder,
     DisplayOrientedMeteringPointFactory Function({
       required CameraInfo cameraInfo,
       required double width,
       required double height,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? newDisplayOrientedMeteringPointFactory,
   }) {
@@ -525,7 +579,9 @@ void main() {
     }
     proxy.fromCamera2CameraControl = ({
       required CameraControl cameraControl,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     }) =>
         cameraControl == cameraControlForComparison
@@ -535,7 +591,9 @@ void main() {
               );
     proxy.newCaptureRequestOptions = ({
       required Map<CaptureRequestKey, Object?> options,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
       return CaptureRequestOptions.pigeon_detached(
@@ -583,13 +641,17 @@ void main() {
         PigeonInstanceManager? pigeonInstanceManager,
       }) {},
       getInstanceProcessCameraProvider: ({
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
       newCameraSelector: ({
         LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         switch (requireLensFacing) {
@@ -608,7 +670,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockSystemServicesManager();
@@ -683,14 +747,18 @@ void main() {
 
     camera.proxy = CameraXProxy(
       getInstanceProcessCameraProvider: ({
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) async {
         return mockProcessCameraProvider;
       },
       newCameraSelector: ({
         LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         switch (requireLensFacing) {
@@ -707,7 +775,9 @@ void main() {
       newPreview: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockPreview;
@@ -716,7 +786,9 @@ void main() {
         int? targetRotation,
         CameraXFlashMode? flashMode,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockImageCapture;
@@ -725,14 +797,18 @@ void main() {
         int? aspectRatio,
         int? targetVideoEncodingBitRate,
         QualitySelector? qualitySelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockRecorder;
       },
       withOutputVideoCapture: ({
         required VideoOutput videoOutput,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockVideoCapture;
@@ -740,7 +816,9 @@ void main() {
       newImageAnalysis: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockImageAnalysis;
@@ -748,7 +826,9 @@ void main() {
       newResolutionStrategy: ({
         required CameraSize boundSize,
         required ResolutionStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockResolutionStrategy();
@@ -757,7 +837,9 @@ void main() {
         AspectRatioStrategy? aspectRatioStrategy,
         ResolutionStrategy? resolutionStrategy,
         ResolutionFilter? resolutionFilter,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockResolutionSelector();
@@ -765,14 +847,18 @@ void main() {
       fromQualitySelector: ({
         required VideoQuality quality,
         FallbackStrategy? fallbackStrategy,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockQualitySelector();
       },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -787,7 +873,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         when(mockSystemServicesManager.requestCameraPermissions(any))
@@ -804,7 +892,9 @@ void main() {
           DeviceOrientationManager,
           String,
         ) onDeviceOrientationChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDeviceOrientationManager manager =
@@ -823,21 +913,27 @@ void main() {
       newAspectRatioStrategy: ({
         required AspectRatio preferredAspectRatio,
         required AspectRatioStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockAspectRatioStrategy();
       },
       createWithOnePreferredSizeResolutionFilter: ({
         required CameraSize preferredSize,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockResolutionFilter();
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockCamera2CameraInfo camera2cameraInfo = MockCamera2CameraInfo();
@@ -850,7 +946,9 @@ void main() {
       newCameraSize: ({
         required int width,
         required int height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockCameraSize();
@@ -860,7 +958,9 @@ void main() {
       },
       lowerQualityOrHigherThanFallbackStrategy: ({
         required VideoQuality quality,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockFallbackStrategy();
@@ -955,14 +1055,18 @@ void main() {
     // testing of createCamera.
     camera.proxy = CameraXProxy(
       getInstanceProcessCameraProvider: ({
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) async {
         return mockProcessCameraProvider;
       },
       newCameraSelector: ({
         LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         switch (requireLensFacing) {
@@ -979,7 +1083,9 @@ void main() {
       newPreview: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockPreview;
@@ -988,7 +1094,9 @@ void main() {
         int? targetRotation,
         CameraXFlashMode? flashMode,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockImageCapture;
@@ -997,14 +1105,18 @@ void main() {
         int? aspectRatio,
         int? targetVideoEncodingBitRate,
         QualitySelector? qualitySelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockRecorder;
       },
       withOutputVideoCapture: ({
         required VideoOutput videoOutput,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockVideoCapture;
@@ -1012,7 +1124,9 @@ void main() {
       newImageAnalysis: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return mockImageAnalysis;
@@ -1020,7 +1134,9 @@ void main() {
       newResolutionStrategy: ({
         required CameraSize boundSize,
         required ResolutionStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockResolutionStrategy();
@@ -1029,7 +1145,9 @@ void main() {
         AspectRatioStrategy? aspectRatioStrategy,
         ResolutionStrategy? resolutionStrategy,
         ResolutionFilter? resolutionFilter,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockResolutionSelector();
@@ -1037,14 +1155,18 @@ void main() {
       fromQualitySelector: ({
         required VideoQuality quality,
         FallbackStrategy? fallbackStrategy,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockQualitySelector();
       },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -1059,7 +1181,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockSystemServicesManager();
@@ -1069,7 +1193,9 @@ void main() {
           DeviceOrientationManager,
           String,
         ) onDeviceOrientationChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDeviceOrientationManager manager =
@@ -1082,21 +1208,27 @@ void main() {
       newAspectRatioStrategy: ({
         required AspectRatio preferredAspectRatio,
         required AspectRatioStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockAspectRatioStrategy();
       },
       createWithOnePreferredSizeResolutionFilter: ({
         required CameraSize preferredSize,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockResolutionFilter();
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         when(
@@ -1108,7 +1240,9 @@ void main() {
       newCameraSize: ({
         required int width,
         required int height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockCameraSize();
@@ -1118,7 +1252,9 @@ void main() {
       },
       lowerQualityOrHigherThanFallbackStrategy: ({
         required VideoQuality quality,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return MockFallbackStrategy();
@@ -1326,7 +1462,9 @@ void main() {
       mockProcessCameraProvider,
       createWithOnePreferredSizeResolutionFilter: ({
         required CameraSize preferredSize,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         lastSetPreferredSize = preferredSize;
@@ -1586,7 +1724,9 @@ void main() {
       mockProcessCameraProvider,
       lowerQualityOrHigherThanFallbackStrategy: ({
         required VideoQuality quality,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         fallbackStrategyVideoQuality = quality;
@@ -1595,7 +1735,9 @@ void main() {
       fromQualitySelector: ({
         required VideoQuality quality,
         FallbackStrategy? fallbackStrategy,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         qualitySelectorVideoQuality = quality;
@@ -1744,13 +1886,17 @@ void main() {
     // as needed.
     camera.proxy = CameraXProxy(
       getInstanceProcessCameraProvider: ({
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
       newCameraSelector: ({
         LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         switch (requireLensFacing) {
@@ -1763,7 +1909,9 @@ void main() {
       newPreview: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockPreview,
@@ -1771,7 +1919,9 @@ void main() {
         int? targetRotation,
         CameraXFlashMode? flashMode,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockImageCapture,
@@ -1779,27 +1929,35 @@ void main() {
         int? aspectRatio,
         int? targetVideoEncodingBitRate,
         QualitySelector? qualitySelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockRecorder(),
       withOutputVideoCapture: ({
         required VideoOutput videoOutput,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockVideoCapture(),
       newImageAnalysis: ({
         int? targetRotation,
         ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockImageAnalysis,
       newResolutionStrategy: ({
         required CameraSize boundSize,
         required ResolutionStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockResolutionStrategy(),
@@ -1807,26 +1965,34 @@ void main() {
         AspectRatioStrategy? aspectRatioStrategy,
         ResolutionStrategy? resolutionStrategy,
         ResolutionFilter? resolutionFilter,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockResolutionSelector(),
       lowerQualityOrHigherThanFallbackStrategy: ({
         required VideoQuality quality,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockFallbackStrategy(),
       fromQualitySelector: ({
         required VideoQuality quality,
         FallbackStrategy? fallbackStrategy,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockQualitySelector(),
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -1841,7 +2007,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockSystemServicesManager(),
@@ -1850,7 +2018,9 @@ void main() {
           DeviceOrientationManager,
           String,
         ) onDeviceOrientationChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDeviceOrientationManager manager =
@@ -1863,19 +2033,25 @@ void main() {
       newAspectRatioStrategy: ({
         required AspectRatio preferredAspectRatio,
         required AspectRatioStrategyFallbackRule fallbackRule,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockAspectRatioStrategy(),
       createWithOnePreferredSizeResolutionFilter: ({
         required CameraSize preferredSize,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockResolutionFilter(),
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockCamera2CameraInfo mockCamera2CameraInfo =
@@ -1888,7 +2064,9 @@ void main() {
       newCameraSize: ({
         required int width,
         required int height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockCameraSize(),
@@ -2010,7 +2188,9 @@ void main() {
         SystemServicesManager,
         String,
       ) onCameraError,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
       final MockSystemServicesManager mockSystemServicesManager =
@@ -2048,7 +2228,9 @@ void main() {
         DeviceOrientationManager,
         String,
       ) onDeviceOrientationChanged,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
       final MockDeviceOrientationManager mockDeviceOrientationManager =
@@ -2155,7 +2337,9 @@ void main() {
     camera.proxy = CameraXProxy(
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -2255,7 +2439,9 @@ void main() {
       camera.proxy = CameraXProxy(
         newObserver: <T>({
           required void Function(Observer<T>, T) onChanged,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return Observer<T>.detached(
@@ -2267,7 +2453,9 @@ void main() {
         },
         fromCamera2CameraInfo: ({
           required CameraInfo cameraInfo,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) =>
             mockCamera2CameraInfo,
@@ -2276,7 +2464,9 @@ void main() {
             SystemServicesManager,
             String,
           ) onCameraError,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final MockSystemServicesManager mockSystemServicesManager =
@@ -2291,7 +2481,9 @@ void main() {
             VideoRecordEventListener,
             VideoRecordEvent,
           ) onEvent,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return VideoRecordEventListener.pigeon_detached(
@@ -2387,7 +2579,9 @@ void main() {
       camera.proxy = CameraXProxy(
         newObserver: <T>({
           required void Function(Observer<T>, T) onChanged,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return Observer<T>.detached(
@@ -2399,7 +2593,9 @@ void main() {
         },
         fromCamera2CameraInfo: ({
           required CameraInfo cameraInfo,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) =>
             mockCamera2CameraInfo,
@@ -2408,7 +2604,9 @@ void main() {
             SystemServicesManager,
             String,
           ) onCameraError,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final MockSystemServicesManager mockSystemServicesManager =
@@ -2423,7 +2621,9 @@ void main() {
             VideoRecordEventListener,
             VideoRecordEvent,
           ) onEvent,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return VideoRecordEventListener.pigeon_detached(
@@ -2519,7 +2719,9 @@ void main() {
       camera.proxy = CameraXProxy(
         newObserver: <T>({
           required void Function(Observer<T>, T) onChanged,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return Observer<T>.detached(
@@ -2531,7 +2733,9 @@ void main() {
         },
         fromCamera2CameraInfo: ({
           required CameraInfo cameraInfo,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) =>
             mockCamera2CameraInfo,
@@ -2540,7 +2744,9 @@ void main() {
             SystemServicesManager,
             String,
           ) onCameraError,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final MockSystemServicesManager mockSystemServicesManager =
@@ -2555,7 +2761,9 @@ void main() {
             VideoRecordEventListener,
             VideoRecordEvent,
           ) onEvent,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return VideoRecordEventListener.pigeon_detached(
@@ -2573,7 +2781,9 @@ void main() {
             Analyzer,
             ImageProxy,
           ) analyze,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return MockAnalyzer();
@@ -2648,7 +2858,9 @@ void main() {
       camera.proxy = CameraXProxy(
         newObserver: <T>({
           required void Function(Observer<T>, T) onChanged,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return Observer<T>.detached(
@@ -2660,7 +2872,9 @@ void main() {
         },
         fromCamera2CameraInfo: ({
           required CameraInfo cameraInfo,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) =>
             cameraInfo == initialCameraInfo
@@ -2671,7 +2885,9 @@ void main() {
             SystemServicesManager,
             String,
           ) onCameraError,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final MockSystemServicesManager mockSystemServicesManager =
@@ -2686,7 +2902,9 @@ void main() {
             DeviceOrientationManager,
             String,
           ) onDeviceOrientationChanged,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final MockDeviceOrientationManager mockDeviceOrientationManager =
@@ -2702,7 +2920,9 @@ void main() {
             VideoRecordEventListener,
             VideoRecordEvent,
           ) onEvent,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return VideoRecordEventListener.pigeon_detached(
@@ -3019,7 +3239,9 @@ void main() {
     camera.proxy = CameraXProxy(
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -3069,7 +3291,9 @@ void main() {
           DeviceOrientationManager,
           String,
         ) onDeviceOrientationChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDeviceOrientationManager mockDeviceOrientationManager =
@@ -3406,7 +3630,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Analyzer.pigeon_detached(
@@ -3462,7 +3688,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Analyzer.pigeon_detached(
@@ -3535,7 +3763,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Analyzer.pigeon_detached(
@@ -3547,7 +3777,9 @@ void main() {
       },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -3638,7 +3870,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockAnalyzer(),
@@ -3678,7 +3912,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockAnalyzer(),
@@ -3687,7 +3923,9 @@ void main() {
           DeviceOrientationManager,
           String,
         ) onDeviceOrientationChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDeviceOrientationManager manager =
@@ -3821,7 +4059,9 @@ void main() {
     camera.proxy = CameraXProxy(
       fromCamera2CameraControl: ({
         required CameraControl cameraControl,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           cameraControl == mockCameraControl
@@ -3831,7 +4071,9 @@ void main() {
                 ),
       newCaptureRequestOptions: ({
         required Map<CaptureRequestKey, Object?> options,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           CaptureRequestOptions.pigeon_detached(
@@ -3897,7 +4139,9 @@ void main() {
         getProxyForExposureAndFocus(withModeFocusMeteringActionBuilder: ({
       required MeteringMode mode,
       required MeteringPoint point,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
       actionBuilderMeteringMode = mode;
@@ -4013,7 +4257,9 @@ void main() {
         required CameraInfo cameraInfo,
         required double width,
         required double height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDisplayOrientedMeteringPointFactory mockFactory =
@@ -4027,7 +4273,9 @@ void main() {
       withModeFocusMeteringActionBuilder: ({
         required MeteringMode mode,
         required MeteringPoint point,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         actionBuilderMeteringMode = mode;
@@ -4136,7 +4384,9 @@ void main() {
         required CameraInfo cameraInfo,
         required double width,
         required double height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDisplayOrientedMeteringPointFactory mockFactory =
@@ -4150,7 +4400,9 @@ void main() {
       withModeFocusMeteringActionBuilder: ({
         required MeteringMode mode,
         required MeteringPoint point,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         actionBuilderMeteringMode = mode;
@@ -4380,7 +4632,9 @@ void main() {
         getProxyForExposureAndFocus(withModeFocusMeteringActionBuilder: ({
       required MeteringMode mode,
       required MeteringPoint point,
+      // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
       actionBuilderMeteringMode = mode;
@@ -4496,7 +4750,9 @@ void main() {
         required CameraInfo cameraInfo,
         required double width,
         required double height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDisplayOrientedMeteringPointFactory mockFactory =
@@ -4509,7 +4765,9 @@ void main() {
       withModeFocusMeteringActionBuilder: ({
         required MeteringMode mode,
         required MeteringPoint point,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         actionBuilderMeteringMode = mode;
@@ -4616,7 +4874,9 @@ void main() {
         required CameraInfo cameraInfo,
         required double width,
         required double height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDisplayOrientedMeteringPointFactory mockFactory =
@@ -4629,7 +4889,9 @@ void main() {
       withModeFocusMeteringActionBuilder: ({
         required MeteringMode mode,
         required MeteringPoint point,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         actionBuilderMeteringMode = mode;
@@ -4761,7 +5023,9 @@ void main() {
         required CameraInfo cameraInfo,
         required double width,
         required double height,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockDisplayOrientedMeteringPointFactory mockFactory =
@@ -5360,13 +5624,17 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           MockAnalyzer(),
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -5424,7 +5692,9 @@ void main() {
     camera.proxy = CameraXProxy(
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -5436,7 +5706,9 @@ void main() {
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockCamera2CameraInfo,
@@ -5445,7 +5717,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockSystemServicesManager mockSystemServicesManager =
@@ -5460,7 +5734,9 @@ void main() {
           VideoRecordEventListener,
           VideoRecordEvent,
         ) onEvent,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return VideoRecordEventListener.pigeon_detached(
@@ -5539,7 +5815,9 @@ void main() {
     camera.proxy = CameraXProxy(
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -5551,7 +5829,9 @@ void main() {
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockCamera2CameraInfo,
@@ -5560,7 +5840,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockSystemServicesManager mockSystemServicesManager =
@@ -5575,7 +5857,9 @@ void main() {
           VideoRecordEventListener,
           VideoRecordEvent,
         ) onEvent,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return VideoRecordEventListener.pigeon_detached(
@@ -5654,7 +5938,9 @@ void main() {
     camera.proxy = CameraXProxy(
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -5666,7 +5952,9 @@ void main() {
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockCamera2CameraInfo,
@@ -5675,7 +5963,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockSystemServicesManager mockSystemServicesManager =
@@ -5690,7 +5980,9 @@ void main() {
           VideoRecordEventListener,
           VideoRecordEvent,
         ) onEvent,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return VideoRecordEventListener.pigeon_detached(
@@ -5773,7 +6065,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Analyzer.pigeon_detached(
@@ -5785,7 +6079,9 @@ void main() {
       },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -5797,7 +6093,9 @@ void main() {
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockCamera2CameraInfo,
@@ -5806,7 +6104,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockSystemServicesManager mockSystemServicesManager =
@@ -5821,7 +6121,9 @@ void main() {
           VideoRecordEventListener,
           VideoRecordEvent,
         ) onEvent,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return VideoRecordEventListener.pigeon_detached(
@@ -5907,7 +6209,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Analyzer.pigeon_detached(
@@ -5919,7 +6223,9 @@ void main() {
       },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -5931,7 +6237,9 @@ void main() {
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockCamera2CameraInfo,
@@ -5940,7 +6248,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockSystemServicesManager mockSystemServicesManager =
@@ -5955,7 +6265,9 @@ void main() {
           VideoRecordEventListener,
           VideoRecordEvent,
         ) onEvent,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return VideoRecordEventListener.pigeon_detached(
@@ -6038,7 +6350,9 @@ void main() {
           Analyzer,
           ImageProxy,
         ) analyze,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Analyzer.pigeon_detached(
@@ -6050,7 +6364,9 @@ void main() {
       },
       newObserver: <T>({
         required void Function(Observer<T>, T) onChanged,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return Observer<T>.detached(
@@ -6062,7 +6378,9 @@ void main() {
       },
       fromCamera2CameraInfo: ({
         required CameraInfo cameraInfo,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) =>
           mockCamera2CameraInfo,
@@ -6071,7 +6389,9 @@ void main() {
           SystemServicesManager,
           String,
         ) onCameraError,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         final MockSystemServicesManager mockSystemServicesManager =
@@ -6086,7 +6406,9 @@ void main() {
           VideoRecordEventListener,
           VideoRecordEvent,
         ) onEvent,
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
       }) {
         return VideoRecordEventListener.pigeon_detached(

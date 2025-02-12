@@ -74,11 +74,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  /// Handles access to system resources.
   late final SystemServicesManager systemServicesManager = proxy
       .newSystemServicesManager(onCameraError: (_, String errorDescription) {
     cameraErrorStreamController.add(errorDescription);
   });
 
+  /// Handles retrieving media orientation for a device.
   late final DeviceOrientationManager deviceOrientationManager =
       proxy.newDeviceOrientationManager(
     onDeviceOrientationChanged: (_, String orientation) {
@@ -691,7 +693,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
     final double exposureOffsetStepSize =
-        (await cameraInfo!.exposureState).exposureCompensationStep;
+        cameraInfo!.exposureState.exposureCompensationStep;
     if (exposureOffsetStepSize == 0) {
       throw CameraException(exposureCompensationNotSupported,
           'Exposure compensation not supported');
