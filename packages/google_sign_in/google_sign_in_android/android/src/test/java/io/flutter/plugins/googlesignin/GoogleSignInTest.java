@@ -291,11 +291,13 @@ public class GoogleSignInTest {
   public void init_PassesForceAccountName() {
     String fakeAccountName = "fakeEmailAddress@google.com";
 
-    try(MockedConstruction<Account> mocked = Mockito.mockConstruction(Account.class, (mock, context) -> {
-      when(mock.toString()).thenReturn(fakeAccountName);
-    })) {
-      InitParams params =
-        buildInitParams("fakeClientId", "fakeServerClientId2", fakeAccountName);
+    try (MockedConstruction<Account> mocked =
+        Mockito.mockConstruction(
+            Account.class,
+            (mock, context) -> {
+              when(mock.toString()).thenReturn(fakeAccountName);
+            })) {
+      InitParams params = buildInitParams("fakeClientId", "fakeServerClientId2", fakeAccountName);
 
       initAndAssertForceAccountName(params, fakeAccountName);
 
