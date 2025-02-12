@@ -1,3 +1,7 @@
+## 2.8.0
+
+- Adds support for passing `preload` parameter to `StatefulShellBranchData`.
+
 ## 2.7.5
 
 - Fixes trailing `?` in the location when a go route has an empty default value.

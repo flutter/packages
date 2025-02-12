@@ -6,9 +6,11 @@ import 'package:collection/collection.dart' show ListEquality;
 import 'package:meta/meta.dart';
 
 import 'generator_tools.dart';
-import 'kotlin/kotlin_generator.dart' show KotlinProxyApiOptions;
+import 'kotlin/kotlin_generator.dart'
+    show KotlinEventChannelOptions, KotlinProxyApiOptions;
 import 'pigeon_lib.dart';
-import 'swift/swift_generator.dart' show SwiftProxyApiOptions;
+import 'swift/swift_generator.dart'
+    show SwiftEventChannelOptions, SwiftProxyApiOptions;
 
 typedef _ListEquals = bool Function(List<Object?>, List<Object?>);
 
@@ -347,8 +349,16 @@ class AstEventChannelApi extends Api {
   AstEventChannelApi({
     required super.name,
     required super.methods,
+    this.kotlinOptions,
+    this.swiftOptions,
     super.documentationComments = const <String>[],
   });
+
+  /// Options for Kotlin generated code for Event Channels.
+  final KotlinEventChannelOptions? kotlinOptions;
+
+  /// Options for Swift generated code for Event Channels.
+  final SwiftEventChannelOptions? swiftOptions;
 
   @override
   String toString() {
