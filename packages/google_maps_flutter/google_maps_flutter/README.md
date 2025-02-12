@@ -133,9 +133,10 @@ required in order to use Advanced Markers:
 body: GoogleMap(
   // Set your Map ID.
   mapId: 'my-map-id',
-
   // Enable support for Advanced Markers.
   markerType: GoogleMapMarkerType.advancedMarker,
+  initialCameraPosition: _kGooglePlex,
+),
 ```
 
 ### Sample Usage
