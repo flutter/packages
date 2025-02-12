@@ -733,7 +733,7 @@
   NSUInteger advancedMarkerFlag =
       self.controller.mapView.mapCapabilities & GMSMapCapabilityFlagsAdvancedMarkers;
   BOOL boolValue = advancedMarkerFlag != 0;
-  return [NSNumber numberWithBool:boolValue];
+  return [NSNumber numberWithBool:(advancedMarkerFlag != 0)];
 }
 
 @end
