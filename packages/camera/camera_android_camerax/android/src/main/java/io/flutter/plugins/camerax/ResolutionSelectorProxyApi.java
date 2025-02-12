@@ -24,9 +24,10 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
   @NonNull
   @Override
   public ResolutionSelector pigeon_defaultConstructor(
-      @Nullable AspectRatioStrategy aspectRatioStrategy,
-      @Nullable ResolutionStrategy resolutionStrategy,
-      @Nullable ResolutionFilter resolutionFilter) {
+          @Nullable ResolutionFilter resolutionFilter,
+          @Nullable ResolutionStrategy resolutionStrategy,
+      @Nullable AspectRatioStrategy aspectRatioStrategy
+      ) {
     final ResolutionSelector.Builder builder = new ResolutionSelector.Builder();
     if (aspectRatioStrategy != null) {
       builder.setAspectRatioStrategy(aspectRatioStrategy);
@@ -38,5 +39,23 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
       builder.setResolutionFilter(resolutionFilter);
     }
     return builder.build();
+  }
+
+  @Nullable
+  @Override
+  public ResolutionFilter resolutionFilter(@NonNull ResolutionSelector pigeon_instance) {
+    return pigeon_instance.getResolutionFilter();
+  }
+
+  @Nullable
+  @Override
+  public ResolutionStrategy resolutionStrategy(@NonNull ResolutionSelector pigeon_instance) {
+    return pigeon_instance.getResolutionStrategy();
+  }
+
+  @NonNull
+  @Override
+  public AspectRatioStrategy getAspectRatioStrategy(@NonNull ResolutionSelector pigeon_instance) {
+    return pigeon_instance.getAspectRatioStrategy();
   }
 }

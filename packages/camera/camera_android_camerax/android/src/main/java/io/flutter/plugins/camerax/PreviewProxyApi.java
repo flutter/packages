@@ -37,7 +37,7 @@ class PreviewProxyApi extends PigeonApiPreview {
   @NonNull
   @Override
   public Preview pigeon_defaultConstructor(
-      @Nullable Long targetRotation, @Nullable ResolutionSelector resolutionSelector) {
+          @Nullable ResolutionSelector resolutionSelector, @Nullable Long targetRotation) {
     final Preview.Builder builder = new Preview.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
@@ -145,5 +145,11 @@ class PreviewProxyApi extends PigeonApiPreview {
       return resultCode + ": Provided surface could not be used by the camera.";
     }
     return resultCode + ": Attempt to provide a surface resulted with unrecognizable code.";
+  }
+
+  @Nullable
+  @Override
+  public ResolutionSelector resolutionSelector(@NonNull Preview pigeon_instance) {
+    return pigeon_instance.getResolutionSelector();
   }
 }

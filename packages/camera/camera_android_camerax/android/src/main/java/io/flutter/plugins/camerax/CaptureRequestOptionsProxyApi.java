@@ -8,6 +8,8 @@ import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
 import androidx.camera.camera2.interop.CaptureRequestOptions;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
+
+import java.util.Collections;
 import java.util.Map;
 
 /**

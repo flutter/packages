@@ -86,6 +86,9 @@ enum AspectRatio {
 
   /// The aspect ratio representing no preference for aspect ratio.
   ratioDefault,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The states the camera can be in.
@@ -614,6 +617,9 @@ enum ResolutionStrategyFallbackRule {
   /// CameraX doesn't select an alternate size when the specified bound size is
   /// unavailable.
   none,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The resolution strategy defines the resolution selection sequence to select
@@ -680,6 +686,9 @@ enum AspectRatioStrategyFallbackRule {
   /// CameraX doesn't fall back to select sizes of any other aspect ratio when
   /// this fallback rule is used.
   none,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The aspect ratio strategy defines the sequence of aspect ratios that are

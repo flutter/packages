@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
+import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
 import androidx.core.content.ContextCompat;
 import java.io.File;
@@ -84,5 +85,11 @@ class RecorderProxyApi extends PigeonApiRecorder {
     } catch (NullPointerException | SecurityException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @NonNull
+  @Override
+  public QualitySelector getQualitySelector(@NonNull Recorder pigeon_instance) {
+    return pigeon_instance.getQualitySelector();
   }
 }

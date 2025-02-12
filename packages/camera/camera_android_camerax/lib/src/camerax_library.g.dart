@@ -833,6 +833,8 @@ enum AspectRatio {
   ratio4To3,
   /// The aspect ratio representing no preference for aspect ratio.
   ratioDefault,
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The states the camera can be in.
@@ -965,6 +967,8 @@ enum AspectRatioStrategyFallbackRule {
   /// CameraX doesn't fall back to select sizes of any other aspect ratio when
   /// this fallback rule is used.
   none,
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// Code for a `CameraState` error.

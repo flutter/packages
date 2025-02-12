@@ -50,7 +50,7 @@ class CameraXError (
   val code: String,
   override val message: String? = null,
   val details: Any? = null
-) : Throwable()
+) : RuntimeException()
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
  *
@@ -997,7 +997,9 @@ enum class AspectRatio(val raw: Int) {
   /** 4:3 standard aspect ratio. */
   RATIO4TO3(1),
   /** The aspect ratio representing no preference for aspect ratio. */
-  RATIO_DEFAULT(2);
+  RATIO_DEFAULT(2),
+  /** The value is not recognized by the wrapper. */
+  UNKNOWN(3);
 
   companion object {
     fun ofRaw(raw: Int): AspectRatio? {
@@ -1223,7 +1225,9 @@ enum class AspectRatioStrategyFallbackRule(val raw: Int) {
    * CameraX doesn't fall back to select sizes of any other aspect ratio when
    * this fallback rule is used.
    */
-  NONE(1);
+  NONE(1),
+  /** The value is not recognized by the wrapper. */
+  UNKNOWN(2);
 
   companion object {
     fun ofRaw(raw: Int): AspectRatioStrategyFallbackRule? {

@@ -19,6 +19,19 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   private long clearFinalizedWeakReferencesIntervalDefaultValue;
   static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS = 1000;
 
+  @NonNull
+  @Override
+  public ImageAnalysis pigeon_defaultConstructor(@Nullable ResolutionSelector resolutionSelector, @Nullable Long targetRotation) {
+    final ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
+    if (resolutionSelector != null) {
+      builder.setResolutionSelector(resolutionSelector);
+    }
+    if (targetRotation != null) {
+      builder.setTargetRotation(targetRotation.intValue());
+    }
+    return builder.build();
+  }
+
   ImageAnalysisProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
@@ -27,20 +40,6 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   @Override
   public ProxyApiRegistrar getPigeonRegistrar() {
     return (ProxyApiRegistrar) super.getPigeonRegistrar();
-  }
-
-  @NonNull
-  @Override
-  public ImageAnalysis pigeon_defaultConstructor(
-      @Nullable Long targetRotation, @Nullable ResolutionSelector resolutionSelector) {
-    final ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
-    if (targetRotation != null) {
-      builder.setTargetRotation(targetRotation.intValue());
-    }
-    if (resolutionSelector != null) {
-      builder.setResolutionSelector(resolutionSelector);
-    }
-    return builder.build();
   }
 
   @Override
@@ -67,5 +66,11 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   @Override
   public void setTargetRotation(ImageAnalysis pigeon_instance, long rotation) {
     pigeon_instance.setTargetRotation((int) rotation);
+  }
+
+  @Nullable
+  @Override
+  public ResolutionSelector resolutionSelector(@NonNull ImageAnalysis pigeon_instance) {
+    return pigeon_instance.getResolutionSelector();
   }
 }

@@ -42,7 +42,10 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
   public Object getCameraCharacteristic(
       Camera2CameraInfo pigeon_instance, @NonNull CameraCharacteristics.Key<?> key) {
     final Object result = pigeon_instance.getCameraCharacteristic(key);
-    // TODO: need better solution
+    if (result == null) {
+      return null;
+    }
+
     if (key == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) {
       switch((Integer) result) {
         case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_3:
