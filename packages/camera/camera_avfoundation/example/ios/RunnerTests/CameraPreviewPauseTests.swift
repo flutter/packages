@@ -8,19 +8,15 @@ import XCTest
 @testable import camera_avfoundation
 
 final class CameraPreviewPauseTests: XCTestCase {
-  private var camera: FLTCam!
-
-  override func setUp() {
-    camera = FLTCam()
-  }
-
   func testPausePreviewWithResult_shouldPausePreview() {
+    let camera = FLTCam()
     camera.pausePreview()
 
     XCTAssertTrue(camera.isPreviewPaused)
   }
 
   func testResumePreviewWithResult_shouldResumePreview() {
+    let camera = FLTCam()
     camera.resumePreview()
 
     XCTAssertFalse(camera.isPreviewPaused)
