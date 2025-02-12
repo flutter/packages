@@ -5407,9 +5407,6 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
@@ -5423,22 +5420,68 @@ void main() {
     camera.captureOrientationLocked = true;
 
     // Tell plugin to create detached Observer when camera info updated.
+    const String outputPath = '/temp/REC123.temp';
     camera.proxy = CameraXProxy(
-      createCameraStateObserver: (void Function(Object) onChanged) =>
-          Observer<CameraState>.detached(onChanged: onChanged),
-      getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-          Future<Camera2CameraInfo>.value(mockCamera2CameraInfo),
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      fromCamera2CameraInfo: ({
+        required CameraInfo cameraInfo,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          mockCamera2CameraInfo,
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockSystemServicesManager mockSystemServicesManager =
+            MockSystemServicesManager();
+        when(mockSystemServicesManager.getTempFilePath(
+                camera.videoPrefix, '.temp'))
+            .thenAnswer((_) async => outputPath);
+        return mockSystemServicesManager;
+      },
+      newVideoRecordEventListener: ({
+        required void Function(
+          VideoRecordEventListener,
+          VideoRecordEvent,
+        ) onEvent,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return VideoRecordEventListener.pigeon_detached(
+          onEvent: onEvent,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      infoSupportedHardwareLevelCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
     );
 
     const int cameraId = 7;
-    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-        .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
-    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(mockPendingRecording.start(any))
+        .thenAnswer((_) async => mockRecording);
     when(camera.processCameraProvider!.isBound(camera.videoCapture!))
         .thenAnswer((_) async => false);
     when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
@@ -5450,19 +5493,25 @@ void main() {
         .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    when(mockCamera2CameraInfo.getSupportedHardwareLevel())
-        .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevelFull);
+    when(mockCamera2CameraInfo.getCameraCharacteristic(any)).thenAnswer(
+      (_) async => InfoSupportedHardwareLevel.full,
+    );
 
     // Simulate video recording being started so startVideoRecording completes.
-    PendingRecording.videoRecordingEventStreamController
-        .add(VideoRecordEvent.start);
+    AndroidCameraCameraX.videoRecordingEventStreamController.add(
+      VideoRecordEventStart.pigeon_detached(
+        pigeon_instanceManager: PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      ),
+    );
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
     verify(
         camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
   });
-/*
+
   test(
       'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback not specified, camera device is level 3, and preview is not paused',
       () async {
@@ -5473,9 +5522,6 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
@@ -5489,21 +5535,68 @@ void main() {
     camera.captureOrientationLocked = true;
 
     // Tell plugin to create detached Observer when camera info updated.
+    const String outputPath = '/temp/REC123.temp';
     camera.proxy = CameraXProxy(
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged),
-        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      fromCamera2CameraInfo: ({
+        required CameraInfo cameraInfo,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          mockCamera2CameraInfo,
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockSystemServicesManager mockSystemServicesManager =
+            MockSystemServicesManager();
+        when(mockSystemServicesManager.getTempFilePath(
+                camera.videoPrefix, '.temp'))
+            .thenAnswer((_) async => outputPath);
+        return mockSystemServicesManager;
+      },
+      newVideoRecordEventListener: ({
+        required void Function(
+          VideoRecordEventListener,
+          VideoRecordEvent,
+        ) onEvent,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return VideoRecordEventListener.pigeon_detached(
+          onEvent: onEvent,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      infoSupportedHardwareLevelCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
 
     const int cameraId = 77;
-    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-        .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
-    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(mockPendingRecording.start(any))
+        .thenAnswer((_) async => mockRecording);
     when(camera.processCameraProvider!.isBound(camera.videoCapture!))
         .thenAnswer((_) async => false);
     when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
@@ -5515,12 +5608,18 @@ void main() {
         .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    when(mockCamera2CameraInfo.getSupportedHardwareLevel())
-        .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
+    when(mockCamera2CameraInfo.getCameraCharacteristic(any)).thenAnswer(
+      (_) async => InfoSupportedHardwareLevel.level3,
+    );
 
     // Simulate video recording being started so startVideoRecording completes.
-    PendingRecording.videoRecordingEventStreamController
-        .add(VideoRecordEvent.start);
+    AndroidCameraCameraX.videoRecordingEventStreamController.add(
+      VideoRecordEventStart.pigeon_detached(
+        pigeon_instanceManager: PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      ),
+    );
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -5538,9 +5637,6 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
@@ -5554,21 +5650,68 @@ void main() {
     camera.captureOrientationLocked = true;
 
     // Tell plugin to create detached Observer when camera info updated.
+    const String outputPath = '/temp/REC123.temp';
     camera.proxy = CameraXProxy(
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged),
-        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      fromCamera2CameraInfo: ({
+        required CameraInfo cameraInfo,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          mockCamera2CameraInfo,
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockSystemServicesManager mockSystemServicesManager =
+            MockSystemServicesManager();
+        when(mockSystemServicesManager.getTempFilePath(
+                camera.videoPrefix, '.temp'))
+            .thenAnswer((_) async => outputPath);
+        return mockSystemServicesManager;
+      },
+      newVideoRecordEventListener: ({
+        required void Function(
+          VideoRecordEventListener,
+          VideoRecordEvent,
+        ) onEvent,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return VideoRecordEventListener.pigeon_detached(
+          onEvent: onEvent,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      infoSupportedHardwareLevelCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
 
     const int cameraId = 87;
-    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-        .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
-    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(mockPendingRecording.start(any))
+        .thenAnswer((_) async => mockRecording);
     when(camera.processCameraProvider!.isBound(camera.videoCapture!))
         .thenAnswer((_) async => false);
     when(camera.processCameraProvider!.isBound(camera.imageAnalysis!))
@@ -5580,12 +5723,18 @@ void main() {
         .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
-        (_) async => CameraMetadata.infoSupportedHardwareLevelExternal);
+    when(mockCamera2CameraInfo.getCameraCharacteristic(any)).thenAnswer(
+      (_) async => InfoSupportedHardwareLevel.external,
+    );
 
     // Simulate video recording being started so startVideoRecording completes.
-    PendingRecording.videoRecordingEventStreamController
-        .add(VideoRecordEvent.start);
+    AndroidCameraCameraX.videoRecordingEventStreamController.add(
+      VideoRecordEventStart.pigeon_detached(
+        pigeon_instanceManager: PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      ),
+    );
 
     await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
         streamCallback: (CameraImageData image) {}));
@@ -5603,9 +5752,6 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
@@ -5620,24 +5766,83 @@ void main() {
     camera.captureOrientationLocked = true;
 
     // Tell plugin to create detached Observer when camera info updated.
+    const String outputPath = '/temp/REC123.temp';
     camera.proxy = CameraXProxy(
-        createAnalyzer:
-            (Future<void> Function(ImageProxy imageProxy) analyze) =>
-                Analyzer.detached(analyze: analyze),
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged),
-        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Analyzer.pigeon_detached(
+          analyze: analyze,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      fromCamera2CameraInfo: ({
+        required CameraInfo cameraInfo,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          mockCamera2CameraInfo,
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockSystemServicesManager mockSystemServicesManager =
+            MockSystemServicesManager();
+        when(mockSystemServicesManager.getTempFilePath(
+                camera.videoPrefix, '.temp'))
+            .thenAnswer((_) async => outputPath);
+        return mockSystemServicesManager;
+      },
+      newVideoRecordEventListener: ({
+        required void Function(
+          VideoRecordEventListener,
+          VideoRecordEvent,
+        ) onEvent,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return VideoRecordEventListener.pigeon_detached(
+          onEvent: onEvent,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      infoSupportedHardwareLevelCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
 
     const int cameraId = 107;
-    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-        .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
-    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(mockPendingRecording.start(any))
+        .thenAnswer((_) async => mockRecording);
     when(camera.processCameraProvider!.isBound(camera.videoCapture!))
         .thenAnswer((_) async => false);
     when(camera.processCameraProvider!.isBound(camera.imageCapture!))
@@ -5651,12 +5856,18 @@ void main() {
         .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    when(mockCamera2CameraInfo.getSupportedHardwareLevel())
-        .thenAnswer((_) async => CameraMetadata.infoSupportedHardwareLevel3);
+    when(mockCamera2CameraInfo.getCameraCharacteristic(any)).thenAnswer(
+      (_) async => InfoSupportedHardwareLevel.level3,
+    );
 
     // Simulate video recording being started so startVideoRecording completes.
-    PendingRecording.videoRecordingEventStreamController
-        .add(VideoRecordEvent.start);
+    AndroidCameraCameraX.videoRecordingEventStreamController.add(
+      VideoRecordEventStart.pigeon_detached(
+        pigeon_instanceManager: PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      ),
+    );
 
     await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
         streamCallback: (CameraImageData image) {}));
@@ -5674,9 +5885,6 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
@@ -5692,21 +5900,83 @@ void main() {
     camera.captureOrientationLocked = true;
 
     // Tell plugin to create detached Observer when camera info updated.
+    const String outputPath = '/temp/REC123.temp';
     camera.proxy = CameraXProxy(
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged),
-        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Analyzer.pigeon_detached(
+          analyze: analyze,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      fromCamera2CameraInfo: ({
+        required CameraInfo cameraInfo,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          mockCamera2CameraInfo,
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockSystemServicesManager mockSystemServicesManager =
+            MockSystemServicesManager();
+        when(mockSystemServicesManager.getTempFilePath(
+                camera.videoPrefix, '.temp'))
+            .thenAnswer((_) async => outputPath);
+        return mockSystemServicesManager;
+      },
+      newVideoRecordEventListener: ({
+        required void Function(
+          VideoRecordEventListener,
+          VideoRecordEvent,
+        ) onEvent,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return VideoRecordEventListener.pigeon_detached(
+          onEvent: onEvent,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      infoSupportedHardwareLevelCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
 
     const int cameraId = 97;
-    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-        .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
-    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(mockPendingRecording.start(any))
+        .thenAnswer((_) async => mockRecording);
     when(camera.processCameraProvider!.isBound(camera.videoCapture!))
         .thenAnswer((_) async => false);
     when(camera.processCameraProvider!.bindToLifecycle(
@@ -5720,8 +5990,13 @@ void main() {
     await camera.pausePreview(cameraId);
 
     // Simulate video recording being started so startVideoRecording completes.
-    PendingRecording.videoRecordingEventStreamController
-        .add(VideoRecordEvent.start);
+    AndroidCameraCameraX.videoRecordingEventStreamController.add(
+      VideoRecordEventStart.pigeon_detached(
+        pigeon_instanceManager: PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      ),
+    );
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -5741,9 +6016,6 @@ void main() {
     final MockCamera mockCamera = MockCamera();
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCamera2CameraInfo mockCamera2CameraInfo = MockCamera2CameraInfo();
-    final TestSystemServicesHostApi mockSystemServicesApi =
-        MockTestSystemServicesHostApi();
-    TestSystemServicesHostApi.setup(mockSystemServicesApi);
 
     // Set directly for test versus calling createCamera.
     camera.processCameraProvider = MockProcessCameraProvider();
@@ -5759,21 +6031,83 @@ void main() {
     camera.captureOrientationLocked = true;
 
     // Tell plugin to create detached Observer when camera info updated.
+    const String outputPath = '/temp/REC123.temp';
     camera.proxy = CameraXProxy(
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged),
-        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Analyzer.pigeon_detached(
+          analyze: analyze,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      fromCamera2CameraInfo: ({
+        required CameraInfo cameraInfo,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          mockCamera2CameraInfo,
+      newSystemServicesManager: ({
+        required void Function(
+          SystemServicesManager,
+          String,
+        ) onCameraError,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockSystemServicesManager mockSystemServicesManager =
+            MockSystemServicesManager();
+        when(mockSystemServicesManager.getTempFilePath(
+                camera.videoPrefix, '.temp'))
+            .thenAnswer((_) async => outputPath);
+        return mockSystemServicesManager;
+      },
+      newVideoRecordEventListener: ({
+        required void Function(
+          VideoRecordEventListener,
+          VideoRecordEvent,
+        ) onEvent,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return VideoRecordEventListener.pigeon_detached(
+          onEvent: onEvent,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
+      infoSupportedHardwareLevelCameraCharacteristics: () {
+        return MockCameraCharacteristicsKey();
+      },
+    );
 
     const int cameraId = 44;
-    const String outputPath = '/temp/REC123.temp';
 
     // Mock method calls.
-    when(mockSystemServicesApi.getTempFilePath(camera.videoPrefix, '.temp'))
-        .thenReturn(outputPath);
     when(camera.recorder!.prepareRecording(outputPath))
         .thenAnswer((_) async => mockPendingRecording);
-    when(mockPendingRecording.start()).thenAnswer((_) async => mockRecording);
+    when(mockPendingRecording.start(any))
+        .thenAnswer((_) async => mockRecording);
     when(camera.processCameraProvider!.isBound(camera.videoCapture!))
         .thenAnswer((_) async => false);
     when(camera.processCameraProvider!.isBound(camera.imageCapture!))
@@ -5787,12 +6121,18 @@ void main() {
         .thenAnswer((_) => Future<CameraInfo>.value(mockCameraInfo));
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
-    when(mockCamera2CameraInfo.getSupportedHardwareLevel()).thenAnswer(
-        (_) async => CameraMetadata.infoSupportedHardwareLevelLegacy);
+    when(mockCamera2CameraInfo.getCameraCharacteristic(any)).thenAnswer(
+      (_) async => InfoSupportedHardwareLevel.legacy,
+    );
 
     // Simulate video recording being started so startVideoRecording completes.
-    PendingRecording.videoRecordingEventStreamController
-        .add(VideoRecordEvent.start);
+    AndroidCameraCameraX.videoRecordingEventStreamController.add(
+      VideoRecordEventStart.pigeon_detached(
+        pigeon_instanceManager: PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      ),
+    );
 
     await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
 
@@ -5819,159 +6159,7 @@ void main() {
     verifyNoMoreInteractions(camera.videoCapture);
     verifyNoMoreInteractions(camera.camera);
   });
-  */
 }
-
-// MockCameraXProxy createProxyWithMocks() {
-//   final MockCameraXProxy mockProxy = MockCameraXProxy();
-//
-//   when(mockProxy.newAnalyzer).thenReturn(({
-//     required void Function(Analyzer, ImageProxy) analyze,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockAnalyzer();
-//   });
-//   when(mockProxy.newAspectRatioStrategy).thenReturn(({
-//     required AspectRatio preferredAspectRatio,
-//     required AspectRatioStrategyFallbackRule fallbackRule,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockAspectRatioStrategy();
-//   });
-//   when(mockProxy.getInstanceProcessCameraProvider).thenReturn(({
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) async {
-//     return MockProcessCameraProvider();
-//   });
-//   when(mockProxy.newCameraSelector).thenReturn(({
-//     LensFacing? requireLensFacing,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockCameraSelector();
-//   });
-//   when(mockProxy.newPreview).thenReturn(({
-//     int? targetRotation,
-//     ResolutionSelector? resolutionSelector,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockPreview();
-//   });
-//   when(mockProxy.newImageCapture).thenReturn(({
-//     int? targetRotation,
-//     CameraXFlashMode? flashMode,
-//     ResolutionSelector? resolutionSelector,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockImageCapture();
-//   });
-//   when(mockProxy.newRecorder).thenReturn(({
-//     int? aspectRatio,
-//     int? targetVideoEncodingBitRate,
-//     QualitySelector? qualitySelector,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockRecorder();
-//   });
-//   when(mockProxy.withOutputVideoCapture).thenReturn(({
-//     required VideoOutput videoOutput,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockVideoCapture();
-//   });
-//   when(mockProxy.newImageAnalysis).thenReturn(({
-//     int? targetRotation,
-//     ResolutionSelector? resolutionSelector,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockImageAnalysis();
-//   });
-//   when(mockProxy.newResolutionStrategy).thenReturn(({
-//     required CameraSize boundSize,
-//     required ResolutionStrategyFallbackRule fallbackRule,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockResolutionStrategy();
-//   });
-//   when(mockProxy.newResolutionSelector).thenReturn(({
-//     AspectRatioStrategy? aspectRatioStrategy,
-//     ResolutionStrategy? resolutionStrategy,
-//     ResolutionFilter? resolutionFilter,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockResolutionSelector();
-//   });
-//   when(mockProxy.lowerQualityThanFallbackStrategy).thenReturn(({
-//     required VideoQuality quality,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockFallbackStrategy();
-//   });
-//   when(mockProxy.fromQualitySelector).thenReturn(({
-//     required VideoQuality quality,
-//     FallbackStrategy? fallbackStrategy,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockQualitySelector();
-//   });
-//   when(mockProxy.newObserver).thenReturn(Observer.detached);
-//   when(mockProxy.createWithOnePreferredSizeResolutionFilter).thenReturn(({
-//     required CameraSize preferredSize,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockResolutionFilter();
-//   });
-//   when(mockProxy.fromCamera2CameraInfo).thenReturn(({
-//     required CameraInfo cameraInfo,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockCamera2CameraInfo();
-//   });
-//   when(mockProxy.newDeviceOrientationManager).thenReturn(({
-//     required void Function(
-//       DeviceOrientationManager,
-//       String,
-//     ) onDeviceOrientationChanged,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockDeviceOrientationManager();
-//   });
-//   when(mockProxy.newSystemServicesManager).thenReturn(({
-//     required void Function(
-//       SystemServicesManager,
-//       String,
-//     ) onCameraError,
-//     BinaryMessenger? pigeon_binaryMessenger,
-//     PigeonInstanceManager? pigeon_instanceManager,
-//   }) {
-//     return MockSystemServicesManager();
-//   });
-//
-//   // return CameraXProxy(
-//   //   startListeningForDeviceOrientationChange: (_, __) {
-//   //     startedListeningForDeviceOrientationChanges = true;
-//   //   },
-//   //   getUiOrientation: () =>
-//   //       Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
-//   // );
-//
-//   return mockProxy;
-// }
 
 class TestMeteringPoint extends MeteringPoint {
   TestMeteringPoint.detached({required this.x, required this.y, this.size})
