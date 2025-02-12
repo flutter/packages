@@ -232,6 +232,8 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
   @override
   Widget build(BuildContext context) {
     final MarkerId? selectedId = selectedMarker;
+    final Cluster? lastCluster = this.lastCluster;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
@@ -301,9 +303,11 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
           ),
           if (lastCluster != null)
             Padding(
-                padding: const EdgeInsets.all(10),
-                child: Text(
-                    'Cluster with ${lastCluster!.count} markers clicked at ${lastCluster!.position}')),
+              padding: const EdgeInsets.all(10),
+              child: Text(
+                'Cluster with ${lastCluster.count} markers clicked at ${lastCluster.position}',
+              ),
+            ),
         ]),
       ],
     );
