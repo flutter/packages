@@ -12,7 +12,7 @@ import 'package:flutter/services.dart'
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
-import 'camerax_proxy2.dart';
+import 'camerax_proxy.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {

@@ -7,8 +7,8 @@ import 'dart:async' as _i5;
 import 'dart:typed_data' as _i9;
 
 import 'package:camera_android_camerax/src/camerax_library.dart' as _i3;
-import 'package:camera_android_camerax/src/camerax_library2.g.dart' as _i2;
-import 'package:camera_android_camerax/src/camerax_proxy2.dart' as _i7;
+import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i2;
+import 'package:camera_android_camerax/src/camerax_proxy.dart' as _i7;
 import 'package:camera_platform_interface/camera_platform_interface.dart'
     as _i4;
 import 'package:flutter/services.dart' as _i8;
@@ -2102,6 +2102,22 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
       }));
 
   @override
+  set withModeFocusMeteringActionBuilder(
+          _i2.FocusMeteringActionBuilder Function({
+            required _i2.MeteringMode mode,
+            required _i2.MeteringPoint point,
+            _i8.BinaryMessenger? pigeon_binaryMessenger,
+            _i2.PigeonInstanceManager? pigeon_instanceManager,
+          })? _withModeFocusMeteringActionBuilder) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #withModeFocusMeteringActionBuilder,
+          _withModeFocusMeteringActionBuilder,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i2.CaptureRequestOptions Function({
     required Map<_i2.CaptureRequestKey, Object?> options,
     _i8.BinaryMessenger? pigeon_binaryMessenger,
@@ -2133,6 +2149,21 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
       }));
 
   @override
+  set newCaptureRequestOptions(
+          _i2.CaptureRequestOptions Function({
+            required Map<_i2.CaptureRequestKey, Object?> options,
+            _i8.BinaryMessenger? pigeon_binaryMessenger,
+            _i2.PigeonInstanceManager? pigeon_instanceManager,
+          })? _newCaptureRequestOptions) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #newCaptureRequestOptions,
+          _newCaptureRequestOptions,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
   _i2.Camera2CameraControl Function({
     required _i2.CameraControl cameraControl,
     _i8.BinaryMessenger? pigeon_binaryMessenger,
@@ -2162,6 +2193,21 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
         _i8.BinaryMessenger? pigeon_binaryMessenger,
         _i2.PigeonInstanceManager? pigeon_instanceManager,
       }));
+
+  @override
+  set fromCamera2CameraControl(
+          _i2.Camera2CameraControl Function({
+            required _i2.CameraControl cameraControl,
+            _i8.BinaryMessenger? pigeon_binaryMessenger,
+            _i2.PigeonInstanceManager? pigeon_instanceManager,
+          })? _fromCamera2CameraControl) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #fromCamera2CameraControl,
+          _fromCamera2CameraControl,
+        ),
+        returnValueForMissingStub: null,
+      );
 
   @override
   _i2.ResolutionFilter Function({
@@ -2263,6 +2309,23 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
         _i8.BinaryMessenger? pigeon_binaryMessenger,
         _i2.PigeonInstanceManager? pigeon_instanceManager,
       }));
+
+  @override
+  set newDisplayOrientedMeteringPointFactory(
+          _i2.DisplayOrientedMeteringPointFactory Function({
+            required _i3.CameraInfo cameraInfo,
+            required double height,
+            required double width,
+            _i8.BinaryMessenger? pigeon_binaryMessenger,
+            _i2.PigeonInstanceManager? pigeon_instanceManager,
+          })? _newDisplayOrientedMeteringPointFactory) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #newDisplayOrientedMeteringPointFactory,
+          _newDisplayOrientedMeteringPointFactory,
+        ),
+        returnValueForMissingStub: null,
+      );
 
   @override
   _i5.Future<_i2.ProcessCameraProvider> Function({
@@ -2407,6 +2470,17 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
           Invocation.getter(#controlAELockCaptureRequest),
         ),
       ) as _i2.CaptureRequestKey Function());
+
+  @override
+  set controlAELockCaptureRequest(
+          _i2.CaptureRequestKey Function()? _controlAELockCaptureRequest) =>
+      super.noSuchMethod(
+        Invocation.setter(
+          #controlAELockCaptureRequest,
+          _controlAELockCaptureRequest,
+        ),
+        returnValueForMissingStub: null,
+      );
 
   @override
   _i2.CameraCharacteristicsKey

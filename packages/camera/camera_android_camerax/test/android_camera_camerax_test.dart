@@ -8,7 +8,7 @@ import 'dart:math' show Point;
 import 'package:async/async.dart';
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/camerax_library.dart';
-import 'package:camera_android_camerax/src/camerax_proxy2.dart';
+import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show BinaryMessenger, DeviceOrientation, PlatformException, Uint8List;

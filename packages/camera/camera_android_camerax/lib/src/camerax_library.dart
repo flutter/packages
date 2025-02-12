@@ -5,9 +5,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'camerax_library2.g.dart' as camerax;
+import 'camerax_library.g.dart' as camerax;
 
-export 'camerax_library2.g.dart' hide CameraInfo, LiveData, Observer;
+export 'camerax_library.g.dart' hide CameraInfo, LiveData, Observer;
 
 /// Handles adding support for generics to the API wrapper.
 ///

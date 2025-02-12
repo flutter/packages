@@ -9,7 +9,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     copyrightHeader: 'pigeons/copyright.txt',
-    dartOut: 'lib/src/camerax_library2.g.dart',
+    dartOut: 'lib/src/camerax_library.g.dart',
     kotlinOut:
         'android/src/main/java/io/flutter/plugins/camerax/CameraXLibrary.g.kt',
     kotlinOptions: KotlinOptions(
