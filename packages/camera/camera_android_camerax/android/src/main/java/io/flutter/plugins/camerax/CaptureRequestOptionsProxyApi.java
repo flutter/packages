@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import android.hardware.camera2.CaptureRequest;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.camera.camera2.interop.CaptureRequestOptions;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 
@@ -43,5 +44,12 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
     }
 
     return builder.build();
+  }
+
+    @ExperimentalCamera2Interop
+    @Nullable
+  @Override
+  public Object getCaptureRequestOption(@NonNull CaptureRequestOptions pigeon_instance, @NonNull CaptureRequest.Key<?> key) {
+    return pigeon_instance.getCaptureRequestOption(key);
   }
 }

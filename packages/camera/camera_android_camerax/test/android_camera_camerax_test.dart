@@ -32,6 +32,7 @@ import 'android_camera_camerax_test.mocks.dart';
   MockSpec<CameraImageData>(),
   MockSpec<CameraSelector>(),
   MockSpec<CameraXProxy>(),
+  MockSpec<CaptureRequestOptions>(),
   MockSpec<DeviceOrientationManager>(),
   MockSpec<DisplayOrientedMeteringPointFactory>(),
   MockSpec<ExposureState>(),
@@ -596,10 +597,14 @@ void main() {
       // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     }) {
-      return CaptureRequestOptions.pigeon_detached(
-        options: options,
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final MockCaptureRequestOptions mockCaptureRequestOptions =
+          MockCaptureRequestOptions();
+      options.forEach((CaptureRequestKey key, Object? value) {
+        when(mockCaptureRequestOptions.getCaptureRequestOption(key)).thenAnswer(
+          (_) async => value,
+        );
+      });
+      return mockCaptureRequestOptions;
     };
     final CaptureRequestKey controlAeLock = CaptureRequestKey.pigeon_detached(
       pigeon_instanceManager: testInstanceManager,
@@ -4075,11 +4080,17 @@ void main() {
         BinaryMessenger? pigeon_binaryMessenger,
         // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
-      }) =>
-          CaptureRequestOptions.pigeon_detached(
-        options: options,
-        pigeon_instanceManager: testInstanceManager,
-      ),
+      }) {
+        final MockCaptureRequestOptions mockCaptureRequestOptions =
+            MockCaptureRequestOptions();
+        options.forEach((CaptureRequestKey key, Object? value) {
+          when(mockCaptureRequestOptions.getCaptureRequestOption(key))
+              .thenAnswer(
+            (_) async => value,
+          );
+        });
+        return mockCaptureRequestOptions;
+      },
       controlAELockCaptureRequest: () => controlAELockKey,
     );
 
@@ -4090,10 +4101,11 @@ void main() {
         verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
     CaptureRequestOptions capturedCaptureRequestOptions =
         verificationResult.captured.single as CaptureRequestOptions;
-    Map<CaptureRequestKey, Object?> requestedOptions =
-        capturedCaptureRequestOptions.options;
-    expect(requestedOptions.length, equals(1));
-    expect(requestedOptions, containsPair(controlAELockKey, false));
+    expect(
+      await capturedCaptureRequestOptions
+          .getCaptureRequestOption(controlAELockKey),
+      isFalse,
+    );
 
     // Test locked mode.
     clearInteractions(mockCamera2CameraControl);
@@ -4103,9 +4115,11 @@ void main() {
         verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
     capturedCaptureRequestOptions =
         verificationResult.captured.single as CaptureRequestOptions;
-    requestedOptions = capturedCaptureRequestOptions.options;
-    expect(requestedOptions.length, equals(1));
-    expect(requestedOptions, containsPair(controlAELockKey, true));
+    expect(
+      await capturedCaptureRequestOptions
+          .getCaptureRequestOption(controlAELockKey),
+      isTrue,
+    );
   });
 
   test(
@@ -5418,8 +5432,9 @@ void main() {
     final CaptureRequestOptions capturedCaptureRequestOptions =
         verificationResult.captured.single as CaptureRequestOptions;
     expect(
-      capturedCaptureRequestOptions.options,
-      containsPair(camera.proxy.controlAELockCaptureRequest(), false),
+      await capturedCaptureRequestOptions
+          .getCaptureRequestOption(camera.proxy.controlAELockCaptureRequest()),
+      isFalse,
     );
   });
 

@@ -1129,10 +1129,11 @@ abstract class CaptureRequestKey {}
   ),
 )
 abstract class CaptureRequestOptions {
-  CaptureRequestOptions();
+  CaptureRequestOptions(Map<CaptureRequestKey, Object?> options);
 
-  /// Capture request option with specific `CaptureRequest.Key` setting.
-  late final Map<CaptureRequestKey, Object?> options;
+  /// Returns a value for the given CaptureRequestKey or null if it hasn't been
+  /// set.
+  Object? getCaptureRequestOption(CaptureRequestKey key);
 }
 
 /// An class that provides ability to interoperate with the
