@@ -1,3 +1,11 @@
+## 24.1.1
+
+* [swift, kotlin] Adds an error message when a ProxyAPI callback method that returns a non-null
+  value is nullable.
+* [swift, kotlin] Adds an error message in the `ProxyApiBaseCodec` when an instance could not be
+  retrieved when reading a value.
+* [swift, kotlin] Fixes ProxyAPI platform APIs not calling completion when creating a new instance.
+
 ## 24.1.0
 
 * [kotlin, swift] Adds annotation options to omit shared classes used in Event Channels.
