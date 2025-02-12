@@ -20,7 +20,6 @@ final class CameraFocusTests: XCTestCase {
     return (camera, mockDevice, mockDeviceOrientationProvider)
   }
 
-
   func testAutoFocusWithContinuousModeSupported_ShouldSetContinuousAutoFocus() {
     let (camera, mockDevice, _) = createSutAndMocks()
     // AVCaptureFocusModeContinuousAutoFocus and AVCaptureFocusModeAutoFocus are supported.

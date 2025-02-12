@@ -8,7 +8,8 @@ import XCTest
 @testable import camera_avfoundation
 
 final class AvailableCamerasTest: XCTestCase {
-  private func createCameraPlugin(with deviceDiscoverer: MockCameraDeviceDiscoverer) -> CameraPlugin {
+  private func createCameraPlugin(with deviceDiscoverer: MockCameraDeviceDiscoverer) -> CameraPlugin
+  {
     return CameraPlugin(
       registry: MockFlutterTextureRegistry(),
       messenger: MockFlutterBinaryMessenger(),
