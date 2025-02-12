@@ -32,6 +32,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.MockedConstruction;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
@@ -286,10 +288,19 @@ public class GoogleSignInTest {
 
   @Test
   public void init_PassesForceAccountName() {
-    InitParams params =
-        buildInitParams("fakeClientId", "fakeServerClientId", "fakeEmailAddress@google.com");
+    String fakeAccountName = "fakeEmailAddress@google.com";
 
-    initAndAssertForceAccountName(params, "fakeEmailAddress@google.com");
+    try(MockedConstruction<Account> mocked = Mockito.mockConstruction(Account.class, (mock, context) -> {
+      when(mock.toString()).thenReturn(fakeAccountName);
+    })) {
+      InitParams params =
+        buildInitParams("fakeClientId", "fakeServerClientId2", fakeAccountName);
+
+      initAndAssertForceAccountName(params, fakeAccountName);
+
+      List<Account> constructed = mocked.constructed();
+      Assert.assertEquals(1, constructed.size());
+    }
   }
 
   public void initAndAssertServerClientId(InitParams params, String serverClientId) {
@@ -318,7 +329,7 @@ public class GoogleSignInTest {
     when(mockGoogleSignIn.getClient(any(Context.class), optionsCaptor.capture()))
         .thenReturn(mockClient);
     plugin.init(params);
-    Assert.assertEquals(forceAccountName, optionsCaptor.getValue().getAccount().name);
+    Assert.assertEquals(forceAccountName, optionsCaptor.getValue().getAccount().toString());
   }
 
   private static InitParams buildInitParams(String clientId, String serverClientId) {
