@@ -23,7 +23,6 @@ final class AvailableCamerasTest: XCTestCase {
   func testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone() {
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
     let cameraPlugin = createCameraPlugin(with: mockDeviceDiscoverer)
-
     let expectation = self.expectation(description: "Result finished")
 
     // iPhone 13 Cameras:
@@ -49,7 +48,6 @@ final class AvailableCamerasTest: XCTestCase {
     if #available(iOS 13.0, *) {
       requiredTypes.append(.builtInUltraWideCamera)
     }
-
     var cameras: [MockCaptureDevice] = [wideAngleCamera, frontFacingCamera, telephotoCamera]
     if #available(iOS 13.0, *) {
       cameras.append(ultraWideCamera)
@@ -81,7 +79,6 @@ final class AvailableCamerasTest: XCTestCase {
   func testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone() {
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
     let cameraPlugin = createCameraPlugin(with: mockDeviceDiscoverer)
-
     let expectation = self.expectation(description: "Result finished")
 
     // iPhone 8 Cameras:
@@ -99,7 +96,6 @@ final class AvailableCamerasTest: XCTestCase {
     if #available(iOS 13.0, *) {
       requiredTypes.append(.builtInUltraWideCamera)
     }
-
     let cameras: [MockCaptureDevice] = [wideAngleCamera, frontFacingCamera]
 
     mockDeviceDiscoverer.discoverySessionStub = { deviceTypes, mediaType, position in

@@ -10,6 +10,7 @@ import XCTest
 final class CameraPreviewPauseTests: XCTestCase {
   func testPausePreviewWithResult_shouldPausePreview() {
     let camera = FLTCam()
+    
     camera.pausePreview()
 
     XCTAssertTrue(camera.isPreviewPaused)
@@ -17,6 +18,7 @@ final class CameraPreviewPauseTests: XCTestCase {
 
   func testResumePreviewWithResult_shouldResumePreview() {
     let camera = FLTCam()
+    
     camera.resumePreview()
 
     XCTAssertFalse(camera.isPreviewPaused)

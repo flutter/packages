@@ -22,7 +22,6 @@ final class CameraExposureTests: XCTestCase {
 
   func testSetExposurePointWithResult_SetsExposurePointOfInterest() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createSutAndMocks()
-
     // UI is currently in landscape left orientation.
     mockDeviceOrientationProvider.orientation = .landscapeLeft
     // Exposure point of interest is supported.
@@ -48,7 +47,6 @@ final class CameraExposureTests: XCTestCase {
 
   func testSetExposurePoint_WhenNotSupported_ReturnsError() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createSutAndMocks()
-
     // UI is currently in landscape left orientation.
     mockDeviceOrientationProvider.orientation = .landscapeLeft
     // Exposure point of interest is not supported.
