@@ -1463,6 +1463,7 @@ class PlatformBitmapBytesMap {
   }
 }
 
+/// Pigeon equivalent of [PinConfig].
 class PlatformBitmapPinConfig {
   PlatformBitmapPinConfig({
     this.backgroundColor,
