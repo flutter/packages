@@ -246,12 +246,12 @@
     GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
     NSNumber *backgroundColor = pinConfig.backgroundColor;
     if (backgroundColor) {
-      options.backgroundColor = [self UIColorFromRGB:[backgroundColor intValue]];
+      options.backgroundColor = FGMGetColorForRGBA([backgroundColor integerValue]);
     }
 
     NSNumber *borderColor = pinConfig.borderColor;
     if (borderColor) {
-      options.borderColor = [self UIColorFromRGB:[borderColor intValue]];
+      options.borderColor = FGMGetColorForRGBA([borderColor integerValue]);
     }
 
     GMSPinImageGlyph *glyph;
@@ -261,11 +261,11 @@
     if (glyphText) {
       NSNumber *glyphTextColorInt = pinConfig.glyphTextColor;
       UIColor *glyphTextColor = glyphTextColorInt
-                                    ? [self UIColorFromRGB:[glyphTextColorInt intValue]]
+                                    ? FGMGetColorForRGBA([glyphTextColorInt integerValue])
                                     : [UIColor blackColor];
       glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
     } else if (glyphColor) {
-      UIColor *color = [self UIColorFromRGB:[glyphColor intValue]];
+      UIColor *color = FGMGetColorForRGBA([glyphColor integerValue]);
       glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
     } else if (glyphBitmap) {
       UIImage *glyphImage = [self iconFromBitmap:glyphBitmap
@@ -282,13 +282,6 @@
   }
 
   return image;
-}
-
-- (UIColor *)UIColorFromRGB:(NSInteger)rgbValue {
-  return [UIColor colorWithRed:((float)((rgbValue & 0x00FF0000) >> 16)) / 255.0
-                         green:((float)((rgbValue & 0x0000FF00) >> 8)) / 255.0
-                          blue:((float)(rgbValue & 0x000000FF)) / 255.0
-                         alpha:((float)((rgbValue & 0xFF000000) >> 24)) / 255.0];
 }
 
 /// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
