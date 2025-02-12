@@ -34,23 +34,23 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     videoSettingsExpectation = test.expectation(description: "videoSettingsExpectation")
   }
 
-  override func lockDevice(_ captureDevice: any FLTCaptureDevice) throws {
+  override func lockDevice(_ captureDevice: FLTCaptureDevice) throws {
     lockExpectation.fulfill()
   }
 
-  override func unlockDevice(_ captureDevice: any FLTCaptureDevice) {
+  override func unlockDevice(_ captureDevice: FLTCaptureDevice) {
     unlockExpectation.fulfill()
   }
 
-  override func beginConfiguration(for videoCaptureSession: any FLTCaptureSession) {
+  override func beginConfiguration(for videoCaptureSession: FLTCaptureSession) {
     beginConfigurationExpectation.fulfill()
   }
 
-  override func commitConfiguration(for videoCaptureSession: any FLTCaptureSession) {
+  override func commitConfiguration(for videoCaptureSession: FLTCaptureSession) {
     commitConfigurationExpectation.fulfill()
   }
 
-  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: any FLTCaptureDevice) {
+  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
     // FLTCam allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
@@ -58,7 +58,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     }
   }
 
-  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: any FLTCaptureDevice) {
+  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
     // FLTCam allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
