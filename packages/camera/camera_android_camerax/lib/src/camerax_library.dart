@@ -78,10 +78,16 @@ class Surface {
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraInfo.
 class CameraInfo extends camerax.CameraInfo {
+  /// Constructs [CameraInfo] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
   CameraInfo.detached({
     required super.sensorRotationDegrees,
     required super.exposureState,
+    // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
+    // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
   }) : super.pigeon_detached();
 
@@ -96,6 +102,7 @@ class CameraInfo extends camerax.CameraInfo {
   }
 
   @override
+  // ignore: non_constant_identifier_names
   CameraInfo pigeon_copy() {
     return CameraInfo.detached(
       sensorRotationDegrees: sensorRotationDegrees,
@@ -121,7 +128,9 @@ class LiveData<T> extends camerax.LiveData {
   @protected
   LiveData.detached({
     required super.type,
+    // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
+    // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
   }) : super.pigeon_detached();
 
@@ -136,6 +145,7 @@ class LiveData<T> extends camerax.LiveData {
   }
 
   @override
+  // ignore: non_constant_identifier_names
   LiveData<T> pigeon_copy() {
     return LiveData<T>.detached(
       type: type,
@@ -152,7 +162,9 @@ class Observer<T> extends camerax.Observer {
   /// Constructs an [Observer].
   Observer({
     required void Function(Observer<T> instance, T value) onChanged,
+    // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
+    // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
   })  : _genericOnChanged = onChanged,
         super(
@@ -164,9 +176,15 @@ class Observer<T> extends camerax.Observer {
           },
         );
 
+  /// Constructs [Observer] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
   Observer.detached({
     required void Function(Observer<T> instance, T value) onChanged,
+    // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
+    // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
   })  : _genericOnChanged = onChanged,
         super.pigeon_detached(
@@ -181,6 +199,7 @@ class Observer<T> extends camerax.Observer {
   final void Function(Observer<T> instance, T value) _genericOnChanged;
 
   @override
+  // ignore: non_constant_identifier_names
   Observer<T> pigeon_copy() {
     return Observer<T>.detached(
       onChanged: _genericOnChanged,
