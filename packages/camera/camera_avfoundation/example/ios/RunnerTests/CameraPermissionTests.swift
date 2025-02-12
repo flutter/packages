@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-final class MockPermissionService: NSObject, FLTPermissionServicing {
+fileprivate final class MockPermissionService: NSObject, FLTPermissionServicing {
   var authorizationStatusStub: ((AVMediaType) -> AVAuthorizationStatus)?
   var requestAccessStub: ((AVMediaType, @escaping (Bool) -> Void) -> Void)?
 
@@ -21,8 +21,8 @@ final class MockPermissionService: NSObject, FLTPermissionServicing {
 }
 
 final class FLTCameraPermissionManagerTests: XCTestCase {
-  var mockService: MockPermissionService!
-  var permissionManager: FLTCameraPermissionManager!
+  fileprivate var mockService: MockPermissionService!
+  private var permissionManager: FLTCameraPermissionManager!
 
   override func setUp() {
     mockService = MockPermissionService()
