@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 // TODO(FirentisTFW): Remove this file when the plugin code that uses it is migrated to Swift.
+// After the migration, the code should throw Swift errors instead of Objective-C exceptions, thus
+// this file will not be needed.
 
 #import <Foundation/Foundation.h>
 

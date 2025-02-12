@@ -13,7 +13,6 @@ AVCaptureFlashMode FCPGetAVCaptureFlashModeForPigeonFlashMode(FCPPlatformFlashMo
     case FCPPlatformFlashModeAlways:
       return AVCaptureFlashModeOn;
     case FCPPlatformFlashModeTorch:
-      // TODO(FirentisTFW): Throw an error when migrating to Swift.
       NSCAssert(false, @"This mode cannot be converted, and requires custom handling.");
       return -1;
   }
