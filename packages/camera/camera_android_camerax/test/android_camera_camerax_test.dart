@@ -406,14 +406,17 @@ void main() {
                   final PigeonInstanceManager testInstanceManager =
                       PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
                   when(mockFactory.createPoint(any, any)).thenAnswer(
-                    (_) async => MeteringPoint.pigeon_detached(
-                      pigeon_instanceManager: testInstanceManager,
+                    (Invocation invocation) async => TestMeteringPoint.detached(
+                      x: invocation.positionalArguments[0]! as double,
+                      y: invocation.positionalArguments[1]! as double,
                     ),
                   );
                   when(mockFactory.createPointWithSize(any, any, any))
                       .thenAnswer(
-                    (_) async => MeteringPoint.pigeon_detached(
-                      pigeon_instanceManager: testInstanceManager,
+                    (Invocation invocation) async => TestMeteringPoint.detached(
+                      x: invocation.positionalArguments[0]! as double,
+                      y: invocation.positionalArguments[1]! as double,
+                      size: invocation.positionalArguments[2]! as double,
                     ),
                   );
                   return mockFactory;
@@ -4815,7 +4818,7 @@ void main() {
     expect(capturedAction.meteringPointsAe.length, equals(1));
     expect(capturedAction.meteringPointsAf.length, equals(0));
   });
-/*
+
   test(
       'setFocusMode cancels focus and metering if only focus point previously set is a focus point',
       () async {
@@ -4838,8 +4841,7 @@ void main() {
         mockCameraControl, mockCamera2CameraControl);
 
     // Make setting focus and metering action successful for test.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -4876,14 +4878,15 @@ void main() {
         mockCameraControl, mockCamera2CameraControl);
 
     // Make setting focus and metering action successful for test.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
     // Lock a focus point.
     await camera.setFocusPoint(
-        cameraId, const Point<double>(focusPointX, focusPointY));
+      cameraId,
+      const Point<double>(focusPointX, focusPointY),
+    );
     await camera.setFocusMode(cameraId, FocusMode.locked);
 
     clearInteractions(mockCameraControl);
@@ -4895,15 +4898,15 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isFalse);
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(1));
-    expect(capturedMeteringPointInfos.first.$1.x, equals(focusPointX));
-    expect(capturedMeteringPointInfos.first.$1.y, equals(focusPointY));
-    expect(capturedMeteringPointInfos.first.$1.size, isNull);
-    expect(capturedMeteringPointInfos.first.$2,
-        equals(FocusMeteringAction.flagAf));
+    expect(capturedAction.isAutoCancelEnabled, isTrue);
+    expect(capturedAction.meteringPointsAe.length, equals(0));
+    expect(capturedAction.meteringPointsAf.length, equals(1));
+    expect(capturedAction.meteringPointsAwb.length, equals(0));
+    final TestMeteringPoint focusPoint =
+        capturedAction.meteringPointsAf.single as TestMeteringPoint;
+    expect(focusPoint.x, equals(focusPointX));
+    expect(focusPoint.y, equals(focusPointY));
+    expect(focusPoint.size, isNull);
   });
 
   test(
@@ -4939,17 +4942,18 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
 
     // We expect the set focus point to be locked.
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(1));
-    expect(capturedMeteringPointInfos.first.$1.x, equals(focusPointX));
-    expect(capturedMeteringPointInfos.first.$1.y, equals(focusPointY));
-    expect(capturedMeteringPointInfos.first.$1.size, isNull);
-    expect(capturedMeteringPointInfos.first.$2,
-        equals(FocusMeteringAction.flagAf));
+    expect(capturedAction.meteringPointsAe.length, equals(0));
+    expect(capturedAction.meteringPointsAf.length, equals(1));
+    expect(capturedAction.meteringPointsAwb.length, equals(0));
+
+    final TestMeteringPoint focusPoint =
+        capturedAction.meteringPointsAf.single as TestMeteringPoint;
+    expect(focusPoint.x, equals(focusPointX));
+    expect(focusPoint.y, equals(focusPointY));
+    expect(focusPoint.size, isNull);
   });
 
   test(
@@ -4989,34 +4993,27 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
 
     // We expect two MeteringPoints, the set focus point and the set exposure
     // point.
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(2));
+    expect(capturedAction.meteringPointsAe.length, equals(1));
+    expect(capturedAction.meteringPointsAf.length, equals(1));
+    expect(capturedAction.meteringPointsAwb.length, equals(0));
 
-    final List<(MeteringPoint, int?)> focusPoints = capturedMeteringPointInfos
-        .where(((MeteringPoint, int?) meteringPointInfo) =>
-            meteringPointInfo.$2 == FocusMeteringAction.flagAf)
-        .toList();
-    expect(focusPoints.length, equals(1));
-    expect(focusPoints.first.$1.x, equals(focusPointX));
-    expect(focusPoints.first.$1.y, equals(focusPointY));
-    expect(focusPoints.first.$1.size, isNull);
+    final TestMeteringPoint focusPoint =
+        capturedAction.meteringPointsAf.single as TestMeteringPoint;
+    expect(focusPoint.x, equals(focusPointX));
+    expect(focusPoint.y, equals(focusPointY));
+    expect(focusPoint.size, isNull);
 
-    final List<(MeteringPoint, int?)> exposurePoints =
-        capturedMeteringPointInfos
-            .where(((MeteringPoint, int?) meteringPointInfo) =>
-                meteringPointInfo.$2 == FocusMeteringAction.flagAe)
-            .toList();
-    expect(exposurePoints.length, equals(1));
-    expect(exposurePoints.first.$1.x, equals(exposurePointX));
-    expect(exposurePoints.first.$1.y, equals(exposurePointY));
-    expect(exposurePoints.first.$1.size, isNull);
+    final TestMeteringPoint exposurePoint =
+        capturedAction.meteringPointsAe.single as TestMeteringPoint;
+    expect(exposurePoint.x, equals(exposurePointX));
+    expect(exposurePoint.y, equals(exposurePointY));
+    expect(exposurePoint.size, isNull);
   });
-
+/*
   test(
       'setFocusMode starts expected focus and metering action if setting locked focus mode and current focus and metering action does not contain an auto-focus point',
       () async {
@@ -5970,3 +5967,16 @@ void main() {
 //
 //   return mockProxy;
 // }
+
+class TestMeteringPoint extends MeteringPoint {
+  TestMeteringPoint.detached({required this.x, required this.y, this.size})
+      : super.pigeon_detached(
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+
+  final double x;
+  final double y;
+  final double? size;
+}
