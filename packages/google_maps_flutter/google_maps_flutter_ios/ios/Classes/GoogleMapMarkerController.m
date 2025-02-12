@@ -106,25 +106,6 @@
   self.marker.zIndex = zIndex;
 }
 
-//- (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
-//                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-//                     screenScale:(CGFloat)screenScale {
-//  [self setAlpha:platformMarker.alpha];
-//  [self setAnchor:FGMGetCGPointForPigeonPoint(platformMarker.anchor)];
-//  [self setDraggable:platformMarker.draggable];
-//  UIImage *image = [self iconFromBitmap:platformMarker.icon
-//                              registrar:registrar
-//                            screenScale:screenScale];
-//  [self setIcon:image];
-//  [self setFlat:platformMarker.flat];
-//  [self setConsumeTapEvents:platformMarker.consumeTapEvents];
-//  [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position)];
-//  [self setRotation:platformMarker.rotation];
-//  [self setVisible:platformMarker.visible];
-//  [self setZIndex:platformMarker.zIndex];
-//  [self setCollisionBehavior:platformMarker.collisionBehavior];
-//}
-//
 - (void)setCollisionBehavior:(FGMMarkerCollisionBehaviorBox *)collisionBehavior {
   if ([self.marker isKindOfClass:[GMSAdvancedMarker class]]) {
     GMSCollisionBehavior collitionBehaviorValue = (GMSCollisionBehavior)collisionBehavior.value;
