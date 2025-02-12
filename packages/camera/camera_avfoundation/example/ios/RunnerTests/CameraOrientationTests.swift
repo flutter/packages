@@ -8,7 +8,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-fileprivate final class MockCamera: FLTCam {
+private final class MockCamera: FLTCam {
   var setDeviceOrientationStub: ((UIDeviceOrientation) -> Void)?
 
   override func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
@@ -20,7 +20,7 @@ fileprivate final class MockCamera: FLTCam {
   }
 }
 
-fileprivate final class MockUIDevice: UIDevice {
+private final class MockUIDevice: UIDevice {
   var mockOrientation: UIDeviceOrientation = .unknown
 
   override var orientation: UIDeviceOrientation {
@@ -34,7 +34,7 @@ final class CameraOrientationTests: XCTestCase {
   private var mockEventAPI: MockGlobalEventApi!
   private var mockDeviceDiscoverer: MockCameraDeviceDiscoverer!
   private var cameraPlugin: CameraPlugin!
-  
+
   override func setUp() {
     mockDevice = MockCaptureDevice()
     mockCamera = MockCamera()
