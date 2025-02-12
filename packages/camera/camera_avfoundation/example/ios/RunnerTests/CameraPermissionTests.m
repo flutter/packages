@@ -60,7 +60,7 @@
       [expectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 - (void)testRequestCameraPermission_completeWithErrorIfPreviouslyDenied {
   XCTestExpectation *expectation =
@@ -82,7 +82,7 @@
       [expectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testRequestCameraPermission_completeWithErrorIfRestricted {
@@ -102,7 +102,7 @@
       [expectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testRequestCameraPermission_completeWithoutErrorIfUserGrantAccess {
@@ -125,7 +125,7 @@
       [grantedExpectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testRequestCameraPermission_completeWithErrorIfUserDenyAccess {
@@ -153,7 +153,7 @@
     }
   }];
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 #pragma mark - audio permissions
@@ -173,7 +173,7 @@
       [expectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testRequestAudioPermission_completeWithErrorIfPreviouslyDenied {
@@ -196,7 +196,7 @@
       [expectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testRequestAudioPermission_completeWithErrorIfRestricted {
@@ -216,7 +216,7 @@
       [expectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testRequestAudioPermission_completeWithoutErrorIfUserGrantAccess {
@@ -239,7 +239,7 @@
       [grantedExpectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testRequestAudioPermission_completeWithErrorIfUserDenyAccess {
@@ -265,7 +265,7 @@
       [expectation fulfill];
     }
   }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end

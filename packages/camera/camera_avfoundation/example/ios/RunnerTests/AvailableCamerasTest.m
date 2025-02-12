@@ -8,33 +8,57 @@
 #endif
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
+
+#import "MockCameraDeviceDiscoverer.h"
+#import "MockCaptureDevice.h"
+#import "MockCaptureSession.h"
+#import "MockFlutterBinaryMessenger.h"
+#import "MockFlutterTextureRegistry.h"
+#import "MockGlobalEventApi.h"
 
 @interface AvailableCamerasTest : XCTestCase
+
 @end
 
 @implementation AvailableCamerasTest
 
+- (CameraPlugin *)createCameraPluginWithDeviceDiscoverer:
+    (MockCameraDeviceDiscoverer *)deviceDiscoverer {
+  return [[CameraPlugin alloc] initWithRegistry:[[MockFlutterTextureRegistry alloc] init]
+      messenger:[[MockFlutterBinaryMessenger alloc] init]
+      globalAPI:[[MockGlobalEventApi alloc] init]
+      deviceDiscoverer:deviceDiscoverer
+      deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
+        return [[MockCaptureDevice alloc] init];
+      }
+      captureSessionFactory:^NSObject<FLTCaptureSession> * {
+        return [[MockCaptureSession alloc] init];
+      }
+      captureDeviceInputFactory:[[MockCaptureDeviceInputFactory alloc] init]];
+}
+
 - (void)testAvailableCamerasShouldReturnAllCamerasOnMultiCameraIPhone {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  MockCameraDeviceDiscoverer *mockDeviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
+  CameraPlugin *cameraPlugin = [self createCameraPluginWithDeviceDiscoverer:mockDeviceDiscoverer];
+
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 13 Cameras:
-  AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([wideAngleCamera uniqueID]).andReturn(@"0");
-  OCMStub([wideAngleCamera position]).andReturn(AVCaptureDevicePositionBack);
+  MockCaptureDevice *wideAngleCamera = [[MockCaptureDevice alloc] init];
+  wideAngleCamera.uniqueID = @"0";
+  wideAngleCamera.position = AVCaptureDevicePositionBack;
 
-  AVCaptureDevice *frontFacingCamera = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([frontFacingCamera uniqueID]).andReturn(@"1");
-  OCMStub([frontFacingCamera position]).andReturn(AVCaptureDevicePositionFront);
+  MockCaptureDevice *frontFacingCamera = [[MockCaptureDevice alloc] init];
+  frontFacingCamera.uniqueID = @"1";
+  frontFacingCamera.position = AVCaptureDevicePositionFront;
 
-  AVCaptureDevice *ultraWideCamera = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([ultraWideCamera uniqueID]).andReturn(@"2");
-  OCMStub([ultraWideCamera position]).andReturn(AVCaptureDevicePositionBack);
+  MockCaptureDevice *ultraWideCamera = [[MockCaptureDevice alloc] init];
+  ultraWideCamera.uniqueID = @"2";
+  ultraWideCamera.position = AVCaptureDevicePositionBack;
 
-  AVCaptureDevice *telephotoCamera = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([telephotoCamera uniqueID]).andReturn(@"3");
-  OCMStub([telephotoCamera position]).andReturn(AVCaptureDevicePositionBack);
+  MockCaptureDevice *telephotoCamera = [[MockCaptureDevice alloc] init];
+  telephotoCamera.uniqueID = @"3";
+  telephotoCamera.position = AVCaptureDevicePositionBack;
 
   NSMutableArray *requiredTypes =
       [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
@@ -43,21 +67,23 @@
     [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
   }
 
-  id discoverySessionMock = OCMClassMock([AVCaptureDeviceDiscoverySession class]);
-  OCMStub([discoverySessionMock discoverySessionWithDeviceTypes:requiredTypes
-                                                      mediaType:AVMediaTypeVideo
-                                                       position:AVCaptureDevicePositionUnspecified])
-      .andReturn(discoverySessionMock);
-
   NSMutableArray *cameras = [NSMutableArray array];
   [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera, telephotoCamera ]];
   if (@available(iOS 13.0, *)) {
     [cameras addObject:ultraWideCamera];
   }
-  OCMStub([discoverySessionMock devices]).andReturn([NSArray arrayWithArray:cameras]);
+
+  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<NSObject<FLTCaptureDevice> *> *_Nullable(
+      NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
+      AVCaptureDevicePosition position) {
+    XCTAssertEqualObjects(deviceTypes, requiredTypes);
+    XCTAssertEqual(mediaType, AVMediaTypeVideo);
+    XCTAssertEqual(position, AVCaptureDevicePositionUnspecified);
+    return cameras;
+  };
 
   __block NSArray<FCPPlatformCameraDescription *> *resultValue;
-  [camera
+  [cameraPlugin
       availableCamerasWithCompletion:^(NSArray<FCPPlatformCameraDescription *> *_Nullable result,
                                        FlutterError *_Nullable error) {
         XCTAssertNil(error);
@@ -74,17 +100,19 @@
   }
 }
 - (void)testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone {
-  CameraPlugin *camera = [[CameraPlugin alloc] initWithRegistry:nil messenger:nil];
+  MockCameraDeviceDiscoverer *mockDeviceDiscoverer = [[MockCameraDeviceDiscoverer alloc] init];
+  CameraPlugin *cameraPlugin = [self createCameraPluginWithDeviceDiscoverer:mockDeviceDiscoverer];
+
   XCTestExpectation *expectation = [self expectationWithDescription:@"Result finished"];
 
   // iPhone 8 Cameras:
-  AVCaptureDevice *wideAngleCamera = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([wideAngleCamera uniqueID]).andReturn(@"0");
-  OCMStub([wideAngleCamera position]).andReturn(AVCaptureDevicePositionBack);
+  MockCaptureDevice *wideAngleCamera = [[MockCaptureDevice alloc] init];
+  wideAngleCamera.uniqueID = @"0";
+  wideAngleCamera.position = AVCaptureDevicePositionBack;
 
-  AVCaptureDevice *frontFacingCamera = OCMClassMock([AVCaptureDevice class]);
-  OCMStub([frontFacingCamera uniqueID]).andReturn(@"1");
-  OCMStub([frontFacingCamera position]).andReturn(AVCaptureDevicePositionFront);
+  MockCaptureDevice *frontFacingCamera = [[MockCaptureDevice alloc] init];
+  frontFacingCamera.uniqueID = @"1";
+  frontFacingCamera.position = AVCaptureDevicePositionFront;
 
   NSMutableArray *requiredTypes =
       [@[ AVCaptureDeviceTypeBuiltInWideAngleCamera, AVCaptureDeviceTypeBuiltInTelephotoCamera ]
@@ -93,18 +121,20 @@
     [requiredTypes addObject:AVCaptureDeviceTypeBuiltInUltraWideCamera];
   }
 
-  id discoverySessionMock = OCMClassMock([AVCaptureDeviceDiscoverySession class]);
-  OCMStub([discoverySessionMock discoverySessionWithDeviceTypes:requiredTypes
-                                                      mediaType:AVMediaTypeVideo
-                                                       position:AVCaptureDevicePositionUnspecified])
-      .andReturn(discoverySessionMock);
-
   NSMutableArray *cameras = [NSMutableArray array];
   [cameras addObjectsFromArray:@[ wideAngleCamera, frontFacingCamera ]];
-  OCMStub([discoverySessionMock devices]).andReturn([NSArray arrayWithArray:cameras]);
+
+  mockDeviceDiscoverer.discoverySessionStub = ^NSArray<NSObject<FLTCaptureDevice> *> *_Nullable(
+      NSArray<AVCaptureDeviceType> *_Nonnull deviceTypes, AVMediaType _Nonnull mediaType,
+      AVCaptureDevicePosition position) {
+    XCTAssertEqualObjects(deviceTypes, requiredTypes);
+    XCTAssertEqual(mediaType, AVMediaTypeVideo);
+    XCTAssertEqual(position, AVCaptureDevicePositionUnspecified);
+    return cameras;
+  };
 
   __block NSArray<FCPPlatformCameraDescription *> *resultValue;
-  [camera
+  [cameraPlugin
       availableCamerasWithCompletion:^(NSArray<FCPPlatformCameraDescription *> *_Nullable result,
                                        FlutterError *_Nullable error) {
         XCTAssertNil(error);
