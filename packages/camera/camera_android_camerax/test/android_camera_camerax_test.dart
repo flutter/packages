@@ -543,9 +543,10 @@ void main() {
         pigeon_instanceManager: testInstanceManager,
       );
     };
-    proxy.controlAELockCaptureRequest = () => CaptureRequestKey.pigeon_detached(
-          pigeon_instanceManager: testInstanceManager,
-        );
+    final CaptureRequestKey controlAeLock = CaptureRequestKey.pigeon_detached(
+      pigeon_instanceManager: testInstanceManager,
+    );
+    proxy.controlAELockCaptureRequest = () => controlAeLock;
 
     return proxy;
   }
@@ -5013,7 +5014,7 @@ void main() {
     expect(exposurePoint.y, equals(exposurePointY));
     expect(exposurePoint.size, isNull);
   });
-/*
+
   test(
       'setFocusMode starts expected focus and metering action if setting locked focus mode and current focus and metering action does not contain an auto-focus point',
       () async {
@@ -5051,32 +5052,25 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
 
     // We expect two MeteringPoints, the default focus point and the set
     //exposure point.
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(2));
+    expect(capturedAction.meteringPointsAe.length, equals(1));
+    expect(capturedAction.meteringPointsAf.length, equals(1));
+    expect(capturedAction.meteringPointsAwb.length, equals(0));
 
-    final List<(MeteringPoint, int?)> focusPoints = capturedMeteringPointInfos
-        .where(((MeteringPoint, int?) meteringPointInfo) =>
-            meteringPointInfo.$2 == FocusMeteringAction.flagAf)
-        .toList();
-    expect(focusPoints.length, equals(1));
-    expect(focusPoints.first.$1.x, equals(defaultFocusPointX));
-    expect(focusPoints.first.$1.y, equals(defaultFocusPointY));
-    expect(focusPoints.first.$1.size, equals(defaultFocusPointSize));
+    final TestMeteringPoint focusPoint =
+        capturedAction.meteringPointsAf.single as TestMeteringPoint;
+    expect(focusPoint.x, equals(defaultFocusPointX));
+    expect(focusPoint.y, equals(defaultFocusPointY));
+    expect(focusPoint.size, equals(defaultFocusPointSize));
 
-    final List<(MeteringPoint, int?)> exposurePoints =
-        capturedMeteringPointInfos
-            .where(((MeteringPoint, int?) meteringPointInfo) =>
-                meteringPointInfo.$2 == FocusMeteringAction.flagAe)
-            .toList();
-    expect(exposurePoints.length, equals(1));
-    expect(exposurePoints.first.$1.x, equals(exposurePointX));
-    expect(exposurePoints.first.$1.y, equals(exposurePointY));
-    expect(exposurePoints.first.$1.size, isNull);
+    final TestMeteringPoint exposurePoint =
+        capturedAction.meteringPointsAe.single as TestMeteringPoint;
+    expect(exposurePoint.x, equals(exposurePointX));
+    expect(exposurePoint.y, equals(exposurePointY));
+    expect(exposurePoint.size, isNull);
   });
 
   test(
@@ -5108,18 +5102,18 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
 
     // We expect only the default focus point to be set.
-    final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-        capturedAction.meteringPointInfos;
-    expect(capturedMeteringPointInfos.length, equals(1));
-    expect(capturedMeteringPointInfos.first.$1.x, equals(defaultFocusPointX));
-    expect(capturedMeteringPointInfos.first.$1.y, equals(defaultFocusPointY));
-    expect(capturedMeteringPointInfos.first.$1.size,
-        equals(defaultFocusPointSize));
-    expect(capturedMeteringPointInfos.first.$2,
-        equals(FocusMeteringAction.flagAf));
+    expect(capturedAction.meteringPointsAe.length, equals(0));
+    expect(capturedAction.meteringPointsAf.length, equals(1));
+    expect(capturedAction.meteringPointsAwb.length, equals(0));
+
+    final TestMeteringPoint focusPoint =
+        capturedAction.meteringPointsAf.single as TestMeteringPoint;
+    expect(focusPoint.x, equals(defaultFocusPointX));
+    expect(focusPoint.y, equals(defaultFocusPointY));
+    expect(focusPoint.size, equals(defaultFocusPointSize));
   });
 
   test(
@@ -5144,8 +5138,7 @@ void main() {
         mockCameraControl, mockCamera2CameraControl);
 
     // Make setting focus and metering action successful for test.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -5160,12 +5153,10 @@ void main() {
         verify(mockCamera2CameraControl.addCaptureRequestOptions(captureAny));
     final CaptureRequestOptions capturedCaptureRequestOptions =
         verificationResult.captured.single as CaptureRequestOptions;
-    final List<(CaptureRequestKeySupportedType, Object?)> requestedOptions =
-        capturedCaptureRequestOptions.requestedOptions;
-    expect(requestedOptions.length, equals(1));
-    expect(requestedOptions.first.$1,
-        equals(CaptureRequestKeySupportedType.controlAeLock));
-    expect(requestedOptions.first.$2, equals(false));
+    expect(
+      capturedCaptureRequestOptions.options,
+      containsPair(camera.proxy.controlAELockCaptureRequest(), false),
+    );
   });
 
   test(
@@ -5187,8 +5178,7 @@ void main() {
 
     // Make setting focus and metering action successful to set locked focus
     // mode.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -5205,8 +5195,7 @@ void main() {
     // Make setting focus and metering action fail to test that auto-cancel is
     // still disabled.
     reset(mockFocusMeteringResult);
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(false));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(false);
 
     // Test disabling auto cancel.
     await camera.setFocusMode(cameraId, FocusMode.auto);
@@ -5217,7 +5206,7 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
   });
 
   test(
@@ -5239,8 +5228,7 @@ void main() {
 
     // Make setting focus and metering action successful to set locked focus
     // mode.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(true));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(true);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -5256,8 +5244,7 @@ void main() {
 
     // Make setting focus and metering action fail to test that auto-cancel is
     // still disabled.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(false));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(false);
 
     // Test disabling auto cancel.
     await camera.setFocusMode(cameraId, FocusMode.auto);
@@ -5268,7 +5255,7 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isTrue);
+    expect(capturedAction.isAutoCancelEnabled, isFalse);
   });
 
   test(
@@ -5290,8 +5277,7 @@ void main() {
 
     // Make setting focus and metering action fail to test auto-cancel is not
     // disabled.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(false));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(false);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -5307,7 +5293,7 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isFalse);
+    expect(capturedAction.isAutoCancelEnabled, isTrue);
   });
 
   test(
@@ -5329,8 +5315,7 @@ void main() {
 
     // Make setting focus and metering action fail to test auto-cancel is not
     // disabled.
-    when(mockFocusMeteringResult.isFocusSuccessful())
-        .thenAnswer((_) async => Future<bool>.value(false));
+    when(mockFocusMeteringResult.isFocusSuccessful).thenReturn(false);
     when(mockCameraControl.startFocusAndMetering(any)).thenAnswer((_) async =>
         Future<FocusMeteringResult>.value(mockFocusMeteringResult));
 
@@ -5346,7 +5331,7 @@ void main() {
         verify(mockCameraControl.startFocusAndMetering(captureAny));
     final FocusMeteringAction capturedAction =
         verificationResult.captured.single as FocusMeteringAction;
-    expect(capturedAction.disableAutoCancel, isFalse);
+    expect(capturedAction.isAutoCancelEnabled, isTrue);
   });
 
   test(
@@ -5370,8 +5355,27 @@ void main() {
 
     // Tell plugin to create a detached analyzer for testing purposes.
     camera.proxy = CameraXProxy(
-      createAnalyzer: (_) => MockAnalyzer(),
-      createCameraStateObserver: (_) => MockObserver(),
+      newAnalyzer: ({
+        required void Function(
+          Analyzer,
+          ImageProxy,
+        ) analyze,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) =>
+          MockAnalyzer(),
+      newObserver: <T>({
+        required void Function(Observer<T>, T) onChanged,
+        BinaryMessenger? pigeon_binaryMessenger,
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        return Observer<T>.detached(
+          onChanged: onChanged,
+          pigeon_instanceManager: PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+      },
     );
 
     when(mockProcessCameraProvider.isBound(mockImageAnalysis))
@@ -5420,10 +5424,11 @@ void main() {
 
     // Tell plugin to create detached Observer when camera info updated.
     camera.proxy = CameraXProxy(
-        createCameraStateObserver: (void Function(Object) onChanged) =>
-            Observer<CameraState>.detached(onChanged: onChanged),
-        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-            Future<Camera2CameraInfo>.value(mockCamera2CameraInfo));
+      createCameraStateObserver: (void Function(Object) onChanged) =>
+          Observer<CameraState>.detached(onChanged: onChanged),
+      getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+          Future<Camera2CameraInfo>.value(mockCamera2CameraInfo),
+    );
 
     const int cameraId = 7;
     const String outputPath = '/temp/REC123.temp';
@@ -5457,7 +5462,7 @@ void main() {
     verify(
         camera.processCameraProvider!.unbind(<UseCase>[camera.imageAnalysis!]));
   });
-
+/*
   test(
       'startVideoCapturing unbinds ImageAnalysis use case when image streaming callback not specified, camera device is level 3, and preview is not paused',
       () async {
