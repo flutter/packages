@@ -434,11 +434,49 @@ void main() {
                   when(mockBuilder.disableAutoCancel()).thenAnswer((_) async {
                     disableAutoCancelCalled = true;
                   });
+                  final List<MeteringPoint> meteringPointsAe =
+                      <MeteringPoint>[];
+                  final List<MeteringPoint> meteringPointsAf =
+                      <MeteringPoint>[];
+                  final List<MeteringPoint> meteringPointsAwb =
+                      <MeteringPoint>[];
+
+                  switch (mode) {
+                    case MeteringMode.ae:
+                      meteringPointsAe.add(point);
+                    case MeteringMode.af:
+                      meteringPointsAf.add(point);
+                    case MeteringMode.awb:
+                      meteringPointsAwb.add(point);
+                  }
+
+                  when(mockBuilder.addPointWithMode(any, any)).thenAnswer(
+                    (Invocation invocation) async {
+                      switch (invocation.positionalArguments[1]) {
+                        case MeteringMode.ae:
+                          meteringPointsAe.add(
+                            invocation.positionalArguments.first
+                                as MeteringPoint,
+                          );
+                        case MeteringMode.af:
+                          meteringPointsAf.add(
+                            invocation.positionalArguments.first
+                                as MeteringPoint,
+                          );
+                        case MeteringMode.awb:
+                          meteringPointsAwb.add(
+                            invocation.positionalArguments.first
+                                as MeteringPoint,
+                          );
+                      }
+                    },
+                  );
+
                   when(mockBuilder.build()).thenAnswer(
                     (_) async => FocusMeteringAction.pigeon_detached(
-                      meteringPointsAe: const <MeteringPoint>[],
-                      meteringPointsAf: const <MeteringPoint>[],
-                      meteringPointsAwb: const <MeteringPoint>[],
+                      meteringPointsAe: meteringPointsAe,
+                      meteringPointsAf: meteringPointsAf,
+                      meteringPointsAwb: meteringPointsAwb,
                       isAutoCancelEnabled: !disableAutoCancelCalled,
                       pigeon_instanceManager: testInstanceManager,
                     ),
@@ -4711,22 +4749,7 @@ void main() {
 
     final PigeonInstanceManager testInstanceManager =
         PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-    final MeteringPoint createdMeteringPoint = MeteringPoint.pigeon_detached(
-      pigeon_instanceManager: testInstanceManager,
-    );
-    MeteringMode? actionBuilderMeteringMode;
-    MeteringPoint? actionBuilderMeteringPoint;
-    final MockFocusMeteringActionBuilder mockActionBuilder =
-        MockFocusMeteringActionBuilder();
-    when(mockActionBuilder.build()).thenAnswer(
-      (_) async => FocusMeteringAction.pigeon_detached(
-        meteringPointsAe: const <MeteringPoint>[],
-        meteringPointsAf: const <MeteringPoint>[],
-        meteringPointsAwb: const <MeteringPoint>[],
-        isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
-      ),
-    );
+    final List<MeteringPoint> createdMeteringPoints = <MeteringPoint>[];
     camera.proxy = getProxyForSettingFocusandExposurePoints(
       mockCameraControl,
       mockCamera2CameraControl,
@@ -4741,22 +4764,26 @@ void main() {
             MockDisplayOrientedMeteringPointFactory();
         when(mockFactory.createPoint(exposurePointX, exposurePointY))
             .thenAnswer(
-          (_) async => createdMeteringPoint,
+          (_) async {
+            final MeteringPoint createdMeteringPoint =
+                MeteringPoint.pigeon_detached(
+              pigeon_instanceManager: testInstanceManager,
+            );
+            createdMeteringPoints.add(createdMeteringPoint);
+            return createdMeteringPoint;
+          },
         );
         when(mockFactory.createPointWithSize(0.5, 0.5, 1)).thenAnswer(
-          (_) async => createdMeteringPoint,
+          (_) async {
+            final MeteringPoint createdMeteringPoint =
+                MeteringPoint.pigeon_detached(
+              pigeon_instanceManager: testInstanceManager,
+            );
+            createdMeteringPoints.add(createdMeteringPoint);
+            return createdMeteringPoint;
+          },
         );
         return mockFactory;
-      },
-      withModeFocusMeteringActionBuilder: ({
-        required MeteringMode mode,
-        required MeteringPoint point,
-        BinaryMessenger? pigeon_binaryMessenger,
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        actionBuilderMeteringMode = mode;
-        actionBuilderMeteringPoint = point;
-        return mockActionBuilder;
       },
     );
 
@@ -4784,18 +4811,9 @@ void main() {
     expect(capturedAction.isAutoCancelEnabled, isTrue);
 
     // We expect only the previously set exposure point to be re-set.
-    expect(actionBuilderMeteringPoint, createdMeteringPoint);
-    expect(actionBuilderMeteringMode, MeteringMode.ae);
-    verify(mockActionBuilder.addPoint(any));
-    verify(mockActionBuilder.addPointWithMode(any, any));
-    // final List<(MeteringPoint, int?)> capturedMeteringPointInfos =
-    //     capturedAction.meteringPointInfos;
-    // expect(capturedMeteringPointInfos.length, equals(1));
-    // expect(capturedMeteringPointInfos.first.$1.x, equals(exposurePointX));
-    // expect(capturedMeteringPointInfos.first.$1.y, equals(exposurePointY));
-    // expect(capturedMeteringPointInfos.first.$1.size, isNull);
-    // expect(capturedMeteringPointInfos.first.$2,
-    //     equals(FocusMeteringAction.flagAe));
+    expect(capturedAction.meteringPointsAe.first, createdMeteringPoints[0]);
+    expect(capturedAction.meteringPointsAe.length, equals(1));
+    expect(capturedAction.meteringPointsAf.length, equals(0));
   });
 /*
   test(
