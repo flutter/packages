@@ -8,21 +8,21 @@ import XCTest
 @testable import camera_avfoundation
 
 final class CameraExposureTests: XCTestCase {
-  var camera: FLTCam!
-  var mockDevice: MockCaptureDevice!
-  var mockDeviceOrientationProvider: MockDeviceOrientationProvider!
-
-  override func setUp() {
-    mockDevice = MockCaptureDevice()
-    mockDeviceOrientationProvider = MockDeviceOrientationProvider()
+  private func createSutAndMocks() -> (FLTCam, MockCaptureDevice, MockDeviceOrientationProvider) {
+    let mockDevice = MockCaptureDevice()
+    let mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 
     let configuration = FLTCreateTestCameraConfiguration()
-    configuration.captureDeviceFactory = { self.mockDevice }
+    configuration.captureDeviceFactory = { mockDevice }
     configuration.deviceOrientationProvider = mockDeviceOrientationProvider
-    camera = FLTCreateCamWithConfiguration(configuration)
+    let camera = FLTCreateCamWithConfiguration(configuration)
+
+    return (camera, mockDevice, mockDeviceOrientationProvider)
   }
 
   func testSetExposurePointWithResult_SetsExposurePointOfInterest() {
+    let (camera, mockDevice, mockDeviceOrientationProvider) = createSutAndMocks()
+
     // UI is currently in landscape left orientation.
     mockDeviceOrientationProvider.orientation = .landscapeLeft
     // Exposure point of interest is supported.
@@ -47,6 +47,8 @@ final class CameraExposureTests: XCTestCase {
   }
 
   func testSetExposurePoint_WhenNotSupported_ReturnsError() {
+    let (camera, mockDevice, mockDeviceOrientationProvider) = createSutAndMocks()
+
     // UI is currently in landscape left orientation.
     mockDeviceOrientationProvider.orientation = .landscapeLeft
     // Exposure point of interest is not supported.
