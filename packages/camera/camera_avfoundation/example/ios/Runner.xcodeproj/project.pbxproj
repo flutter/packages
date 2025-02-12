@@ -10,7 +10,6 @@
 		03BB766B2665316900CE5A93 /* CameraFocusTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 03BB766A2665316900CE5A93 /* CameraFocusTests.m */; };
 		1000364CB781922C6D6AAA4A /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9DDC4CE84A8B378AE4A8CD9C /* libPods-RunnerTests.a */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
-		334733EA2668111C00DCC49E /* CameraOrientationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 03BB767226653ABE00CE5A93 /* CameraOrientationTests.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		408D7A792C3C9CD000B71F9A /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 408D7A782C3C9CD000B71F9A /* OCMock */; };
 		43ED1537282570DE00EB00DE /* AvailableCamerasTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 43ED1536282570DE00EB00DE /* AvailableCamerasTest.m */; };
@@ -34,6 +33,7 @@
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		979B3DFE2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */; };
 		979B3E002D5B9E6C009BDE1A /* CameraMethodChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3DFF2D5B9E6C009BDE1A /* CameraMethodChannelTests.swift */; };
+		979B3E022D5BA48F009BDE1A /* CameraOrientationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 979B3E012D5BA48F009BDE1A /* CameraOrientationTests.swift */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
@@ -76,7 +76,6 @@
 		03BB76682665316900CE5A93 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		03BB766A2665316900CE5A93 /* CameraFocusTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraFocusTests.m; sourceTree = "<group>"; };
 		03BB766C2665316900CE5A93 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		03BB767226653ABE00CE5A93 /* CameraOrientationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraOrientationTests.m; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
@@ -115,6 +114,7 @@
 		979B3DFC2D5B985B009BDE1A /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureSessionQueueRaceConditionTests.swift; sourceTree = "<group>"; };
 		979B3DFF2D5B9E6C009BDE1A /* CameraMethodChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraMethodChannelTests.swift; sourceTree = "<group>"; };
+		979B3E012D5BA48F009BDE1A /* CameraOrientationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraOrientationTests.swift; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		97C146F21CF9000F007C117D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		97C146FB1CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -168,7 +168,6 @@
 				7D5FCCD32AEF9D0200FB7108 /* CameraSettingsTests.m */,
 				03BB766A2665316900CE5A93 /* CameraFocusTests.m */,
 				7FA99E582D22C75300582559 /* CameraExposureTests.m */,
-				03BB767226653ABE00CE5A93 /* CameraOrientationTests.m */,
 				03BB766C2665316900CE5A93 /* Info.plist */,
 				E0C6E1FF2770F01A00EA6AA3 /* ThreadSafeEventChannelTests.m */,
 				E04F108527A87CA600573D0C /* FLTSavePhotoDelegateTests.m */,
@@ -186,6 +185,7 @@
 				979B3DFD2D5B985B009BDE1A /* CameraCaptureSessionQueueRaceConditionTests.swift */,
 				979B3DFC2D5B985B009BDE1A /* RunnerTests-Bridging-Header.h */,
 				979B3DFF2D5B9E6C009BDE1A /* CameraMethodChannelTests.swift */,
+				979B3E012D5BA48F009BDE1A /* CameraOrientationTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -530,13 +530,13 @@
 				E04F108627A87CA600573D0C /* FLTSavePhotoDelegateTests.m in Sources */,
 				43ED1537282570DE00EB00DE /* AvailableCamerasTest.m in Sources */,
 				E0CDBAC227CD9729002561D9 /* CameraTestUtils.m in Sources */,
-				334733EA2668111C00DCC49E /* CameraOrientationTests.m in Sources */,
 				7FD582202D579ECC003B1200 /* MockCapturePhotoOutput.m in Sources */,
 				CEF6611A2B5E36A500D33FD4 /* CameraSessionPresetsTests.m in Sources */,
 				979B3E002D5B9E6C009BDE1A /* CameraMethodChannelTests.swift in Sources */,
 				7F29EB292D26A59000740257 /* MockCameraDeviceDiscoverer.m in Sources */,
 				788A065A27B0E02900533D74 /* StreamingTest.m in Sources */,
 				E0C6E2022770F01A00EA6AA3 /* ThreadSafeEventChannelTests.m in Sources */,
+				979B3E022D5BA48F009BDE1A /* CameraOrientationTests.swift in Sources */,
 				7F29EB412D281C7E00740257 /* MockCaptureSession.m in Sources */,
 				E01EE4A82799F3A5008C1950 /* QueueUtilsTests.m in Sources */,
 				7FD582122D579650003B1200 /* MockWritableData.m in Sources */,

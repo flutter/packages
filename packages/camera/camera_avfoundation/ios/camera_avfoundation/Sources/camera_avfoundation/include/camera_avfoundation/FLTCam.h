@@ -18,7 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// A class that manages camera's state and performs camera operations.
 @interface FLTCam : NSObject <FlutterTexture>
 
-@property(readonly, nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
+// FIXME It was readonly before
+@property(nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
 @property(readonly, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) BOOL isPreviewPaused;
 @property(nonatomic, copy) void (^onFrameAvailable)(void);
