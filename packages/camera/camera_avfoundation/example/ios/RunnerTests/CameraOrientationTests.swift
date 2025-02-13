@@ -25,28 +25,26 @@ private final class MockUIDevice: UIDevice {
 }
 
 final class CameraOrientationTests: XCTestCase {
-  private var mockCamera: MockCamera!
-  private var mockDevice: MockCaptureDevice!
-  private var mockEventAPI: MockGlobalEventApi!
-  private var mockDeviceDiscoverer: MockCameraDeviceDiscoverer!
-  private var cameraPlugin: CameraPlugin!
+  private func createCameraPlugin() -> (
+    CameraPlugin, MockCamera, MockGlobalEventApi, MockCaptureDevice, MockCameraDeviceDiscoverer
+  ) {
+    let mockDevice = MockCaptureDevice()
+    let mockCamera = MockCamera()
+    let mockEventAPI = MockGlobalEventApi()
+    let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
 
-  override func setUp() {
-    mockDevice = MockCaptureDevice()
-    mockCamera = MockCamera()
-    mockEventAPI = MockGlobalEventApi()
-    mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
-
-    cameraPlugin = CameraPlugin(
+    let cameraPlugin = CameraPlugin(
       registry: MockFlutterTextureRegistry(),
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: mockEventAPI,
       deviceDiscoverer: mockDeviceDiscoverer,
-      deviceFactory: { _ in self.mockDevice },
+      deviceFactory: { _ in mockDevice },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory()
     )
     cameraPlugin.camera = mockCamera
+
+    return (cameraPlugin, mockCamera, mockEventAPI, mockDevice, mockDeviceDiscoverer)
   }
 
   private func waitForRoundTrip(with queue: DispatchQueue) {
@@ -71,6 +69,8 @@ final class CameraOrientationTests: XCTestCase {
   }
 
   func testOrientationNotifications() {
+    let (cameraPlugin, _, mockEventAPI, _, _) = createCameraPlugin()
+
     sendOrientation(.portraitUpsideDown, to: cameraPlugin)
     XCTAssertEqual(mockEventAPI.lastOrientation, .portraitDown)
     sendOrientation(.portrait, to: cameraPlugin)
@@ -82,11 +82,13 @@ final class CameraOrientationTests: XCTestCase {
   }
 
   func testOrientationNotificationsNotCalledForFaceUp() {
+    let (cameraPlugin, _, mockEventAPI, _, _) = createCameraPlugin()
     sendOrientation(.faceUp, to: cameraPlugin)
     XCTAssertFalse(mockEventAPI.deviceOrientationChangedCalled)
   }
 
   func testOrientationNotificationsNotCalledForFaceDown() {
+    let (cameraPlugin, _, mockEventAPI, _, _) = createCameraPlugin()
     sendOrientation(.faceDown, to: cameraPlugin)
     XCTAssertFalse(mockEventAPI.deviceOrientationChangedCalled)
   }
@@ -94,13 +96,11 @@ final class CameraOrientationTests: XCTestCase {
   func testOrientationUpdateMustBeOnCaptureSessionQueue() {
     let queueExpectation = expectation(
       description: "Orientation update must happen on the capture session queue")
-
-    let plugin = CameraPlugin(
-      registry: MockFlutterTextureRegistry(),
-      messenger: MockFlutterBinaryMessenger())
+    let (cameraPlugin, mockCamera, _, _, _) = createCameraPlugin()
     let captureSessionQueueSpecific = DispatchSpecificKey<Void>()
-    plugin.captureSessionQueue.setSpecific(key: captureSessionQueueSpecific, value: ())
-    plugin.camera = mockCamera
+    cameraPlugin.captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecific,
+      value: ())
 
     mockCamera.setDeviceOrientationStub = { orientation in
       if DispatchQueue.getSpecific(key: captureSessionQueueSpecific) != nil {
@@ -108,30 +108,31 @@ final class CameraOrientationTests: XCTestCase {
       }
     }
 
-    plugin.orientationChanged(createMockNotification(for: .landscapeLeft))
+    cameraPlugin.orientationChanged(createMockNotification(for: .landscapeLeft))
     waitForExpectations(timeout: 30, handler: nil)
   }
 
   func testOrientationChangedNoRetainCycle() {
+    let (_, mockCamera, mockEventAPI, mockDevice, mockDeviceDiscoverer) = createCameraPlugin()
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     weak var weakPlugin: CameraPlugin?
-    weak var weakDevice: MockCaptureDevice! = mockDevice
+    weak var weakDevice = mockDevice
 
     autoreleasepool {
-      let plugin = CameraPlugin(
+      let cameraPlugin = CameraPlugin(
         registry: MockFlutterTextureRegistry(),
         messenger: MockFlutterBinaryMessenger(),
         globalAPI: mockEventAPI,
         deviceDiscoverer: mockDeviceDiscoverer,
-        deviceFactory: { _ in weakDevice },
+        deviceFactory: { _ in weakDevice! },
         captureSessionFactory: { MockCaptureSession() },
         captureDeviceInputFactory: MockCaptureDeviceInputFactory()
       )
-      weakPlugin = plugin
-      plugin.captureSessionQueue = captureSessionQueue
-      plugin.camera = mockCamera
+      weakPlugin = cameraPlugin
+      cameraPlugin.captureSessionQueue = captureSessionQueue
+      cameraPlugin.camera = mockCamera
 
-      plugin.orientationChanged(createMockNotification(for: .landscapeLeft))
+      cameraPlugin.orientationChanged(createMockNotification(for: .landscapeLeft))
     }
 
     // Sanity check.
@@ -141,6 +142,7 @@ final class CameraOrientationTests: XCTestCase {
       XCTAssertNil(weakPlugin)
       cameraDeallocatedExpectation.fulfill()
     }
+    // Awaiting expectation is needed. The test is flaky when checking for null right away.
     waitForExpectations(timeout: 1, handler: nil)
 
     var setDeviceOrientationCalled = false
