@@ -6,7 +6,6 @@ package io.flutter.plugins.camerax;
 
 import androidx.camera.core.ImageProxy;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
@@ -33,5 +32,4 @@ public class AnalyzerTest {
 
     verify(mockApi).analyze(eq(instance), eq(image), any());
   }
-
 }
