@@ -142,7 +142,7 @@ final class CameraOrientationTests: XCTestCase {
       XCTAssertNil(weakPlugin)
       cameraDeallocatedExpectation.fulfill()
     }
-    // Awaiting expectation is needed. The test is flaky when checking for null right away.
+    // Awaiting expectation is needed. The test is flaky when checking for nil right away.
     waitForExpectations(timeout: 1, handler: nil)
 
     var setDeviceOrientationCalled = false
