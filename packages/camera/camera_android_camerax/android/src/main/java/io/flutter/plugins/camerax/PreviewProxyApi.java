@@ -37,7 +37,7 @@ class PreviewProxyApi extends PigeonApiPreview {
   @NonNull
   @Override
   public Preview pigeon_defaultConstructor(
-          @Nullable ResolutionSelector resolutionSelector, @Nullable Long targetRotation) {
+      @Nullable ResolutionSelector resolutionSelector, @Nullable Long targetRotation) {
     final Preview.Builder builder = new Preview.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());

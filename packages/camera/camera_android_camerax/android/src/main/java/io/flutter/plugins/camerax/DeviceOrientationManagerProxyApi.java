@@ -7,7 +7,6 @@ package io.flutter.plugins.camerax;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
-
 /**
  * ProxyApi implementation for {@link DeviceOrientationManager}. This class may handle instantiating
  * native object instances that are attached to a Dart instance or handle method calls on the

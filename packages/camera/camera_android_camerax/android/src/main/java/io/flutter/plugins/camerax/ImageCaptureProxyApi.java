@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -39,7 +38,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   @NonNull
   @Override
   public ImageCapture pigeon_defaultConstructor(
-          @Nullable androidx.camera.core.resolutionselector.ResolutionSelector resolutionSelector,
+      @Nullable androidx.camera.core.resolutionselector.ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
       @Nullable CameraXFlashMode flashMode) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();

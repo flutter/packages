@@ -21,7 +21,8 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
 
   @NonNull
   @Override
-  public ImageAnalysis pigeon_defaultConstructor(@Nullable ResolutionSelector resolutionSelector, @Nullable Long targetRotation) {
+  public ImageAnalysis pigeon_defaultConstructor(
+      @Nullable ResolutionSelector resolutionSelector, @Nullable Long targetRotation) {
     final ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
     if (resolutionSelector != null) {
       builder.setResolutionSelector(resolutionSelector);

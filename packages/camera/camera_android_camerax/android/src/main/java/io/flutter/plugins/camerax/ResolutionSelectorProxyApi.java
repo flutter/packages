@@ -24,10 +24,9 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
   @NonNull
   @Override
   public ResolutionSelector pigeon_defaultConstructor(
-          @Nullable ResolutionFilter resolutionFilter,
-          @Nullable ResolutionStrategy resolutionStrategy,
-      @Nullable AspectRatioStrategy aspectRatioStrategy
-      ) {
+      @Nullable ResolutionFilter resolutionFilter,
+      @Nullable ResolutionStrategy resolutionStrategy,
+      @Nullable AspectRatioStrategy aspectRatioStrategy) {
     final ResolutionSelector.Builder builder = new ResolutionSelector.Builder();
     if (aspectRatioStrategy != null) {
       builder.setAspectRatioStrategy(aspectRatioStrategy);

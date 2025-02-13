@@ -5,7 +5,6 @@
 package io.flutter.plugins.camerax;
 
 import android.util.Size;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.resolutionselector.ResolutionStrategy;
@@ -59,18 +58,19 @@ class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
 
   @NonNull
   @Override
-  public ResolutionStrategyFallbackRule getFallbackRule(@NonNull ResolutionStrategy pigeon_instance) {
-    switch(pigeon_instance.getFallbackRule()) {
-        case ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER:
-            return ResolutionStrategyFallbackRule.CLOSEST_HIGHER;
-        case ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER:
-          return ResolutionStrategyFallbackRule.CLOSEST_HIGHER_THEN_LOWER;
-        case ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER:
-          return ResolutionStrategyFallbackRule.CLOSEST_LOWER;
-        case ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER:
-          return ResolutionStrategyFallbackRule.CLOSEST_LOWER_THEN_HIGHER;
-        case ResolutionStrategy.FALLBACK_RULE_NONE:
-          return ResolutionStrategyFallbackRule.NONE;
+  public ResolutionStrategyFallbackRule getFallbackRule(
+      @NonNull ResolutionStrategy pigeon_instance) {
+    switch (pigeon_instance.getFallbackRule()) {
+      case ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER:
+        return ResolutionStrategyFallbackRule.CLOSEST_HIGHER;
+      case ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER:
+        return ResolutionStrategyFallbackRule.CLOSEST_HIGHER_THEN_LOWER;
+      case ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER:
+        return ResolutionStrategyFallbackRule.CLOSEST_LOWER;
+      case ResolutionStrategy.FALLBACK_RULE_CLOSEST_LOWER_THEN_HIGHER:
+        return ResolutionStrategyFallbackRule.CLOSEST_LOWER_THEN_HIGHER;
+      case ResolutionStrategy.FALLBACK_RULE_NONE:
+        return ResolutionStrategyFallbackRule.NONE;
     }
 
     return ResolutionStrategyFallbackRule.UNKNOWN;

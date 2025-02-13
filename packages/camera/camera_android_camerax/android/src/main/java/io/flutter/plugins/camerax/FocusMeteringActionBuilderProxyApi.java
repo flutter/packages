@@ -8,7 +8,6 @@ import androidx.annotation.NonNull;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.MeteringPoint;
 
-
 /**
  * ProxyApi implementation for {@link FocusMeteringAction.Builder}. This class may handle
  * instantiating native object instances that are attached to a Dart instance or handle method calls
