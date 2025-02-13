@@ -12,7 +12,6 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		334733EA2668111C00DCC49E /* CameraOrientationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 03BB767226653ABE00CE5A93 /* CameraOrientationTests.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		408D7A792C3C9CD000B71F9A /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 408D7A782C3C9CD000B71F9A /* OCMock */; };
 		54D650172516862D30686934 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ECAF63F924EFA2D68883BA85 /* libPods-Runner.a */; };
 		788A065A27B0E02900533D74 /* StreamingTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 788A065927B0E02900533D74 /* StreamingTest.m */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
@@ -27,7 +26,9 @@
 		7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */; };
 		7FD582122D579650003B1200 /* MockWritableData.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582112D579650003B1200 /* MockWritableData.m */; };
 		7FD582202D579ECC003B1200 /* MockCapturePhotoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */; };
+		7FD582272D57C020003B1200 /* MockAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582262D57C020003B1200 /* MockAssetWriter.m */; };
 		7FD582352D57D97C003B1200 /* MockCaptureDeviceFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */; };
+		7FD83D2B2D5BA65B00F4DB7C /* MockCaptureConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD83D2A2D5BA65B00F4DB7C /* MockCaptureConnection.m */; };
 		972CA92B2D5A1D8C004B846F /* CameraPropertiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972CA92A2D5A1D8C004B846F /* CameraPropertiesTests.swift */; };
 		972CA92D2D5A28C4004B846F /* QueueUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972CA92C2D5A28C4004B846F /* QueueUtilsTests.swift */; };
 		972CA9312D5A366C004B846F /* CameraExposureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972CA9302D5A366C004B846F /* CameraExposureTests.swift */; };
@@ -106,6 +107,12 @@
 		7FD582132D57965A003B1200 /* MockWritableData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockWritableData.h; sourceTree = "<group>"; };
 		7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCapturePhotoOutput.m; sourceTree = "<group>"; };
 		7FD582212D579ED9003B1200 /* MockCapturePhotoOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCapturePhotoOutput.h; sourceTree = "<group>"; };
+		7FD582262D57C020003B1200 /* MockAssetWriter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockAssetWriter.m; sourceTree = "<group>"; };
+		7FD582282D57C02B003B1200 /* MockAssetWriter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockAssetWriter.h; sourceTree = "<group>"; };
+		7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceFormat.m; sourceTree = "<group>"; };
+		7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceFormat.h; sourceTree = "<group>"; };
+		7FD83D292D5BA49100F4DB7C /* MockCaptureConnection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureConnection.h; sourceTree = "<group>"; };
+		7FD83D2A2D5BA65B00F4DB7C /* MockCaptureConnection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureConnection.m; sourceTree = "<group>"; };
 		7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDeviceFormat.m; sourceTree = "<group>"; };
 		7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDeviceFormat.h; sourceTree = "<group>"; };
 		972CA92A2D5A1D8C004B846F /* CameraPropertiesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPropertiesTests.swift; sourceTree = "<group>"; };
@@ -145,7 +152,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				408D7A792C3C9CD000B71F9A /* OCMock in Frameworks */,
 				1000364CB781922C6D6AAA4A /* libPods-RunnerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -204,12 +210,16 @@
 		7F29EB3F2D281C6D00740257 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
+				7FD582282D57C02B003B1200 /* MockAssetWriter.h */,
+				7FD582262D57C020003B1200 /* MockAssetWriter.m */,
 				7F8FD22D2D4D0B73001AF2C1 /* MockFlutterBinaryMessenger.h */,
 				7F8FD22E2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m */,
 				7F8FD22A2D4D07A6001AF2C1 /* MockFlutterTextureRegistry.h */,
 				7F8FD22B2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m */,
 				7F8FD2282D4BFABF001AF2C1 /* MockGlobalEventApi.m */,
 				7F8FD2272D4BFA8D001AF2C1 /* MockGlobalEventApi.h */,
+				7FD83D292D5BA49100F4DB7C /* MockCaptureConnection.h */,
+				7FD83D2A2D5BA65B00F4DB7C /* MockCaptureConnection.m */,
 				7FCEDD312D43C2B900EA1CA8 /* MockCaptureDevice.h */,
 				7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */,
 				7FD582362D57D989003B1200 /* MockCaptureDeviceFormat.h */,
@@ -316,7 +326,6 @@
 			);
 			name = RunnerTests;
 			packageProductDependencies = (
-				408D7A782C3C9CD000B71F9A /* OCMock */,
 			);
 			productName = camera_exampleTests;
 			productReference = 03BB76682665316900CE5A93 /* RunnerTests.xctest */;
@@ -378,7 +387,6 @@
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
 				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
-				408D7A772C3C9CD000B71F9A /* XCRemoteSwiftPackageReference "ocmock" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -520,6 +528,7 @@
 				972CA92D2D5A28C4004B846F /* QueueUtilsTests.swift in Sources */,
 				979B3DFB2D5B6BC7009BDE1A /* ExceptionCatcher.m in Sources */,
 				E071CF7227B3061B006EF3BA /* FLTCamPhotoCaptureTests.m in Sources */,
+				7FD83D2B2D5BA65B00F4DB7C /* MockCaptureConnection.m in Sources */,
 				977A25242D5A511600931E34 /* CameraPermissionTests.swift in Sources */,
 				7D5FCCD42AEF9D0200FB7108 /* CameraSettingsTests.m in Sources */,
 				7F8FD2292D4BFABF001AF2C1 /* MockGlobalEventApi.m in Sources */,
@@ -538,6 +547,7 @@
 				972CA9312D5A366C004B846F /* CameraExposureTests.swift in Sources */,
 				7F29EB292D26A59000740257 /* MockCameraDeviceDiscoverer.m in Sources */,
 				788A065A27B0E02900533D74 /* StreamingTest.m in Sources */,
+				7FD582272D57C020003B1200 /* MockAssetWriter.m in Sources */,
 				E0C6E2022770F01A00EA6AA3 /* ThreadSafeEventChannelTests.m in Sources */,
 				977A25222D5A49EC00931E34 /* CameraFocusTests.swift in Sources */,
 				7F29EB412D281C7E00740257 /* MockCaptureSession.m in Sources */,
@@ -845,23 +855,7 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		408D7A772C3C9CD000B71F9A /* XCRemoteSwiftPackageReference "ocmock" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/erikdoe/ocmock";
-			requirement = {
-				kind = revision;
-				revision = fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		408D7A782C3C9CD000B71F9A /* OCMock */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 408D7A772C3C9CD000B71F9A /* XCRemoteSwiftPackageReference "ocmock" */;
-			productName = OCMock;
-		};
 		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FlutterGeneratedPluginSwiftPackage;
