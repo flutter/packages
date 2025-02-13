@@ -482,14 +482,14 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
      * Clears the token kept in the client side cache.
      *
      * <p>Runs on a background task queue.
-     * */
+     */
     @Override
     public void clearAuthCache(@NonNull String token) {
-        try {
-            GoogleAuthUtil.clearToken(context, token);
-        } catch (Exception e) {
-            throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
-        }
+      try {
+        GoogleAuthUtil.clearToken(context, token);
+      } catch (Exception e) {
+        throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
+      }
     }
 
     /**
