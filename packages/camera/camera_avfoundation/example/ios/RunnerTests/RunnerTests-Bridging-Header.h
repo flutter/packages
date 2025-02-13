@@ -12,7 +12,10 @@
 // Mocks, protocols.
 #import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDevice.h"
+<<<<<<< HEAD
 #import "MockCaptureDeviceFormat.h"
+=======
+>>>>>>> main
 #import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
 #import "MockEventChannel.h"
@@ -22,3 +25,7 @@
 
 // Utils.
 #import "CameraTestUtils.h"
+<<<<<<< HEAD
+=======
+#import "ExceptionCatcher.h"
+>>>>>>> main
