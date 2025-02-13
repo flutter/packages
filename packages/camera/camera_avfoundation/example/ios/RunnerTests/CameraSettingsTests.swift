@@ -97,7 +97,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func addInput(_ writerInput: AVAssetWriterInput, to writer: AVAssetWriter) {
-    // No-op
+    // No-op.
   }
 
   override func recommendedVideoSettingsForAssetWriter(

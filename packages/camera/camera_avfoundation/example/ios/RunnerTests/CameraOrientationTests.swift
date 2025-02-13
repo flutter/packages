@@ -14,10 +14,6 @@ private final class MockCamera: FLTCam {
   override func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
     setDeviceOrientationStub?(orientation)
   }
-
-  func setCaptureDevice(_ device: FLTCaptureDevice) {
-    self.captureDevice = device
-  }
 }
 
 private final class MockUIDevice: UIDevice {
@@ -117,7 +113,7 @@ final class CameraOrientationTests: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
   }
 
-  func testOrientationChanged_noRetainCycle() {
+  func testOrientationChangedNoRetainCycle() {
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     weak var weakPlugin: CameraPlugin?
     weak var weakDevice: MockCaptureDevice! = mockDevice

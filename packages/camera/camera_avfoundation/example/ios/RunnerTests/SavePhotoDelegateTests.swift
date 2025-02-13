@@ -11,7 +11,6 @@ final class SavePhotoDelegateTests: XCTestCase {
   func testHandlePhotoCaptureResult_mustCompleteWithErrorIfFailedToCapture() {
     let completionExpectation = expectation(
       description: "Must complete with error if failed to capture photo.")
-
     let captureError = NSError(domain: "test", code: 0, userInfo: nil)
     let ioQueue = DispatchQueue(label: "test")
     let delegate = FLTSavePhotoDelegate(path: "test", ioQueue: ioQueue) { path, error in
@@ -21,6 +20,7 @@ final class SavePhotoDelegateTests: XCTestCase {
     }
 
     delegate.handlePhotoCaptureResult(error: captureError) { nil }
+
     waitForExpectations(timeout: 30, handler: nil)
   }
 
@@ -28,7 +28,6 @@ final class SavePhotoDelegateTests: XCTestCase {
     let completionExpectation = expectation(
       description: "Must complete with error if failed to write file.")
     let ioQueue = DispatchQueue(label: "test")
-
     let ioError = NSError(
       domain: "IOError", code: 0, userInfo: [NSLocalizedDescriptionKey: "Localized IO Error"])
     let delegate = FLTSavePhotoDelegate(path: "test", ioQueue: ioQueue) { path, error in
@@ -45,13 +44,13 @@ final class SavePhotoDelegateTests: XCTestCase {
     }
 
     delegate.handlePhotoCaptureResult(error: nil) { mockWritableData }
+
     waitForExpectations(timeout: 30, handler: nil)
   }
 
   func testHandlePhotoCaptureResult_mustCompleteWithFilePathIfSuccessToWrite() {
     let completionExpectation = expectation(
       description: "Must complete with file path if succeeds to write file.")
-
     let ioQueue = DispatchQueue(label: "test")
     let filePath = "test"
     let delegate = FLTSavePhotoDelegate(path: filePath, ioQueue: ioQueue) { path, error in
@@ -66,6 +65,7 @@ final class SavePhotoDelegateTests: XCTestCase {
     }
 
     delegate.handlePhotoCaptureResult(error: nil) { mockWritableData }
+
     waitForExpectations(timeout: 30, handler: nil)
   }
 
@@ -75,7 +75,6 @@ final class SavePhotoDelegateTests: XCTestCase {
     let writeFileQueueExpectation = expectation(description: "File writing must run on io queue.")
     let completionExpectation = expectation(
       description: "Must complete with file path if success to write file.")
-
     let ioQueue = DispatchQueue(label: "test")
     let ioQueueSpecific = DispatchSpecificKey<Void>()
     ioQueue.setSpecific(key: ioQueueSpecific, value: ())

@@ -7,7 +7,7 @@ import XCTest
 @testable import camera_avfoundation
 
 final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
-  func createCameraPlugin() -> CameraPlugin {
+  private func createCameraPlugin() -> CameraPlugin {
     let captureDevice = MockCaptureDevice()
 
     return CameraPlugin(
@@ -23,7 +23,6 @@ final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
 
   func testFixForCaptureSessionQueueNullPointerCrashDueToRaceCondition() {
     let cameraPlugin = createCameraPlugin()
-
     let disposeExpectation = expectation(description: "dispose's result block must be called")
     let createExpectation = expectation(description: "create's result block must be called")
 

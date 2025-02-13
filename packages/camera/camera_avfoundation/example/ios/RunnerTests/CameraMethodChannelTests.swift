@@ -8,7 +8,7 @@ import XCTest
 @testable import camera_avfoundation
 
 final class CameraMethodChannelTests: XCTestCase {
-  func createCameraPlugin(with session: MockCaptureSession) -> CameraPlugin {
+  private func createCameraPlugin(with session: MockCaptureSession) -> CameraPlugin {
     return CameraPlugin(
       registry: MockFlutterTextureRegistry(),
       messenger: MockFlutterBinaryMessenger(),
@@ -23,9 +23,7 @@ final class CameraMethodChannelTests: XCTestCase {
   func testCreate_ShouldCallResultOnMainThread() {
     let avCaptureSessionMock = MockCaptureSession()
     avCaptureSessionMock.canSetSessionPreset = true
-
     let camera = createCameraPlugin(with: avCaptureSessionMock)
-
     let expectation = self.expectation(description: "Result finished")
 
     var resultValue: NSNumber?
@@ -44,17 +42,15 @@ final class CameraMethodChannelTests: XCTestCase {
     }
 
     waitForExpectations(timeout: 30, handler: nil)
-
     XCTAssertNotNil(resultValue)
   }
 
   func testDisposeShouldDeallocCamera() {
     let avCaptureSessionMock = MockCaptureSession()
     avCaptureSessionMock.canSetSessionPreset = true
-
     let camera = createCameraPlugin(with: avCaptureSessionMock)
-
     let createExpectation = self.expectation(description: "create's result block must be called")
+
     camera.createCameraOnSessionQueue(
       withName: "acamera",
       settings: FCPPlatformMediaSettings.make(
