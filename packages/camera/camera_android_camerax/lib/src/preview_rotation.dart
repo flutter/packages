@@ -17,11 +17,12 @@ double computeRotation(
     DeviceOrientation.portraitDown => 180,
     DeviceOrientation.landscapeLeft => 270, // FIXME: Should this be -90?
   };
-  final double preAppliedRotation = deviceOrientationDegrees / 90;
+  final double preAppliedRotation = deviceOrientationDegrees;
   debugPrint('>>>>> deviceOrientationDegrees: $deviceOrientationDegrees');
   debugPrint('>>>>> preAppliedRotation: $preAppliedRotation');
   return ((sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
-      360) - preAppliedRotation;
+          360) -
+      preAppliedRotation;
 }
 
 final class PreviewRotation extends StatefulWidget {
@@ -47,6 +48,9 @@ final class PreviewRotation extends StatefulWidget {
   /// ...
   final Stream<DeviceOrientation> deviceOrientation;
 
+  /// FIXME: Add an initialDeviceOrientation.
+  /// final DeviceOrientation initialDeviceOrientation;
+
   /// ...
   final double sensorOrientationDegrees;
 
@@ -58,11 +62,26 @@ final class PreviewRotation extends StatefulWidget {
 }
 
 final class _PreviewRotationState extends State<PreviewRotation> {
+  // FIXME: Instead of assuming the initial state is portraitUp, we should
+  // get that from the widget itself; meaning, when we call 'createCameraWithSettings'
+  // we should get the initial device orientation, and then provide that to preview
+  // rotation PreviewRotation.frontFacingCamera(initialDeviceOrientation: ...);
+  //
+  // So this will be come late instead of having an initial value.
   DeviceOrientation deviceOrientation = DeviceOrientation.portraitUp;
 
   @override
   void initState() {
+    // FIXME: Get the initial orientation.
+    // deviceOrientation = widget.initialDeviceOrientation;
+
+    // FIXME: Need to store a reference to the stream subscription, and
+    // cancel it in the @override dispose() method, which is not yet done here.
     widget.deviceOrientation.listen((DeviceOrientation event) {
+      // Make sure we aren't updating the state if the widget is being destroyed.
+      if (!mounted) {
+        return;
+      }
       setState(() {
         debugPrint('>>>> deviceOrientation changed to: $event');
         deviceOrientation = event;
