@@ -27,8 +27,6 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -222,7 +220,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         // https://developers.google.com/android/guides/client-auth
         // https://developers.google.com/identity/sign-in/android/start#configure-a-google-api-project
         String serverClientId = params.getServerClientId();
-        if (!Strings.isNullOrEmpty(params.getClientId()) && Strings.isNullOrEmpty(serverClientId)) {
+        if (!isNullOrEmpty(params.getClientId()) && isNullOrEmpty(serverClientId)) {
           Log.w(
               "google_sign_in",
               "clientId is not supported on Android and is interpreted as serverClientId. "
@@ -230,7 +228,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           serverClientId = params.getClientId();
         }
 
-        if (Strings.isNullOrEmpty(serverClientId)) {
+        if (isNullOrEmpty(serverClientId)) {
           // Only requests a clientId if google-services.json was present and parsed
           // by the google-services Gradle script.
           // TODO(jackson): Perhaps we should provide a mechanism to override this
@@ -244,7 +242,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
             serverClientId = context.getString(webClientIdIdentifier);
           }
         }
-        if (!Strings.isNullOrEmpty(serverClientId)) {
+        if (!isNullOrEmpty(serverClientId)) {
           optionsBuilder.requestIdToken(serverClientId);
           optionsBuilder.requestServerAuthCode(
               serverClientId, params.getForceCodeForRefreshToken());
@@ -253,7 +251,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         for (String scope : requestedScopes) {
           optionsBuilder.requestScopes(new Scope(scope));
         }
-        if (!Strings.isNullOrEmpty(params.getHostedDomain())) {
+        if (!isNullOrEmpty(params.getHostedDomain())) {
           optionsBuilder.setHostedDomain(params.getHostedDomain());
         }
 
@@ -448,6 +446,10 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       pendingOperation = null;
     }
 
+    private static boolean isNullOrEmpty(@Nullable String s) {
+      return s == null || s.isEmpty();
+    }
+
     private static class PendingOperation {
       final @NonNull String method;
       final @Nullable Messages.Result<Messages.UserData> userDataResult;
@@ -506,7 +508,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         @NonNull Messages.Result<String> result) {
       try {
         Account account = new Account(email, "com.google");
-        String scopesStr = "oauth2:" + Joiner.on(' ').join(requestedScopes);
+        String scopesStr = "oauth2:" + String.join(" ", requestedScopes);
         String token = GoogleAuthUtil.getToken(context, account, scopesStr);
         result.success(token);
       } catch (UserRecoverableAuthException e) {
