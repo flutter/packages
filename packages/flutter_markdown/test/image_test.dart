@@ -510,6 +510,7 @@ void defineTests() {
             find.byType(Container),
             matchesGoldenFile(
                 'assets/images/golden/image_test/custom_image_builder_test.png'));
+        imageCache.clear();
       },
       skip: kIsWeb,
     );
