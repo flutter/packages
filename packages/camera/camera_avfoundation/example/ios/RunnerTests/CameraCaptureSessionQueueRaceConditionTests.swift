@@ -8,14 +8,12 @@ import XCTest
 
 final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
   private func createCameraPlugin() -> CameraPlugin {
-    let captureDevice = MockCaptureDevice()
-
     return CameraPlugin(
       registry: MockFlutterTextureRegistry(),
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      deviceFactory: { _ in captureDevice },
+      deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory()
     )

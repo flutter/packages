@@ -97,8 +97,7 @@ final class CameraOrientationTests: XCTestCase {
 
     let plugin = CameraPlugin(
       registry: MockFlutterTextureRegistry(),
-      messenger: MockFlutterBinaryMessenger()
-    )
+      messenger: MockFlutterBinaryMessenger())
     let captureSessionQueueSpecific = DispatchSpecificKey<Void>()
     plugin.captureSessionQueue.setSpecific(key: captureSessionQueueSpecific, value: ())
     plugin.camera = mockCamera
