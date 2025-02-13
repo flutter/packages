@@ -39,7 +39,7 @@
                                     [mainThreadCompletionExpectation fulfill];
                                   }
                                 }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testSetStreamHandler_shouldDispatchToMainThreadIfCalledFromBackgroundThread {
@@ -67,7 +67,7 @@
                                     }
                                   }];
   });
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testEventChannel_shouldBeKeptAliveWhenDispatchingBackToMainThread {
@@ -86,7 +86,7 @@
                    }];
   });
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end

@@ -1,3 +1,7 @@
+## 0.2.4+3
+
+* Updates README to indicate that this package will be discontinued.
+
 ## 0.2.4+2
 
 * Replaces usage of deprecated `loadBuffer`.

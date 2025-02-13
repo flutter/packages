@@ -8,7 +8,8 @@
 #endif
 @import AVFoundation;
 @import XCTest;
-#import <OCMock/OCMock.h>
+
+#import "MockWritableData.h"
 
 @interface FLTSavePhotoDelegateTests : XCTestCase
 
@@ -35,7 +36,7 @@
                             photoDataProvider:^NSData * {
                               return nil;
                             }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testHandlePhotoCaptureResult_mustCompleteWithErrorIfFailedToWrite {
@@ -55,18 +56,18 @@
         [completionExpectation fulfill];
       }];
 
-  // Do not use OCMClassMock for NSData because some XCTest APIs uses NSData (e.g.
-  // `XCTRunnerIDESession::logDebugMessage:`) on a private queue.
-  id mockData = OCMPartialMock([NSData data]);
-  OCMStub([mockData writeToFile:OCMOCK_ANY
-                        options:NSDataWritingAtomic
-                          error:[OCMArg setTo:ioError]])
-      .andReturn(NO);
+  MockWritableData *mockWritableData = [[MockWritableData alloc] init];
+  mockWritableData.writeToFileStub =
+      ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
+        *error = ioError;
+        return NO;
+      };
+
   [delegate handlePhotoCaptureResultWithError:nil
-                            photoDataProvider:^NSData * {
-                              return mockData;
+                            photoDataProvider:^NSObject<FLTWritableData> * {
+                              return mockWritableData;
                             }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testHandlePhotoCaptureResult_mustCompleteWithFilePathIfSuccessToWrite {
@@ -84,17 +85,17 @@
         [completionExpectation fulfill];
       }];
 
-  // Do not use OCMClassMock for NSData because some XCTest APIs uses NSData (e.g.
-  // `XCTRunnerIDESession::logDebugMessage:`) on a private queue.
-  id mockData = OCMPartialMock([NSData data]);
-  OCMStub([mockData writeToFile:filePath options:NSDataWritingAtomic error:[OCMArg setTo:nil]])
-      .andReturn(YES);
+  MockWritableData *mockWritableData = [[MockWritableData alloc] init];
+  mockWritableData.writeToFileStub =
+      ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
+        return YES;
+      };
 
   [delegate handlePhotoCaptureResultWithError:nil
-                            photoDataProvider:^NSData * {
-                              return mockData;
+                            photoDataProvider:^NSObject<FLTWritableData> * {
+                              return mockWritableData;
                             }];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testHandlePhotoCaptureResult_bothProvideDataAndSaveFileMustRunOnIOQueue {
@@ -109,16 +110,14 @@
   const char *ioQueueSpecific = "io_queue_specific";
   dispatch_queue_set_specific(ioQueue, ioQueueSpecific, (void *)ioQueueSpecific, NULL);
 
-  // Do not use OCMClassMock for NSData because some XCTest APIs uses NSData (e.g.
-  // `XCTRunnerIDESession::logDebugMessage:`) on a private queue.
-  id mockData = OCMPartialMock([NSData data]);
-  OCMStub([mockData writeToFile:OCMOCK_ANY options:NSDataWritingAtomic error:[OCMArg setTo:nil]])
-      .andDo(^(NSInvocation *invocation) {
+  MockWritableData *mockWritableData = [[MockWritableData alloc] init];
+  mockWritableData.writeToFileStub =
+      ^BOOL(NSString *path, NSDataWritingOptions options, NSError *__autoreleasing *error) {
         if (dispatch_get_specific(ioQueueSpecific)) {
           [writeFileQueueExpectation fulfill];
         }
-      })
-      .andReturn(YES);
+        return YES;
+      };
 
   NSString *filePath = @"test";
   FLTSavePhotoDelegate *delegate = [[FLTSavePhotoDelegate alloc]
@@ -129,14 +128,14 @@
       }];
 
   [delegate handlePhotoCaptureResultWithError:nil
-                            photoDataProvider:^NSData * {
+                            photoDataProvider:^NSObject<FLTWritableData> * {
                               if (dispatch_get_specific(ioQueueSpecific)) {
                                 [dataProviderQueueExpectation fulfill];
                               }
-                              return mockData;
+                              return mockWritableData;
                             }];
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end

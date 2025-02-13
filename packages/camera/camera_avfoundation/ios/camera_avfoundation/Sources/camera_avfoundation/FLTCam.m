@@ -119,10 +119,11 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 NSString *const errorMethod = @"error";
 
 // Returns frame rate supported by format closest to targetFrameRate.
-static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targetFrameRate) {
+static double bestFrameRateForFormat(NSObject<FLTCaptureDeviceFormat> *format,
+                                     double targetFrameRate) {
   double bestFrameRate = 0;
   double minDistance = DBL_MAX;
-  for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+  for (NSObject<FLTFrameRateRange> *range in format.videoSupportedFrameRateRanges) {
     double frameRate = MIN(MAX(targetFrameRate, range.minFrameRate), range.maxFrameRate);
     double distance = fabs(frameRate - targetFrameRate);
     if (distance < minDistance) {
@@ -145,11 +146,11 @@ static void selectBestFormatForRequestedFrameRate(
   double targetFrameRate = mediaSettings.framesPerSecond.doubleValue;
   FourCharCode preferredSubType =
       CMFormatDescriptionGetMediaSubType(captureDevice.activeFormat.formatDescription);
-  AVCaptureDeviceFormat *bestFormat = captureDevice.activeFormat;
+  NSObject<FLTCaptureDeviceFormat> *bestFormat = captureDevice.activeFormat;
   double bestFrameRate = bestFrameRateForFormat(bestFormat, targetFrameRate);
   double minDistance = fabs(bestFrameRate - targetFrameRate);
   BOOL isBestSubTypePreferred = YES;
-  for (AVCaptureDeviceFormat *format in captureDevice.formats) {
+  for (NSObject<FLTCaptureDeviceFormat> *format in captureDevice.formats) {
     CMVideoDimensions resolution = videoDimensionsForFormat(format);
     if (resolution.width != targetResolution.width ||
         resolution.height != targetResolution.height) {
@@ -217,9 +218,10 @@ static void selectBestFormatForRequestedFrameRate(
   [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
   [_videoCaptureSession addConnection:connection];
 
-  _capturePhotoOutput = [AVCapturePhotoOutput new];
+  _capturePhotoOutput =
+      [[FLTDefaultCapturePhotoOutput alloc] initWithPhotoOutput:[AVCapturePhotoOutput new]];
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
-  [_videoCaptureSession addOutput:_capturePhotoOutput];
+  [_videoCaptureSession addOutput:_capturePhotoOutput.photoOutput];
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
@@ -358,7 +360,7 @@ static void selectBestFormatForRequestedFrameRate(
                                         ? _lockedCaptureOrientation
                                         : _deviceOrientation;
 
-  [self updateOrientation:orientation forCaptureOutput:_capturePhotoOutput];
+  [self updateOrientation:orientation forCaptureOutput:_capturePhotoOutput.photoOutput];
   [self updateOrientation:orientation forCaptureOutput:_captureVideoOutput];
 }
 
@@ -486,7 +488,7 @@ static void selectBestFormatForRequestedFrameRate(
                       withError:(NSError **)error {
   switch (resolutionPreset) {
     case FCPPlatformResolutionPresetMax: {
-      AVCaptureDeviceFormat *bestFormat =
+      NSObject<FLTCaptureDeviceFormat> *bestFormat =
           [self highestResolutionFormatForCaptureDevice:_captureDevice];
       if (bestFormat) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
@@ -551,14 +553,14 @@ static void selectBestFormatForRequestedFrameRate(
 
 /// Finds the highest available resolution in terms of pixel count for the given device.
 /// Preferred are formats with the same subtype as current activeFormat.
-- (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
+- (NSObject<FLTCaptureDeviceFormat> *)highestResolutionFormatForCaptureDevice:
     (NSObject<FLTCaptureDevice> *)captureDevice {
   FourCharCode preferredSubType =
       CMFormatDescriptionGetMediaSubType(_captureDevice.activeFormat.formatDescription);
-  AVCaptureDeviceFormat *bestFormat = nil;
+  NSObject<FLTCaptureDeviceFormat> *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
   BOOL isBestSubTypePreferred = NO;
-  for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
+  for (NSObject<FLTCaptureDeviceFormat> *format in _captureDevice.formats) {
     CMVideoDimensions res = self.videoDimensionsForFormat(format);
     NSUInteger height = res.height;
     NSUInteger width = res.width;
