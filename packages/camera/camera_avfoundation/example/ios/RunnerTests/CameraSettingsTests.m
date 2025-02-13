@@ -124,7 +124,8 @@ static const BOOL gTestEnableAudio = YES;
   return [[MockAssetWriterInput alloc] init];
 }
 
-- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput toAssetWriter:(NSObject<FLTAssetWriter> *)writer {
+- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput
+    toAssetWriter:(NSObject<FLTAssetWriter> *)writer {
 }
 
 - (NSDictionary<NSString *, id> *)

@@ -64,7 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// A default implementation of `FLTAssetWriterInputPixelBufferAdaptor` which forwards calls to the
 /// underlying `AVAssetWriterInputPixelBufferAdaptor`.
-@interface FLTDefaultAssetWriterInputPixelBufferAdaptor : NSObject <FLTAssetWriterInputPixelBufferAdaptor>
+@interface FLTDefaultAssetWriterInputPixelBufferAdaptor
+    : NSObject <FLTAssetWriterInputPixelBufferAdaptor>
 
 /// Creates a wrapper around the `adaptor` which will forward calls to it.
 - (instancetype)initWithAdaptor:(AVAssetWriterInputPixelBufferAdaptor *)adaptor;

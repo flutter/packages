@@ -68,8 +68,8 @@ FLTCamConfiguration *FLTCreateTestCameraConfiguration(void) {
   configuration.videoCaptureSession = videoSessionMock;
   configuration.audioCaptureSession = audioSessionMock;
   configuration.orientation = UIDeviceOrientationPortrait;
-  configuration.assetWriterFactory = ^NSObject<FLTAssetWriter> *(
-      NSURL *url, AVFileType fileType, NSError **error) {
+  configuration.assetWriterFactory =
+      ^NSObject<FLTAssetWriter> *(NSURL *url, AVFileType fileType, NSError **error) {
     return [[MockAssetWriter alloc] init];
   };
   configuration.inputPixelBufferAdaptorFactory = ^NSObject<FLTAssetWriterInputPixelBufferAdaptor> *(

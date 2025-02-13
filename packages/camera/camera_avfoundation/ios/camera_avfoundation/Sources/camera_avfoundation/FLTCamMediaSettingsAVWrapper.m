@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/camera_avfoundation/FLTAssetWriter.h"
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
+#import "./include/camera_avfoundation/FLTAssetWriter.h"
 #import "./include/camera_avfoundation/FLTCaptureDevice.h"
 #import "./include/camera_avfoundation/FLTCaptureSession.h"
 
@@ -37,8 +37,8 @@
 - (NSObject<FLTAssetWriterInput> *)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
   return [[FLTDefaultAssetWriterInput alloc]
-          initWithInput:[AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
-                                            outputSettings:outputSettings]];
+      initWithInput:[AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
+                                                       outputSettings:outputSettings]];
 }
 
 - (NSObject<FLTAssetWriterInput> *)assetWriterVideoInputWithOutputSettings:
@@ -48,7 +48,8 @@
                                                        outputSettings:outputSettings]];
 }
 
-- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput toAssetWriter:(NSObject<FLTAssetWriter> *)writer {
+- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput
+    toAssetWriter:(NSObject<FLTAssetWriter> *)writer {
   [writer addInput:writerInput.input];
 }
 

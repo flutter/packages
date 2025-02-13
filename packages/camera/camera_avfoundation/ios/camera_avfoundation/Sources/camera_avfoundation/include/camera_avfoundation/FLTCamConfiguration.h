@@ -22,7 +22,7 @@ typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(void);
 typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
 
 typedef NSObject<FLTAssetWriter> *_Nonnull (^AssetWriterFactory)(NSURL *, AVFileType,
-                                                          NSError *_Nullable *_Nullable);
+                                                                 NSError *_Nullable *_Nullable);
 
 typedef NSObject<FLTAssetWriterInputPixelBufferAdaptor> *_Nonnull (^InputPixelBufferAdaptorFactory)(
     NSObject<FLTAssetWriterInput> *, NSDictionary<NSString *, id> *_Nullable);

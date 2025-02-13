@@ -98,7 +98,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param writerInput The `AVAssetWriterInput` object to be added.
  * @param writer The `AVAssetWriter` object.
  */
-- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput toAssetWriter:(NSObject<FLTAssetWriter> *)writer;
+- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput
+    toAssetWriter:(NSObject<FLTAssetWriter> *)writer;
 
 /**
  * @method recommendedVideoSettingsForAssetWriterWithFileType:forOutput:

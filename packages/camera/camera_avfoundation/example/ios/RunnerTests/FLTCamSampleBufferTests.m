@@ -70,7 +70,9 @@
 
 @implementation FLTCamSampleBufferTests
 
-- (FLTCam *)createCameraWithAssetWriter:(MockAssetWriter *)assetWriter adaptor:(MockAssetWriterInputPixelBufferAdaptor *)adaptor input:(MockAssetWriterInput *)input {
+- (FLTCam *)createCameraWithAssetWriter:(MockAssetWriter *)assetWriter
+                                adaptor:(MockAssetWriterInputPixelBufferAdaptor *)adaptor
+                                  input:(MockAssetWriterInput *)input {
   FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
   configuration.mediaSettings =
       [FCPPlatformMediaSettings makeWithResolutionPreset:FCPPlatformResolutionPresetMedium
@@ -82,13 +84,14 @@
 
   configuration.assetWriterFactory =
       ^NSObject<FLTAssetWriter> *_Nonnull(NSURL *url, AVFileType fileType, NSError **error) {
-        return assetWriter;
+    return assetWriter;
   };
-  configuration.inputPixelBufferAdaptorFactory = ^id<FLTAssetWriterInputPixelBufferAdaptor> _Nonnull(
-      NSObject<FLTAssetWriterInput> *input, NSDictionary<NSString *, id> *settings) {
-        return adaptor;
+  configuration.inputPixelBufferAdaptorFactory =
+      ^id<FLTAssetWriterInputPixelBufferAdaptor> _Nonnull(NSObject<FLTAssetWriterInput> *input,
+                                                          NSDictionary<NSString *, id> *settings) {
+    return adaptor;
   };
-  
+
   return FLTCreateCamWithConfiguration(configuration);
 }
 
@@ -139,7 +142,8 @@
 
 - (void)testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples {
   MockAssetWriter *writerMock = [[MockAssetWriter alloc] init];
-  MockAssetWriterInputPixelBufferAdaptor *adaptorMock = [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
+  MockAssetWriterInputPixelBufferAdaptor *adaptorMock =
+      [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
   MockAssetWriterInput *inputMock = [[MockAssetWriterInput alloc] init];
   MockCaptureConnection *connectionMock = [[MockCaptureConnection alloc] init];
 
@@ -147,11 +151,13 @@
   writerMock.startWritingStub = ^{
     status = AVAssetWriterStatusWriting;
   };
-  writerMock.statusStub = ^AVAssetWriterStatus{
+  writerMock.statusStub = ^AVAssetWriterStatus {
     return status;
   };
 
-  FLTCam *camera = [self createCameraWithAssetWriter:writerMock adaptor:adaptorMock input:inputMock];
+  FLTCam *camera = [self createCameraWithAssetWriter:writerMock
+                                             adaptor:adaptorMock
+                                               input:inputMock];
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
   CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
 
@@ -189,22 +195,25 @@
 
 - (void)testDidOutputSampleBufferSampleTimesMustBeNumericAfterPauseResume {
   MockAssetWriter *writerMock = [[MockAssetWriter alloc] init];
-  MockAssetWriterInputPixelBufferAdaptor *adaptorMock = [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
+  MockAssetWriterInputPixelBufferAdaptor *adaptorMock =
+      [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
   MockAssetWriterInput *inputMock = [[MockAssetWriterInput alloc] init];
   MockCaptureConnection *connectionMock = [[MockCaptureConnection alloc] init];
-  
-  FLTCam *camera = [self createCameraWithAssetWriter:writerMock adaptor:adaptorMock input:inputMock];
+
+  FLTCam *camera = [self createCameraWithAssetWriter:writerMock
+                                             adaptor:adaptorMock
+                                               input:inputMock];
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
   CMSampleBufferRef audioSample = FLTCreateTestAudioSampleBuffer();
-  
+
   __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
   writerMock.startWritingStub = ^{
     status = AVAssetWriterStatusWriting;
   };
-  writerMock.statusStub = ^AVAssetWriterStatus{
+  writerMock.statusStub = ^AVAssetWriterStatus {
     return status;
   };
-  
+
   __block BOOL videoAppended = NO;
   adaptorMock.appendPixelBufferStub = ^BOOL(CVPixelBufferRef buffer, CMTime time) {
     XCTAssert(CMTIME_IS_NUMERIC(time));
@@ -245,11 +254,14 @@
 
 - (void)testDidOutputSampleBufferMustNotAppendSampleWhenReadyForMoreMediaDataIsNo {
   MockAssetWriter *writerMock = [[MockAssetWriter alloc] init];
-  MockAssetWriterInputPixelBufferAdaptor *adaptorMock = [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
+  MockAssetWriterInputPixelBufferAdaptor *adaptorMock =
+      [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
   MockAssetWriterInput *inputMock = [[MockAssetWriterInput alloc] init];
   MockCaptureConnection *connectionMock = [[MockCaptureConnection alloc] init];
-  FLTCam *camera = [self createCameraWithAssetWriter:writerMock adaptor:adaptorMock input:inputMock];
-  
+  FLTCam *camera = [self createCameraWithAssetWriter:writerMock
+                                             adaptor:adaptorMock
+                                               input:inputMock];
+
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
 
   __block BOOL sampleAppended = NO;
@@ -282,15 +294,18 @@
 
 - (void)testStopVideoRecordingWithCompletionMustCallCompletion {
   MockAssetWriter *writerMock = [[MockAssetWriter alloc] init];
-  MockAssetWriterInputPixelBufferAdaptor *adaptorMock = [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
+  MockAssetWriterInputPixelBufferAdaptor *adaptorMock =
+      [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
   MockAssetWriterInput *inputMock = [[MockAssetWriterInput alloc] init];
-  FLTCam *camera = [self createCameraWithAssetWriter:writerMock adaptor:adaptorMock input:inputMock];
-  
+  FLTCam *camera = [self createCameraWithAssetWriter:writerMock
+                                             adaptor:adaptorMock
+                                               input:inputMock];
+
   __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
   writerMock.startWritingStub = ^{
     status = AVAssetWriterStatusWriting;
   };
-  writerMock.statusStub = ^AVAssetWriterStatus{
+  writerMock.statusStub = ^AVAssetWriterStatus {
     return status;
   };
   writerMock.finishWritingStub = ^(void (^param)(void)) {
@@ -316,11 +331,14 @@
 
 - (void)testStartWritingShouldNotBeCalledBetweenSampleCreationAndAppending {
   MockAssetWriter *writerMock = [[MockAssetWriter alloc] init];
-  MockAssetWriterInputPixelBufferAdaptor *adaptorMock = [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
+  MockAssetWriterInputPixelBufferAdaptor *adaptorMock =
+      [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
   MockAssetWriterInput *inputMock = [[MockAssetWriterInput alloc] init];
   MockCaptureConnection *connectionMock = [[MockCaptureConnection alloc] init];
-  FLTCam *camera = [self createCameraWithAssetWriter:writerMock adaptor:adaptorMock input:inputMock];
-  
+  FLTCam *camera = [self createCameraWithAssetWriter:writerMock
+                                             adaptor:adaptorMock
+                                               input:inputMock];
+
   CMSampleBufferRef videoSample = FLTCreateTestSampleBuffer();
 
   __block BOOL startWritingCalled = NO;
@@ -358,7 +376,7 @@
 
 - (void)testStartVideoRecordingWithCompletionShouldNotDisableMixWithOthers {
   FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
-    
+
   [AVAudioSession.sharedInstance setCategory:AVAudioSessionCategoryPlayback
                                  withOptions:AVAudioSessionCategoryOptionMixWithOthers
                                        error:nil];

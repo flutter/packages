@@ -69,7 +69,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic) NSObject<FLTAssetWriter> *videoWriter;
 @property(strong, nonatomic) NSObject<FLTAssetWriterInput> *videoWriterInput;
 @property(strong, nonatomic) NSObject<FLTAssetWriterInput> *audioWriterInput;
-@property(strong, nonatomic) NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
+@property(strong, nonatomic)
+    NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(strong, nonatomic) NSString *videoRecordingPath;
@@ -1259,7 +1260,7 @@ static void selectBestFormatForRequestedFrameRate(
   [self setUpCaptureSessionForAudioIfNeeded];
 
   _videoWriter = _assetWriterFactory(outputURL, AVFileTypeMPEG4, &error);
-  
+
   NSParameterAssert(_videoWriter);
   if (error) {
     [self reportErrorMessage:error.description];
@@ -1287,9 +1288,8 @@ static void selectBestFormatForRequestedFrameRate(
   _videoWriterInput =
       [_mediaSettingsAVWrapper assetWriterVideoInputWithOutputSettings:videoSettings];
 
-  _videoAdaptor = _inputPixelBufferAdaptorFactory(_videoWriterInput, @{
-    (NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)
-  });
+  _videoAdaptor = _inputPixelBufferAdaptorFactory(
+      _videoWriterInput, @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)});
 
   NSParameterAssert(_videoWriterInput);
 

@@ -10,7 +10,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// `AVCaptureConnection` in tests.
 @protocol FLTCaptureConnection <NSObject>
 
-/// Underlying `AVCaptureConnection` instance. All methods and properties are passed through to this.
+/// Underlying `AVCaptureConnection` instance. All methods and properties are passed through to
+/// this.
 @property(nonatomic, readonly) AVCaptureConnection *connection;
 
 @property(nonatomic) BOOL videoMirrored;

@@ -46,7 +46,7 @@
 /// Exposed for unit tests.
 - (void)captureOutput:(AVCaptureOutput *)output
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-       fromConnection:(NSObject<FLTCaptureConnection> *)connection;
+           fromConnection:(NSObject<FLTCaptureConnection> *)connection;
 
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
