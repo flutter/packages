@@ -1,3 +1,7 @@
+## 0.9.18+6
+
+* Migrates unit tests to Swift.
+
 ## 0.9.18+5
 
 * Migrates unit tests to Swift.
