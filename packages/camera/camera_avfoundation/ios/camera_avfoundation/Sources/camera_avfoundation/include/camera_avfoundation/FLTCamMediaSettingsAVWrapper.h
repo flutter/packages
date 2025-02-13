@@ -5,6 +5,7 @@
 @import AVFoundation;
 @import Foundation;
 
+#import "FLTAssetWriter.h"
 #import "FLTCaptureDevice.h"
 #import "FLTCaptureSession.h"
 
