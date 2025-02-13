@@ -67,16 +67,16 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
-    -> AVAssetWriterInput
+    -> FLTAssetWriterInput
   {
     if let bitrate = outputSettings?[AVEncoderBitRateKey] as? Int, bitrate == testAudioBitrate {
       audioSettingsExpectation.fulfill()
     }
-    return AVAssetWriterInput(mediaType: .audio, outputSettings: outputSettings)
+    return MockAssetWriterInput()
   }
 
   override func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
-    -> AVAssetWriterInput
+    -> FLTAssetWriterInput
   {
     if let compressionProperties = outputSettings?[AVVideoCompressionPropertiesKey]
       as? [String: Any],
@@ -93,10 +93,10 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     outputSettingsWithRequiredKeys[AVVideoWidthKey] = 1280
     outputSettingsWithRequiredKeys[AVVideoHeightKey] = 720
 
-    return AVAssetWriterInput(mediaType: .video, outputSettings: outputSettingsWithRequiredKeys)
+    return MockAssetWriterInput()
   }
 
-  override func addInput(_ writerInput: AVAssetWriterInput, to writer: AVAssetWriter) {
+  override func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
     // No-op.
   }
 
