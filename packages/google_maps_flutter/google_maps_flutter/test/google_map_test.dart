@@ -579,4 +579,72 @@ void main() {
 
     expect(map.mapConfiguration.style, '');
   });
+
+  testWidgets(
+    'Providing both mapId and cloudMapId throws an exception',
+    (WidgetTester tester) async {
+      expect(
+        () {
+          GoogleMap(
+            initialCameraPosition: const CameraPosition(
+              target: LatLng(10.0, 15.0),
+            ),
+            mapId: 'mapId',
+            cloudMapId: 'cloudMapId',
+          );
+        },
+        throwsAssertionError,
+      );
+    },
+  );
+
+  testWidgets(
+    "Providing mapId doesn't thrown an exception",
+    (WidgetTester tester) async {
+      expect(
+        () {
+          const GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(10.0, 15.0),
+            ),
+            mapId: 'mapId',
+          );
+        },
+        returnsNormally,
+      );
+    },
+  );
+
+  testWidgets(
+    "Providing cloudMapid doesn't thrown an exception",
+    (WidgetTester tester) async {
+      expect(
+        () {
+          const GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(10.0, 15.0),
+            ),
+            cloudMapId: 'cloudMapId',
+          );
+        },
+        returnsNormally,
+      );
+    },
+  );
+
+  testWidgets(
+    "Not setting cloudMapid and mapId doesn't thrown an exception",
+    (WidgetTester tester) async {
+      expect(
+        () {
+          const GoogleMap(
+            initialCameraPosition: CameraPosition(
+              target: LatLng(10.0, 15.0),
+            ),
+          );
+        },
+        returnsNormally,
+      );
+    },
+  );
 }
