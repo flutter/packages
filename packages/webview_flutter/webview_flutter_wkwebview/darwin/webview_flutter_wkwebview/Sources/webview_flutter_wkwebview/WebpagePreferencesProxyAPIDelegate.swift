@@ -4,23 +4,22 @@
 
 import WebKit
 
-/// ProxyApi implementation for `WKPreferences`.
+/// ProxyApi implementation for `WKWebpagePreferences`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class PreferencesProxyAPIDelegate: PigeonApiDelegateWKPreferences {
-  func setJavaScriptEnabled(
-    pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool
+class WebpagePreferencesProxyAPIDelegate: PigeonApiDelegateWKWebpagePreferences {
+  @available(iOS 13.0, macOS 10.15, *)
+  func setAllowsContentJavaScript(
+    pigeonApi: PigeonApiWKWebpagePreferences, pigeonInstance: WKWebpagePreferences, allow: Bool
   ) throws {
     if #available(iOS 14.0, macOS 11.0, *) {
-      // On iOS 14 and macOS 11, WKWebpagePreferences.allowsContentJavaScript should be
-      // used instead.
+      pigeonInstance.allowsContentJavaScript = allow
+    } else {
       throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
         .createUnsupportedVersionError(
-          method: "WKPreferences.javaScriptEnabled",
-          versionRequirements: "< iOS 14.0, macOS 11.0")
-    } else {
-      pigeonInstance.javaScriptEnabled = enabled
+          method: "WKWebpagePreferences.allowsContentJavaScript",
+          versionRequirements: "iOS 14.0, macOS 11.0")
     }
   }
 }
