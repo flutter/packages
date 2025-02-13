@@ -1142,7 +1142,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     indoorViewEnabled: options['indoorEnabled'] as bool?,
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
-    markerType: _platformMarkerTypeFromIndex(options['markerType'] as int?),
+    markerType: PlatformMarkerType.marker,
     mapId: options['mapId'] as String?,
     style: options['style'] as String?,
   );
@@ -1208,14 +1208,6 @@ PlatformZoomRange? _platformZoomRangeFromMinMaxZoomPreferenceJson(
   final List<double?> minMaxZoom =
       (zoomPrefsJson as List<Object?>).cast<double?>();
   return PlatformZoomRange(min: minMaxZoom[0], max: minMaxZoom[1]);
-}
-
-PlatformMarkerType _platformMarkerTypeFromIndex(int? index) {
-  return switch (index) {
-    0 => PlatformMarkerType.marker,
-    1 => PlatformMarkerType.advancedMarker,
-    _ => PlatformMarkerType.marker,
-  };
 }
 
 /// Converts platform interface's JointType to Pigeon's PlatformJointType.
