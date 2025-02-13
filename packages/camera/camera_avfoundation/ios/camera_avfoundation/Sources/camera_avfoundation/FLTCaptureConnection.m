@@ -30,8 +30,8 @@
   _connection.videoMirrored = videoMirrored;
 }
 
-- (BOOL)videoMirrored {
-  return _connection.videoMirrored;
+- (BOOL)isVideoMirrored {
+  return _connection.isVideoMirrored;
 }
 
 - (void)setVideoOrientation:(AVCaptureVideoOrientation)videoOrientation {

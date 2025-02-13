@@ -13,11 +13,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Properties redeclared as read/write for testing purposes.
 @property(nonatomic, strong) AVCaptureConnection *connection;
-@property(nonatomic, assign) BOOL videoMirrored;
+@property(nonatomic, assign, getter=isVideoMirrored) BOOL videoMirrored;
 @property(nonatomic, assign) AVCaptureVideoOrientation videoOrientation;
 @property(nonatomic, strong) NSArray<AVCaptureInputPort *> *inputPorts;
-@property(nonatomic, assign) BOOL isVideoMirroringSupported;
-@property(nonatomic, assign) BOOL isVideoOrientationSupported;
+@property(nonatomic, assign, getter=isVideoMirroringSupported) BOOL supportsVideoMirroring;
+@property(nonatomic, assign, getter=isVideoOrientationSupported) BOOL supportsVideoOrientation;
 
 @end
 

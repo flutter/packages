@@ -100,7 +100,7 @@ static const BOOL gTestEnableAudio = YES;
   }
 }
 
-- (NSObject<FLTAssetWriterInput> *)assetWriterAudioInputWithOutputSettings:
+- (MockAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
   if ([outputSettings[AVEncoderBitRateKey] isEqual:@(gTestAudioBitrate)]) {
     [_audioSettingsExpectation fulfill];
@@ -109,7 +109,7 @@ static const BOOL gTestEnableAudio = YES;
   return [[MockAssetWriterInput alloc] init];
 }
 
-- (NSObject<FLTAssetWriterInput> *)assetWriterVideoInputWithOutputSettings:
+- (MockAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
   if ([outputSettings[AVVideoCompressionPropertiesKey] isKindOfClass:[NSMutableDictionary class]]) {
     NSDictionary *compressionProperties = outputSettings[AVVideoCompressionPropertiesKey];
