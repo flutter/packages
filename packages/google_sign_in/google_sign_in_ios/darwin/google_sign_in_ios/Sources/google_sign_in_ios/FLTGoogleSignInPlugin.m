@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTGoogleSignInPlugin.h"
-#import "FLTGoogleSignInPlugin_Test.h"
+#import "./include/google_sign_in_ios/FLTGoogleSignInPlugin.h"
+#import "./include/google_sign_in_ios/FLTGoogleSignInPlugin_Test.h"
 
 #import <GoogleSignIn/GoogleSignIn.h>
 
