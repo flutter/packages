@@ -1,3 +1,7 @@
+## 5.9.0
+
+* Add a sign-in field to allow Android clients to explicitly specify an account name. This capability is only available within Android for the underlying libraries.
+
 ## 5.8.0
 
 * Add a sign-in field to allow Android clients to explicitly specify an account name. This capability is only available within Android for the underlying libraries.
