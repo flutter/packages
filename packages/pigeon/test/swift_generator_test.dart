@@ -422,7 +422,7 @@ void main() {
     final String code = sink.toString();
     expect(code,
         contains('completion: @escaping (Result<Void, PigeonError>) -> Void'));
-    expect(code, contains('completion(.success(Void()))'));
+    expect(code, contains('completion(.success(()))'));
     expect(code, isNot(contains('if (')));
   });
 

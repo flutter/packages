@@ -22,7 +22,7 @@ typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
-typedef CMVideoDimensions (^VideoDimensionsForFormat)(AVCaptureDeviceFormat *);
+typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceFormat> *);
 
 /// A configuration object that centralizes dependencies  for `FLTCam`.
 @interface FLTCamConfiguration : NSObject
