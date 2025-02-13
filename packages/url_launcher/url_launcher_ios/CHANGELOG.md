@@ -1,7 +1,7 @@
 ## 6.3.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* Fixes When not fully loaded, clicking close causes the callback to not be triggered correctly.
+* Ensures the completion callback is invoked if the user dismisses the Safari view before the initial URL load completes.
 
 ## 6.3.2
 
