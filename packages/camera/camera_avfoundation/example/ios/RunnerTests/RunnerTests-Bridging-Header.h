@@ -5,8 +5,8 @@
 // Sources.
 #import "camera_avfoundation/CameraPlugin.h"
 #import "camera_avfoundation/CameraPlugin_Test.h"
-#import "camera_avfoundation/FLTCam_Test.h"
 #import "camera_avfoundation/FLTCamConfiguration.h"
+#import "camera_avfoundation/FLTCam_Test.h"
 #import "camera_avfoundation/FLTThreadSafeEventChannel.h"
 
 // Mocks, protocols.
