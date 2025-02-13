@@ -19,6 +19,7 @@
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
 #import "MockGlobalEventApi.h"
+#import "MockWritableData.h"
 
 // Utils.
 #import "CameraTestUtils.h"
