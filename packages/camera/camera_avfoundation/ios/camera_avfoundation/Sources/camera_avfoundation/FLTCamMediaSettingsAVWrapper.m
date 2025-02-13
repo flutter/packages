@@ -3,34 +3,33 @@
 // found in the LICENSE file.
 
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
-#import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
+#import "./include/camera_avfoundation/FLTCaptureDevice.h"
+#import "./include/camera_avfoundation/FLTCaptureSession.h"
 
 @implementation FLTCamMediaSettingsAVWrapper
 
-- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice
+- (BOOL)lockDevice:(NSObject<FLTCaptureDevice> *)captureDevice
              error:(NSError *_Nullable *_Nullable)outError {
   return [captureDevice lockForConfiguration:outError];
 }
 
-- (void)unlockDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)unlockDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   return [captureDevice unlockForConfiguration];
 }
 
-- (void)beginConfigurationForSession:(AVCaptureSession *)videoCaptureSession {
+- (void)beginConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession {
   [videoCaptureSession beginConfiguration];
 }
 
-- (void)commitConfigurationForSession:(AVCaptureSession *)videoCaptureSession {
+- (void)commitConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession {
   [videoCaptureSession commitConfiguration];
 }
 
-- (void)setMinFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)setMinFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   captureDevice.activeVideoMinFrameDuration = duration;
 }
 
-- (void)setMaxFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+- (void)setMaxFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   captureDevice.activeVideoMaxFrameDuration = duration;
 }
 

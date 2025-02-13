@@ -2183,6 +2183,18 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         aMap: const <String?, Object?>{},
         anEnum: ProxyApiTestEnum.one,
         aProxyApi: ProxyApiSuperClass(),
+        flutterEchoBool: (ProxyApiTestClass instance, bool aBool) => true,
+        flutterEchoInt: (_, __) => 3,
+        flutterEchoDouble: (_, __) => 1.0,
+        flutterEchoString: (_, __) => '',
+        flutterEchoUint8List: (_, __) => Uint8List(0),
+        flutterEchoList: (_, __) => <Object?>[],
+        flutterEchoProxyApiList: (_, __) => <ProxyApiTestClass?>[],
+        flutterEchoMap: (_, __) => <String?, Object?>{},
+        flutterEchoEnum: (_, __) => ProxyApiTestEnum.one,
+        flutterEchoProxyApi: (_, __) => ProxyApiSuperClass(),
+        flutterEchoAsyncString: (_, __) async => '',
+        flutterEchoProxyApiMap: (_, __) => <String?, ProxyApiTestClass?>{},
       );
       // Ensure no error calling method on instance.
       await instance.noop();
@@ -3283,17 +3295,18 @@ ProxyApiTestClass _createGenericProxyApiTestClass({
     flutterNoop: flutterNoop,
     flutterThrowError: flutterThrowError,
     flutterThrowErrorFromVoid: flutterThrowErrorFromVoid,
-    flutterEchoBool: flutterEchoBool,
-    flutterEchoInt: flutterEchoInt,
-    flutterEchoDouble: flutterEchoDouble,
-    flutterEchoString: flutterEchoString,
-    flutterEchoUint8List: flutterEchoUint8List,
-    flutterEchoList: flutterEchoList,
-    flutterEchoProxyApiList: flutterEchoProxyApiList,
-    flutterEchoMap: flutterEchoMap,
-    flutterEchoProxyApiMap: flutterEchoProxyApiMap,
-    flutterEchoEnum: flutterEchoEnum,
-    flutterEchoProxyApi: flutterEchoProxyApi,
+    flutterEchoBool:
+        flutterEchoBool ?? (ProxyApiTestClass instance, bool aBool) => true,
+    flutterEchoInt: flutterEchoInt ?? (_, __) => 3,
+    flutterEchoDouble: flutterEchoDouble ?? (_, __) => 1.0,
+    flutterEchoString: flutterEchoString ?? (_, __) => '',
+    flutterEchoUint8List: flutterEchoUint8List ?? (_, __) => Uint8List(0),
+    flutterEchoList: flutterEchoList ?? (_, __) => <Object?>[],
+    flutterEchoProxyApiList:
+        flutterEchoProxyApiList ?? (_, __) => <ProxyApiTestClass?>[],
+    flutterEchoMap: flutterEchoMap ?? (_, __) => <String?, Object?>{},
+    flutterEchoEnum: flutterEchoEnum ?? (_, __) => ProxyApiTestEnum.one,
+    flutterEchoProxyApi: flutterEchoProxyApi ?? (_, __) => ProxyApiSuperClass(),
     flutterEchoNullableBool: flutterEchoNullableBool,
     flutterEchoNullableInt: flutterEchoNullableInt,
     flutterEchoNullableDouble: flutterEchoNullableDouble,
@@ -3304,6 +3317,8 @@ ProxyApiTestClass _createGenericProxyApiTestClass({
     flutterEchoNullableEnum: flutterEchoNullableEnum,
     flutterEchoNullableProxyApi: flutterEchoNullableProxyApi,
     flutterNoopAsync: flutterNoopAsync,
-    flutterEchoAsyncString: flutterEchoAsyncString,
+    flutterEchoAsyncString: flutterEchoAsyncString ?? (_, __) async => '',
+    flutterEchoProxyApiMap:
+        flutterEchoProxyApiMap ?? (_, __) => <String?, ProxyApiTestClass?>{},
   );
 }

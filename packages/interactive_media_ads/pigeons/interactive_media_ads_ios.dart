@@ -673,3 +673,52 @@ abstract class IMACompanionDelegate extends NSObject {
   /// navigate away.
   late void Function(IMACompanionAdSlot slot)? companionSlotWasClicked;
 }
+
+/// Simple data object containing podding metadata.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdPodInfo.html.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAAdPodInfo {
+  /// The position of this ad within an ad pod.
+  ///
+  /// Will be 1 for standalone ads.
+  late final int adPosition;
+
+  /// The maximum duration of the pod in seconds.
+  ///
+  /// For unknown duration, -1 is returned.
+  late final double maxDuration;
+
+  /// Returns the index of the ad pod.
+  ///
+  /// Client side: For a preroll pod, returns 0. For midrolls, returns 1, 2,…,
+  /// N. For a postroll pod, returns -1. Defaults to 0 if this ad is not part of
+  /// a pod, or this pod is not part of a playlist.
+  ///
+  /// DAI VOD: Returns the index of the ad pod. For a preroll pod, returns 0.
+  /// For midrolls, returns 1, 2,…,N. For a postroll pod, returns N+1…N+X.
+  /// Defaults to 0 if this ad is not part of a pod, or this pod is not part of
+  /// a playlist.
+  ///
+  /// DAI live stream: For a preroll pod, returns 0. For midrolls, returns the
+  /// break ID. Returns -2 if pod index cannot be determined (internal error).
+  late final int podIndex;
+
+  /// The position of the pod in the content in seconds.
+  ///
+  /// Pre-roll returns 0, post-roll returns -1 and mid-rolls return the
+  /// scheduled time of the pod.
+  late final double timeOffset;
+
+  /// Total number of ads in the pod this ad belongs to.
+  ///
+  /// Will be 1 for standalone ads.
+  late final int totalAds;
+
+  /// Specifies whether the ad is a bumper.
+  ///
+  /// Bumpers are short videos used to open and close ad breaks.
+  late final bool isBumper;
+}

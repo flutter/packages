@@ -247,7 +247,6 @@ targets:
 
   # Wasm unit tests in master
   - name: Linux_web web_dart_unit_test_wasm_shard_1 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -263,7 +262,6 @@ targets:
         }
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -923,7 +921,6 @@ targets:
 
   # Wasm integration tests in master
   - name: Linux_web web_platform_tests_wasm_shard_1 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -938,7 +935,6 @@ targets:
         }
 
   - name: Linux_web web_platform_tests_wasm_shard_2 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -953,7 +949,6 @@ targets:
         }
 
   - name: Linux_web web_platform_tests_wasm_shard_3 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
