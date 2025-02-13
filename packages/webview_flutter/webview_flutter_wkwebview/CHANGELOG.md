@@ -1,7 +1,7 @@
 ## 3.18.1
 
-* Updates internal API wrapper to make all Flutter methods with a non-null return value be required
-  to implement.
+* Fixes bug that would allow the API wrapper to return `null` when a non-null value was required in
+  a callback method.
 * Changes default method to enable JavaScript for web content to
   `WKWebpagePreferences.allowsContentJavaScript`. 
 

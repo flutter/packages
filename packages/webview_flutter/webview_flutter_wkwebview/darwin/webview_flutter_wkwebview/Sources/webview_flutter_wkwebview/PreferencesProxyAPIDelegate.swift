@@ -13,6 +13,8 @@ class PreferencesProxyAPIDelegate: PigeonApiDelegateWKPreferences {
     pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool
   ) throws {
     if #available(iOS 14.0, macOS 11.0, *) {
+      // On iOS 14 and macOS 11, WKWebpagePreferences.allowsContentJavaScript should be
+      // used instead.
       throw (pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar)
         .createUnsupportedVersionError(
           method: "WKPreferences.javaScriptEnabled",
