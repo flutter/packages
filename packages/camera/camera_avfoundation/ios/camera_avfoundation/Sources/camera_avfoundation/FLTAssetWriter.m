@@ -70,8 +70,8 @@
   _input.expectsMediaDataInRealTime = expectsMediaDataInRealTime;
 }
 
-- (BOOL)isReadyForMoreMediaData {
-  return [_input isReadyForMoreMediaData];
+- (BOOL)readyForMoreMediaData {
+  return _input.readyForMoreMediaData;
 }
 
 @end

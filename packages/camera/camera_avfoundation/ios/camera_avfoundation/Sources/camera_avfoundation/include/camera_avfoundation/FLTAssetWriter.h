@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) AVAssetWriterInput *input;
 
 @property(nonatomic, assign) BOOL expectsMediaDataInRealTime;
-@property(nonatomic, readonly) BOOL isReadyForMoreMediaData;
+@property(nonatomic, readonly) BOOL readyForMoreMediaData;
 
 - (BOOL)appendSampleBuffer:(CMSampleBufferRef)sampleBuffer;
 

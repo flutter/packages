@@ -13,6 +13,13 @@
   return YES;
 }
 
+- (AVAssetWriterStatus)status {
+  if (_statusStub) {
+    return _statusStub();
+  }
+  return AVAssetWriterStatusUnknown;
+}
+
 - (void)finishWritingWithCompletionHandler:(void (^)(void))handler {
   if (self.finishWritingStub) {
     self.finishWritingStub(handler);

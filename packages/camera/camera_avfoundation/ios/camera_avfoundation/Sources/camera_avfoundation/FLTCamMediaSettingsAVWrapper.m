@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "./include/camera_avfoundation/FLTAssetWriter.h"
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
 #import "./include/camera_avfoundation/FLTCaptureDevice.h"
 #import "./include/camera_avfoundation/FLTCaptureSession.h"
@@ -33,20 +34,22 @@
   captureDevice.activeVideoMaxFrameDuration = duration;
 }
 
-- (AVAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
+- (NSObject<FLTAssetWriterInput> *)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
-                                            outputSettings:outputSettings];
+  return [[FLTDefaultAssetWriterInput alloc]
+          initWithInput:[AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
+                                            outputSettings:outputSettings]];
 }
 
-- (AVAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
+- (NSObject<FLTAssetWriterInput> *)assetWriterVideoInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
-                                            outputSettings:outputSettings];
+  return [[FLTDefaultAssetWriterInput alloc]
+      initWithInput:[AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
+                                                       outputSettings:outputSettings]];
 }
 
-- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer {
-  [writer addInput:writerInput];
+- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput toAssetWriter:(NSObject<FLTAssetWriter> *)writer {
+  [writer addInput:writerInput.input];
 }
 
 - (nullable NSDictionary<NSString *, id> *)

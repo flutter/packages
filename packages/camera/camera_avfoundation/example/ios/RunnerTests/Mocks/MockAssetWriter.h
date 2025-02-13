@@ -10,10 +10,10 @@
 @interface MockAssetWriter : NSObject <FLTAssetWriter>
 
 // Properties re-declared as read/write so a mocked value can be set during testing.
-@property(nonatomic, assign) AVAssetWriterStatus status;
 @property(nonatomic, strong) NSError *error;
 
 // Stubs that are called when the corresponding public method is called.
+@property(nonatomic, copy) AVAssetWriterStatus (^statusStub)(void);
 @property(nonatomic, copy) void (^getStatusStub)(void);
 @property(nonatomic, copy) void (^startWritingStub)(void);
 @property(nonatomic, copy) void (^finishWritingStub)(void (^)(void));
@@ -26,7 +26,7 @@
 
 // Properties re-declared as read/write so a mocked value can be set during testing.
 @property(nonatomic, strong) AVAssetWriterInput *input;
-@property(nonatomic, assign) BOOL isReadyForMoreMediaData;
+@property(nonatomic, assign) BOOL readyForMoreMediaData;
 @property(nonatomic, assign) BOOL expectsMediaDataInRealTime;
 
 // Stub that is called when the `appendSampleBuffer` method is called.
