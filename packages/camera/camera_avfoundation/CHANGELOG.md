@@ -1,6 +1,10 @@
-## 0.9.18+6
+## 0.9.18+7
 
 * Migrates unit tests to Swift.
+
+## 0.9.18+6
+
+* Refactors implementations to remove remaining usage of OCMock in internal testing.
 
 ## 0.9.18+5
 

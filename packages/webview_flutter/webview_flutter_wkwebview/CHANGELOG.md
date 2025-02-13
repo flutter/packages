@@ -1,3 +1,10 @@
+## 3.18.1
+
+* Fixes bug that would allow the API wrapper to return `null` when a non-null value was required in
+  a callback method.
+* Changes default method to enable JavaScript for web content to
+  `WKWebpagePreferences.allowsContentJavaScript`. 
+
 ## 3.18.0
 
 * Updates internal API wrapper to use ProxyApis.
