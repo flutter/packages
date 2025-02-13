@@ -21,8 +21,6 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @NonNull private final TextureRegistry textureRegistry;
 
-  private final long defaultClearFinalizedWeakReferencesInterval;
-
   @NonNull private Context context;
 
   @Nullable private CameraPermissionsManager.PermissionsRegistry permissionsRegistry;
@@ -34,8 +32,6 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     super(binaryMessenger);
     this.context = context;
     this.textureRegistry = textureRegistry;
-    defaultClearFinalizedWeakReferencesInterval =
-        getInstanceManager().getClearFinalizedWeakReferencesInterval();
   }
 
   // Interface for an injectable SDK version checker.
@@ -115,7 +111,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   }
 
   long getDefaultClearFinalizedWeakReferencesInterval() {
-    return defaultClearFinalizedWeakReferencesInterval;
+    return 3000;
   }
 
   @SuppressWarnings("deprecation")
