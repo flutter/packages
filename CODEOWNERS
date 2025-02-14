@@ -12,7 +12,7 @@ packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
 packages/file_selector/**                                @stuartmorgan
 packages/flutter_adaptive_scaffold/**                    @gspencergoog
 packages/flutter_image/**                                @stuartmorgan
-packages/flutter_lints/**                                @goderbauer
+packages/flutter_lints/**                                @chunhtai
 packages/flutter_markdown/**                             @domesticmouse
 packages/flutter_migrate/**                              @stuartmorgan
 packages/flutter_template_images/**                      @stuartmorgan
