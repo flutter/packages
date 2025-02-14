@@ -25,9 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (AVCaptureDevicePosition)position;
 
 // Format/Configuration
-- (NSObject<FLTCaptureDeviceFormat> *)activeFormat;
-- (NSArray<NSObject<FLTCaptureDeviceFormat> *> *)formats;
-- (void)setActiveFormat:(NSObject<FLTCaptureDeviceFormat> *)format;
+@property(nonatomic, retain) NSObject<FLTCaptureDeviceFormat> *activeFormat;
+@property(nonatomic, readonly) NSArray<NSObject<FLTCaptureDeviceFormat> *> *formats;
 
 // Flash/Torch
 - (BOOL)hasFlash;
