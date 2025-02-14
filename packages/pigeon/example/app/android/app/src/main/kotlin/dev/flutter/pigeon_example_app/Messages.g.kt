@@ -44,7 +44,7 @@ class FlutterError(
     val code: String,
     override val message: String? = null,
     val details: Any? = null
-) : Throwable()
+) : RuntimeException()
 
 enum class Code(val raw: Int) {
   ONE(0),
