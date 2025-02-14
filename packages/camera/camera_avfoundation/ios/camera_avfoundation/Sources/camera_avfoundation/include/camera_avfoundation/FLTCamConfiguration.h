@@ -7,6 +7,7 @@
 @import Flutter;
 
 #import "CameraProperties.h"
+#import "FLTAssetWriter.h"
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTCaptureDevice.h"
 #import "FLTCaptureSession.h"
@@ -19,6 +20,12 @@ NS_ASSUME_NONNULL_BEGIN
 typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(void);
 
 typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
+
+typedef NSObject<FLTAssetWriter> *_Nonnull (^AssetWriterFactory)(NSURL *, AVFileType,
+                                                                 NSError *_Nullable *_Nullable);
+
+typedef NSObject<FLTAssetWriterInputPixelBufferAdaptor> *_Nonnull (^InputPixelBufferAdaptorFactory)(
+    NSObject<FLTAssetWriterInput> *, NSDictionary<NSString *, id> *_Nullable);
 
 /// Determines the video dimensions (width and height) for a given capture device format.
 /// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
@@ -47,6 +54,8 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceF
 @property(nonatomic, strong) NSObject<FLTCaptureSession> *videoCaptureSession;
 @property(nonatomic, strong) NSObject<FLTCaptureSession> *audioCaptureSession;
 @property(nonatomic, strong) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
+@property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
+@property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 
 @end
 

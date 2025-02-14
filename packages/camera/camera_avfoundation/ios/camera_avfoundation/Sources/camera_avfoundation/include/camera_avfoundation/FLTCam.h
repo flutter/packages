@@ -101,7 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// If @c point is nil, the focus point will reset to the center.
 - (void)setFocusPoint:(nullable FCPPlatformPoint *)point
-       withCompletion:(void (^)(FlutterError *_Nullable))completion;
+       withCompletion:(void (^)(FlutterError *_Nullable))completion
+    NS_SWIFT_NAME(setFocusPoint(_:completion:));
 - (void)setExposureOffset:(double)offset;
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 - (void)stopImageStream;

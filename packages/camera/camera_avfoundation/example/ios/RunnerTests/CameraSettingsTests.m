@@ -10,6 +10,7 @@
 @import AVFoundation;
 
 #import "CameraTestUtils.h"
+#import "MockAssetWriter.h"
 #import "MockCameraDeviceDiscoverer.h"
 #import "MockCaptureDevice.h"
 #import "MockCaptureSession.h"
@@ -99,17 +100,16 @@ static const BOOL gTestEnableAudio = YES;
   }
 }
 
-- (AVAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
+- (MockAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
   if ([outputSettings[AVEncoderBitRateKey] isEqual:@(gTestAudioBitrate)]) {
     [_audioSettingsExpectation fulfill];
   }
 
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
-                                            outputSettings:outputSettings];
+  return [[MockAssetWriterInput alloc] init];
 }
 
-- (AVAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
+- (MockAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
   if ([outputSettings[AVVideoCompressionPropertiesKey] isKindOfClass:[NSMutableDictionary class]]) {
     NSDictionary *compressionProperties = outputSettings[AVVideoCompressionPropertiesKey];
@@ -121,11 +121,11 @@ static const BOOL gTestEnableAudio = YES;
     }
   }
 
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
-                                            outputSettings:outputSettings];
+  return [[MockAssetWriterInput alloc] init];
 }
 
-- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer {
+- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput
+    toAssetWriter:(NSObject<FLTAssetWriter> *)writer {
 }
 
 - (NSDictionary<NSString *, id> *)
