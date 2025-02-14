@@ -44,8 +44,8 @@
   return wrappedFormats;
 }
 
-- (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
-  self.device.activeFormat = format;
+- (void)setActiveFormat:(NSObject<FLTCaptureDeviceFormat> *)format {
+  self.device.activeFormat = format.format;
 }
 
 // Flash/Torch
