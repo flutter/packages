@@ -692,6 +692,57 @@ public class ConvertTest {
     Assert.assertEquals(0.5, anchor.getY(), 1e-15);
   }
 
+  private void assertGroundOverlayEquals(
+      Messages.PlatformGroundOverlay result,
+      GroundOverlay expectedOverlay,
+      String expectedId,
+      LatLng expectedPosition,
+      LatLngBounds expectedBounds) {
+    Assert.assertEquals(expectedId, result.getGroundOverlayId());
+    if (expectedPosition != null) {
+      Assert.assertNotNull(result.getPosition());
+      Assert.assertEquals(expectedPosition.latitude, result.getPosition().getLatitude(), 1e-15);
+      Assert.assertEquals(expectedPosition.longitude, result.getPosition().getLongitude(), 1e-15);
+      Assert.assertNotNull(result.getWidth());
+      Assert.assertNotNull(result.getHeight());
+      Assert.assertEquals(expectedOverlay.getWidth(), result.getWidth(), 1e-15);
+      Assert.assertEquals(expectedOverlay.getHeight(), result.getHeight(), 1e-15);
+    } else {
+      Assert.assertNull(result.getPosition());
+    }
+    if (expectedBounds != null) {
+      Assert.assertNotNull(result.getBounds());
+      Assert.assertEquals(
+          expectedBounds.southwest.latitude,
+          result.getBounds().getSouthwest().getLatitude(),
+          1e-15);
+      Assert.assertEquals(
+          expectedBounds.southwest.longitude,
+          result.getBounds().getSouthwest().getLongitude(),
+          1e-15);
+      Assert.assertEquals(
+          expectedBounds.northeast.latitude,
+          result.getBounds().getNortheast().getLatitude(),
+          1e-15);
+      Assert.assertEquals(
+          expectedBounds.northeast.longitude,
+          result.getBounds().getNortheast().getLongitude(),
+          1e-15);
+    } else {
+      Assert.assertNull(result.getBounds());
+    }
+
+    Assert.assertEquals(expectedOverlay.getBearing(), result.getBearing(), 1e-15);
+    Assert.assertEquals(expectedOverlay.getTransparency(), result.getTransparency(), 1e-6);
+    Assert.assertEquals(expectedOverlay.getZIndex(), result.getZIndex().intValue(), 1e-6);
+    Assert.assertEquals(expectedOverlay.isVisible(), result.getVisible());
+    Assert.assertEquals(expectedOverlay.isClickable(), result.getClickable());
+    Messages.PlatformDoublePair anchor = result.getAnchor();
+    Assert.assertNotNull(anchor);
+    Assert.assertEquals(0.5, anchor.getX(), 1e-6);
+    Assert.assertEquals(0.5, anchor.getY(), 1e-6);
+  }
+
   @Test
   public void groundOverlayToPigeonWithPosition() {
     GroundOverlay mockGroundOverlay = mock(GroundOverlay.class);
@@ -709,28 +760,11 @@ public class ConvertTest {
     when(mockGroundOverlay.isVisible()).thenReturn(true);
     when(mockGroundOverlay.isClickable()).thenReturn(false);
 
+    String overlayId = "overlay_1";
     Messages.PlatformGroundOverlay result =
-        Convert.groundOverlayToPigeon(mockGroundOverlay, "overlay_1", false);
+        Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, false);
 
-    Assert.assertEquals("overlay_1", result.getGroundOverlayId());
-    Assert.assertNotNull(result.getPosition());
-    Assert.assertEquals(position.latitude, result.getPosition().getLatitude(), 1e-15);
-    Assert.assertEquals(position.longitude, result.getPosition().getLongitude(), 1e-15);
-    Assert.assertNotNull(result.getWidth());
-    Assert.assertNotNull(result.getHeight());
-    Assert.assertEquals(30.0, result.getWidth(), 1e-15);
-    Assert.assertEquals(40.0, result.getHeight(), 1e-15);
-    Assert.assertEquals(50.0, result.getBearing(), 1e-15);
-    Assert.assertEquals(0.6, result.getTransparency(), 1e-6);
-    Assert.assertEquals(7, result.getZIndex().intValue());
-    Assert.assertTrue(result.getVisible());
-    Assert.assertFalse(result.getClickable());
-    Assert.assertNull(result.getBounds());
-
-    Messages.PlatformDoublePair anchor = result.getAnchor();
-    Assert.assertNotNull(anchor);
-    Assert.assertEquals(0.5, anchor.getX(), 1e-6);
-    Assert.assertEquals(0.5, anchor.getY(), 1e-6);
+    assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, position, null);
   }
 
   @Test
@@ -750,34 +784,11 @@ public class ConvertTest {
     when(mockGroundOverlay.isVisible()).thenReturn(true);
     when(mockGroundOverlay.isClickable()).thenReturn(false);
 
+    String overlayId = "overlay_2";
     Messages.PlatformGroundOverlay result =
-        Convert.groundOverlayToPigeon(mockGroundOverlay, "overlay_2", true);
+        Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true);
 
-    Assert.assertEquals("overlay_2", result.getGroundOverlayId());
-    Assert.assertNotNull(result.getBounds());
-    Assert.assertEquals(
-        bounds.southwest.latitude, result.getBounds().getSouthwest().getLatitude(), 1e-15);
-    Assert.assertEquals(
-        bounds.southwest.longitude, result.getBounds().getSouthwest().getLongitude(), 1e-15);
-    Assert.assertEquals(
-        bounds.northeast.latitude, result.getBounds().getNortheast().getLatitude(), 1e-15);
-    Assert.assertEquals(
-        bounds.northeast.longitude, result.getBounds().getNortheast().getLongitude(), 1e-15);
-    Assert.assertNotNull(result.getWidth());
-    Assert.assertNotNull(result.getHeight());
-    Assert.assertEquals(30.0, result.getWidth(), 1e-15);
-    Assert.assertEquals(40.0, result.getHeight(), 1e-15);
-    Assert.assertEquals(50.0, result.getBearing(), 1e-15);
-    Assert.assertEquals(0.6, result.getTransparency(), 1e-6);
-    Assert.assertEquals(7, result.getZIndex().intValue());
-    Assert.assertTrue(result.getVisible());
-    Assert.assertFalse(result.getClickable());
-    Assert.assertNull(result.getPosition());
-
-    Messages.PlatformDoublePair anchor = result.getAnchor();
-    Assert.assertNotNull(anchor);
-    Assert.assertEquals(0.5, anchor.getX(), 1e-6);
-    Assert.assertEquals(0.5, anchor.getY(), 1e-6);
+    assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, null, bounds);
   }
 }
 

@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -20,6 +21,11 @@ const double _kInitialZoomLevel = 5;
 const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
 const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+
+// The tolerance value for floating-point comparisons in the tests.
+// This value was selected as the minimum possible value that the test passes.
+// There are multiple float conversions and calculations when data is converted
+// between Dart and platform implementations.
 const double _floatTolerance = 1e-8;
 
 void googleMapsTests() {
@@ -995,7 +1001,7 @@ void googleMapsTests() {
   },
       // TODO(cyanglaz): un-skip the test when we can test this on CI with API key enabled.
       // https://github.com/flutter/flutter/issues/57057
-      skip: true);
+      skip: Platform.isAndroid);
 
   testWidgets(
     'set tileOverlay correctly',

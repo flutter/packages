@@ -41,6 +41,7 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.WeightedLatLng;
 import io.flutter.FlutterInjector;
+import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -881,8 +882,12 @@ class Convert {
     sink.setClickable(groundOverlay.getClickable());
     sink.setImage(toBitmapDescriptor(groundOverlay.getImage(), assetManager, density, wrapper));
     if (groundOverlay.getPosition() != null) {
-      assert groundOverlay.getWidth() != null
-          : "Width is required when using a ground overlay with a position.";
+      if (groundOverlay.getWidth() == null) {
+        throw new FlutterError(
+            "Invalid GroundOverlay",
+            "Width is required when using a ground overlay with a position.",
+            null);
+      }
       sink.setPosition(
           latLngFromPigeon(groundOverlay.getPosition()),
           groundOverlay.getWidth().floatValue(),
@@ -906,8 +911,8 @@ class Convert {
       @NonNull String groundOverlayId,
       boolean isCreatedWithBounds) {
 
-    // Dummy image is used as image is required field of PlatformGroundOverlay and converting image
-    // back to image descriptor is not currently supported.
+    // Dummy image is used as image is a required field of PlatformGroundOverlay and converting
+    // BitmapDescriptor used by Google Maps back to PlatformImageDescriptor is not currently supported.
     Messages.PlatformBitmap dummyImage =
         new Messages.PlatformBitmap.Builder()
             .setBitmap(
