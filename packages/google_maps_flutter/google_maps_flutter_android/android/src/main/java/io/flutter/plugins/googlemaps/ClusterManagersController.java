@@ -107,8 +107,8 @@ class ClusterManagersController
   }
 
   /**
-   * Initializes cluster renderer based on marker type. AdvancedMarkerCluster renderer is used
-   * for advanced markers and MarkerClusterRenderer is used for default markers.
+   * Initializes cluster renderer based on marker type. AdvancedMarkerCluster renderer is used for
+   * advanced markers and MarkerClusterRenderer is used for default markers.
    */
   private void initializeRenderer(ClusterManager<MarkerBuilder> clusterManager) {
     final ClusterRenderer<MarkerBuilder> renderer = clusterManager.getRenderer();
