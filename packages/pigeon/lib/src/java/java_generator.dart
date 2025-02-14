@@ -6,7 +6,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show TaskQueueType;
+import '../types/task_queue.dart';
 
 /// Documentation open symbol.
 const String _docCommentPrefix = '/**';

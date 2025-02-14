@@ -6,7 +6,8 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show Error, TaskQueueType;
+import '../pigeon_lib.dart' show Error;
+import '../types/task_queue.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
