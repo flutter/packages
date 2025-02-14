@@ -143,9 +143,7 @@ class GoogleMap extends StatefulWidget {
     @Deprecated('cloudMapId is deprecated. Use mapId instead.')
     String? cloudMapId,
   })  : assert(
-          (mapId == null && cloudMapId == null) ||
-              (mapId != null && cloudMapId == null) ||
-              (mapId == null && cloudMapId != null),
+          mapId == null || cloudMapId == null,
           '''A value may be provided for either mapId or cloudMapId, or neither, but not for both.''',
         ),
         mapId = mapId ?? cloudMapId;
