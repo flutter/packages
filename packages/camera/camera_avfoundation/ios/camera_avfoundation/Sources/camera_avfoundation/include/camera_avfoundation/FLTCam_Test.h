@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FLTCam.h"
+#import "FLTCaptureConnection.h"
 #import "FLTCaptureDevice.h"
 #import "FLTCapturePhotoOutput.h"
 #import "FLTDeviceOrientationProviding.h"
@@ -45,7 +46,7 @@
 /// Exposed for unit tests.
 - (void)captureOutput:(AVCaptureOutput *)output
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-           fromConnection:(AVCaptureConnection *)connection;
+           fromConnection:(NSObject<FLTCaptureConnection> *)connection;
 
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
