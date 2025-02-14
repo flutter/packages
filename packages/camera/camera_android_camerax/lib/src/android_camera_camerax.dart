@@ -258,6 +258,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// of camera previews for the device this plugin runs on.
   late bool _handlesCropAndRotation;
 
+  /// The initial orientation of the device when the camera is created.
+  late DeviceOrientation _initialDeviceOrientation;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -397,7 +400,9 @@ class AndroidCameraCameraX extends CameraPlatform {
         await proxy.getCamera2CameraInfo(cameraInfo!);
 
     sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
-    _handlesCropAndRotation = await preview!.surfaceProducerHandlesCropAndRotation();
+    _handlesCropAndRotation =
+        await preview!.surfaceProducerHandlesCropAndRotation();
+    _initialDeviceOrientation = await proxy.getUiOrientation();
 
     return flutterSurfaceTextureId;
   }
@@ -855,10 +860,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     debugPrint('>>>> _handlesCropAndRotation: $_handlesCropAndRotation');
 
     if (!_handlesCropAndRotation) {
-      // FIXME: This is bad, will cause a flash/frame in the wrong rotation if started in another rotation.
       final double sensorOrientationDegrees = sensorOrientation.toDouble();
       if (cameraIsFrontFacing) {
         result = PreviewRotation.frontFacingCamera(
+          _initialDeviceOrientation,
           onDeviceOrientationChanged()
               .map((DeviceOrientationChangedEvent e) => e.orientation),
           sensorOrientationDegrees: sensorOrientationDegrees,
@@ -866,6 +871,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         );
       } else {
         result = PreviewRotation.backFacingCamera(
+          _initialDeviceOrientation,
           onDeviceOrientationChanged()
               .map((DeviceOrientationChangedEvent e) => e.orientation),
           sensorOrientationDegrees: sensorOrientationDegrees,
