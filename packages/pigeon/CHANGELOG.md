@@ -1,6 +1,6 @@
 ## 24.2.0
 
-* [kotlin] Changes custom error class to inherit `RuntimeException` rather than `Throwable`.
+* [kotlin] Changes custom error class to extend `RuntimeException` rather than `Throwable`.
 
 ## 24.1.1
 
