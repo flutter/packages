@@ -658,7 +658,6 @@ if (wrapped == null) {
           if (api.methods.any((Method m) =>
               m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
             serialBackgroundQueue = 'taskQueue';
-            serialBackgroundQueue = 'taskQueue';
             indent.writeln(
                 'val $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue()');
           }
