@@ -131,6 +131,8 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   void _setBearing() {
     assert(_groundOverlay != null);
     setState(() {
+      // Adjusts the bearing by 10 degrees, wrapping around at 360 degrees.
+      // 10 is the increment, 350 degrees of the full circle -10.
       _groundOverlay = _groundOverlay!.copyWith(
           bearingParam: _groundOverlay!.bearing >= 350
               ? 0

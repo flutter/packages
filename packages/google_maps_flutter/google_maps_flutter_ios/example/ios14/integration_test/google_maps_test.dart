@@ -20,6 +20,11 @@ const double _kInitialZoomLevel = 5;
 const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
 const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+
+// The tolerance value for floating-point comparisons in the tests.
+// This value was selected as the minimum possible value that the test passes.
+// There are multiple float conversions and calculations when data is converted
+// between Dart and platform implementations.
 const double _floatTolerance = 1e-6;
 
 void main() {
