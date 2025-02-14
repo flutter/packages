@@ -732,7 +732,6 @@
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   NSUInteger advancedMarkerFlag =
       self.controller.mapView.mapCapabilities & GMSMapCapabilityFlagsAdvancedMarkers;
-  BOOL boolValue = advancedMarkerFlag != 0;
   return [NSNumber numberWithBool:(advancedMarkerFlag != 0)];
 }
 
