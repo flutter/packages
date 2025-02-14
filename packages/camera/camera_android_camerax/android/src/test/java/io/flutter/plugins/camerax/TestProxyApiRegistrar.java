@@ -15,17 +15,17 @@ import io.flutter.view.TextureRegistry;
  * of posting them, and makes all SDK checks pass by default.
  */
 public class TestProxyApiRegistrar extends ProxyApiRegistrar {
-    public TestProxyApiRegistrar() {
-        super(mock(BinaryMessenger.class), mock(Context.class), mock(TextureRegistry.class));
-    }
+  public TestProxyApiRegistrar() {
+    super(mock(BinaryMessenger.class), mock(Context.class), mock(TextureRegistry.class));
+  }
 
-    @Override
-    void runOnMainThread(Runnable runnable) {
-        runnable.run();
-    }
+  @Override
+  void runOnMainThread(Runnable runnable) {
+    runnable.run();
+  }
 
-    @Override
-    boolean sdkIsAtLeast(int version) {
-        return true;
-    }
+  @Override
+  boolean sdkIsAtLeast(int version) {
+    return true;
+  }
 }

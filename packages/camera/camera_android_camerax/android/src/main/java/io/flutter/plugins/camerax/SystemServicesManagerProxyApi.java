@@ -83,10 +83,10 @@ class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
     try {
       return pigeon_instance.getTempFilePath(prefix, suffix);
     } catch (IOException e) {
-      throw new CameraXError(
+      throw new RuntimeException(
           "getTempFilePath_failure",
-          "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e,
-          null);
+          new Throwable(
+              "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e));
     }
   }
 

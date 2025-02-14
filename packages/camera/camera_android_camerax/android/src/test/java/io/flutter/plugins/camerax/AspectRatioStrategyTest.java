@@ -4,32 +4,35 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import androidx.camera.core.resolutionselector.AspectRatioStrategy;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class AspectRatioStrategyTest {
   @Test
   public void pigeon_defaultConstructor() {
-    final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
+    final PigeonApiAspectRatioStrategy api =
+        new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
-    final AspectRatioStrategy instance = api.pigeon_defaultConstructor(io.flutter.plugins.camerax.AspectRatio.RATIO16TO9, io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO);
+    final AspectRatioStrategy instance =
+        api.pigeon_defaultConstructor(
+            io.flutter.plugins.camerax.AspectRatio.RATIO16TO9,
+            io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO);
     assertEquals(instance.getPreferredAspectRatio(), androidx.camera.core.AspectRatio.RATIO_16_9);
     assertEquals(instance.getFallbackRule(), AspectRatioStrategy.FALLBACK_RULE_AUTO);
   }
 
   @Test
   public void getFallbackRule() {
-    final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
+    final PigeonApiAspectRatioStrategy api =
+        new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
     final AspectRatioStrategy instance = mock(AspectRatioStrategy.class);
-    final AspectRatioStrategyFallbackRule value = io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO;
+    final AspectRatioStrategyFallbackRule value =
+        io.flutter.plugins.camerax.AspectRatioStrategyFallbackRule.AUTO;
     when(instance.getFallbackRule()).thenReturn(AspectRatioStrategy.FALLBACK_RULE_AUTO);
 
     assertEquals(value, api.getFallbackRule(instance));
@@ -37,13 +40,14 @@ public class AspectRatioStrategyTest {
 
   @Test
   public void getPreferredAspectRatio() {
-    final PigeonApiAspectRatioStrategy api = new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
+    final PigeonApiAspectRatioStrategy api =
+        new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
     final AspectRatioStrategy instance = mock(AspectRatioStrategy.class);
     final AspectRatio value = io.flutter.plugins.camerax.AspectRatio.RATIO16TO9;
-    when(instance.getPreferredAspectRatio()).thenReturn(androidx.camera.core.AspectRatio.RATIO_16_9);
+    when(instance.getPreferredAspectRatio())
+        .thenReturn(androidx.camera.core.AspectRatio.RATIO_16_9);
 
-    assertEquals(value, api.getPreferredAspectRatio(instance ));
+    assertEquals(value, api.getPreferredAspectRatio(instance));
   }
-
 }
