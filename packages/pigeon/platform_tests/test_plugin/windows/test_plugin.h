@@ -393,8 +393,8 @@ class TestPlugin : public flutter::Plugin,
                          std::optional<core_tests_pigeontest::AnotherEnum>>
                              reply)>
           result) override;
-  ErrorOr<bool> DefaultIsMainThread() override;
-  ErrorOr<bool> TaskQueueIsBackgroundThread() override;
+  core_tests_pigeontest::ErrorOr<bool> DefaultIsMainThread() override;
+  core_tests_pigeontest::ErrorOr<bool> TaskQueueIsBackgroundThread() override;
   void CallFlutterNoop(
       std::function<
           void(std::optional<core_tests_pigeontest::FlutterError> reply)>
@@ -681,7 +681,7 @@ class TestPlugin : public flutter::Plugin,
       flutter_small_api_two_;
   std::unique_ptr<TestSmallApi> host_small_api_one_;
   std::unique_ptr<TestSmallApi> host_small_api_two_;
-  std::this_thread::id main_thread_id_;
+  std::thread::id main_thread_id_;
 };
 
 }  // namespace test_plugin
