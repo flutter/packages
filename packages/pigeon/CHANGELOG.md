@@ -1,3 +1,7 @@
+## 24.2.0
+
+* [kotlin] Changes custom error class to inherit `RuntimeException` rather than `Throwable`.
+
 ## 24.1.1
 
 * [swift, kotlin] Adds an error message when a ProxyAPI callback method that returns a non-null
