@@ -1553,6 +1553,35 @@ void main() {
     expect(code, contains('exception.details'));
   });
 
+  test('error class inherits RuntimeException', () {
+    final Method method = Method(
+        name: 'doSomething',
+        location: ApiLocation.host,
+        returnType: const TypeDeclaration.voidDeclaration(),
+        parameters: <Parameter>[]);
+    final AstHostApi api =
+        AstHostApi(name: 'SomeApi', methods: <Method>[method]);
+    final Root root = Root(
+      apis: <Api>[api],
+      classes: <Class>[],
+      enums: <Enum>[],
+      containsHostApi: true,
+    );
+    final StringBuffer sink = StringBuffer();
+    const KotlinOptions kotlinOptions =
+        KotlinOptions(errorClassName: 'SomeError');
+    const KotlinGenerator generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('class SomeError'));
+    expect(code, contains(': RuntimeException()'));
+  });
+
   test('connection error contains channel name', () {
     final Root root = Root(
       apis: <Api>[
