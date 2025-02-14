@@ -27,6 +27,17 @@
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
     };
     _captureDeviceInputFactory = captureDeviceInputFactory;
+    _assetWriterFactory = ^id<FLTAssetWriter>(NSURL *url, AVFileType fileType, NSError **error) {
+      return [[FLTDefaultAssetWriter alloc] initWithURL:url fileType:fileType error:error];
+    };
+    _inputPixelBufferAdaptorFactory = ^NSObject<FLTAssetWriterInputPixelBufferAdaptor> *(
+        NSObject<FLTAssetWriterInput> *assetWriterInput,
+        NSDictionary<NSString *, id> *sourcePixelBufferAttributes) {
+      return [[FLTDefaultAssetWriterInputPixelBufferAdaptor alloc]
+          initWithAdaptor:[[AVAssetWriterInputPixelBufferAdaptor alloc]
+                                 initWithAssetWriterInput:assetWriterInput.input
+                              sourcePixelBufferAttributes:sourcePixelBufferAttributes]];
+    };
   }
   return self;
 }

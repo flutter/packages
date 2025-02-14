@@ -66,7 +66,7 @@ android {
             // the Java heap size when running the Android unit tests. The following property here
             // sets the heap size to a size large enough to run the robolectric tests across
             // multiple SDK levels.
-            jvmArgs "-Xmx1g"
+            jvmArgs "-Xmx4G"
         }
     }
 }
