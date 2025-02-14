@@ -580,6 +580,135 @@ void main() {
     expect(map.mapConfiguration.style, '');
   });
 
+  testWidgets('Default markerType is "marker"', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.mapConfiguration.markerType, MarkerType.marker);
+  });
+
+  testWidgets('Can update markerType', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          // ignore: avoid_redundant_argument_values
+          markerType: GoogleMapMarkerType.marker,
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.mapConfiguration.markerType, MarkerType.marker);
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          markerType: GoogleMapMarkerType.advancedMarker,
+        ),
+      ),
+    );
+    expect(map.mapConfiguration.markerType, MarkerType.advancedMarker);
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+    expect(map.mapConfiguration.markerType, MarkerType.marker);
+  });
+
+  testWidgets('Can update mapId', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          mapId: 'myMapId',
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.mapConfiguration.mapId, 'myMapId');
+    expect(map.mapConfiguration.cloudMapId, 'myMapId');
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          mapId: 'myNewMapId',
+        ),
+      ),
+    );
+    expect(map.mapConfiguration.mapId, 'myNewMapId');
+    expect(map.mapConfiguration.cloudMapId, 'myNewMapId');
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+    expect(map.mapConfiguration.mapId, '');
+    expect(map.mapConfiguration.cloudMapId, '');
+  });
+
+  testWidgets('Can update cloudMapId', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          cloudMapId: 'myCloudMapId',
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+    expect(map.mapConfiguration.cloudMapId, 'myCloudMapId');
+    expect(map.mapConfiguration.mapId, 'myCloudMapId');
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          cloudMapId: 'myNewCloudMapId',
+        ),
+      ),
+    );
+    expect(map.mapConfiguration.cloudMapId, 'myNewCloudMapId');
+    expect(map.mapConfiguration.mapId, 'myNewCloudMapId');
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+    expect(map.mapConfiguration.cloudMapId, '');
+    expect(map.mapConfiguration.mapId, '');
+  });
+
   testWidgets(
     'Providing both mapId and cloudMapId throws an exception',
     (WidgetTester tester) async {

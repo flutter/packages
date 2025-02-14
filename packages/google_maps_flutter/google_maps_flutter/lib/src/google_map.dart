@@ -654,7 +654,9 @@ MapConfiguration _configurationFromMapWidget(GoogleMap map) {
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
     markerType: mapConfigurationMarkerType,
-    mapId: map.mapId,
+    // A null mapId in the widget means no map ID, which is expressed as '' in
+    // the configuration to distinguish from no change (null).
+    mapId: map.mapId ?? '',
     // A null style in the widget means no style, which is expressed as '' in
     // the configuration to distinguish from no change (null).
     style: map.style ?? '',
