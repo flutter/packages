@@ -1,4 +1,4 @@
-## 0.8.0
+## 0.7.7
 
 * Introduces `MarkdownImageConfig` for `sizedImageBuilder` builder.
 
