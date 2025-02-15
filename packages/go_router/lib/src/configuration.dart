@@ -23,7 +23,7 @@ typedef GoRouterRedirect = FutureOr<String?> Function(
 );
 
 /// The signature of the onEnter callback.
-typedef OnEnter = bool Function(
+typedef OnEnter = FutureOr<bool> Function(
   BuildContext context,
   GoRouterState currentState,
   GoRouterState nextState,

@@ -47,10 +47,6 @@ class RoutingConfig {
       'This feature will be removed in a future release.',
     )
     this.redirect = _defaultRedirect,
-    @Deprecated(
-      'Use onEnter instead. '
-      'This feature will be removed in a future release.',
-    )
     this.redirectLimit = 5,
   });
 
@@ -84,10 +80,6 @@ class RoutingConfig {
   /// The maximum number of redirection allowed.
   ///
   /// See [GoRouter].
-  @Deprecated(
-    'Use onEnter instead. '
-    'This feature will be removed in a future release.',
-  )
   final int redirectLimit;
 
   /// A callback invoked for every incoming route before it is processed.
@@ -178,10 +170,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       'This feature will be removed in a future release.',
     )
     GoRouterRedirect? redirect,
-    @Deprecated(
-      'Use onEnter instead. '
-      'This feature will be removed in a future release.',
-    )
     int redirectLimit = 5,
     Listenable? refreshListenable,
     bool routerNeglect = false,
@@ -282,7 +270,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       onParserException: parserExceptionHandler,
       configuration: configuration,
       initialLocation: initialLocation,
-      fallbackRouter: this,
+      router: this,
     );
 
     routeInformationProvider = GoRouteInformationProvider(
