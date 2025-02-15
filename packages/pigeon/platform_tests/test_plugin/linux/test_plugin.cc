@@ -26,7 +26,7 @@ struct _TestPlugin {
 
   GCancellable* cancellable;
 
-  int main_thread_id;
+  std::thread::id main_thread_id;
 };
 
 G_DEFINE_TYPE(TestPlugin, test_plugin, G_TYPE_OBJECT)
@@ -796,14 +796,14 @@ static CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse*
 default_is_main_thread(gpointer user_data) {
   TestPlugin* self = TEST_PLUGIN(user_data);
   return core_tests_pigeon_test_host_integration_core_api_default_is_main_thread_response_new(
-      std::this_thread::get_id() == this->main_thread_id);
+      std::this_thread::get_id() == self->main_thread_id);
 }
 
 static CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse*
 task_queue_is_background_thread(gpointer user_data) {
   TestPlugin* self = TEST_PLUGIN(user_data);
   return core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_response_new(
-      std::this_thread::get_id() != this->main_thread_id);
+      std::this_thread::get_id() != self->main_thread_id);
 }
 
 static void noop_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
