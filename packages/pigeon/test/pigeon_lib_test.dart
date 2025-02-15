@@ -1599,6 +1599,23 @@ abstract class MyClass {
         contains('Attached fields must not be nullable: MyClass?'),
       );
     });
+
+    test('callback methods with non-null return types must be non-null', () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass {
+  late String Function()? aCallbackMethod;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'Callback methods that return a non-null value must be non-null: aCallbackMethod.',
+        ),
+      );
+    });
   });
 
   group('event channel validation', () {

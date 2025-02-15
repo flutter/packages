@@ -6,7 +6,8 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show Error, TaskQueueType;
+import '../pigeon_lib.dart' show Error;
+import '../types/task_queue.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -860,24 +861,33 @@ if (self.wrapped == nil) {
     indent.addScoped('{', '}', () {
       indent.writeln(
           'messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";');
+      String? serialBackgroundQueue;
+      if (api.methods.any((Method m) =>
+          m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+        serialBackgroundQueue = 'taskQueue';
+        // See https://github.com/flutter/flutter/issues/162613 for why this
+        // is an ifdef instead of just a respondsToSelector: check.
+        indent.format('''
+#if TARGET_OS_IOS
+  NSObject<FlutterTaskQueue> *$serialBackgroundQueue = [binaryMessenger makeBackgroundTaskQueue];
+#else
+  NSObject<FlutterTaskQueue> *$serialBackgroundQueue = nil;
+#endif''');
+      }
       for (final Method func in api.methods) {
         addDocumentationComments(
             indent, func.documentationComments, _docCommentSpec);
 
         indent.writeScoped('{', '}', () {
-          String? taskQueue;
-          if (func.taskQueueType != TaskQueueType.serial) {
-            taskQueue = 'taskQueue';
-            indent.writeln(
-                'NSObject<FlutterTaskQueue> *$taskQueue = [binaryMessenger makeBackgroundTaskQueue];');
-          }
           _writeChannelAllocation(
             generatorOptions,
             indent,
             api,
             func,
             channelName,
-            taskQueue,
+            func.taskQueueType == TaskQueueType.serialBackgroundThread
+                ? serialBackgroundQueue
+                : null,
             dartPackageName: dartPackageName,
           );
           indent.write('if (api) ');
@@ -1112,7 +1122,15 @@ static FlutterError *createConnectionError(NSString *channelName) {
 
         if (taskQueue != null) {
           indent.newln();
-          indent.addln('taskQueue:$taskQueue];');
+          // See https://github.com/flutter/flutter/issues/162613 for why this
+          // is in an ifdef instead of just relying on the parameter being
+          // nullable.
+          indent.format('''
+#ifdef TARGET_OS_IOS
+taskQueue:$taskQueue
+#endif
+];
+''');
         } else {
           indent.addln('];');
         }

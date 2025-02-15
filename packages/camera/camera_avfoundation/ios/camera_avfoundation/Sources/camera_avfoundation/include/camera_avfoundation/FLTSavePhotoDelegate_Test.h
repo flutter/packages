@@ -4,6 +4,8 @@
 
 #import "FLTSavePhotoDelegate.h"
 
+#import "FLTWritableData.h"
+
 /// API exposed for unit tests.
 @interface FLTSavePhotoDelegate ()
 
@@ -20,5 +22,5 @@
 /// @param error the capture error.
 /// @param photoDataProvider a closure that provides photo data.
 - (void)handlePhotoCaptureResultWithError:(NSError *)error
-                        photoDataProvider:(NSData * (^)(void))photoDataProvider;
+                        photoDataProvider:(NSObject<FLTWritableData> * (^)(void))photoDataProvider;
 @end

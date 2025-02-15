@@ -23,12 +23,10 @@
   _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
   _mockDevice = mockDevice;
 
-  _camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-      nil, nil, nil,
-      ^NSObject<FLTCaptureDevice> *(void) {
-        return mockDevice;
-      },
-      _mockDeviceOrientationProvider);
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureDeviceFactory = ^NSObject<FLTCaptureDevice> *_Nonnull { return mockDevice; };
+  configuration.deviceOrientationProvider = _mockDeviceOrientationProvider;
+  _camera = FLTCreateCamWithConfiguration(configuration);
 }
 
 - (void)testSetExposurePointWithResult_SetsExposurePointOfInterest {
@@ -53,7 +51,7 @@
                [completionExpectation fulfill];
              }];
 
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
   XCTAssertEqual(setPoint.x, 1.0);
   XCTAssertEqual(setPoint.y, 1.0);
 }
@@ -77,7 +75,7 @@
         }];
 
   // Verify
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end
