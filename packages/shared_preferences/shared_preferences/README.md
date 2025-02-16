@@ -170,15 +170,15 @@ This can be run on every launch without data loss as long as the `migrationCompl
 <?code-excerpt "main.dart (migrate)"?>
 ```dart
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
-// ···
-    const SharedPreferencesOptions sharedPreferencesOptions =
-        SharedPreferencesOptions();
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
-      legacySharedPreferencesInstance: prefs,
-      sharedPreferencesAsyncOptions: sharedPreferencesOptions,
-      migrationCompletedKey: 'migrationCompleted',
-    );
+
+const SharedPreferencesOptions sharedPreferencesOptions = SharedPreferencesOptions();
+final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
+  legacySharedPreferencesInstance: prefs,
+  sharedPreferencesAsyncOptions: sharedPreferencesOptions,
+  migrationCompletedKey: 'migrationCompleted',
+);
 ```
 
 #### Adding, Removing, or changing prefixes on SharedPreferences
