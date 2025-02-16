@@ -31,7 +31,7 @@ for more information.
 
 [SharedPreferences] and [SharedPreferencesWithCache] both use a local cache to store preferences.
 This allows for synchronous get calls after the initial setup call fetches the preferences from the platform.
-However, The cache can present issues as well:
+However, the cache can present issues as well:
 
 - If you are using `shared_preferences` from multiple isolates, since each
   isolate has its own singleton and cache.
