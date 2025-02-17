@@ -196,7 +196,7 @@ final class CameraSettingsTests: XCTestCase {
     configuration.mediaSettings = settings
     let camera = FLTCreateCamWithConfiguration(configuration)
 
-    let range = camera.captureDevice.activeFormat().videoSupportedFrameRateRanges[0]
+    let range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0]
     XCTAssertLessThanOrEqual(range.minFrameRate, 60)
     XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60)
   }
