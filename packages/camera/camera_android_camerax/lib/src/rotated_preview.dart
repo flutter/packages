@@ -4,24 +4,25 @@
 
 import 'dart:async';
 
-import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-final class PreviewRotation extends StatefulWidget {
-  /// Creates [PreviewRotation] that will correct the preview
-  /// rotation assuming the front camera is being used.
-  PreviewRotation.frontFacingCamera(
+/// Widget that rotates the camera preview to be upright according to the
+/// current device orientation.
+final class RotatedPreview extends StatefulWidget {
+  /// Creates [RotatedPreview] that will correct the preview
+  /// rotation assuming that the front camera is being used.
+  const RotatedPreview.frontFacingCamera(
     this.initialDeviceOrientation,
     this.deviceOrientation, {
-    required this.child,
     required this.sensorOrientationDegrees,
+    required this.child,
     super.key,
   }) : facingSign = 1;
 
-  /// Creates [PreviewRotation] that will correct the preview
-  /// rotation assuming the back camera is being used.
-  PreviewRotation.backFacingCamera(
+  /// Creates [RotatedPreview] that will correct the preview
+  /// rotation assuming that the back camera is being used.
+  const RotatedPreview.backFacingCamera(
     this.initialDeviceOrientation,
     this.deviceOrientation, {
     required this.child,
@@ -29,28 +30,28 @@ final class PreviewRotation extends StatefulWidget {
     super.key,
   }) : facingSign = -1;
 
-  /// The preview [Widget] to rotate.
-  final Widget child;
-
   /// The initial orientation of the device when the camera is created.
   final DeviceOrientation initialDeviceOrientation;
 
   /// The orientation of the device using the camera.
   final Stream<DeviceOrientation> deviceOrientation;
 
-  /// The orienation of the camera sensor.
+  /// The orienation of the camera sensor in degrees.
   final double sensorOrientationDegrees;
+
+  /// The camera preview [Widget] to rotate.
+  final Widget child;
 
   /// Value used to calculate the correct preview rotation.
   ///
-  /// 1 if the camera is front facing; -1 if the camerea is back facing.
+  /// 1 if the camera is front facing; -1 if the camera is back facing.
   final int facingSign;
 
   @override
-  State<StatefulWidget> createState() => _PreviewRotationState();
+  State<StatefulWidget> createState() => _RotatedPreviewState();
 }
 
-final class _PreviewRotationState extends State<PreviewRotation> {
+final class _RotatedPreviewState extends State<RotatedPreview> {
   late DeviceOrientation deviceOrientation;
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
@@ -59,19 +60,18 @@ final class _PreviewRotationState extends State<PreviewRotation> {
     deviceOrientation = widget.initialDeviceOrientation;
     deviceOrientationSubscription =
         widget.deviceOrientation.listen((DeviceOrientation event) {
-      // Make sure we aren't updating the state if the widget is being destroyed.
+      // Ensure that we aren't updating the state if the widget is being destroyed.
       if (!mounted) {
         return;
       }
       setState(() {
-        debugPrint('>>>> deviceOrientation changed to: $event');
         deviceOrientation = event;
       });
     });
     super.initState();
   }
 
-  double _computeRotation(
+  double _computeRotationDegrees(
     DeviceOrientation orientation, {
     required double sensorOrientationDegrees,
     required int sign,
@@ -100,15 +100,13 @@ final class _PreviewRotationState extends State<PreviewRotation> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('>>>> PreviewRotation build called!');
-    final double rotation = _computeRotation(
+    final double rotationDegrees = _computeRotationDegrees(
       deviceOrientation,
       sensorOrientationDegrees: widget.sensorOrientationDegrees,
       sign: widget.facingSign,
     );
-    // FIXME: This sucks.
     return RotatedBox(
-      quarterTurns: rotation ~/ 90,
+      quarterTurns: rotationDegrees ~/ 90,
       child: widget.child,
     );
   }

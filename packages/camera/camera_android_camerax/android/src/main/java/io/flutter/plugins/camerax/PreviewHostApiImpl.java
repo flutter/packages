@@ -184,7 +184,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
     if (flutterSurfaceProducer != null) {
       return flutterSurfaceProducer.handlesCropAndRotation();
     }
-    throw new IllegalStateException("surfaceProducerHandlesCropAndRotation() cannot be called when the flutterSurfaceProducer for the camera preview has not yet been initialized.");
+    throw new IllegalStateException("surfaceProducerHandlesCropAndRotation() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
   }
 
   /** Retrieves the {@link Preview} instance associated with the specified {@code identifier}. */

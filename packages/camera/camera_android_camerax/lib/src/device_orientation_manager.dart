@@ -6,7 +6,6 @@ import 'dart:async';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart'
     show DeviceOrientationChangedEvent;
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'android_camera_camerax_flutter_api_impls.dart';

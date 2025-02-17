@@ -87,8 +87,8 @@ class Preview extends UseCase {
     return _api.getResolutionInfoFromInstance(this);
   }
 
-  /// Returns whether or not the Impeller backend handles correcting the
-  /// rotation of camera previews for the device this plugin runs on.
+  /// Returns whether or not the Android surface producer automatically handles
+  /// correcting the rotation of camera previews for the device this plugin runs on.
   Future<bool> surfaceProducerHandlesCropAndRotation() {
     return _api.surfaceProducerHandlesCropAndRotationFromInstance();
   }
@@ -163,8 +163,8 @@ class PreviewHostApiImpl extends PreviewHostApi {
     return resolutionInfo;
   }
 
-  /// Returns whether or not the Impeller backend handles correcting the
-  /// rotation of camera previews for the device this plugin runs on.
+  /// Returns whether or not the Android surface producer automatically handles
+  /// correcting the rotation of camera previews for the device this plugin runs on.
   Future<bool> surfaceProducerHandlesCropAndRotationFromInstance() {
     return surfaceProducerHandlesCropAndRotation();
   }

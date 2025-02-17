@@ -10,15 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show
-        AsyncSnapshot,
-        BuildContext,
-        Size,
-        StreamBuilder,
-        Texture,
-        Widget,
-        debugPrint,
-        visibleForTesting;
+    show Size, Texture, Widget, debugPrint, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
@@ -48,7 +40,7 @@ import 'observer.dart';
 import 'pending_recording.dart';
 import 'plane_proxy.dart';
 import 'preview.dart';
-import 'preview_rotation.dart';
+import 'rotated_preview.dart';
 import 'process_camera_provider.dart';
 import 'quality_selector.dart';
 import 'recorder.dart';
@@ -248,18 +240,16 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The camera sensor orientation.
   @visibleForTesting
-  late int sensorOrientation;
+  late double sensorOrientationDegrees;
 
-  /// Subscription for listening to changes in device orientation.
-  StreamSubscription<DeviceOrientationChangedEvent>?
-      _subscriptionForDeviceOrientationChanges;
-
-  /// Whether or not the Impeller backend handles correcting the rotation
-  /// of camera previews for the device this plugin runs on.
-  late bool _handlesCropAndRotation;
+  /// Whether or not the Android Surface producer automatically handles
+  /// correcting the rotation of camera previews for the device this plugin runs on.
+  @visibleForTesting
+  late bool handlesCropAndRotation;
 
   /// The initial orientation of the device when the camera is created.
-  late DeviceOrientation _initialDeviceOrientation;
+  @visibleForTesting
+  late DeviceOrientation initialDeviceOrientation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -399,10 +389,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     final Camera2CameraInfo camera2CameraInfo =
         await proxy.getCamera2CameraInfo(cameraInfo!);
 
-    sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
-    _handlesCropAndRotation =
-        await preview!.surfaceProducerHandlesCropAndRotation();
-    _initialDeviceOrientation = await proxy.getUiOrientation();
+    sensorOrientationDegrees =
+        (await proxy.getSensorOrientation(camera2CameraInfo)).toDouble();
+    handlesCropAndRotation =
+        await proxy.previewSurfaceProducerHandlesCropAndRotation(preview!);
+    initialDeviceOrientation = await proxy.getUiOrientation();
 
     return flutterSurfaceTextureId;
   }
@@ -463,7 +454,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
-    await _subscriptionForDeviceOrientationChanges?.cancel();
   }
 
   /// The camera has been initialized.
@@ -855,32 +845,30 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    Widget result = Texture(textureId: cameraId);
-    debugPrint('>>> buildPreview()');
-    debugPrint('>>>> _handlesCropAndRotation: $_handlesCropAndRotation');
+    Widget preview = Texture(textureId: cameraId);
 
-    if (!_handlesCropAndRotation) {
-      final double sensorOrientationDegrees = sensorOrientation.toDouble();
-      if (cameraIsFrontFacing) {
-        result = PreviewRotation.frontFacingCamera(
-          _initialDeviceOrientation,
+    if (!handlesCropAndRotation) {
+      final Stream<DeviceOrientation> deviceOrientationStream =
           onDeviceOrientationChanged()
-              .map((DeviceOrientationChangedEvent e) => e.orientation),
+              .map((DeviceOrientationChangedEvent e) => e.orientation);
+      if (cameraIsFrontFacing) {
+        preview = RotatedPreview.frontFacingCamera(
+          initialDeviceOrientation,
+          deviceOrientationStream,
           sensorOrientationDegrees: sensorOrientationDegrees,
-          child: result,
+          child: preview,
         );
       } else {
-        result = PreviewRotation.backFacingCamera(
-          _initialDeviceOrientation,
-          onDeviceOrientationChanged()
-              .map((DeviceOrientationChangedEvent e) => e.orientation),
+        preview = RotatedPreview.backFacingCamera(
+          initialDeviceOrientation,
+          deviceOrientationStream,
           sensorOrientationDegrees: sensorOrientationDegrees,
-          child: result,
+          child: preview,
         );
       }
     }
 
-    return result;
+    return preview;
   }
 
   /// Captures an image and returns the file where it was saved.
