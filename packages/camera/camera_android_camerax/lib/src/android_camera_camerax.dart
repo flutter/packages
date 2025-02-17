@@ -10,7 +10,7 @@ import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show Size, Texture, Widget, debugPrint, visibleForTesting;
+    show Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
@@ -40,7 +40,6 @@ import 'observer.dart';
 import 'pending_recording.dart';
 import 'plane_proxy.dart';
 import 'preview.dart';
-import 'rotated_preview.dart';
 import 'process_camera_provider.dart';
 import 'quality_selector.dart';
 import 'recorder.dart';
@@ -48,6 +47,7 @@ import 'recording.dart';
 import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
+import 'rotated_preview.dart';
 import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
