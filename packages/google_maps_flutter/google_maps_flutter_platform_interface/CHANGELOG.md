@@ -1,6 +1,6 @@
 ## 2.11.0
 
-* Adds support to animate the camera with a duration.
+* Adds support for animating the camera with a duration.
 
 ## 2.10.0
 
