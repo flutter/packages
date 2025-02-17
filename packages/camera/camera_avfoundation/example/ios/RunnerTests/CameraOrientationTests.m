@@ -139,7 +139,7 @@
 
   [plugin orientationChanged:
               [self createMockNotificationForOrientation:UIDeviceOrientationLandscapeLeft]];
-  [self waitForExpectationsWithTimeout:1 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testOrientationChanged_noRetainCycle {

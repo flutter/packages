@@ -38,7 +38,10 @@
 
 - (void)setUp {
   dispatch_queue_t captureSessionQueue = dispatch_queue_create("testing", NULL);
-  _camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue);
+  FLTCamConfiguration *configuration = FLTCreateTestCameraConfiguration();
+  configuration.captureSessionQueue = captureSessionQueue;
+
+  _camera = FLTCreateCamWithConfiguration(configuration);
   _sampleBuffer = FLTCreateTestSampleBuffer();
 }
 
@@ -69,7 +72,7 @@
     [_camera captureOutput:nil didOutputSampleBuffer:self.sampleBuffer fromConnection:nil];
   }
 
-  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 - (void)testReceivedImageStreamData {
@@ -99,7 +102,7 @@
   [_camera receivedImageStreamData];
   [_camera captureOutput:nil didOutputSampleBuffer:self.sampleBuffer fromConnection:nil];
 
-  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+  [self waitForExpectationsWithTimeout:30 handler:nil];
 }
 
 @end

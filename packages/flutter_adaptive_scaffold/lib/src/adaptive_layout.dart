@@ -206,6 +206,10 @@ class AdaptiveLayout extends StatefulWidget {
 class _AdaptiveLayoutState extends State<AdaptiveLayout>
     with TickerProviderStateMixin {
   late AnimationController _controller;
+  late final CurvedAnimation _sizeAnimation = CurvedAnimation(
+    parent: _controller,
+    curve: Curves.easeInOutCubic,
+  );
 
   late Map<String, SlotLayoutConfig?> chosenWidgets =
       <String, SlotLayoutConfig?>{};
@@ -250,6 +254,10 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
   @override
   void dispose() {
     _controller.dispose();
+    _sizeAnimation.dispose();
+    for (final ValueNotifier<Key?> notifier in notifiers.values) {
+      notifier.dispose();
+    }
     super.dispose();
   }
 
@@ -314,6 +322,7 @@ class _AdaptiveLayoutState extends State<AdaptiveLayout>
         bodyOrientation: widget.bodyOrientation,
         textDirection: Directionality.of(context) == TextDirection.ltr,
         hinge: hinge,
+        sizeAnimation: _sizeAnimation,
       ),
       children: entries,
     );
@@ -333,6 +342,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     required this.internalAnimations,
     required this.bodyOrientation,
     required this.textDirection,
+    required this.sizeAnimation,
     this.hinge,
   }) : super(relayout: controller);
 
@@ -346,6 +356,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
   final Axis bodyOrientation;
   final bool textDirection;
   final Rect? hinge;
+  final Animation<double> sizeAnimation;
 
   @override
   void performLayout(Size size) {
@@ -359,10 +370,7 @@ class _AdaptiveLayoutDelegate extends MultiChildLayoutDelegate {
     double animatedSize(double begin, double end) {
       if (isAnimating.contains(_SlotIds.secondaryBody.name)) {
         return internalAnimations
-            ? Tween<double>(begin: begin, end: end)
-                .animate(CurvedAnimation(
-                    parent: controller, curve: Curves.easeInOutCubic))
-                .value
+            ? Tween<double>(begin: begin, end: end).animate(sizeAnimation).value
             : end;
       }
       return end;

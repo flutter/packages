@@ -8,7 +8,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show TaskQueueType;
+import '../types/task_queue.dart';
 import 'templates.dart';
 
 /// Documentation open symbol.
@@ -654,6 +654,13 @@ if (wrapped == null) {
         indent.addScoped('{', '}', () {
           indent.writeln(
               r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
+          String? serialBackgroundQueue;
+          if (api.methods.any((Method m) =>
+              m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+            serialBackgroundQueue = 'taskQueue';
+            indent.writeln(
+                'val $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue()');
+          }
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
@@ -664,6 +671,10 @@ if (wrapped == null) {
               parameters: method.parameters,
               returnType: method.returnType,
               isAsynchronous: method.isAsynchronous,
+              serialBackgroundQueue:
+                  method.taskQueueType == TaskQueueType.serialBackgroundThread
+                      ? serialBackgroundQueue
+                      : null,
             );
           }
         });
@@ -847,7 +858,15 @@ if (wrapped == null) {
           override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
             return when (type) {
               $proxyApiCodecInstanceManagerKey.toByte() -> {
-                return registrar.instanceManager.getInstance(readValue(buffer) as Long)
+                val identifier: Long = readValue(buffer) as Long
+                val instance: Any? = registrar.instanceManager.getInstance(identifier)
+                if (instance == null) {
+                  Log.e(
+                    "${proxyApiCodecName(const KotlinOptions())}",
+                    "Failed to find instance with identifier: \$identifier"
+                  )
+                }
+                return instance
               }
               else -> super.readValueOfType(type, buffer)
             }
@@ -1063,8 +1082,8 @@ if (wrapped == null) {
           fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
             sink.error(errorCode, errorMessage, errorDetails)
           }
-  
-          fun endOfStream() { 
+
+          fun endOfStream() {
             sink.endOfStream()
           }
         }
@@ -1241,24 +1260,18 @@ if (wrapped == null) {
     required TypeDeclaration returnType,
     String setHandlerCondition = 'api != null',
     bool isAsynchronous = false,
+    String? serialBackgroundQueue,
     String Function(List<String> safeArgNames, {required String apiVarName})?
         onCreateCall,
   }) {
     indent.write('run ');
     indent.addScoped('{', '}', () {
-      String? taskQueue;
-      if (taskQueueType != TaskQueueType.serial) {
-        taskQueue = 'taskQueue';
-        indent.writeln(
-            'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
-      }
-
       indent.write(
         'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec',
       );
 
-      if (taskQueue != null) {
-        indent.addln(', $taskQueue)');
+      if (serialBackgroundQueue != null) {
+        indent.addln(', $serialBackgroundQueue)');
       } else {
         indent.addln(')');
       }
@@ -1912,58 +1925,63 @@ if (wrapped == null) {
               '''
               callback(
                   Result.failure(
-                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-              return''',
+                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))''',
             );
           },
+          addTrailingNewline: false,
         );
         indent.writeScoped(
-          'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+          ' else if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
           '}',
           () {
-            indent.writeln('Result.success(Unit)');
-            indent.writeln('return');
+            indent.writeln('callback(Result.success(Unit))');
           },
+          addTrailingNewline: false,
         );
-        if (api.hasCallbackConstructor()) {
-          indent.writeln(
-            'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
-          );
-          enumerate(api.unattachedFields, (int index, ApiField field) {
-            final String argName = _getSafeArgumentName(index, field);
+        indent.writeScoped(' else {', '}', () {
+          if (api.hasCallbackConstructor()) {
             indent.writeln(
-              'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
             );
-          });
+            enumerate(api.unattachedFields, (int index, ApiField field) {
+              final String argName = _getSafeArgumentName(index, field);
+              indent.writeln(
+                'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              );
+            });
 
-          indent
-              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
-          indent.writeln('val codec = pigeonRegistrar.codec');
-          _writeFlutterMethodMessageCall(
-            indent,
-            returnType: returnType,
-            channelName: channelName,
-            errorClassName: errorClassName,
-            parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}identifier',
-                type: const TypeDeclaration(
-                  baseName: 'int',
-                  isNullable: false,
+            indent.writeln(
+                'val binaryMessenger = pigeonRegistrar.binaryMessenger');
+            indent.writeln('val codec = pigeonRegistrar.codec');
+            _writeFlutterMethodMessageCall(
+              indent,
+              returnType: returnType,
+              channelName: channelName,
+              errorClassName: errorClassName,
+              parameters: <Parameter>[
+                Parameter(
+                  name: '${classMemberNamePrefix}identifier',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
                 ),
-              ),
-              ...api.unattachedFields.map(
-                (ApiField field) {
-                  return Parameter(name: field.name, type: field.type);
-                },
-              ),
-            ],
-          );
-        } else {
-          indent.writeln(
-            'throw IllegalStateException("Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
-          );
-        }
+                ...api.unattachedFields.map(
+                  (ApiField field) {
+                    return Parameter(name: field.name, type: field.type);
+                  },
+                ),
+              ],
+            );
+          } else {
+            indent.format(
+              '''
+              callback(
+                  Result.failure(
+                      $errorClassName("new-instance-error", "Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", "")))''',
+            );
+          }
+        });
       },
     );
     indent.newln();

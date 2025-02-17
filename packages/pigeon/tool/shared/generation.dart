@@ -86,7 +86,6 @@ Future<int> generateTestPigeons(
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
   const Set<String> inputs = <String>{
-    'background_platform_channels',
     'core_tests',
     'enum',
     'event_channel_tests',
@@ -113,14 +112,14 @@ Future<int> generateTestPigeons(
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
 
     final bool kotlinErrorClassGenerationTestFiles =
-        input == 'core_tests' || input == 'background_platform_channels';
+        input == 'core_tests' || input == 'primitive';
 
     final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
     final bool swiftErrorUseDefaultErrorName =
-        input == 'core_tests' || input == 'background_platform_channels';
+        input == 'core_tests' || input == 'primitive';
 
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
@@ -140,13 +139,13 @@ Future<int> generateTestPigeons(
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
-      kotlinIncludeErrorClass: input != 'core_tests',
+      kotlinIncludeErrorClass: input != 'primitive',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'background_platform_channels',
+      swiftIncludeErrorClass: input != 'primitive',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -178,7 +177,7 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'background_platform_channels',
+      swiftIncludeErrorClass: input != 'primitive',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
