@@ -1,6 +1,11 @@
+## 0.3.2
+
+* Fixes some memory leaks by disposing curved animations and value notifiers.
+
 ## 0.3.1+1
 
 * Updates README to indicate that this package will be discontinued.
+
 
 ## 0.3.1
 

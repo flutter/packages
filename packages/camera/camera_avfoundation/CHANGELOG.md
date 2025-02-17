@@ -1,6 +1,10 @@
-## 0.9.18+7
+## 0.9.18+8
 
 * Migrates unit tests to Swift.
+
+## 0.9.18+7
+
+* Fixes crash when setting `activeFormat` on `FLTCaptureDevice`.
 
 ## 0.9.18+6
 

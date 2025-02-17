@@ -2871,6 +2871,28 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(unused, unused);
   });
 
+  /// Task queues
+
+  testWidgets('non-task-queue handlers run on a the main thread', (_) async {
+    final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    expect(await api.defaultIsMainThread(), true);
+  });
+
+  testWidgets('task queue handlers run on a background thread', (_) async {
+    final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+    // Currently only Android and iOS have task queue support. See
+    // https://github.com/flutter/flutter/issues/93945
+    // Rather than skip the test, this changes the expectation, so that there
+    // is test coverage of the code path, even though the actual backgrounding
+    // doesn't happen. This is especially important for macOS, which may need to
+    // share generated code with iOS, falling back to the main thread since
+    // background is not supported.
+    final bool taskQueuesSupported =
+        defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS;
+    expect(await api.taskQueueIsBackgroundThread(), taskQueuesSupported);
+  });
+
   /// Event channels
 
   const List<TargetGenerator> eventChannelSupported = <TargetGenerator>[
