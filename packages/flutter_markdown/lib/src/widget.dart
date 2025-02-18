@@ -32,7 +32,7 @@ typedef MarkdownOnSelectionChangedCallback = void Function(
 typedef MarkdownTapLinkCallback = void Function(
     String text, String? href, String title);
 
-/// Signature for custom image widget.
+/// Signature for custom image builder.
 ///
 /// Used by [MarkdownWidget.sizedImageBuilder]
 typedef MarkdownSizedImageBuilder = Widget Function(MarkdownImageConfig config);
