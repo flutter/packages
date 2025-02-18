@@ -145,7 +145,13 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.onSelectionChanged,
     this.onTapText,
     this.softLineBreak = false,
-  });
+  }):
+
+  // Check that only one of imageBuilder and sizedImageBuilder has a value.
+  // sizedImageBuilder takes precedence when both are provided, but it's
+  // better to not allow this configuration.
+  assert(imageBuilder == null || sizedImageBuilder == null,
+  'Only one of imageBuilder or sizedImageBuilder may be specified.');
 
   /// A delegate that controls how link and `pre` elements behave.
   final MarkdownBuilderDelegate delegate;
