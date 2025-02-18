@@ -1153,8 +1153,9 @@ if (wrapped == null) {
     }
     returnStatement = '$returnStatement;';
 
+    const String sendFutureVar = '${varNamePrefix}sendFuture';
     indent.writeln(
-      'final Future<Object?> ${varNamePrefix}sendFuture = ${varNamePrefix}channel.send($sendArgument);',
+      'final Future<Object?> $sendFutureVar = ${varNamePrefix}channel.send($sendArgument);',
     );
 
     // If the message call is not made inside of an async method, this creates
@@ -1166,7 +1167,7 @@ if (wrapped == null) {
 
     indent.format('''
 final List<Object?>? ${varNamePrefix}replyList =
-\t\tawait ${varNamePrefix}sendFuture as List<Object?>?;
+\t\tawait $sendFutureVar as List<Object?>?;
 if (${varNamePrefix}replyList == null) {
 \tthrow _createConnectionError(${varNamePrefix}channelName);
 } else if (${varNamePrefix}replyList.length > 1) {
