@@ -340,9 +340,7 @@ class _PigeonInternalInstanceManagerApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[identifier]
-    ]);
+        pigeonVar_channel.send(<Object?>[identifier]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -370,8 +368,7 @@ class _PigeonInternalInstanceManagerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[null]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -532,45 +529,43 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       );
       final Future<Object?> pigeonVar_sendFuture =
           pigeonVar_channel.send(<Object?>[
-        <Object?>[
-          pigeonVar_instanceIdentifier,
-          aBool,
-          anInt,
-          aDouble,
-          aString,
-          aUint8List,
-          aList,
-          aMap,
-          anEnum,
-          aProxyApi,
-          aNullableBool,
-          aNullableInt,
-          aNullableDouble,
-          aNullableString,
-          aNullableUint8List,
-          aNullableList,
-          aNullableMap,
-          aNullableEnum,
-          aNullableProxyApi,
-          boolParam,
-          intParam,
-          doubleParam,
-          stringParam,
-          aUint8ListParam,
-          listParam,
-          mapParam,
-          enumParam,
-          proxyApiParam,
-          nullableBoolParam,
-          nullableIntParam,
-          nullableDoubleParam,
-          nullableStringParam,
-          nullableUint8ListParam,
-          nullableListParam,
-          nullableMapParam,
-          nullableEnumParam,
-          nullableProxyApiParam
-        ]
+        pigeonVar_instanceIdentifier,
+        aBool,
+        anInt,
+        aDouble,
+        aString,
+        aUint8List,
+        aList,
+        aMap,
+        anEnum,
+        aProxyApi,
+        aNullableBool,
+        aNullableInt,
+        aNullableDouble,
+        aNullableString,
+        aNullableUint8List,
+        aNullableList,
+        aNullableMap,
+        aNullableEnum,
+        aNullableProxyApi,
+        boolParam,
+        intParam,
+        doubleParam,
+        stringParam,
+        aUint8ListParam,
+        listParam,
+        mapParam,
+        enumParam,
+        proxyApiParam,
+        nullableBoolParam,
+        nullableIntParam,
+        nullableDoubleParam,
+        nullableStringParam,
+        nullableUint8ListParam,
+        nullableListParam,
+        nullableMapParam,
+        nullableEnumParam,
+        nullableProxyApiParam
       ]);
       () async {
         final List<Object?>? pigeonVar_replyList =
@@ -654,27 +649,25 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       );
       final Future<Object?> pigeonVar_sendFuture =
           pigeonVar_channel.send(<Object?>[
-        <Object?>[
-          pigeonVar_instanceIdentifier,
-          aBool,
-          anInt,
-          aDouble,
-          aString,
-          aUint8List,
-          aList,
-          aMap,
-          anEnum,
-          aProxyApi,
-          aNullableBool,
-          aNullableInt,
-          aNullableDouble,
-          aNullableString,
-          aNullableUint8List,
-          aNullableList,
-          aNullableMap,
-          aNullableEnum,
-          aNullableProxyApi
-        ]
+        pigeonVar_instanceIdentifier,
+        aBool,
+        anInt,
+        aDouble,
+        aString,
+        aUint8List,
+        aList,
+        aMap,
+        anEnum,
+        aProxyApi,
+        aNullableBool,
+        aNullableInt,
+        aNullableDouble,
+        aNullableString,
+        aNullableUint8List,
+        aNullableList,
+        aNullableMap,
+        aNullableEnum,
+        aNullableProxyApi
       ]);
       () async {
         final List<Object?>? pigeonVar_replyList =
@@ -2387,9 +2380,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         binaryMessenger: pigeonVar_binaryMessenger,
       );
       final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[
-        <Object?>[this, pigeonVar_instanceIdentifier]
-      ]);
+          pigeonVar_channel.send(<Object?>[this, pigeonVar_instanceIdentifier]);
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -2426,9 +2417,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
         binaryMessenger: pigeonVar_binaryMessenger,
       );
       final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[
-        <Object?>[pigeonVar_instanceIdentifier]
-      ]);
+          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -2461,9 +2450,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2493,9 +2480,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2525,9 +2510,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2557,9 +2540,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2589,9 +2570,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anInt]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anInt]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2626,9 +2605,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aDouble]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aDouble]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2663,9 +2640,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aBool]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aBool]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2700,9 +2675,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aString]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2737,9 +2710,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aUint8List]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aUint8List]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2774,9 +2745,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anObject]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anObject]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2811,9 +2780,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2850,9 +2817,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2888,9 +2853,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2928,9 +2891,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -2966,9 +2927,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anEnum]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anEnum]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3003,9 +2962,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aProxyApi]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aProxyApi]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3040,9 +2997,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableInt]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableInt]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3072,9 +3027,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableDouble]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableDouble]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3104,9 +3057,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableBool]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableBool]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3136,9 +3087,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableString]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3169,9 +3118,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableUint8List]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableUint8List]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3201,9 +3148,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableObject]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableObject]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3233,9 +3178,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3266,9 +3209,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3299,9 +3240,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableEnum]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableEnum]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3332,9 +3271,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aNullableProxyApi]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aNullableProxyApi]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3365,9 +3302,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3397,9 +3332,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anInt]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anInt]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3434,9 +3367,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aDouble]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aDouble]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3471,9 +3402,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aBool]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aBool]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3508,9 +3437,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aString]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3545,9 +3472,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aUint8List]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aUint8List]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3582,9 +3507,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anObject]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anObject]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3619,9 +3542,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3656,9 +3577,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3694,9 +3613,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anEnum]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anEnum]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3731,9 +3648,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3763,9 +3678,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3795,9 +3708,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3827,9 +3738,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anInt]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anInt]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3859,9 +3768,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aDouble]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aDouble]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3891,9 +3798,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aBool]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aBool]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3923,9 +3828,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aString]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3955,9 +3858,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aUint8List]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aUint8List]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3987,9 +3888,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anObject]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anObject]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4019,9 +3918,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4052,9 +3949,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4086,9 +3981,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anEnum]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anEnum]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4120,8 +4013,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[null]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4155,9 +4047,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[aString]
-    ]);
+        pigeonVar_channel.send(<Object?>[aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4194,8 +4084,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[null]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4224,9 +4113,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4255,9 +4142,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4286,9 +4171,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4317,9 +4200,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aBool]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aBool]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4353,9 +4234,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anInt]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anInt]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4389,9 +4268,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aDouble]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aDouble]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4425,9 +4302,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aString]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4461,9 +4336,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aUint8List]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aUint8List]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4497,9 +4370,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4534,9 +4405,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4572,9 +4441,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4610,9 +4477,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4647,9 +4512,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anEnum]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anEnum]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4684,9 +4547,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aProxyApi]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aProxyApi]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4720,9 +4581,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aBool]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aBool]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4751,9 +4610,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anInt]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anInt]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4782,9 +4639,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aDouble]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aDouble]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4813,9 +4668,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aString]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4845,9 +4698,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aUint8List]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aUint8List]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4877,9 +4728,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aList]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aList]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4909,9 +4758,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aMap]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aMap]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4942,9 +4789,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, anEnum]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, anEnum]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -4974,9 +4819,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aProxyApi]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aProxyApi]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5005,9 +4848,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5036,9 +4877,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this, aString]
-    ]);
+        pigeonVar_channel.send(<Object?>[this, aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5133,9 +4972,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
         binaryMessenger: pigeonVar_binaryMessenger,
       );
       final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[
-        <Object?>[pigeonVar_instanceIdentifier]
-      ]);
+          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       () async {
         final List<Object?>? pigeonVar_replyList =
             await pigeonVar_sendFuture as List<Object?>?;
@@ -5230,9 +5067,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -5403,9 +5238,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
         binaryMessenger: pigeonVar_binaryMessenger,
       );
       final Future<Object?> pigeonVar_sendFuture =
-          pigeonVar_channel.send(<Object?>[
-        <Object?>[pigeonVar_instanceIdentifier]
-      ]);
+          pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier]);
       () async {
         final List<Object?>? pigeonVar_replyList =
             await pigeonVar_sendFuture as List<Object?>?;
@@ -5500,9 +5333,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[this]
-    ]);
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

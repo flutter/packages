@@ -127,9 +127,7 @@ class EnumApi2Host {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[
-      <Object?>[data]
-    ]);
+        pigeonVar_channel.send(<Object?>[data]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
