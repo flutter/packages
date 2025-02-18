@@ -63,11 +63,14 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
 
 /// Includes test cases related to sample buffer handling for FLTCam class.
 final class CameraSampleBufferTests: XCTestCase {
-  private func createCamera() -> (FLTCam, MockAssetWriter, MockAssetWriterInputPixelBufferAdaptor, MockAssetWriterInput, MockCaptureConnection) {
+  private func createCamera() -> (
+    FLTCam, MockAssetWriter, MockAssetWriterInputPixelBufferAdaptor, MockAssetWriterInput,
+    MockCaptureConnection
+  ) {
     let assetWriter = MockAssetWriter()
     let adaptor = MockAssetWriterInputPixelBufferAdaptor()
     let input = MockAssetWriterInput()
-    
+
     let configuration = FLTCreateTestCameraConfiguration()
     configuration.mediaSettings = FCPPlatformMediaSettings.make(
       with: .medium, framesPerSecond: nil, videoBitrate: nil, audioBitrate: nil, enableAudio: true)
@@ -80,7 +83,10 @@ final class CameraSampleBufferTests: XCTestCase {
       return adaptor
     }
 
-    return (FLTCreateCamWithConfiguration(configuration), assetWriter, adaptor, input, MockCaptureConnection())
+    return (
+      FLTCreateCamWithConfiguration(configuration), assetWriter, adaptor, input,
+      MockCaptureConnection()
+    )
   }
 
   func testSampleBufferCallbackQueueMustBeCaptureSessionQueue() {
@@ -127,7 +133,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
-    
+
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
