@@ -81,117 +81,64 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   final Random _random = Random();
 
-  // Processes an onEnter navigation attempt. Returns an updated RouteMatchList.
-  // This is where the onEnter navigation logic happens.
-  // 1. Setting the Stage:
-  //    We figure out the current and next states using the matchList and any previous successful match.
-  // 2. Calling onEnter:
-  //    We call topOnEnter. It decides if navigation can happen. If yes, we update the match and return it.
-  // 3. The Safety Net (Last Successful Match):
-  //    If navigation is blocked and we have a previous successful match, we go back to that.
-  //    This provides a safe fallback (e.g., /) to prevent loops.
-  // 4. Loop Check:
-  //    If there's no previous match, we check for loops. If the current URI is in the
-  //    history, we're in a loop. Throw a GoException.
-  // 5. Redirection Limit:
-  //    We check we haven't redirected too many times.
-  // 6. The Fallback (Initial Location):
-  //   If not looping, and not over the redirect limit, go back to the start (initial location,
-  //    usually /). We don't recurse. This treats places like / as final destinations,
-  //   not part of a loop.
-  // This method avoids infinite loops but ensures we end up somewhere valid. Handling fallbacks
-  // like / prevents false loop detections and unnecessary recursion. It's about smooth,
-  // reliable navigation.
-  Future<RouteMatchList> _processOnEnter(
+  /// Tracks the URIs of onEnter redirections.
+  final List<Uri> _onEnterRedirectionHistory = <Uri>[];
+
+  /// Checks if the top-level onEnter callback allows navigation.
+  /// Returns true if allowed; otherwise, false.
+  /// If onEnter is null, navigation is always allowed.
+  Future<bool> _handleTopOnEnter(
     BuildContext context,
-    RouteMatchList matchList,
-    List<RouteMatchList> onEnterHistory,
-  ) async {
-    // Build states for onEnter
+    RouteInformation routeInformation,
+    RouteInformationState<dynamic> infoState,
+  ) {
+    final OnEnter? topOnEnter = configuration.topOnEnter;
+    if (topOnEnter == null) {
+      return SynchronousFuture<bool>(true);
+    }
+
+    // Build route matches for the incoming URI.
+    final RouteMatchList incomingMatches = configuration.findMatch(
+      routeInformation.uri,
+      extra: infoState.extra,
+    );
+
+    // Construct navigation states.
     final GoRouterState nextState =
-        configuration.buildTopLevelGoRouterState(matchList);
+        configuration.buildTopLevelGoRouterState(incomingMatches);
     final GoRouterState currentState = _lastMatchList != null
         ? configuration.buildTopLevelGoRouterState(_lastMatchList!)
         : nextState;
 
-    // Invoke the onEnter callback
-    final bool canEnter = await configuration.topOnEnter!(
+    // Execute the onEnter callback.
+    final FutureOr<bool> result = topOnEnter(
       context,
       currentState,
       nextState,
-      _router,
+      GoRouter.maybeOf(context) ?? _router,
     );
 
-    // If navigation is allowed, update and return immediately
-    if (canEnter) {
-      _lastMatchList = matchList;
-      return _updateRouteMatchList(
-        matchList,
-        baseRouteMatchList: matchList,
-        completer: null,
-        type: NavigatingType.go,
-      );
-    }
-
-    // If we have a last successful match, use it as fallback WITHOUT recursion
-    if (_lastMatchList != null) {
-      return _updateRouteMatchList(
-        _lastMatchList!,
-        baseRouteMatchList: matchList,
-        completer: null,
-        type: NavigatingType.go,
-      );
-    }
-
-    // Check for loops
-    if (onEnterHistory.length > 1 &&
-        onEnterHistory.any((RouteMatchList m) => m.uri == matchList.uri)) {
-      throw GoException(
-        'onEnter redirect loop detected: ${onEnterHistory.map((RouteMatchList m) => m.uri).join(' => ')} => ${matchList.uri}',
-      );
-    }
-
-    // Check redirect limit before continuing
-    if (onEnterHistory.length >= configuration.redirectLimit) {
-      throw GoException(
-        'Too many onEnter redirects: ${onEnterHistory.map((RouteMatchList m) => m.uri).join(' => ')}',
-      );
-    }
-
-    // Add current match to history
-    onEnterHistory.add(matchList);
-
-    // Try initial location as fallback WITHOUT recursion
-    final RouteMatchList fallbackMatches = configuration.findMatch(
-      Uri.parse(_initialLocation ?? '/'),
-      extra: matchList.extra,
-    );
-
-    return _updateRouteMatchList(
-      fallbackMatches,
-      baseRouteMatchList: matchList,
-      completer: null,
-      type: NavigatingType.go,
-    );
+    // Wrap immediate results in a SynchronousFuture.
+    return (result is bool)
+        ? SynchronousFuture<bool>(result)
+        : Future<bool>.value(result);
   }
 
-  /// Parses route information and handles navigation decisions based on various states and callbacks.
-  /// This is called by the [Router] when a new route needs to be processed, such as during deep linking,
-  /// browser navigation, or in-app navigation.
+  /// Parses route information and determines the navigation outcome.
+  /// Handles both legacy (non-RouteInformationState) and current route states.
   @override
   Future<RouteMatchList> parseRouteInformationWithDependencies(
     RouteInformation routeInformation,
     BuildContext context,
   ) {
-    // 1) Safety check
+    // Safety check
     if (routeInformation.state == null) {
       return SynchronousFuture<RouteMatchList>(RouteMatchList.empty);
     }
 
     final Object infoState = routeInformation.state!;
-
-    // 2) Handle restored navigation
     if (infoState is! RouteInformationState) {
+      // Decode the legacy state and apply redirects.
       final RouteMatchList matchList =
           _routeMatchListCodec.decode(infoState as Map<Object?, Object?>);
 
@@ -205,7 +152,87 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       });
     }
 
-    // 3) Normalize the URI first
+    // handle redirection limit
+    if (configuration.topOnEnter != null) {
+      // A redirection is being triggered via onEnter.
+      _onEnterRedirectionHistory.add(routeInformation.uri);
+      if (_onEnterRedirectionHistory.length > configuration.redirectLimit) {
+        final String formattedHistory =
+            _formatOnEnterRedirectionHistory(_onEnterRedirectionHistory);
+
+        final RouteMatchList errorMatchList = _errorRouteMatchList(
+          routeInformation.uri,
+          GoException('Too many onEnter calls detected: $formattedHistory'),
+        );
+
+        _onEnterRedirectionHistory.clear();
+        return SynchronousFuture<RouteMatchList>(
+          onParserException != null
+              ? onParserException!(context, errorMatchList)
+              : errorMatchList,
+        );
+      }
+    }
+
+    // Use onEnter to decide if navigation should proceed.
+    final Future<bool> canEnterFuture = _handleTopOnEnter(
+      context,
+      routeInformation,
+      infoState,
+    );
+
+    return canEnterFuture.then(
+      (bool canEnter) {
+        _onEnterRedirectionHistory.clear();
+        if (!canEnter) {
+          // If navigation is blocked, return the last successful match or a fallback.
+          if (_lastMatchList != null) {
+            return SynchronousFuture<RouteMatchList>(_lastMatchList!);
+          } else {
+            final Uri defaultUri = Uri.parse(_initialLocation ?? '/');
+            final RouteMatchList fallbackMatches = configuration.findMatch(
+              defaultUri,
+              extra: infoState.extra,
+            );
+            _lastMatchList = fallbackMatches;
+            return SynchronousFuture<RouteMatchList>(fallbackMatches);
+          }
+        } else {
+          // Navigation allowed: clear redirection history.
+          return _navigate(routeInformation, context, infoState);
+        }
+      },
+    );
+  }
+
+  /// The match used when there is an error during parsing.
+  static RouteMatchList _errorRouteMatchList(
+    Uri uri,
+    GoException exception, {
+    Object? extra,
+  }) {
+    return RouteMatchList(
+      matches: const <RouteMatch>[],
+      extra: extra,
+      error: exception,
+      uri: uri,
+      pathParameters: const <String, String>{},
+    );
+  }
+
+  /// Formats the redirection history for error messages.
+  String _formatOnEnterRedirectionHistory(List<Uri> history) {
+    return history.map((Uri uri) => uri.toString()).join(' => ');
+  }
+
+  /// Normalizes the URI, finds matching routes, processes redirects,
+  /// and updates the route match list based on the navigation type.
+  Future<RouteMatchList> _navigate(
+    RouteInformation routeInformation,
+    BuildContext context,
+    RouteInformationState<dynamic> infoState,
+  ) {
+    // Normalize the URI: ensure it has a valid path and remove trailing slashes.
     Uri uri = routeInformation.uri;
     if (uri.hasEmptyPath) {
       uri = uri.replace(path: '/');
@@ -213,50 +240,35 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       uri = uri.replace(path: uri.path.substring(0, uri.path.length - 1));
     }
 
-    // Find initial matches for the normalized URI
+    // Find initial route matches.
     final RouteMatchList initialMatches = configuration.findMatch(
       uri,
       extra: infoState.extra,
     );
-
-    // 4) Handle route interception via onEnter callback
-    if (configuration.topOnEnter != null) {
-      // Call _processOnEnter and immediately return its result
-      return _processOnEnter(
-        context,
-        initialMatches,
-        <RouteMatchList>[initialMatches], // Start history with initial match
-      );
-    }
-
-    // 5) If onEnter isn't used or throws, continue with redirect processing
     if (initialMatches.isError) {
       log('No initial matches: ${routeInformation.uri.path}');
     }
 
-    // 6) Process any redirects defined in the route configuration
-    // Routes might need to redirect based on auth state or other conditions
+    // Process any defined redirects.
     return debugParserFuture =
         _redirect(context, initialMatches).then((RouteMatchList matchList) {
-      // Handle any errors during route matching/redirection
       if (matchList.isError && onParserException != null) {
         return onParserException!(context, matchList);
       }
 
-      // 7) Development-time check for redirect-only routes
-      // Redirect-only routes must actually redirect somewhere else
+      // Ensure that redirect-only routes actually perform a redirection.
       assert(() {
         if (matchList.isNotEmpty) {
           assert(
-              !matchList.last.route.redirectOnly,
-              'A redirect-only route must redirect to a different location.\n'
-              'Offending route: ${matchList.last.route}');
+            !matchList.last.route.redirectOnly,
+            'Redirect-only route must redirect to a new location.\n'
+            'Offending route: ${matchList.last.route}',
+          );
         }
         return true;
       }());
 
-      // 8) Handle specific navigation types (push, replace, etc.)
-      // Different navigation actions need different route stack manipulations
+      // Update the route match list according to the navigation type (push, replace, etc.).
       final RouteMatchList updated = _updateRouteMatchList(
         matchList,
         baseRouteMatchList: infoState.baseRouteMatchList,
@@ -264,8 +276,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         type: infoState.type,
       );
 
-      // 9) Cache this successful route match for future reference
-      // We need this for comparison in onEnter and fallback in navigation failure
+      // Cache the successful match list.
       _lastMatchList = updated;
       return updated;
     });

@@ -60,7 +60,7 @@ class App extends StatelessWidget {
         GoRouterState currentState,
         GoRouterState nextState,
         GoRouter goRouter,
-      ) {
+      ) async {
         // Track analytics for deep links
         if (nextState.uri.hasQuery || nextState.uri.hasFragment) {
           _handleDeepLinkTracking(nextState.uri);

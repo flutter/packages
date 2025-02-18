@@ -23,7 +23,7 @@ typedef GoRouterRedirect = FutureOr<String?> Function(
 );
 
 /// The signature of the onEnter callback.
-typedef OnEnter = FutureOr<bool> Function(
+typedef OnEnter = Future<bool> Function(
   BuildContext context,
   GoRouterState currentState,
   GoRouterState nextState,
@@ -227,6 +227,7 @@ class RouteConfiguration {
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
       topRoute: matchList.lastOrNull?.route,
+      error: matchList.error,
     );
   }
 
