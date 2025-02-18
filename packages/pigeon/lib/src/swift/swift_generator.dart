@@ -9,6 +9,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
+import '../types/task_queue.dart';
 import 'templates.dart';
 
 /// Documentation comment open symbol.
@@ -736,6 +737,21 @@ if (wrapped == nil) {
       indent.addScoped('{', '}', () {
         indent.writeln(
             r'let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""');
+        String? serialBackgroundQueue;
+        if (api.methods.any((Method m) =>
+            m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+          serialBackgroundQueue = 'taskQueue';
+          // TODO(stuartmorgan): Remove the ? once macOS supports task queues
+          // and this is no longer an optional protocol method.
+          // See https://github.com/flutter/flutter/issues/162613 for why this
+          // is an ifdef instead of just relying on the optionality check.
+          indent.format('''
+#if os(iOS)
+  let $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue?()
+#else
+  let $serialBackgroundQueue: FlutterTaskQueue? = nil
+#endif''');
+        }
         for (final Method method in api.methods) {
           _writeHostMethodMessageHandler(
             indent,
@@ -747,6 +763,10 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,
             documentationComments: method.documentationComments,
+            serialBackgroundQueue:
+                method.taskQueueType == TaskQueueType.serialBackgroundThread
+                    ? serialBackgroundQueue
+                    : null,
           );
         }
       });
@@ -1404,7 +1424,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         func endOfStream() {
           sink(FlutterEndOfEventStream)
         }
-      
+
       }
       ''');
     }
@@ -1413,7 +1433,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     for (final Method func in api.methods) {
       indent.format('''
         class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
-          static func register(with messenger: FlutterBinaryMessenger, 
+          static func register(with messenger: FlutterBinaryMessenger,
                               instanceName: String = "",
                               streamHandler: ${toUpperCamelCase(func.name)}StreamHandler) {
             var channelName = "${makeChannelName(api, func, dartPackageName)}"
@@ -1535,6 +1555,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration returnType,
     required bool isAsynchronous,
     required String? swiftFunction,
+    String? serialBackgroundQueue,
     String setHandlerCondition = 'let api = api',
     List<String> documentationComments = const <String>[],
     String Function(List<String> safeArgNames, {required String apiVarName})?
@@ -1549,8 +1570,30 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-    indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
+    final String baseArgs = 'name: "$channelName", '
+        'binaryMessenger: binaryMessenger, codec: codec';
+    // The version with taskQueue: is an optional protocol method that isn't
+    // implemented on macOS yet, so the call has to be conditionalized even
+    // though the taskQueue argument is nullable. The runtime branching can be
+    // removed once macOS supports task queues. The condition is on the task
+    // queue variable not being nil because the earlier code to set it will
+    // return nil on macOS where the optional parts of the protocol are not
+    // implemented.
+    final String channelCreationWithoutTaskQueue =
+        'FlutterBasicMessageChannel($baseArgs)';
+    if (serialBackgroundQueue == null) {
+      indent.writeln('let $varChannelName = $channelCreationWithoutTaskQueue');
+    } else {
+      final String channelCreationWithTaskQueue =
+          'FlutterBasicMessageChannel($baseArgs, taskQueue: $serialBackgroundQueue)';
+
+      indent.write('let $varChannelName = $serialBackgroundQueue == nil');
+      indent.addScoped('', '', () {
+        indent.writeln('? $channelCreationWithoutTaskQueue');
+        indent.writeln(': $channelCreationWithTaskQueue');
+      });
+    }
+
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');

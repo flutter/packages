@@ -600,6 +600,19 @@
   completion(AnotherEnumBoxed, nil);
 }
 
+- (nullable NSNumber *)defaultIsMainThreadWithError:(FlutterError *_Nullable *_Nonnull)error {
+  // Using boxing on an inline expression results in the Dart side receiving an int, so
+  // force the right type via numberWithBool.
+  return [NSNumber numberWithBool:NSThread.isMainThread];
+}
+
+- (nullable NSNumber *)taskQueueIsBackgroundThreadWithError:
+    (FlutterError *_Nullable *_Nonnull)error {
+  // Using boxing on an inline expression results in the Dart side receiving an int, so
+  // force the right type via numberWithBool.
+  return [NSNumber numberWithBool:!NSThread.isMainThread];
+}
+
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   [self.flutterAPI noopWithCompletion:^(FlutterError *error) {
     completion(error);
