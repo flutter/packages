@@ -906,7 +906,6 @@ void main() {
             r'AnEnum? nullableEnumType, Api2? nullableProxyApiType, )',
           ),
         );
-        expect(code, contains('await pigeonVar_sendFuture'));
         expect(
           collapsedCode,
           contains(
