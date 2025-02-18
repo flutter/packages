@@ -94,12 +94,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     }
 
     return _onEnterHandler.handleTopOnEnter(
-      context,
-      routeInformation,
-      infoState,
-      _lastMatchList,
-      () => _navigate(routeInformation, context, infoState),
-      () {
+      context: context,
+      routeInformation: routeInformation,
+      infoState: infoState,
+      lastMatchList: _lastMatchList,
+      onCanEnter: () => _navigate(routeInformation, context, infoState),
+      onCanNotEnter: () {
         // If navigation is blocked, return the last successful match or a fallback.
         if (_lastMatchList != null) {
           return SynchronousFuture<RouteMatchList>(_lastMatchList!);

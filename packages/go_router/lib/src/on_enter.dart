@@ -76,14 +76,14 @@ class OnEnterHandler {
   /// [onCanNotEnter] is called when navigation is blocked.
   ///
   /// Returns a Future that resolves to a [RouteMatchList].
-  Future<RouteMatchList> handleTopOnEnter(
-    BuildContext context,
-    RouteInformation routeInformation,
-    RouteInformationState<dynamic> infoState,
-    RouteMatchList? lastMatchList,
-    Future<RouteMatchList> Function() onCanEnter,
-    Future<RouteMatchList> Function() onCanNotEnter,
-  ) {
+  Future<RouteMatchList> handleTopOnEnter({
+    required BuildContext context,
+    required RouteInformation routeInformation,
+    required RouteInformationState<dynamic> infoState,
+    required RouteMatchList? lastMatchList,
+    required Future<RouteMatchList> Function() onCanEnter,
+    required Future<RouteMatchList> Function() onCanNotEnter,
+  }) {
     final OnEnter? topOnEnter = _configuration.topOnEnter;
     // If no onEnter is configured, simply allow navigation.
     if (topOnEnter == null) {
