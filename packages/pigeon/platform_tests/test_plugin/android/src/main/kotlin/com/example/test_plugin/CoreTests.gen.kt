@@ -36,6 +36,19 @@ private fun createConnectionError(channelName: String): FlutterError {
       "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
 }
 
+/**
+ * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
+ * @property code The error code.
+ * @property message The error message.
+ * @property details The error details. Must be a datatype supported by the api codec.
+ */
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
+) : Throwable()
+
 enum class AnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
@@ -890,6 +903,16 @@ interface HostIntegrationCoreApi {
       anotherEnum: AnotherEnum?,
       callback: (Result<AnotherEnum?>) -> Unit
   )
+  /**
+   * Returns true if the handler is run on a main thread, which should be true since there is no
+   * TaskQueue annotation.
+   */
+  fun defaultIsMainThread(): Boolean
+  /**
+   * Returns true if the handler is run on a non-main thread, which should be true for any platform
+   * with TaskQueue support.
+   */
+  fun taskQueueIsBackgroundThread(): Boolean
 
   fun callFlutterNoop(callback: (Result<Unit>) -> Unit)
 
@@ -1099,6 +1122,7 @@ interface HostIntegrationCoreApi {
     ) {
       val separatedMessageChannelSuffix =
           if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+      val taskQueue = binaryMessenger.makeBackgroundTaskQueue()
       run {
         val channel =
             BasicMessageChannel<Any?>(
@@ -3368,6 +3392,47 @@ interface HostIntegrationCoreApi {
                 reply.reply(wrapResult(data))
               }
             }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread$separatedMessageChannelSuffix",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.defaultIsMainThread())
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread$separatedMessageChannelSuffix",
+                codec,
+                taskQueue)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.taskQueueIsBackgroundThread())
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
           }
         } else {
           channel.setMessageHandler(null)

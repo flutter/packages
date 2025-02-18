@@ -30,14 +30,14 @@ NS_ASSUME_NONNULL_BEGIN
  * @result A BOOL indicating whether the device was successfully locked for configuration.
  */
 - (BOOL)lockDevice:(NSObject<FLTCaptureDevice> *)captureDevice
-             error:(NSError *_Nullable *_Nullable)outError;
+             error:(NSError *_Nullable *_Nullable)outError NS_SWIFT_NAME(lockDevice(_:));
 
 /**
  * @method unlockDevice:
  * @abstract Release exclusive control over device hardware properties.
  * @param captureDevice The capture device.
  */
-- (void)unlockDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
+- (void)unlockDevice:(NSObject<FLTCaptureDevice> *)captureDevice NS_SWIFT_NAME(unlockDevice(_:)) ;
 
 /**
  * @method beginConfigurationForSession:
@@ -100,7 +100,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param writer The `AVAssetWriter` object.
  */
 - (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput
-    toAssetWriter:(NSObject<FLTAssetWriter> *)writer;
+    toAssetWriter:(NSObject<FLTAssetWriter> *)writer NS_SWIFT_NAME(addInput(_:to:));
 
 /**
  * @method recommendedVideoSettingsForAssetWriterWithFileType:forOutput:
