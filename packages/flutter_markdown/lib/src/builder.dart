@@ -1,3 +1,4 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:1053232416.
 // Suggested code may be subject to a license. Learn more: ~LicenseLog:410293059.
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
@@ -651,12 +652,12 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     Widget child;
-    if (imageBuilder != null || sizedImageBuilder != null) {
+    if (sizedImageBuilder != null) {
       final MarkdownImageConfig config = MarkdownImageConfig(
           uri: uri, alt: alt, title: title, height: height, width: width);
-      child = sizedImageBuilder != null
-          ? sizedImageBuilder!(config)
-          : imageBuilder!(uri, alt, title);
+      child = sizedImageBuilder!(config);
+    } else if (imageBuilder != null) {
+      child = imageBuilder!(uri, alt, title);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }
