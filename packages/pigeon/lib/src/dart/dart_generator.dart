@@ -1154,7 +1154,7 @@ if (wrapped == null) {
     returnStatement = '$returnStatement;';
 
     indent.writeln(
-      'final Future<Object?> ${varNamePrefix}sendFuture = ${varNamePrefix}channel.send(<Object?>[$sendArgument]);',
+      'final Future<Object?> ${varNamePrefix}sendFuture = ${varNamePrefix}channel.send($sendArgument);',
     );
 
     // If the message call is not made inside of an async method, this creates
