@@ -1444,9 +1444,7 @@ if (${varNamePrefix}replyList == null) {
                   cb.Code(
                     'final BinaryMessenger? ${varNamePrefix}binaryMessenger = ${binaryMessengerParameter.name};',
                   ),
-                  const cb.Code('() async {'),
                   cb.Code(messageCallSink.toString()),
-                  const cb.Code('}();'),
                 ]);
               },
             );
