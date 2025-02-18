@@ -106,6 +106,13 @@
   self.marker.zIndex = zIndex;
 }
 
+- (void)setCollisionBehavior:(FGMMarkerCollisionBehaviorBox *)collisionBehavior {
+  if ([self.marker isKindOfClass:[GMSAdvancedMarker class]]) {
+    GMSCollisionBehavior collitionBehaviorValue = (GMSCollisionBehavior)collisionBehavior.value;
+    [(GMSAdvancedMarker *)self.marker setCollisionBehavior:(collitionBehaviorValue)];
+  }
+}
+
 - (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                      screenScale:(CGFloat)screenScale {
@@ -122,6 +129,7 @@
   [self setRotation:platformMarker.rotation];
   [self setVisible:platformMarker.visible];
   [self setZIndex:platformMarker.zIndex];
+  [self setCollisionBehavior:platformMarker.collisionBehavior];
 }
 
 - (void)interpretInfoWindow:(NSDictionary *)data {
@@ -231,6 +239,46 @@
                                      reason:@"Unable to interpret bytes as a valid image."
                                    userInfo:nil];
     }
+
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapPinConfig class]]) {
+    FGMPlatformBitmapPinConfig *pinConfig = bitmap;
+
+    GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
+    NSNumber *backgroundColor = pinConfig.backgroundColor;
+    if (backgroundColor) {
+      options.backgroundColor = FGMGetColorForRGBA([backgroundColor integerValue]);
+    }
+
+    NSNumber *borderColor = pinConfig.borderColor;
+    if (borderColor) {
+      options.borderColor = FGMGetColorForRGBA([borderColor integerValue]);
+    }
+
+    GMSPinImageGlyph *glyph;
+    NSString *glyphText = pinConfig.glyphText;
+    NSNumber *glyphColor = pinConfig.glyphColor;
+    FGMPlatformBitmap *glyphBitmap = pinConfig.glyphBitmap;
+    if (glyphText) {
+      NSNumber *glyphTextColorInt = pinConfig.glyphTextColor;
+      UIColor *glyphTextColor = glyphTextColorInt
+                                    ? FGMGetColorForRGBA([glyphTextColorInt integerValue])
+                                    : [UIColor blackColor];
+      glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
+    } else if (glyphColor) {
+      UIColor *color = FGMGetColorForRGBA([glyphColor integerValue]);
+      glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
+    } else if (glyphBitmap) {
+      UIImage *glyphImage = [self iconFromBitmap:glyphBitmap
+                                       registrar:registrar
+                                     screenScale:screenScale];
+      glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
+    }
+
+    if (glyph) {
+      options.glyph = glyph;
+    }
+
+    image = [GMSPinImage pinImageWithOptions:options];
   }
 
   return image;
@@ -380,6 +428,7 @@
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
+@property(nonatomic) FGMPlatformMarkerType markerType;
 
 @end
 
@@ -388,7 +437,8 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                     markerType:(FGMPlatformMarkerType)markerType {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
@@ -396,6 +446,7 @@
     _clusterManagersController = clusterManagersController;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
+    _markerType = markerType;
   }
   return self;
 }
@@ -410,7 +461,10 @@
   CLLocationCoordinate2D position = FGMGetCoordinateForPigeonLatLng(markerToAdd.position);
   NSString *markerIdentifier = markerToAdd.markerId;
   NSString *clusterManagerIdentifier = markerToAdd.clusterManagerId;
-  GMSMarker *marker = [GMSMarker markerWithPosition:position];
+  GMSMarker *marker = (self.markerType == FGMPlatformMarkerTypeAdvancedMarker)
+                          ? [GMSAdvancedMarker markerWithPosition:position]
+                          : [GMSMarker markerWithPosition:position];
+
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
                                           markerIdentifier:markerIdentifier

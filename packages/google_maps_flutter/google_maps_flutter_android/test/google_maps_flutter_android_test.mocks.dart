@@ -3,11 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
-import 'dart:typed_data' as _i4;
+import 'dart:async' as _i4;
+import 'dart:typed_data' as _i5;
 
 import 'package:google_maps_flutter_android/src/messages.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i3;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -59,29 +60,42 @@ class _FakePlatformLatLngBounds_2 extends _i1.SmartFake
 /// See the documentation for Mockito's code generation for more information.
 class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
   @override
-  _i3.Future<void> waitForMap() => (super.noSuchMethod(
+  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
+        Invocation.getter(#pigeonVar_messageChannelSuffix),
+        returnValue: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+        returnValueForMissingStub: _i3.dummyValue<String>(
+          this,
+          Invocation.getter(#pigeonVar_messageChannelSuffix),
+        ),
+      ) as String);
+
+  @override
+  _i4.Future<void> waitForMap() => (super.noSuchMethod(
         Invocation.method(
           #waitForMap,
           [],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updateMapConfiguration(
+  _i4.Future<void> updateMapConfiguration(
           _i2.PlatformMapConfiguration? configuration) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateMapConfiguration,
           [configuration],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updateCircles(
+  _i4.Future<void> updateCircles(
     List<_i2.PlatformCircle?>? toAdd,
     List<_i2.PlatformCircle?>? toChange,
     List<String?>? idsToRemove,
@@ -95,12 +109,12 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             idsToRemove,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updateHeatmaps(
+  _i4.Future<void> updateHeatmaps(
     List<_i2.PlatformHeatmap?>? toAdd,
     List<_i2.PlatformHeatmap?>? toChange,
     List<String?>? idsToRemove,
@@ -114,12 +128,12 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             idsToRemove,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updateClusterManagers(
+  _i4.Future<void> updateClusterManagers(
     List<_i2.PlatformClusterManager?>? toAdd,
     List<String?>? idsToRemove,
   ) =>
@@ -131,12 +145,12 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             idsToRemove,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updateMarkers(
+  _i4.Future<void> updateMarkers(
     List<_i2.PlatformMarker?>? toAdd,
     List<_i2.PlatformMarker?>? toChange,
     List<String?>? idsToRemove,
@@ -150,12 +164,12 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             idsToRemove,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updatePolygons(
+  _i4.Future<void> updatePolygons(
     List<_i2.PlatformPolygon?>? toAdd,
     List<_i2.PlatformPolygon?>? toChange,
     List<String?>? idsToRemove,
@@ -169,12 +183,12 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             idsToRemove,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updatePolylines(
+  _i4.Future<void> updatePolylines(
     List<_i2.PlatformPolyline?>? toAdd,
     List<_i2.PlatformPolyline?>? toChange,
     List<String?>? idsToRemove,
@@ -188,12 +202,12 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             idsToRemove,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> updateTileOverlays(
+  _i4.Future<void> updateTileOverlays(
     List<_i2.PlatformTileOverlay?>? toAdd,
     List<_i2.PlatformTileOverlay?>? toChange,
     List<String?>? idsToRemove,
@@ -207,19 +221,19 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             idsToRemove,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<_i2.PlatformPoint> getScreenCoordinate(
+  _i4.Future<_i2.PlatformPoint> getScreenCoordinate(
           _i2.PlatformLatLng? latLng) =>
       (super.noSuchMethod(
         Invocation.method(
           #getScreenCoordinate,
           [latLng],
         ),
-        returnValue: _i3.Future<_i2.PlatformPoint>.value(_FakePlatformPoint_0(
+        returnValue: _i4.Future<_i2.PlatformPoint>.value(_FakePlatformPoint_0(
           this,
           Invocation.method(
             #getScreenCoordinate,
@@ -227,24 +241,24 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i2.PlatformPoint>.value(_FakePlatformPoint_0(
+            _i4.Future<_i2.PlatformPoint>.value(_FakePlatformPoint_0(
           this,
           Invocation.method(
             #getScreenCoordinate,
             [latLng],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformPoint>);
+      ) as _i4.Future<_i2.PlatformPoint>);
 
   @override
-  _i3.Future<_i2.PlatformLatLng> getLatLng(
+  _i4.Future<_i2.PlatformLatLng> getLatLng(
           _i2.PlatformPoint? screenCoordinate) =>
       (super.noSuchMethod(
         Invocation.method(
           #getLatLng,
           [screenCoordinate],
         ),
-        returnValue: _i3.Future<_i2.PlatformLatLng>.value(_FakePlatformLatLng_1(
+        returnValue: _i4.Future<_i2.PlatformLatLng>.value(_FakePlatformLatLng_1(
           this,
           Invocation.method(
             #getLatLng,
@@ -252,23 +266,23 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
           ),
         )),
         returnValueForMissingStub:
-            _i3.Future<_i2.PlatformLatLng>.value(_FakePlatformLatLng_1(
+            _i4.Future<_i2.PlatformLatLng>.value(_FakePlatformLatLng_1(
           this,
           Invocation.method(
             #getLatLng,
             [screenCoordinate],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformLatLng>);
+      ) as _i4.Future<_i2.PlatformLatLng>);
 
   @override
-  _i3.Future<_i2.PlatformLatLngBounds> getVisibleRegion() =>
+  _i4.Future<_i2.PlatformLatLngBounds> getVisibleRegion() =>
       (super.noSuchMethod(
         Invocation.method(
           #getVisibleRegion,
           [],
         ),
-        returnValue: _i3.Future<_i2.PlatformLatLngBounds>.value(
+        returnValue: _i4.Future<_i2.PlatformLatLngBounds>.value(
             _FakePlatformLatLngBounds_2(
           this,
           Invocation.method(
@@ -276,7 +290,7 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             [],
           ),
         )),
-        returnValueForMissingStub: _i3.Future<_i2.PlatformLatLngBounds>.value(
+        returnValueForMissingStub: _i4.Future<_i2.PlatformLatLngBounds>.value(
             _FakePlatformLatLngBounds_2(
           this,
           Invocation.method(
@@ -284,108 +298,118 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
             [],
           ),
         )),
-      ) as _i3.Future<_i2.PlatformLatLngBounds>);
+      ) as _i4.Future<_i2.PlatformLatLngBounds>);
 
   @override
-  _i3.Future<void> moveCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
+  _i4.Future<void> moveCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
       (super.noSuchMethod(
         Invocation.method(
           #moveCamera,
           [cameraUpdate],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> animateCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
+  _i4.Future<void> animateCamera(_i2.PlatformCameraUpdate? cameraUpdate) =>
       (super.noSuchMethod(
         Invocation.method(
           #animateCamera,
           [cameraUpdate],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<double> getZoomLevel() => (super.noSuchMethod(
+  _i4.Future<double> getZoomLevel() => (super.noSuchMethod(
         Invocation.method(
           #getZoomLevel,
           [],
         ),
-        returnValue: _i3.Future<double>.value(0.0),
-        returnValueForMissingStub: _i3.Future<double>.value(0.0),
-      ) as _i3.Future<double>);
+        returnValue: _i4.Future<double>.value(0.0),
+        returnValueForMissingStub: _i4.Future<double>.value(0.0),
+      ) as _i4.Future<double>);
 
   @override
-  _i3.Future<void> showInfoWindow(String? markerId) => (super.noSuchMethod(
+  _i4.Future<void> showInfoWindow(String? markerId) => (super.noSuchMethod(
         Invocation.method(
           #showInfoWindow,
           [markerId],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<void> hideInfoWindow(String? markerId) => (super.noSuchMethod(
+  _i4.Future<void> hideInfoWindow(String? markerId) => (super.noSuchMethod(
         Invocation.method(
           #hideInfoWindow,
           [markerId],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<bool> isInfoWindowShown(String? markerId) => (super.noSuchMethod(
+  _i4.Future<bool> isInfoWindowShown(String? markerId) => (super.noSuchMethod(
         Invocation.method(
           #isInfoWindowShown,
           [markerId],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> setStyle(String? style) => (super.noSuchMethod(
+  _i4.Future<bool> setStyle(String? style) => (super.noSuchMethod(
         Invocation.method(
           #setStyle,
           [style],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> didLastStyleSucceed() => (super.noSuchMethod(
+  _i4.Future<bool> didLastStyleSucceed() => (super.noSuchMethod(
         Invocation.method(
           #didLastStyleSucceed,
           [],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-        returnValueForMissingStub: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
 
   @override
-  _i3.Future<void> clearTileCache(String? tileOverlayId) => (super.noSuchMethod(
+  _i4.Future<bool> isAdvancedMarkersAvailable() => (super.noSuchMethod(
+        Invocation.method(
+          #isAdvancedMarkersAvailable,
+          [],
+        ),
+        returnValue: _i4.Future<bool>.value(false),
+        returnValueForMissingStub: _i4.Future<bool>.value(false),
+      ) as _i4.Future<bool>);
+
+  @override
+  _i4.Future<void> clearTileCache(String? tileOverlayId) => (super.noSuchMethod(
         Invocation.method(
           #clearTileCache,
           [tileOverlayId],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
-  _i3.Future<_i4.Uint8List> takeSnapshot() => (super.noSuchMethod(
+  _i4.Future<_i5.Uint8List> takeSnapshot() => (super.noSuchMethod(
         Invocation.method(
           #takeSnapshot,
           [],
         ),
-        returnValue: _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
+        returnValue: _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
         returnValueForMissingStub:
-            _i3.Future<_i4.Uint8List>.value(_i4.Uint8List(0)),
-      ) as _i3.Future<_i4.Uint8List>);
+            _i4.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+      ) as _i4.Future<_i5.Uint8List>);
 }

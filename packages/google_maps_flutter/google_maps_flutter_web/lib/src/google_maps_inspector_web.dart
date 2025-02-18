@@ -9,8 +9,8 @@ import 'marker_clustering.dart';
 typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// Function that gets the [ClusterManagersController] for a given `mapId`.
-typedef ClusterManagersControllerProvider = ClusterManagersController? Function(
-    int mapId);
+typedef ClusterManagersControllerProvider = ClusterManagersController<dynamic>?
+    Function(int mapId);
 
 /// This platform implementation allows inspecting the running maps.
 class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {

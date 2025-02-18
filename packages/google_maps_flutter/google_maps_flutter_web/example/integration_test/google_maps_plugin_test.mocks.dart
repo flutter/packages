@@ -135,12 +135,12 @@ class MockGoogleMapController extends _i1.Mock
   void debugSetOverrides({
     _i4.DebugCreateMapFunction? createMap,
     _i4.DebugSetOptionsFunction? setOptions,
-    _i4.MarkersController? markers,
+    _i4.MarkersController<Object?, Object>? markers,
     _i4.CirclesController? circles,
     _i4.HeatmapsController? heatmaps,
     _i4.PolygonsController? polygons,
     _i4.PolylinesController? polylines,
-    _i6.ClusterManagersController? clusterManagers,
+    _i6.ClusterManagersController<Object?>? clusterManagers,
     _i4.TileOverlaysController? tileOverlays,
   }) =>
       super.noSuchMethod(
@@ -381,6 +381,16 @@ class MockGoogleMapController extends _i1.Mock
         Invocation.method(
           #isInfoWindowShown,
           [markerId],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
+
+  @override
+  bool isAdvancedMarkersAvailable() => (super.noSuchMethod(
+        Invocation.method(
+          #isAdvancedMarkersAvailable,
+          [],
         ),
         returnValue: false,
         returnValueForMissingStub: false,

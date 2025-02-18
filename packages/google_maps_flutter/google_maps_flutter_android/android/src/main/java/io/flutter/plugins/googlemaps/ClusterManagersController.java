@@ -7,15 +7,20 @@ package io.flutter.plugins.googlemaps;
 import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.ClusterRenderer;
+import com.google.maps.android.clustering.view.DefaultAdvancedMarkersClusterRenderer;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +34,14 @@ class ClusterManagersController
     implements GoogleMap.OnCameraIdleListener,
         ClusterManager.OnClusterClickListener<MarkerBuilder> {
   @NonNull private final Context context;
-  @NonNull private final HashMap<String, ClusterManager<MarkerBuilder>> clusterManagerIdToManager;
+
+  @VisibleForTesting @NonNull
+  protected final HashMap<String, ClusterManager<MarkerBuilder>> clusterManagerIdToManager;
+
   @NonNull private final MapsCallbackApi flutterApi;
   @Nullable private MarkerManager markerManager;
   @Nullable private GoogleMap googleMap;
+  @NonNull private PlatformMarkerType markerType;
 
   @Nullable
   private ClusterManager.OnClusterItemClickListener<MarkerBuilder> clusterItemClickListener;
@@ -41,10 +50,14 @@ class ClusterManagersController
   private ClusterManagersController.OnClusterItemRendered<MarkerBuilder>
       clusterItemRenderedListener;
 
-  ClusterManagersController(@NonNull MapsCallbackApi flutterApi, Context context) {
+  ClusterManagersController(
+      @NonNull MapsCallbackApi flutterApi,
+      @NonNull Context context,
+      @NonNull PlatformMarkerType markerType) {
     this.clusterManagerIdToManager = new HashMap<>();
     this.context = context;
     this.flutterApi = flutterApi;
+    this.markerType = markerType;
   }
 
   void init(GoogleMap googleMap, MarkerManager markerManager) {
@@ -89,11 +102,22 @@ class ClusterManagersController
   void addClusterManager(String clusterManagerId) {
     ClusterManager<MarkerBuilder> clusterManager =
         new ClusterManager<MarkerBuilder>(context, googleMap, markerManager);
-    ClusterRenderer<MarkerBuilder> clusterRenderer =
-        new ClusterRenderer<MarkerBuilder>(context, googleMap, clusterManager, this);
+    initializeRenderer(clusterManager);
+    clusterManagerIdToManager.put(clusterManagerId, clusterManager);
+  }
+
+  /**
+   * Initializes cluster renderer based on marker type. AdvancedMarkerCluster renderer is used for
+   * advanced markers and MarkerClusterRenderer is used for default markers.
+   */
+  private void initializeRenderer(ClusterManager<MarkerBuilder> clusterManager) {
+    final ClusterRenderer<MarkerBuilder> renderer = clusterManager.getRenderer();
+    final ClusterRenderer<MarkerBuilder> clusterRenderer =
+        markerType == PlatformMarkerType.ADVANCED_MARKER
+            ? new AdvancedMarkerClusterRenderer<>(context, googleMap, clusterManager, this)
+            : new MarkerClusterRenderer<>(context, googleMap, clusterManager, this);
     clusterManager.setRenderer(clusterRenderer);
     initListenersForClusterManager(clusterManager, this, clusterItemClickListener);
-    clusterManagerIdToManager.put(clusterManagerId, clusterManager);
   }
 
   /** Removes ClusterManagers by given cluster manager IDs from the controller. */
@@ -195,13 +219,14 @@ class ClusterManagersController
   }
 
   /**
-   * ClusterRenderer builds marker options for new markers to be rendered to the map. After cluster
-   * item (marker) is rendered, it is sent to the listeners for control.
+   * MarkerClusterRenderer builds marker options for new markers to be rendered to the map. After
+   * cluster item (marker) is rendered, it is sent to the listeners for control.
    */
-  private static class ClusterRenderer<T extends MarkerBuilder> extends DefaultClusterRenderer<T> {
+  @VisibleForTesting
+  static class MarkerClusterRenderer<T extends MarkerBuilder> extends DefaultClusterRenderer<T> {
     private final ClusterManagersController clusterManagersController;
 
-    public ClusterRenderer(
+    public MarkerClusterRenderer(
         Context context,
         GoogleMap map,
         ClusterManager<T> clusterManager,
@@ -215,6 +240,35 @@ class ClusterManagersController
         @NonNull T item, @NonNull MarkerOptions markerOptions) {
       // Builds new markerOptions for new marker created by the ClusterRenderer under
       // ClusterManager.
+      item.update(markerOptions);
+    }
+
+    @Override
+    protected void onClusterItemRendered(@NonNull T item, @NonNull Marker marker) {
+      super.onClusterItemRendered(item, marker);
+      clusterManagersController.onClusterItemRendered(item, marker);
+    }
+  }
+
+  /** AdvancedMarkerClusterRenderer is a ClusterRenderer that supports AdvancedMarkers. */
+  @VisibleForTesting
+  static class AdvancedMarkerClusterRenderer<T extends MarkerBuilder>
+      extends DefaultAdvancedMarkersClusterRenderer<T> {
+
+    private final ClusterManagersController clusterManagersController;
+
+    public AdvancedMarkerClusterRenderer(
+        Context context,
+        GoogleMap map,
+        ClusterManager<T> clusterManager,
+        ClusterManagersController clusterManagersController) {
+      super(context, map, clusterManager);
+      this.clusterManagersController = clusterManagersController;
+    }
+
+    @Override
+    protected void onBeforeClusterItemRendered(
+        @NonNull T item, @NonNull AdvancedMarkerOptions markerOptions) {
       item.update(markerOptions);
     }
 

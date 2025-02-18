@@ -18,21 +18,30 @@ class ClusteringPage extends GoogleMapExampleAppPage {
 
   @override
   Widget build(BuildContext context) {
-    return const ClusteringBody();
+    return const _ClusteringBody();
   }
 }
 
 /// Body of the clustering page.
-class ClusteringBody extends StatefulWidget {
+class _ClusteringBody extends StatefulWidget {
   /// Default Constructor.
-  const ClusteringBody({super.key});
+  const _ClusteringBody();
 
   @override
   State<StatefulWidget> createState() => ClusteringBodyState();
+
+  /// Returns selected or unselected state of the given [marker].
+  Marker copyWithSelectedState(Marker marker, bool isSelected) {
+    return marker.copyWith(
+      iconParam: isSelected
+          ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
+          : BitmapDescriptor.defaultMarker,
+    );
+  }
 }
 
 /// State of the clustering page.
-class ClusteringBodyState extends State<ClusteringBody> {
+class ClusteringBodyState extends State<_ClusteringBody> {
   /// Default Constructor.
   ClusteringBodyState();
 
@@ -95,16 +104,13 @@ class ClusteringBodyState extends State<ClusteringBody> {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
-          final Marker resetOld = markers[previousMarkerId]!
-              .copyWith(iconParam: BitmapDescriptor.defaultMarker);
+          final Marker resetOld =
+              widget.copyWithSelectedState(markers[previousMarkerId]!, false);
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
-        final Marker newMarker = tappedMarker.copyWith(
-          iconParam: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ),
-        );
+        final Marker newMarker =
+            widget.copyWithSelectedState(tappedMarker, true);
         markers[markerId] = newMarker;
       });
     }
