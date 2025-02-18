@@ -1,3 +1,4 @@
+// Suggested code may be subject to a license. Learn more: ~LicenseLog:410293059.
 // Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -159,10 +160,10 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// The base directory holding images referenced by Img tags with local or network file paths.
   final String? imageDirectory;
 
-  /// Call when build an image widget.
+  /// Call when building an image widget when no sizing information is available.
   final MarkdownImageBuilder? imageBuilder;
 
-  /// Call when build an image widget.
+  /// Call when building an image widget with sizing information available.
   final MarkdownSizedImageBuilder? sizedImageBuilder;
 
   /// Call when build a checkbox widget.
