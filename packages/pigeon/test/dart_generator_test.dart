@@ -166,7 +166,7 @@ void main() {
     );
     final String code = sink.toString();
     expect(code, contains('class Api'));
-    expect(code, contains('Future<int> add(gint x, int y)'));
+    expect(code, contains('Future<int> add(int x, int y)'));
     expect(
       code,
       contains(
