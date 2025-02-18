@@ -7,6 +7,7 @@
 #import "camera_avfoundation/CameraPlugin_Test.h"
 #import "camera_avfoundation/FLTCamConfiguration.h"
 #import "camera_avfoundation/FLTCam_Test.h"
+#import "camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "camera_avfoundation/FLTThreadSafeEventChannel.h"
 
 // Mocks, protocols.
@@ -15,6 +16,7 @@
 #import "MockCaptureConnection.h"
 #import "MockCaptureDevice.h"
 #import "MockCaptureDeviceFormat.h"
+#import "MockCapturePhotoOutput.h"
 #import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
 #import "MockEventChannel.h"
