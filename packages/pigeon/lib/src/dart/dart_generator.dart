@@ -1115,6 +1115,7 @@ if (wrapped == null) {
     required Iterable<Parameter> parameters,
     required TypeDeclaration returnType,
     required bool addSuffixVariable,
+    bool insideAsyncMethod = true,
   }) {
     String sendArgument = 'null';
     if (parameters.isNotEmpty) {
@@ -1152,9 +1153,20 @@ if (wrapped == null) {
     }
     returnStatement = '$returnStatement;';
 
+    indent.writeln(
+      'final Future<Object?> ${varNamePrefix}sendFuture = ${varNamePrefix}channel.send(<Object?>[$sendArgument]);',
+    );
+
+    // If the message call is not made inside of an async method, this creates
+    // an anonymous function to handle the send future.
+    if (!insideAsyncMethod) {
+      indent.writeln('() async {');
+      indent.inc();
+    }
+
     indent.format('''
 final List<Object?>? ${varNamePrefix}replyList =
-\t\tawait ${varNamePrefix}channel.send($sendArgument) as List<Object?>?;
+\t\tawait ${varNamePrefix}sendFuture as List<Object?>?;
 if (${varNamePrefix}replyList == null) {
 \tthrow _createConnectionError(${varNamePrefix}channelName);
 } else if (${varNamePrefix}replyList.length > 1) {
@@ -1178,6 +1190,11 @@ if (${varNamePrefix}replyList == null) {
 } else {
 \t$returnStatement
 }''');
+
+    if (!insideAsyncMethod) {
+      indent.dec();
+      indent.writeln('}();');
+    }
   }
 
   void _writeFlutterMethodMessageHandler(
@@ -1398,6 +1415,7 @@ if (${varNamePrefix}replyList == null) {
                   Indent(messageCallSink),
                   addSuffixVariable: false,
                   channelName: channelName,
+                  insideAsyncMethod: false,
                   parameters: <Parameter>[
                     Parameter(
                       name: '${varNamePrefix}instanceIdentifier',

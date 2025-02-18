@@ -1,3 +1,5 @@
+## 24.1.2
+
 ## 24.1.1
 
 * [swift, kotlin] Adds an error message when a ProxyAPI callback method that returns a non-null
