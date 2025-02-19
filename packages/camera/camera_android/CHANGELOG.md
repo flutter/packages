@@ -1,3 +1,7 @@
+## 0.10.10+1
+
+* Fixes Android Platform `mediaRecorder.stop` throws exceptiq did not get caught
+
 ## 0.10.10
 
 * Adds API support query for image streaming.
