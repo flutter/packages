@@ -967,6 +967,12 @@ protocol HostIntegrationCoreApi {
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncNullable(
     _ anotherEnum: AnotherEnum?, completion: @escaping (Result<AnotherEnum?, Error>) -> Void)
+  /// Returns true if the handler is run on a main thread, which should be
+  /// true since there is no TaskQueue annotation.
+  func defaultIsMainThread() throws -> Bool
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  func taskQueueIsBackgroundThread() throws -> Bool
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(completion: @escaping (Result<Void, Error>) -> Void)
@@ -1089,6 +1095,11 @@ class HostIntegrationCoreApiSetup {
     messageChannelSuffix: String = ""
   ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
+    #if os(iOS)
+      let taskQueue = binaryMessenger.makeBackgroundTaskQueue?()
+    #else
+      let taskQueue: FlutterTaskQueue? = nil
+    #endif
     /// A no-op function taking no arguments and returning no value, to sanity
     /// test basic calling.
     let noopChannel = FlutterBasicMessageChannel(
@@ -3058,6 +3069,49 @@ class HostIntegrationCoreApiSetup {
       }
     } else {
       echoAnotherAsyncNullableEnumChannel.setMessageHandler(nil)
+    }
+    /// Returns true if the handler is run on a main thread, which should be
+    /// true since there is no TaskQueue annotation.
+    let defaultIsMainThreadChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      defaultIsMainThreadChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.defaultIsMainThread()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      defaultIsMainThreadChannel.setMessageHandler(nil)
+    }
+    /// Returns true if the handler is run on a non-main thread, which should be
+    /// true for any platform with TaskQueue support.
+    let taskQueueIsBackgroundThreadChannel =
+      taskQueue == nil
+      ? FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
+        binaryMessenger: binaryMessenger, codec: codec)
+      : FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
+        binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
+
+    if let api = api {
+      taskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.taskQueueIsBackgroundThread()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      taskQueueIsBackgroundThreadChannel.setMessageHandler(nil)
     }
     let callFlutterNoopChannel = FlutterBasicMessageChannel(
       name:
