@@ -342,7 +342,7 @@ android {
           buildGradle,
           containsAll(<Matcher>[
             contains('This is the legacy file'),
-            contains('compileSdk flutter.compileSdkVersion'),
+            contains('compileSdk = 35'),
           ]));
     });
 
@@ -375,7 +375,7 @@ android {
       expect(
           buildGradle,
           containsAll(<Matcher>[
-            contains('compileSdk flutter.compileSdkVersion'),
+            contains('compileSdk = 35'),
             contains('androidx.lifecycle:lifecycle-runtime'),
           ]));
     });

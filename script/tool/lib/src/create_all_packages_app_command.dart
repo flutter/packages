@@ -242,11 +242,8 @@ dependencies {}
     _adjustFile(
       gradleFile,
       replacements: <String, List<String>>{
-        if (gradleFileIsKotlin)
-          'compileSdk': <String>['compileSdk = flutter.compileSdkVersion']
-        else ...<String, List<String>>{
-          'compileSdkVersion': <String>['compileSdk flutter.compileSdkVersion'],
-        }
+        'compileSdk': <String>['compileSdk = 35'],
+        'compileSdkVersion': <String>['compileSdk = 35'],
       },
       regexReplacements: <RegExp, List<String>>{
         // Tests for https://github.com/flutter/flutter/issues/43383
@@ -267,6 +264,8 @@ dependencies {}
         // section.
       },
     );
+    print('build.gradle contents:');
+    print(content);
   }
 
   Future<void> _genPubspecWithAllPlugins() async {
