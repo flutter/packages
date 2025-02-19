@@ -49,7 +49,7 @@ public class VideoPlayerPluginTest {
 
   @SuppressWarnings("unchecked")
   private LongSparseArray<VideoPlayer> getVideoPlayers() throws Exception {
-    Field field = VideoPlayerPlugin.class.getDeclaredField("videoPlayers");
+    final Field field = VideoPlayerPlugin.class.getDeclaredField("videoPlayers");
     field.setAccessible(true);
     return (LongSparseArray<VideoPlayer>) field.get(plugin);
   }
@@ -69,42 +69,44 @@ public class VideoPlayerPluginTest {
 
   @Test
   public void createsVideoPlayerWithPlatformViewType() throws Exception {
-    MockedStatic<VideoPlayer> mockedVideoPlayerStatic = mockStatic(VideoPlayer.class);
-    mockedVideoPlayerStatic
-        .when(() -> VideoPlayer.create(any(), any(), any(), any()))
-        .thenReturn(mock(VideoPlayer.class));
+    try (MockedStatic<VideoPlayer> mockedVideoPlayerStatic = mockStatic(VideoPlayer.class)) {
+      mockedVideoPlayerStatic
+          .when(() -> VideoPlayer.create(any(), any(), any(), any()))
+          .thenReturn(mock(VideoPlayer.class));
 
-    CreateMessage createMessage =
-        new CreateMessage.Builder()
-            .setViewType(PlatformVideoViewType.PLATFORM_VIEW)
-            .setHttpHeaders(new HashMap<>())
-            .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
-            .build();
+      final CreateMessage createMessage =
+          new CreateMessage.Builder()
+              .setViewType(PlatformVideoViewType.PLATFORM_VIEW)
+              .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
+              .setHttpHeaders(new HashMap<>())
+              .build();
 
-    long playerId = plugin.create(createMessage);
+      final long playerId = plugin.create(createMessage);
 
-    LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
-    assertNotNull(videoPlayers.get(playerId));
+      final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
+      assertNotNull(videoPlayers.get(playerId));
+    }
   }
 
   @Test
   public void createsVideoPlayerWithTextureViewType() throws Exception {
-    MockedStatic<TextureBasedVideoPlayer> mockedTextureBasedVideoPlayerStatic =
-        mockStatic(TextureBasedVideoPlayer.class);
-    mockedTextureBasedVideoPlayerStatic
-        .when(() -> TextureBasedVideoPlayer.create(any(), any(), any(), any(), any()))
-        .thenReturn(mock(TextureBasedVideoPlayer.class));
+    try (MockedStatic<TextureBasedVideoPlayer> mockedTextureBasedVideoPlayerStatic =
+        mockStatic(TextureBasedVideoPlayer.class)) {
+      mockedTextureBasedVideoPlayerStatic
+          .when(() -> TextureBasedVideoPlayer.create(any(), any(), any(), any(), any()))
+          .thenReturn(mock(TextureBasedVideoPlayer.class));
 
-    CreateMessage createMessage =
-        new CreateMessage.Builder()
-            .setViewType(PlatformVideoViewType.TEXTURE_VIEW)
-            .setHttpHeaders(new HashMap<>())
-            .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
-            .build();
-    long playerId = plugin.create(createMessage);
+      final CreateMessage createMessage =
+          new CreateMessage.Builder()
+              .setViewType(PlatformVideoViewType.TEXTURE_VIEW)
+              .setUri("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
+              .setHttpHeaders(new HashMap<>())
+              .build();
 
-    LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
-    final VideoPlayer player = videoPlayers.get(playerId);
-    assertTrue(videoPlayers.get(playerId) instanceof TextureBasedVideoPlayer);
+      final long playerId = plugin.create(createMessage);
+
+      final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
+      assertTrue(videoPlayers.get(playerId) instanceof TextureBasedVideoPlayer);
+    }
   }
 }
