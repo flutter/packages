@@ -7,6 +7,9 @@ package io.flutter.plugins.camerax;
 import static org.mockito.Mockito.mock;
 
 import android.content.Context;
+
+import org.checkerframework.checker.nullness.qual.NonNull;
+
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.view.TextureRegistry;
 
@@ -20,7 +23,7 @@ public class TestProxyApiRegistrar extends ProxyApiRegistrar {
   }
 
   @Override
-  void runOnMainThread(Runnable runnable) {
+  void runOnMainThread(@NonNull Runnable runnable) {
     runnable.run();
   }
 

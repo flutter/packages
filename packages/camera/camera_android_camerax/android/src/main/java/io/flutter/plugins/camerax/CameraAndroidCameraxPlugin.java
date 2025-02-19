@@ -6,6 +6,8 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -13,7 +15,8 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 /** Platform implementation of the camera_plugin implemented with the CameraX library. */
 public final class CameraAndroidCameraxPlugin implements FlutterPlugin, ActivityAware {
   private FlutterPluginBinding pluginBinding;
-  @Nullable private ProxyApiRegistrar proxyApiRegistrar;
+  @VisibleForTesting
+  @Nullable ProxyApiRegistrar proxyApiRegistrar;
 
   /**
    * Initialize this within the {@code #configureFlutterEngine} of a Flutter activity or fragment.
