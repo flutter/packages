@@ -264,7 +264,8 @@ public class PreviewTest {
   }
 
   @Test
-  public void surfaceProducerHandlesCropAndRotation_returnsIfSurfaceProducerHandlesCropAndRotation() {
+  public void
+      surfaceProducerHandlesCropAndRotation_returnsIfSurfaceProducerHandlesCropAndRotation() {
     final PreviewHostApiImpl hostApi =
         new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry);
     final TextureRegistry.SurfaceProducer mockSurfaceProducer =
