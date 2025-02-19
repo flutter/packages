@@ -242,7 +242,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late double sensorOrientationDegrees;
 
-  /// Whether or not the Android Surface producer automatically handles
+  /// Whether or not the Android surface producer automatically handles
   /// correcting the rotation of camera previews for the device this plugin runs on.
   @visibleForTesting
   late bool handlesCropAndRotation;
