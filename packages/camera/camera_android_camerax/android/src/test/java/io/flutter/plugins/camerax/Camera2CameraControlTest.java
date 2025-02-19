@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -13,7 +14,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.camera2.interop.Camera2CameraControl;
+import androidx.camera.camera2.interop.Camera2CameraInfo;
 import androidx.camera.camera2.interop.CaptureRequestOptions;
+import androidx.camera.core.CameraControl;
+import androidx.camera.core.CameraInfo;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -23,9 +27,27 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 /** @noinspection unchecked*/
 public class Camera2CameraControlTest {
+  @Test
+  public void from() {
+    final PigeonApiCamera2CameraControl api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraControl();
+
+    final CameraControl mockCameraControl = mock(CameraControl.class);
+    final Camera2CameraControl mockCamera2CameraControl = mock(Camera2CameraControl.class);
+
+    try (MockedStatic<Camera2CameraControl> mockedCamera2CameraControl =
+                 Mockito.mockStatic(Camera2CameraControl.class)) {
+      mockedCamera2CameraControl
+              .when(() -> Camera2CameraControl.from(mockCameraControl))
+              .thenAnswer((Answer<Camera2CameraControl>) invocation -> mockCamera2CameraControl);
+
+      assertEquals(api.from(mockCameraControl), mockCamera2CameraControl);
+    }
+  }
+
   @SuppressWarnings("unchecked")
   @Test
   public void addCaptureRequestOptions_respondsAsExpectedToSuccessful() {
