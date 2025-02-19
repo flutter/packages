@@ -11,9 +11,11 @@ import android.content.Context;
 import android.util.LongSparseArray;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.platform.PlatformViewRegistry;
-import io.flutter.plugins.videoplayer.Messages.PlatformVideoViewType;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
+import io.flutter.plugins.videoplayer.Messages.PlatformVideoViewType;
 import io.flutter.view.TextureRegistry;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +23,6 @@ import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import java.lang.reflect.Field;
-import java.util.HashMap;
 
 @RunWith(RobolectricTestRunner.class)
 public class VideoPlayerPluginTest {

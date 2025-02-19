@@ -6,8 +6,8 @@ import static org.mockito.Mockito.*;
 import android.content.Context;
 import android.view.SurfaceView;
 import androidx.media3.exoplayer.ExoPlayer;
-import org.junit.Test;
 import java.lang.reflect.Field;
+import org.junit.Test;
 
 public class NativeVideoViewTest {
   @Test
