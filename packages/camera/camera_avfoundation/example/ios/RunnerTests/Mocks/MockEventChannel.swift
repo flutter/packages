@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// A mock implementation of `FLTEventChannel` that allows injecting a custom implementation
-/// for setting a stream handler..
+/// for setting a stream handler.
 final class MockEventChannel: NSObject, FLTEventChannel {
   var setStreamHandlerStub: ((FlutterStreamHandler?) -> Void)?
 

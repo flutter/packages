@@ -40,6 +40,7 @@ final class SavePhotoDelegateTests: XCTestCase {
     mockWritableData.writeToFileStub = { path, options in
       throw ioError
     }
+
     delegate.handlePhotoCaptureResult(error: nil) { mockWritableData }
 
     waitForExpectations(timeout: 30, handler: nil)
