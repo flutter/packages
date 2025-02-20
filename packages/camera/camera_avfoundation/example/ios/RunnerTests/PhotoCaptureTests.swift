@@ -15,8 +15,6 @@ final class PhotoCaptureTests: XCTestCase {
     return FLTCreateCamWithConfiguration(configuration)
   }
 
-  // FIXME Try to get rid of these ugly casts in this file.
-
   func testCaptureToFile_mustReportErrorToResultIfSavePhotoDelegateCompletionsWithError() {
     let errorExpectation = expectation(
       description: "Must send error to result if save photo delegate completes with error.")
