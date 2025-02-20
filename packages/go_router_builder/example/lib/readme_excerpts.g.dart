@@ -50,7 +50,7 @@ extension $FamilyRouteExtension on FamilyRoute {
       );
 
   String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid)}',
+        '/family/${Uri.encodeComponent(fid ?? '')}',
       );
 
   void go(BuildContext context) => context.go(location);

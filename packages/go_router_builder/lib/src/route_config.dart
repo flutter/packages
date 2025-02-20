@@ -231,8 +231,9 @@ class GoRouteConfig extends RouteBaseConfig {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
+
         final String value =
-            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${type?.isEnum ?? false ? '!' : ''})}';
+            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${(type?.isEnum ?? false) ? '!' : (type?.isNullableType ?? false) ? "?? ''" : ''})}';
         return MapEntry<String, String>(pathParameter, value);
       }),
     );
