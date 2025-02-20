@@ -29,7 +29,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-/** @noinspection unchecked*/
 public class Camera2CameraControlTest {
   @Test
   public void from() {
