@@ -1,0 +1,49 @@
+RouteBase get $badJson => GoRouteData.$route(
+      path: '/',
+      factory: $BadJsonExtension._fromState,
+    );
+
+extension $BadJsonExtension on BadJson {
+  static BadJson _fromState(GoRouterState state) => BadJson(
+        nested: (String json) => JsonExampleNested.fromJson(
+          jsonDecode(json),
+          (dynamic json1) =>
+              JsonExample.fromJson(json1 as Map<String, dynamic>),
+        )(state.uri.queryParameters['nested']!),
+        deepNested: _$convertMapValue(
+            'deep-nested',
+            state.uri.queryParameters,
+            (String json) => JsonExampleNested.fromJson(
+                  jsonDecode(json),
+                  (dynamic json1) => JsonExampleNested<JsonExample>.fromJson(
+                      json1 as Map<String, dynamic>),
+                )),
+      );
+
+  String get location => GoRouteData.$location(
+        '/',
+        queryParams: {
+          'nested': jsonEncode(nested.toJson()),
+          if (deepNested != null)
+            'deep-nested': jsonEncode(deepNested!.toJson()),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
