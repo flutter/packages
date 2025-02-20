@@ -19,11 +19,9 @@
 #import "MockCapturePhotoOutput.h"
 #import "MockCaptureSession.h"
 #import "MockDeviceOrientationProvider.h"
-#import "MockEventChannel.h"
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
 #import "MockGlobalEventApi.h"
-//#import "MockWritableData.h"
 
 // Utils.
 #import "CameraTestUtils.h"
