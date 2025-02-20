@@ -22,19 +22,19 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     // No-op.
   }
 
-  override func beginConfiguration(for videoCaptureSession: any FLTCaptureSession) {
+  override func beginConfiguration(for videoCaptureSession: FLTCaptureSession) {
     // No-op.
   }
 
-  override func commitConfiguration(for videoCaptureSession: any FLTCaptureSession) {
+  override func commitConfiguration(for videoCaptureSession: FLTCaptureSession) {
     // No-op.
   }
 
-  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: any FLTCaptureDevice) {
+  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
     // No-op.
   }
 
-  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: any FLTCaptureDevice) {
+  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
     // No-op.
   }
 
@@ -50,7 +50,7 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     return inputMock
   }
 
-  override func addInput(_ writerInput: any FLTAssetWriterInput, to writer: any FLTAssetWriter) {
+  override func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
     // No-op.
   }
 
