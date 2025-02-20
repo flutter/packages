@@ -5,8 +5,10 @@ RouteBase get $goodJson => GoRouteData.$route(
 
 extension $GoodJsonExtension on GoodJson {
   static GoodJson _fromState(GoRouterState state) => GoodJson(
-        id: (String json) => JsonExample.fromJson(jsonDecode(json))(
-            state.uri.queryParameters['id']!),
+        id: (String json0) {
+          return JsonExample.fromJson(
+              jsonDecode(json0) as Map<String, dynamic>);
+        }(state.uri.queryParameters['id']!),
       );
 
   String get location => GoRouteData.$location(

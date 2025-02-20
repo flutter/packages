@@ -5,19 +5,28 @@ RouteBase get $badJson => GoRouteData.$route(
 
 extension $BadJsonExtension on BadJson {
   static BadJson _fromState(GoRouterState state) => BadJson(
-        nested: (String json) => JsonExampleNested.fromJson(
-          jsonDecode(json),
-          (dynamic json1) =>
-              JsonExample.fromJson(json1 as Map<String, dynamic>),
-        )(state.uri.queryParameters['nested']!),
-        deepNested: _$convertMapValue(
-            'deep-nested',
-            state.uri.queryParameters,
-            (String json) => JsonExampleNested.fromJson(
-                  jsonDecode(json),
-                  (dynamic json1) => JsonExampleNested<JsonExample>.fromJson(
-                      json1 as Map<String, dynamic>),
-                )),
+        nested: (String json0) {
+          return JsonExampleNested.fromJson(
+            jsonDecode(json0) as Map<String, dynamic>,
+            (dynamic json1) {
+              return JsonExample.fromJson(json1 as Map<String, dynamic>);
+            },
+          );
+        }(state.uri.queryParameters['nested']!),
+        deepNested: _$convertMapValue('deep-nested', state.uri.queryParameters,
+            (String json0) {
+          return JsonExampleNested.fromJson(
+            jsonDecode(json0) as Map<String, dynamic>,
+            (dynamic json1) {
+              return JsonExampleNested.fromJson(
+                json1 as Map<String, dynamic>,
+                (dynamic json2) {
+                  return JsonExample.fromJson(json2 as Map<String, dynamic>);
+                },
+              );
+            },
+          );
+        }),
       );
 
   String get location => GoRouteData.$location(
