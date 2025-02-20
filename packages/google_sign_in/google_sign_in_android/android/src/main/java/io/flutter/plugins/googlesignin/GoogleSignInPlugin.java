@@ -256,7 +256,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         }
 
         String forceAccountName = params.getForceAccountName();
-        if (!Strings.isNullOrEmpty(forceAccountName)) {
+        if (!isNullOrEmpty(forceAccountName)) {
           optionsBuilder.setAccountName(forceAccountName);
         }
 
