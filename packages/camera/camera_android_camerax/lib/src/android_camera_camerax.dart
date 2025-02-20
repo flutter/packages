@@ -845,30 +845,30 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    Widget preview = Texture(textureId: cameraId);
+    final Widget preview = Texture(textureId: cameraId);
 
-    if (!handlesCropAndRotation) {
-      final Stream<DeviceOrientation> deviceOrientationStream =
-          onDeviceOrientationChanged()
-              .map((DeviceOrientationChangedEvent e) => e.orientation);
-      if (cameraIsFrontFacing) {
-        preview = RotatedPreview.frontFacingCamera(
-          initialDeviceOrientation,
-          deviceOrientationStream,
-          sensorOrientationDegrees: sensorOrientationDegrees,
-          child: preview,
-        );
-      } else {
-        preview = RotatedPreview.backFacingCamera(
-          initialDeviceOrientation,
-          deviceOrientationStream,
-          sensorOrientationDegrees: sensorOrientationDegrees,
-          child: preview,
-        );
-      }
+    if (handlesCropAndRotation) {
+      return preview;
     }
 
-    return preview;
+    final Stream<DeviceOrientation> deviceOrientationStream =
+        onDeviceOrientationChanged()
+            .map((DeviceOrientationChangedEvent e) => e.orientation);
+    if (cameraIsFrontFacing) {
+      return RotatedPreview.frontFacingCamera(
+        initialDeviceOrientation,
+        deviceOrientationStream,
+        sensorOrientationDegrees: sensorOrientationDegrees,
+        child: preview,
+      );
+    } else {
+      return RotatedPreview.backFacingCamera(
+        initialDeviceOrientation,
+        deviceOrientationStream,
+        sensorOrientationDegrees: sensorOrientationDegrees,
+        child: preview,
+      );
+    }
   }
 
   /// Captures an image and returns the file where it was saved.

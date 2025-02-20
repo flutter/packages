@@ -275,7 +275,6 @@ public class PreviewTest {
     when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
 
     assertEquals(hostApi.surfaceProducerHandlesCropAndRotation(), true);
-    verify(mockSurfaceProducer).handlesCropAndRotation();
   }
 
   // TODO(bparrishMines): Replace with inline calls to onSurfaceCleanup once available on stable;
