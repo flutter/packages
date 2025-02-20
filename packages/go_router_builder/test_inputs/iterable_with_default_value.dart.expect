@@ -8,8 +8,7 @@ extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
       IterableDefaultValueRoute(
         param: (state.uri.queryParametersAll['param']
                 ?.map(int.parse)
-                ?.where((e) => e != null)
-                ?.cast<int>() as Iterable<int>?) ??
+                .cast<int>() as Iterable<int>?) ??
             const <int>[0],
       );
 

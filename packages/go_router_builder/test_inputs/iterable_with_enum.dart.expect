@@ -8,8 +8,7 @@ extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
       IterableWithEnumRoute(
         param: (state.uri.queryParametersAll['param']
                 ?.map(_$EnumOnlyUsedInIterableEnumMap._$fromName)
-                ?.where((e) => e != null)
-                ?.cast<EnumOnlyUsedInIterable>()
+                .cast<EnumOnlyUsedInIterable>()
             as Iterable<EnumOnlyUsedInIterable>?),
       );
 
