@@ -1085,6 +1085,11 @@ class MockTaskRunner : public TaskRunner {
   MOCK_METHOD(void, EnqueueTask, (TaskClosure), (override));
 };
 
+class ImmediateTaskRunner : public TaskRunner {
+ public:
+  virtual void EnqueueTask(TaskClosure task) override { task(); }
+};
+
 // Mock class for flutter::EventSink<flutter::EncodableValue>
 class MockEventSink : public flutter::EventSink<flutter::EncodableValue> {
  public:

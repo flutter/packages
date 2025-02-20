@@ -1610,5 +1610,69 @@ TEST(CaptureController, ResumePreviewFailsIfPreviewNotStarted) {
   camera = nullptr;
 }
 
+TEST(CaptureController, FrameIsDeliveredAfterStartImageStream) {
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<ImmediateTaskRunner>();
+
+  int64_t mock_texture_id = 1234;
+
+  // Initialize capture controller to be able to start preview
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
+
+  auto sink = std::make_unique<MockEventSink>();
+
+  // Expect the sink to receive a frame after UpdateBuffer.
+  EXPECT_CALL(*sink, SuccessInternal(_));
+
+  capture_controller->StartImageStream(std::move(sink));
+  capture_controller->UpdateBuffer(nullptr, 0);
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+}
+
+TEST(CaptureController, NoFramesAreDeliveredAfterStopImageStream) {
+  ComPtr<MockCaptureEngine> engine = new MockCaptureEngine();
+  std::unique_ptr<MockCamera> camera =
+      std::make_unique<MockCamera>(MOCK_DEVICE_ID);
+  std::unique_ptr<CaptureControllerImpl> capture_controller =
+      std::make_unique<CaptureControllerImpl>(camera.get());
+  std::unique_ptr<MockTextureRegistrar> texture_registrar =
+      std::make_unique<MockTextureRegistrar>();
+  auto task_runner = std::make_shared<ImmediateTaskRunner>();
+
+  int64_t mock_texture_id = 1234;
+
+  // Initialize capture controller to be able to start preview
+  MockInitCaptureController(capture_controller.get(), texture_registrar.get(),
+                            engine.Get(), camera.get(), mock_texture_id,
+                            task_runner);
+
+  auto sink = std::make_unique<MockEventSink>();
+
+  EXPECT_CALL(*sink, SuccessInternal(_)).Times(0);
+
+  capture_controller->StartImageStream(std::move(sink));
+  capture_controller->StopImageStream();
+
+  // Stream is stopped, the sink should not receive any frames.
+  capture_controller->UpdateBuffer(nullptr, 0);
+
+  capture_controller = nullptr;
+  texture_registrar = nullptr;
+  engine = nullptr;
+  camera = nullptr;
+}
+
 }  // namespace test
 }  // namespace camera_windows

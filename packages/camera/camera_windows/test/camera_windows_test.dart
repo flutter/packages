@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:camera_windows/camera_windows.dart';
@@ -552,6 +554,15 @@ void main() {
         final VerificationResult verification =
             verify(mockApi.resumePreview(captureAny));
         expect(verification.captured[0], cameraId);
+      });
+
+      test('Should start the image stream when it is subscribed', () async {
+        final Stream<CameraImageData> stream =
+            plugin.onStreamedFrameAvailable(cameraId);
+
+        await stream.listen((CameraImageData frame) {}).cancel();
+
+        verify(mockApi.startImageStream(cameraId));
       });
     });
   });
