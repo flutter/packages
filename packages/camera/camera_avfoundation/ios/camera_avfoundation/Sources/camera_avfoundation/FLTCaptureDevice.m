@@ -31,16 +31,21 @@
 }
 
 // Format/Configuration
-- (AVCaptureDeviceFormat *)activeFormat {
-  return self.device.activeFormat;
+- (NSObject<FLTCaptureDeviceFormat> *)activeFormat {
+  return [[FLTDefaultCaptureDeviceFormat alloc] initWithFormat:self.device.activeFormat];
 }
 
-- (NSArray<AVCaptureDeviceFormat *> *)formats {
-  return self.device.formats;
+- (NSArray<NSObject<FLTCaptureDeviceFormat> *> *)formats {
+  NSMutableArray<id<FLTCaptureDeviceFormat>> *wrappedFormats =
+      [NSMutableArray arrayWithCapacity:self.device.formats.count];
+  for (AVCaptureDeviceFormat *format in self.device.formats) {
+    [wrappedFormats addObject:[[FLTDefaultCaptureDeviceFormat alloc] initWithFormat:format]];
+  }
+  return wrappedFormats;
 }
 
-- (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
-  self.device.activeFormat = format;
+- (void)setActiveFormat:(NSObject<FLTCaptureDeviceFormat> *)format {
+  self.device.activeFormat = format.format;
 }
 
 // Flash/Torch

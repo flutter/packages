@@ -12,7 +12,14 @@
 
 @implementation MockCaptureDevice
 
-- (void)setActiveFormat:(AVCaptureDeviceFormat *)format {
+- (NSObject<FLTCaptureDeviceFormat> *)activeFormat {
+  if (self.activeFormatStub) {
+    return self.activeFormatStub();
+  }
+  return nil;
+}
+
+- (void)setActiveFormat:(NSObject<FLTCaptureDeviceFormat> *)format {
   if (self.setActiveFormatStub) {
     self.setActiveFormatStub(format);
   }

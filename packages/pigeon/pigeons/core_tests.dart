@@ -838,6 +838,17 @@ abstract class HostIntegrationCoreApi {
   @SwiftFunction('echoAsyncNullable(_:)')
   AnotherEnum? echoAnotherAsyncNullableEnum(AnotherEnum? anotherEnum);
 
+  // ========== TaskQueue tests ==========
+
+  /// Returns true if the handler is run on a main thread, which should be
+  /// true since there is no TaskQueue annotation.
+  bool defaultIsMainThread();
+
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  bool taskQueueIsBackgroundThread();
+
   // ========== Flutter API test wrappers ==========
 
   @async

@@ -59,8 +59,9 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   /// or via some native system.
   Future<void> _getExternalCounter() async {
     final SharedPreferencesAsync prefs = SharedPreferencesAsync();
-    setState(() async {
-      _externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
+    final int externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
+    setState(() {
+      _externalCounter = externalCounter;
     });
   }
 

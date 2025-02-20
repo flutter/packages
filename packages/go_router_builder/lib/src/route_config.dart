@@ -149,6 +149,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required this.observers,
     this.restorationScopeId,
     this.initialLocation,
+    this.preload,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -163,6 +164,9 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   /// The navigator observers.
   final String? observers;
 
+  /// The preload parameter.
+  final String? preload;
+
   @override
   Iterable<String> classDeclarations() => <String>[];
 
@@ -173,7 +177,8 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
       '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}'
-      '${observers == null ? '' : 'observers: $observers,'}';
+      '${observers == null ? '' : 'observers: $observers,'}'
+      '${preload == null ? '' : 'preload: $preload,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
@@ -531,6 +536,10 @@ abstract class RouteBaseConfig {
           observers: _generateParameterGetterCode(
             classElement,
             parameterName: r'$observers',
+          ),
+          preload: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$preload',
           ),
         );
       case 'TypedGoRoute':
