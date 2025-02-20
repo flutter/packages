@@ -409,16 +409,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
   @override
   String helperName(DartType paramType) {
-    if (_isTemplate(paramType as InterfaceType)) {
-      final String subType = paramType.typeArguments.first
-          .getDisplayString(withNullability: false);
-      return '''
-(String json) => ${jsonMapName(paramType)}.fromJson(
-  jsonDecode(json),
-  (dynamic json1) => $subType.fromJson(json1 as Map<String, dynamic>),
-)''';
-    }
-    return '(String json) => ${jsonMapName(paramType)}.fromJson(jsonDecode(json))';
+    return _helperNameN(paramType, 0);
   }
 
   @override
@@ -441,7 +432,8 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
     // test for template
     if (_isTemplate(type)) {
-      return true;
+      // check for deep compatibility
+      return _matchesType(type.typeArguments.first);
     }
 
     final ConstructorElement? fromJsonMethod =
@@ -458,7 +450,27 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     return true;
   }
 
-  static bool _isTemplate(InterfaceType type) {
+  String _helperNameN(DartType paramType, int index) {
+    final String mainType = index == 0 ? 'String' : 'dynamic';
+    final String mainDecoder = index == 0
+        ? 'jsonDecode(json$index) as Map<String, dynamic>'
+        : 'json$index as Map<String, dynamic>';
+    if (_isTemplate(paramType as InterfaceType)) {
+      return '''
+($mainType json$index) {
+  return ${jsonMapName(paramType)}.fromJson(
+    $mainDecoder,
+    ${_helperNameN(paramType.typeArguments.first, index + 1)},
+  );
+}''';
+    }
+    return '''
+($mainType json$index) {
+  return ${jsonMapName(paramType)}.fromJson($mainDecoder);
+}''';
+  }
+
+  bool _isTemplate(InterfaceType type) {
     // check if has fromJson contrcutor
     final ConstructorElement? fromJsonMethod =
         type.element.getNamedConstructor('fromJson');
@@ -490,7 +502,6 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     final FunctionType functionType = secondParam.type as FunctionType;
     if (functionType.parameters.length != 1 ||
         functionType.parameters[0].type.getDisplayString() != 'Object?') {
-      print(functionType.parameters[0].type.getDisplayString());
       return false;
     }
 
