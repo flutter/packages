@@ -88,6 +88,7 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
     double rotationDegrees =
         (sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
             360;
+
     // Then, subtract the rotation already applied in the CameraPreview widget
     // (see camera/camera/lib/src/camera_preview.dart).
     rotationDegrees -= deviceOrientationDegrees;

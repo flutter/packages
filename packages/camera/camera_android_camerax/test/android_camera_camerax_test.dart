@@ -42,7 +42,6 @@ import 'package:camera_android_camerax/src/recording.dart';
 import 'package:camera_android_camerax/src/resolution_filter.dart';
 import 'package:camera_android_camerax/src/resolution_selector.dart';
 import 'package:camera_android_camerax/src/resolution_strategy.dart';
-import 'package:camera_android_camerax/src/rotated_preview.dart';
 import 'package:camera_android_camerax/src/surface.dart';
 import 'package:camera_android_camerax/src/system_services.dart';
 import 'package:camera_android_camerax/src/use_case.dart';
@@ -51,7 +50,7 @@ import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException, Uint8List;
-import 'package:flutter/widgets.dart' show BuildContext, Size, Texture, Widget;
+import 'package:flutter/widgets.dart' show BuildContext, Size;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -1299,6 +1298,8 @@ void main() {
     expect(camera.cameraControl, equals(mockCameraControl));
   });
 
+  // Further `buildPreview` testing concerning the Widget that it returns is
+  // located in preview_rotation_test.dart.
   test(
       'buildPreview throws an exception if the preview is not bound to the lifecycle',
       () async {
@@ -1311,66 +1312,6 @@ void main() {
 
     expect(
         () => camera.buildPreview(cameraId), throwsA(isA<CameraException>()));
-  });
-
-  test(
-      'buildPreview returns expected Texture if crop and rotation is handled by surface producer',
-      () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const int cameraId = 567;
-
-    // Tell camera that createCamera has been called and thus, preview has been
-    // bound to the lifecycle of the camera.
-    camera.previewInitiallyBound = true;
-
-    camera.handlesCropAndRotation = true;
-    final Widget widget = camera.buildPreview(cameraId);
-
-    expect(widget, isA<Texture>());
-    expect((widget as Texture).textureId, cameraId);
-  });
-
-  test(
-      'buildPreview returns expected PreviewRotation widget if crop and rotation is not handled by surface producer',
-      () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const int cameraId = 37;
-    const DeviceOrientation initialDeviceOrientation =
-        DeviceOrientation.portraitDown;
-    const double sensorOrientationDegrees = 270;
-
-    // Tell camera that createCamera has been called and thus, preview has been
-    // bound to the lifecycle of the camera.
-    camera.previewInitiallyBound = true;
-
-    camera.handlesCropAndRotation = false;
-    camera.initialDeviceOrientation = initialDeviceOrientation;
-    camera.sensorOrientationDegrees = sensorOrientationDegrees;
-
-    // Test front facing camera.
-    camera.cameraIsFrontFacing = true;
-    Widget widget = camera.buildPreview(cameraId);
-
-    expect(widget is RotatedPreview, isTrue);
-    RotatedPreview preview = widget as RotatedPreview;
-    expect(preview.initialDeviceOrientation, initialDeviceOrientation);
-    expect(preview.deviceOrientation, isA<Stream<DeviceOrientation>>());
-    expect(preview.sensorOrientationDegrees, sensorOrientationDegrees);
-    expect(preview.facingSign, 1);
-    expect(preview.child, isA<Texture>());
-    expect((preview.child as Texture).textureId, cameraId);
-
-    // Test back facing camera.
-    camera.cameraIsFrontFacing = false;
-    widget = camera.buildPreview(cameraId);
-
-    preview = widget as RotatedPreview;
-    expect(preview.initialDeviceOrientation, initialDeviceOrientation);
-    expect(preview.deviceOrientation, isA<Stream<DeviceOrientation>>());
-    expect(preview.sensorOrientationDegrees, sensorOrientationDegrees);
-    expect(preview.facingSign, -1);
-    expect(preview.child, isA<Texture>());
-    expect((preview.child as Texture).textureId, cameraId);
   });
 
   group('video recording', () {
