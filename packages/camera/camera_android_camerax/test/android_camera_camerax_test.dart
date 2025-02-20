@@ -921,7 +921,9 @@ void main() {
     expect(camera.recorder!.qualitySelector, isNull);
   });
 
-  test('createCamera sets sensor orientation as expected', () async {
+  test(
+      'createCamera sets sensor orientation, handlesCropAndRotation, initialDeviceOrientation as expected',
+      () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 270;
@@ -931,6 +933,7 @@ void main() {
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
+    const bool testHandlesCropAndRotation = true;
     const DeviceOrientation testUiOrientation = DeviceOrientation.portraitDown;
 
     // Mock/Detached objects for (typically attached) objects created by
@@ -950,6 +953,8 @@ void main() {
         getProxyForTestingResolutionPreset(mockProcessCameraProvider);
     camera.proxy.getSensorOrientation =
         (_) async => Future<int>.value(testSensorOrientation);
+    camera.proxy.previewSurfaceProducerHandlesCropAndRotation =
+        (_) async => Future<bool>.value(testHandlesCropAndRotation);
     camera.proxy.getUiOrientation =
         () async => Future<DeviceOrientation>.value(testUiOrientation);
 
@@ -963,6 +968,8 @@ void main() {
         enableAudio: enableAudio);
 
     expect(camera.sensorOrientationDegrees, testSensorOrientation);
+    expect(camera.handlesCropAndRotation, testHandlesCropAndRotation);
+    expect(camera.initialDeviceOrientation, testUiOrientation);
   });
 
   test(

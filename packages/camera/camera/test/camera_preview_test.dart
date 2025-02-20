@@ -139,6 +139,16 @@ class FakeController extends ValueNotifier<CameraValue>
 
 void main() {
   group('RotatedBox (Android only)', () {
+    int getClockwiseQuarterTurnsFromDeviceOrientation(
+        DeviceOrientation deviceOrientation) {
+      return switch (deviceOrientation) {
+        DeviceOrientation.portraitUp => 0,
+        DeviceOrientation.landscapeRight => 1,
+        DeviceOrientation.portraitDown => 2,
+        DeviceOrientation.landscapeLeft => 3,
+      };
+    }
+
     testWidgets(
         'when recording rotatedBox should turn according to recording orientation',
         (
@@ -148,30 +158,36 @@ void main() {
 
       final FakeController controller = FakeController();
       addTearDown(controller.dispose);
-      controller.value = controller.value.copyWith(
-        isInitialized: true,
-        isRecordingVideo: true,
-        deviceOrientation: DeviceOrientation.portraitUp,
-        lockedCaptureOrientation:
-            const Optional<DeviceOrientation>.fromNullable(
-                DeviceOrientation.landscapeRight),
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
-        previewSize: const Size(480, 640),
-      );
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: CameraPreview(controller),
-        ),
-      );
-      expect(find.byType(RotatedBox), findsOneWidget);
+      for (final DeviceOrientation currentRecordingOrientation
+          in DeviceOrientation.values) {
+        controller.value = controller.value.copyWith(
+          isInitialized: true,
+          isRecordingVideo: true,
+          deviceOrientation: DeviceOrientation.portraitUp,
+          lockedCaptureOrientation:
+              const Optional<DeviceOrientation>.fromNullable(
+                  DeviceOrientation.landscapeRight),
+          recordingOrientation: Optional<DeviceOrientation>.fromNullable(
+              currentRecordingOrientation),
+          previewSize: const Size(480, 640),
+        );
 
-      final RotatedBox rotatedBox =
-          tester.widget<RotatedBox>(find.byType(RotatedBox));
-      expect(rotatedBox.quarterTurns, 3);
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: CameraPreview(controller),
+          ),
+        );
+        expect(find.byType(RotatedBox), findsOneWidget);
 
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(
+            rotatedBox.quarterTurns,
+            getClockwiseQuarterTurnsFromDeviceOrientation(
+                currentRecordingOrientation));
+      }
       debugDefaultTargetPlatformOverride = null;
     });
 
@@ -184,28 +200,34 @@ void main() {
 
       final FakeController controller = FakeController();
       addTearDown(controller.dispose);
-      controller.value = controller.value.copyWith(
-        isInitialized: true,
-        deviceOrientation: DeviceOrientation.portraitUp,
-        lockedCaptureOrientation:
-            const Optional<DeviceOrientation>.fromNullable(
-                DeviceOrientation.landscapeRight),
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
-        previewSize: const Size(480, 640),
-      );
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: CameraPreview(controller),
-        ),
-      );
-      expect(find.byType(RotatedBox), findsOneWidget);
+      for (final DeviceOrientation currentLockedOrientation
+          in DeviceOrientation.values) {
+        controller.value = controller.value.copyWith(
+          isInitialized: true,
+          deviceOrientation: DeviceOrientation.portraitUp,
+          lockedCaptureOrientation: Optional<DeviceOrientation>.fromNullable(
+              currentLockedOrientation),
+          recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
+              DeviceOrientation.landscapeLeft),
+          previewSize: const Size(480, 640),
+        );
 
-      final RotatedBox rotatedBox =
-          tester.widget<RotatedBox>(find.byType(RotatedBox));
-      expect(rotatedBox.quarterTurns, 1);
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: CameraPreview(controller),
+          ),
+        );
+        expect(find.byType(RotatedBox), findsOneWidget);
+
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(
+            rotatedBox.quarterTurns,
+            getClockwiseQuarterTurnsFromDeviceOrientation(
+                currentLockedOrientation));
+      }
 
       debugDefaultTargetPlatformOverride = null;
     });
@@ -219,26 +241,32 @@ void main() {
 
       final FakeController controller = FakeController();
       addTearDown(controller.dispose);
-      controller.value = controller.value.copyWith(
-        isInitialized: true,
-        deviceOrientation: DeviceOrientation.portraitUp,
-        recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
-            DeviceOrientation.landscapeLeft),
-        previewSize: const Size(480, 640),
-      );
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: CameraPreview(controller),
-        ),
-      );
-      expect(find.byType(RotatedBox), findsOneWidget);
+      for (final DeviceOrientation currentDeviceOrientation
+          in DeviceOrientation.values) {
+        controller.value = controller.value.copyWith(
+          isInitialized: true,
+          deviceOrientation: currentDeviceOrientation,
+          recordingOrientation: const Optional<DeviceOrientation>.fromNullable(
+              DeviceOrientation.landscapeLeft),
+          previewSize: const Size(480, 640),
+        );
 
-      final RotatedBox rotatedBox =
-          tester.widget<RotatedBox>(find.byType(RotatedBox));
-      expect(rotatedBox.quarterTurns, 0);
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: CameraPreview(controller),
+          ),
+        );
+        expect(find.byType(RotatedBox), findsOneWidget);
 
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(
+            rotatedBox.quarterTurns,
+            getClockwiseQuarterTurnsFromDeviceOrientation(
+                currentDeviceOrientation));
+      }
       debugDefaultTargetPlatformOverride = null;
     });
   }, skip: kIsWeb);
