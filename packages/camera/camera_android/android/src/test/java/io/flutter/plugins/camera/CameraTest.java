@@ -1027,8 +1027,7 @@ public class CameraTest {
   }
 
   @Test
-  public void stopVideoRecording_shouldCatchRuntimeException()
-          throws RuntimeException {
+  public void stopVideoRecording_shouldCatchRuntimeException() throws RuntimeException {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     File mockFile = mock(File.class);
