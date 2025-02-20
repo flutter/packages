@@ -166,7 +166,6 @@ final class PhotoCaptureTests: XCTestCase {
     let cam = FLTCreateCamWithConfiguration(configuration)
 
     let filePath = "test"
-
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
       let delegate = cam.inProgressSavePhotoDelegates[settings!.uniqueID] as? FLTSavePhotoDelegate

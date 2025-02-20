@@ -29,7 +29,6 @@ final class ThreadSafeEventChannelTests: XCTestCase {
         mainThreadExpectation.fulfill()
       }
     }
-
     threadSafeEventChannel.setStreamHandler(nil) {
       if Thread.isMainThread {
         mainThreadCompletionExpectation.fulfill()
@@ -53,7 +52,6 @@ final class ThreadSafeEventChannelTests: XCTestCase {
         mainThreadExpectation.fulfill()
       }
     }
-
     DispatchQueue.global(qos: .default).async {
       threadSafeEventChannel.setStreamHandler(nil) {
         if Thread.isMainThread {

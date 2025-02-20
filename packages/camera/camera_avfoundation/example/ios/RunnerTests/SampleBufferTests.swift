@@ -133,7 +133,6 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testDidOutputSampleBufferIgnoreAudioSamplesBeforeVideoSamples() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
-
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
