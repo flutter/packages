@@ -6,14 +6,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-private final class MockEventChannel: NSObject, FLTEventChannel {
-  var setStreamHandlerStub: ((FlutterStreamHandler?) -> Void)?
-
-  func setStreamHandler(_ handler: (FlutterStreamHandler & NSObjectProtocol)?) {
-    setStreamHandlerStub?(handler)
-  }
-}
-
 final class ThreadSafeEventChannelTests: XCTestCase {
   func testSetStreamHandler_shouldStayOnMainThreadIfCalledFromMainThread() {
     let mockEventChannel = MockEventChannel()

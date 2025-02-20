@@ -4,7 +4,7 @@
 
 /// A mock implementation of `FLTWritableData` that allows injecting a custom implementation
 /// for writing to a file.
-class MockWritableData: NSObject, FLTWritableData {
+final class MockWritableData: NSObject, FLTWritableData {
   /// A stub that replaces the default implementation of `write(toFile,options).`.
   var writeToFileStub: ((String, NSData.WritingOptions) throws -> Void)?
 
