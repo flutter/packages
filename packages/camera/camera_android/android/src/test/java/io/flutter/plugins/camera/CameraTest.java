@@ -1029,15 +1029,14 @@ public class CameraTest {
   @Test
   public void stopVideoRecording_shouldCatchRuntimeException() throws RuntimeException {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
     File mockFile = mock(File.class);
-    TestUtils.setPrivateField(camera, "recordingVideo", true);
-    TestUtils.setPrivateField(camera, "mediaRecorder", mockMediaRecorder);
-    TestUtils.setPrivateField(camera, "captureFile", mockFile);
+    camera.recordingVideo = true;
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.captureFile = mockFile;
 
     doThrow(new RuntimeException("Some RuntimeException")).when(mockMediaRecorder).stop();
 
-    camera.stopVideoRecording(mockResult);
+    camera.stopVideoRecording();
 
     verify(mockMediaRecorder, times(1)).reset();
   }
