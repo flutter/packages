@@ -1,3 +1,7 @@
+## 2.4.6
+
+* Ensures that platform messages on background queues are handled in order.
+
 ## 2.4.5
 
 * Bumps gradle-plugin to 2.1.10.
