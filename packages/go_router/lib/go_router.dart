@@ -6,6 +6,9 @@
 /// deep linking, data-driven routes and more.
 library go_router;
 
+// used for json decoder/encoder
+export 'dart:convert' show jsonDecode, jsonEncode;
+
 export 'src/builder.dart';
 export 'src/configuration.dart';
 export 'src/delegate.dart';
