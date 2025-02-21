@@ -27,7 +27,7 @@ enum InAppLoadResult {
   /// The URL was successfully loaded.
   success,
 
-  /// The URL did not load successfully (or close the SFSafariViewController earlier).
+  /// The URL did not load successfully (or the user closed the view controller before it loaded).
   failedToLoad,
 
   /// The URL could not be launched because it is invalid.
