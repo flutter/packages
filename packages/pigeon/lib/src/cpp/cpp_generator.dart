@@ -93,15 +93,60 @@ class CppOptions {
   }
 }
 
+/// Options that control how C++ code will be generated.
+///
+/// For internal use only.
+class InternalCppOptions {
+  /// Creates a [InternalCppOptions] object.
+  const InternalCppOptions({
+    this.headerIncludePath,
+    this.cppHeaderOut,
+    this.cppSourceOut,
+    this.namespace,
+    this.copyrightHeader,
+    this.headerOutPath,
+  });
+
+  /// Creates InternalCppOptions from CppOptions.
+  InternalCppOptions.fromCppOptions(
+    CppOptions options, {
+    this.cppHeaderOut,
+    this.cppSourceOut,
+    Iterable<String>? copyrightHeader,
+  })  : headerIncludePath = options.headerIncludePath,
+        namespace = options.namespace,
+        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
+        headerOutPath = options.headerOutPath;
+
+  /// The path to the header that will get placed in the source filed (example:
+  /// "foo.h").
+  final String? headerIncludePath;
+
+  /// Path to the ".h" C++ file that will be generated.
+  final String? cppHeaderOut;
+
+  /// Path to the ".cpp" C++ file that will be generated.
+  final String? cppSourceOut;
+
+  /// The namespace where the generated class will live.
+  final String? namespace;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// The path to the output header file location.
+  final String? headerOutPath;
+}
+
 /// Class that manages all Cpp code generation.
-class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
+class CppGenerator extends Generator<OutputFileOptions<InternalCppOptions>> {
   /// Constructor.
   const CppGenerator();
 
   /// Generates C++ file of type specified in [generatorOptions]
   @override
   void generate(
-    OutputFileOptions<CppOptions> generatorOptions,
+    OutputFileOptions<InternalCppOptions> generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
@@ -127,13 +172,13 @@ class CppGenerator extends Generator<OutputFileOptions<CppOptions>> {
 }
 
 /// Writes C++ header (.h) file to sink.
-class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
+class CppHeaderGenerator extends StructuredGenerator<InternalCppOptions> {
   /// Constructor.
   const CppHeaderGenerator();
 
   @override
   void writeFilePrologue(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -148,7 +193,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFileImports(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -185,7 +230,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeEnum(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -208,7 +253,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeGeneralUtilities(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -226,7 +271,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeDataClasses(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -252,7 +297,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeDataClass(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -399,7 +444,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeGeneralCodec(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -443,7 +488,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFlutterApi(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -498,7 +543,7 @@ class CppHeaderGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeHostApi(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -660,7 +705,7 @@ $friendLines
 
   @override
   void writeCloseNamespace(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -674,13 +719,13 @@ $friendLines
 }
 
 /// Writes C++ source (.cpp) file to sink.
-class CppSourceGenerator extends StructuredGenerator<CppOptions> {
+class CppSourceGenerator extends StructuredGenerator<InternalCppOptions> {
   /// Constructor.
   const CppSourceGenerator();
 
   @override
   void writeFilePrologue(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -697,7 +742,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeFileImports(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -721,7 +766,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeOpenNamespace(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -733,7 +778,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeGeneralUtilities(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -763,7 +808,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeDataClass(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -817,7 +862,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeClassEncode(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -848,7 +893,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
 
   @override
   void writeClassDecode(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -919,7 +964,7 @@ class CppSourceGenerator extends StructuredGenerator<CppOptions> {
   }
 
   void _writeCodecOverflowUtilities(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     List<EnumeratedType> types, {
@@ -986,7 +1031,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
 
   @override
   void writeGeneralCodec(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -1081,7 +1126,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
 
   @override
   void writeFlutterApi(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -1215,7 +1260,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
 
   @override
   void writeHostApi(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -1439,7 +1484,7 @@ return EncodableValue(EncodableList{
     });
   }
 
-  void _writeCppSourceClassField(CppOptions generatorOptions, Root root,
+  void _writeCppSourceClassField(InternalCppOptions generatorOptions, Root root,
       Indent indent, Class classDefinition, NamedType field) {
     final HostDatatype hostDatatype =
         getFieldHostDatatype(field, _shortBaseCppTypeForBuiltinDartType);
@@ -1570,7 +1615,7 @@ ${prefix}reply(EncodableValue(std::move(wrapped)));''';
 
   @override
   void writeCloseNamespace(
-    CppOptions generatorOptions,
+    InternalCppOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -2085,7 +2130,7 @@ void _writeAccessBlock(
 }
 
 /// Validates an AST to make sure the cpp generator supports everything.
-List<Error> validateCpp(CppOptions options, Root root) {
+List<Error> validateCpp(InternalCppOptions options, Root root) {
   final List<Error> result = <Error>[];
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {

@@ -33,10 +33,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -59,10 +59,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -87,10 +87,10 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -116,10 +116,10 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(prefix: 'PREFIX'),
+      languageOptions: const InternalObjcOptions(prefix: 'PREFIX'),
     );
     generator.generate(
       generatorOptions,
@@ -166,10 +166,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -210,12 +210,12 @@ void main() {
       ])
     ]);
     final StringBuffer sink = StringBuffer();
-    const ObjcOptions options =
-        ObjcOptions(headerIncludePath: 'foo.h', prefix: 'AC');
+    const InternalObjcOptions options =
+        InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'AC');
     {
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
         languageOptions: options,
       );
@@ -231,8 +231,8 @@ void main() {
     }
     {
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
         languageOptions: options,
       );
@@ -275,7 +275,8 @@ void main() {
         EnumMember(name: 'two'),
       ])
     ]);
-    const ObjcOptions options = ObjcOptions(headerIncludePath: 'foo.h');
+    const InternalObjcOptions options =
+        InternalObjcOptions(headerIncludePath: 'foo.h');
     final List<Error> errors = validateObjc(options, root);
     expect(errors.length, 1);
     expect(errors[0].message, contains('Nullable enum'));
@@ -314,10 +315,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -365,10 +366,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -420,10 +421,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -478,10 +479,10 @@ void main() {
 
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -517,10 +518,10 @@ void main() {
 
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -553,10 +554,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -588,10 +589,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -614,10 +615,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(prefix: 'ABC'),
+      languageOptions: const InternalObjcOptions(prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -639,10 +640,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(prefix: 'ABC'),
+      languageOptions: const InternalObjcOptions(prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -693,10 +694,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(prefix: 'ABC'),
+      languageOptions: const InternalObjcOptions(prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -749,10 +750,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(prefix: 'ABC'),
+      languageOptions: const InternalObjcOptions(prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -801,10 +802,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -856,10 +857,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(headerIncludePath: 'foo.h'),
+      languageOptions: const InternalObjcOptions(headerIncludePath: 'foo.h'),
     );
     generator.generate(
       generatorOptions,
@@ -898,11 +899,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -940,11 +941,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -984,11 +985,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1026,11 +1027,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1065,11 +1066,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1103,11 +1104,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1141,11 +1142,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1182,11 +1183,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1212,10 +1213,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -1238,10 +1239,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -1270,10 +1271,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -1311,10 +1312,10 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -1358,11 +1359,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1413,11 +1414,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1455,11 +1456,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1487,11 +1488,11 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1542,11 +1543,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1593,11 +1594,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1625,11 +1626,11 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1667,11 +1668,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1694,10 +1695,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: ObjcOptions(
+      languageOptions: InternalObjcOptions(
           headerIncludePath: 'foo.h',
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
@@ -1716,10 +1717,10 @@ void main() {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: ObjcOptions(
+      languageOptions: InternalObjcOptions(
           headerIncludePath: 'foo.h',
           prefix: 'ABC',
           copyrightHeader: makeIterable('hello world')),
@@ -1755,11 +1756,11 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
       languageOptions:
-          const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+          const InternalObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
     );
     generator.generate(
       generatorOptions,
@@ -1797,11 +1798,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -1815,11 +1816,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -1861,11 +1862,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -1879,11 +1880,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -1928,11 +1929,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -1967,11 +1968,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -1986,11 +1987,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2025,11 +2026,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2044,11 +2045,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2085,11 +2086,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2106,11 +2107,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2157,11 +2158,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2178,11 +2179,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2227,11 +2228,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2248,11 +2249,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2324,11 +2325,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2342,11 +2343,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2364,11 +2365,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2382,11 +2383,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const ObjcOptions(headerIncludePath: 'foo.h', prefix: 'ABC'),
+        languageOptions: const InternalObjcOptions(
+            headerIncludePath: 'foo.h', prefix: 'ABC'),
       );
       generator.generate(
         generatorOptions,
@@ -2409,10 +2410,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2444,10 +2445,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2481,10 +2482,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2515,10 +2516,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2554,10 +2555,10 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions: const ObjcOptions(),
+        languageOptions: const InternalObjcOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -2571,10 +2572,10 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions: const ObjcOptions(),
+        languageOptions: const InternalObjcOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -2612,10 +2613,10 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.header,
-        languageOptions: const ObjcOptions(),
+        languageOptions: const InternalObjcOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -2629,10 +2630,10 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<ObjcOptions> generatorOptions =
-          OutputFileOptions<ObjcOptions>(
+      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+          OutputFileOptions<InternalObjcOptions>(
         fileType: FileType.source,
-        languageOptions: const ObjcOptions(),
+        languageOptions: const InternalObjcOptions(),
       );
       generator.generate(
         generatorOptions,
@@ -2665,10 +2666,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2760,10 +2761,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2821,10 +2822,10 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2865,10 +2866,10 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(),
+      languageOptions: const InternalObjcOptions(),
     );
     generator.generate(
       generatorOptions,
@@ -2911,10 +2912,10 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(prefix: 'FLT'),
+      languageOptions: const InternalObjcOptions(prefix: 'FLT'),
     );
     generator.generate(
       generatorOptions,
@@ -2954,10 +2955,10 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(prefix: 'FLT'),
+      languageOptions: const InternalObjcOptions(prefix: 'FLT'),
     );
     generator.generate(
       generatorOptions,
@@ -2998,10 +2999,10 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.header,
-      languageOptions: const ObjcOptions(prefix: 'FLT'),
+      languageOptions: const InternalObjcOptions(prefix: 'FLT'),
     );
     generator.generate(
       generatorOptions,
@@ -3042,10 +3043,10 @@ void main() {
     ]);
     final StringBuffer sink = StringBuffer();
     const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<ObjcOptions> generatorOptions =
-        OutputFileOptions<ObjcOptions>(
+    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+        OutputFileOptions<InternalObjcOptions>(
       fileType: FileType.source,
-      languageOptions: const ObjcOptions(prefix: 'FLT'),
+      languageOptions: const InternalObjcOptions(prefix: 'FLT'),
     );
     generator.generate(
       generatorOptions,

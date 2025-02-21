@@ -85,7 +85,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const SwiftGenerator generator = SwiftGenerator();
       generator.generate(
-        const SwiftOptions(fileSpecificClassNameComponent: 'MyFile'),
+        const InternalSwiftOptions(fileSpecificClassNameComponent: 'MyFile'),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -208,7 +208,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -238,7 +238,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -269,7 +269,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -311,7 +311,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -347,7 +347,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -385,7 +385,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -432,7 +432,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -460,7 +460,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -506,7 +506,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -598,7 +598,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -653,7 +653,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(errorClassName: 'TestError'),
+          const InternalSwiftOptions(errorClassName: 'TestError'),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -747,7 +747,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -844,7 +844,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -897,7 +897,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -995,7 +995,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1045,7 +1045,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1133,7 +1133,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
