@@ -760,7 +760,7 @@ void main() {
         final List<Caption> captions =
             (await controller.closedCaptionFile)!.captions.toList();
 
-        // Check that captions are not in sorted order
+        // Check that captions are not in sorted order.
         bool isSorted = true;
         for (int i = 0; i < captions.length - 1; i++) {
           if (captions[i].start.compareTo(captions[i + 1].start) > 0) {

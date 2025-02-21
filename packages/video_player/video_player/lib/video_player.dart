@@ -795,7 +795,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     _sortedCaptions = _closedCaptionFile?.captions;
 
-    /// Sort the captions by start time so that we can do a binary search.
+    /// Sort the captions by start time to allow a binary search.
     _sortedCaptions?.sort((Caption a, Caption b) {
       return a.start.compareTo(b.start);
     });
