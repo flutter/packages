@@ -112,7 +112,7 @@ void main() {
         await plugin.initWithParams(
           const SignInInitParameters(
             clientId: 'some-non-null-client-id',
-            forceAccountName: 'fakeEmailAddress@google.com',
+            forceAccountName: 'fakeEmailAddress@example.com',
           ),
         );
       }, throwsAssertionError);

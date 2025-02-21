@@ -58,7 +58,7 @@ void main() {
               const SignInInitParameters(
                 hostedDomain: 'example.com',
                 clientId: 'fakeClientId',
-                forceAccountName: 'fakeEmailAddress@google.com',
+                forceAccountName: 'fakeEmailAddress@example.com',
               ),
             ),
         throwsA(isInstanceOf<PlatformException>().having(

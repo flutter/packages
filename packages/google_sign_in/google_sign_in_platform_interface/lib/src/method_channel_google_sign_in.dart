@@ -24,14 +24,12 @@ class MethodChannelGoogleSignIn extends GoogleSignInPlatform {
     SignInOption signInOption = SignInOption.standard,
     String? hostedDomain,
     String? clientId,
-    String? forceAccountName,
   }) {
     return initWithParams(SignInInitParameters(
         scopes: scopes,
         signInOption: signInOption,
         hostedDomain: hostedDomain,
-        clientId: clientId,
-        forceAccountName: forceAccountName));
+        clientId: clientId));
   }
 
   @override
@@ -43,7 +41,6 @@ class MethodChannelGoogleSignIn extends GoogleSignInPlatform {
       'clientId': params.clientId,
       'serverClientId': params.serverClientId,
       'forceCodeForRefreshToken': params.forceCodeForRefreshToken,
-      'forceAccountName': params.forceAccountName,
     });
   }
 

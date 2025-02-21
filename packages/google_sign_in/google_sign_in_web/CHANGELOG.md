@@ -1,6 +1,6 @@
-## 0.12.5
+## 0.12.4+4
 
-* Add a sign-in field to allow Android clients to explicitly specify an account name. This capability is only available within Android for the underlying libraries.
+* Asserts that new `forceAccountName` parameter is null (not used in web).
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.12.4+3

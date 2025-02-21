@@ -289,7 +289,7 @@ public class GoogleSignInTest {
 
   @Test
   public void init_PassesForceAccountName() {
-    String fakeAccountName = "fakeEmailAddress@google.com";
+    String fakeAccountName = "fakeEmailAddress@example.com";
 
     try (MockedConstruction<Account> mocked =
         Mockito.mockConstruction(

@@ -143,7 +143,7 @@ void main() {
       clientId: 'fakeClientId',
       serverClientId: 'fakeServerClientId',
       forceCodeForRefreshToken: true,
-      forceAccountName: 'fakeEmailAddress@google.com',
+      forceAccountName: 'fakeEmailAddress@example.com',
     );
 
     await googleSignIn.initWithParams(initParams);

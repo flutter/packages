@@ -264,7 +264,7 @@ class GoogleSignIn {
   /// Force the authorization code to be valid for a refresh token every time. Only needed on Android.
   final bool forceCodeForRefreshToken;
 
-  /// Explicitly specifies the account name to be used in sign-in. Only used on Android.
+  /// Explicitly specifies the account name to be used in sign-in. Must only be set on Android.
   final String? forceAccountName;
 
   final StreamController<GoogleSignInAccount?> _currentUserController =

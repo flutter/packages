@@ -115,12 +115,12 @@ void main() {
 
     test('forceAccountName sent with init method call', () async {
       final GoogleSignIn googleSignIn =
-          GoogleSignIn(forceAccountName: 'fakeEmailAddress@google.com');
+          GoogleSignIn(forceAccountName: 'fakeEmailAddress@example.com');
 
       await googleSignIn.signIn();
 
       _verifyInit(mockPlatform,
-          forceAccountName: 'fakeEmailAddress@google.com');
+          forceAccountName: 'fakeEmailAddress@example.com');
       verify(mockPlatform.signIn());
     });
 

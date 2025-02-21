@@ -1,6 +1,7 @@
 ## 6.3.0
 
-* Add a sign-in field to allow Android clients to explicitly specify an account name. This capability is only available within Android for the underlying libraries.
+* Adds a sign-in field to allow Android clients to explicitly specify an account name. This
+  capability is only available within Android for the underlying libraries.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 6.2.2

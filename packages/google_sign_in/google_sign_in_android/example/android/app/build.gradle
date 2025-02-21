@@ -25,7 +25,6 @@ if (flutterVersionName == null) {
 android {
     namespace 'io.flutter.plugins.googlesigninexample'
     compileSdk flutter.compileSdkVersion
-    ndkVersion = "26.3.11579264"
 
 
     defaultConfig {
