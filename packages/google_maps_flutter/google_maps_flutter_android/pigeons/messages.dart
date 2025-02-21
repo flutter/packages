@@ -385,6 +385,37 @@ class PlatformCluster {
   final List<String> markerIds;
 }
 
+/// Pigeon equivalent of the GroundOverlay class.
+class PlatformGroundOverlay {
+  PlatformGroundOverlay({
+    required this.groundOverlayId,
+    required this.image,
+    required this.position,
+    required this.bounds,
+    required this.width,
+    required this.height,
+    required this.anchor,
+    required this.transparency,
+    required this.bearing,
+    required this.zIndex,
+    required this.visible,
+    required this.clickable,
+  });
+
+  final String groundOverlayId;
+  final PlatformBitmap image;
+  final PlatformLatLng? position;
+  final PlatformLatLngBounds? bounds;
+  final double? width;
+  final double? height;
+  final PlatformDoublePair? anchor;
+  final double transparency;
+  final double bearing;
+  final int zIndex;
+  final bool visible;
+  final bool clickable;
+}
+
 /// Pigeon equivalent of CameraTargetBounds.
 ///
 /// As with the Dart version, it exists to distinguish between not setting a
@@ -407,6 +438,7 @@ class PlatformMapViewCreationParams {
     required this.initialHeatmaps,
     required this.initialTileOverlays,
     required this.initialClusterManagers,
+    required this.initialGroundOverlays,
   });
 
   final PlatformCameraPosition initialCameraPosition;
@@ -418,6 +450,7 @@ class PlatformMapViewCreationParams {
   final List<PlatformHeatmap> initialHeatmaps;
   final List<PlatformTileOverlay> initialTileOverlays;
   final List<PlatformClusterManager> initialClusterManagers;
+  final List<PlatformGroundOverlay> initialGroundOverlays;
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -631,6 +664,10 @@ abstract class MapsApi {
   void updateTileOverlays(List<PlatformTileOverlay> toAdd,
       List<PlatformTileOverlay> toChange, List<String> idsToRemove);
 
+  /// Updates the set of ground overlays on the map.
+  void updateGroundOverlays(List<PlatformGroundOverlay> toAdd,
+      List<PlatformGroundOverlay> toChange, List<String> idsToRemove);
+
   /// Gets the screen coordinate for the given map location.
   PlatformPoint getScreenCoordinate(PlatformLatLng latLng);
 
@@ -726,6 +763,9 @@ abstract class MapsCallbackApi {
   /// Called when a polyline is tapped.
   void onPolylineTap(String polylineId);
 
+  /// Called when a ground overlay is tapped.
+  void onGroundOverlayTap(String groundOverlayId);
+
   /// Called to get data for a map tile.
   @async
   PlatformTile getTileOverlayTile(
@@ -770,6 +810,7 @@ abstract class MapsInspectorApi {
   bool isMyLocationButtonEnabled();
   bool isTrafficEnabled();
   PlatformTileLayer? getTileOverlayInfo(String tileOverlayId);
+  PlatformGroundOverlay? getGroundOverlayInfo(String groundOverlayId);
   PlatformZoomRange getZoomRange();
   List<PlatformCluster> getClusters(String clusterManagerId);
 }
