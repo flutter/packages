@@ -14,6 +14,10 @@ const int _90DegreesClockwise = 1;
 const int _270DegreesClockwise = 3;
 
 void main() {
+  String getExpectedRotationTestFailureReason(
+          int expectedQuarterTurns, int actualQuarterTurns) =>
+      'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated $actualQuarterTurns quarter turns.';
+
   testWidgets(
       'when handlesCropAndRotation is true, the preview is an unrotated Texture',
       (WidgetTester tester) async {
@@ -79,8 +83,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
 
       testWidgets(
@@ -101,8 +105,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
 
       testWidgets(
@@ -123,8 +127,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
 
       testWidgets(
@@ -145,8 +149,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
     });
 
@@ -169,6 +173,8 @@ void main() {
       camera.sensorOrientationDegrees = 90;
       camera.cameraIsFrontFacing = true;
 
+      // Calculated according to:
+      // ((90 - currentDeviceOrientation * 1 + 360) % 360) - currentDeviceOrientation.
       final Map<DeviceOrientation, int> expectedRotationPerDeviceOrientation =
           <DeviceOrientation, int>{
         DeviceOrientation.portraitUp: _90DegreesClockwise,
@@ -247,8 +253,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
 
       testWidgets(
@@ -266,8 +272,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
     });
 
@@ -309,8 +315,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
 
       testWidgets(
@@ -327,8 +333,8 @@ void main() {
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
-            reason:
-                'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
       });
     });
   });
