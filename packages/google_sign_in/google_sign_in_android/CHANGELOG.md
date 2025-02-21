@@ -1,6 +1,6 @@
 ## 6.2.0
 
-* Add a sign-in field to allow clients to explicitly specify an account name.
+* Adds a sign-in field to allow clients to explicitly specify an account name.
 
 ## 6.1.35
 
