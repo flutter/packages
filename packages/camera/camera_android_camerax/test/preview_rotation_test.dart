@@ -110,7 +110,7 @@ void main() {
       });
 
       testWidgets(
-          'initial device orientation fixed to DeviceOrientation.portraitDown, then the preview Texture is rotated 90 degrees clockwise',
+          'initial device orientation fixed to DeviceOrientation.portraitDown, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
         // Set camera initial device orientation to portrait down.
         const DeviceOrientation testInitialDeviceOrientation =
@@ -258,7 +258,7 @@ void main() {
       });
 
       testWidgets(
-          'sensor orientation degrees is 270, then the preview Texture is rotated 90 degrees clockwise',
+          'sensor orientation degrees is 270, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
         camera.sensorOrientationDegrees = 270;
 
@@ -301,7 +301,7 @@ void main() {
       });
 
       testWidgets(
-          'camera is front facing, then the preview Texture is rotated X degrees clockwise',
+          'camera is front facing, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
         camera.cameraIsFrontFacing = true;
 
@@ -320,7 +320,7 @@ void main() {
       });
 
       testWidgets(
-          'camera is back facing, then the preview Texture is rotated X degrees clockwise',
+          'camera is back facing, then the preview Texture is rotated 90 degrees clockwise',
           (WidgetTester tester) async {
         camera.cameraIsFrontFacing = false;
 
