@@ -1,3 +1,7 @@
+## 0.8.12+21
+
+* Ensures that platform messages on background queues are handled in order.
+
 ## 0.8.12+20
 
 * Updates androidx.annotation:annotation to 1.9.1.

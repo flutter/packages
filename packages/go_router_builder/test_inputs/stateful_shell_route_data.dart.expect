@@ -1,0 +1,28 @@
+RouteBase get $statefulShellRouteNoConstConstructor =>
+    StatefulShellRouteData.$route(
+      factory: $StatefulShellRouteNoConstConstructorExtension._fromState,
+      branches: [
+        StatefulShellBranchData.$branch(),
+      ],
+    );
+
+extension $StatefulShellRouteNoConstConstructorExtension
+    on StatefulShellRouteNoConstConstructor {
+  static StatefulShellRouteNoConstConstructor _fromState(GoRouterState state) =>
+      StatefulShellRouteNoConstConstructor();
+}
+
+RouteBase get $statefulShellRouteWithConstConstructor =>
+    StatefulShellRouteData.$route(
+      factory: $StatefulShellRouteWithConstConstructorExtension._fromState,
+      branches: [
+        StatefulShellBranchData.$branch(),
+      ],
+    );
+
+extension $StatefulShellRouteWithConstConstructorExtension
+    on StatefulShellRouteWithConstConstructor {
+  static StatefulShellRouteWithConstConstructor _fromState(
+          GoRouterState state) =>
+      const StatefulShellRouteWithConstConstructor();
+}

@@ -2,21 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import <AVFoundation/AVFoundation.h>
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
 #endif
 
-#import <AVFoundation/AVFoundation.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 /// FVPFrameUpdater is responsible for notifying the Flutter texture registry
 /// when a new video frame is available.
 @interface FVPFrameUpdater : NSObject
-/// The texture ID associated with the video output.
-@property(nonatomic) int64_t textureId;
+/// The texture identifier associated with the video output.
+@property(nonatomic) int64_t textureIdentifier;
 /// The output that this updater is managing.
 @property(nonatomic, weak) AVPlayerItemVideoOutput *videoOutput;
 /// The last time that has been validated as avaliable according to hasNewPixelBufferForItemTime:.

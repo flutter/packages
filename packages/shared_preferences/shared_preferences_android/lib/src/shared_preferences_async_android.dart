@@ -198,25 +198,33 @@ base class SharedPreferencesAsyncAndroid
         convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
     // Request JSON encoded string list.
-    final String? jsonEncodedStringList =
-        await _convertKnownExceptions<String?>(
+    final StringListResult? result =
+        await _convertKnownExceptions<StringListResult?>(
             () async => api.getStringList(key, pigeonOptions));
-    if (jsonEncodedStringList != null) {
-      final String jsonEncodedString =
-          jsonEncodedStringList.substring(jsonListPrefix.length);
-      try {
-        final List<String> decodedList =
-            (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
-        return decodedList;
-      } catch (e) {
-        throw TypeError();
-      }
+    if (result == null) {
+      return null;
     }
-    // If no JSON encoded string list exists, check for platform encoded value.
-    final List<String>? stringList =
-        await _convertKnownExceptions<List<String>?>(
-            () async => api.getPlatformEncodedStringList(key, pigeonOptions));
-    return stringList?.cast<String>().toList();
+    switch (result.type) {
+      case StringListLookupResultType.jsonEncoded:
+        // Force-unwrap is safe because a value is always set for this type.
+        final String jsonEncodedStringList = result.jsonEncodedValue!;
+        final String jsonEncodedString =
+            jsonEncodedStringList.substring(jsonListPrefix.length);
+        try {
+          final List<String> decodedList =
+              (jsonDecode(jsonEncodedString) as List<dynamic>).cast<String>();
+          return decodedList;
+        } catch (e) {
+          throw TypeError();
+        }
+      case StringListLookupResultType.platformEncoded:
+        final List<String>? stringList =
+            await _convertKnownExceptions<List<String>?>(() async =>
+                api.getPlatformEncodedStringList(key, pigeonOptions));
+        return stringList?.cast<String>().toList();
+      case StringListLookupResultType.unexpectedString:
+        throw TypeError();
+    }
   }
 
   Future<T?> _convertKnownExceptions<T>(Future<T?> Function() method) async {

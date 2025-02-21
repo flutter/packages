@@ -79,8 +79,9 @@ private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {
 
 val EventChannelMessagesPigeonMethodCodec = StandardMethodCodec(EventChannelMessagesPigeonCodec())
 
-private class PigeonStreamHandler<T>(val wrapper: PigeonEventChannelWrapper<T>) :
-    EventChannel.StreamHandler {
+private class EventChannelMessagesPigeonStreamHandler<T>(
+    val wrapper: EventChannelMessagesPigeonEventChannelWrapper<T>
+) : EventChannel.StreamHandler {
   var pigeonSink: PigeonEventSink<T>? = null
 
   override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
@@ -94,7 +95,7 @@ private class PigeonStreamHandler<T>(val wrapper: PigeonEventChannelWrapper<T>) 
   }
 }
 
-interface PigeonEventChannelWrapper<T> {
+interface EventChannelMessagesPigeonEventChannelWrapper<T> {
   open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
   open fun onCancel(p0: Any?) {}
@@ -114,7 +115,8 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
   }
 }
 
-abstract class StreamEventsStreamHandler : PigeonEventChannelWrapper<PlatformEvent> {
+abstract class StreamEventsStreamHandler :
+    EventChannelMessagesPigeonEventChannelWrapper<PlatformEvent> {
   companion object {
     fun register(
         messenger: BinaryMessenger,
@@ -126,7 +128,8 @@ abstract class StreamEventsStreamHandler : PigeonEventChannelWrapper<PlatformEve
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
-      val internalStreamHandler = PigeonStreamHandler<PlatformEvent>(streamHandler)
+      val internalStreamHandler =
+          EventChannelMessagesPigeonStreamHandler<PlatformEvent>(streamHandler)
       EventChannel(messenger, channelName, EventChannelMessagesPigeonMethodCodec)
           .setStreamHandler(internalStreamHandler)
     }

@@ -7,7 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/sk2_pigeon.g.dart',
   dartTestOut: 'test/sk2_test_api.g.dart',
-  swiftOut: 'darwin/Classes/StoreKit2/sk2_pigeon.g.swift',
+  swiftOut:
+      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/sk2_pigeon.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 enum SK2ProductTypeMessage {

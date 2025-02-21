@@ -1,3 +1,16 @@
+## 2.4.6
+
+* Ensures that platform messages on background queues are handled in order.
+
+## 2.4.5
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 2.4.4
+
+* Restores the behavior of throwing a `TypeError` when calling `getStringList`
+  on a value stored with `setString`.
+
 ## 2.4.3
 
 * Migrates `List<String>` value encoding to JSON.

@@ -118,7 +118,7 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
   Iterable<String> classDeclarations() => <String>[
         '''
 extension $_extensionName on $_className {
-  static $_className _fromState(GoRouterState state) => const $_className();
+  static $_className _fromState(GoRouterState state) =>${routeDataClass.unnamedConstructor!.isConst ? ' const' : ''}   $_className();
 }
 '''
       ];
@@ -149,6 +149,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required this.observers,
     this.restorationScopeId,
     this.initialLocation,
+    this.preload,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -163,6 +164,9 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   /// The navigator observers.
   final String? observers;
 
+  /// The preload parameter.
+  final String? preload;
+
   @override
   Iterable<String> classDeclarations() => <String>[];
 
@@ -173,7 +177,8 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
       '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}'
-      '${observers == null ? '' : 'observers: $observers,'}';
+      '${observers == null ? '' : 'observers: $observers,'}'
+      '${preload == null ? '' : 'preload: $preload,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
@@ -313,7 +318,9 @@ class GoRouteConfig extends RouteBaseConfig {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
         }
-        conditions.add('$parameterName != ${param.defaultValueCode!}');
+        conditions.add(
+          compareField(param, parameterName, param.defaultValueCode!),
+        );
       } else if (param.type.isNullableType) {
         conditions.add('$parameterName != null');
       }
@@ -530,6 +537,10 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$observers',
           ),
+          preload: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$preload',
+          ),
         );
       case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
@@ -734,6 +745,7 @@ const Map<String, String> helperNames = <String, String>{
   convertMapValueHelperName: _convertMapValueHelper,
   boolConverterHelperName: _boolConverterHelper,
   enumExtensionHelperName: _enumConverterHelper,
+  iterablesEqualHelperName: _iterableEqualsHelper,
 };
 
 const String _convertMapValueHelper = '''
@@ -764,4 +776,19 @@ const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
   T $enumExtensionHelperName(String value) =>
       entries.singleWhere((element) => element.value == value).key;
+}''';
+
+const String _iterableEqualsHelper = '''
+bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+  if (identical(iterable1, iterable2)) return true;
+  if (iterable1 == null || iterable2 == null) return false;
+  final iterator1 = iterable1.iterator;
+  final iterator2 = iterable2.iterator;
+  while (true) {
+    final hasNext1 = iterator1.moveNext();
+    final hasNext2 = iterator2.moveNext();
+    if (hasNext1 != hasNext2) return false;
+    if (!hasNext1) return true;
+    if (iterator1.current != iterator2.current) return false;
+  }
 }''';

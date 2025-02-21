@@ -598,44 +598,47 @@ extension $IterableRouteWithDefaultValuesExtension
   String get location => GoRouteData.$location(
         '/iterable-route-with-default-values',
         queryParams: {
-          if (intIterableField != const <int>[0])
+          if (!_$iterablesEqual(intIterableField, const <int>[0]))
             'int-iterable-field':
                 intIterableField.map((e) => e.toString()).toList(),
-          if (doubleIterableField != const <double>[0, 1, 2])
+          if (!_$iterablesEqual(doubleIterableField, const <double>[0, 1, 2]))
             'double-iterable-field':
                 doubleIterableField.map((e) => e.toString()).toList(),
-          if (stringIterableField != const <String>['defaultValue'])
+          if (!_$iterablesEqual(
+              stringIterableField, const <String>['defaultValue']))
             'string-iterable-field': stringIterableField.map((e) => e).toList(),
-          if (boolIterableField != const <bool>[false])
+          if (!_$iterablesEqual(boolIterableField, const <bool>[false]))
             'bool-iterable-field':
                 boolIterableField.map((e) => e.toString()).toList(),
-          if (enumIterableField !=
-              const <SportDetails>[SportDetails.tennis, SportDetails.hockey])
+          if (!_$iterablesEqual(enumIterableField,
+              const <SportDetails>[SportDetails.tennis, SportDetails.hockey]))
             'enum-iterable-field':
                 enumIterableField.map((e) => _$SportDetailsEnumMap[e]).toList(),
-          if (intListField != const <int>[0])
+          if (!_$iterablesEqual(intListField, const <int>[0]))
             'int-list-field': intListField.map((e) => e.toString()).toList(),
-          if (doubleListField != const <double>[1, 2, 3])
+          if (!_$iterablesEqual(doubleListField, const <double>[1, 2, 3]))
             'double-list-field':
                 doubleListField.map((e) => e.toString()).toList(),
-          if (stringListField !=
-              const <String>['defaultValue0', 'defaultValue1'])
+          if (!_$iterablesEqual(stringListField,
+              const <String>['defaultValue0', 'defaultValue1']))
             'string-list-field': stringListField.map((e) => e).toList(),
-          if (boolListField != const <bool>[true])
+          if (!_$iterablesEqual(boolListField, const <bool>[true]))
             'bool-list-field': boolListField.map((e) => e.toString()).toList(),
-          if (enumListField != const <SportDetails>[SportDetails.football])
+          if (!_$iterablesEqual(
+              enumListField, const <SportDetails>[SportDetails.football]))
             'enum-list-field':
                 enumListField.map((e) => _$SportDetailsEnumMap[e]).toList(),
-          if (intSetField != const <int>{0, 1})
+          if (!_$iterablesEqual(intSetField, const <int>{0, 1}))
             'int-set-field': intSetField.map((e) => e.toString()).toList(),
-          if (doubleSetField != const <double>{})
+          if (!_$iterablesEqual(doubleSetField, const <double>{}))
             'double-set-field':
                 doubleSetField.map((e) => e.toString()).toList(),
-          if (stringSetField != const <String>{'defaultValue'})
+          if (!_$iterablesEqual(stringSetField, const <String>{'defaultValue'}))
             'string-set-field': stringSetField.map((e) => e).toList(),
-          if (boolSetField != const <bool>{true, false})
+          if (!_$iterablesEqual(boolSetField, const <bool>{true, false}))
             'bool-set-field': boolSetField.map((e) => e.toString()).toList(),
-          if (enumSetField != const <SportDetails>{SportDetails.hockey})
+          if (!_$iterablesEqual(
+              enumSetField, const <SportDetails>{SportDetails.hockey}))
             'enum-set-field':
                 enumSetField.map((e) => _$SportDetailsEnumMap[e]).toList(),
         },
@@ -674,4 +677,18 @@ bool _$boolConverter(String value) {
 extension<T extends Enum> on Map<T, String> {
   T _$fromName(String value) =>
       entries.singleWhere((element) => element.value == value).key;
+}
+
+bool _$iterablesEqual<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+  if (identical(iterable1, iterable2)) return true;
+  if (iterable1 == null || iterable2 == null) return false;
+  final iterator1 = iterable1.iterator;
+  final iterator2 = iterable2.iterator;
+  while (true) {
+    final hasNext1 = iterator1.moveNext();
+    final hasNext2 = iterator2.moveNext();
+    if (hasNext1 != hasNext2) return false;
+    if (!hasNext1) return true;
+    if (iterator1.current != iterator2.current) return false;
+  }
 }

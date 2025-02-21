@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 // #docregion migrate
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
 // #enddocregion migrate
-import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
   runApp(const MyApp());
@@ -60,8 +59,9 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   /// or via some native system.
   Future<void> _getExternalCounter() async {
     final SharedPreferencesAsync prefs = SharedPreferencesAsync();
-    setState(() async {
-      _externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
+    final int externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
+    setState(() {
+      _externalCounter = externalCounter;
     });
   }
 
