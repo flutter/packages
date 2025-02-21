@@ -356,6 +356,26 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
       ) as _i4.Future<void>);
 
   @override
+  _i4.Future<void> setAllowContentAccess(bool? enabled) => (super.noSuchMethod(
+        Invocation.method(
+          #setAllowContentAccess,
+          [enabled],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setGeolocationEnabled(bool? enabled) => (super.noSuchMethod(
+        Invocation.method(
+          #setGeolocationEnabled,
+          [enabled],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
   _i4.Future<void> setTextZoom(int? textZoom) => (super.noSuchMethod(
         Invocation.method(
           #setTextZoom,

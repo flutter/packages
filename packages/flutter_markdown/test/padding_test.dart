@@ -50,6 +50,7 @@ void defineTests() {
           paddings[3].padding.along(Axis.horizontal) == paddingX * 4 * 2,
           true,
         );
+        imageCache.clear();
       },
     );
   });

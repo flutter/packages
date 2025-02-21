@@ -142,7 +142,7 @@ void defineTests() {
     testWidgets(
       'multiple inline links with same content should not throw an exception',
       (WidgetTester tester) async {
-        //Arange
+        //Arrange
         final Widget toBePumped = boilerplate(
           Column(
             children: <Widget>[
@@ -1477,6 +1477,7 @@ void defineTests() {
 
         gestureWidget.onTap!();
         expectLinkTap(linkTapResults, const MarkdownLink('moon', '/uri'));
+        imageCache.clear();
       },
     );
 

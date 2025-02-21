@@ -564,6 +564,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       'build_runner',
       'integration_test',
       'flutter_test',
+      'leak_tracker_flutter_testing',
       'mockito',
       'pigeon',
       'test',

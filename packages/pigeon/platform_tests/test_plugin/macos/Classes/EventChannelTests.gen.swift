@@ -574,3 +574,21 @@ class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
     channel.setStreamHandler(internalStreamHandler)
   }
 }
+
+class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    streamHandler: StreamConsistentNumbersStreamHandler
+  ) {
+    var channelName =
+      "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
+    if !instanceName.isEmpty {
+      channelName += ".\(instanceName)"
+    }
+    let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+    channel.setStreamHandler(internalStreamHandler)
+  }
+}

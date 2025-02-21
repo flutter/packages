@@ -24,12 +24,12 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.example.all_packages"
-    compileSdkVersion 33
+    compileSdkVersion flutter.compileSdkVersion
 
     defaultConfig {
         applicationId "com.example.all_packages"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 30
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

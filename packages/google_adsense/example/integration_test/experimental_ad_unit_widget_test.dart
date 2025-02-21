@@ -205,7 +205,8 @@ Future<void> pumpAdWidget(Widget adUnit, WidgetTester tester) async {
 
   // This extra pump is needed for the platform view to actually render in the DOM.
   await tester.pump();
-
+  // One more for skwasm.
+  await tester.pump();
   // This extra pump is needed to simulate the async behavior of the adsense JS mock.
   await tester.pumpAndSettle();
 }

@@ -5,51 +5,79 @@
 @import camera_avfoundation;
 @import XCTest;
 @import AVFoundation;
-#import <OCMock/OCMock.h>
 
-@interface FLTCam : NSObject <FlutterTexture,
-                              AVCaptureVideoDataOutputSampleBufferDelegate,
-                              AVCaptureAudioDataOutputSampleBufferDelegate>
-
-- (void)setExposurePointWithResult:(FlutterResult)result x:(double)x y:(double)y;
-@end
+#import "CameraTestUtils.h"
+#import "MockCaptureDeviceController.h"
+#import "MockDeviceOrientationProvider.h"
 
 @interface CameraExposureTests : XCTestCase
 @property(readonly, nonatomic) FLTCam *camera;
-@property(readonly, nonatomic) id mockDevice;
-@property(readonly, nonatomic) id mockUIDevice;
+@property(readonly, nonatomic) MockCaptureDeviceController *mockDevice;
+@property(readonly, nonatomic) MockDeviceOrientationProvider *mockDeviceOrientationProvider;
 @end
 
 @implementation CameraExposureTests
 
 - (void)setUp {
-  _camera = [[FLTCam alloc] init];
-  _mockDevice = OCMClassMock([AVCaptureDevice class]);
-  _mockUIDevice = OCMPartialMock([UIDevice currentDevice]);
+  MockCaptureDeviceController *mockDevice = [[MockCaptureDeviceController alloc] init];
+  _mockDeviceOrientationProvider = [[MockDeviceOrientationProvider alloc] init];
+  _mockDevice = mockDevice;
+
+  _camera = FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
+      nil, nil, nil,
+      ^id<FLTCaptureDeviceControlling>(void) {
+        return mockDevice;
+      },
+      _mockDeviceOrientationProvider);
 }
 
-- (void)tearDown {
-  [_mockDevice stopMocking];
-  [_mockUIDevice stopMocking];
-}
-
-- (void)testSetExpsourePointWithResult_SetsExposurePointOfInterest {
+- (void)testSetExposurePointWithResult_SetsExposurePointOfInterest {
   // UI is currently in landscape left orientation
-  OCMStub([(UIDevice *)_mockUIDevice orientation]).andReturn(UIDeviceOrientationLandscapeLeft);
+  _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
   // Exposure point of interest is supported
-  OCMStub([_mockDevice isExposurePointOfInterestSupported]).andReturn(true);
-  // Set mock device as the current capture device
-  [_camera setValue:_mockDevice forKey:@"captureDevice"];
-
-  // Run test
-  [_camera
-      setExposurePointWithResult:^void(id _Nullable result) {
-      }
-                               x:1
-                               y:1];
+  _mockDevice.exposurePointOfInterestSupported = YES;
 
   // Verify the focus point of interest has been set
-  OCMVerify([_mockDevice setExposurePointOfInterest:CGPointMake(1, 1)]);
+  __block CGPoint setPoint = CGPointZero;
+  _mockDevice.setExposurePointOfInterestStub = ^(CGPoint point) {
+    if (CGPointEqualToPoint(CGPointMake(1, 1), point)) {
+      setPoint = point;
+    }
+  };
+
+  // Run test
+  XCTestExpectation *completionExpectation = [self expectationWithDescription:@"Completion called"];
+  [_camera setExposurePoint:[FCPPlatformPoint makeWithX:1 y:1]
+             withCompletion:^(FlutterError *_Nullable error) {
+               XCTAssertNil(error);
+               [completionExpectation fulfill];
+             }];
+
+  [self waitForExpectationsWithTimeout:1 handler:nil];
+  XCTAssertEqual(setPoint.x, 1.0);
+  XCTAssertEqual(setPoint.y, 1.0);
+}
+
+- (void)testSetExposurePoint_WhenNotSupported_ReturnsError {
+  // UI is currently in landscape left orientation
+  _mockDeviceOrientationProvider.orientation = UIDeviceOrientationLandscapeLeft;
+  // Exposure point of interest is not supported
+  _mockDevice.exposurePointOfInterestSupported = NO;
+
+  XCTestExpectation *expectation = [self expectationWithDescription:@"Completion with error"];
+
+  // Run
+  [_camera
+      setExposurePoint:[FCPPlatformPoint makeWithX:1 y:1]
+        withCompletion:^(FlutterError *_Nullable error) {
+          XCTAssertNotNil(error);
+          XCTAssertEqualObjects(error.code, @"setExposurePointFailed");
+          XCTAssertEqualObjects(error.message, @"Device does not have exposure point capabilities");
+          [expectation fulfill];
+        }];
+
+  // Verify
+  [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 @end

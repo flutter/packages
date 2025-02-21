@@ -6030,39 +6030,39 @@ void main() {
     await tester.pumpAndSettle();
 
     GoRouterState? state = router.state;
-    expect(state?.name, 'home');
-    expect(state?.fullPath, '/');
+    expect(state.name, 'home');
+    expect(state.fullPath, '/');
 
     router.go('/books');
     await tester.pumpAndSettle();
     state = router.state;
-    expect(state?.name, 'books');
-    expect(state?.fullPath, '/books');
+    expect(state.name, 'books');
+    expect(state.fullPath, '/books');
 
     router.push('/boats');
     await tester.pumpAndSettle();
     state = router.state;
-    expect(state?.name, 'boats');
-    expect(state?.fullPath, '/boats');
+    expect(state.name, 'boats');
+    expect(state.fullPath, '/boats');
 
     router.pop();
     await tester.pumpAndSettle();
     state = router.state;
-    expect(state?.name, 'books');
-    expect(state?.fullPath, '/books');
+    expect(state.name, 'books');
+    expect(state.fullPath, '/books');
 
     router.go('/tulips');
     await tester.pumpAndSettle();
     state = router.state;
-    expect(state?.name, 'tulips');
-    expect(state?.fullPath, '/tulips');
+    expect(state.name, 'tulips');
+    expect(state.fullPath, '/tulips');
 
     router.go('/books');
     router.push('/tulips');
     await tester.pumpAndSettle();
     state = router.state;
-    expect(state?.name, 'tulips');
-    expect(state?.fullPath, '/tulips');
+    expect(state.name, 'tulips');
+    expect(state.fullPath, '/tulips');
   });
 
   testWidgets('should allow route paths without leading /',

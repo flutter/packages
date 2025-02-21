@@ -52,19 +52,19 @@ public class BillingClientFactoryImplTest {
 
   @Test
   public void playBillingOnly() {
-    // No logic to verify just ensure creation works.
+    // No logic to verify, just ensure creation works.
     BillingClient client =
         factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, null);
     assertNotNull(client);
   }
 
   @Test
   public void alternativeBillingOnly() {
-    // No logic to verify just ensure creation works.
+    // No logic to verify, just ensure creation works.
     BillingClient client =
         factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, null);
     assertNotNull(client);
   }
 
@@ -78,7 +78,7 @@ public class BillingClientFactoryImplTest {
 
     final BillingClient billingClient =
         factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.USER_CHOICE_BILLING);
+            context, mockCallbackApi, PlatformBillingChoiceMode.USER_CHOICE_BILLING, null);
 
     UserChoiceDetails details = mock(UserChoiceDetails.class);
     final String externalTransactionToken = "someLongTokenId1234";
@@ -96,6 +96,17 @@ public class BillingClientFactoryImplTest {
     assertEquals(
         callbackCaptor.getValue().getOriginalExternalTransactionId(), originalTransactionId);
     assertTrue(callbackCaptor.getValue().getProducts().isEmpty());
+  }
+
+  @Test
+  public void pendingPurchasesForPrepaidPlans() {
+    // No logic to verify, just ensure creation works.
+    Messages.PlatformPendingPurchasesParams params =
+        new Messages.PlatformPendingPurchasesParams.Builder().setEnablePrepaidPlans(true).build();
+    BillingClient client =
+        factory.createBillingClient(
+            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, params);
+    assertNotNull(client);
   }
 
   @After

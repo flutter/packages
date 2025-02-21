@@ -37,7 +37,13 @@ abstract class SharedPreferencesApi {
 
   /// Adds property to shared preferences data set of type List<String>.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool setStringList(String key, List<String> value);
+  bool setEncodedStringList(String key, String value);
+
+  /// Adds property to shared preferences data set of type List<String>.
+  ///
+  /// Deprecated, this is only here for testing purposes.
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  bool setDeprecatedStringList(String key, List<String> value);
 
   /// Removes all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

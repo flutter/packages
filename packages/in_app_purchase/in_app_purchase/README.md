@@ -216,7 +216,7 @@ the end user's payment account.
 To upgrade/downgrade an existing in-app subscription in Google Play,
 you need to provide an instance of `ChangeSubscriptionParam` with the old
 `PurchaseDetails` that the user needs to migrate from, and an optional
-`ProrationMode` with the `GooglePlayPurchaseParam` object while calling
+`ReplacementMode` with the `GooglePlayPurchaseParam` object while calling
 `InAppPurchase.buyNonConsumable`.
 
 The App Store does not require this because it provides a subscription
@@ -232,7 +232,7 @@ PurchaseParam purchaseParam = GooglePlayPurchaseParam(
     productDetails: productDetails,
     changeSubscriptionParam: ChangeSubscriptionParam(
         oldPurchaseDetails: oldPurchaseDetails,
-        prorationMode: ProrationMode.immediateWithTimeProration));
+        replacementMode: ReplacementMode.withTimeProration));
 InAppPurchase.instance
     .buyNonConsumable(purchaseParam: purchaseParam);
 ```

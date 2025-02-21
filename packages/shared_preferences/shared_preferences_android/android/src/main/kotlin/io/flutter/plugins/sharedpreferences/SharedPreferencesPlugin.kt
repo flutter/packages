@@ -30,7 +30,11 @@ import kotlinx.coroutines.runBlocking
 
 const val TAG = "SharedPreferencesPlugin"
 const val SHARED_PREFERENCES_NAME = "FlutterSharedPreferences"
+// All identifiers must match the LegacySharedPreferencesPlugin.java file, as well as the
+// strings.dart file.
 const val LIST_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu"
+// The symbol `!` was chosen as it cannot be created by the base 64 encoding used with LIST_PREFIX.
+const val JSON_LIST_PREFIX = LIST_PREFIX + "!"
 const val DOUBLE_PREFIX = "VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu"
 
 private val Context.sharedPreferencesDataStore: DataStore<Preferences> by
@@ -103,8 +107,18 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
     }
   }
 
-  /** Adds property to data store of type List<String>. */
-  override fun setStringList(
+  /** Adds property to data store of type List<String> as encoded String. */
+  override fun setEncodedStringList(
+      key: String,
+      value: String,
+      options: SharedPreferencesPigeonOptions
+  ) {
+    return runBlocking { dataStoreSetString(key, value) }
+  }
+
+  /** Deprecated, for testing purposes only. Adds property to data store of type List<String>. */
+  @Deprecated("This is just for testing, use `setEncodedStringList`")
+  override fun setDeprecatedStringList(
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
@@ -189,9 +203,33 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>? {
-    val value: List<*>? = transformPref(getString(key, options) as Any?, listEncoder) as List<*>?
-    return value?.filterIsInstance<String>()
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
+    val stringValue = getString(key, options)
+    stringValue?.let {
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that using listEncoder.
+      if (stringValue.startsWith(JSON_LIST_PREFIX)) {
+        return stringValue
+      }
+    }
+    return null
+  }
+
+  /** Gets StringList at [key] from data store. */
+  override fun getPlatformEncodedStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): List<String>? {
+    val stringValue = getString(key, options)
+    stringValue?.let {
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that using listEncoder.
+      if (!stringValue.startsWith(JSON_LIST_PREFIX) && stringValue.startsWith(LIST_PREFIX)) {
+        val value: List<*>? = transformPref(stringValue, listEncoder) as List<*>?
+        return value?.filterIsInstance<String>()
+      }
+    }
+    return null
   }
 
   /** Gets all properties from data store. */
@@ -278,7 +316,17 @@ class SharedPreferencesBackend(
   }
 
   /** Adds property to data store of type List<String>. */
-  override fun setStringList(
+  override fun setEncodedStringList(
+      key: String,
+      value: String,
+      options: SharedPreferencesPigeonOptions
+  ) {
+    return createSharedPreferences(options).edit().putString(key, value).apply()
+  }
+
+  /** Adds property to data store of type List<String>. */
+  @Deprecated("This is just for testing, use `setEncodedStringList`")
+  override fun setDeprecatedStringList(
       key: String,
       value: List<String>,
       options: SharedPreferencesPigeonOptions
@@ -339,6 +387,7 @@ class SharedPreferencesBackend(
       null
     }
   }
+
   /** Gets double at [key] from data store. */
   override fun getDouble(key: String, options: SharedPreferencesPigeonOptions): Double? {
     val preferences = createSharedPreferences(options)
@@ -348,7 +397,6 @@ class SharedPreferencesBackend(
       null
     }
   }
-
   /** Gets String at [key] from data store. */
   override fun getString(key: String, options: SharedPreferencesPigeonOptions): String? {
     val preferences = createSharedPreferences(options)
@@ -360,14 +408,30 @@ class SharedPreferencesBackend(
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): List<String>? {
+  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
     val preferences = createSharedPreferences(options)
-    return if (preferences.contains(key)) {
-      (transformPref(preferences.getString(key, ""), listEncoder) as List<*>?)?.filterIsInstance<
-          String>()
-    } else {
-      null
+    if (preferences.contains(key)) {
+      val value = preferences.getString(key, "")
+      if (value!!.startsWith(JSON_LIST_PREFIX)) {
+        return value
+      }
     }
+    return null
+  }
+
+  override fun getPlatformEncodedStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): List<String>? {
+    val preferences = createSharedPreferences(options)
+    if (preferences.contains(key)) {
+      val value = preferences.getString(key, "")
+      if (value!!.startsWith(LIST_PREFIX) && !value!!.startsWith(JSON_LIST_PREFIX)) {
+        val transformed = transformPref(preferences.getString(key, ""), listEncoder)
+        return (transformed as List<*>?)?.filterIsInstance<String>()
+      }
+    }
+    return null
   }
 
   /** Gets all properties from data store. */
@@ -401,7 +465,13 @@ internal fun preferencesFilter(key: String, value: Any?, allowList: Set<String>?
 internal fun transformPref(value: Any?, listEncoder: SharedPreferencesListEncoder): Any? {
   if (value is String) {
     if (value.startsWith(LIST_PREFIX)) {
-      return listEncoder.decode(value.substring(LIST_PREFIX.length))
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that are encoded on the platform.
+      return if (value.startsWith(JSON_LIST_PREFIX)) {
+        value
+      } else {
+        listEncoder.decode(value.substring(LIST_PREFIX.length))
+      }
     } else if (value.startsWith(DOUBLE_PREFIX)) {
       return value.substring(DOUBLE_PREFIX.length).toDouble()
     }

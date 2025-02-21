@@ -70,7 +70,8 @@ Future<void> _fullyRenderApp(WidgetTester tester) async {
   await tester.pumpWidget(const app.MyApp());
   // Pump 2 frames so the framework injects the platform view into the DOM.
   await tester.pump();
-  await tester.pump();
+  // Give the browser some time to perform DOM operations (for Wasm code)
+  await tester.pump(const Duration(milliseconds: 500));
 }
 
 // Calls [_getHtmlElementAt] passing it the center of the widget identified by

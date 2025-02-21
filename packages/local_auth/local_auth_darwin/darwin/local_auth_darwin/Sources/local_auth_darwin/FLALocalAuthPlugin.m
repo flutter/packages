@@ -317,6 +317,11 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
     if (authError.code == LAErrorBiometryNotEnrolled) {
       return @YES;
     }
+    // Biometry hardware is available, but possibly permissions were denied.
+    if (authError.code == LAErrorBiometryNotAvailable &&
+        context.biometryType != LABiometryTypeNone) {
+      return @YES;
+    }
   }
 
   return @NO;

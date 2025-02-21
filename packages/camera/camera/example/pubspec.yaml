@@ -27,6 +27,7 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  leak_tracker_flutter_testing: any
 
 flutter:
   uses-material-design: true

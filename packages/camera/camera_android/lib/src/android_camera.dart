@@ -229,6 +229,9 @@ class AndroidCamera extends CameraPlatform {
       _hostApi.resumeVideoRecording();
 
   @override
+  bool supportsImageStreaming() => true;
+
+  @override
   Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
       {CameraImageStreamOptions? options}) {
     _installStreamController(onListen: _onFrameStreamListen);

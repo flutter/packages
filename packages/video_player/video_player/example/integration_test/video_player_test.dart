@@ -199,6 +199,10 @@ void main() {
         expect(controller.value.position,
             lessThanOrEqualTo(controller.value.duration));
       },
+      // Flaky on the web, headless browsers don't like to seek to non-buffered
+      // positions of a video (and since this isn't even injecting the video
+      // element on the page, the video never starts buffering with the test)
+      skip: kIsWeb,
     );
 
     testWidgets('test video player view with local asset',

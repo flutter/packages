@@ -109,7 +109,7 @@ updates:
       test-dependencies:
         patterns:
           - "androidx.test:*"
-          - "io.mockk:mockk:*"
+          - "io.mockk:*"
           - "junit:junit"
           - "org.mockito:*"
           - "org.robolectric:*"

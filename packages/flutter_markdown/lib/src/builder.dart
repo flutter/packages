@@ -346,16 +346,20 @@ class MarkdownBuilder implements md.NodeVisitor {
       child = builders[_blocks.last.tag!]!
           .visitText(text, styleSheet.styles[_blocks.last.tag!]);
     } else if (_blocks.last.tag == 'pre') {
-      final ScrollController preScrollController = ScrollController();
-      child = Scrollbar(
-        controller: preScrollController,
-        child: SingleChildScrollView(
-          controller: preScrollController,
-          scrollDirection: Axis.horizontal,
-          padding: styleSheet.codeblockPadding,
-          child: _buildRichText(delegate.formatText(styleSheet, text.text)),
-        ),
-      );
+      child = _ScrollControllerBuilder(
+          builder: (BuildContext context, ScrollController preScrollController,
+              Widget? child) {
+            return Scrollbar(
+              controller: preScrollController,
+              child: SingleChildScrollView(
+                controller: preScrollController,
+                scrollDirection: Axis.horizontal,
+                padding: styleSheet.codeblockPadding,
+                child: child,
+              ),
+            );
+          },
+          child: _buildRichText(delegate.formatText(styleSheet, text.text)));
     } else {
       child = _buildRichText(
         TextSpan(
@@ -448,15 +452,20 @@ class MarkdownBuilder implements md.NodeVisitor {
         }
       } else if (tag == 'table') {
         if (styleSheet.tableColumnWidth is FixedColumnWidth) {
-          final ScrollController tableScrollController = ScrollController();
-          child = Scrollbar(
-            controller: tableScrollController,
-            child: SingleChildScrollView(
-              controller: tableScrollController,
-              scrollDirection: Axis.horizontal,
-              padding: styleSheet.tablePadding,
-              child: _buildTable(),
-            ),
+          child = _ScrollControllerBuilder(
+            builder: (BuildContext context,
+                ScrollController tableScrollController, Widget? child) {
+              return Scrollbar(
+                controller: tableScrollController,
+                child: SingleChildScrollView(
+                  controller: tableScrollController,
+                  scrollDirection: Axis.horizontal,
+                  padding: styleSheet.tablePadding,
+                  child: child,
+                ),
+              );
+            },
+            child: _buildTable(),
           );
         } else {
           child = _buildTable();
@@ -1015,5 +1024,35 @@ class MarkdownBuilder implements md.NodeVisitor {
         key: k,
       );
     }
+  }
+}
+
+class _ScrollControllerBuilder extends StatefulWidget {
+  const _ScrollControllerBuilder({
+    required this.builder,
+    this.child,
+  });
+
+  final ValueWidgetBuilder<ScrollController> builder;
+
+  final Widget? child;
+
+  @override
+  State<_ScrollControllerBuilder> createState() =>
+      _ScrollControllerBuilderState();
+}
+
+class _ScrollControllerBuilderState extends State<_ScrollControllerBuilder> {
+  final ScrollController _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.builder(context, _controller, widget.child);
   }
 }
