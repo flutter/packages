@@ -61,8 +61,10 @@ void main() {
                 forceAccountName: 'fakeEmailAddress@example.com',
               ),
             ),
-        throwsA(isInstanceOf<PlatformException>().having(
-            (PlatformException e) => e.code, 'code', 'unsupported-options')));
+        throwsA(isInstanceOf<ArgumentError>().having(
+            (ArgumentError e) => e.message,
+            'message',
+            'Force account name is not supported on iOS')));
   });
 
   test('signInSilently transforms platform data to GoogleSignInUserData',
