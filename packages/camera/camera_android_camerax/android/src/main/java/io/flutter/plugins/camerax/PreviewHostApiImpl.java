@@ -155,6 +155,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   public void releaseFlutterSurfaceTexture() {
     if (flutterSurfaceProducer != null) {
       flutterSurfaceProducer.release();
+      return;
     }
     throw new IllegalStateException(
         "releaseFlutterSurfaceTexture() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
