@@ -31,5 +31,5 @@ topics:
   - google-sign-in
 
 false_secrets:
-  - example/android/app/google-services.json
-  - example/ios/Runner/GoogleService-Info.plist
+ - example/android/app/google-services.json
+ - example/ios/Runner/GoogleService-Info.plist
