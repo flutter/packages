@@ -379,6 +379,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
+  ClosedCaptionFile? _previousClosedCaptionFile;
   List<Caption>? _sortedCaptions;
 
   Timer? _timer;
@@ -791,12 +792,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void _sortClosedCaption() {
-    _sortedCaptions = _closedCaptionFile?.captions;
+    // Only sort if the file has changed
+    if (_previousClosedCaptionFile != _closedCaptionFile) {
+      _sortedCaptions = _closedCaptionFile?.captions;
 
-    /// Sort the captions by start time to allow a binary search.
-    _sortedCaptions?.sort((Caption a, Caption b) {
-      return a.start.compareTo(b.start);
-    });
+      /// Sort the captions by start time to allow a binary search.
+      _sortedCaptions?.sort((Caption a, Caption b) {
+        return a.start.compareTo(b.start);
+      });
+
+      _previousClosedCaptionFile = _closedCaptionFile;
+    }
   }
 
   Future<void> _updateClosedCaptionWithFuture(
