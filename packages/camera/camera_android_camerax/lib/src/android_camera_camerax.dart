@@ -346,6 +346,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       requireLensFacing: cameraSelectorLensDirection,
     );
     // Start listening for device orientation changes preceding camera creation.
+    // TODO(bparrishMines): `isFrontFacing` and `sensorOrientation` aren't used
+    // by the DeviceOrientationManager and can be removed if this was
+    // intentional.
     unawaited(deviceOrientationManager.startListeningForDeviceOrientationChange(
       cameraIsFrontFacing,
       cameraDescription.sensorOrientation,
