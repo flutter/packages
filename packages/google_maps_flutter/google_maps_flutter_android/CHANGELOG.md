@@ -1,3 +1,7 @@
+## 2.14.13
+
+* Updates com.google.maps.android:android-maps-utils from 3.6.0 to 3.9.0.
+
 ## 2.14.12
 
 * Updates androidx.annotation:annotation to 1.9.1.
