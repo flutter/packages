@@ -38,7 +38,7 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
           builder.requireLensFacing(CameraSelector.LENS_FACING_EXTERNAL);
           break;
         case UNKNOWN:
-          builder.requireLensFacing(CameraSelector.LENS_FACING_FRONT);
+          builder.requireLensFacing(CameraSelector.LENS_FACING_UNKNOWN);
           break;
       }
     }
@@ -57,7 +57,7 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
     return CameraSelector.DEFAULT_FRONT_CAMERA;
   }
 
-  // List<? extends CameraInfo> is the same as List<CameraInfo>.
+  // List<? extends CameraInfo> can be considered the same as List<CameraInfo>.
   @SuppressWarnings("unchecked")
   @NonNull
   @Override
