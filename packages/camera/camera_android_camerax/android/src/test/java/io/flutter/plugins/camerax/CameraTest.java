@@ -4,17 +4,14 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraControl;
 import androidx.camera.core.CameraInfo;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CameraTest {
   @Test
@@ -25,7 +22,7 @@ public class CameraTest {
     final androidx.camera.core.CameraInfo value = mock(CameraInfo.class);
     when(instance.getCameraInfo()).thenReturn(value);
 
-    assertEquals(value, api.getCameraInfo(instance ));
+    assertEquals(value, api.getCameraInfo(instance));
   }
 
   @Test

@@ -4,25 +4,24 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.CameraControl;
-import androidx.camera.core.FocusMeteringAction;
-import androidx.camera.core.FocusMeteringResult;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import androidx.camera.core.CameraControl;
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.FocusMeteringResult;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 public class CameraControlTest {
   @SuppressWarnings("unchecked")
@@ -38,10 +37,13 @@ public class CameraControlTest {
 
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final ArgumentCaptor<FutureCallback<Void>> futureCallbackCaptor =
-              ArgumentCaptor.forClass(FutureCallback.class);
+          ArgumentCaptor.forClass(FutureCallback.class);
 
       final boolean[] isSuccess = {false};
-      api.enableTorch(instance, enable, ResultCompat.asCompatCallback(
+      api.enableTorch(
+          instance,
+          enable,
+          ResultCompat.asCompatCallback(
               reply -> {
                 isSuccess[0] = reply.isSuccess();
                 return null;
@@ -49,9 +51,8 @@ public class CameraControlTest {
 
       verify(instance).enableTorch(enable);
       mockedFutures.verify(
-              () ->
-                      Futures.addCallback(
-                              eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       final FutureCallback<Void> successfulCallback = futureCallbackCaptor.getValue();
@@ -74,10 +75,13 @@ public class CameraControlTest {
 
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final ArgumentCaptor<FutureCallback<Void>> futureCallbackCaptor =
-              ArgumentCaptor.forClass(FutureCallback.class);
+          ArgumentCaptor.forClass(FutureCallback.class);
 
       final boolean[] isSuccess = {false};
-      api.setZoomRatio(instance, ratio, ResultCompat.asCompatCallback(
+      api.setZoomRatio(
+          instance,
+          ratio,
+          ResultCompat.asCompatCallback(
               reply -> {
                 isSuccess[0] = reply.isSuccess();
                 return null;
@@ -85,9 +89,8 @@ public class CameraControlTest {
 
       verify(instance).setZoomRatio(ratio);
       mockedFutures.verify(
-              () ->
-                      Futures.addCallback(
-                              eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       final FutureCallback<Void> successfulCallback = futureCallbackCaptor.getValue();
@@ -110,10 +113,13 @@ public class CameraControlTest {
 
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final ArgumentCaptor<FutureCallback<FocusMeteringResult>> futureCallbackCaptor =
-              ArgumentCaptor.forClass(FutureCallback.class);
+          ArgumentCaptor.forClass(FutureCallback.class);
 
       final FocusMeteringResult[] resultArray = {null};
-      api.startFocusAndMetering(instance, action, ResultCompat.asCompatCallback(
+      api.startFocusAndMetering(
+          instance,
+          action,
+          ResultCompat.asCompatCallback(
               reply -> {
                 resultArray[0] = reply.getOrNull();
                 return null;
@@ -121,12 +127,12 @@ public class CameraControlTest {
 
       verify(instance).startFocusAndMetering(action);
       mockedFutures.verify(
-              () ->
-                      Futures.addCallback(
-                              eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
-      final FutureCallback<FocusMeteringResult> successfulCallback = futureCallbackCaptor.getValue();
+      final FutureCallback<FocusMeteringResult> successfulCallback =
+          futureCallbackCaptor.getValue();
 
       final FocusMeteringResult result = mock(FocusMeteringResult.class);
       successfulCallback.onSuccess(result);
@@ -146,10 +152,12 @@ public class CameraControlTest {
 
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final ArgumentCaptor<FutureCallback<Void>> futureCallbackCaptor =
-              ArgumentCaptor.forClass(FutureCallback.class);
+          ArgumentCaptor.forClass(FutureCallback.class);
 
       final boolean[] isSuccess = {false};
-      api.cancelFocusAndMetering(instance, ResultCompat.asCompatCallback(
+      api.cancelFocusAndMetering(
+          instance,
+          ResultCompat.asCompatCallback(
               reply -> {
                 isSuccess[0] = reply.isSuccess();
                 return null;
@@ -157,9 +165,8 @@ public class CameraControlTest {
 
       verify(instance).cancelFocusAndMetering();
       mockedFutures.verify(
-              () ->
-                      Futures.addCallback(
-                              eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       final FutureCallback<Void> successfulCallback = futureCallbackCaptor.getValue();
@@ -182,10 +189,13 @@ public class CameraControlTest {
 
     try (MockedStatic<Futures> mockedFutures = Mockito.mockStatic(Futures.class)) {
       final ArgumentCaptor<FutureCallback<Integer>> futureCallbackCaptor =
-              ArgumentCaptor.forClass(FutureCallback.class);
+          ArgumentCaptor.forClass(FutureCallback.class);
 
       final Long[] resultArray = {-1L};
-      api.setExposureCompensationIndex(instance, index, ResultCompat.asCompatCallback(
+      api.setExposureCompensationIndex(
+          instance,
+          index,
+          ResultCompat.asCompatCallback(
               reply -> {
                 resultArray[0] = reply.getOrNull();
                 return null;
@@ -193,9 +203,8 @@ public class CameraControlTest {
 
       verify(instance).setExposureCompensationIndex(index);
       mockedFutures.verify(
-              () ->
-                      Futures.addCallback(
-                              eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
+          () ->
+              Futures.addCallback(eq(mockListenableFuture), futureCallbackCaptor.capture(), any()));
       mockedFutures.clearInvocations();
 
       final FutureCallback<Integer> successfulCallback = futureCallbackCaptor.getValue();

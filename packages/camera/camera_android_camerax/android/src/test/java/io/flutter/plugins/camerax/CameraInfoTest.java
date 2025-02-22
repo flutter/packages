@@ -4,20 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraState;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;
-
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class CameraInfoTest {
   @Test
@@ -54,16 +50,15 @@ public class CameraInfoTest {
     assertEquals(value, api.exposureState(instance));
   }
 
-    @SuppressWarnings("unchecked")
+  @SuppressWarnings("unchecked")
   @Test
   public void getZoomState_retrievesExpectedZoomState() {
     final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
 
     final CameraInfo instance = mock(CameraInfo.class);
-      final LiveData<ZoomState> value = mock(LiveData.class);
+    final LiveData<ZoomState> value = mock(LiveData.class);
     when(instance.getZoomState()).thenReturn(value);
 
-    assertEquals(value, api.getZoomState(instance ).getLiveData());
+    assertEquals(value, api.getZoomState(instance).getLiveData());
   }
-
 }

@@ -21,8 +21,8 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
     super(pigeonRegistrar);
   }
 
-    @ExperimentalCamera2Interop
-    CaptureRequestOptions.Builder createBuilder() {
+  @ExperimentalCamera2Interop
+  CaptureRequestOptions.Builder createBuilder() {
     return new CaptureRequestOptions.Builder();
   }
 

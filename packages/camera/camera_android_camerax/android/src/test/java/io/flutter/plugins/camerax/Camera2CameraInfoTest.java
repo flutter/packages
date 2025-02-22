@@ -4,28 +4,23 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.camera2.interop.Camera2CameraInfo;
-import androidx.camera.core.CameraInfo;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import android.hardware.camera2.CameraCharacteristics;
-
+import androidx.camera.camera2.interop.Camera2CameraInfo;
+import androidx.camera.core.CameraInfo;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import org.mockito.stubbing.Answer;
 
 public class Camera2CameraInfoTest {
   @Test
   public void from() {
-    final PigeonApiCamera2CameraInfo api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
+    final PigeonApiCamera2CameraInfo api =
+        new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
 
     final CameraInfo mockCameraInfo = mock(CameraInfo.class);
     final Camera2CameraInfo mockCamera2CameraInfo = mock(Camera2CameraInfo.class);
@@ -42,19 +37,21 @@ public class Camera2CameraInfoTest {
 
   @Test
   public void getCameraId_returnsExpectedId() {
-    final PigeonApiCamera2CameraInfo api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
+    final PigeonApiCamera2CameraInfo api =
+        new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
 
     final Camera2CameraInfo instance = mock(Camera2CameraInfo.class);
     final String value = "myString";
     when(instance.getCameraId()).thenReturn(value);
 
-    assertEquals(value, api.getCameraId(instance ));
+    assertEquals(value, api.getCameraId(instance));
   }
 
   @SuppressWarnings("unchecked")
   @Test
   public void getCameraCharacteristic() {
-    final PigeonApiCamera2CameraInfo api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
+    final PigeonApiCamera2CameraInfo api =
+        new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
 
     final Camera2CameraInfo instance = mock(Camera2CameraInfo.class);
     final CameraCharacteristics.Key<Integer> key = mock(CameraCharacteristics.Key.class);

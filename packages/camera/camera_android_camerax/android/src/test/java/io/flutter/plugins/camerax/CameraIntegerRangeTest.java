@@ -4,20 +4,17 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
+
 import android.util.Range;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class CameraIntegerRangeTest {
   @SuppressWarnings("unchecked")
   @Test
   public void pigeon_defaultConstructor() {
-    final PigeonApiCameraIntegerRange api = new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
+    final PigeonApiCameraIntegerRange api =
+        new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
 
     final long lower = 2;
     final long upper = 1;
@@ -29,7 +26,8 @@ public class CameraIntegerRangeTest {
 
   @Test
   public void lower() {
-    final PigeonApiCameraIntegerRange api = new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
+    final PigeonApiCameraIntegerRange api =
+        new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
 
     final int lower = 3;
     final Range<Integer> instance = new Range<>(lower, 4);
@@ -39,7 +37,8 @@ public class CameraIntegerRangeTest {
 
   @Test
   public void upper() {
-    final PigeonApiCameraIntegerRange api = new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
+    final PigeonApiCameraIntegerRange api =
+        new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
 
     final int upper = 4;
     final Range<Integer> instance = new Range<>(0, upper);

@@ -8,12 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.isNotNull;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
@@ -24,17 +19,13 @@ import androidx.lifecycle.LifecycleOwner;
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.camerax.CameraPermissionsManager.PermissionsRegistry;
 import io.flutter.view.TextureRegistry;
-
 import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 
-import java.util.Objects;
 
 public class CameraAndroidCameraxPluginTest {
   @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
@@ -83,7 +74,7 @@ public class CameraAndroidCameraxPluginTest {
   @Test
   public void onAttachedToActivity_setsActivityAsNeededAndPermissionsRegistry() {
     final Activity mockActivity =
-            mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
+        mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
 
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
@@ -104,7 +95,7 @@ public class CameraAndroidCameraxPluginTest {
   public void
       onDetachedFromActivityForConfigChanges_removesReferencesToActivityPluginBindingAndActivity() {
     final Activity mockActivity =
-            mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
+        mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
 
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
@@ -126,7 +117,7 @@ public class CameraAndroidCameraxPluginTest {
       onDetachedFromActivityForConfigChanges_setsContextReferencesBasedOnFlutterPluginBinding() {
     final Context mockContext = mock(Context.class);
     final Activity mockActivity =
-            mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
+        mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
 
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mockContext);
@@ -148,7 +139,7 @@ public class CameraAndroidCameraxPluginTest {
   public void
       onReattachedToActivityForConfigChanges_setsLifecycleOwnerAsActivityIfLifecycleOwnerAsNeeded() {
     final Activity mockActivity =
-            mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
+        mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
 
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
@@ -186,7 +177,7 @@ public class CameraAndroidCameraxPluginTest {
   @Test
   public void onReattachedToActivityForConfigChanges_setsActivityAndPermissionsRegistryAsNeeded() {
     final Activity mockActivity =
-            mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
+        mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
 
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mock(Context.class));
@@ -203,12 +194,11 @@ public class CameraAndroidCameraxPluginTest {
     assertNotNull(plugin.proxyApiRegistrar.getPermissionsRegistry());
   }
 
-
   @Test
   public void onDetachedFromActivity_setsContextReferencesBasedOnFlutterPluginBinding() {
     final Context mockContext = mock(Context.class);
     final Activity mockActivity =
-            mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
+        mock(Activity.class, withSettings().extraInterfaces(LifecycleOwner.class));
 
     when(flutterPluginBinding.getBinaryMessenger()).thenReturn(mock(BinaryMessenger.class));
     when(flutterPluginBinding.getApplicationContext()).thenReturn(mockContext);
