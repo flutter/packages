@@ -21,13 +21,18 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
     super(pigeonRegistrar);
   }
 
+    @ExperimentalCamera2Interop
+    CaptureRequestOptions.Builder createBuilder() {
+    return new CaptureRequestOptions.Builder();
+  }
+
   @SuppressWarnings("unchecked")
   @ExperimentalCamera2Interop
   @NonNull
   @Override
   public CaptureRequestOptions pigeon_defaultConstructor(
       @NonNull Map<CaptureRequest.Key<?>, ?> options) {
-    final CaptureRequestOptions.Builder builder = new CaptureRequestOptions.Builder();
+    final CaptureRequestOptions.Builder builder = createBuilder();
 
     for (final Map.Entry<CaptureRequest.Key<?>, ?> option : options.entrySet()) {
       Object optionValue = option.getValue();
