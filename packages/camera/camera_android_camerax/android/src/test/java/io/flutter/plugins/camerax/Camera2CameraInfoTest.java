@@ -41,7 +41,7 @@ public class Camera2CameraInfoTest {
   }
 
   @Test
-  public void getCameraId() {
+  public void getCameraId_returnsExpectedId() {
     final PigeonApiCamera2CameraInfo api = new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
 
     final Camera2CameraInfo instance = mock(Camera2CameraInfo.class);
