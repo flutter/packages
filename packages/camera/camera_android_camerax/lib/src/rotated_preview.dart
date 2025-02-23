@@ -6,9 +6,11 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:meta/meta.dart';
 
 /// Widget that rotates the camera preview to be upright according to the
-/// current device orientation.
+/// current user interface orientation.
+@internal
 final class RotatedPreview extends StatefulWidget {
   /// Creates [RotatedPreview] that will correct the preview
   /// rotation assuming that the front camera is being used.

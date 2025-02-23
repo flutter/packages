@@ -968,8 +968,6 @@ void main() {
         enableAudio: enableAudio);
 
     expect(camera.sensorOrientationDegrees, testSensorOrientation);
-    expect(camera.handlesCropAndRotation, testHandlesCropAndRotation);
-    expect(camera.initialDeviceOrientation, testUiOrientation);
   });
 
   test(

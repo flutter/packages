@@ -239,17 +239,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   late bool cameraIsFrontFacing;
 
   /// The camera sensor orientation.
+  ///
+  /// This can change if the camera being used changes. Also, it is independent
+  /// of the device orientation or user interface orientation.
   @visibleForTesting
   late double sensorOrientationDegrees;
 
   /// Whether or not the Android surface producer automatically handles
   /// correcting the rotation of camera previews for the device this plugin runs on.
-  @visibleForTesting
-  late bool handlesCropAndRotation;
+  late bool _handlesCropAndRotation;
 
   /// The initial orientation of the device when the camera is created.
-  @visibleForTesting
-  late DeviceOrientation initialDeviceOrientation;
+  late DeviceOrientation _initialDeviceOrientation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -386,14 +387,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
-    final Camera2CameraInfo camera2CameraInfo =
-        await proxy.getCamera2CameraInfo(cameraInfo!);
-
-    sensorOrientationDegrees =
-        (await proxy.getSensorOrientation(camera2CameraInfo)).toDouble();
-    handlesCropAndRotation =
+    sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
+    _handlesCropAndRotation =
         await proxy.previewSurfaceProducerHandlesCropAndRotation(preview!);
-    initialDeviceOrientation = await proxy.getUiOrientation();
+    _initialDeviceOrientation = await proxy.getUiOrientation();
 
     return flutterSurfaceTextureId;
   }
@@ -847,7 +844,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     final Widget preview = Texture(textureId: cameraId);
 
-    if (handlesCropAndRotation) {
+    if (_handlesCropAndRotation) {
       return preview;
     }
 
@@ -856,14 +853,14 @@ class AndroidCameraCameraX extends CameraPlatform {
             .map((DeviceOrientationChangedEvent e) => e.orientation);
     if (cameraIsFrontFacing) {
       return RotatedPreview.frontFacingCamera(
-        initialDeviceOrientation,
+        _initialDeviceOrientation,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
         child: preview,
       );
     } else {
       return RotatedPreview.backFacingCamera(
-        initialDeviceOrientation,
+        _initialDeviceOrientation,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
         child: preview,
