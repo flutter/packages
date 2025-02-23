@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat;
  * native class or an instance of that class.
  */
 class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
-  private long clearFinalizedWeakReferencesIntervalDefaultValue;
   static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS = 1000;
 
   @NonNull
