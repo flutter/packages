@@ -64,7 +64,10 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
 /// Includes test cases related to sample buffer handling for FLTCam class.
 final class CameraSampleBufferTests: XCTestCase {
   private func createCamera() -> (
-    FLTCam, MockAssetWriter, MockAssetWriterInputPixelBufferAdaptor, MockAssetWriterInput,
+    FLTCam,
+    MockAssetWriter,
+    MockAssetWriterInputPixelBufferAdaptor,
+    MockAssetWriterInput,
     MockCaptureConnection
   ) {
     let assetWriter = MockAssetWriter()
@@ -73,7 +76,11 @@ final class CameraSampleBufferTests: XCTestCase {
 
     let configuration = FLTCreateTestCameraConfiguration()
     configuration.mediaSettings = FCPPlatformMediaSettings.make(
-      with: .medium, framesPerSecond: nil, videoBitrate: nil, audioBitrate: nil, enableAudio: true)
+      with: .medium,
+      framesPerSecond: nil,
+      videoBitrate: nil,
+      audioBitrate: nil,
+      enableAudio: true)
     configuration.mediaSettingsWrapper = FakeMediaSettingsAVWrapper(inputMock: input)
 
     configuration.assetWriterFactory = { url, fileType, error in
