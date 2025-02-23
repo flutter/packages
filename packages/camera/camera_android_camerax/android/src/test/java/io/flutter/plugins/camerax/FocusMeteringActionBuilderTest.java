@@ -4,21 +4,20 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.MeteringPoint;
-import androidx.camera.core.FocusMeteringAction;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.MeteringPoint;
+import org.junit.Test;
+
 public class FocusMeteringActionBuilderTest {
   @Test
   public void addPoint() {
-    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+    final PigeonApiFocusMeteringActionBuilder api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
     final FocusMeteringAction.Builder instance = mock(FocusMeteringAction.Builder.class);
     final androidx.camera.core.MeteringPoint point = mock(MeteringPoint.class);
@@ -29,7 +28,8 @@ public class FocusMeteringActionBuilderTest {
 
   @Test
   public void addPointWithMode() {
-    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+    final PigeonApiFocusMeteringActionBuilder api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
     final FocusMeteringAction.Builder instance = mock(FocusMeteringAction.Builder.class);
     final androidx.camera.core.MeteringPoint point = mock(MeteringPoint.class);
@@ -41,7 +41,8 @@ public class FocusMeteringActionBuilderTest {
 
   @Test
   public void disableAutoCancel() {
-    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+    final PigeonApiFocusMeteringActionBuilder api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
     final FocusMeteringAction.Builder instance = mock(FocusMeteringAction.Builder.class);
     api.disableAutoCancel(instance);
@@ -51,12 +52,13 @@ public class FocusMeteringActionBuilderTest {
 
   @Test
   public void build() {
-    final PigeonApiFocusMeteringActionBuilder api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
+    final PigeonApiFocusMeteringActionBuilder api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
     final FocusMeteringAction.Builder instance = mock(FocusMeteringAction.Builder.class);
     final androidx.camera.core.FocusMeteringAction value = mock(FocusMeteringAction.class);
     when(instance.build()).thenReturn(value);
 
-    assertEquals(value, api.build(instance ));
+    assertEquals(value, api.build(instance));
   }
 }

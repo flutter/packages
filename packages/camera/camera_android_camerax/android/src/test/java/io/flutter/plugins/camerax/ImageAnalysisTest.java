@@ -4,31 +4,25 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ImageAnalysis;
-import androidx.camera.core.resolutionselector.ResolutionSelector;
-import androidx.camera.core.ImageAnalysis.Analyzer;
-import androidx.core.content.ContextCompat;
-
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.runner.RunWith;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
-import org.robolectric.RobolectricTestRunner;
-
 import static org.mockito.Mockito.any;
-
-import java.util.concurrent.Executor;
-
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.view.Surface;
+import androidx.camera.core.ImageAnalysis;
+import androidx.camera.core.ImageAnalysis.Analyzer;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.core.content.ContextCompat;
+import java.util.concurrent.Executor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class ImageAnalysisTest {
@@ -38,7 +32,8 @@ public class ImageAnalysisTest {
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
-    final ImageAnalysis imageAnalysis = api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution);
+    final ImageAnalysis imageAnalysis =
+        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution);
 
     assertEquals(imageAnalysis.getResolutionSelector(), mockResolutionSelector);
     assertEquals(imageAnalysis.getTargetRotation(), Surface.ROTATION_0);
@@ -49,7 +44,8 @@ public class ImageAnalysisTest {
     final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
     final ImageAnalysis instance = mock(ImageAnalysis.class);
-    final androidx.camera.core.resolutionselector.ResolutionSelector value = mock(ResolutionSelector.class);
+    final androidx.camera.core.resolutionselector.ResolutionSelector value =
+        mock(ResolutionSelector.class);
     when(instance.getResolutionSelector()).thenReturn(value);
 
     assertEquals(value, api.resolutionSelector(instance));
@@ -63,10 +59,10 @@ public class ImageAnalysisTest {
     final androidx.camera.core.ImageAnalysis.Analyzer analyzer = mock(Analyzer.class);
 
     try (MockedStatic<ContextCompat> mockedContextCompat =
-                 Mockito.mockStatic(ContextCompat.class)) {
+        Mockito.mockStatic(ContextCompat.class)) {
       mockedContextCompat
-              .when(() -> ContextCompat.getMainExecutor(any()))
-              .thenAnswer((Answer<Executor>) invocation -> mock(Executor.class));
+          .when(() -> ContextCompat.getMainExecutor(any()))
+          .thenAnswer((Answer<Executor>) invocation -> mock(Executor.class));
 
       api.setAnalyzer(instance, analyzer);
 
@@ -79,7 +75,7 @@ public class ImageAnalysisTest {
     final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
     final ImageAnalysis instance = mock(ImageAnalysis.class);
-    api.clearAnalyzer(instance );
+    api.clearAnalyzer(instance);
 
     verify(instance).clearAnalyzer();
   }

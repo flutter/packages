@@ -4,26 +4,21 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.MeteringPoint;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-
 import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
 public class FocusMeteringActionTest {
   @Test
   public void meteringPointsAe() {
-    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
-
+    final PigeonApiFocusMeteringAction api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 
     final FocusMeteringAction instance = mock(FocusMeteringAction.class);
     final List<MeteringPoint> value = Collections.singletonList(mock(MeteringPoint.class));
@@ -34,10 +29,12 @@ public class FocusMeteringActionTest {
 
   @Test
   public void meteringPointsAf() {
-    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
+    final PigeonApiFocusMeteringAction api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 
     final FocusMeteringAction instance = mock(FocusMeteringAction.class);
-    final List<androidx.camera.core.MeteringPoint> value = Collections.singletonList(mock(MeteringPoint.class));
+    final List<androidx.camera.core.MeteringPoint> value =
+        Collections.singletonList(mock(MeteringPoint.class));
     when(instance.getMeteringPointsAf()).thenReturn(value);
 
     assertEquals(value, api.meteringPointsAf(instance));
@@ -45,10 +42,12 @@ public class FocusMeteringActionTest {
 
   @Test
   public void meteringPointsAwb() {
-    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
+    final PigeonApiFocusMeteringAction api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 
     final FocusMeteringAction instance = mock(FocusMeteringAction.class);
-    final List<androidx.camera.core.MeteringPoint> value = Collections.singletonList(mock(MeteringPoint.class));
+    final List<androidx.camera.core.MeteringPoint> value =
+        Collections.singletonList(mock(MeteringPoint.class));
     when(instance.getMeteringPointsAwb()).thenReturn(value);
 
     assertEquals(value, api.meteringPointsAwb(instance));
@@ -56,7 +55,8 @@ public class FocusMeteringActionTest {
 
   @Test
   public void isAutoCancelEnabled() {
-    final PigeonApiFocusMeteringAction api = new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
+    final PigeonApiFocusMeteringAction api =
+        new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 
     final FocusMeteringAction instance = mock(FocusMeteringAction.class);
     final Boolean value = true;

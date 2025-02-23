@@ -109,6 +109,12 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     pigeon_instance.setTargetRotation((int) rotation);
   }
 
+  @Nullable
+  @Override
+  public ResolutionSelector resolutionSelector(@NonNull ImageCapture pigeon_instance) {
+    return pigeon_instance.getResolutionSelector();
+  }
+
   ImageCapture.OutputFileOptions createImageCaptureOutputFileOptions(@NonNull File file) {
     return new ImageCapture.OutputFileOptions.Builder(file).build();
   }
@@ -127,11 +133,5 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
         ResultCompat.failure(exception, callback);
       }
     };
-  }
-
-  @Nullable
-  @Override
-  public ResolutionSelector resolutionSelector(@NonNull ImageCapture pigeon_instance) {
-    return pigeon_instance.getResolutionSelector();
   }
 }
