@@ -4,20 +4,16 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ImageProxy;
-import androidx.camera.core.ImageProxy.PlaneProxy;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import androidx.camera.core.ImageProxy;
+import androidx.camera.core.ImageProxy.PlaneProxy;
+import java.util.Collections;
+import java.util.List;
+import org.junit.Test;
 
 public class ImageProxyTest {
   @Test
@@ -59,7 +55,7 @@ public class ImageProxyTest {
 
     final ImageProxy instance = mock(ImageProxy.class);
     final List<PlaneProxy> value = Collections.singletonList(mock(PlaneProxy.class));
-    when(instance.getPlanes()).thenReturn(value.toArray(new PlaneProxy[]{}));
+    when(instance.getPlanes()).thenReturn(value.toArray(new PlaneProxy[] {}));
 
     assertEquals(value, api.getPlanes(instance));
   }
@@ -69,7 +65,7 @@ public class ImageProxyTest {
     final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
 
     final ImageProxy instance = mock(ImageProxy.class);
-    api.close(instance );
+    api.close(instance);
 
     verify(instance).close();
   }

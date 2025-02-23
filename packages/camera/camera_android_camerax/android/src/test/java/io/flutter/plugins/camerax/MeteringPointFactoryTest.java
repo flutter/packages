@@ -4,21 +4,19 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.MeteringPointFactory;
-import androidx.camera.core.MeteringPoint;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import androidx.camera.core.MeteringPoint;
+import androidx.camera.core.MeteringPointFactory;
+import org.junit.Test;
 
 public class MeteringPointFactoryTest {
   @Test
   public void createPoint() {
-    final PigeonApiMeteringPointFactory api = new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
+    final PigeonApiMeteringPointFactory api =
+        new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
 
     final MeteringPointFactory instance = mock(MeteringPointFactory.class);
     final double x = 1.0;
@@ -31,7 +29,8 @@ public class MeteringPointFactoryTest {
 
   @Test
   public void createPointWithSize() {
-    final PigeonApiMeteringPointFactory api = new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
+    final PigeonApiMeteringPointFactory api =
+        new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
 
     final MeteringPointFactory instance = mock(MeteringPointFactory.class);
     final double x = 1.0;
