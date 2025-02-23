@@ -25,8 +25,13 @@ final class PhotoCaptureTests: XCTestCase {
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      guard let unwrappedSettings = try? XCTUnwrap(settings, "Settings is unexpectedly nil") else {
+        XCTFail("Settings is unexpectedly nil")
+        return
+      }
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings!.uniqueID) as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates.object(forKey: unwrappedSettings.uniqueID)
+        as? FLTSavePhotoDelegate
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -57,8 +62,13 @@ final class PhotoCaptureTests: XCTestCase {
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      guard let unwrappedSettings = try? XCTUnwrap(settings, "Settings is unexpectedly nil") else {
+        XCTFail("Settings is unexpectedly nil")
+        return
+      }
       let delegate =
-        cam.inProgressSavePhotoDelegates.object(forKey: settings!.uniqueID) as? FLTSavePhotoDelegate
+        cam.inProgressSavePhotoDelegates.object(forKey: unwrappedSettings.uniqueID)
+        as? FLTSavePhotoDelegate
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -90,7 +100,13 @@ final class PhotoCaptureTests: XCTestCase {
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.availablePhotoCodecTypes = [AVVideoCodecType.hevc]
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
-      let delegate = cam.inProgressSavePhotoDelegates[settings!.uniqueID] as? FLTSavePhotoDelegate
+      guard let unwrappedSettings = try? XCTUnwrap(settings, "Settings is unexpectedly nil") else {
+        XCTFail("Settings is unexpectedly nil")
+        return
+      }
+      let delegate =
+        cam.inProgressSavePhotoDelegates.object(forKey: unwrappedSettings.uniqueID)
+        as? FLTSavePhotoDelegate
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -122,7 +138,13 @@ final class PhotoCaptureTests: XCTestCase {
 
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
-      let delegate = cam.inProgressSavePhotoDelegates[settings!.uniqueID] as? FLTSavePhotoDelegate
+      guard let unwrappedSettings = try? XCTUnwrap(settings, "Settings is unexpectedly nil") else {
+        XCTFail("Settings is unexpectedly nil")
+        return
+      }
+      let delegate =
+        cam.inProgressSavePhotoDelegates.object(forKey: unwrappedSettings.uniqueID)
+        as? FLTSavePhotoDelegate
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
@@ -168,7 +190,13 @@ final class PhotoCaptureTests: XCTestCase {
     let filePath = "test"
     let mockOutput = MockCapturePhotoOutput()
     mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
-      let delegate = cam.inProgressSavePhotoDelegates[settings!.uniqueID] as? FLTSavePhotoDelegate
+      guard let unwrappedSettings = try? XCTUnwrap(settings, "Settings is unexpectedly nil") else {
+        XCTFail("Settings is unexpectedly nil")
+        return
+      }
+      let delegate =
+        cam.inProgressSavePhotoDelegates.object(forKey: unwrappedSettings.uniqueID)
+        as? FLTSavePhotoDelegate
       // Completion runs on IO queue.
       let ioQueue = DispatchQueue(label: "io_queue")
       ioQueue.async {
