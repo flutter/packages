@@ -4,17 +4,12 @@
 
 package io.flutter.plugins.camerax;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import androidx.camera.core.ImageProxy.PlaneProxy;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Mockito.any;
-
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class PlaneProxyTest {
   @Test

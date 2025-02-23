@@ -1,37 +1,84 @@
-//// Copyright 2013 The Flutter Authors. All rights reserved.
-//// Use of this source code is governed by a BSD-style license that can be
-//// found in the LICENSE file.
-//
-//package io.flutter.plugins.camerax
-//
-//import androidx.camera.video.QualitySelector
-//import androidx.camera.video.FallbackStrategy
-//import androidx.camera.core.CameraInfo
-//import android.util.Size
-//import org.junit.Test;
-//import static org.junit.Assert.assertEquals;
-//import static org.junit.Assert.assertTrue;
-//import org.mockito.Mockito;
-//import org.mockito.Mockito.any;
-//import java.util.HashMap;
-//import static org.mockito.Mockito.eq;
-//import static org.mockito.Mockito.mock;
-//import org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.when;
-//
-//public class QualitySelectorProxyApiTest {
-//  @Test
-//  public void from() {
-//    final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
-//
-//    assertTrue(api.from(io.flutter.plugins.camerax.VideoQuality.SD, mock(FallbackStrategy.class)) instanceof QualitySelectorProxyApi.QualitySelector);
-//  }
-//
-//  @Test
-//  public void fromOrderedList() {
-//    final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
-//
-//    assertTrue(api.fromOrderedList(Arrays.asList(io.flutter.plugins.camerax.VideoQuality.SD), mock(FallbackStrategy.class)) instanceof QualitySelectorProxyApi.QualitySelector);
-//  }
-//
-//}
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+package io.flutter.plugins.camerax;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+
+import android.util.Size;
+
+import androidx.camera.camera2.interop.Camera2CameraControl;
+import androidx.camera.core.CameraControl;
+import androidx.camera.core.CameraInfo;
+import androidx.camera.video.FallbackStrategy;
+import androidx.camera.video.Quality;
+import androidx.camera.video.QualitySelector;
+
+import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class QualitySelectorProxyApiTest {
+  @Test
+  public void from() {
+    final PigeonApiQualitySelector api =
+        new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+
+    final QualitySelector mockQualitySelector = mock(QualitySelector.class);
+      final FallbackStrategy fallbackStrategy = mock(FallbackStrategy.class);
+
+    try (MockedStatic<QualitySelector> mockedQualitySelector =
+        Mockito.mockStatic(QualitySelector.class)) {
+        mockedQualitySelector
+          .when(() -> QualitySelector.from(Quality.HD, fallbackStrategy))
+          .thenAnswer((Answer<QualitySelector>) invocation -> mockQualitySelector);
+
+      assertEquals(api.from(VideoQuality.HD, fallbackStrategy), mockQualitySelector);
+    }
+  }
+
+  @Test
+  public void fromOrderedList() {
+    final PigeonApiQualitySelector api =
+            new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+
+    final QualitySelector mockQualitySelector = mock(QualitySelector.class);
+    final FallbackStrategy fallbackStrategy = mock(FallbackStrategy.class);
+
+    try (MockedStatic<QualitySelector> mockedQualitySelector =
+                 Mockito.mockStatic(QualitySelector.class)) {
+      mockedQualitySelector
+              .when(() -> QualitySelector.fromOrderedList(Collections.singletonList(Quality.SD), fallbackStrategy))
+              .thenAnswer((Answer<QualitySelector>) invocation -> mockQualitySelector);
+
+      assertEquals(api.fromOrderedList(Collections.singletonList(VideoQuality.SD), fallbackStrategy), mockQualitySelector);
+    }
+  }
+
+  @Test
+  public void getResolution_returnsExpectedResolutionInfo() {
+    final PigeonApiQualitySelector api =
+            new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+
+    final CameraInfo cameraInfo = mock(CameraInfo.class);
+
+    try (MockedStatic<QualitySelector> mockedQualitySelector =
+                 Mockito.mockStatic(QualitySelector.class)) {
+      final Size value = new Size(1, 2);
+      mockedQualitySelector
+              .when(() -> QualitySelector.getResolution(cameraInfo, Quality.UHD))
+              .thenAnswer((Answer<Size>) invocation -> value);
+
+      assertEquals(api.getResolution(cameraInfo, VideoQuality.UHD), value);
+    }
+  }
+}

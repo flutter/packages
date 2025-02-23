@@ -4,27 +4,9 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.annotation.NonNull;
-import androidx.camera.core.Preview;
-import androidx.camera.core.SurfaceRequest;
-import androidx.camera.core.resolutionselector.ResolutionSelector;
-import androidx.camera.core.ResolutionInfo;
-import androidx.core.util.Consumer;
-
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.robolectric.RobolectricTestRunner;
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.any;
-
-import java.util.concurrent.Executor;
-
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -33,22 +15,32 @@ import static org.mockito.Mockito.when;
 
 import android.util.Size;
 import android.view.Surface;
-
+import androidx.annotation.NonNull;
+import androidx.camera.core.Preview;
+import androidx.camera.core.ResolutionInfo;
+import androidx.camera.core.SurfaceRequest;
+import androidx.camera.core.resolutionselector.ResolutionSelector;
+import androidx.core.util.Consumer;
 import io.flutter.view.TextureRegistry;
+import java.util.concurrent.Executor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class PreviewTest {
   @Test
   public void pigeon_defaultConstructor() {
-      final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
+    final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
-      final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
-      final long targetResolution = Surface.ROTATION_0;
-      final Preview instance =
-              api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution);
+    final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
+    final long targetResolution = Surface.ROTATION_0;
+    final Preview instance =
+        api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution);
 
-      assertEquals(instance.getResolutionSelector(), mockResolutionSelector);
-      assertEquals(instance.getTargetRotation(), Surface.ROTATION_0);
+    assertEquals(instance.getResolutionSelector(), mockResolutionSelector);
+    assertEquals(instance.getTargetRotation(), Surface.ROTATION_0);
   }
 
   @Test
@@ -56,7 +48,8 @@ public class PreviewTest {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
-    final androidx.camera.core.resolutionselector.ResolutionSelector value = mock(ResolutionSelector.class);
+    final androidx.camera.core.resolutionselector.ResolutionSelector value =
+        mock(ResolutionSelector.class);
     when(instance.getResolutionSelector()).thenReturn(value);
 
     assertEquals(value, api.resolutionSelector(instance));
@@ -65,17 +58,19 @@ public class PreviewTest {
   @Test
   public void setSurfaceProvider() {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final long textureId = 0;
     when(mockSurfaceProducer.id()).thenReturn(textureId);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    final PigeonApiPreview api = new TestProxyApiRegistrar() {
-      @NonNull
-      @Override
-      TextureRegistry getTextureRegistry() {
-        return mockTextureRegistry;
-      }
-    }.getPigeonApiPreview();
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
@@ -87,17 +82,20 @@ public class PreviewTest {
   @Test
   public void createSurfaceProducer_setsExpectedSurfaceProducerCallback() {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final long textureId = 0;
     when(mockSurfaceProducer.id()).thenReturn(textureId);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    final PreviewProxyApi api = (PreviewProxyApi) new TestProxyApiRegistrar() {
-      @NonNull
-      @Override
-      TextureRegistry getTextureRegistry() {
-        return mockTextureRegistry;
-      }
-    }.getPigeonApiPreview();
+    final PreviewProxyApi api =
+        (PreviewProxyApi)
+            new TestProxyApiRegistrar() {
+              @NonNull
+              @Override
+              TextureRegistry getTextureRegistry() {
+                return mockTextureRegistry;
+              }
+            }.getPigeonApiPreview();
 
     final SystemServicesManager mockSystemServicesManager = mock(SystemServicesManager.class);
     final SurfaceRequest mockSurfaceRequest = mock(SurfaceRequest.class);
@@ -107,7 +105,8 @@ public class PreviewTest {
     when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
     when(mockSurfaceProducer.getSurface()).thenReturn(mock(Surface.class));
 
-    final Preview.SurfaceProvider previewSurfaceProvider = api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
+    final Preview.SurfaceProvider previewSurfaceProvider =
+        api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
     previewSurfaceProvider.onSurfaceRequested(mockSurfaceRequest);
 
     verify(mockSurfaceProducer).setCallback(callbackCaptor.capture());
@@ -129,17 +128,20 @@ public class PreviewTest {
   @Test
   public void createSurfaceProvider_createsExpectedPreviewSurfaceProvider() {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     final long textureId = 0;
     when(mockSurfaceProducer.id()).thenReturn(textureId);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    final PreviewProxyApi api = (PreviewProxyApi) new TestProxyApiRegistrar() {
-      @NonNull
-      @Override
-      TextureRegistry getTextureRegistry() {
-        return mockTextureRegistry;
-      }
-    }.getPigeonApiPreview();
+    final PreviewProxyApi api =
+        (PreviewProxyApi)
+            new TestProxyApiRegistrar() {
+              @NonNull
+              @Override
+              TextureRegistry getTextureRegistry() {
+                return mockTextureRegistry;
+              }
+            }.getPigeonApiPreview();
 
     final SystemServicesManager mockSystemServicesManager = mock(SystemServicesManager.class);
 
@@ -212,16 +214,18 @@ public class PreviewTest {
   @Test
   public void releaseSurfaceProvider_makesCallToReleaseFlutterSurfaceTexture() {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
-    final TextureRegistry.SurfaceProducer mockSurfaceProducer = mock(TextureRegistry.SurfaceProducer.class);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
     when(mockSurfaceProducer.id()).thenReturn(0L);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
-    final PigeonApiPreview api = new TestProxyApiRegistrar() {
-      @NonNull
-      @Override
-      TextureRegistry getTextureRegistry() {
-        return mockTextureRegistry;
-      }
-    }.getPigeonApiPreview();
+    final PigeonApiPreview api =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
@@ -239,7 +243,7 @@ public class PreviewTest {
     final androidx.camera.core.ResolutionInfo value = mock(ResolutionInfo.class);
     when(instance.getResolutionInfo()).thenReturn(value);
 
-    assertEquals(value, api.getResolutionInfo(instance ));
+    assertEquals(value, api.getResolutionInfo(instance));
   }
 
   @Test
