@@ -35,6 +35,6 @@ extern CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void);
 /// In Swift, the API for settinng key-value pairs on a queue is different, so Swift tests
 /// need to call this method to set the key-value pair on the queue in a way that's
 /// compatible withn the existing Objective-C code.
-extern void dispatchQueueSetSpecific(dispatch_queue_t queue, const void *key);
+extern void FLTdispatchQueueSetSpecific(dispatch_queue_t queue, const void *key);
 
 NS_ASSUME_NONNULL_END
