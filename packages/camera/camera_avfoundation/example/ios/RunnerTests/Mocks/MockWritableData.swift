@@ -9,7 +9,7 @@ final class MockWritableData: NSObject, FLTWritableData {
 
   func write(toFile path: String, options writeOptionsMask: NSData.WritingOptions) throws {
     if let stub = self.writeToFileStub {
-      return try stub(path, writeOptionsMask)
+      try stub(path, writeOptionsMask)
     }
   }
 }
