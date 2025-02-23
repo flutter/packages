@@ -35,5 +35,4 @@
 //
 //    verify(mockApi).onChanged(eq(instance), eq(value), any());
 //  }
-//
 //}
