@@ -128,6 +128,6 @@ CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void) {
   return sampleBuffer;
 }
 
-void dispatchQueueSetSpecific(dispatch_queue_t queue, const void *key) {
+void FLTdispatchQueueSetSpecific(dispatch_queue_t queue, const void *key) {
   dispatch_queue_set_specific(queue, key, (void *)key, NULL);
 }
