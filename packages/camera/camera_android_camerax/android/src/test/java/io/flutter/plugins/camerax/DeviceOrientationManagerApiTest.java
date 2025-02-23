@@ -4,9 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -14,13 +12,14 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import androidx.annotation.NonNull;
-
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
+import org.junit.Test;
 
 public class DeviceOrientationManagerApiTest {
   @Test
   public void startListeningForDeviceOrientationChange() {
-    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+    final PigeonApiDeviceOrientationManager api =
+        new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
     final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
     api.startListeningForDeviceOrientationChange(instance, false, 0L);
@@ -30,17 +29,19 @@ public class DeviceOrientationManagerApiTest {
 
   @Test
   public void stopListeningForDeviceOrientationChange() {
-    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+    final PigeonApiDeviceOrientationManager api =
+        new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
     final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
-    api.stopListeningForDeviceOrientationChange(instance );
+    api.stopListeningForDeviceOrientationChange(instance);
 
     verify(instance).stop();
   }
 
   @Test
   public void getDefaultDisplayRotation() {
-    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+    final PigeonApiDeviceOrientationManager api =
+        new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
     final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
     final Long value = 0L;
@@ -51,13 +52,15 @@ public class DeviceOrientationManagerApiTest {
 
   @Test
   public void getUiOrientation() {
-    final PigeonApiDeviceOrientationManager api = new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
+    final PigeonApiDeviceOrientationManager api =
+        new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
     final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
-    final PlatformChannel.DeviceOrientation orientation = PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
+    final PlatformChannel.DeviceOrientation orientation =
+        PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
     when(instance.getUIOrientation()).thenReturn(orientation);
 
-    assertEquals(orientation.toString(), api.getUiOrientation(instance ));
+    assertEquals(orientation.toString(), api.getUiOrientation(instance));
   }
 
   @Test
@@ -65,14 +68,16 @@ public class DeviceOrientationManagerApiTest {
     final DeviceOrientationManagerProxyApi mockApi = mock(DeviceOrientationManagerProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
-    final PlatformChannel.DeviceOrientation orientation = PlatformChannel.DeviceOrientation.PORTRAIT_UP;
-    final DeviceOrientationManagerProxyApi.DeviceOrientationManagerImpl instance = new DeviceOrientationManagerProxyApi.DeviceOrientationManagerImpl(mockApi) {
-      @NonNull
-      @Override
-      PlatformChannel.DeviceOrientation getUIOrientation() {
-        return orientation;
-      }
-    };
+    final PlatformChannel.DeviceOrientation orientation =
+        PlatformChannel.DeviceOrientation.PORTRAIT_UP;
+    final DeviceOrientationManagerProxyApi.DeviceOrientationManagerImpl instance =
+        new DeviceOrientationManagerProxyApi.DeviceOrientationManagerImpl(mockApi) {
+          @NonNull
+          @Override
+          PlatformChannel.DeviceOrientation getUIOrientation() {
+            return orientation;
+          }
+        };
     instance.handleUIOrientationChange();
 
     verify(mockApi).onDeviceOrientationChanged(eq(instance), eq(orientation.toString()), any());
