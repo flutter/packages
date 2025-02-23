@@ -360,6 +360,7 @@ class _GoogleMapState extends State<GoogleMap> {
         circles: widget.circles,
         clusterManagers: widget.clusterManagers,
         heatmaps: widget.heatmaps,
+        tileOverlays: widget.tileOverlays,
       ),
       mapConfiguration: _mapConfiguration,
     );
@@ -469,7 +470,6 @@ class _GoogleMapState extends State<GoogleMap> {
       this,
     );
     _controller.complete(controller);
-    unawaited(_updateTileOverlays());
     final MapCreatedCallback? onMapCreated = widget.onMapCreated;
     if (onMapCreated != null) {
       onMapCreated(controller);

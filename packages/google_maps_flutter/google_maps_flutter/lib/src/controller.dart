@@ -6,6 +6,19 @@
 
 part of '../google_maps_flutter.dart';
 
+/// Exception for map state errors when calling a function
+/// of the map when it's not mounted.
+class MapStateException implements Exception {
+  /// Creates a new instance of [MapStateException].
+  MapStateException(this.message);
+
+  /// Error message describing the exception.
+  final String message;
+
+  @override
+  String toString() => 'MapStateException: $message';
+}
+
 /// Controller for a single GoogleMap instance running on the host platform.
 class GoogleMapController {
   GoogleMapController._(
@@ -181,8 +194,13 @@ class GoogleMapController {
   /// in-memory cache of tiles. If you want to cache tiles for longer, you
   /// should implement an on-disk cache.
   Future<void> clearTileCache(TileOverlayId tileOverlayId) async {
-    return GoogleMapsFlutterPlatform.instance
-        .clearTileCache(tileOverlayId, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .clearTileCache(tileOverlayId, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method clearTileCache on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Starts an animated change of the map camera position.
@@ -190,8 +208,13 @@ class GoogleMapController {
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
   Future<void> animateCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .animateCamera(cameraUpdate, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .animateCamera(cameraUpdate, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method animateCamera on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Changes the map camera position.
@@ -199,8 +222,13 @@ class GoogleMapController {
   /// The returned [Future] completes after the change has been made on the
   /// platform side.
   Future<void> moveCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .moveCamera(cameraUpdate, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .moveCamera(cameraUpdate, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method moveCamera on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Sets the styling of the base map.
@@ -218,18 +246,33 @@ class GoogleMapController {
   /// style reference for more information regarding the supported styles.
   @Deprecated('Use GoogleMap.style instead.')
   Future<void> setMapStyle(String? mapStyle) {
-    return GoogleMapsFlutterPlatform.instance
-        .setMapStyle(mapStyle, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .setMapStyle(mapStyle, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method setMapStyle on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Returns the last style error, if any.
   Future<String?> getStyleError() {
-    return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method getStyleError on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Return [LatLngBounds] defining the region that is visible in a map.
   Future<LatLngBounds> getVisibleRegion() {
-    return GoogleMapsFlutterPlatform.instance.getVisibleRegion(mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance.getVisibleRegion(mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method getVisibleRegion on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Return [ScreenCoordinate] of the [LatLng] in the current map view.
@@ -238,8 +281,13 @@ class GoogleMapController {
   /// Screen location is in screen pixels (not display pixels) with respect to the top left corner
   /// of the map, not necessarily of the whole screen.
   Future<ScreenCoordinate> getScreenCoordinate(LatLng latLng) {
-    return GoogleMapsFlutterPlatform.instance
-        .getScreenCoordinate(latLng, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .getScreenCoordinate(latLng, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method getScreenCoordinate on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Returns [LatLng] corresponding to the [ScreenCoordinate] in the current map view.
@@ -247,8 +295,13 @@ class GoogleMapController {
   /// Returned [LatLng] corresponds to a screen location. The screen location is specified in screen
   /// pixels (not display pixels) relative to the top left of the map, not top left of the whole screen.
   Future<LatLng> getLatLng(ScreenCoordinate screenCoordinate) {
-    return GoogleMapsFlutterPlatform.instance
-        .getLatLng(screenCoordinate, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .getLatLng(screenCoordinate, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method getLatLng on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Programmatically show the Info Window for a [Marker].
@@ -260,8 +313,13 @@ class GoogleMapController {
   ///   * [hideMarkerInfoWindow] to hide the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
   Future<void> showMarkerInfoWindow(MarkerId markerId) {
-    return GoogleMapsFlutterPlatform.instance
-        .showMarkerInfoWindow(markerId, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .showMarkerInfoWindow(markerId, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method showMarkerInfoWindow on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Programmatically hide the Info Window for a [Marker].
@@ -272,9 +330,15 @@ class GoogleMapController {
   /// * See also:
   ///   * [showMarkerInfoWindow] to show the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
+  ///
   Future<void> hideMarkerInfoWindow(MarkerId markerId) {
-    return GoogleMapsFlutterPlatform.instance
-        .hideMarkerInfoWindow(markerId, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .hideMarkerInfoWindow(markerId, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method hideMarkerInfoWindow on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Returns `true` when the [InfoWindow] is showing, `false` otherwise.
@@ -286,18 +350,33 @@ class GoogleMapController {
   ///   * [showMarkerInfoWindow] to show the Info Window.
   ///   * [hideMarkerInfoWindow] to hide the Info Window.
   Future<bool> isMarkerInfoWindowShown(MarkerId markerId) {
-    return GoogleMapsFlutterPlatform.instance
-        .isMarkerInfoWindowShown(markerId, mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance
+          .isMarkerInfoWindowShown(markerId, mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method isMarkerInfoWindowShown on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Returns the current zoom level of the map
   Future<double> getZoomLevel() {
-    return GoogleMapsFlutterPlatform.instance.getZoomLevel(mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance.getZoomLevel(mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method getZoomLevel on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Returns the image bytes of the map
   Future<Uint8List?> takeSnapshot() {
-    return GoogleMapsFlutterPlatform.instance.takeSnapshot(mapId: mapId);
+    if (_googleMapState.mounted) {
+      return GoogleMapsFlutterPlatform.instance.takeSnapshot(mapId: mapId);
+    } else {
+      throw MapStateException(
+          'Cannot call method takeSnapshot on an unmounted GoogleMap instance.');
+    }
   }
 
   /// Disposes of the platform resources

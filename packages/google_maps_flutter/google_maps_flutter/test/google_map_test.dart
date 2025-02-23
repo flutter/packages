@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -578,5 +581,42 @@ void main() {
     );
 
     expect(map.mapConfiguration.style, '');
+  });
+
+  testWidgets('testMapStateException', (WidgetTester tester) async {
+    final Completer<GoogleMapController> controllerCompleter =
+        Completer<GoogleMapController>();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition:
+              const CameraPosition(target: LatLng(10.0, 15.0)),
+          onMapCreated: (GoogleMapController controller) {
+            controllerCompleter.complete(controller);
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+    final GoogleMapController controller = await controllerCompleter.future;
+
+    try {
+      await controller.getZoomLevel();
+    } on MapStateException {
+      fail('should not throw MapStateException');
+    }
+
+    await tester.pumpWidget(Container());
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    try {
+      await controller.getZoomLevel();
+      fail('expected MapStateException');
+    } on MapStateException catch (e) {
+      expect(e.message.isNotEmpty, true);
+    }
   });
 }
