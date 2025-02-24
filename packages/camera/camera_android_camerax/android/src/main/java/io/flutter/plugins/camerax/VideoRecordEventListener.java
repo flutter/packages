@@ -4,8 +4,9 @@
 
 package io.flutter.plugins.camerax;
 
+import androidx.annotation.NonNull;
 import androidx.camera.video.VideoRecordEvent;
 
 public interface VideoRecordEventListener {
-  void onEvent(VideoRecordEvent event);
+  void onEvent(@NonNull VideoRecordEvent event);
 }
