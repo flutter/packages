@@ -16,36 +16,6 @@ public class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientation
     super(pigeonRegistrar);
   }
 
-  //  /**
-  //   * Implementation of {@link DeviceOrientationManager} that passes arguments of callback methods to
-  //   * Dart.
-  //   */
-  //  static class DeviceOrientationManagerImpl extends DeviceOrientationManager {
-  //    private final DeviceOrientationManagerProxyApi api;
-  //
-  //    DeviceOrientationManagerImpl(@NonNull DeviceOrientationManagerProxyApi api) {
-  //      super(
-  //          (manager, newOrientation) ->
-  //              api.getPigeonRegistrar()
-  //                  .runOnMainThread(
-  //                      () ->
-  //                          api.onDeviceOrientationChanged(
-  //                              manager, newOrientation.toString(), reply -> null)));
-  //      this.api = api;
-  //    }
-  //
-  //    @NonNull
-  //    @Override
-  //    Context getContext() {
-  //      return api.getPigeonRegistrar().getContext();
-  //    }
-  //
-  //    @Override
-  //    Display getDisplay() {
-  //      return api.getPigeonRegistrar().getDisplay();
-  //    }
-  //  }
-
   @NonNull
   @Override
   public ProxyApiRegistrar getPigeonRegistrar() {
