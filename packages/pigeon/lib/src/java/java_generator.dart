@@ -6,7 +6,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show TaskQueueType;
+import '../types/task_queue.dart';
 
 /// Documentation open symbol.
 const String _docCommentPrefix = '/**';
@@ -835,15 +835,21 @@ if (wrapped == null) {
       indent.addScoped('{', '}', () {
         indent.writeln(
             'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
+        String? serialBackgroundQueue;
+        if (api.methods.any((Method m) =>
+            m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+          serialBackgroundQueue = 'taskQueue';
+          indent.writeln(
+              'BinaryMessenger.TaskQueue $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue();');
+        }
         for (final Method method in api.methods) {
-          _writeMethodSetUp(
-            generatorOptions,
-            root,
-            indent,
-            api,
-            method,
-            dartPackageName: dartPackageName,
-          );
+          _writeHostMethodMessageHandler(
+              generatorOptions, root, indent, api, method,
+              dartPackageName: dartPackageName,
+              serialBackgroundQueue:
+                  method.taskQueueType == TaskQueueType.serialBackgroundThread
+                      ? serialBackgroundQueue
+                      : null);
         }
       });
     });
@@ -887,34 +893,27 @@ if (wrapped == null) {
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
 
-  /// Write a static setUp function in the interface.
-  /// Example:
-  ///   static void setUp(BinaryMessenger binaryMessenger, Foo api) {...}
-  void _writeMethodSetUp(
+  /// Write a single method's handler for the setUp function.
+  void _writeHostMethodMessageHandler(
     JavaOptions generatorOptions,
     Root root,
     Indent indent,
     Api api,
     final Method method, {
     required String dartPackageName,
+    String? serialBackgroundQueue,
   }) {
     final String channelName = makeChannelName(api, method, dartPackageName);
     indent.write('');
     indent.addScoped('{', '}', () {
-      String? taskQueue;
-      if (method.taskQueueType != TaskQueueType.serial) {
-        taskQueue = 'taskQueue';
-        indent.writeln(
-            'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
-      }
       indent.writeln('BasicMessageChannel<Object> channel =');
       indent.nest(2, () {
         indent.writeln('new BasicMessageChannel<>(');
         indent.nest(2, () {
           indent.write(
               'binaryMessenger, "$channelName" + messageChannelSuffix, getCodec()');
-          if (taskQueue != null) {
-            indent.addln(', $taskQueue);');
+          if (serialBackgroundQueue != null) {
+            indent.addln(', $serialBackgroundQueue);');
           } else {
             indent.addln(');');
           }
