@@ -1,3 +1,27 @@
+## 0.9.18+8
+
+* Migrates unit tests to Swift.
+
+## 0.9.18+7
+
+* Fixes crash when setting `activeFormat` on `FLTCaptureDevice`.
+
+## 0.9.18+6
+
+* Refactors implementations to remove remaining usage of OCMock in internal testing.
+
+## 0.9.18+5
+
+* Migrates unit tests to Swift.
+
+## 0.9.18+4
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
+## 0.9.18+3
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
 ## 0.9.18+2
 
 * Refactors implementations to reduce usage of OCMock in internal testing.

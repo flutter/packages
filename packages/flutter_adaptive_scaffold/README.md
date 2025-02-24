@@ -1,5 +1,11 @@
 # Adaptive Scaffold
 
+## To be discontinued
+
+**This project will be discontinued on April 30, 2025**, and will not receive further updates after that point. Community members interested in collaborating on a community-maintained fork can coordinate in [this issue](https://github.com/flutter/flutter/issues/162965).
+
+---
+
 `AdaptiveScaffold` reacts to input from users, devices and screen elements and
 renders your Flutter application according to the
 [Material 3](https://m3.material.io/foundations/adaptive-design/overview)
