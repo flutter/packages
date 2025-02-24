@@ -498,7 +498,7 @@ void main() {
       const double width = 20;
       const double height = 30;
       const Offset defaultOffset = Offset(0.5, 1);
-      const Offset anchorOffset = Offset(1.5, 2);
+      const Offset anchorOffset = Offset(0, 0.5);
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
       final Marker marker1 = Marker(
         markerId: const MarkerId('1'),
