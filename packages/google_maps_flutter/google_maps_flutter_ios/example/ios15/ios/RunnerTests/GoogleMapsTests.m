@@ -103,7 +103,8 @@
                    initialPolylines:@[]
                     initialHeatmaps:@[]
                 initialTileOverlays:@[]
-             initialClusterManagers:@[]];
+             initialClusterManagers:@[]
+              initialGroundOverlays:@[]];
 }
 
 @end

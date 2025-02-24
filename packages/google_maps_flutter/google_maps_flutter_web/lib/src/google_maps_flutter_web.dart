@@ -116,6 +116,14 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) async {
+    _map(mapId).updateGroundOverlays(groundOverlayUpdates);
+  }
+
+  @override
   Future<void> clearTileCache(
     TileOverlayId tileOverlayId, {
     required int mapId,
@@ -302,6 +310,11 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return _events(mapId).whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   Future<String?> getStyleError({required int mapId}) async {
     return _map(mapId).lastStyleError;
   }
@@ -362,6 +375,7 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     GoogleMapsInspectorPlatform.instance = GoogleMapsInspectorWeb(
       (int mapId) => _map(mapId).configuration,
       (int mapId) => _map(mapId).clusterManagersController,
+      (int mapId) => _map(mapId).groundOverlayController,
     );
   }
 }

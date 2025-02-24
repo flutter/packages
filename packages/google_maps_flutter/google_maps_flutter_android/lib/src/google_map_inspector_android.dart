@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
@@ -77,6 +79,61 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
 
   @override
   bool supportsGettingHeatmapInfo() => false;
+
+  @override
+  bool supportsGettingGroundOverlayInfo() => true;
+
+  @override
+  Future<GroundOverlay?> getGroundOverlayInfo(GroundOverlayId groundOverlayId,
+      {required int mapId}) async {
+    final PlatformGroundOverlay? groundOverlayInfo =
+        await _inspectorProvider(mapId)!
+            .getGroundOverlayInfo(groundOverlayId.value);
+
+    if (groundOverlayInfo == null) {
+      return null;
+    }
+
+    // Create dummy image to represent the image of the ground overlay.
+    final BytesMapBitmap dummyImage = BytesMapBitmap(
+      Uint8List.fromList(<int>[0]),
+      bitmapScaling: MapBitmapScaling.none,
+    );
+
+    if (groundOverlayInfo.position != null) {
+      return GroundOverlay.fromPosition(
+        groundOverlayId: groundOverlayId,
+        position: LatLng(groundOverlayInfo.position!.latitude,
+            groundOverlayInfo.position!.longitude),
+        image: dummyImage,
+        width: groundOverlayInfo.width,
+        height: groundOverlayInfo.height,
+        zIndex: groundOverlayInfo.zIndex,
+        bearing: groundOverlayInfo.bearing,
+        transparency: groundOverlayInfo.transparency,
+        visible: groundOverlayInfo.visible,
+        clickable: groundOverlayInfo.clickable,
+        anchor:
+            Offset(groundOverlayInfo.anchor!.x, groundOverlayInfo.anchor!.y),
+      );
+    } else if (groundOverlayInfo.bounds != null) {
+      return GroundOverlay.fromBounds(
+        groundOverlayId: groundOverlayId,
+        bounds: LatLngBounds(
+            southwest: LatLng(groundOverlayInfo.bounds!.southwest.latitude,
+                groundOverlayInfo.bounds!.southwest.longitude),
+            northeast: LatLng(groundOverlayInfo.bounds!.northeast.latitude,
+                groundOverlayInfo.bounds!.northeast.longitude)),
+        image: dummyImage,
+        zIndex: groundOverlayInfo.zIndex,
+        bearing: groundOverlayInfo.bearing,
+        transparency: groundOverlayInfo.transparency,
+        visible: groundOverlayInfo.visible,
+        clickable: groundOverlayInfo.clickable,
+      );
+    }
+    return null;
+  }
 
   @override
   Future<bool> isCompassEnabled({required int mapId}) async {
