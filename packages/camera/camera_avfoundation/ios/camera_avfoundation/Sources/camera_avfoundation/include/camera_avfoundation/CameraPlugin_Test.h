@@ -8,6 +8,7 @@
 #import "FLTCam.h"
 #import "FLTCamConfiguration.h"
 #import "FLTCameraDeviceDiscovering.h"
+#import "FLTCameraPermissionManager.h"
 #import "FLTCaptureDevice.h"
 #import "messages.g.h"
 
@@ -34,6 +35,7 @@ typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureNamedDeviceFactory)(NSStri
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI
                 deviceDiscoverer:(id<FLTCameraDeviceDiscovering>)deviceDiscoverer
+               permissionManager:(FLTCameraPermissionManager *)permissionManager
                    deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
            captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
        captureDeviceInputFactory:(id<FLTCaptureDeviceInputFactory>)captureDeviceInputFactory
