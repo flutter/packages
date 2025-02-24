@@ -70,8 +70,8 @@ public class DeviceOrientationManagerApiTest {
 
     final PlatformChannel.DeviceOrientation orientation =
         PlatformChannel.DeviceOrientation.PORTRAIT_UP;
-    final DeviceOrientationManagerProxyApi.DeviceOrientationManagerImpl instance =
-        new DeviceOrientationManagerProxyApi.DeviceOrientationManagerImpl(mockApi) {
+    final DeviceOrientationManager instance =
+        new DeviceOrientationManager(mockApi) {
           @NonNull
           @Override
           PlatformChannel.DeviceOrientation getUIOrientation() {

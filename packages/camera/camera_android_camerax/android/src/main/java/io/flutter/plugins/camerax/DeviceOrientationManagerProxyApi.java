@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.content.Context;
 import androidx.annotation.NonNull;
 
 /**
@@ -12,35 +11,40 @@ import androidx.annotation.NonNull;
  * native object instances that are attached to a Dart instance or handle method calls on the
  * associated native class or an instance of that class.
  */
-class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientationManager {
+public class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientationManager {
   DeviceOrientationManagerProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
 
-  /**
-   * Implementation of {@link DeviceOrientationManager} that passes arguments of callback methods to
-   * Dart.
-   */
-  static class DeviceOrientationManagerImpl extends DeviceOrientationManager {
-    private final DeviceOrientationManagerProxyApi api;
-
-    DeviceOrientationManagerImpl(@NonNull DeviceOrientationManagerProxyApi api) {
-      super(
-          (manager, newOrientation) ->
-              api.getPigeonRegistrar()
-                  .runOnMainThread(
-                      () ->
-                          api.onDeviceOrientationChanged(
-                              manager, newOrientation.toString(), reply -> null)));
-      this.api = api;
-    }
-
-    @NonNull
-    @Override
-    Context getContext() {
-      return api.getPigeonRegistrar().getContext();
-    }
-  }
+  //  /**
+  //   * Implementation of {@link DeviceOrientationManager} that passes arguments of callback methods to
+  //   * Dart.
+  //   */
+  //  static class DeviceOrientationManagerImpl extends DeviceOrientationManager {
+  //    private final DeviceOrientationManagerProxyApi api;
+  //
+  //    DeviceOrientationManagerImpl(@NonNull DeviceOrientationManagerProxyApi api) {
+  //      super(
+  //          (manager, newOrientation) ->
+  //              api.getPigeonRegistrar()
+  //                  .runOnMainThread(
+  //                      () ->
+  //                          api.onDeviceOrientationChanged(
+  //                              manager, newOrientation.toString(), reply -> null)));
+  //      this.api = api;
+  //    }
+  //
+  //    @NonNull
+  //    @Override
+  //    Context getContext() {
+  //      return api.getPigeonRegistrar().getContext();
+  //    }
+  //
+  //    @Override
+  //    Display getDisplay() {
+  //      return api.getPigeonRegistrar().getDisplay();
+  //    }
+  //  }
 
   @NonNull
   @Override
@@ -51,7 +55,7 @@ class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientationManager
   @NonNull
   @Override
   public DeviceOrientationManager pigeon_defaultConstructor() {
-    return new DeviceOrientationManagerImpl(this);
+    return new DeviceOrientationManager(this);
   }
 
   @Override

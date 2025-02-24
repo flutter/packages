@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.view.Display;
 import android.view.Surface;
-import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
@@ -20,31 +19,28 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientat
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
-public abstract class DeviceOrientationManager {
-  interface DeviceOrientationChangeCallback {
-    void onChange(
-        @NonNull DeviceOrientationManager manager, @NonNull DeviceOrientation newOrientation);
-  }
-
+public class DeviceOrientationManager {
   private static final IntentFilter orientationIntentFilter =
       new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED);
 
-  private final DeviceOrientationChangeCallback deviceOrientationChangeCallback;
+  private final DeviceOrientationManagerProxyApi api;
   private PlatformChannel.DeviceOrientation lastOrientation;
   private BroadcastReceiver broadcastReceiver;
 
-  DeviceOrientationManager(DeviceOrientationChangeCallback callback) {
-    this.deviceOrientationChangeCallback = callback;
+  DeviceOrientationManager(DeviceOrientationManagerProxyApi api) {
+    this.api = api;
   }
 
   @NonNull
-  abstract Context getContext();
+  Context getContext() {
+    return api.getPigeonRegistrar().getContext();
+  }
 
   /**
    * Starts listening to the device's sensors or UI for orientation updates.
    *
    * <p>When orientation information is updated, the callback method of the {@link
-   * DeviceOrientationChangeCallback} is called with the new orientation.
+   * DeviceOrientationManagerProxyApi} is called with the new orientation.
    *
    * <p>If the device's ACCELEROMETER_ROTATION setting is enabled the {@link
    * DeviceOrientationManager} will report orientation updates based on the sensor information. If
@@ -84,7 +80,7 @@ public abstract class DeviceOrientationManager {
   @VisibleForTesting
   void handleUIOrientationChange() {
     PlatformChannel.DeviceOrientation orientation = getUIOrientation();
-    handleOrientationChange(this, orientation, lastOrientation, deviceOrientationChangeCallback);
+    handleOrientationChange(this, orientation, lastOrientation, api);
     lastOrientation = orientation;
   }
 
@@ -100,9 +96,13 @@ public abstract class DeviceOrientationManager {
       DeviceOrientationManager manager,
       DeviceOrientation newOrientation,
       DeviceOrientation previousOrientation,
-      DeviceOrientationChangeCallback callback) {
+      DeviceOrientationManagerProxyApi api) {
     if (!newOrientation.equals(previousOrientation)) {
-      callback.onChange(manager, newOrientation);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () ->
+                  api.onDeviceOrientationChanged(
+                      manager, newOrientation.toString(), reply -> null));
     }
   }
 
@@ -164,10 +164,8 @@ public abstract class DeviceOrientationManager {
    *
    * @return An instance of the Android {@link android.view.Display}.
    */
-  @SuppressWarnings("deprecation")
   @VisibleForTesting
   Display getDisplay() {
-    return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
-        .getDefaultDisplay();
+    return api.getPigeonRegistrar().getDisplay();
   }
 }

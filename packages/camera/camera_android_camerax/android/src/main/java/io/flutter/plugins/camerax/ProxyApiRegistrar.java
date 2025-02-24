@@ -191,7 +191,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @NonNull
   @Override
-  public PigeonApiDeviceOrientationManager getPigeonApiDeviceOrientationManager() {
+  public DeviceOrientationManagerProxyApi getPigeonApiDeviceOrientationManager() {
     return new DeviceOrientationManagerProxyApi(this);
   }
 
