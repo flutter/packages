@@ -14,23 +14,29 @@ import 'package:meta/meta.dart';
 final class RotatedPreview extends StatefulWidget {
   /// Creates [RotatedPreview] that will correct the preview
   /// rotation assuming that the front camera is being used.
-  const RotatedPreview.frontFacingCamera(
+  RotatedPreview.frontFacingCamera(
     this.initialDeviceOrientation,
     this.deviceOrientation, {
     required this.sensorOrientationDegrees,
     required this.child,
+    this.initialLockedCaptureOrientation,
     super.key,
-  }) : facingSign = 1;
+  })  : facingSign = 1,
+        lockedCaptureOrientation =
+            ValueNotifier<DeviceOrientation?>(initialLockedCaptureOrientation);
 
   /// Creates [RotatedPreview] that will correct the preview
   /// rotation assuming that the back camera is being used.
-  const RotatedPreview.backFacingCamera(
+  RotatedPreview.backFacingCamera(
     this.initialDeviceOrientation,
     this.deviceOrientation, {
     required this.child,
     required this.sensorOrientationDegrees,
+    this.initialLockedCaptureOrientation,
     super.key,
-  }) : facingSign = -1;
+  })  : facingSign = -1,
+        lockedCaptureOrientation =
+            ValueNotifier<DeviceOrientation?>(initialLockedCaptureOrientation);
 
   /// The initial orientation of the device when the camera is created.
   final DeviceOrientation initialDeviceOrientation;
@@ -44,10 +50,25 @@ final class RotatedPreview extends StatefulWidget {
   /// The camera preview [Widget] to rotate.
   final Widget child;
 
+  /// The initial locked capture orientation of the camera when this
+  /// widget is created.
+  final DeviceOrientation? initialLockedCaptureOrientation;
+
   /// Value used to calculate the correct preview rotation.
   ///
   /// 1 if the camera is front facing; -1 if the camera is back facing.
   final int facingSign;
+
+  /// Value notifier for the camera's locked capture orientation,
+  /// if it is locked.
+  final ValueNotifier<DeviceOrientation?> lockedCaptureOrientation;
+
+  /// Update the locked capture orientation of the camera.
+  // ignore: use_setters_to_change_properties
+  void setLockedCaptureOrientation(
+      DeviceOrientation? newLockedCaptureOrientation) {
+    lockedCaptureOrientation.value = newLockedCaptureOrientation;
+  }
 
   @override
   State<StatefulWidget> createState() => _RotatedPreviewState();
@@ -73,17 +94,24 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
     super.initState();
   }
 
-  double _computeRotationDegrees(
-    DeviceOrientation orientation, {
-    required double sensorOrientationDegrees,
-    required int sign,
-  }) {
-    final double deviceOrientationDegrees = switch (orientation) {
+  double _getClockwiseDegreesFromDeviceOrientation(
+      DeviceOrientation orientation) {
+    return switch (orientation) {
       DeviceOrientation.portraitUp => 0,
       DeviceOrientation.landscapeRight => 90,
       DeviceOrientation.portraitDown => 180,
       DeviceOrientation.landscapeLeft => 270,
     };
+  }
+
+  double _computeRotationDegrees({
+    required DeviceOrientation deviceOrientation,
+    required double sensorOrientationDegrees,
+    required int sign,
+    DeviceOrientation? lockedCaptureOrientation,
+  }) {
+    final double deviceOrientationDegrees =
+        _getClockwiseDegreesFromDeviceOrientation(deviceOrientation);
 
     // Rotate the camera preview according to
     // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation.
@@ -92,8 +120,11 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
             360;
 
     // Then, subtract the rotation already applied in the CameraPreview widget
-    // (see camera/camera/lib/src/camera_preview.dart).
-    rotationDegrees -= deviceOrientationDegrees;
+    // (see camera/camera/lib/src/camera_preview.dart). This will be either
+    // the locked capture orientation (if applied) or the device orientation.
+    rotationDegrees -= lockedCaptureOrientation != null
+        ? _getClockwiseDegreesFromDeviceOrientation(lockedCaptureOrientation)
+        : deviceOrientationDegrees;
 
     return rotationDegrees;
   }
@@ -101,19 +132,27 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
   @override
   void dispose() {
     deviceOrientationSubscription.cancel();
+    widget.lockedCaptureOrientation.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final double rotationDegrees = _computeRotationDegrees(
-      deviceOrientation,
-      sensorOrientationDegrees: widget.sensorOrientationDegrees,
-      sign: widget.facingSign,
-    );
-    return RotatedBox(
-      quarterTurns: rotationDegrees ~/ 90,
-      child: widget.child,
-    );
+    return ValueListenableBuilder<DeviceOrientation?>(
+        valueListenable: widget.lockedCaptureOrientation,
+        builder: (BuildContext context,
+            DeviceOrientation? lockedCaptureOrientation, Widget? child) {
+          final double rotationDegrees = _computeRotationDegrees(
+            deviceOrientation: deviceOrientation,
+            sensorOrientationDegrees: widget.sensorOrientationDegrees,
+            sign: widget.facingSign,
+            lockedCaptureOrientation: lockedCaptureOrientation,
+          );
+
+          return RotatedBox(
+            quarterTurns: rotationDegrees ~/ 90,
+            child: widget.child,
+          );
+        });
   }
 }

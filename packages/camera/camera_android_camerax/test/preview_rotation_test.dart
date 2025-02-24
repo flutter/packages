@@ -18,6 +18,7 @@ import 'android_camera_camerax_test.mocks.dart';
 
 // Constants to map clockwise degree rotations to quarter turns:
 const int _90DegreesClockwise = 1;
+const int _180DegreesClockwise = 2;
 const int _270DegreesClockwise = 3;
 
 void main() {
@@ -130,6 +131,11 @@ void main() {
   String getExpectedRotationTestFailureReason(
           int expectedQuarterTurns, int actualQuarterTurns) =>
       'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated $actualQuarterTurns quarter turns.';
+
+  tearDownAll(() async {
+    await DeviceOrientationManager.deviceOrientationChangedStreamController
+        .close();
+  });
 
   testWidgets(
       'when handlesCropAndRotation is true, the preview is an unrotated Texture',
@@ -409,9 +415,6 @@ void main() {
             reason:
                 'When the device orientation is $currentDeviceOrientation, expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
       }
-
-      await DeviceOrientationManager.deviceOrientationChangedStreamController
-          .close();
     });
 
     // Test the preview rotation responds to the two most common sensor orientations for Android phone cameras; see
@@ -603,11 +606,11 @@ void main() {
 
         // Set up front camera selection and initial device orientation as landscape right.
         final MockCameraSelector Function(int cameraSelectorLensDirection)
-            proxyCreateCameraSelectorForFrontCamera =
+            proxyCreateCameraSelectorForBackCamera =
             createCameraSelectorForBackCamera(mockBackCameraSelector);
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
-            createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
+            createCameraSelector: proxyCreateCameraSelectorForBackCamera,
             handlesCropAndRotation: false,
             getUiOrientation: () =>
                 Future<DeviceOrientation>.value(testInitialDeviceOrientation));
@@ -624,6 +627,315 @@ void main() {
 
         // Verify Texture is rotated by ((90 - 90 * -1 + 360) % 360) - 90 = 90 degrees clockwise.
         const int expectedQuarterTurns = _90DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(rotatedBox.quarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+    });
+    // Test that preview is properly rotated when capture orientation is locked:
+    group(
+        'initial device orientation is DeviceOrientation.portraitDown, sensor orientation degrees is 270, camera is back facing,',
+        () {
+      late AndroidCameraCameraX camera;
+      late int cameraId;
+      late MediaSettings testMediaSettings;
+
+      setUp(() {
+        camera = AndroidCameraCameraX();
+        cameraId = 22;
+        testMediaSettings = const MediaSettings();
+
+        // Set up back facing test camera with sensor orientation degrees 270. Additionally, set
+        // initial device orientation to portrait down.
+        final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
+        final MockProcessCameraProvider mockProcessCameraProvider =
+            setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
+                mockCameraSelector: mockBackCameraSelector,
+                sensorRotationDegrees: 270);
+        final MockCameraSelector Function(int cameraSelectorLensDirection)
+            proxyCreateCameraSelectorForBackCamera =
+            createCameraSelectorForBackCamera(mockBackCameraSelector);
+        camera.proxy = getProxyForCreatingTestCamera(
+            mockProcessCameraProvider: mockProcessCameraProvider,
+            createCameraSelector: proxyCreateCameraSelectorForBackCamera,
+            handlesCropAndRotation: false,
+            getUiOrientation: () => Future<DeviceOrientation>.value(
+                DeviceOrientation.portraitDown));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.landscapeLeft before the preview is built, then the preview Texture is rotated 180 degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Lock capture orientation to landscape left.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.landscapeLeft);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Verify Texture is rotated by ((180 - 270 * -1 + 360) % 360) - 270 = -180 degrees clockwise = 180 degrees counterclockwise = 180 degrees clockwise.
+        const int expectedQuarterTurns = _180DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.landscapeLeft after the preview is built, then the preview Texture is rotated 180 degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Lock capture orientation to landscape left.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.landscapeLeft);
+        await tester.pumpAndSettle();
+
+        // Verify Texture is rotated by ((180 - 270 * -1 + 360) % 360) - 270 = -180 degrees clockwise = 180 degrees counterclockwise = 180 degrees clockwise.
+        const int expectedQuarterTurns = _180DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.portraitUp before the preview is built, then it is unlocked, then the preview Texture is rotated 270 degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Lock capture orientation to portrait up.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.portraitUp);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Unlock capture orientation.
+        await camera.unlockCaptureOrientation(cameraId);
+        await tester.pumpAndSettle();
+
+        // Verify Texture is rotated by ((180 - 270 * -1 + 360) % 360) - 180 = -90 degrees clockwise = 90 degrees counterclockwise = 270 degrees clockwise.
+        const int expectedQuarterTurns = _270DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.portraitUp after the preview is built, then it is unlocked, then the preview Texture is rotated 270 degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Lock capture orientation to portrait up.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.portraitUp);
+        await tester.pumpAndSettle();
+
+        // Unlock capture orientation.
+        await camera.unlockCaptureOrientation(cameraId);
+        await tester.pumpAndSettle();
+
+        // Verify Texture is rotated by ((180 - 270 * -1 + 360) % 360) - 180 = -90 degrees clockwise = 90 degrees counterclockwise = 270 degrees clockwise.
+        const int expectedQuarterTurns = _270DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.portraitDown before the preview is built, then the device orientation is changed DeviceOrientation.landscapeRight, then the preview Texture is rotated 180 degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Lock capture orientation to portrait down.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.portraitDown);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Change the device orientation to landscape right.
+        const DeviceOrientationChangedEvent testEvent =
+            DeviceOrientationChangedEvent(DeviceOrientation.landscapeRight);
+        DeviceOrientationManager.deviceOrientationChangedStreamController
+            .add(testEvent);
+        await tester.pumpAndSettle();
+
+        // Verify Texture is rotated by ((90 - 270 * -1 + 360) % 360) - 180 = -180 degrees clockwise = 180 degrees counterclockwise = 180 degrees clockwise.
+        const int expectedQuarterTurns = _180DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.portraitDown after the preview is built, then the device orientation is changed DeviceOrientation.landscapeRight, then the preview Texture is rotated X degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Lock capture orientation to portrait down.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.portraitDown);
+        await tester.pumpAndSettle();
+
+        // Change the device orientation to landscape right.
+        const DeviceOrientationChangedEvent testEvent =
+            DeviceOrientationChangedEvent(DeviceOrientation.landscapeRight);
+        DeviceOrientationManager.deviceOrientationChangedStreamController
+            .add(testEvent);
+        await tester.pumpAndSettle();
+
+        // Verify Texture is rotated by ((90 - 270 * -1 + 360) % 360) - 180 = -180 degrees clockwise = 180 degrees counterclockwise = 180 degrees clockwise.
+        const int expectedQuarterTurns = _180DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.landscapeRight before the preview is built, the device orientation is changed to DeviceOrientation.portraitUp, then the capture orientation is unlocked, then the preview Texture is rotated 270 degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Lock capture orientation to landscape right.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.landscapeRight);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Change the device orientation to portrait up.
+        const DeviceOrientationChangedEvent testEvent =
+            DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+        DeviceOrientationManager.deviceOrientationChangedStreamController
+            .add(testEvent);
+        await tester.pumpAndSettle();
+
+        // Unlock capture orientation.
+        await camera.unlockCaptureOrientation(cameraId);
+        await tester.pumpAndSettle();
+
+        // Verify Texture is rotated by ((0 - 270 * -1 + 360) % 360) - 0 = 270 degrees clockwise.
+        const int expectedQuarterTurns = _270DegreesClockwise;
+        final RotatedBox rotatedBox =
+            tester.widget<RotatedBox>(find.byType(RotatedBox));
+        expect(rotatedBox.child, isA<Texture>());
+        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        expect(rotatedBox.quarterTurns, expectedQuarterTurns,
+            reason: getExpectedRotationTestFailureReason(
+                expectedQuarterTurns, rotatedBox.quarterTurns));
+      });
+
+      testWidgets(
+          'capture orientation is locked to DeviceOrientation.landscapeRight after the preview is built, the device orientation is changed to DeviceOrientation.portraitUp, then the capture orientation is unlocked, then the preview Texture is rotated 270 degrees',
+          (WidgetTester tester) async {
+        // Get and create test camera.
+        final List<CameraDescription> availableCameras =
+            await camera.availableCameras();
+        expect(availableCameras.length, 1);
+        await camera.createCameraWithSettings(
+            availableCameras.first, testMediaSettings);
+
+        // Build and put camera preview in widget tree.
+        await tester.pumpWidget(camera.buildPreview(cameraId));
+
+        // Lock capture orientation to landscape right.
+        await camera.lockCaptureOrientation(
+            cameraId, DeviceOrientation.landscapeRight);
+        await tester.pumpAndSettle();
+
+        // Change the device orientation to portrait up.
+        const DeviceOrientationChangedEvent testEvent =
+            DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+        DeviceOrientationManager.deviceOrientationChangedStreamController
+            .add(testEvent);
+        await tester.pumpAndSettle();
+
+        // Unlock capture orientation.
+        await camera.unlockCaptureOrientation(cameraId);
+        await tester.pumpAndSettle();
+
+        // Verify Texture is rotated by ((0 - 270 * -1 + 360) % 360) - 0 = 270 degrees clockwise.
+        const int expectedQuarterTurns = _270DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
         expect(rotatedBox.child, isA<Texture>());

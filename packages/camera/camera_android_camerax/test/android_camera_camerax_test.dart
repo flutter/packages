@@ -49,7 +49,7 @@ import 'package:camera_android_camerax/src/video_capture.dart';
 import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
-    show DeviceOrientation, PlatformException, Uint8List;
+    show DeviceOrientation, PlatformException, Uint8List, landscapeLeft;
 import 'package:flutter/widgets.dart' show BuildContext, Size;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -1350,7 +1350,7 @@ void main() {
       camera.imageAnalysis = MockImageAnalysis();
 
       // Ignore setting target rotation for this test; tested seprately.
-      camera.captureOrientationLocked = true;
+      camera.lockedCaptureOrientation = DeviceOrientation.landscapeRight;
 
       // Tell plugin to create detached Observer when camera info updated.
       camera.proxy = CameraXProxy(
@@ -1433,7 +1433,7 @@ void main() {
       camera.imageAnalysis = MockImageAnalysis();
 
       // Ignore setting target rotation for this test; tested seprately.
-      camera.captureOrientationLocked = true;
+      camera.lockedCaptureOrientation = DeviceOrientation.portraitUp;
 
       // Tell plugin to create detached Observer when camera info updated.
       camera.proxy = CameraXProxy(
@@ -1513,7 +1513,7 @@ void main() {
       camera.imageCapture = MockImageCapture();
 
       // Ignore setting target rotation for this test; tested seprately.
-      camera.captureOrientationLocked = true;
+      camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
 
       // Tell plugin to create detached Analyzer for testing.
       camera.proxy = CameraXProxy(
@@ -1628,7 +1628,7 @@ void main() {
       // Orientation is locked and plugin does not need to set default target
       // rotation manually.
       camera.recording = null;
-      camera.captureOrientationLocked = true;
+      camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
 
@@ -1639,7 +1639,7 @@ void main() {
       // Orientation is locked and plugin does need to set default target
       // rotation manually.
       camera.recording = null;
-      camera.captureOrientationLocked = true;
+      camera.lockedCaptureOrientation = DeviceOrientation.portraitUp;
       camera.shouldSetDefaultRotation = true;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verifyNever(mockVideoCapture.setTargetRotation(any));
@@ -1651,7 +1651,7 @@ void main() {
       // Orientation is unlocked and plugin does need to set default target
       // rotation manually.
       camera.recording = null;
-      camera.captureOrientationLocked = false;
+      camera.lockedCaptureOrientation = null;
       camera.shouldSetDefaultRotation = true;
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
       verify(mockVideoCapture.setTargetRotation(defaultTargetRotation));
@@ -1851,7 +1851,7 @@ void main() {
     camera.cameraSelector = MockCameraSelector();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeLeft;
 
     // Tell plugin to create detached camera state observers.
     camera.proxy = CameraXProxy(
@@ -1906,20 +1906,20 @@ void main() {
 
     // Orientation is locked and plugin does not need to set default target
     // rotation manually.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
     await camera.takePicture(cameraId);
     verifyNever(mockImageCapture.setTargetRotation(any));
 
     // Orientation is locked and plugin does need to set default target
     // rotation manually.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeLeft;
     camera.shouldSetDefaultRotation = true;
     await camera.takePicture(cameraId);
     verifyNever(mockImageCapture.setTargetRotation(any));
 
     // Orientation is unlocked and plugin does need to set default target
     // rotation manually.
-    camera.captureOrientationLocked = false;
+    camera.lockedCaptureOrientation = null;
     camera.shouldSetDefaultRotation = true;
     await camera.takePicture(cameraId);
     verify(mockImageCapture.setTargetRotation(defaultTargetRotation));
@@ -1938,7 +1938,7 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
 
     when(mockProcessCameraProvider.isBound(camera.imageCapture))
         .thenAnswer((_) async => true);
@@ -1962,7 +1962,7 @@ void main() {
     camera.cameraControl = mockCameraControl;
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitUp;
     camera.processCameraProvider = mockProcessCameraProvider;
 
     when(mockProcessCameraProvider.isBound(camera.imageCapture))
@@ -2185,7 +2185,7 @@ void main() {
     camera.imageAnalysis = MockImageAnalysis();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeRight;
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) => Future<Camera>.value(mockCamera));
@@ -2228,7 +2228,7 @@ void main() {
     camera.imageAnalysis = MockImageAnalysis();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeLeft;
 
     when(mockProcessCameraProvider.isBound(camera.imageAnalysis))
         .thenAnswer((_) async => true);
@@ -2290,7 +2290,7 @@ void main() {
     camera.imageAnalysis = mockImageAnalysis;
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeLeft;
 
     when(mockProcessCameraProvider.isBound(mockImageAnalysis))
         .thenAnswer((_) async => false);
@@ -2354,7 +2354,7 @@ void main() {
     camera.processCameraProvider = mockProcessCameraProvider;
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitUp;
 
     // Tell plugin to create a detached analyzer for testing purposes.
     camera.proxy = CameraXProxy(createAnalyzer: (_) => MockAnalyzer());
@@ -2406,7 +2406,7 @@ void main() {
 
     // Orientation is locked and plugin does not need to set default target
     // rotation manually.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
     imageStreamSubscription = camera
         .onStreamedFrameAvailable(cameraId)
         .listen((CameraImageData data) {});
@@ -2416,7 +2416,7 @@ void main() {
 
     // Orientation is locked and plugin does need to set default target
     // rotation manually.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitUp;
     camera.shouldSetDefaultRotation = true;
     imageStreamSubscription = camera
         .onStreamedFrameAvailable(cameraId)
@@ -2427,7 +2427,7 @@ void main() {
 
     // Orientation is unlocked and plugin does need to set default target
     // rotation manually.
-    camera.captureOrientationLocked = false;
+    camera.lockedCaptureOrientation = null;
     camera.shouldSetDefaultRotation = true;
     imageStreamSubscription = camera
         .onStreamedFrameAvailable(cameraId)
@@ -2470,11 +2470,11 @@ void main() {
       verify(mockImageAnalysis.setTargetRotation(expectedTargetRotation));
       verify(mockImageCapture.setTargetRotation(expectedTargetRotation));
       verify(mockVideoCapture.setTargetRotation(expectedTargetRotation));
-      expect(camera.captureOrientationLocked, isTrue);
+      expect(camera.lockedCaptureOrientation, orientation);
       expect(camera.shouldSetDefaultRotation, isTrue);
 
       // Reset flags for testing.
-      camera.captureOrientationLocked = false;
+      camera.lockedCaptureOrientation = null;
       camera.shouldSetDefaultRotation = false;
     }
   });
@@ -2485,9 +2485,9 @@ void main() {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const int cameraId = 57;
 
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
     await camera.unlockCaptureOrientation(cameraId);
-    expect(camera.captureOrientationLocked, isFalse);
+    expect(camera.lockedCaptureOrientation, isNull);
   });
 
   test('setExposureMode sets expected controlAeLock value via Camera2 interop',
@@ -3775,7 +3775,7 @@ void main() {
     camera.cameraSelector = MockCameraSelector();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
 
     // Tell plugin to create a detached analyzer for testing purposes.
     camera.proxy = CameraXProxy(
@@ -3825,7 +3825,7 @@ void main() {
     camera.imageAnalysis = MockImageAnalysis();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitUp;
 
     // Tell plugin to create detached Observer when camera info updated.
     camera.proxy = CameraXProxy(
@@ -3890,7 +3890,7 @@ void main() {
     camera.imageAnalysis = MockImageAnalysis();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeLeft;
 
     // Tell plugin to create detached Observer when camera info updated.
     camera.proxy = CameraXProxy(
@@ -3955,7 +3955,7 @@ void main() {
     camera.imageAnalysis = MockImageAnalysis();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeLeft;
 
     // Tell plugin to create detached Observer when camera info updated.
     camera.proxy = CameraXProxy(
@@ -4021,7 +4021,7 @@ void main() {
     camera.imageCapture = MockImageCapture();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.portraitDown;
 
     // Tell plugin to create detached Observer when camera info updated.
     camera.proxy = CameraXProxy(
@@ -4093,7 +4093,7 @@ void main() {
     camera.preview = MockPreview();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeLeft;
 
     // Tell plugin to create detached Observer when camera info updated.
     camera.proxy = CameraXProxy(
@@ -4160,7 +4160,7 @@ void main() {
     camera.preview = MockPreview();
 
     // Ignore setting target rotation for this test; tested seprately.
-    camera.captureOrientationLocked = true;
+    camera.lockedCaptureOrientation = DeviceOrientation.landscapeRight;
 
     // Tell plugin to create detached Observer when camera info updated.
     camera.proxy = CameraXProxy(

@@ -184,12 +184,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// set for the camera in use.
   static const String zoomStateNotSetErrorCode = 'zoomStateNotSet';
 
-  /// Whether or not the capture orientation is locked.
+  /// The current locked capture orientaiton.
   ///
-  /// Indicates a new target rotation should not be set as it has been locked by
-  /// [lockCaptureOrientation].
+  /// Null if the capture orientation is not locked.
   @visibleForTesting
-  bool captureOrientationLocked = false;
+  DeviceOrientation? lockedCaptureOrientation;
 
   /// Whether or not the default rotation for [UseCase]s needs to be set
   /// manually because the capture orientation was previously locked.
@@ -251,6 +250,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
   /// The initial orientation of the device when the camera is created.
   late DeviceOrientation _initialDeviceOrientation;
+
+  /// Correctly rotated preview [Widget], if used.
+  RotatedPreview? _rotatedPreview;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -502,7 +504,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // if orientation is ever unlocked and (2) the capture orientation is locked
     // and should not be changed until unlocked.
     shouldSetDefaultRotation = true;
-    captureOrientationLocked = true;
+    lockedCaptureOrientation = orientation;
 
     // Get target rotation based on locked orientation.
     final int targetLockedRotation =
@@ -512,13 +514,19 @@ class AndroidCameraCameraX extends CameraPlatform {
     await imageCapture!.setTargetRotation(targetLockedRotation);
     await imageAnalysis!.setTargetRotation(targetLockedRotation);
     await videoCapture!.setTargetRotation(targetLockedRotation);
+
+    // Update preview to maintain correct rotation, if needed.
+    _rotatedPreview?.setLockedCaptureOrientation(lockedCaptureOrientation);
   }
 
   /// Unlocks the capture orientation.
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
     // Flag that default rotation should be set for UseCases as needed.
-    captureOrientationLocked = false;
+    lockedCaptureOrientation = null;
+
+    // Update preview to maintain correct rotation, if needed.
+    _rotatedPreview?.setLockedCaptureOrientation(null);
   }
 
   /// Sets the exposure point for automatically determining the exposure values.
@@ -852,20 +860,24 @@ class AndroidCameraCameraX extends CameraPlatform {
         onDeviceOrientationChanged()
             .map((DeviceOrientationChangedEvent e) => e.orientation);
     if (cameraIsFrontFacing) {
-      return RotatedPreview.frontFacingCamera(
+      _rotatedPreview = RotatedPreview.frontFacingCamera(
         _initialDeviceOrientation,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
+        initialLockedCaptureOrientation: lockedCaptureOrientation,
         child: preview,
       );
     } else {
-      return RotatedPreview.backFacingCamera(
+      _rotatedPreview = RotatedPreview.backFacingCamera(
         _initialDeviceOrientation,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
+        initialLockedCaptureOrientation: lockedCaptureOrientation,
         child: preview,
       );
     }
+
+    return _rotatedPreview!;
   }
 
   /// Captures an image and returns the file where it was saved.
@@ -885,7 +897,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+    if (lockedCaptureOrientation == null && shouldSetDefaultRotation) {
       await imageCapture!
           .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
@@ -1014,7 +1026,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+    if (lockedCaptureOrientation == null && shouldSetDefaultRotation) {
       await videoCapture!
           .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
@@ -1145,7 +1157,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+    if (lockedCaptureOrientation == null && shouldSetDefaultRotation) {
       await imageAnalysis!
           .setTargetRotation(await proxy.getDefaultDisplayRotation());
     }
