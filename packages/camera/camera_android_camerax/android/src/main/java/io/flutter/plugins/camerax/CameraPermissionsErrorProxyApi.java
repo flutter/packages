@@ -3,12 +3,13 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 
 /**
- * ProxyApi implementation for {@link CameraPermissionsError}. This class may handle instantiating native
- * object instances that are attached to a Dart instance or handle method calls on the associated
- * native class or an instance of that class.
+ * ProxyApi implementation for {@link CameraPermissionsError}. This class may handle instantiating
+ * native object instances that are attached to a Dart instance or handle method calls on the
+ * associated native class or an instance of that class.
  */
 public class CameraPermissionsErrorProxyApi extends PigeonApiCameraPermissionsError {
-  public CameraPermissionsErrorProxyApi(@NonNull CameraXLibraryPigeonProxyApiRegistrar pigeonRegistrar) {
+  public CameraPermissionsErrorProxyApi(
+      @NonNull CameraXLibraryPigeonProxyApiRegistrar pigeonRegistrar) {
     super(pigeonRegistrar);
   }
 

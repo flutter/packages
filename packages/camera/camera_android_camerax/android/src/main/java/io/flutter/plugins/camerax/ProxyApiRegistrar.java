@@ -181,7 +181,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @NonNull
   @Override
-  public PigeonApiSystemServicesManager getPigeonApiSystemServicesManager() {
+  public SystemServicesManagerProxyApi getPigeonApiSystemServicesManager() {
     return new SystemServicesManagerProxyApi(this);
   }
 
@@ -392,7 +392,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @NonNull
   @Override
-  public PigeonApiCameraPermissionsError getPigeonApiCameraPermissionsError() {
+  public CameraPermissionsErrorProxyApi getPigeonApiCameraPermissionsError() {
     return new CameraPermissionsErrorProxyApi(this);
   }
 }

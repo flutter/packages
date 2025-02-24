@@ -4,35 +4,31 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.resolutionselector.ResolutionFilter;
-import android.util.Size;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
 
+import android.util.Size;
+import androidx.camera.core.resolutionselector.ResolutionFilter;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import org.junit.Test;
 
 public class ResolutionFilterTest {
   @Test
   public void createWithOnePreferredSize() {
-    final PigeonApiResolutionFilter api = new TestProxyApiRegistrar().getPigeonApiResolutionFilter();
+    final PigeonApiResolutionFilter api =
+        new TestProxyApiRegistrar().getPigeonApiResolutionFilter();
 
     final int preferredResolutionWidth = 20;
     final int preferredResolutionHeight = 80;
-    final ResolutionFilter resolutionFilter = api.createWithOnePreferredSize(new Size( preferredResolutionWidth, preferredResolutionHeight));
+    final ResolutionFilter resolutionFilter =
+        api.createWithOnePreferredSize(
+            new Size(preferredResolutionWidth, preferredResolutionHeight));
 
     // Test that instance filters supported resolutions as expected.
     final Size fakeSupportedSize1 = new Size(720, 480);
     final Size fakeSupportedSize2 = new Size(20, 80);
     final Size fakeSupportedSize3 = new Size(2, 8);
-    final Size preferredSize =
-        new Size( preferredResolutionWidth,  preferredResolutionHeight);
+    final Size preferredSize = new Size(preferredResolutionWidth, preferredResolutionHeight);
 
     final ArrayList<Size> fakeSupportedSizes = new ArrayList<>();
     fakeSupportedSizes.add(fakeSupportedSize1);

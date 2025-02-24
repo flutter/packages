@@ -394,8 +394,8 @@ abstract class SystemServicesManager {
 /// Contains data when an attempt to retrieve camera permissions fails.
 @ProxyApi()
 abstract class CameraPermissionsError {
- late final String errorCode;
- late final String description;
+  late final String errorCode;
+  late final String description;
 }
 
 /// Support class to help to determine the media orientation based on the

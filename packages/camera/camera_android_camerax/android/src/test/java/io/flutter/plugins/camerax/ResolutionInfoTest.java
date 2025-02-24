@@ -4,16 +4,13 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.core.ResolutionInfo;
-import android.util.Size;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import android.util.Size;
+import androidx.camera.core.ResolutionInfo;
+import org.junit.Test;
 
 public class ResolutionInfoTest {
   @Test

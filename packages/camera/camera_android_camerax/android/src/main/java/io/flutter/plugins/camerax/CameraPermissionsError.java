@@ -6,12 +6,9 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import java.util.Objects;
 
-/**
- * Contains data when an attempt to retrieve camera permissions fails.
- */
+/** Contains data when an attempt to retrieve camera permissions fails. */
 public class CameraPermissionsError {
   private final String errorCode;
   private final String description;
@@ -34,7 +31,8 @@ public class CameraPermissionsError {
   @Override
   public boolean equals(@Nullable Object obj) {
     if (obj instanceof CameraPermissionsError) {
-      return Objects.equals(((CameraPermissionsError) obj).errorCode, errorCode) && Objects.equals(((CameraPermissionsError) obj).description, description);
+      return Objects.equals(((CameraPermissionsError) obj).errorCode, errorCode)
+          && Objects.equals(((CameraPermissionsError) obj).description, description);
     }
 
     return false;

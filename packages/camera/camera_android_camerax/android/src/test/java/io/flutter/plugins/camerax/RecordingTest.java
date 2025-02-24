@@ -4,14 +4,11 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.video.Recording;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+
+import androidx.camera.video.Recording;
+import org.junit.Test;
 
 public class RecordingTest {
   @Test
@@ -19,7 +16,7 @@ public class RecordingTest {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);
-    api.close(instance );
+    api.close(instance);
 
     verify(instance).close();
   }
@@ -29,7 +26,7 @@ public class RecordingTest {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);
-    api.pause(instance );
+    api.pause(instance);
 
     verify(instance).pause();
   }
@@ -39,7 +36,7 @@ public class RecordingTest {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);
-    api.resume(instance );
+    api.resume(instance);
 
     verify(instance).resume();
   }
@@ -49,7 +46,7 @@ public class RecordingTest {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);
-    api.stop(instance );
+    api.stop(instance);
 
     verify(instance).stop();
   }

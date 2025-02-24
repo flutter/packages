@@ -39,7 +39,9 @@ public class CameraPermissionsManagerTest {
         9796, null, new int[] {PackageManager.PERMISSION_DENIED});
 
     verify(fakeResultCallback)
-        .onResult(new CameraPermissionsError("CameraAccessDenied", "Camera access permission was denied."));
+        .onResult(
+            new CameraPermissionsError(
+                "CameraAccessDenied", "Camera access permission was denied."));
   }
 
   @Test
@@ -53,7 +55,9 @@ public class CameraPermissionsManagerTest {
         null,
         new int[] {PackageManager.PERMISSION_GRANTED, PackageManager.PERMISSION_DENIED});
 
-    verify(fakeResultCallback).onResult(new CameraPermissionsError("AudioAccessDenied", "Audio access permission was denied."));
+    verify(fakeResultCallback)
+        .onResult(
+            new CameraPermissionsError("AudioAccessDenied", "Audio access permission was denied."));
   }
 
   @Test
@@ -68,9 +72,12 @@ public class CameraPermissionsManagerTest {
         new int[] {PackageManager.PERMISSION_GRANTED, PackageManager.PERMISSION_GRANTED});
 
     verify(fakeResultCallback, never())
-        .onResult(new CameraPermissionsError("CameraAccessDenied", "Camera access permission was denied."));
+        .onResult(
+            new CameraPermissionsError(
+                "CameraAccessDenied", "Camera access permission was denied."));
     verify(fakeResultCallback, never())
-        .onResult(new CameraPermissionsError("AudioAccessDenied", "Audio access permission was denied."));
+        .onResult(
+            new CameraPermissionsError("AudioAccessDenied", "Audio access permission was denied."));
   }
 
   @Test
@@ -84,6 +91,8 @@ public class CameraPermissionsManagerTest {
     permissionsListener.onRequestPermissionsResult(9796, null, new int[] {});
 
     verify(fakeResultCallback)
-        .onResult(new CameraPermissionsError("CameraAccessDenied", "Camera access permission was denied."));
+        .onResult(
+            new CameraPermissionsError(
+                "CameraAccessDenied", "Camera access permission was denied."));
   }
 }

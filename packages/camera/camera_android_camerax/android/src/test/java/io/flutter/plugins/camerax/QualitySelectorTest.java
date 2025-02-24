@@ -5,36 +5,30 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 import android.util.Size;
-
 import androidx.camera.core.CameraInfo;
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
-
+import java.util.Collections;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 
-import java.util.Collections;
-
 public class QualitySelectorTest {
   @Test
   public void from() {
-    final PigeonApiQualitySelector api =
-        new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+    final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
 
     final QualitySelector mockQualitySelector = mock(QualitySelector.class);
-      final FallbackStrategy fallbackStrategy = mock(FallbackStrategy.class);
+    final FallbackStrategy fallbackStrategy = mock(FallbackStrategy.class);
 
     try (MockedStatic<QualitySelector> mockedQualitySelector =
         Mockito.mockStatic(QualitySelector.class)) {
-        mockedQualitySelector
+      mockedQualitySelector
           .when(() -> QualitySelector.from(Quality.HD, fallbackStrategy))
           .thenAnswer((Answer<QualitySelector>) invocation -> mockQualitySelector);
 
@@ -44,35 +38,38 @@ public class QualitySelectorTest {
 
   @Test
   public void fromOrderedList() {
-    final PigeonApiQualitySelector api =
-            new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+    final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
 
     final QualitySelector mockQualitySelector = mock(QualitySelector.class);
     final FallbackStrategy fallbackStrategy = mock(FallbackStrategy.class);
 
     try (MockedStatic<QualitySelector> mockedQualitySelector =
-                 Mockito.mockStatic(QualitySelector.class)) {
+        Mockito.mockStatic(QualitySelector.class)) {
       mockedQualitySelector
-              .when(() -> QualitySelector.fromOrderedList(Collections.singletonList(Quality.SD), fallbackStrategy))
-              .thenAnswer((Answer<QualitySelector>) invocation -> mockQualitySelector);
+          .when(
+              () ->
+                  QualitySelector.fromOrderedList(
+                      Collections.singletonList(Quality.SD), fallbackStrategy))
+          .thenAnswer((Answer<QualitySelector>) invocation -> mockQualitySelector);
 
-      assertEquals(api.fromOrderedList(Collections.singletonList(VideoQuality.SD), fallbackStrategy), mockQualitySelector);
+      assertEquals(
+          api.fromOrderedList(Collections.singletonList(VideoQuality.SD), fallbackStrategy),
+          mockQualitySelector);
     }
   }
 
   @Test
   public void getResolution_returnsExpectedResolutionInfo() {
-    final PigeonApiQualitySelector api =
-            new TestProxyApiRegistrar().getPigeonApiQualitySelector();
+    final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
 
     final CameraInfo cameraInfo = mock(CameraInfo.class);
 
     try (MockedStatic<QualitySelector> mockedQualitySelector =
-                 Mockito.mockStatic(QualitySelector.class)) {
+        Mockito.mockStatic(QualitySelector.class)) {
       final Size value = new Size(1, 2);
       mockedQualitySelector
-              .when(() -> QualitySelector.getResolution(cameraInfo, Quality.UHD))
-              .thenAnswer((Answer<Size>) invocation -> value);
+          .when(() -> QualitySelector.getResolution(cameraInfo, Quality.UHD))
+          .thenAnswer((Answer<Size>) invocation -> value);
 
       assertEquals(api.getResolution(cameraInfo, VideoQuality.UHD), value);
     }

@@ -4,45 +4,37 @@
 
 package io.flutter.plugins.camerax;
 
-import androidx.camera.video.FileOutputOptions;
-import androidx.camera.video.Quality;
-import androidx.camera.video.Recorder;
-import androidx.camera.video.QualitySelector;
-import androidx.camera.video.PendingRecording;
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-
 import static org.mockito.Mockito.any;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import androidx.camera.video.FileOutputOptions;
+import androidx.camera.video.PendingRecording;
+import androidx.camera.video.Quality;
+import androidx.camera.video.QualitySelector;
+import androidx.camera.video.Recorder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class RecorderTest {
-    @Test
-    public void pigeon_defaultConstructor() {
-        final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
+  @Test
+  public void pigeon_defaultConstructor() {
+    final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
 
-        final long aspectRatio = 5;
-        final long targetVideoEncodingBitRate = 7;
-        final QualitySelector qualitySelector = QualitySelector.from(Quality.HD);
-        final Recorder recorder =
-            api.pigeon_defaultConstructor(
-                aspectRatio, targetVideoEncodingBitRate, qualitySelector);
+    final long aspectRatio = 5;
+    final long targetVideoEncodingBitRate = 7;
+    final QualitySelector qualitySelector = QualitySelector.from(Quality.HD);
+    final Recorder recorder =
+        api.pigeon_defaultConstructor(aspectRatio, targetVideoEncodingBitRate, qualitySelector);
 
-        assertEquals(recorder.getAspectRatio(), aspectRatio);
-        assertEquals(recorder.getTargetVideoEncodingBitRate(), targetVideoEncodingBitRate);
-        assertEquals(recorder.getQualitySelector(), qualitySelector);
-    }
+    assertEquals(recorder.getAspectRatio(), aspectRatio);
+    assertEquals(recorder.getTargetVideoEncodingBitRate(), targetVideoEncodingBitRate);
+    assertEquals(recorder.getQualitySelector(), qualitySelector);
+  }
 
   @Test
   public void getAspectRatioTest() {
@@ -52,7 +44,7 @@ public class RecorderTest {
     final long value = 0;
     when(instance.getAspectRatio()).thenReturn((int) value);
 
-    assertEquals(value, api.getAspectRatio(instance ));
+    assertEquals(value, api.getAspectRatio(instance));
   }
 
   @Test
@@ -63,7 +55,7 @@ public class RecorderTest {
     final long value = 0;
     when(instance.getTargetVideoEncodingBitRate()).thenReturn((int) value);
 
-    assertEquals(value, api.getTargetVideoEncodingBitRate(instance ));
+    assertEquals(value, api.getTargetVideoEncodingBitRate(instance));
   }
 
   @Test
@@ -74,7 +66,7 @@ public class RecorderTest {
     final androidx.camera.video.QualitySelector value = mock(QualitySelector.class);
     when(instance.getQualitySelector()).thenReturn(value);
 
-    assertEquals(value, api.getQualitySelector(instance ));
+    assertEquals(value, api.getQualitySelector(instance));
   }
 
   @Test

@@ -17,7 +17,7 @@ import kotlin.jvm.functions.Function1;
  * native object instances that are attached to a Dart instance or handle method calls on the
  * associated native class or an instance of that class.
  */
-class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
+public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
   /**
    * Implementation of {@link SystemServicesManager} that passes arguments of callback methods to
    * Dart.
@@ -66,7 +66,10 @@ class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
   }
 
   @Override
-  public void requestCameraPermissions(@NonNull SystemServicesManager pigeon_instance, boolean enableAudio, @NonNull Function1<? super Result<? extends CameraPermissionsError>, Unit> callback) {
+  public void requestCameraPermissions(
+      @NonNull SystemServicesManager pigeon_instance,
+      boolean enableAudio,
+      @NonNull Function1<? super Result<? extends CameraPermissionsError>, Unit> callback) {
     pigeon_instance.requestCameraPermissions(
         enableAudio, (isSuccessful, error) -> ResultCompat.success(error, callback));
   }
