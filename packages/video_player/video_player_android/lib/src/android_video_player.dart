@@ -45,8 +45,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return createWithOptions(
       VideoCreationOptions(
         dataSource: dataSource,
-        // Texture view was the only supported view type before
-        // createWithOptions was introduced.
+        // Compatibility; "create" is always a textureView (createWithOptions
+        // allows selecting).
         viewType: VideoViewType.textureView,
       ),
     );
@@ -202,8 +202,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         PlatformVideoViewCreationParams(playerId: playerId);
 
     return Builder(
+      // IgnorePointer so that GestureDetector can be used above the platform view.
       builder: (BuildContext context) => IgnorePointer(
-        // IgnorePointer so that GestureDetector can be used above the platform view.
         child: PlatformViewLink(
           viewType: viewType,
           surfaceFactory: (
