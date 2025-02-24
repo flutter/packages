@@ -445,25 +445,23 @@ void main() {
       await followLinkCallback!();
       await Future<void>.delayed(const Duration(seconds: 1));
       final html.Event event1 = _simulateClick(anchor);
+      await Future<void>.delayed(const Duration(seconds: 1));
 
       // The link shouldn't have been triggered.
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
-      expect(event1.defaultPrevented, isFalse);
-
-      await Future<void>.delayed(const Duration(seconds: 1));
+      expect(event1.defaultPrevented, isTrue);
 
       // Signals with large delay (in reverse order).
       final html.Event event2 = _simulateClick(anchor);
       await Future<void>.delayed(const Duration(seconds: 1));
       await followLinkCallback!();
+      await Future<void>.delayed(const Duration(seconds: 1));
 
       // The link shouldn't have been triggered.
       expect(pushedRouteNames, isEmpty);
       expect(testPlugin.launches, isEmpty);
-      expect(event2.defaultPrevented, isFalse);
-
-      await Future<void>.delayed(const Duration(seconds: 1));
+      expect(event2.defaultPrevented, isTrue);
 
       // A small delay is okay.
       await followLinkCallback!();
@@ -473,6 +471,7 @@ void main() {
       // The link should've been triggered now.
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
+      // (default is prevented here because the link is internal)
       expect(event3.defaultPrevented, isTrue);
     });
 
@@ -970,6 +969,109 @@ void main() {
       expect(pushedRouteNames, <String>['/foobar']);
       expect(testPlugin.launches, isEmpty);
       expect(event.defaultPrevented, isTrue);
+    });
+
+    testWidgets('handles debounced clicks on semantic link',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('https://flutter.dev');
+      FollowLink? followLinkCallback;
+
+      await tester.pumpWidget(MaterialApp(
+        home: WebLinkDelegate(
+          semanticsIdentifier: 'test-link-71',
+          TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              followLinkCallback = followLink;
+              return GestureDetector(
+                onTap: () {},
+                child: const Text('My Link'),
+              );
+            },
+          ),
+        ),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+      await tester.pump();
+
+      final html.Element semanticsHost =
+          html.document.createElement('flt-semantics-host');
+      html.document.body!.append(semanticsHost);
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', uri.toString())
+        ..textContent = 'My Text Link';
+      semanticsHost.append(semanticsAnchor);
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      // Receive the DOM click first.
+      final html.Event event = _simulateClick(semanticsAnchor);
+      // The browser will be prevented from navigating right at the end of the event loop because
+      // we are still not sure if the `followLink` will arrive or not.
+      await Future<void>.delayed(Duration.zero);
+      expect(event.defaultPrevented, isTrue);
+      // After some delay, the engine's click debouncer sends the events to the framework and we get
+      // the `followLink` signal.
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      await followLinkCallback!();
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, <String>['https://flutter.dev']);
+    });
+
+    // Regression test for: https://github.com/flutter/flutter/issues/162927
+    testWidgets('prevents navigation with debounced clicks on semantic link',
+        (WidgetTester tester) async {
+      final Uri uri = Uri.parse('https://flutter.dev');
+
+      await tester.pumpWidget(MaterialApp(
+        home: WebLinkDelegate(
+          semanticsIdentifier: 'test-link-71',
+          TestLinkInfo(
+            uri: uri,
+            target: LinkTarget.blank,
+            builder: (BuildContext context, FollowLink? followLink) {
+              return GestureDetector(
+                onTap: () {},
+                child: const Text('My Link'),
+              );
+            },
+          ),
+        ),
+      ));
+      // Platform view creation happens asynchronously.
+      await tester.pumpAndSettle();
+      await tester.pump();
+
+      final html.Element semanticsHost =
+          html.document.createElement('flt-semantics-host');
+      html.document.body!.append(semanticsHost);
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', uri.toString())
+        ..textContent = 'My Text Link';
+      semanticsHost.append(semanticsAnchor);
+
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
+
+      // Receive the DOM click first.
+      final html.Event event = _simulateClick(semanticsAnchor);
+      // The browser will be prevented from navigating right at the end of the event loop because
+      // we are still not sure if the `followLink` will arrive or not.
+      await Future<void>.delayed(Duration.zero);
+      expect(event.defaultPrevented, isTrue);
+
+      // No navigation should occur because no `followLink` signal was received.
+      await Future<void>.delayed(const Duration(seconds: 1));
+      expect(pushedRouteNames, isEmpty);
+      expect(testPlugin.launches, isEmpty);
     });
 
     // TODO(mdebbar): Remove this test after the engine PR [1] makes it to stable.
