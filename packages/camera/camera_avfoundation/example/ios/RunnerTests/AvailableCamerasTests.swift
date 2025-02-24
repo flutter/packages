@@ -15,6 +15,7 @@ final class AvailableCamerasTest: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: deviceDiscoverer,
+      permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory()
@@ -77,7 +78,7 @@ final class AvailableCamerasTest: XCTestCase {
     }
   }
 
-  func testAvailableCamerasShouldReturnOneCameraOnSingleCameraIPhone() {
+  func testAvailableCamerasShouldReturnTwoCamerasOnDualCameraIPhone() {
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
     let cameraPlugin = createCameraPlugin(with: mockDeviceDiscoverer)
     let expectation = self.expectation(description: "Result finished")
@@ -116,5 +117,40 @@ final class AvailableCamerasTest: XCTestCase {
 
     // Verify the result.
     XCTAssertEqual(resultValue?.count, 2)
+  }
+
+  func testAvailableCamerasShouldReturnExternalLensDirectionForUnspecifiedCameraPosition() {
+    let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
+    let cameraPlugin = createCameraPlugin(with: mockDeviceDiscoverer)
+    let expectation = self.expectation(description: "Result finished")
+
+    let unspecifiedCamera = MockCaptureDevice()
+    unspecifiedCamera.uniqueID = "0"
+    unspecifiedCamera.position = .unspecified
+
+    var requiredTypes: [AVCaptureDevice.DeviceType] = [
+      .builtInWideAngleCamera, .builtInTelephotoCamera,
+    ]
+    if #available(iOS 13.0, *) {
+      requiredTypes.append(.builtInUltraWideCamera)
+    }
+    let cameras: [MockCaptureDevice] = [unspecifiedCamera]
+
+    mockDeviceDiscoverer.discoverySessionStub = { deviceTypes, mediaType, position in
+      XCTAssertEqual(deviceTypes, requiredTypes)
+      XCTAssertEqual(mediaType, .video)
+      XCTAssertEqual(position, .unspecified)
+      return cameras
+    }
+
+    var resultValue: [FCPPlatformCameraDescription]?
+    cameraPlugin.availableCameras { result, error in
+      XCTAssertNil(error)
+      resultValue = result
+      expectation.fulfill()
+    }
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertEqual(resultValue?.first?.lensDirection, FCPPlatformCameraLensDirection.external)
   }
 }
