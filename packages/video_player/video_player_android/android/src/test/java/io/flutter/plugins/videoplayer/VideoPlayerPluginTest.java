@@ -14,6 +14,7 @@ import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.Messages.PlatformVideoViewType;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
+import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
 import java.lang.reflect.Field;
@@ -73,7 +74,7 @@ public class VideoPlayerPluginTest {
   public void createsVideoPlayerWithPlatformViewType() throws Exception {
     try (MockedStatic<VideoPlayer> mockedVideoPlayerStatic = mockStatic(VideoPlayer.class)) {
       mockedVideoPlayerStatic
-          .when(() -> VideoPlayer.create(any(), any(), any(), any()))
+          .when(() -> PlatformViewVideoPlayer.create(any(), any(), any(), any()))
           .thenReturn(mock(VideoPlayer.class));
 
       final CreateMessage createMessage =

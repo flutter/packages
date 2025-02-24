@@ -13,7 +13,6 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.ExoPlayerState;
-import io.flutter.plugins.videoplayer.Messages;
 import io.flutter.plugins.videoplayer.VideoAsset;
 import io.flutter.plugins.videoplayer.VideoPlayer;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
@@ -21,10 +20,11 @@ import io.flutter.plugins.videoplayer.VideoPlayerOptions;
 import io.flutter.view.TextureRegistry;
 
 /**
- * A subclass of {@link VideoPlayer} that adds functionality related to texture-based view as a way
- * of displaying the video in the app. It manages the lifecycle of the texture and ensures that the
- * video is properly displayed on the texture. If you need to display a video using platform view,
- * use {@link VideoPlayer} instead.
+ * A subclass of {@link VideoPlayer} that adds functionality related to texture view as a way of
+ * displaying the video in the app.
+ *
+ * <p>It manages the lifecycle of the texture and ensures that the video is properly displayed on
+ * the texture.
  */
 public final class TextureVideoPlayer extends VideoPlayer
     implements TextureRegistry.SurfaceProducer.Callback {
@@ -32,7 +32,7 @@ public final class TextureVideoPlayer extends VideoPlayer
   @Nullable private ExoPlayerState savedStateDuring;
 
   /**
-   * Creates a texture-based video player.
+   * Creates a texture video player.
    *
    * @param context application context.
    * @param events event callbacks.
@@ -105,11 +105,6 @@ public final class TextureVideoPlayer extends VideoPlayer
   @Override
   protected boolean playerHasBeenSuspended() {
     return savedStateDuring != null;
-  }
-
-  @Override
-  protected Messages.PlatformVideoViewType getViewType() {
-    return Messages.PlatformVideoViewType.TEXTURE_VIEW;
   }
 
   public void dispose() {

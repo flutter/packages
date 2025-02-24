@@ -7,9 +7,7 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
-import android.content.Context;
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
@@ -17,48 +15,20 @@ import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
-import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 
 /**
- * A class responsible for managing video playback using {@link ExoPlayer}. It provides methods to
- * control playback, adjust volume, and handle seeking. This class contains all functionalities
- * needed to manage video playback in platform views and is typically used alongside {@link
- * PlatformVideoViewFactory}. If you need to display a video using a texture, use {@link
- * TextureVideoPlayer} instead.
+ * A class responsible for managing video playback using {@link ExoPlayer}.
+ *
+ * <p>It provides methods to control playback, adjust volume, and handle seeking. This class
+ * contains all functionalities needed to manage video playback in platform views and is typically
+ * used alongside {@link PlatformVideoViewFactory}.
  */
-public class VideoPlayer {
+public abstract class VideoPlayer {
   @NonNull private final ExoPlayerProvider exoPlayerProvider;
   @NonNull private final MediaItem mediaItem;
   @NonNull private final VideoPlayerOptions options;
   @NonNull protected final VideoPlayerCallbacks videoPlayerEvents;
   @NonNull protected ExoPlayer exoPlayer;
-
-  /**
-   * Creates a video player.
-   *
-   * @param context application context.
-   * @param events event callbacks.
-   * @param asset asset to play.
-   * @param options options for playback.
-   * @return a video player instance.
-   */
-  @NonNull
-  static VideoPlayer create(
-      @NonNull Context context,
-      @NonNull VideoPlayerCallbacks events,
-      @NonNull VideoAsset asset,
-      @NonNull VideoPlayerOptions options) {
-    return new VideoPlayer(
-        () -> {
-          ExoPlayer.Builder builder =
-              new ExoPlayer.Builder(context)
-                  .setMediaSourceFactory(asset.getMediaSourceFactory(context));
-          return builder.build();
-        },
-        events,
-        asset.getMediaItem(),
-        options);
-  }
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -70,7 +40,6 @@ public class VideoPlayer {
     ExoPlayer get();
   }
 
-  @VisibleForTesting
   public VideoPlayer(
       @NonNull ExoPlayerProvider exoPlayerProvider,
       @NonNull VideoPlayerCallbacks events,
@@ -102,10 +71,6 @@ public class VideoPlayer {
   protected boolean playerHasBeenSuspended() {
     // The base implementation never suspends and re-creates the exoPlayer, but subclasses may.
     return false;
-  }
-
-  protected Messages.PlatformVideoViewType getViewType() {
-    return Messages.PlatformVideoViewType.PLATFORM_VIEW;
   }
 
   void sendBufferingUpdate() {

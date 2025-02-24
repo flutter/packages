@@ -15,6 +15,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
+import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
 
@@ -122,7 +123,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     if (arg.getViewType() == Messages.PlatformVideoViewType.PLATFORM_VIEW) {
       id = nextNonTexturePlayerId--;
       videoPlayer =
-          VideoPlayer.create(
+          PlatformViewVideoPlayer.create(
               flutterState.applicationContext,
               VideoPlayerEventCallbacks.bindTo(createEventChannel(id)),
               videoAsset,

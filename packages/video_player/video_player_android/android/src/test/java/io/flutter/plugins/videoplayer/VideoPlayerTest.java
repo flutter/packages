@@ -23,6 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 
 /**
  * Unit tests for {@link VideoPlayer}.
@@ -58,7 +59,8 @@ public final class VideoPlayerTest {
   }
 
   private VideoPlayer createVideoPlayer(VideoPlayerOptions options) {
-    return new VideoPlayer(() -> mockExoPlayer, mockEvents, fakeVideoAsset.getMediaItem(), options);
+    return new PlatformViewVideoPlayer(
+        () -> mockExoPlayer, mockEvents, fakeVideoAsset.getMediaItem(), options);
   }
 
   @Test
