@@ -100,13 +100,30 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (_useStoreKit2) {
-      final SK2ProductPurchaseOptions options = SK2ProductPurchaseOptions(
+      late SK2ProductPurchaseOptions options;
+
+      if (purchaseParam is Sk2PurchaseParam) {
+        options = SK2ProductPurchaseOptions(
+          appAccountToken: purchaseParam.applicationUserName,
+          quantity: purchaseParam.quantity,
+          winBackOfferId: purchaseParam.winBackOfferId,
+          promotionalOffer: _convertPromotionalOffer(
+            purchaseParam.promotionalOffer,
+          ),
+        );
+      } else {
+        options = SK2ProductPurchaseOptions(
           quantity: purchaseParam is AppStorePurchaseParam
               ? purchaseParam.quantity
               : 1,
-          appAccountToken: purchaseParam.applicationUserName);
-      await SK2Product.purchase(purchaseParam.productDetails.id,
-          options: options);
+          appAccountToken: purchaseParam.applicationUserName,
+        );
+      }
+
+      await SK2Product.purchase(
+        purchaseParam.productDetails.id,
+        options: options,
+      );
 
       return true;
     }
@@ -122,6 +139,24 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
             : null));
 
     return true; // There's no error feedback from iOS here to return.
+  }
+
+  SK2SubscriptionOfferPurchaseMessage? _convertPromotionalOffer(
+    SK2PromotionalOffer? promotionalOffer,
+  ) {
+    if (promotionalOffer == null) {
+      return null;
+    }
+
+    return SK2SubscriptionOfferPurchaseMessage(
+      promotionalOfferSignature: SK2SubscriptionOfferSignatureMessage(
+        keyID: promotionalOffer.signature.keyID,
+        signature: promotionalOffer.signature.signature,
+        nonce: promotionalOffer.signature.nonce,
+        timestamp: promotionalOffer.signature.timestamp,
+      ),
+      promotionalOfferId: promotionalOffer.offerId,
+    );
   }
 
   @override
@@ -247,6 +282,28 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// Use countryCode instead.
   @Deprecated('Use countryCode')
   Future<String?> getCountryCode() => countryCode();
+
+  /// Checks if the user is eligible for a specific win back offer (StoreKit2 only).
+  ///
+  /// Throws [PlatformException] if StoreKit2 is not enabled or if the check fails.
+  Future<bool> checkWinBackOfferEligibility(
+    String productId,
+    String offerId,
+  ) async {
+    if (!_useStoreKit2) {
+      throw PlatformException(
+        code: 'storekit2_not_enabled',
+        message: 'Win back offers require StoreKit2 which is not enabled.',
+      );
+    }
+
+    final bool eligibility = await SK2Product.checkWinBackOfferEligibility(
+      productId,
+      offerId,
+    );
+
+    return eligibility;
+  }
 
   /// Turns on StoreKit2. You cannot disable this after it is enabled.
   /// This can only be enabled if your device supports StoreKit 2.
