@@ -91,7 +91,7 @@ public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManage
   }
 
   @Override
-  public boolean isPreviewPreTransformed(SystemServicesManager pigeon_instance) {
+  public boolean isPreviewPreTransformed(@NonNull SystemServicesManager pigeon_instance) {
     return pigeon_instance.isPreviewPreTransformed();
   }
 }
