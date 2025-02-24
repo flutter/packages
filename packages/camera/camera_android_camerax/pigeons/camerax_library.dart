@@ -384,11 +384,18 @@ abstract class SystemServicesManager {
   late void Function(String errorDescription) onCameraError;
 
   @async
-  void requestCameraPermissions(bool enableAudio);
+  CameraPermissionsError? requestCameraPermissions(bool enableAudio);
 
   String getTempFilePath(String prefix, String suffix);
 
   bool isPreviewPreTransformed();
+}
+
+/// Contains data when an attempt to retrieve camera permissions fails.
+@ProxyApi()
+abstract class CameraPermissionsError {
+ late final String errorCode;
+ late final String description;
 }
 
 /// Support class to help to determine the media orientation based on the

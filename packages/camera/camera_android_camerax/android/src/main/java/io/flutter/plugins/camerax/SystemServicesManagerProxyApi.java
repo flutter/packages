@@ -66,12 +66,9 @@ class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManager {
   }
 
   @Override
-  public void requestCameraPermissions(
-      @NonNull SystemServicesManager pigeon_instance,
-      boolean enableAudio,
-      @NonNull Function1<? super Result<Unit>, Unit> callback) {
+  public void requestCameraPermissions(@NonNull SystemServicesManager pigeon_instance, boolean enableAudio, @NonNull Function1<? super Result<? extends CameraPermissionsError>, Unit> callback) {
     pigeon_instance.requestCameraPermissions(
-        enableAudio, isSuccessful -> ResultCompat.success(null, callback));
+        enableAudio, (isSuccessful, error) -> ResultCompat.success(error, callback));
   }
 
   @NonNull

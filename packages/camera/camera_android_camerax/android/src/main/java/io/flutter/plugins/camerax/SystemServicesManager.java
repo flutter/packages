@@ -12,7 +12,7 @@ public abstract class SystemServicesManager {
   @NonNull private final CameraPermissionsManager cameraPermissionsManager;
 
   public interface PermissionsResultListener {
-    void onResult(boolean isSuccessful);
+    void onResult(boolean isSuccessful, @Nullable CameraPermissionsError error);
   }
 
   protected SystemServicesManager(@NonNull CameraPermissionsManager cameraPermissionsManager) {
@@ -37,7 +37,7 @@ public abstract class SystemServicesManager {
         (Activity) getContext(),
         getPermissionsRegistry(),
         enableAudio,
-        (String errorCode, String description) -> listener.onResult(errorCode == null));
+        (CameraPermissionsError error) -> listener.onResult(error == null, error));
   }
 
   @NonNull

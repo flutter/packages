@@ -389,4 +389,10 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
       getPigeonApiDisplayOrientedMeteringPointFactory() {
     return new DisplayOrientedMeteringPointFactoryProxyApi(this);
   }
+
+  @NonNull
+  @Override
+  public PigeonApiCameraPermissionsError getPigeonApiCameraPermissionsError() {
+    return new CameraPermissionsErrorProxyApi(this);
+  }
 }

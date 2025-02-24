@@ -34,11 +34,6 @@ dev_dependencies:
   leak_tracker_flutter_testing: any
   mockito: ^5.4.4
   pigeon: ^24.1.1
-#  pigeon:
-#    git:
-#      url: git@github.com:bparrishMines/packages.git
-#      ref: pigeon_helper
-#      path: packages/pigeon
 
 topics:
   - camera
