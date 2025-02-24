@@ -14,6 +14,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
+import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.view.TextureRegistry;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
@@ -48,7 +49,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
         .getPlatformViewRegistry()
         .registerViewFactory(
             "plugins.flutter.dev/video_player_android",
-            new NativeVideoViewFactory(videoPlayers::get));
+            new PlatformVideoViewFactory(videoPlayers::get));
   }
 
   @Override

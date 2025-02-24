@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package io.flutter.plugins.videoplayer;
+package io.flutter.plugins.videoplayer.platformview;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -10,22 +10,26 @@ import androidx.annotation.Nullable;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
+import io.flutter.plugins.videoplayer.Messages;
+import io.flutter.plugins.videoplayer.VideoPlayer;
+import io.flutter.plugins.videoplayer.VideoPlayerProvider;
+
 import java.util.Objects;
 
 /**
  * A factory class responsible for creating native video views that can be embedded in a Flutter
  * app.
  */
-class NativeVideoViewFactory extends PlatformViewFactory {
+public class PlatformVideoViewFactory extends PlatformViewFactory {
   private final VideoPlayerProvider videoPlayerProvider;
 
   /**
-   * Constructs a new NativeVideoViewFactory.
+   * Constructs a new PlatformVideoViewFactory.
    *
    * @param videoPlayerProvider The provider used to retrieve the video player associated with the
    *     view.
    */
-  public NativeVideoViewFactory(@NonNull VideoPlayerProvider videoPlayerProvider) {
+  public PlatformVideoViewFactory(@NonNull VideoPlayerProvider videoPlayerProvider) {
     super(Messages.AndroidVideoPlayerApi.getCodec());
     this.videoPlayerProvider = videoPlayerProvider;
   }
@@ -36,7 +40,7 @@ class NativeVideoViewFactory extends PlatformViewFactory {
    * @param context The context in which the view is running.
    * @param id The unique identifier for the view.
    * @param args The arguments for creating the view.
-   * @return A new instance of NativeVideoView.
+   * @return A new instance of PlatformVideoView.
    */
   @NonNull
   @Override
@@ -48,6 +52,6 @@ class NativeVideoViewFactory extends PlatformViewFactory {
     final VideoPlayer player = videoPlayerProvider.getVideoPlayer(playerId);
     final ExoPlayer exoPlayer = player.getExoPlayer();
 
-    return new NativeVideoView(context, exoPlayer);
+    return new PlatformVideoView(context, exoPlayer);
   }
 }

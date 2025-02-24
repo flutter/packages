@@ -6,9 +6,10 @@ package io.flutter.plugins.videoplayer;
 
 import androidx.annotation.NonNull;
 
+// FIXME Public temporarily (?)
 /** Functional interface for providing a VideoPlayer instance based on the player ID. */
 @FunctionalInterface
-interface VideoPlayerProvider {
+public interface VideoPlayerProvider {
   /**
    * Retrieves a VideoPlayer instance based on the provided player ID.
    *

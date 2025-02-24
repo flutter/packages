@@ -13,15 +13,17 @@ import androidx.media3.exoplayer.ExoPlayer;
 import java.lang.reflect.Field;
 import org.junit.Test;
 
-public class NativeVideoViewTest {
+import io.flutter.plugins.videoplayer.platformview.PlatformVideoView;
+
+public class PlatformVideoViewTest {
   @Test
   public void createsSurfaceViewAndSetsItForExoPlayer() throws Exception {
     final Context mockContext = mock(Context.class);
     final ExoPlayer mockExoPlayer = mock(ExoPlayer.class);
 
-    final NativeVideoView view = new NativeVideoView(mockContext, mockExoPlayer);
+    final PlatformVideoView view = new PlatformVideoView(mockContext, mockExoPlayer);
 
-    final Field field = NativeVideoView.class.getDeclaredField("surfaceView");
+    final Field field = PlatformVideoView.class.getDeclaredField("surfaceView");
     field.setAccessible(true);
     final SurfaceView surfaceView = (SurfaceView) field.get(view);
 

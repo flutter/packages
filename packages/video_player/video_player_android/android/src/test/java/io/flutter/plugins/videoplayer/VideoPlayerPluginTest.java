@@ -13,6 +13,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.Messages.PlatformVideoViewType;
+import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.view.TextureRegistry;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -61,10 +62,10 @@ public class VideoPlayerPluginTest {
   }
 
   @Test
-  public void registersNativeVideoViewFactory() throws Exception {
+  public void registersPlatformVideoViewFactory() throws Exception {
     verify(mockPlatformViewRegistry)
         .registerViewFactory(
-            eq("plugins.flutter.dev/video_player_android"), any(NativeVideoViewFactory.class));
+            eq("plugins.flutter.dev/video_player_android"), any(PlatformVideoViewFactory.class));
   }
 
   @Test

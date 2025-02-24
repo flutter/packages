@@ -10,11 +10,13 @@ import static org.mockito.Mockito.*;
 import android.content.Context;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugins.videoplayer.platformview.PlatformVideoView;
+import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import org.junit.Test;
 
-public class NativeVideoViewFactoryTest {
+public class PlatformVideoViewFactoryTest {
   @Test
-  public void createsNativeVideoViewBasedOnSuppliedArguments() throws Exception {
+  public void createsPlatformVideoViewBasedOnSuppliedArguments() throws Exception {
     final VideoPlayerProvider videoPlayerProvider = mock(VideoPlayerProvider.class);
     final VideoPlayer videoPlayer = mock(VideoPlayer.class);
     final ExoPlayer exoPlayer = mock(ExoPlayer.class);
@@ -24,13 +26,13 @@ public class NativeVideoViewFactoryTest {
     when(videoPlayerProvider.getVideoPlayer(playerId)).thenReturn(videoPlayer);
     when(videoPlayer.getExoPlayer()).thenReturn(exoPlayer);
 
-    final NativeVideoViewFactory factory = new NativeVideoViewFactory(videoPlayerProvider);
+    final PlatformVideoViewFactory factory = new PlatformVideoViewFactory(videoPlayerProvider);
     final Messages.PlatformVideoViewCreationParams args =
         new Messages.PlatformVideoViewCreationParams.Builder().setPlayerId(playerId).build();
 
     final PlatformView view = factory.create(context, 0, args);
 
-    assertTrue(view instanceof NativeVideoView);
+    assertTrue(view instanceof PlatformVideoView);
     verify(videoPlayerProvider).getVideoPlayer(playerId);
     verify(videoPlayer).getExoPlayer();
   }
