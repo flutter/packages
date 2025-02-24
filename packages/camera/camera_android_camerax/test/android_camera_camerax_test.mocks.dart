@@ -3280,12 +3280,15 @@ class MockSystemServicesManager extends _i1.Mock
       ) as _i2.PigeonInstanceManager);
 
   @override
-  _i5.Future<void> requestCameraPermissions(bool? enableAudio) =>
+  _i5.Future<_i2.CameraPermissionsError?> requestCameraPermissions(
+    bool? enableAudio,
+  ) =>
       (super.noSuchMethod(
         Invocation.method(#requestCameraPermissions, [enableAudio]),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
+        returnValue: _i5.Future<_i2.CameraPermissionsError?>.value(),
+        returnValueForMissingStub:
+            _i5.Future<_i2.CameraPermissionsError?>.value(),
+      ) as _i5.Future<_i2.CameraPermissionsError?>);
 
   @override
   _i5.Future<String> getTempFilePath(String? prefix, String? suffix) =>
