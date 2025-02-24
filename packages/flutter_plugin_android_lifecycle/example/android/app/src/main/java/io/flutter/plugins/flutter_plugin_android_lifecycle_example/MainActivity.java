@@ -17,7 +17,7 @@ public class MainActivity extends FlutterActivity {
   private static final String TAG = "MainActivity";
 
   @Override
-  public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+  public void configureFlutterEngine(FlutterEngine flutterEngine) {
     super.configureFlutterEngine(flutterEngine);
     flutterEngine.getPlugins().add(new TestPlugin());
     engine = flutterEngine;
