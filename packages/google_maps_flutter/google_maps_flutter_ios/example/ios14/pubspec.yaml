@@ -29,6 +29,9 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  # Swift Package Manager for google_maps_flutter_ios does not support iOS 14,
+  # so it needs to be disabled for this example project.
+  disable-swift-package-manager: true
   uses-material-design: true
   assets:
     - assets/
