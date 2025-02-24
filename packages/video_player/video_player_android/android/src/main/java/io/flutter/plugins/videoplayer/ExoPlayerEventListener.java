@@ -60,12 +60,16 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     }
   }
 
-  protected void sendInitialized() {
+  private void sendInitializedPrivate() {
     if (isInitialized) {
       return;
     }
     isInitialized = true;
+
+    sendInitialized();
   }
+
+  abstract protected void sendInitialized();
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
@@ -75,7 +79,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         events.onBufferingUpdate(exoPlayer.getBufferedPosition());
         break;
       case Player.STATE_READY:
-        sendInitialized();
+        sendInitializedPrivate();
         break;
       case Player.STATE_ENDED:
         events.onCompleted();

@@ -71,11 +71,11 @@ public class VideoPlayerPluginTest {
   }
 
   @Test
-  public void createsVideoPlayerWithPlatformViewType() throws Exception {
-    try (MockedStatic<VideoPlayer> mockedVideoPlayerStatic = mockStatic(VideoPlayer.class)) {
-      mockedVideoPlayerStatic
+  public void createsPlatformViewVideoPlayer() throws Exception {
+    try (MockedStatic<PlatformViewVideoPlayer> mockedPlatformViewVideoPlayerStatic = mockStatic(PlatformViewVideoPlayer.class)) {
+      mockedPlatformViewVideoPlayerStatic
           .when(() -> PlatformViewVideoPlayer.create(any(), any(), any(), any()))
-          .thenReturn(mock(VideoPlayer.class));
+          .thenReturn(mock(PlatformViewVideoPlayer.class));
 
       final CreateMessage createMessage =
           new CreateMessage.Builder()
@@ -92,10 +92,10 @@ public class VideoPlayerPluginTest {
   }
 
   @Test
-  public void createsVideoPlayerWithTextureViewType() throws Exception {
-    try (MockedStatic<TextureVideoPlayer> mockedTextureBasedVideoPlayerStatic =
+  public void createsTextureVideoPlayer() throws Exception {
+    try (MockedStatic<TextureVideoPlayer> mockedTextureVideoPlayerStatic =
         mockStatic(TextureVideoPlayer.class)) {
-      mockedTextureBasedVideoPlayerStatic
+      mockedTextureVideoPlayerStatic
           .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
           .thenReturn(mock(TextureVideoPlayer.class));
 

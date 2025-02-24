@@ -1,18 +1,22 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 package io.flutter.plugins.videoplayer.texture;
 
 import android.os.Build;
-
 import androidx.annotation.OptIn;
+import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.Format;
 import androidx.media3.common.VideoSize;
-import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
 import java.util.Objects;
 
 public final class TextureExoPlayerEventListener extends ExoPlayerEventListener {
-  TextureExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
+  @VisibleForTesting
+  public TextureExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
     this(exoPlayer, events, false);
   }
 
@@ -21,10 +25,8 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
     super(exoPlayer, events, initialized);
   }
 
-  @OptIn(markerClass = UnstableApi.class)
   @Override
   protected void sendInitialized() {
-    super.sendInitialized();
     VideoSize videoSize = exoPlayer.getVideoSize();
     int rotationCorrection = 0;
     int width = videoSize.width;
