@@ -12,8 +12,6 @@ import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
 import io.flutter.plugins.videoplayer.Messages;
 import io.flutter.plugins.videoplayer.VideoPlayer;
-import io.flutter.plugins.videoplayer.VideoPlayerProvider;
-
 import java.util.Objects;
 
 /**
@@ -22,6 +20,19 @@ import java.util.Objects;
  */
 public class PlatformVideoViewFactory extends PlatformViewFactory {
   private final VideoPlayerProvider videoPlayerProvider;
+
+  /** Functional interface for providing a VideoPlayer instance based on the player ID. */
+  @FunctionalInterface
+  public interface VideoPlayerProvider {
+    /**
+     * Retrieves a VideoPlayer instance based on the provided player ID.
+     *
+     * @param playerId The unique identifier for the video player.
+     * @return A VideoPlayer instance associated with the given player ID.
+     */
+    @NonNull
+    VideoPlayer getVideoPlayer(@NonNull Long playerId);
+  }
 
   /**
    * Constructs a new PlatformVideoViewFactory.
