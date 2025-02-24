@@ -20,15 +20,17 @@ public class LiveDataProxyApi extends PigeonApiLiveData {
     private final LiveData<?> liveData;
     private final LiveDataSupportedType genericType;
 
-    LiveDataWrapper(LiveData<?> liveData, LiveDataSupportedType genericType) {
+    LiveDataWrapper(@NonNull LiveData<?> liveData, @NonNull LiveDataSupportedType genericType) {
       this.liveData = liveData;
       this.genericType = genericType;
     }
 
+    @NonNull
     public LiveData<?> getLiveData() {
       return liveData;
     }
 
+    @NonNull
     public LiveDataSupportedType getGenericType() {
       return genericType;
     }
