@@ -4,14 +4,12 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'messages.g.dart';
+import 'platform_view_player.dart';
 
 /// An Android implementation of [VideoPlayerPlatform] that uses the
 /// Pigeon-generated [VideoPlayerApi].
@@ -189,50 +187,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return switch (viewState) {
       VideoPlayerTextureViewState(:final int textureId) =>
         Texture(textureId: textureId),
-      VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
+      VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
       null => throw Exception(
           'Could not find corresponding view type for playerId: $playerId',
         ),
     };
-  }
-
-  Widget _buildPlatformView(int playerId) {
-    const String viewType = 'plugins.flutter.dev/video_player_android';
-    final PlatformVideoViewCreationParams creationParams =
-        PlatformVideoViewCreationParams(playerId: playerId);
-
-    return Builder(
-      // IgnorePointer so that GestureDetector can be used above the platform view.
-      builder: (BuildContext context) => IgnorePointer(
-        child: PlatformViewLink(
-          viewType: viewType,
-          surfaceFactory: (
-            BuildContext context,
-            PlatformViewController controller,
-          ) {
-            return AndroidViewSurface(
-              controller: controller as AndroidViewController,
-              gestureRecognizers: const <Factory<
-                  OneSequenceGestureRecognizer>>{},
-              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-            );
-          },
-          onCreatePlatformView: (PlatformViewCreationParams params) {
-            return PlatformViewsService.initSurfaceAndroidView(
-              id: params.id,
-              viewType: viewType,
-              layoutDirection:
-                  Directionality.maybeOf(context) ?? TextDirection.ltr,
-              creationParams: creationParams,
-              creationParamsCodec: AndroidVideoPlayerApi.pigeonChannelCodec,
-              onFocus: () => params.onFocusChanged(true),
-            )
-              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
-              ..create();
-          },
-        ),
-      ),
-    );
   }
 
   @override
