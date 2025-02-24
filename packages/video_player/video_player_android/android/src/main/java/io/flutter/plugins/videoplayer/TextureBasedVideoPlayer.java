@@ -11,6 +11,7 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
+import io.flutter.plugins.videoplayer.texture.TextureExoPlayerEventListener;
 import io.flutter.view.TextureRegistry;
 
 /**
@@ -67,6 +68,12 @@ final class TextureBasedVideoPlayer extends VideoPlayer
     surfaceProducer.setCallback(this);
 
     this.exoPlayer.setVideoSurface(surfaceProducer.getSurface());
+  }
+
+  @Override
+  protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer) {
+    return new TextureExoPlayerEventListener(
+        exoPlayer, videoPlayerEvents, playerHasBeenSuspended());
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
