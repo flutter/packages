@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-package io.flutter.plugins.videoplayer;
+package io.flutter.plugins.videoplayer.texture;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
@@ -11,7 +11,13 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
-import io.flutter.plugins.videoplayer.texture.TextureExoPlayerEventListener;
+import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
+import io.flutter.plugins.videoplayer.ExoPlayerState;
+import io.flutter.plugins.videoplayer.Messages;
+import io.flutter.plugins.videoplayer.VideoAsset;
+import io.flutter.plugins.videoplayer.VideoPlayer;
+import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
+import io.flutter.plugins.videoplayer.VideoPlayerOptions;
 import io.flutter.view.TextureRegistry;
 
 /**
@@ -20,7 +26,7 @@ import io.flutter.view.TextureRegistry;
  * video is properly displayed on the texture. If you need to display a video using platform view,
  * use {@link VideoPlayer} instead.
  */
-final class TextureBasedVideoPlayer extends VideoPlayer
+public final class TextureVideoPlayer extends VideoPlayer
     implements TextureRegistry.SurfaceProducer.Callback {
   @NonNull private final TextureRegistry.SurfaceProducer surfaceProducer;
   @Nullable private ExoPlayerState savedStateDuring;
@@ -36,13 +42,13 @@ final class TextureBasedVideoPlayer extends VideoPlayer
    * @return a video player instance.
    */
   @NonNull
-  static TextureBasedVideoPlayer create(
+  public static TextureVideoPlayer create(
       @NonNull Context context,
       @NonNull VideoPlayerCallbacks events,
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
       @NonNull VideoAsset asset,
       @NonNull VideoPlayerOptions options) {
-    return new TextureBasedVideoPlayer(
+    return new TextureVideoPlayer(
         () -> {
           ExoPlayer.Builder builder =
               new ExoPlayer.Builder(context)
@@ -56,7 +62,7 @@ final class TextureBasedVideoPlayer extends VideoPlayer
   }
 
   @VisibleForTesting
-  TextureBasedVideoPlayer(
+  public TextureVideoPlayer(
       @NonNull ExoPlayerProvider exoPlayerProvider,
       @NonNull VideoPlayerCallbacks events,
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer,

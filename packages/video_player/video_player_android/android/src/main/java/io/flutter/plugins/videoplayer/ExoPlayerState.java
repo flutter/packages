@@ -15,7 +15,7 @@ import androidx.media3.exoplayer.ExoPlayer;
  * is reclaimed. Upon <em>resume</em>, the player will need to be recreated, but start again at the
  * previous point (and settings).
  */
-final class ExoPlayerState {
+public final class ExoPlayerState {
   /**
    * Saves a representation of the current state of the player at the current point in time.
    *
@@ -24,7 +24,7 @@ final class ExoPlayerState {
    * @param exoPlayer the active player instance.
    * @return an opaque object representing the state.
    */
-  static ExoPlayerState save(ExoPlayer exoPlayer) {
+  public static ExoPlayerState save(ExoPlayer exoPlayer) {
     return new ExoPlayerState(
         /*position=*/ exoPlayer.getCurrentPosition(),
         /*repeatMode=*/ exoPlayer.getRepeatMode(),
@@ -60,7 +60,7 @@ final class ExoPlayerState {
    *
    * @param exoPlayer the new player instance to reflect the state back to.
    */
-  void restore(ExoPlayer exoPlayer) {
+  public void restore(ExoPlayer exoPlayer) {
     exoPlayer.seekTo(position);
     exoPlayer.setRepeatMode(repeatMode);
     exoPlayer.setVolume(volume);

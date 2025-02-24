@@ -14,6 +14,7 @@ import io.flutter.plugin.platform.PlatformViewRegistry;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.Messages.PlatformVideoViewType;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
+import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -62,7 +63,7 @@ public class VideoPlayerPluginTest {
   }
 
   @Test
-  public void registersPlatformVideoViewFactory() throws Exception {
+  public void registersPlatformVideoViewFactory() {
     verify(mockPlatformViewRegistry)
         .registerViewFactory(
             eq("plugins.flutter.dev/video_player_android"), any(PlatformVideoViewFactory.class));
@@ -91,11 +92,11 @@ public class VideoPlayerPluginTest {
 
   @Test
   public void createsVideoPlayerWithTextureViewType() throws Exception {
-    try (MockedStatic<TextureBasedVideoPlayer> mockedTextureBasedVideoPlayerStatic =
-        mockStatic(TextureBasedVideoPlayer.class)) {
+    try (MockedStatic<TextureVideoPlayer> mockedTextureBasedVideoPlayerStatic =
+        mockStatic(TextureVideoPlayer.class)) {
       mockedTextureBasedVideoPlayerStatic
-          .when(() -> TextureBasedVideoPlayer.create(any(), any(), any(), any(), any()))
-          .thenReturn(mock(TextureBasedVideoPlayer.class));
+          .when(() -> TextureVideoPlayer.create(any(), any(), any(), any(), any()))
+          .thenReturn(mock(TextureVideoPlayer.class));
 
       final CreateMessage createMessage =
           new CreateMessage.Builder()
@@ -107,7 +108,7 @@ public class VideoPlayerPluginTest {
       final long playerId = plugin.create(createMessage);
 
       final LongSparseArray<VideoPlayer> videoPlayers = getVideoPlayers();
-      assertTrue(videoPlayers.get(playerId) instanceof TextureBasedVideoPlayer);
+      assertTrue(videoPlayers.get(playerId) instanceof TextureVideoPlayer);
     }
   }
 }

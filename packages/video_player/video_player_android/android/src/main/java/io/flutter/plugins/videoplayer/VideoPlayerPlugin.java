@@ -15,6 +15,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
+import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
@@ -130,7 +131,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       TextureRegistry.SurfaceProducer handle = flutterState.textureRegistry.createSurfaceProducer();
       id = handle.id();
       videoPlayer =
-          TextureBasedVideoPlayer.create(
+          TextureVideoPlayer.create(
               flutterState.applicationContext,
               VideoPlayerEventCallbacks.bindTo(createEventChannel(id)),
               handle,

@@ -15,6 +15,8 @@ import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.ExoPlayer;
+
+import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,9 +31,9 @@ import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 
 /**
- * Unit tests for {@link TextureBasedVideoPlayer}.
+ * Unit tests for {@link TextureVideoPlayer}.
  *
- * <p>This test suite <em>narrowly verifies</em> that {@link TextureBasedVideoPlayer} interfaces
+ * <p>This test suite <em>narrowly verifies</em> that {@link TextureVideoPlayer} interfaces
  * with the {@link ExoPlayer} interface <em>exactly</em> as it did when the test suite was created.
  * That is, if the behavior changes, this test will need to change. However, this suite should catch
  * bugs related to <em>"this is a safe refactor with no behavior changes"</em>.
@@ -41,7 +43,7 @@ import org.robolectric.RobolectricTestRunner;
  * in order to figure out how to set everything up so the player "works".
  */
 @RunWith(RobolectricTestRunner.class)
-public final class TextureBasedVideoPlayerTest {
+public final class TextureVideoPlayerTest {
   private static final String FAKE_ASSET_URL = "https://flutter.dev/movie.mp4";
   private FakeVideoAsset fakeVideoAsset;
 
@@ -64,8 +66,8 @@ public final class TextureBasedVideoPlayerTest {
     return createVideoPlayer(new VideoPlayerOptions());
   }
 
-  private TextureBasedVideoPlayer createVideoPlayer(VideoPlayerOptions options) {
-    return new TextureBasedVideoPlayer(
+  private TextureVideoPlayer createVideoPlayer(VideoPlayerOptions options) {
+    return new TextureVideoPlayer(
         () -> mockExoPlayer, mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options);
   }
 

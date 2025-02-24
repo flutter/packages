@@ -17,13 +17,14 @@ import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
+import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 
 /**
  * A class responsible for managing video playback using {@link ExoPlayer}. It provides methods to
  * control playback, adjust volume, and handle seeking. This class contains all functionalities
  * needed to manage video playback in platform views and is typically used alongside {@link
  * PlatformVideoViewFactory}. If you need to display a video using a texture, use {@link
- * TextureBasedVideoPlayer} instead.
+ * TextureVideoPlayer} instead.
  */
 public class VideoPlayer {
   @NonNull private final ExoPlayerProvider exoPlayerProvider;
@@ -60,7 +61,7 @@ public class VideoPlayer {
   }
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
-  interface ExoPlayerProvider {
+  public interface ExoPlayerProvider {
     /**
      * Returns a new {@link ExoPlayer}.
      *
@@ -70,7 +71,7 @@ public class VideoPlayer {
   }
 
   @VisibleForTesting
-  VideoPlayer(
+  public VideoPlayer(
       @NonNull ExoPlayerProvider exoPlayerProvider,
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,
@@ -155,7 +156,7 @@ public class VideoPlayer {
     return exoPlayer;
   }
 
-  void dispose() {
+  public void dispose() {
     exoPlayer.release();
   }
 }
