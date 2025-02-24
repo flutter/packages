@@ -23,4 +23,17 @@ public final class Size {
   public int getHeight() {
     return height;
   }
+
+  public boolean equals(Object obj) {
+    if (obj instanceof Size) {
+      return ((Size) obj).width == width && ((Size) obj).height == height;
+    }
+
+    return false;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
 }
