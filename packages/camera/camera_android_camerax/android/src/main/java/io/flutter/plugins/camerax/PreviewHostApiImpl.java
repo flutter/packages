@@ -155,7 +155,10 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   public void releaseFlutterSurfaceTexture() {
     if (flutterSurfaceProducer != null) {
       flutterSurfaceProducer.release();
+      return;
     }
+    throw new IllegalStateException(
+        "releaseFlutterSurfaceTexture() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
   }
 
   /** Returns the resolution information for the specified {@link Preview}. */
@@ -177,6 +180,16 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
     Preview preview = getPreviewInstance(identifier);
     preview.setTargetRotation(rotation.intValue());
+  }
+
+  @NonNull
+  @Override
+  public Boolean surfaceProducerHandlesCropAndRotation() {
+    if (flutterSurfaceProducer != null) {
+      return flutterSurfaceProducer.handlesCropAndRotation();
+    }
+    throw new IllegalStateException(
+        "surfaceProducerHandlesCropAndRotation() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
   }
 
   /** Retrieves the {@link Preview} instance associated with the specified {@code identifier}. */

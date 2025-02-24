@@ -510,8 +510,6 @@ abstract class TestSystemServicesHostApi {
 
   String getTempFilePath(String prefix, String suffix);
 
-  bool isPreviewPreTransformed();
-
   static void setup(TestSystemServicesHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -559,24 +557,6 @@ abstract class TestSystemServicesHostApi {
           assert(arg_suffix != null,
               'Argument for dev.flutter.pigeon.SystemServicesHostApi.getTempFilePath was null, expected non-null String.');
           final String output = api.getTempFilePath(arg_prefix!, arg_suffix!);
-          return <Object?>[output];
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed',
-          codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(channel, null);
-      } else {
-        _testBinaryMessengerBinding!.defaultBinaryMessenger
-            .setMockDecodedMessageHandler<Object?>(channel,
-                (Object? message) async {
-          // ignore message
-          final bool output = api.isPreviewPreTransformed();
           return <Object?>[output];
         });
       }
@@ -722,6 +702,8 @@ abstract class TestPreviewHostApi {
 
   void setTargetRotation(int identifier, int rotation);
 
+  bool surfaceProducerHandlesCropAndRotation();
+
   static void setup(TestPreviewHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -832,6 +814,24 @@ abstract class TestPreviewHostApi {
               'Argument for dev.flutter.pigeon.PreviewHostApi.setTargetRotation was null, expected non-null int.');
           api.setTargetRotation(arg_identifier!, arg_rotation!);
           return <Object?>[];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.PreviewHostApi.surfaceProducerHandlesCropAndRotation',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          // ignore message
+          final bool output = api.surfaceProducerHandlesCropAndRotation();
+          return <Object?>[output];
         });
       }
     }

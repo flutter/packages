@@ -47,6 +47,7 @@ import 'recording.dart';
 import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
+import 'rotated_preview.dart';
 import 'surface.dart';
 import 'system_services.dart';
 import 'use_case.dart';
@@ -238,12 +239,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   late bool cameraIsFrontFacing;
 
   /// The camera sensor orientation.
+  ///
+  /// This can change if the camera being used changes. Also, it is independent
+  /// of the device orientation or user interface orientation.
   @visibleForTesting
-  late int sensorOrientation;
+  late double sensorOrientationDegrees;
 
-  /// Subscription for listening to changes in device orientation.
-  StreamSubscription<DeviceOrientationChangedEvent>?
-      _subscriptionForDeviceOrientationChanges;
+  /// Whether or not the Android surface producer automatically handles
+  /// correcting the rotation of camera previews for the device this plugin runs on.
+  late bool _handlesCropAndRotation;
+
+  /// The initial orientation of the device when the camera is created.
+  late DeviceOrientation _initialDeviceOrientation;
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -380,10 +387,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
-
-    final Camera2CameraInfo camera2CameraInfo =
-        await proxy.getCamera2CameraInfo(cameraInfo!);
-    sensorOrientation = await proxy.getSensorOrientation(camera2CameraInfo);
+    sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
+    _handlesCropAndRotation =
+        await proxy.previewSurfaceProducerHandlesCropAndRotation(preview!);
+    _initialDeviceOrientation = await proxy.getUiOrientation();
 
     return flutterSurfaceTextureId;
   }
@@ -444,7 +451,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     await liveCameraState?.removeObservers();
     processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
-    await _subscriptionForDeviceOrientationChanges?.cancel();
   }
 
   /// The camera has been initialized.
@@ -836,7 +842,30 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    return Texture(textureId: cameraId);
+    final Widget preview = Texture(textureId: cameraId);
+
+    if (_handlesCropAndRotation) {
+      return preview;
+    }
+
+    final Stream<DeviceOrientation> deviceOrientationStream =
+        onDeviceOrientationChanged()
+            .map((DeviceOrientationChangedEvent e) => e.orientation);
+    if (cameraIsFrontFacing) {
+      return RotatedPreview.frontFacingCamera(
+        _initialDeviceOrientation,
+        deviceOrientationStream,
+        sensorOrientationDegrees: sensorOrientationDegrees,
+        child: preview,
+      );
+    } else {
+      return RotatedPreview.backFacingCamera(
+        _initialDeviceOrientation,
+        deviceOrientationStream,
+        sensorOrientationDegrees: sensorOrientationDegrees,
+        child: preview,
+      );
+    }
   }
 
   /// Captures an image and returns the file where it was saved.

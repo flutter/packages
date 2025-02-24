@@ -127,6 +127,15 @@ class MockTestPreviewHostApi extends _i1.Mock
         ),
         returnValueForMissingStub: null,
       );
+
+  @override
+  bool surfaceProducerHandlesCropAndRotation() => (super.noSuchMethod(
+        Invocation.method(
+          #surfaceProducerHandlesCropAndRotation,
+          [],
+        ),
+        returnValue: false,
+      ) as bool);
 }
 
 /// A class which mocks [ResolutionSelector].
