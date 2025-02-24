@@ -15,7 +15,7 @@ import io.flutter.plugin.platform.PlatformView;
  * A class used to create a native video view that can be embedded in a Flutter app. It wraps an
  * {@link ExoPlayer} instance and displays its video content.
  */
-class NativeVideoView implements PlatformView {
+final class NativeVideoView implements PlatformView {
   @NonNull private final SurfaceView surfaceView;
 
   /**
