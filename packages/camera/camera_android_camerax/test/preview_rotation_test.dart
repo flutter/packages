@@ -24,7 +24,7 @@ void main() {
   /// Sets up mock CameraSelector and mock ProcessCameraProvider used to
   /// select test camera when `availableCameras` is called.
   ///
-  /// Also mocks a cakk for mock ProcessCameraProvider that is irrelevant
+  /// Also mocks a call for mock ProcessCameraProvider that is irrelevant
   /// to this test.
   ///
   /// Returns mock ProcessCameraProvider that is used to select test camera.
