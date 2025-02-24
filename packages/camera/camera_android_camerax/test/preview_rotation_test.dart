@@ -21,9 +21,15 @@ const int _90DegreesClockwise = 1;
 const int _270DegreesClockwise = 3;
 
 void main() {
+  /// Sets up mock CameraSelector and mock ProcessCameraProvider used to
+  /// select test camera when `availableCameras` is called.
+  ///
+  /// Also mocks a cakk for mock ProcessCameraProvider that is irrelevant
+  /// to this test.
+  ///
   /// Returns mock ProcessCameraProvider that is used to select test camera.
   MockProcessCameraProvider
-      getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+      setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
           {required MockCameraSelector mockCameraSelector,
           required int sensorRotationDegrees}) {
     final MockProcessCameraProvider mockProcessCameraProvider =
@@ -31,7 +37,9 @@ void main() {
     final MockCameraInfo mockCameraInfo = MockCameraInfo();
     final MockCamera mockCamera = MockCamera();
 
-    // Mock retrieiving available test camera.
+    // Mock retrieving available test camera.
+    when(mockProcessCameraProvider.bindToLifecycle(any, any))
+        .thenAnswer((_) async => mockCamera);
     when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
     when(mockProcessCameraProvider.getAvailableCameraInfos())
         .thenAnswer((_) async => <MockCameraInfo>[mockCameraInfo]);
@@ -40,10 +48,8 @@ void main() {
     when(mockCameraInfo.getSensorRotationDegrees())
         .thenAnswer((_) async => sensorRotationDegrees);
 
-    // Mock additional ProcessCameraProvider operations that are irrelevant
+    // Mock additional ProcessCameraProvider operation that is irrelevant
     // for the tests in this file.
-    when(mockProcessCameraProvider.bindToLifecycle(any, any))
-        .thenAnswer((_) async => mockCamera);
     when(mockCameraInfo.getCameraState())
         .thenAnswer((_) async => MockLiveCameraState());
 
@@ -86,7 +92,7 @@ void main() {
         requestCameraPermissions: (_) => Future<void>.value(),
         startListeningForDeviceOrientationChange: (_, __) {},
         setPreviewSurfaceProvider: (_) => Future<int>.value(
-            3), // 3 is a random Flutter SurfaceTexture ID for testing,
+            3), // 3 is a random Flutter SurfaceTexture ID for testing
         createAspectRatioStrategy: (int aspectRatio, int fallbackRule) =>
             MockAspectRatioStrategy(),
         createResolutionFilterWithOnePreferredSize:
@@ -137,7 +143,7 @@ void main() {
     // tell camera that handlesCropAndRotation is true.
     final MockCameraSelector mockCameraSelector = MockCameraSelector();
     final MockProcessCameraProvider mockProcessCameraProvider =
-        getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+        setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
             mockCameraSelector: mockCameraSelector,
             sensorRotationDegrees: /* irrelevant for test */ 90);
     camera.proxy = getProxyForCreatingTestCamera(
@@ -187,7 +193,7 @@ void main() {
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
         mockProcessCameraProviderForFrontCamera =
-            getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+            setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                 mockCameraSelector: mockFrontCameraSelector,
                 sensorRotationDegrees: 270);
 
@@ -343,7 +349,7 @@ void main() {
           proxyCreateCameraSelectorForFrontCamera =
           createCameraSelectorForFrontCamera(mockFrontCameraSelector);
       final MockProcessCameraProvider mockProcessCameraProviderForFrontCamera =
-          getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+          setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 90);
 
@@ -443,7 +449,7 @@ void main() {
         // Create mock ProcessCameraProvider that will acknowledge that the test back camera with sensor orientation degrees
         // 90 is available.
         final MockProcessCameraProvider mockProcessCameraProviderForBackCamera =
-            getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+            setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                 mockCameraSelector: mockBackCameraSelector,
                 sensorRotationDegrees: 90);
 
@@ -484,7 +490,7 @@ void main() {
         // Create mock ProcessCameraProvider that will acknowledge that the test back camera with sensor orientation degrees
         // 270 is available.
         final MockProcessCameraProvider mockProcessCameraProviderForBackCamera =
-            getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+            setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                 mockCameraSelector: mockBackCameraSelector,
                 sensorRotationDegrees: 270);
 
@@ -548,7 +554,7 @@ void main() {
         // Set up test front camera with sensor orientation degrees 90.
         final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
         final MockProcessCameraProvider mockProcessCameraProvider =
-            getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+            setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                 mockCameraSelector: mockFrontCameraSelector,
                 sensorRotationDegrees: testSensorOrientation);
 
@@ -591,7 +597,7 @@ void main() {
         // Set up test front camera with sensor orientation degrees 90.
         final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
         final MockProcessCameraProvider mockProcessCameraProvider =
-            getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
+            setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                 mockCameraSelector: mockBackCameraSelector,
                 sensorRotationDegrees: testSensorOrientation);
 
