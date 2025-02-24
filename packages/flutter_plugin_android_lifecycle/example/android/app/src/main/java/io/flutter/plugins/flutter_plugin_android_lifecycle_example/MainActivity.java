@@ -20,7 +20,6 @@ public class MainActivity extends FlutterActivity {
   public void configureFlutterEngine(FlutterEngine flutterEngine) {
     super.configureFlutterEngine(flutterEngine);
     flutterEngine.getPlugins().add(new TestPlugin());
-    engine = flutterEngine;
   }
 
   private static class TestPlugin implements FlutterPlugin, ActivityAware {
