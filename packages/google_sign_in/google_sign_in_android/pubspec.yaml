@@ -2,7 +2,7 @@ name: google_sign_in_android
 description: Android implementation of the google_sign_in plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_sign_in%22
-version: 6.1.34
+version: 6.1.35
 
 environment:
   sdk: ^3.5.0
@@ -29,7 +29,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^22.4.2
+  pigeon: ^24.2.0
 
 topics:
   - authentication

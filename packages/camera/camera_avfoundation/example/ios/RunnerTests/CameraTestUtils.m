@@ -4,10 +4,10 @@
 
 #import "CameraTestUtils.h"
 
-#import <OCMock/OCMock.h>
 @import AVFoundation;
 @import camera_avfoundation;
 
+#import "MockAssetWriter.h"
 #import "MockCaptureDevice.h"
 #import "MockCaptureDeviceFormat.h"
 #import "MockCaptureSession.h"
@@ -68,6 +68,14 @@ FLTCamConfiguration *FLTCreateTestCameraConfiguration(void) {
   configuration.videoCaptureSession = videoSessionMock;
   configuration.audioCaptureSession = audioSessionMock;
   configuration.orientation = UIDeviceOrientationPortrait;
+  configuration.assetWriterFactory =
+      ^NSObject<FLTAssetWriter> *(NSURL *url, AVFileType fileType, NSError **error) {
+    return [[MockAssetWriter alloc] init];
+  };
+  configuration.inputPixelBufferAdaptorFactory = ^NSObject<FLTAssetWriterInputPixelBufferAdaptor> *(
+      NSObject<FLTAssetWriterInput> *input, NSDictionary<NSString *, id> *settings) {
+    return [[MockAssetWriterInputPixelBufferAdaptor alloc] init];
+  };
 
   return configuration;
 }
@@ -79,28 +87,6 @@ FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue
 }
 
 FLTCam *FLTCreateCamWithConfiguration(FLTCamConfiguration *configuration) {
-  id captureVideoDataOutputMock = [OCMockObject niceMockForClass:[AVCaptureVideoDataOutput class]];
-  OCMStub([captureVideoDataOutputMock new]).andReturn(captureVideoDataOutputMock);
-  OCMStub([captureVideoDataOutputMock
-              recommendedVideoSettingsForAssetWriterWithOutputFileType:AVFileTypeMPEG4])
-      .andReturn(@{});
-  OCMStub([captureVideoDataOutputMock sampleBufferCallbackQueue])
-      .andReturn(configuration.captureSessionQueue);
-
-  id videoMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
-  OCMStub([videoMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
-                                                sourcePixelBufferAttributes:OCMOCK_ANY])
-      .andReturn(videoMock);
-
-  id writerInputMock = [OCMockObject niceMockForClass:[AVAssetWriterInput class]];
-  OCMStub([writerInputMock assetWriterInputWithMediaType:AVMediaTypeAudio
-                                          outputSettings:[OCMArg any]])
-      .andReturn(writerInputMock);
-
-  OCMStub([writerInputMock assetWriterInputWithMediaType:AVMediaTypeVideo
-                                          outputSettings:[OCMArg any]])
-      .andReturn(writerInputMock);
-
   return [[FLTCam alloc] initWithConfiguration:configuration error:nil];
 }
 
