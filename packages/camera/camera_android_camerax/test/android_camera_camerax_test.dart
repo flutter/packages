@@ -49,7 +49,7 @@ import 'package:camera_android_camerax/src/video_capture.dart';
 import 'package:camera_android_camerax/src/zoom_state.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
-    show DeviceOrientation, PlatformException, Uint8List, landscapeLeft;
+    show DeviceOrientation, PlatformException, Uint8List;
 import 'package:flutter/widgets.dart' show BuildContext, Size;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
