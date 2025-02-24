@@ -1,3 +1,8 @@
+## 24.2.1
+
+* [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in
+  an async method.
+
 ## 24.2.0
 
 * Adjusts task queues to use a shared task queue for all methods in a single
