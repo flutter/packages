@@ -1,3 +1,7 @@
+## 3.18.2
+
+* Updates generated pigeon code to ensure the internal wrapper immediately sends constructor calls.
+
 ## 3.18.1
 
 * Fixes bug that would allow the API wrapper to return `null` when a non-null value was required in
