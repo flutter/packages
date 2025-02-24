@@ -21,6 +21,7 @@ const int _90DegreesClockwise = 1;
 const int _270DegreesClockwise = 3;
 
 void main() {
+  /// Returns mock ProcessCameraProvider that is used to select test camera.
   MockProcessCameraProvider
       getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
           {required MockCameraSelector mockCameraSelector,
@@ -39,7 +40,7 @@ void main() {
     when(mockCameraInfo.getSensorRotationDegrees())
         .thenAnswer((_) async => sensorRotationDegrees);
 
-    // Mock additional process camera provider operations that are irrelevant
+    // Mock additional ProcessCameraProvider operations that are irrelevant
     // for the tests in this file.
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
@@ -49,6 +50,8 @@ void main() {
     return mockProcessCameraProvider;
   }
 
+  /// Returns CameraXProxy used to mock all calls to native Android in
+  /// the `availableCameras` and `createCameraWithSettings` methods.
   CameraXProxy getProxyForCreatingTestCamera(
           {required MockProcessCameraProvider mockProcessCameraProvider,
           required CameraSelector Function(int) createCameraSelector,
@@ -90,6 +93,7 @@ void main() {
             (Size preferredResolution) => MockResolutionFilter(),
       );
 
+  /// Returns function that a CameraXProxy can use to select the front camera.
   MockCameraSelector Function(int cameraSelectorLensDirection)
       createCameraSelectorForFrontCamera(
           MockCameraSelector mockCameraSelector) {
@@ -103,6 +107,7 @@ void main() {
     };
   }
 
+  /// Returns function that a CameraXProxy can use to select the back camera.
   MockCameraSelector Function(int cameraSelectorLensDirection)
       createCameraSelectorForBackCamera(MockCameraSelector mockCameraSelector) {
     return (int cameraSelectorLensDirection) {
@@ -115,6 +120,7 @@ void main() {
     };
   }
 
+  /// Error message for detecting an incorrect preview rotation.
   String getExpectedRotationTestFailureReason(
           int expectedQuarterTurns, int actualQuarterTurns) =>
       'Expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated $actualQuarterTurns quarter turns.';
@@ -175,7 +181,7 @@ void main() {
         camera = AndroidCameraCameraX();
         cameraId = 27;
 
-        // Create and set up camera selector and process camera provider for front camera
+        // Create and set up mock CameraSelector and mock ProcessCameraProvider for test front camera
         // with sensor orientation degrees 270.
         mockFrontCameraSelector = MockCameraSelector();
         proxyCreateCameraSelectorForFrontCamera =
@@ -192,8 +198,8 @@ void main() {
       testWidgets(
           'initial device orientation fixed to DeviceOrientation.portraitUp, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
-        // Set up test to use front camera and tell camera that handlesCropAndRotation is false,
-        // set camera initial device oreintation to portrait up.
+        // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
+        // set camera initial device orientation to portrait up.
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -225,8 +231,8 @@ void main() {
       testWidgets(
           'initial device orientation fixed to DeviceOrientation.landscapeRight, then the preview Texture is rotated 90 degrees clockwise',
           (WidgetTester tester) async {
-        // Set up test to use front camera and tell camera that handlesCropAndRotation is false,
-        // set camera initial device oreintation to landscape right.
+        // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
+        // set camera initial device orientation to landscape right.
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -258,8 +264,8 @@ void main() {
       testWidgets(
           'initial device orientation fixed to DeviceOrientation.portraitDown, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
-        // Set up test to use front camera and tell camera that handlesCropAndRotation is false,
-        // set camera initial device oreintation to portrait down.
+        // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
+        // set camera initial device orientation to portrait down.
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -292,8 +298,8 @@ void main() {
       testWidgets(
           'initial device orientation fixed to DeviceOrientation.landscapeLeft, then the preview Texture is rotated 90 degrees clockwise',
           (WidgetTester tester) async {
-        // Set up test to use front camera and tell camera that handlesCropAndRotation is false,
-        // set camera initial device oreintation to landscape left.
+        // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
+        // set camera initial device orientation to landscape left.
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -330,7 +336,7 @@ void main() {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const int cameraId = 3372;
 
-      // Create and set up camera selector and process camera provider for front camera
+      // Create and set up mock CameraSelector and mock ProcessCameraProvider for test front camera
       // with sensor orientation degrees 90.
       final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
       final MockCameraSelector Function(int cameraSelectorLensDirection)
@@ -345,7 +351,7 @@ void main() {
       const MediaSettings testMediaSettings = MediaSettings();
 
       // Set up test to use front camera and tell camera that handlesCropAndRotation is false,
-      // set camera initial device oreintation to landscape left.
+      // set camera initial device orientation to landscape left.
       camera.proxy = getProxyForCreatingTestCamera(
           mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
           createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -413,14 +419,16 @@ void main() {
       late MockCameraSelector Function(int cameraSelectorLensDirection)
           proxyCreateCameraSelectorForBackCamera;
       late MediaSettings testMediaSettings;
-      const DeviceOrientation initialDeviceOrientation =
-          DeviceOrientation.landscapeLeft;
+      late DeviceOrientation testInitialDeviceOrientation;
 
       setUp(() {
         camera = AndroidCameraCameraX();
         cameraId = 347;
 
-        // Create and set up camera selector and process camera provider for front camera
+        // Set test camera initial device orientation for test.
+        testInitialDeviceOrientation = DeviceOrientation.landscapeLeft;
+
+        // Create and set up mock CameraSelector and mock ProcessCameraProvider for test back camera
         // with sensor orientation degrees 270.
         mockBackCameraSelector = MockCameraSelector();
         proxyCreateCameraSelectorForBackCamera =
@@ -432,21 +440,21 @@ void main() {
       testWidgets(
           'sensor orientation degrees is 90, then the preview Texture is rotated 90 degrees clockwise',
           (WidgetTester tester) async {
-        // Create process camera provider that will acknowledge that the back camera with sensor orientation degrees
+        // Create mock ProcessCameraProvider that will acknowledge that the test back camera with sensor orientation degrees
         // 90 is available.
         final MockProcessCameraProvider mockProcessCameraProviderForBackCamera =
             getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
                 mockCameraSelector: mockBackCameraSelector,
                 sensorRotationDegrees: 90);
 
-        // Set up test to use back camera and tell camera that handlesCropAndRotation is false,
+        // Set up test to use back camera, tell camera that handlesCropAndRotation is false,
         // set camera initial device orientation to landscape left.
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProviderForBackCamera,
             createCameraSelector: proxyCreateCameraSelectorForBackCamera,
             handlesCropAndRotation: false,
             getUiOrientation: () =>
-                Future<DeviceOrientation>.value(initialDeviceOrientation));
+                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
 
         // Get and create test back camera.
         final List<CameraDescription> availableCameras =
@@ -473,21 +481,21 @@ void main() {
       testWidgets(
           'sensor orientation degrees is 270, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
-        // Create process camera provider that will acknowledge that the back camera with sensor orientation degrees
+        // Create mock ProcessCameraProvider that will acknowledge that the test back camera with sensor orientation degrees
         // 270 is available.
         final MockProcessCameraProvider mockProcessCameraProviderForBackCamera =
             getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
                 mockCameraSelector: mockBackCameraSelector,
                 sensorRotationDegrees: 270);
 
-        // Set up test to use back camera and tell camera that handlesCropAndRotation is false,
+        // Set up test to use back camera, tell camera that handlesCropAndRotation is false,
         // set camera initial device orientation to landscape left.
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProviderForBackCamera,
             createCameraSelector: proxyCreateCameraSelectorForBackCamera,
             handlesCropAndRotation: false,
             getUiOrientation: () =>
-                Future<DeviceOrientation>.value(initialDeviceOrientation));
+                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
 
         // Get and create test back camera.
         final List<CameraDescription> availableCameras =
@@ -512,18 +520,23 @@ void main() {
       });
     });
 
+    // Test the preview rotation responds to the camera being front or back facing:
     group(
         'initial device orientation is DeviceOrientation.landscapeRight, sensor orientation degrees is 90,',
         () {
       late AndroidCameraCameraX camera;
       late int cameraId;
       late MediaSettings testMediaSettings;
-      const DeviceOrientation initialDeviceOrientation =
-          DeviceOrientation.landscapeRight;
+      late DeviceOrientation testInitialDeviceOrientation;
+      late int testSensorOrientation;
 
       setUp(() {
         camera = AndroidCameraCameraX();
         cameraId = 317;
+
+        // Set test camera initial device orientation and sensor orientation for test.
+        testInitialDeviceOrientation = DeviceOrientation.landscapeRight;
+        testSensorOrientation = 90;
 
         // Media settings to create camera; irrelevant for test.
         testMediaSettings = const MediaSettings();
@@ -537,7 +550,7 @@ void main() {
         final MockProcessCameraProvider mockProcessCameraProvider =
             getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
                 mockCameraSelector: mockFrontCameraSelector,
-                sensorRotationDegrees: 90);
+                sensorRotationDegrees: testSensorOrientation);
 
         // Set up front camera selection and initial device orientation as landscape right.
         final MockCameraSelector Function(int cameraSelectorLensDirection)
@@ -548,7 +561,7 @@ void main() {
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
             getUiOrientation: () =>
-                Future<DeviceOrientation>.value(initialDeviceOrientation));
+                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
 
         // Get and create test camera.
         final List<CameraDescription> availableCameras =
@@ -580,7 +593,7 @@ void main() {
         final MockProcessCameraProvider mockProcessCameraProvider =
             getMockProcessCameraProviderForSelectingAndCreatingTestCamera(
                 mockCameraSelector: mockBackCameraSelector,
-                sensorRotationDegrees: 90);
+                sensorRotationDegrees: testSensorOrientation);
 
         // Set up front camera selection and initial device orientation as landscape right.
         final MockCameraSelector Function(int cameraSelectorLensDirection)
@@ -591,7 +604,7 @@ void main() {
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
             getUiOrientation: () =>
-                Future<DeviceOrientation>.value(initialDeviceOrientation));
+                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
 
         // Get and create test camera.
         final List<CameraDescription> availableCameras =
