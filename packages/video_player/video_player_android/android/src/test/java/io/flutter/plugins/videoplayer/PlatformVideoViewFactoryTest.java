@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class PlatformVideoViewFactoryTest {
   @Test
-  public void createsPlatformVideoViewBasedOnSuppliedArguments() throws Exception {
+  public void createsPlatformVideoViewBasedOnSuppliedArguments() {
     final VideoPlayerProvider videoPlayerProvider = mock(VideoPlayerProvider.class);
     final VideoPlayer videoPlayer = mock(VideoPlayer.class);
     final ExoPlayer exoPlayer = mock(ExoPlayer.class);

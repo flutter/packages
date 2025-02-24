@@ -41,11 +41,6 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     }
   }
 
-  // FIXME Remove
-  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
-    this(exoPlayer, events, false);
-  }
-
   public ExoPlayerEventListener(
       ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean initialized) {
     this.exoPlayer = exoPlayer;
@@ -65,7 +60,6 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     }
   }
 
-  @SuppressWarnings("SuspiciousNameCombination")
   protected void sendInitialized() {
     if (isInitialized) {
       return;
