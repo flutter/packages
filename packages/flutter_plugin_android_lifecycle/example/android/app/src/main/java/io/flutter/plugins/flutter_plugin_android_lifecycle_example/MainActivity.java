@@ -6,7 +6,6 @@ package io.flutter.plugins.flutter_plugin_android_lifecycle_example;
 
 import android.util.Log;
 import androidx.lifecycle.Lifecycle;
-import dev.flutter.plugins.integration_test.IntegrationTestPlugin;
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -18,9 +17,10 @@ public class MainActivity extends FlutterActivity {
   private static final String TAG = "MainActivity";
 
   @Override
-  public void configureFlutterEngine(FlutterEngine flutterEngine) {
+  public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+    super.configureFlutterEngine(flutterEngine);
     flutterEngine.getPlugins().add(new TestPlugin());
-    flutterEngine.getPlugins().add(new IntegrationTestPlugin());
+    engine = flutterEngine;
   }
 
   private static class TestPlugin implements FlutterPlugin, ActivityAware {
