@@ -69,7 +69,7 @@ extension $NotificationsRouteDataExtension on NotificationsRouteData {
   static NotificationsRouteData _fromState(GoRouterState state) =>
       NotificationsRouteData(
         section: _$NotificationsPageSectionEnumMap
-            ._$fromName(state.pathParameters['section']!),
+            ._$fromName(state.pathParameters['section']!)!,
       );
 
   String get location => GoRouteData.$location(
@@ -111,6 +111,6 @@ extension $OrdersRouteDataExtension on OrdersRouteData {
 }
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? _$fromName(String value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }

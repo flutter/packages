@@ -79,7 +79,7 @@ extension $FamilyRouteExtension on FamilyRoute {
 extension $PersonRouteExtension on PersonRoute {
   static PersonRoute _fromState(GoRouterState state) => PersonRoute(
         state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
+        int.parse(state.pathParameters['pid']!)!,
       );
 
   String get location => GoRouteData.$location(
@@ -100,8 +100,8 @@ extension $PersonDetailsRouteExtension on PersonDetailsRoute {
   static PersonDetailsRoute _fromState(GoRouterState state) =>
       PersonDetailsRoute(
         state.pathParameters['fid']!,
-        int.parse(state.pathParameters['pid']!),
-        _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!),
+        int.parse(state.pathParameters['pid']!)!,
+        _$PersonDetailsEnumMap._$fromName(state.pathParameters['details']!)!,
         $extra: state.extra as int?,
       );
 
@@ -129,7 +129,7 @@ const _$PersonDetailsEnumMap = {
 
 extension $FamilyCountRouteExtension on FamilyCountRoute {
   static FamilyCountRoute _fromState(GoRouterState state) => FamilyCountRoute(
-        int.parse(state.pathParameters['count']!),
+        int.parse(state.pathParameters['count']!)!,
       );
 
   String get location => GoRouteData.$location(
@@ -147,8 +147,8 @@ extension $FamilyCountRouteExtension on FamilyCountRoute {
 }
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? _$fromName(String value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
 RouteBase get $loginRoute => GoRouteData.$route(
