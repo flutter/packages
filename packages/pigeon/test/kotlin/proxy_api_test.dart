@@ -86,7 +86,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const KotlinGenerator generator = KotlinGenerator();
       generator.generate(
-        const KotlinOptions(fileSpecificClassNameComponent: 'MyFile'),
+        const InternalKotlinOptions(fileSpecificClassNameComponent: 'MyFile'),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -188,7 +188,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -227,7 +227,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -274,7 +274,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -302,7 +302,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -404,7 +404,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -458,7 +458,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(errorClassName: 'TestError'),
+          const InternalKotlinOptions(errorClassName: 'TestError'),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -499,7 +499,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(errorClassName: 'TestError'),
+          const InternalKotlinOptions(errorClassName: 'TestError'),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -593,7 +593,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -689,7 +689,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -741,7 +741,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -839,7 +839,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -888,7 +888,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -970,7 +970,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,

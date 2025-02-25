@@ -6,6 +6,7 @@ import 'dart:io' show Platform;
 
 import 'package:path/path.dart' as p;
 import 'package:pigeon/pigeon.dart';
+import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/generator_tools.dart';
 
 import 'process_utils.dart';
@@ -204,10 +205,15 @@ Future<int> generateTestPigeons(
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
-      objcPrefix: input == 'core_tests' ? 'FLT' : '',
+      objcPrefix: input == 'core_tests'
+          ? 'FLT'
+          : input == 'enum'
+              ? 'PGN'
+              : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
+      mergeDefinitionFileOptions: input != 'enum',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -224,10 +230,15 @@ Future<int> generateTestPigeons(
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
           : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
-      objcPrefix: input == 'core_tests' ? 'FLT' : '',
+      objcPrefix: input == 'core_tests'
+          ? 'FLT'
+          : input == 'enum'
+              ? 'PGN'
+              : '',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
+      mergeDefinitionFileOptions: input != 'enum',
     );
     if (generateCode != 0) {
       return generateCode;
@@ -263,6 +274,7 @@ Future<int> runPigeon({
   String? basePath,
   String? dartPackageName,
   bool injectOverflowTypes = false,
+  bool mergeDefinitionFileOptions = true,
 }) async {
   // Temporarily suppress the version output via the global flag if requested.
   // This is done because having the version in all the generated test output
@@ -276,6 +288,22 @@ Future<int> runPigeon({
   if (suppressVersion) {
     includeVersionInGeneratedWarning = false;
   }
+
+  // parse results in advance when overflow is included to avoid exposing as public option
+  final ParseResults parseResults = Pigeon().parseFile(input);
+  if (injectOverflowTypes) {
+    final List<Enum> addedEnums = List<Enum>.generate(
+      totalCustomCodecKeysAllowed - 1,
+      (final int tag) {
+        return Enum(
+            name: 'FillerEnum$tag',
+            members: <EnumMember>[EnumMember(name: 'FillerMember$tag')]);
+      },
+    );
+    addedEnums.addAll(parseResults.root.enums);
+    parseResults.root.enums = addedEnums;
+  }
+
   final int result = await Pigeon.runWithOptions(
     PigeonOptions(
       input: input,
@@ -286,9 +314,10 @@ Future<int> runPigeon({
       cppHeaderOut: cppHeaderOut,
       cppSourceOut: cppSourceOut,
       cppOptions: CppOptions(namespace: cppNamespace),
-      gobjectHeaderOut: gobjectHeaderOut,
-      gobjectSourceOut: gobjectSourceOut,
-      gobjectOptions: GObjectOptions(module: gobjectModule),
+      gobjectHeaderOut: injectOverflowTypes ? null : gobjectHeaderOut,
+      gobjectSourceOut: injectOverflowTypes ? null : gobjectSourceOut,
+      gobjectOptions:
+          injectOverflowTypes ? null : GObjectOptions(module: gobjectModule),
       javaOut: javaOut,
       javaOptions: JavaOptions(package: javaPackage),
       kotlinOut: kotlinOut,
@@ -308,7 +337,9 @@ Future<int> runPigeon({
       basePath: basePath,
       dartPackageName: dartPackageName,
     ),
-    injectOverflowTypes: injectOverflowTypes,
+    // ignore: invalid_use_of_visible_for_testing_member
+    parseResults: injectOverflowTypes ? parseResults : null,
+    mergeDefinitionFileOptions: mergeDefinitionFileOptions,
   );
   includeVersionInGeneratedWarning = originalWarningSetting;
   return result;
