@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates compileSdk 35 to flutter.compileSdkVersion.
+
 ## 2.0.24
 
 * Updates annotation to 1.9.1.
