@@ -35,6 +35,8 @@ public final class PlatformViewExoPlayerEventListener extends ExoPlayerEventList
     int width = videoFormat.width;
     int height = videoFormat.height;
 
+    // Switch the width/height if video was taken in portrait mode and a rotation
+    // correction was detected.
     if (rotationCorrection == RotationDegrees.ROTATE_90
         || rotationCorrection == RotationDegrees.ROTATE_270) {
       width = videoFormat.height;
