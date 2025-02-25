@@ -22,6 +22,7 @@ import 'package:analyzer/dart/ast/visitor.dart' as dart_ast_visitor;
 import 'package:analyzer/error/error.dart' show AnalysisError;
 import 'package:args/args.dart';
 import 'package:collection/collection.dart' as collection;
+import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
 
@@ -2677,8 +2678,8 @@ ${_argParser.usage}''';
     PigeonOptions options, {
     List<GeneratorAdapter>? adapters,
     String? sdkPath,
-    bool injectOverflowTypes = false,
     bool mergeDefinitionFileOptions = true,
+    @visibleForTesting ParseResults? parseResults,
   }) async {
     final Pigeon pigeon = Pigeon.setup();
     if (options.debugGenerators ?? false) {
@@ -2703,21 +2704,8 @@ ${_argParser.usage}''';
       return 0;
     }
 
-    final ParseResults parseResults =
-        pigeon.parseFile(options.input!, sdkPath: sdkPath);
-
-    if (injectOverflowTypes) {
-      final List<Enum> addedEnums = List<Enum>.generate(
-        totalCustomCodecKeysAllowed - 1,
-        (final int tag) {
-          return Enum(
-              name: 'FillerEnum$tag',
-              members: <EnumMember>[EnumMember(name: 'FillerMember$tag')]);
-        },
-      );
-      addedEnums.addAll(parseResults.root.enums);
-      parseResults.root.enums = addedEnums;
-    }
+    parseResults =
+        parseResults ?? pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
     final List<Error> errors = <Error>[];
     errors.addAll(parseResults.errors);
@@ -2734,37 +2722,10 @@ ${_argParser.usage}''';
           mergeMaps(options.toMap(), parseResults.pigeonOptions!));
     }
 
-    if (options.objcHeaderOut != null) {
-      options = options.merge(PigeonOptions(
-          objcOptions: (options.objcOptions ?? const ObjcOptions()).merge(
-              ObjcOptions(
-                  headerIncludePath: options.objcOptions?.headerIncludePath ??
-                      path.basename(options.objcHeaderOut!)))));
-    }
-
-    if (options.cppHeaderOut != null) {
-      options = options.merge(PigeonOptions(
-          cppOptions: (options.cppOptions ?? const CppOptions()).merge(
-              CppOptions(
-                  headerIncludePath: options.cppOptions?.headerIncludePath ??
-                      path.basename(options.cppHeaderOut!)))));
-    }
-
-    if (options.gobjectHeaderOut != null) {
-      options = options.merge(PigeonOptions(
-          gobjectOptions: (options.gobjectOptions ?? const GObjectOptions())
-              .merge(GObjectOptions(
-                  headerIncludePath:
-                      path.basename(options.gobjectHeaderOut!)))));
-    }
-
     final InternalPigeonOptions internalOptions =
         InternalPigeonOptions.fromPigeonOptions(options);
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
-      if (injectOverflowTypes && adapter is GObjectGeneratorAdapter) {
-        continue;
-      }
       final IOSink? sink =
           adapter.shouldGenerate(internalOptions, FileType.source);
       if (sink != null) {

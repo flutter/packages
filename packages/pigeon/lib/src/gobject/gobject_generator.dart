@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path/path.dart' as path;
+
 import '../ast.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
@@ -89,7 +91,8 @@ class InternalGObjectOptions {
     this.gobjectHeaderOut,
     this.gobjectSourceOut,
     Iterable<String>? copyrightHeader,
-  })  : headerIncludePath = options.headerIncludePath,
+  })  : headerIncludePath =
+            options.headerIncludePath ?? path.basename(gobjectHeaderOut!),
         module = options.module,
         copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         headerOutPath = options.headerOutPath;

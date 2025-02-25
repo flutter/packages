@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path/path.dart' as path;
+
 import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
@@ -110,7 +112,8 @@ class InternalObjcOptions {
     this.objcSourceOut,
     String? fileSpecificClassNameComponent,
     Iterable<String>? copyrightHeader,
-  })  : headerIncludePath = options.headerIncludePath,
+  })  : headerIncludePath =
+            options.headerIncludePath ?? path.basename(objcHeaderOut!),
         prefix = options.prefix,
         copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         fileSpecificClassNameComponent =

@@ -1376,7 +1376,7 @@ abstract class Api {
     await completer.future;
   });
 
-  test('run with InternalPigeonOptions', () async {
+  test('run with PigeonOptions', () async {
     final Completer<void> completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
       final _ValidatorGeneratorAdapter generator =
