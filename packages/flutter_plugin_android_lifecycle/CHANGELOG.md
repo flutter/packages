@@ -1,4 +1,4 @@
-## NEXT
+## 2.0.25
 
 * Updates compileSdk 35 to flutter.compileSdkVersion.
 
