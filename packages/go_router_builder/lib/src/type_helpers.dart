@@ -109,7 +109,7 @@ String compareField(ParameterElement param, String value1, String value2) {
 /// Gets the name of the `const` map generated to help encode [Enum] types.
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
-/// Gets the name of the `const` map generated to help encode [Enum] types.
+/// Gets the name of the `const` map generated to help encode [Json] types.
 String jsonMapName(InterfaceType type) => type.element.name;
 
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
