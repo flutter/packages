@@ -431,7 +431,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     }
 
     // test for template
-    if (_isTemplate(type)) {
+    if (_isNestedTemplate(type)) {
       // check for deep compatibility
       return _matchesType(type.typeArguments.first);
     }
@@ -440,11 +440,17 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
         type.element.getNamedConstructor('fromJson');
 
     if (fromJsonMethod == null ||
+        !fromJsonMethod.isPublic ||
         fromJsonMethod.parameters.length != 1 ||
         fromJsonMethod.parameters.first.type
                 .getDisplayString(withNullability: false) !=
             'Map<String, dynamic>') {
-      return false;
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+      // return false;
     }
 
     return true;
@@ -455,7 +461,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     final String mainDecoder = index == 0
         ? 'jsonDecode(json$index) as Map<String, dynamic>'
         : 'json$index as Map<String, dynamic>';
-    if (_isTemplate(paramType as InterfaceType)) {
+    if (_isNestedTemplate(paramType as InterfaceType)) {
       return '''
 ($mainType json$index) {
   return ${jsonMapName(paramType)}.fromJson(
@@ -470,11 +476,11 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 }''';
   }
 
-  bool _isTemplate(InterfaceType type) {
+  bool _isNestedTemplate(InterfaceType type) {
     // check if has fromJson contrcutor
     final ConstructorElement? fromJsonMethod =
         type.element.getNamedConstructor('fromJson');
-    if (fromJsonMethod == null) {
+    if (fromJsonMethod == null || !fromJsonMethod.isPublic) {
       return false;
     }
 
@@ -482,6 +488,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       return false;
     }
 
+    // check if fromJson method receive two parameters
     final List<ParameterElement> parameters = fromJsonMethod.parameters;
     if (parameters.length != 2) {
       return false;
@@ -490,7 +497,12 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
     final ParameterElement firstParam = parameters[0];
     if (firstParam.type.getDisplayString(withNullability: false) !=
         'Map<String, dynamic>') {
-      return false;
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+      // return false;
     }
 
     // Test for (T Function(Object? json)).
@@ -501,8 +513,15 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
     final FunctionType functionType = secondParam.type as FunctionType;
     if (functionType.parameters.length != 1 ||
+        functionType.returnType.getDisplayString() !=
+            type.element.typeParameters.first.getDisplayString() ||
         functionType.parameters[0].type.getDisplayString() != 'Object?') {
-      return false;
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+      // return false;
     }
 
     return true;

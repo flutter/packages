@@ -3,10 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
+// used for json decoder/encoder
+export 'dart:convert' show jsonDecode, jsonEncode;
 
-@TypedGoRoute<BadJson>(path: '/')
-class BadJson extends GoRouteData {
-  const BadJson({required this.nested, this.deepNested});
+@TypedGoRoute<JsonTemplateRoute>(path: '/')
+class JsonTemplateRoute extends GoRouteData {
+  const JsonTemplateRoute({required this.nested, this.deepNested});
 
   final JsonExampleNested<JsonExample> nested;
   final JsonExampleNested<JsonExampleNested<JsonExample>>? deepNested;

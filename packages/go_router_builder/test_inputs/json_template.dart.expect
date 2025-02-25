@@ -1,10 +1,10 @@
-RouteBase get $badJson => GoRouteData.$route(
+RouteBase get $jsonTemplateRoute => GoRouteData.$route(
       path: '/',
-      factory: $BadJsonExtension._fromState,
+      factory: $JsonTemplateRouteExtension._fromState,
     );
 
-extension $BadJsonExtension on BadJson {
-  static BadJson _fromState(GoRouterState state) => BadJson(
+extension $JsonTemplateRouteExtension on JsonTemplateRoute {
+  static JsonTemplateRoute _fromState(GoRouterState state) => JsonTemplateRoute(
         nested: (String json0) {
           return JsonExampleNested.fromJson(
             jsonDecode(json0) as Map<String, dynamic>,
