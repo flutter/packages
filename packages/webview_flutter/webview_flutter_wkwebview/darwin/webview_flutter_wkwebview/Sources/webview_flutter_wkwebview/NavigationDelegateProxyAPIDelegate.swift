@@ -244,7 +244,23 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           DispatchQueue.main.async {
             switch result {
             case .success(let response):
-              completionHandler(response.disposition, response.credential)
+              let disposition = response[0] as! UrlSessionAuthChallengeDisposition
+              var nativeDisposition: URLSession.AuthChallengeDisposition
+              switch disposition {
+              case .useCredential:
+                nativeDisposition = .useCredential
+              case .performDefaultHandling:
+                nativeDisposition = .performDefaultHandling
+              case .cancelAuthenticationChallenge:
+                nativeDisposition = .cancelAuthenticationChallenge
+              case .rejectProtectionSpace:
+                nativeDisposition = .rejectProtectionSpace
+              case .unknown:
+                print(
+                  self.registrar.createUnknownEnumError(withEnum: disposition).localizedDescription)
+                nativeDisposition = .cancelAuthenticationChallenge
+              }
+              completionHandler(nativeDisposition, response[1] as? URLCredential)
             case .failure(let error):
               completionHandler(.cancelAuthenticationChallenge, nil)
               onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)
@@ -266,7 +282,23 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           DispatchQueue.main.async {
             switch result {
             case .success(let response):
-              completionHandler(response.disposition, response.credential)
+              let disposition = response[0] as! UrlSessionAuthChallengeDisposition
+              var nativeDisposition: URLSession.AuthChallengeDisposition
+              switch disposition {
+              case .useCredential:
+                nativeDisposition = .useCredential
+              case .performDefaultHandling:
+                nativeDisposition = .performDefaultHandling
+              case .cancelAuthenticationChallenge:
+                nativeDisposition = .cancelAuthenticationChallenge
+              case .rejectProtectionSpace:
+                nativeDisposition = .rejectProtectionSpace
+              case .unknown:
+                print(
+                  self.registrar.createUnknownEnumError(withEnum: disposition).localizedDescription)
+                nativeDisposition = .cancelAuthenticationChallenge
+              }
+              completionHandler(nativeDisposition, response[1] as? URLCredential)
             case .failure(let error):
               completionHandler(.cancelAuthenticationChallenge, nil)
               onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)

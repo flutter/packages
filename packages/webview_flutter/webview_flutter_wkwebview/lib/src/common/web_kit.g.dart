@@ -4326,6 +4326,9 @@ class WKNavigationDelegate extends NSObject {
 
   /// Asks the delegate to respond to an authentication challenge.
   ///
+  /// Returns a List with a `UrlSessionAuthChallengeDisposition` and a nullable
+  /// `URLCredential`.
+  ///
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a
   /// strong reference to the encapsulating class instance. When this `Function`
@@ -4343,7 +4346,7 @@ class WKNavigationDelegate extends NSObject {
   ///
   /// Alternatively, [PigeonInstanceManager.removeWeakReference] can be used to
   /// release the associated Native object manually.
-  final Future<AuthenticationChallengeResponse> Function(
+  final Future<List<Object?>> Function(
     WKNavigationDelegate pigeon_instance,
     WKWebView webView,
     URLAuthenticationChallenge challenge,
@@ -4387,7 +4390,7 @@ class WKNavigationDelegate extends NSObject {
       WKNavigationDelegate pigeon_instance,
       WKWebView webView,
     )? webViewWebContentProcessDidTerminate,
-    Future<AuthenticationChallengeResponse> Function(
+    Future<List<Object?>> Function(
       WKNavigationDelegate pigeon_instance,
       WKWebView webView,
       URLAuthenticationChallenge challenge,
@@ -4693,7 +4696,7 @@ class WKNavigationDelegate extends NSObject {
           assert(arg_challenge != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didReceiveAuthenticationChallenge was null, expected non-null URLAuthenticationChallenge.');
           try {
-            final AuthenticationChallengeResponse output =
+            final List<Object?> output =
                 await (didReceiveAuthenticationChallenge ??
                         arg_pigeon_instance!.didReceiveAuthenticationChallenge)
                     .call(arg_pigeon_instance!, arg_webView!, arg_challenge!);
