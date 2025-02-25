@@ -5,9 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -33,7 +31,6 @@ import org.mockito.MockedStatic;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 public class SystemServicesTest {
@@ -135,29 +132,5 @@ public class SystemServicesTest {
         () -> systemServicesHostApi.getTempFilePath(prefix, suffix));
 
     mockedStaticFile.close();
-  }
-
-  @Test
-  @Config(sdk = 28)
-  public void isPreviewPreTransformed_returnsTrueWhenRunningBelowSdk29() {
-    final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertTrue(systemServicesHostApi.isPreviewPreTransformed());
-  }
-
-  @Test
-  @Config(sdk = 28)
-  public void isPreviewPreTransformed_returnsTrueWhenRunningSdk28() {
-    final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertTrue(systemServicesHostApi.isPreviewPreTransformed());
-  }
-
-  @Test
-  @Config(sdk = 29)
-  public void isPreviewPreTransformed_returnsFalseWhenRunningAboveSdk28() {
-    final SystemServicesHostApiImpl systemServicesHostApi =
-        new SystemServicesHostApiImpl(mockBinaryMessenger, mockInstanceManager, mockContext);
-    assertFalse(systemServicesHostApi.isPreviewPreTransformed());
   }
 }

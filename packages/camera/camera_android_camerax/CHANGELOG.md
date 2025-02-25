@@ -1,3 +1,11 @@
+## 0.6.15
+
+* Fixes incorrect camera preview rotation when capture orientation is locked.
+
+## 0.6.14
+
+* Fixes incorrect camera preview rotation when capture orientation is unlocked.
+
 ## 0.6.13
 
 * Adds API support query for image streaming.
