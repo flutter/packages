@@ -1,3 +1,7 @@
+## 6.3.15
+
+* Bumps compileSdk version from 34 to 35.
+
 ## 6.3.14
 
 * Bumps androidx.annotation:annotation from 1.9.0 to 1.9.1.
