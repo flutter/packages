@@ -69,7 +69,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     sendInitialized();
   }
 
-  abstract protected void sendInitialized();
+  protected abstract void sendInitialized();
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {

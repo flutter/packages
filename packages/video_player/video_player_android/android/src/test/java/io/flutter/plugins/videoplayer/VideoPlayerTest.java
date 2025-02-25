@@ -49,6 +49,8 @@ public final class VideoPlayerTest {
 
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
+
+
   @Before
   public void setUp() {
     fakeVideoAsset = new FakeVideoAsset(FAKE_ASSET_URL);

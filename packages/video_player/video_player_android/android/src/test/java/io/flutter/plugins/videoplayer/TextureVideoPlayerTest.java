@@ -32,14 +32,10 @@ import org.robolectric.RobolectricTestRunner;
 /**
  * Unit tests for {@link TextureVideoPlayer}.
  *
- * <p>This test suite <em>narrowly verifies</em> that {@link TextureVideoPlayer} interfaces
- * with the {@link ExoPlayer} interface <em>exactly</em> as it did when the test suite was created.
- * That is, if the behavior changes, this test will need to change. However, this suite should catch
- * bugs related to <em>"this is a safe refactor with no behavior changes"</em>.
- *
- * <p>It's hypothetically possible to write better tests using {@link
- * androidx.media3.test.utils.FakeMediaSource}, but you really need a PhD in the Android media APIs
- * in order to figure out how to set everything up so the player "works".
+ * <p>This test suite <em>narrowly verifies</em> that {@link TextureVideoPlayer} interfaces with the
+ * {@link ExoPlayer} interface <em>exactly</em> as it did when the test suite was created. That is,
+ * if the behavior changes, this test will need to change. However, this suite should catch bugs
+ * related to <em>"this is a safe refactor with no behavior changes"</em>.
  */
 @RunWith(RobolectricTestRunner.class)
 public final class TextureVideoPlayerTest {

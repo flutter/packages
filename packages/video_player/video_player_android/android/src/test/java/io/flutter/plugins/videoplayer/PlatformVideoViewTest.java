@@ -14,6 +14,9 @@ import io.flutter.plugins.videoplayer.platformview.PlatformVideoView;
 import java.lang.reflect.Field;
 import org.junit.Test;
 
+/**
+ * Unit tests for {@link PlatformVideoViewTest}.
+ */
 public class PlatformVideoViewTest {
   @Test
   public void createsSurfaceViewAndSetsItForExoPlayer() throws Exception {

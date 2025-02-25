@@ -17,7 +17,8 @@ import org.junit.Test;
 public class PlatformVideoViewFactoryTest {
   @Test
   public void createsPlatformVideoViewBasedOnSuppliedArguments() {
-    final PlatformVideoViewFactory.VideoPlayerProvider videoPlayerProvider = mock(PlatformVideoViewFactory.VideoPlayerProvider.class);
+    final PlatformVideoViewFactory.VideoPlayerProvider videoPlayerProvider =
+        mock(PlatformVideoViewFactory.VideoPlayerProvider.class);
     final VideoPlayer videoPlayer = mock(VideoPlayer.class);
     final ExoPlayer exoPlayer = mock(ExoPlayer.class);
     final Context context = mock(Context.class);

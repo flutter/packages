@@ -72,7 +72,8 @@ public class VideoPlayerPluginTest {
 
   @Test
   public void createsPlatformViewVideoPlayer() throws Exception {
-    try (MockedStatic<PlatformViewVideoPlayer> mockedPlatformViewVideoPlayerStatic = mockStatic(PlatformViewVideoPlayer.class)) {
+    try (MockedStatic<PlatformViewVideoPlayer> mockedPlatformViewVideoPlayerStatic =
+        mockStatic(PlatformViewVideoPlayer.class)) {
       mockedPlatformViewVideoPlayerStatic
           .when(() -> PlatformViewVideoPlayer.create(any(), any(), any(), any()))
           .thenReturn(mock(PlatformViewVideoPlayer.class));
