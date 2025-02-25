@@ -166,16 +166,24 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
         lensType = FCPPlatformCameraLensTypeWide;
       } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTelephotoCamera]) {
         lensType = FCPPlatformCameraLensTypeTelephoto;
-      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
-        lensType = FCPPlatformCameraLensTypeUltraWide;
-      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualCamera]) {
-        lensType = FCPPlatformCameraLensTypeDual;
-      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
-        lensType = FCPPlatformCameraLensTypeDualWide;
-      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTripleCamera]) {
-        lensType = FCPPlatformCameraLensTypeTriple;
-      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeContinuityCamera]) {
-        lensType = FCPPlatformCameraLensTypeContinuity;
+      } else if (@available(iOS 13.0, *)) {
+        if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
+          lensType = FCPPlatformCameraLensTypeUltraWide;
+        } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualCamera]) {
+          lensType = FCPPlatformCameraLensTypeDual;
+        } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
+          lensType = FCPPlatformCameraLensTypeDualWide;
+        } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTripleCamera]) {
+          lensType = FCPPlatformCameraLensTypeTriple;
+        } else {
+          lensType = FCPPlatformCameraLensTypeUnknown;
+        }
+      } else if (@available(iOS 17.0, *)) {
+        if ([device.deviceType isEqualToString:AVCaptureDeviceTypeContinuityCamera]) {
+          lensType = FCPPlatformCameraLensTypeContinuity;
+        } else {
+          lensType = FCPPlatformCameraLensTypeUnknown;
+        }
       } else {
         lensType = FCPPlatformCameraLensTypeUnknown;
       }
