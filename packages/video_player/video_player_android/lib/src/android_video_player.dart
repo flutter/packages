@@ -243,14 +243,6 @@ final class _VideoPlayerTextureViewState extends _VideoPlayerViewState {
 
   /// The ID of the texture used by the video player.
   final int textureId;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is _VideoPlayerTextureViewState && other.textureId == textureId;
-
-  @override
-  int get hashCode => textureId.hashCode;
 }
 
 /// Represents the state of a video player view that uses a platform view.
