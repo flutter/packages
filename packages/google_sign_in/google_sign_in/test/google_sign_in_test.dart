@@ -113,6 +113,17 @@ void main() {
       verify(mockPlatform.signIn());
     });
 
+    test('forceAccountName sent with init method call', () async {
+      final GoogleSignIn googleSignIn =
+          GoogleSignIn(forceAccountName: 'fakeEmailAddress@example.com');
+
+      await googleSignIn.signIn();
+
+      _verifyInit(mockPlatform,
+          forceAccountName: 'fakeEmailAddress@example.com');
+      verify(mockPlatform.signIn());
+    });
+
     test('signOut', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn();
 
@@ -447,6 +458,7 @@ void _verifyInit(
   String? clientId,
   String? serverClientId,
   bool forceCodeForRefreshToken = false,
+  String? forceAccountName,
 }) {
   verify(mockSignIn.initWithParams(argThat(
     isA<SignInInitParameters>()
@@ -479,6 +491,11 @@ void _verifyInit(
           (SignInInitParameters p) => p.forceCodeForRefreshToken,
           'forceCodeForRefreshToken',
           forceCodeForRefreshToken,
+        )
+        .having(
+          (SignInInitParameters p) => p.forceAccountName,
+          'forceAccountName',
+          forceAccountName,
         ),
   )));
 }
