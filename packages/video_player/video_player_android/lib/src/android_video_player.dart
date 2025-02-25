@@ -18,9 +18,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   /// A map that associates player ID with a view state.
   /// This is used to determine which view type to use when building a view.
-  @visibleForTesting
-  final Map<int, VideoPlayerViewState> playerViewStates =
-      <int, VideoPlayerViewState>{};
+  final Map<int, _VideoPlayerViewState> _playerViewStates =
+      <int, _VideoPlayerViewState>{};
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
@@ -35,7 +34,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int playerId) async {
     await _api.dispose(playerId);
-    playerViewStates.remove(playerId);
+    _playerViewStates.remove(playerId);
   }
 
   @override
@@ -83,11 +82,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     );
 
     final int playerId = await _api.create(message);
-    playerViewStates[playerId] = switch (options.viewType) {
+    _playerViewStates[playerId] = switch (options.viewType) {
       // playerId is also the textureId when using texture view.
       VideoViewType.textureView =>
-        VideoPlayerTextureViewState(textureId: playerId),
-      VideoViewType.platformView => const VideoPlayerPlatformViewState(),
+        _VideoPlayerTextureViewState(textureId: playerId),
+      VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
     };
 
     return playerId;
@@ -182,12 +181,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final VideoPlayerViewState? viewState = playerViewStates[playerId];
+    final _VideoPlayerViewState? viewState = _playerViewStates[playerId];
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) =>
+      _VideoPlayerTextureViewState(:final int textureId) =>
         Texture(textureId: textureId),
-      VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
+      _VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
       null => throw Exception(
           'Could not find corresponding view type for playerId: $playerId',
         ),
@@ -230,17 +229,15 @@ PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
 }
 
 /// Base class representing the state of a video player view.
-@visibleForTesting
 @immutable
-sealed class VideoPlayerViewState {
-  const VideoPlayerViewState();
+sealed class _VideoPlayerViewState {
+  const _VideoPlayerViewState();
 }
 
 /// Represents the state of a video player view that uses a texture.
-@visibleForTesting
-final class VideoPlayerTextureViewState extends VideoPlayerViewState {
-  /// Creates a new instance of [VideoPlayerTextureViewState].
-  const VideoPlayerTextureViewState({
+final class _VideoPlayerTextureViewState extends _VideoPlayerViewState {
+  /// Creates a new instance of [_VideoPlayerTextureViewState].
+  const _VideoPlayerTextureViewState({
     required this.textureId,
   });
 
@@ -250,15 +247,14 @@ final class VideoPlayerTextureViewState extends VideoPlayerViewState {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is VideoPlayerTextureViewState && other.textureId == textureId;
+      other is _VideoPlayerTextureViewState && other.textureId == textureId;
 
   @override
   int get hashCode => textureId.hashCode;
 }
 
 /// Represents the state of a video player view that uses a platform view.
-@visibleForTesting
-final class VideoPlayerPlatformViewState extends VideoPlayerViewState {
-  /// Creates a new instance of [VideoPlayerPlatformViewState].
-  const VideoPlayerPlatformViewState();
+final class _VideoPlayerPlatformViewState extends _VideoPlayerViewState {
+  /// Creates a new instance of [_VideoPlayerPlatformViewState].
+  const _VideoPlayerPlatformViewState();
 }
