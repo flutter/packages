@@ -15,7 +15,7 @@ import io.flutter.plugins.videoplayer.VideoPlayer;
 import java.util.Objects;
 
 /**
- * A factory class responsible for creating native video views that can be embedded in a Flutter
+ * A factory class responsible for creating platform video views that can be embedded in a Flutter
  * app.
  */
 public class PlatformVideoViewFactory extends PlatformViewFactory {

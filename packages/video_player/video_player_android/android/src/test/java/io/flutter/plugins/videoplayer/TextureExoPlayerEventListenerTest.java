@@ -27,7 +27,7 @@ import org.robolectric.annotation.Config;
  *
  * <p>This test suite <em>narrowly verifies</em> that the events emitted by the underlying {@link
  * androidx.media3.exoplayer.ExoPlayer} instance are translated to the callback interface we expect
- * ({@link VideoPlayerCallbacks} and/or interface with the player instance as expected.
+ * ({@link VideoPlayerCallbacks} and/or interface with the player instance as expected).
  */
 @RunWith(RobolectricTestRunner.class)
 public class TextureExoPlayerEventListenerTest {

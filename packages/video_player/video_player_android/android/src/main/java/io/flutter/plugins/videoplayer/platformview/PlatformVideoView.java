@@ -32,7 +32,7 @@ public final class PlatformVideoView implements PlatformView {
   public PlatformVideoView(@NonNull Context context, @NonNull ExoPlayer exoPlayer) {
     surfaceView = new SurfaceView(context);
 
-    if (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
+    if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) {
       // Workaround for rendering issues on Android 9 (API 28).
       // On Android 9, using setVideoSurfaceView seems to lead to issues where the first frame is
       // not displayed if the video is paused initially.
@@ -41,7 +41,7 @@ public final class PlatformVideoView implements PlatformView {
       // first frame.
       setupSurfaceWithCallback(exoPlayer);
     } else {
-      if (android.os.Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
+      if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.N_MR1) {
         // Avoid blank space instead of a video on Android versions below 8 by adjusting video's
         // z-layer within the Android view hierarchy:
         surfaceView.setZOrderMediaOverlay(true);

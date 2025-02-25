@@ -13,14 +13,11 @@ import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
-import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 
 /**
  * A class responsible for managing video playback using {@link ExoPlayer}.
  *
- * <p>It provides methods to control playback, adjust volume, and handle seeking. This class
- * contains all functionalities needed to manage video playback in platform views and is typically
- * used alongside {@link PlatformVideoViewFactory}.
+ * <p>It provides methods to control playback, adjust volume, and handle seeking.
  */
 public abstract class VideoPlayer {
   @NonNull private final ExoPlayerProvider exoPlayerProvider;

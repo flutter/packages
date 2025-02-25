@@ -10,10 +10,9 @@ import static org.mockito.Mockito.*;
 import android.content.Context;
 import android.view.SurfaceView;
 import androidx.media3.exoplayer.ExoPlayer;
+import io.flutter.plugins.videoplayer.platformview.PlatformVideoView;
 import java.lang.reflect.Field;
 import org.junit.Test;
-
-import io.flutter.plugins.videoplayer.platformview.PlatformVideoView;
 
 public class PlatformVideoViewTest {
   @Test

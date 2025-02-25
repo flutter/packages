@@ -15,7 +15,6 @@ import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.ExoPlayer;
-
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
 import org.junit.Before;
