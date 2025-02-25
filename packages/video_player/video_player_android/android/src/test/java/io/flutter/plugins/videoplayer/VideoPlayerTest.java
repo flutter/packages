@@ -7,12 +7,15 @@ package io.flutter.plugins.videoplayer;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+import androidx.annotation.NonNull;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
+import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
+import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,7 +26,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 
 /**
  * Unit tests for {@link VideoPlayer}.
@@ -49,7 +51,22 @@ public final class VideoPlayerTest {
 
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
+  /** A test subclass of {@link VideoPlayer} that exposes the abstract class for testing. */
+  private final class TestVideoPlayer extends VideoPlayer {
+    private TestVideoPlayer(
+        @NonNull ExoPlayerProvider exoPlayerProvider,
+        @NonNull VideoPlayerCallbacks events,
+        @NonNull MediaItem mediaItem,
+        @NonNull VideoPlayerOptions options) {
+      super(exoPlayerProvider, events, mediaItem, options);
+    }
 
+    @Override
+    protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer) {
+      // Use platform view implementation for testing.
+      return new PlatformViewExoPlayerEventListener(exoPlayer, mockEvents);
+    }
+  }
 
   @Before
   public void setUp() {
@@ -61,7 +78,7 @@ public final class VideoPlayerTest {
   }
 
   private VideoPlayer createVideoPlayer(VideoPlayerOptions options) {
-    return new PlatformViewVideoPlayer(
+    return new TestVideoPlayer(
         () -> mockExoPlayer, mockEvents, fakeVideoAsset.getMediaItem(), options);
   }
 
