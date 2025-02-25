@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
+import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.VideoAsset;
 import io.flutter.plugins.videoplayer.VideoPlayer;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
@@ -49,5 +50,12 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
         events,
         asset.getMediaItem(),
         options);
+  }
+
+  @Override
+  protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer) {
+    // Platform view video player does not suspend and re-create the exoPlayer, hence initialized
+    // is always false.
+    return new PlatformViewExoPlayerEventListener(exoPlayer, videoPlayerEvents, false);
   }
 }

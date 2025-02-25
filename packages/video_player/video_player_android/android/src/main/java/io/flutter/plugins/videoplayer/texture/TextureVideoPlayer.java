@@ -102,8 +102,7 @@ public final class TextureVideoPlayer extends VideoPlayer
     exoPlayer.release();
   }
 
-  @Override
-  protected boolean playerHasBeenSuspended() {
+  private boolean playerHasBeenSuspended() {
     return savedStateDuring != null;
   }
 

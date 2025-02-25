@@ -14,7 +14,6 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
-import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
 
 /**
  * A class responsible for managing video playback using {@link ExoPlayer}.
@@ -63,15 +62,7 @@ public abstract class VideoPlayer {
     return exoPlayer;
   }
 
-  protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer) {
-    return new PlatformViewExoPlayerEventListener(
-        exoPlayer, videoPlayerEvents, playerHasBeenSuspended());
-  }
-
-  protected boolean playerHasBeenSuspended() {
-    // The base implementation never suspends and re-creates the exoPlayer, but subclasses may.
-    return false;
-  }
+  protected abstract ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer);
 
   void sendBufferingUpdate() {
     videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
