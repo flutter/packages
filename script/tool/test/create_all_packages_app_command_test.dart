@@ -75,7 +75,7 @@ android {
     defaultConfig {
         applicationId "dev.flutter.packages.foo.example"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 32
+        targetSdkVersion 35
     }
 }
 
