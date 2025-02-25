@@ -745,6 +745,9 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Tells the delegate that the web view’s content process was terminated.
   void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
+  // TODO(bparrishMines): This method should return an
+  // `AuthenticationChallengeResponse` once the cause of
+  // https://github.com/flutter/flutter/issues/162437 can be found and fixed.
   /// Asks the delegate to respond to an authentication challenge.
   ///
   /// This return value expects a List with a
