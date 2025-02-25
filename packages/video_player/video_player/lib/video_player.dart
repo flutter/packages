@@ -6,6 +6,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:collection/collection.dart' as collection;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -378,6 +379,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
+  ClosedCaptionFile? _previousClosedCaptionFile;
+  List<Caption>? _sortedCaptions;
+
   Timer? _timer;
   bool _isDisposed = false;
   Completer<void>? _creatingCompleter;
@@ -506,6 +510,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     if (_closedCaptionFileFuture != null) {
       await _updateClosedCaptionWithFuture(_closedCaptionFileFuture);
+      _sortClosedCaption();
     }
 
     void errorListener(Object obj) {
@@ -728,20 +733,46 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// If no [closedCaptionFile] was specified, this will always return an empty
   /// [Caption].
+
   Caption _getCaptionAt(Duration position) {
-    if (_closedCaptionFile == null) {
+    if (_closedCaptionFile == null || _sortedCaptions == null) {
       return Caption.none;
     }
 
     final Duration delayedPosition = position + value.captionOffset;
-    // TODO(johnsonmh): This would be more efficient as a binary search.
-    for (final Caption caption in _closedCaptionFile!.captions) {
-      if (caption.start <= delayedPosition && caption.end >= delayedPosition) {
-        return caption;
-      }
+
+    final int captionIndex = collection.binarySearch<Caption>(
+      _sortedCaptions!,
+      Caption(
+        number: -1,
+        start: delayedPosition,
+        end: delayedPosition,
+        text: '',
+      ),
+      compare: (Caption candidate, Caption search) {
+        if (search.start < candidate.start) {
+          return 1;
+        } else if (search.start > candidate.end) {
+          return -1;
+        } else {
+          // delayedPosition is within [candidate.start, candidate.end]
+          return 0;
+        }
+      },
+    );
+
+    // -1 means not found by the binary search.
+    if (captionIndex == -1) {
+      return Caption.none;
     }
 
-    return Caption.none;
+    final Caption caption = _sortedCaptions![captionIndex];
+    // check if it really fits within that caption's [start, end].
+    if (caption.start <= delayedPosition && caption.end >= delayedPosition) {
+      return caption;
+    }
+
+    return Caption.none; // No matching caption found
   }
 
   /// Returns the file containing closed captions for the video, if any.
@@ -757,12 +788,28 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ) async {
     await _updateClosedCaptionWithFuture(closedCaptionFile);
     _closedCaptionFileFuture = closedCaptionFile;
+    _sortClosedCaption();
+  }
+
+  void _sortClosedCaption() {
+    // Only sort if the file has changed
+    if (_previousClosedCaptionFile != _closedCaptionFile) {
+      _sortedCaptions = _closedCaptionFile?.captions;
+
+      /// Sort the captions by start time to allow a binary search.
+      _sortedCaptions?.sort((Caption a, Caption b) {
+        return a.start.compareTo(b.start);
+      });
+
+      _previousClosedCaptionFile = _closedCaptionFile;
+    }
   }
 
   Future<void> _updateClosedCaptionWithFuture(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {
     _closedCaptionFile = await closedCaptionFile;
+
     value = value.copyWith(caption: _getCaptionAt(value.position));
   }
 
