@@ -746,8 +746,11 @@ abstract class WKNavigationDelegate extends NSObject {
   void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
   /// Asks the delegate to respond to an authentication challenge.
+  ///
+  /// This return value expects a List with a
+  /// `UrlSessionAuthChallengeDisposition` and a nullable `URLCredential`.
   @async
-  late AuthenticationChallengeResponse Function(
+  late List<Object?> Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
   ) didReceiveAuthenticationChallenge;

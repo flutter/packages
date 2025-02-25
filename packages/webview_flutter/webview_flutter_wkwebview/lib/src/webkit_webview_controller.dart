@@ -1213,32 +1213,34 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           final String host = protectionSpace.host;
           final String? realm = protectionSpace.realm;
 
-          final Completer<AuthenticationChallengeResponse> responseCompleter =
-              Completer<AuthenticationChallengeResponse>();
+          final Completer<List<Object?>> responseCompleter =
+              Completer<List<Object?>>();
 
           callback(
             HttpAuthRequest(
               host: host,
               realm: realm,
               onProceed: (WebViewCredential credential) {
-                final AuthenticationChallengeResponse response =
-                    proxy.newAuthenticationChallengeResponse(
-                  disposition: UrlSessionAuthChallengeDisposition.useCredential,
-                  credential: URLCredential.withUser(
-                    user: credential.user,
-                    password: credential.password,
-                    persistence: UrlCredentialPersistence.forSession,
-                  ),
+                final URLCredential userCredential = URLCredential.withUser(
+                  user: credential.user,
+                  password: credential.password,
+                  persistence: UrlCredentialPersistence.forSession,
                 );
-                responseCompleter.complete(response);
+                responseCompleter.complete(
+                  <Object?>[
+                    UrlSessionAuthChallengeDisposition.useCredential,
+                    userCredential,
+                  ],
+                );
               },
               onCancel: () {
-                final AuthenticationChallengeResponse response =
-                    proxy.newAuthenticationChallengeResponse(
-                  disposition: UrlSessionAuthChallengeDisposition
-                      .cancelAuthenticationChallenge,
+                responseCompleter.complete(
+                  <Object?>[
+                    UrlSessionAuthChallengeDisposition
+                        .cancelAuthenticationChallenge,
+                    null,
+                  ],
                 );
-                responseCompleter.complete(response);
               },
             ),
           );
@@ -1246,10 +1248,10 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           return responseCompleter.future;
         }
 
-        return AuthenticationChallengeResponse(
-          disposition:
-              UrlSessionAuthChallengeDisposition.performDefaultHandling,
-        );
+        return <Object?>[
+          UrlSessionAuthChallengeDisposition.performDefaultHandling,
+          null,
+        ];
       },
     );
   }

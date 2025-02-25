@@ -244,7 +244,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           DispatchQueue.main.async {
             switch result {
             case .success(let response):
-              completionHandler(response.disposition, response.credential)
+              completionHandler(
+                response[0] as! URLSession.AuthChallengeDisposition, response[1] as? URLCredential)
             case .failure(let error):
               completionHandler(.cancelAuthenticationChallenge, nil)
               onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)
@@ -266,7 +267,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           DispatchQueue.main.async {
             switch result {
             case .success(let response):
-              completionHandler(response.disposition, response.credential)
+              completionHandler(
+                response[0] as! URLSession.AuthChallengeDisposition, response[1] as? URLCredential)
             case .failure(let error):
               completionHandler(.cancelAuthenticationChallenge, nil)
               onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)

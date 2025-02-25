@@ -54,11 +54,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -93,11 +92,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -136,11 +134,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -186,11 +183,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -235,11 +231,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -291,11 +286,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -348,11 +342,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -406,11 +399,10 @@ void main() {
               return NavigationResponsePolicy.cancel;
             },
             didReceiveAuthenticationChallenge: (_, __, ___) async {
-              return AuthenticationChallengeResponse.pigeon_detached(
-                disposition:
-                    UrlSessionAuthChallengeDisposition.performDefaultHandling,
-                pigeon_instanceManager: TestInstanceManager(),
-              );
+              return <Object?>[
+                UrlSessionAuthChallengeDisposition.performDefaultHandling,
+                null,
+              ];
             },
           ),
           WKWebView.pigeon_detached(
@@ -496,11 +488,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -574,11 +565,10 @@ void main() {
             return NavigationResponsePolicy.cancel;
           },
           didReceiveAuthenticationChallenge: (_, __, ___) async {
-            return AuthenticationChallengeResponse.pigeon_detached(
-              disposition:
-                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
-              pigeon_instanceManager: TestInstanceManager(),
-            );
+            return <Object?>[
+              UrlSessionAuthChallengeDisposition.performDefaultHandling,
+              null,
+            ];
           },
         ),
         WKWebView.pigeon_detached(
@@ -616,10 +606,10 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
       return NavigationResponsePolicy.cancel;
     },
     didReceiveAuthenticationChallenge: (_, __, ___) async {
-      return AuthenticationChallengeResponse.pigeon_detached(
-        disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
-        pigeon_instanceManager: TestInstanceManager(),
-      );
+      return <Object?>[
+        UrlSessionAuthChallengeDisposition.performDefaultHandling,
+        null,
+      ];
     },
   );
 }
