@@ -227,7 +227,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
     didReceiveAuthenticationChallengeArgs = [webViewArg, challengeArg]
     completion(
       .success([
-        URLSession.AuthChallengeDisposition.useCredential,
+        UrlSessionAuthChallengeDisposition.useCredential,
         URLCredential(user: "user", password: "password", persistence: .none),
       ]))
   }
