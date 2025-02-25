@@ -28,6 +28,33 @@ typedef NS_ENUM(NSUInteger, FCPPlatformCameraLensDirection) {
 - (instancetype)initWithValue:(FCPPlatformCameraLensDirection)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FCPPlatformCameraLensType) {
+  /// A built-in wide-angle camera device type.
+  FCPPlatformCameraLensTypeWide = 0,
+  /// A built-in camera device type with a shorter focal length than a wide-angle camera.
+  FCPPlatformCameraLensTypeTelephoto = 1,
+  /// A built-in camera device type with a longer focal length than a wide-angle camera.
+  FCPPlatformCameraLensTypeUltraWide = 2,
+  /// A built-in camera device type that consists of a wide-angle and telephoto camera.
+  FCPPlatformCameraLensTypeDual = 3,
+  /// A built-in camera device type that consists of two cameras of fixed focal length, one
+  /// ultrawide angle and one wide angle.
+  FCPPlatformCameraLensTypeDualWide = 4,
+  /// A built-in camera device type that consists of three cameras of fixed focal length, one
+  /// ultrawide angle, one wide angle, and one telephoto.
+  FCPPlatformCameraLensTypeTriple = 5,
+  /// A Continuity Camera device type.
+  FCPPlatformCameraLensTypeContinuity = 6,
+  /// Unknown camera device type.
+  FCPPlatformCameraLensTypeUnknown = 7,
+};
+
+/// Wrapper for FCPPlatformCameraLensType to allow for nullability.
+@interface FCPPlatformCameraLensTypeBox : NSObject
+@property(nonatomic, assign) FCPPlatformCameraLensType value;
+- (instancetype)initWithValue:(FCPPlatformCameraLensType)value;
+@end
+
 typedef NS_ENUM(NSUInteger, FCPPlatformDeviceOrientation) {
   FCPPlatformDeviceOrientationPortraitUp = 0,
   FCPPlatformDeviceOrientationLandscapeLeft = 1,
@@ -124,11 +151,14 @@ typedef NS_ENUM(NSUInteger, FCPPlatformResolutionPreset) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithName:(NSString *)name
-               lensDirection:(FCPPlatformCameraLensDirection)lensDirection;
+               lensDirection:(FCPPlatformCameraLensDirection)lensDirection
+                    lensType:(FCPPlatformCameraLensType)lensType;
 /// The name of the camera device.
 @property(nonatomic, copy) NSString *name;
 /// The direction the camera is facing.
 @property(nonatomic, assign) FCPPlatformCameraLensDirection lensDirection;
+/// The type of the camera lens.
+@property(nonatomic, assign) FCPPlatformCameraLensType lensType;
 @end
 
 @interface FCPPlatformCameraState : NSObject
