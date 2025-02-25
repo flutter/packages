@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
+// used for json decoder/encoder
+export 'dart:convert' show jsonDecode, jsonEncode;
 
 @TypedGoRoute<BadJson>(path: '/')
 class BadJson extends GoRouteData {
@@ -14,11 +16,14 @@ class BadJson extends GoRouteData {
 class JsonExample {
   const JsonExample({required this.id});
 
-  // mismach toJson
-  factory JsonExample.toJson(dynamic json) {
-    return const JsonExample(id: 'a');
+  // json parameter is not a Map<String, dynamic>
+  factory JsonExample.fromJson(/*Map<String, dynamic>*/ dynamic json) {
+    return JsonExample(id: (json as Map<String, dynamic>)['a'] as String);
   }
-  // missing to Json
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{'id': id};
+  }
 
   final String id;
 }
