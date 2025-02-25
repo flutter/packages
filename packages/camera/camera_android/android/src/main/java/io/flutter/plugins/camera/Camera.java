@@ -128,7 +128,7 @@ class Camera
   /** True when the preview is paused. */
   @VisibleForTesting boolean pausedPreview;
 
-  private File captureFile;
+  @VisibleForTesting File captureFile;
 
   /** Holds the current capture timeouts */
   private CaptureTimeoutsWrapper captureTimeouts;
@@ -856,7 +856,7 @@ class Camera
       closeRenderer();
       captureSession.abortCaptures();
       mediaRecorder.stop();
-    } catch (CameraAccessException | IllegalStateException e) {
+    } catch (CameraAccessException | RuntimeException e) {
       // Ignore exceptions and try to continue (changes are camera session already aborted capture).
     }
     mediaRecorder.reset();
