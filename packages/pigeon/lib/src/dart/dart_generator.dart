@@ -103,9 +103,7 @@ class InternalDartOptions {
     String? testOut,
   })  : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
         dartOut = (dartOut ?? options.sourceOutPath)!,
-        testOut = testOut ??
-            options
-                .testOutPath; // Throw if no output (should already have failed at this point)
+        testOut = testOut ?? options.testOutPath;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;

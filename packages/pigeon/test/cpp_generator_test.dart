@@ -69,7 +69,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -85,7 +86,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -160,7 +162,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -185,7 +188,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -220,7 +224,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -278,7 +283,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -344,7 +350,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -362,7 +369,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -400,7 +408,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -426,8 +435,10 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const InternalCppOptions(headerIncludePath: 'a_header.h'),
+        languageOptions: const InternalCppOptions(
+            headerIncludePath: 'a_header.h',
+            cppHeaderOut: '',
+            cppSourceOut: ''),
       );
       generator.generate(
         generatorOptions,
@@ -475,7 +486,11 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(namespace: 'foo'),
+        languageOptions: const InternalCppOptions(
+            namespace: 'foo',
+            headerIncludePath: '',
+            cppHeaderOut: '',
+            cppSourceOut: ''),
       );
       generator.generate(
         generatorOptions,
@@ -493,7 +508,11 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(namespace: 'foo'),
+        languageOptions: const InternalCppOptions(
+            namespace: 'foo',
+            headerIncludePath: '',
+            cppHeaderOut: '',
+            cppSourceOut: ''),
       );
       generator.generate(
         generatorOptions,
@@ -568,7 +587,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -621,7 +641,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -749,7 +770,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -793,7 +815,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -931,7 +954,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1054,7 +1078,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1149,7 +1174,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1175,7 +1201,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1303,7 +1330,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1329,7 +1357,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1457,7 +1486,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1498,7 +1528,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1617,7 +1648,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1651,7 +1683,8 @@ void main() {
       final OutputFileOptions<InternalCppOptions> generatorOptions =
           OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalCppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1695,7 +1728,8 @@ void main() {
     final OutputFileOptions<InternalCppOptions> generatorOptions =
         OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const InternalCppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -1739,7 +1773,10 @@ void main() {
         ])
       ],
     );
-    final List<Error> errors = validateCpp(const InternalCppOptions(), root);
+    final List<Error> errors = validateCpp(
+        const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
+        root);
     expect(errors.length, 1);
   });
 
@@ -1821,7 +1858,11 @@ void main() {
     final OutputFileOptions<InternalCppOptions> generatorOptions =
         OutputFileOptions<InternalCppOptions>(
       fileType: FileType.header,
-      languageOptions: const InternalCppOptions(headerIncludePath: 'foo'),
+      languageOptions: const InternalCppOptions(
+        headerIncludePath: 'foo',
+        cppHeaderOut: '',
+        cppSourceOut: '',
+      ),
     );
     generator.generate(
       generatorOptions,
@@ -1882,7 +1923,8 @@ void main() {
     final OutputFileOptions<InternalCppOptions> generatorOptions =
         OutputFileOptions<InternalCppOptions>(
       fileType: FileType.header,
-      languageOptions: const InternalCppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -1964,7 +2006,8 @@ void main() {
     final OutputFileOptions<InternalCppOptions> generatorOptions =
         OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const InternalCppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -2033,7 +2076,8 @@ void main() {
     final OutputFileOptions<InternalCppOptions> generatorOptions =
         OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const InternalCppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -2084,7 +2128,8 @@ void main() {
     final OutputFileOptions<InternalCppOptions> generatorOptions =
         OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const InternalCppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -2131,7 +2176,8 @@ void main() {
     final OutputFileOptions<InternalCppOptions> generatorOptions =
         OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const InternalCppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,

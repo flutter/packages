@@ -83,7 +83,7 @@ class InternalSwiftOptions {
   /// Creates a [InternalSwiftOptions] object
   const InternalSwiftOptions({
     this.copyrightHeader,
-    this.swiftOut,
+    required this.swiftOut,
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
@@ -92,12 +92,12 @@ class InternalSwiftOptions {
   /// Creates InternalSwiftOptions from SwiftOptions.
   InternalSwiftOptions.fromSwiftOptions(
     SwiftOptions options, {
-    this.swiftOut,
+    required this.swiftOut,
     Iterable<String>? copyrightHeader,
   })  : copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         fileSpecificClassNameComponent =
             options.fileSpecificClassNameComponent ??
-                swiftOut?.split('/').lastOrNull?.split('.').firstOrNull ??
+                swiftOut.split('/').lastOrNull?.split('.').firstOrNull ??
                 '',
         errorClassName = options.errorClassName,
         includeErrorClass = options.includeErrorClass;
@@ -106,7 +106,7 @@ class InternalSwiftOptions {
   final Iterable<String>? copyrightHeader;
 
   /// Path to the swift file that will be generated.
-  final String? swiftOut;
+  final String swiftOut;
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;

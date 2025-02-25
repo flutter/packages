@@ -97,9 +97,9 @@ class ObjcOptions {
 class InternalObjcOptions {
   /// Parametric constructor for InternalObjcOptions.
   const InternalObjcOptions({
-    this.headerIncludePath,
-    this.objcHeaderOut,
-    this.objcSourceOut,
+    required this.headerIncludePath,
+    required this.objcHeaderOut,
+    required this.objcSourceOut,
     this.prefix,
     this.copyrightHeader,
     this.fileSpecificClassNameComponent,
@@ -108,12 +108,12 @@ class InternalObjcOptions {
   /// Creates InternalObjcOptions from ObjcOptions.
   InternalObjcOptions.fromObjcOptions(
     ObjcOptions options, {
-    this.objcHeaderOut,
-    this.objcSourceOut,
+    required this.objcHeaderOut,
+    required this.objcSourceOut,
     String? fileSpecificClassNameComponent,
     Iterable<String>? copyrightHeader,
   })  : headerIncludePath =
-            options.headerIncludePath ?? path.basename(objcHeaderOut!),
+            options.headerIncludePath ?? path.basename(objcHeaderOut),
         prefix = options.prefix,
         copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         fileSpecificClassNameComponent =
@@ -122,13 +122,13 @@ class InternalObjcOptions {
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  final String? headerIncludePath;
+  final String headerIncludePath;
 
   /// Path to the ".h" Objective-C file will be generated.
-  final String? objcHeaderOut;
+  final String objcHeaderOut;
 
   /// Path to the ".m" Objective-C file will be generated.
-  final String? objcSourceOut;
+  final String objcSourceOut;
 
   /// Prefix that will be appended before all generated classes and protocols.
   final String? prefix;

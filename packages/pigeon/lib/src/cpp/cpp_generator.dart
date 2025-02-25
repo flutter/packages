@@ -101,9 +101,9 @@ class CppOptions {
 class InternalCppOptions {
   /// Creates a [InternalCppOptions] object.
   const InternalCppOptions({
-    this.headerIncludePath,
-    this.cppHeaderOut,
-    this.cppSourceOut,
+    required this.headerIncludePath,
+    required this.cppHeaderOut,
+    required this.cppSourceOut,
     this.namespace,
     this.copyrightHeader,
     this.headerOutPath,
@@ -112,24 +112,24 @@ class InternalCppOptions {
   /// Creates InternalCppOptions from CppOptions.
   InternalCppOptions.fromCppOptions(
     CppOptions options, {
-    this.cppHeaderOut,
-    this.cppSourceOut,
+    required this.cppHeaderOut,
+    required this.cppSourceOut,
     Iterable<String>? copyrightHeader,
   })  : headerIncludePath =
-            options.headerIncludePath ?? path.basename(cppHeaderOut!),
+            options.headerIncludePath ?? path.basename(cppHeaderOut),
         namespace = options.namespace,
         copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         headerOutPath = options.headerOutPath;
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  final String? headerIncludePath;
+  final String headerIncludePath;
 
   /// Path to the ".h" C++ file that will be generated.
-  final String? cppHeaderOut;
+  final String cppHeaderOut;
 
   /// Path to the ".cpp" C++ file that will be generated.
-  final String? cppSourceOut;
+  final String cppSourceOut;
 
   /// The namespace where the generated class will live.
   final String? namespace;

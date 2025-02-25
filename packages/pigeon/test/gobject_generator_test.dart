@@ -58,7 +58,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -78,7 +82,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -150,7 +158,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -174,7 +186,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -238,7 +254,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -256,7 +276,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -294,7 +318,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -313,8 +341,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.source,
-        languageOptions:
-            const InternalGObjectOptions(headerIncludePath: 'a_header.h'),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: 'a_header.h',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -392,7 +423,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -413,7 +448,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -522,7 +561,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -648,7 +691,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.header,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -668,7 +715,11 @@ void main() {
       final OutputFileOptions<InternalGObjectOptions> generatorOptions =
           OutputFileOptions<InternalGObjectOptions>(
         fileType: FileType.source,
-        languageOptions: const InternalGObjectOptions(),
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
       );
       generator.generate(
         generatorOptions,
@@ -762,7 +813,11 @@ void main() {
     final OutputFileOptions<InternalGObjectOptions> generatorOptions =
         OutputFileOptions<InternalGObjectOptions>(
       fileType: FileType.header,
-      languageOptions: const InternalGObjectOptions(headerIncludePath: 'foo'),
+      languageOptions: const InternalGObjectOptions(
+        headerIncludePath: 'foo',
+        gobjectHeaderOut: '',
+        gobjectSourceOut: '',
+      ),
     );
     generator.generate(
       generatorOptions,

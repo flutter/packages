@@ -478,8 +478,8 @@ class InternalPigeonOptions {
                 ? null
                 : InternalObjcOptions.fromObjcOptions(
                     options.objcOptions ?? const ObjcOptions(),
-                    objcHeaderOut: options.objcHeaderOut,
-                    objcSourceOut: options.objcSourceOut,
+                    objcHeaderOut: options.objcHeaderOut!,
+                    objcSourceOut: options.objcSourceOut!,
                     fileSpecificClassNameComponent: options.objcSourceOut
                             ?.split('/')
                             .lastOrNull
@@ -492,21 +492,21 @@ class InternalPigeonOptions {
             ? null
             : InternalJavaOptions.fromJavaOptions(
                 options.javaOptions ?? const JavaOptions(),
-                javaOut: options.javaOut,
+                javaOut: options.javaOut!,
                 copyrightHeader: copyrightHeader,
               ),
         swiftOptions = options.swiftOut == null
             ? null
             : InternalSwiftOptions.fromSwiftOptions(
                 options.swiftOptions ?? const SwiftOptions(),
-                swiftOut: options.swiftOut,
+                swiftOut: options.swiftOut!,
                 copyrightHeader: copyrightHeader,
               ),
         kotlinOptions = options.kotlinOut == null
             ? null
             : InternalKotlinOptions.fromKotlinOptions(
                 options.kotlinOptions ?? const KotlinOptions(),
-                kotlinOut: options.kotlinOut,
+                kotlinOut: options.kotlinOut!,
                 copyrightHeader: copyrightHeader,
               ),
         cppOptions =
@@ -514,8 +514,8 @@ class InternalPigeonOptions {
                 ? null
                 : InternalCppOptions.fromCppOptions(
                     options.cppOptions ?? const CppOptions(),
-                    cppHeaderOut: options.cppHeaderOut,
-                    cppSourceOut: options.cppSourceOut,
+                    cppHeaderOut: options.cppHeaderOut!,
+                    cppSourceOut: options.cppSourceOut!,
                     copyrightHeader: copyrightHeader,
                   ),
         gobjectOptions =
@@ -523,8 +523,8 @@ class InternalPigeonOptions {
                 ? null
                 : InternalGObjectOptions.fromGObjectOptions(
                     options.gobjectOptions ?? const GObjectOptions(),
-                    gobjectHeaderOut: options.gobjectHeaderOut,
-                    gobjectSourceOut: options.gobjectSourceOut,
+                    gobjectHeaderOut: options.gobjectHeaderOut!,
+                    gobjectSourceOut: options.gobjectSourceOut!,
                     copyrightHeader: copyrightHeader,
                   ),
         dartOptions = (options.dartOut == null &&

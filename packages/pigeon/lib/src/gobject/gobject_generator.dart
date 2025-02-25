@@ -77,9 +77,9 @@ class GObjectOptions {
 class InternalGObjectOptions {
   /// Creates a [InternalGObjectOptions] object
   const InternalGObjectOptions({
-    this.headerIncludePath,
-    this.gobjectHeaderOut,
-    this.gobjectSourceOut,
+    required this.headerIncludePath,
+    required this.gobjectHeaderOut,
+    required this.gobjectSourceOut,
     this.module,
     this.copyrightHeader,
     this.headerOutPath,
@@ -88,24 +88,24 @@ class InternalGObjectOptions {
   /// Creates InternalGObjectOptions from GObjectOptions.
   InternalGObjectOptions.fromGObjectOptions(
     GObjectOptions options, {
-    this.gobjectHeaderOut,
-    this.gobjectSourceOut,
+    required this.gobjectHeaderOut,
+    required this.gobjectSourceOut,
     Iterable<String>? copyrightHeader,
   })  : headerIncludePath =
-            options.headerIncludePath ?? path.basename(gobjectHeaderOut!),
+            options.headerIncludePath ?? path.basename(gobjectHeaderOut),
         module = options.module,
         copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         headerOutPath = options.headerOutPath;
 
   /// The path to the header that will get placed in the source filed (example:
   /// "foo.h").
-  final String? headerIncludePath;
+  final String headerIncludePath;
 
   /// Path to the ".h" GObject file that will be generated.
-  final String? gobjectHeaderOut;
+  final String gobjectHeaderOut;
 
   /// Path to the ".cc" GObject file that will be generated.
-  final String? gobjectSourceOut;
+  final String gobjectSourceOut;
 
   /// The module where the generated class will live.
   final String? module;

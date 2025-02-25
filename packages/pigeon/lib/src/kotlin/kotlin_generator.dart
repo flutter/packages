@@ -103,7 +103,7 @@ class InternalKotlinOptions {
   /// Creates a [InternalKotlinOptions] object
   const InternalKotlinOptions({
     this.package,
-    this.kotlinOut,
+    required this.kotlinOut,
     this.copyrightHeader,
     this.errorClassName,
     this.includeErrorClass = true,
@@ -121,13 +121,13 @@ class InternalKotlinOptions {
         includeErrorClass = options.includeErrorClass,
         fileSpecificClassNameComponent =
             options.fileSpecificClassNameComponent ??
-                kotlinOut?.split('/').lastOrNull?.split('.').first;
+                kotlinOut.split('/').lastOrNull?.split('.').first;
 
   /// The package where the generated class will live.
   final String? package;
 
   /// Path to the kotlin file that will be generated.
-  final String? kotlinOut;
+  final String kotlinOut;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;

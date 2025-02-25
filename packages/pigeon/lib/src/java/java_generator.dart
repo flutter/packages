@@ -93,7 +93,7 @@ class JavaOptions {
 class InternalJavaOptions {
   /// Creates a [InternalJavaOptions] object
   const InternalJavaOptions({
-    this.javaOut,
+    required this.javaOut,
     this.className,
     this.package,
     this.copyrightHeader,
@@ -103,16 +103,15 @@ class InternalJavaOptions {
   /// Creates InternalJavaOptions from JavaOptions.
   InternalJavaOptions.fromJavaOptions(
     JavaOptions options, {
-    this.javaOut,
+    required this.javaOut,
     Iterable<String>? copyrightHeader,
-  })  : className = options.className ??
-            (javaOut == null ? null : path.basenameWithoutExtension(javaOut)),
+  })  : className = options.className ?? path.basenameWithoutExtension(javaOut),
         package = options.package,
         copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         useGeneratedAnnotation = options.useGeneratedAnnotation;
 
   /// Path to the java file that will be generated.
-  final String? javaOut;
+  final String javaOut;
 
   /// The name of the class that will house all the generated classes.
   final String? className;
