@@ -42,6 +42,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperString(),
   _TypeHelperUri(),
   _TypeHelperIterable(),
+  _TypeHelperJson(),
 ];
 
 /// Returns the decoded [String] value for [element], if its type is supported.
@@ -107,6 +108,9 @@ String compareField(ParameterElement param, String value1, String value2) {
 
 /// Gets the name of the `const` map generated to help encode [Enum] types.
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
+
+/// Gets the name of the `const` map generated to help encode [Json] types.
+String jsonMapName(InterfaceType type) => type.element.name;
 
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
@@ -352,6 +356,130 @@ $fieldName$nullAwareAccess.map((e) => e.toString()).toList()''';
   @override
   String _compare(String value1, String value2) =>
       '!$iterablesEqualHelperName($value1, $value2)';
+}
+
+class _TypeHelperJson extends _TypeHelperWithHelper {
+  const _TypeHelperJson();
+
+  @override
+  String helperName(DartType paramType) {
+    return _helperNameN(paramType, 0);
+  }
+
+  @override
+  String _encode(String fieldName, DartType type) =>
+      'jsonEncode($fieldName${type.ensureNotNull}.toJson())';
+
+  @override
+  bool _matchesType(DartType type) {
+    if (type is! InterfaceType) {
+      return false;
+    }
+
+    final MethodElement? toJsonMethod =
+        type.lookUpMethod2('toJson', type.element.library);
+    if (toJsonMethod == null ||
+        !toJsonMethod.isPublic ||
+        toJsonMethod.parameters.isNotEmpty) {
+      return false;
+    }
+
+    // test for template
+    if (_isNestedTemplate(type)) {
+      // check for deep compatibility
+      return _matchesType(type.typeArguments.first);
+    }
+
+    final ConstructorElement? fromJsonMethod =
+        type.element.getNamedConstructor('fromJson');
+
+    if (fromJsonMethod == null ||
+        !fromJsonMethod.isPublic ||
+        fromJsonMethod.parameters.length != 1 ||
+        fromJsonMethod.parameters.first.type
+                .getDisplayString(withNullability: false) !=
+            'Map<String, dynamic>') {
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+      // return false;
+    }
+
+    return true;
+  }
+
+  String _helperNameN(DartType paramType, int index) {
+    final String mainType = index == 0 ? 'String' : 'dynamic';
+    final String mainDecoder = index == 0
+        ? 'jsonDecode(json$index) as Map<String, dynamic>'
+        : 'json$index as Map<String, dynamic>';
+    if (_isNestedTemplate(paramType as InterfaceType)) {
+      return '''
+($mainType json$index) {
+  return ${jsonMapName(paramType)}.fromJson(
+    $mainDecoder,
+    ${_helperNameN(paramType.typeArguments.first, index + 1)},
+  );
+}''';
+    }
+    return '''
+($mainType json$index) {
+  return ${jsonMapName(paramType)}.fromJson($mainDecoder);
+}''';
+  }
+
+  bool _isNestedTemplate(InterfaceType type) {
+    // check if has fromJson contrcutor
+    final ConstructorElement? fromJsonMethod =
+        type.element.getNamedConstructor('fromJson');
+    if (fromJsonMethod == null || !fromJsonMethod.isPublic) {
+      return false;
+    }
+
+    if (type.typeArguments.length != 1) {
+      return false;
+    }
+
+    // check if fromJson method receive two parameters
+    final List<ParameterElement> parameters = fromJsonMethod.parameters;
+    if (parameters.length != 2) {
+      return false;
+    }
+
+    final ParameterElement firstParam = parameters[0];
+    if (firstParam.type.getDisplayString(withNullability: false) !=
+        'Map<String, dynamic>') {
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+      // return false;
+    }
+
+    // Test for (T Function(Object? json)).
+    final ParameterElement secondParam = parameters[1];
+    if (secondParam.type is! FunctionType) {
+      return false;
+    }
+
+    final FunctionType functionType = secondParam.type as FunctionType;
+    if (functionType.parameters.length != 1 ||
+        functionType.returnType.getDisplayString() !=
+            type.element.typeParameters.first.getDisplayString() ||
+        functionType.parameters[0].type.getDisplayString() != 'Object?') {
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${type.getDisplayString(withNullability: false)}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+      // return false;
+    }
+
+    return true;
+  }
 }
 
 abstract class _TypeHelperWithHelper extends _TypeHelper {

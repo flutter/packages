@@ -1,3 +1,7 @@
+## 2.8.1
+
+- Adds support for classes that support fromJson/toJson. [#110781](https://github.com/flutter/flutter/issues/110781) [#117261](https://github.com/flutter/flutter/issues/117261)
+
 ## 2.8.0
 
 - Adds support for passing `preload` parameter to `StatefulShellBranchData`.
