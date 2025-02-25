@@ -148,6 +148,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
         [[NSMutableArray alloc] initWithCapacity:devices.count];
     for (NSObject<FLTCaptureDevice> *device in devices) {
       FCPPlatformCameraLensDirection lensFacing;
+      FCPPlatformCameraLensType lensType;
+
       switch (device.position) {
         case AVCaptureDevicePositionBack:
           lensFacing = FCPPlatformCameraLensDirectionBack;
@@ -159,8 +161,28 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
           lensFacing = FCPPlatformCameraLensDirectionExternal;
           break;
       }
+
+      if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInWideAngleCamera]) {
+        lensType = FCPPlatformCameraLensTypeWide;
+      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTelephotoCamera]) {
+        lensType = FCPPlatformCameraLensTypeTelephoto;
+      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
+        lensType = FCPPlatformCameraLensTypeUltraWide;
+      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualCamera]) {
+        lensType = FCPPlatformCameraLensTypeDual;
+      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
+        lensType = FCPPlatformCameraLensTypeDualWide;
+      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTripleCamera]) {
+        lensType = FCPPlatformCameraLensTypeTriple;
+      } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeContinuityCamera]) {
+        lensType = FCPPlatformCameraLensTypeContinuity;
+      } else {
+        lensType = FCPPlatformCameraLensTypeUnknown;
+      }
+
       [reply addObject:[FCPPlatformCameraDescription makeWithName:device.uniqueID
-                                                    lensDirection:lensFacing]];
+                                                    lensDirection:lensFacing
+                                                         lensType:lensType]];
     }
     completion(reply, nil);
   });
