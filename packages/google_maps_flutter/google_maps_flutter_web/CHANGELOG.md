@@ -1,5 +1,6 @@
-## NEXT
+## 0.5.10+1
 
+* Updates READMEs and API docs.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.5.10
