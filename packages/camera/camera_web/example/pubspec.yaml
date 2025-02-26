@@ -26,8 +26,3 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mocktail: 0.3.0
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-   {camera_platform_interface: {path: ../../../camera/camera_platform_interface}}
