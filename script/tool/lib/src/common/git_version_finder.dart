@@ -28,15 +28,6 @@ class GitVersionFinder {
   /// The base branche used to find a merge point if baseSha is not provided.
   final String _baseBranch;
 
-  static bool _isPubspec(String file) {
-    return file.trim().endsWith('pubspec.yaml');
-  }
-
-  /// Get a list of all the pubspec.yaml file that is changed.
-  Future<List<String>> getChangedPubSpecs() async {
-    return (await getChangedFiles()).where(_isPubspec).toList();
-  }
-
   /// Get a list of all the changed files.
   Future<List<String>> getChangedFiles(
       {bool includeUncommitted = false}) async {

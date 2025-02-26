@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/git_version_finder.dart';
 import 'package:flutter_plugin_tools/src/common/package_state_utils.dart';
 import 'package:test/fake.dart';
@@ -11,12 +10,11 @@ import 'package:test/test.dart';
 import '../util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('checkPackageChangeState', () {

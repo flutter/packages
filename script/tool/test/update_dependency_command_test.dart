@@ -6,9 +6,9 @@ import 'dart:convert';
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_dependency_command.dart';
+import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -18,19 +18,19 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  FileSystem fileSystem;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
   late CommandRunner<void> runner;
   Future<http.Response> Function(http.Request request)? mockHttpResponse;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    processRunner = RecordingProcessRunner();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    final GitDir gitDir;
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks();
     final UpdateDependencyCommand command = UpdateDependencyCommand(
       packagesDir,
       processRunner: processRunner,
+      gitDir: gitDir,
       httpClient:
           MockClient((http.Request request) => mockHttpResponse!(request)),
     );

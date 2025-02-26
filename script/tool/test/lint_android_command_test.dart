@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/lint_android_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -15,21 +15,21 @@ import 'util.dart';
 
 void main() {
   group('LintAndroidCommand', () {
-    FileSystem fileSystem;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late MockPlatform mockPlatform;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
       mockPlatform = MockPlatform();
-      processRunner = RecordingProcessRunner();
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final LintAndroidCommand command = LintAndroidCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(

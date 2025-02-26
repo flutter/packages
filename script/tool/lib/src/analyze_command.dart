@@ -17,6 +17,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addMultiOption(_customAnalysisFlag,
         help:
