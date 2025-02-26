@@ -22,7 +22,7 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def androidXTestVersion = '1.2.0'
+def androidXTestVersion = '1.4.0'
 
 android {
     namespace 'io.flutter.plugins.quickactionsexample'
@@ -54,7 +54,6 @@ flutter {
 
 dependencies {
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     api "androidx.test:core:$androidXTestVersion"
 
