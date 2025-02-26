@@ -25,12 +25,13 @@ public final class ExoPlayerState {
    * @param exoPlayer the active player instance.
    * @return an opaque object representing the state.
    */
- @NonNull public static ExoPlayerState save(@NonNull ExoPlayer exoPlayer) {
+  @NonNull
+  public static ExoPlayerState save(@NonNull ExoPlayer exoPlayer) {
     return new ExoPlayerState(
-        /*position=*/ exoPlayer.getCurrentPosition(),
-        /*repeatMode=*/ exoPlayer.getRepeatMode(),
-        /*volume=*/ exoPlayer.getVolume(),
-        /*playbackParameters=*/ exoPlayer.getPlaybackParameters());
+        /* position= */ exoPlayer.getCurrentPosition(),
+        /* repeatMode= */ exoPlayer.getRepeatMode(),
+        /* volume= */ exoPlayer.getVolume(),
+        /* playbackParameters= */ exoPlayer.getPlaybackParameters());
   }
 
   private ExoPlayerState(
