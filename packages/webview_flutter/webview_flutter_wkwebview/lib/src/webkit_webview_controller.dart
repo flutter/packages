@@ -1221,16 +1221,14 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
               host: host,
               realm: realm,
               onProceed: (WebViewCredential credential) {
-                final URLCredential userCredential =
-                    proxy.withUserURLCredential(
-                  user: credential.user,
-                  password: credential.password,
-                  persistence: UrlCredentialPersistence.forSession,
-                );
                 responseCompleter.complete(
                   <Object?>[
                     UrlSessionAuthChallengeDisposition.useCredential,
-                    userCredential,
+                    <String, Object?>{
+                      'user': credential.user,
+                      'password': credential.password,
+                      'persistence': UrlCredentialPersistence.forSession,
+                    },
                   ],
                 );
               },

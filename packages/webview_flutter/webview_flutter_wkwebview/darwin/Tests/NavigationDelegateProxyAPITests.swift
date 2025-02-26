@@ -131,7 +131,9 @@ class NavigationDelegateProxyAPITests: XCTestCase {
 
     XCTAssertEqual(api.didReceiveAuthenticationChallengeArgs, [webView, challenge])
     XCTAssertEqual(dispositionResult, .useCredential)
-    XCTAssertNotNil(credentialResult)
+    XCTAssertEqual(credentialResult?.user, "user1")
+    XCTAssertEqual(credentialResult?.password, "password1")
+    XCTAssertEqual(credentialResult?.persistence, URLCredential.Persistence.none)
   }
 }
 
@@ -228,7 +230,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
     completion(
       .success([
         UrlSessionAuthChallengeDisposition.useCredential,
-        URLCredential(user: "user", password: "password", persistence: .none),
+        ["user": "user1", "password": "password1", "persistence": UrlCredentialPersistence.none],
       ]))
   }
 }

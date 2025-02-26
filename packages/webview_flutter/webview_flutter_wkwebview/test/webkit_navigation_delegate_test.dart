@@ -505,8 +505,6 @@ void main() {
     });
 
     test('onHttpNtlmAuthRequest emits host and realm', () async {
-      late final String credentialUser;
-      late final String credentialPassword;
       final WebKitNavigationDelegate iosNavigationDelegate =
           WebKitNavigationDelegate(
         WebKitNavigationDelegateCreationParams(
@@ -519,17 +517,6 @@ void main() {
               return AuthenticationChallengeResponse.pigeon_detached(
                 disposition: UrlSessionAuthChallengeDisposition
                     .cancelAuthenticationChallenge,
-                pigeon_instanceManager: TestInstanceManager(),
-              );
-            },
-            withUserURLCredential: ({
-              required String user,
-              required String password,
-              required UrlCredentialPersistence persistence,
-            }) {
-              credentialUser = user;
-              credentialPassword = password;
-              return URLCredential.pigeon_detached(
                 pigeon_instanceManager: TestInstanceManager(),
               );
             },
@@ -596,9 +583,12 @@ void main() {
       );
 
       expect(result[0], UrlSessionAuthChallengeDisposition.useCredential);
-      expect(result[1], isA<URLCredential>());
-      expect(credentialUser, user);
-      expect(credentialPassword, password);
+      expect(result[1], containsPair('user', user));
+      expect(result[1], containsPair('password', password));
+      expect(
+        result[1],
+        containsPair('persistence', UrlCredentialPersistence.forSession),
+      );
 
       expect(callbackHost, expectedHost);
       expect(callbackRealm, expectedRealm);
