@@ -170,5 +170,19 @@ void main() {
 
       verify(mockApi.getResolutionInfo(instanceManager.getIdentifier(preview)));
     });
+
+    test(
+        'surfaceProducerHandlesCropAndRotation makes call to check if Android surface producer automatically corrects camera preview rotation',
+        () async {
+      final MockTestPreviewHostApi mockApi = MockTestPreviewHostApi();
+      TestPreviewHostApi.setup(mockApi);
+      final Preview preview = Preview.detached();
+
+      when(mockApi.surfaceProducerHandlesCropAndRotation()).thenReturn(true);
+
+      expect(await preview.surfaceProducerHandlesCropAndRotation(), true);
+
+      verify(mockApi.surfaceProducerHandlesCropAndRotation());
+    });
   });
 }
