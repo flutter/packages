@@ -3,8 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
-// used for json decoder/encoder
-export 'dart:convert' show jsonDecode, jsonEncode;
 
 @TypedGoRoute<GoodJson>(path: '/')
 class GoodJson extends GoRouteData {
