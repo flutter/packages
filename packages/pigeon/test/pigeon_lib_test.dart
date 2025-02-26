@@ -5,9 +5,9 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/generator_tools.dart';
-import 'package:pigeon/pigeon_lib.dart';
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart';
+import 'package:pigeon/src/pigeon_lib.dart';
 import 'package:test/test.dart';
 
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {
@@ -1597,6 +1597,23 @@ abstract class MyClass {
       expect(
         parseResult.errors[0].message,
         contains('Attached fields must not be nullable: MyClass?'),
+      );
+    });
+
+    test('callback methods with non-null return types must be non-null', () {
+      const String code = '''
+@ProxyApi()
+abstract class MyClass {
+  late String Function()? aCallbackMethod;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'Callback methods that return a non-null value must be non-null: aCallbackMethod.',
+        ),
       );
     });
   });

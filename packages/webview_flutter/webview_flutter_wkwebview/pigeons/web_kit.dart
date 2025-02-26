@@ -650,6 +650,9 @@ abstract class WKWebViewConfiguration extends NSObject {
 
   /// The media types that require a user gesture to begin playing.
   void setMediaTypesRequiringUserActionForPlayback(AudiovisualMediaType type);
+
+  /// The default preferences to use when loading and rendering content.
+  WKWebpagePreferences getDefaultWebpagePreferences();
 }
 
 /// An object for managing interactions between JavaScript code and your web
@@ -719,18 +722,18 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Asks the delegate for permission to navigate to new content based on the
   /// specified action information.
   @async
-  NavigationActionPolicy Function(
+  late NavigationActionPolicy Function(
     WKWebView webView,
     WKNavigationAction navigationAction,
-  )? decidePolicyForNavigationAction;
+  ) decidePolicyForNavigationAction;
 
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
   @async
-  NavigationResponsePolicy Function(
+  late NavigationResponsePolicy Function(
     WKWebView webView,
     WKNavigationResponse navigationResponse,
-  )? decidePolicyForNavigationResponse;
+  ) decidePolicyForNavigationResponse;
 
   /// Tells the delegate that an error occurred during navigation.
   void Function(WKWebView webView, NSError error)? didFailNavigation;
@@ -744,10 +747,10 @@ abstract class WKNavigationDelegate extends NSObject {
 
   /// Asks the delegate to respond to an authentication challenge.
   @async
-  AuthenticationChallengeResponse Function(
+  late AuthenticationChallengeResponse Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
-  )? didReceiveAuthenticationChallenge;
+  ) didReceiveAuthenticationChallenge;
 }
 
 /// The root class of most Objective-C class hierarchies, from which subclasses
@@ -981,12 +984,12 @@ abstract class WKUIDelegate extends NSObject {
   /// Determines whether a web resource, which the security origin object
   /// describes, can access to the device’s microphone audio and camera video.
   @async
-  PermissionDecision Function(
+  late PermissionDecision Function(
     WKWebView webView,
     WKSecurityOrigin origin,
     WKFrameInfo frame,
     MediaCaptureType type,
-  )? requestMediaCapturePermission;
+  ) requestMediaCapturePermission;
 
   /// Displays a JavaScript alert panel.
   @async
@@ -998,11 +1001,11 @@ abstract class WKUIDelegate extends NSObject {
 
   /// Displays a JavaScript confirm panel.
   @async
-  bool Function(
+  late bool Function(
     WKWebView webView,
     String message,
     WKFrameInfo frame,
-  )? runJavaScriptConfirmPanel;
+  ) runJavaScriptConfirmPanel;
 
   /// Displays a JavaScript text input panel.
   @async
@@ -1091,11 +1094,28 @@ abstract class URLAuthenticationChallenge extends NSObject {
 }
 
 /// A value that identifies the location of a resource, such as an item on a
-/// remote server or the path to a local file..
+/// remote server or the path to a local file.
 ///
 /// See https://developer.apple.com/documentation/foundation/url.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URL'))
 abstract class URL extends NSObject {
   /// The absolute string for the URL.
   String getAbsoluteString();
+}
+
+/// An object that specifies the behaviors to use when loading and rendering
+/// page content.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebpagepreferences.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    minIosApi: '13.0.0',
+    minMacosApi: '10.15.0',
+  ),
+)
+abstract class WKWebpagePreferences extends NSObject {
+  /// A Boolean value that indicates whether JavaScript from web content is
+  /// allowed to run.
+  void setAllowsContentJavaScript(bool allow);
 }

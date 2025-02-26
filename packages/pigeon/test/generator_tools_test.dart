@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/generator_tools.dart';
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart';
 import 'package:test/test.dart';
 
 bool _equalSet<T>(Set<T> x, Set<T> y) {

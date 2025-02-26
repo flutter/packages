@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/java_generator.dart';
 import 'package:pigeon/pigeon.dart';
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/java/java_generator.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
