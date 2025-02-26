@@ -121,14 +121,14 @@ updates:
           - "androidx.annotation:annotation"
     ignore:
       - dependency-name: "com.android.tools.build:gradle"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "junit:junit"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "org.mockito:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "androidx.test:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "org.robolectric:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "io.mockk:mockk:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
