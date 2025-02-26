@@ -1,3 +1,7 @@
+## 0.6.14
+
+* Updates internal API wrapper to use ProxyApis.
+
 ## 0.6.13
 
 * Adds API support query for image streaming.
