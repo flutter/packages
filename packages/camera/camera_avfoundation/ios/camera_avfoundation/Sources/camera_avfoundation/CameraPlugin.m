@@ -24,33 +24,33 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 static void FCPGetLensDirectionAndType(AVCaptureDevice *device,
                                        FCPPlatformCameraLensDirection *lensDirection,
                                        FCPPlatformCameraLensType *lensType) {
-    switch (device.position) {
-        case AVCaptureDevicePositionBack:
-            *lensDirection = FCPPlatformCameraLensDirectionBack;
-            break;
-        case AVCaptureDevicePositionFront:
-            *lensDirection = FCPPlatformCameraLensDirectionFront;
-            break;
-        case AVCaptureDevicePositionUnspecified:
-            *lensDirection = FCPPlatformCameraLensDirectionExternal;
-            break;
-    }
-    
-    if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInWideAngleCamera]) {
-        *lensType = FCPPlatformCameraLensTypeWide;
-    } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTelephotoCamera]) {
-        *lensType = FCPPlatformCameraLensTypeTelephoto;
-    } else if (@available(iOS 13.0, *)) {
-        if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
-            *lensType = FCPPlatformCameraLensTypeUltraWide;
-        } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
-            *lensType = FCPPlatformCameraLensTypeWide;
-        } else {
-            *lensType = FCPPlatformCameraLensTypeUnknown;
-        }
+  switch (device.position) {
+    case AVCaptureDevicePositionBack:
+      *lensDirection = FCPPlatformCameraLensDirectionBack;
+      break;
+    case AVCaptureDevicePositionFront:
+      *lensDirection = FCPPlatformCameraLensDirectionFront;
+      break;
+    case AVCaptureDevicePositionUnspecified:
+      *lensDirection = FCPPlatformCameraLensDirectionExternal;
+      break;
+  }
+
+  if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInWideAngleCamera]) {
+    *lensType = FCPPlatformCameraLensTypeWide;
+  } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTelephotoCamera]) {
+    *lensType = FCPPlatformCameraLensTypeTelephoto;
+  } else if (@available(iOS 13.0, *)) {
+    if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
+      *lensType = FCPPlatformCameraLensTypeUltraWide;
+    } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
+      *lensType = FCPPlatformCameraLensTypeWide;
     } else {
-        *lensType = FCPPlatformCameraLensTypeUnknown;
+      *lensType = FCPPlatformCameraLensTypeUnknown;
     }
+  } else {
+    *lensType = FCPPlatformCameraLensTypeUnknown;
+  }
 }
 
 @interface CameraPlugin ()
