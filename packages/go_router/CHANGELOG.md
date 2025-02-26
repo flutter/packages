@@ -1,3 +1,7 @@
+## 14.8.1
+
+- Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781)
+
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.

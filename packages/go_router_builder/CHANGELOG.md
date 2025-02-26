@@ -1,6 +1,7 @@
 ## 2.8.1
 
-- Adds support for classes that support fromJson/toJson. [#110781](https://github.com/flutter/flutter/issues/110781) [#117261](https://github.com/flutter/flutter/issues/117261)
+- Adds support for classes that support fromJson/toJson. [#117261](https://github.com/flutter/flutter/issues/117261)
+- Adds annotation that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781)
 
 ## 2.8.0
 

@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
@@ -48,7 +50,8 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
 /// Returns the decoded [String] value for [element], if its type is supported.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String decodeParameter(ParameterElement element, Set<String> pathParameters) {
+String decodeParameter(ParameterElement element, Set<String> pathParameters,
+    List<ElementAnnotation>? metadata) {
   if (element.isExtraField) {
     return 'state.${_stateValueAccess(element, pathParameters)}';
   }
@@ -56,7 +59,29 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
   final DartType paramType = element.type;
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
-      String decoded = helper._decode(element, pathParameters);
+      String? decoder;
+
+      final ElementAnnotation? annotation =
+          metadata?.firstWhereOrNull((ElementAnnotation annotation) {
+        return annotation.computeConstantValue()?.type?.getDisplayString() ==
+            'CustomParameterCodec';
+      });
+      if (annotation != null) {
+        final String? decode = annotation
+            .computeConstantValue()
+            ?.getField('decode')
+            ?.toFunctionValue()
+            ?.displayName;
+        final String? encode = annotation
+            .computeConstantValue()
+            ?.getField('encode')
+            ?.toFunctionValue()
+            ?.displayName;
+        if (decode != null && encode != null) {
+          decoder = decode;
+        }
+      }
+      String decoded = helper._decode(element, pathParameters, decoder);
       if (element.isOptional && element.hasDefaultValue) {
         if (element.type.isNullableType) {
           throw NullableDefaultValueError(element);
@@ -77,10 +102,34 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 /// Returns the encoded [String] value for [element], if its type is supported.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String encodeField(PropertyAccessorElement element) {
+String encodeField(
+    PropertyAccessorElement element, List<ElementAnnotation>? metadata) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
-      return helper._encode(element.name, element.returnType);
+      String? encoder;
+      final ElementAnnotation? annotation =
+          metadata?.firstWhereOrNull((ElementAnnotation annotation) {
+        final DartObject? constant = annotation.computeConstantValue();
+        return constant?.type?.getDisplayString() == 'CustomParameterCodec';
+      });
+      if (annotation != null) {
+        final String? decode = annotation
+            .computeConstantValue()
+            ?.getField('decode')
+            ?.toFunctionValue()
+            ?.displayName;
+        final String? encode = annotation
+            .computeConstantValue()
+            ?.getField('encode')
+            ?.toFunctionValue()
+            ?.displayName;
+        if (decode != null && encode != null) {
+          encoder = encode;
+        }
+      }
+      final String encoded =
+          helper._encode(element.name, element.returnType, encoder);
+      return encoded;
     }
   }
 
@@ -136,10 +185,11 @@ abstract class _TypeHelper {
   const _TypeHelper();
 
   /// Decodes the value from its string representation in the URL.
-  String _decode(ParameterElement parameterElement, Set<String> pathParameters);
+  String _decode(ParameterElement parameterElement, Set<String> pathParameters,
+      String? customDecoder);
 
   /// Encodes the value from its string representation in the URL.
-  String _encode(String fieldName, DartType type);
+  String _encode(String fieldName, DartType type, String? customEncoder);
 
   bool _matchesType(DartType type);
 
@@ -153,8 +203,13 @@ class _TypeHelperBigInt extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => 'BigInt.parse';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = '$fieldName${type.ensureNotNull}.toString()';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) =>
@@ -168,8 +223,13 @@ class _TypeHelperBool extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => boolConverterHelperName;
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = '$fieldName${type.ensureNotNull}.toString()';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreBool;
@@ -182,8 +242,13 @@ class _TypeHelperDateTime extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => 'DateTime.parse';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = '$fieldName${type.ensureNotNull}.toString()';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) =>
@@ -197,8 +262,13 @@ class _TypeHelperDouble extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => 'double.parse';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = '$fieldName${type.ensureNotNull}.toString()';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreDouble;
@@ -212,8 +282,14 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
       '${enumMapName(paramType as InterfaceType)}.$enumExtensionHelperName';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode =
+        '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) => type.isEnum;
@@ -226,8 +302,13 @@ class _TypeHelperInt extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => 'int.parse';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = '$fieldName${type.ensureNotNull}.toString()';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreInt;
@@ -240,8 +321,13 @@ class _TypeHelperNum extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => 'num.parse';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = '$fieldName${type.ensureNotNull}.toString()';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreNum;
@@ -251,12 +337,18 @@ class _TypeHelperString extends _TypeHelper {
   const _TypeHelperString();
 
   @override
-  String _decode(
-          ParameterElement parameterElement, Set<String> pathParameters) =>
+  String _decode(ParameterElement parameterElement, Set<String> pathParameters,
+          String? customDecoder) =>
       'state.${_stateValueAccess(parameterElement, pathParameters)}';
 
   @override
-  String _encode(String fieldName, DartType type) => fieldName;
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = fieldName;
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreString;
@@ -269,8 +361,13 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => 'Uri.parse';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = '$fieldName${type.ensureNotNull}.toString()';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) =>
@@ -284,8 +381,9 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => iterablesEqualHelperName;
 
   @override
-  String _decode(
-      ParameterElement parameterElement, Set<String> pathParameters) {
+  String _decode(ParameterElement parameterElement, Set<String> pathParameters,
+      String? customDecoder) {
+    String decode;
     if (parameterElement.type is ParameterizedType) {
       final DartType iterableType =
           (parameterElement.type as ParameterizedType).typeArguments.first;
@@ -296,6 +394,10 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
         if (helper._matchesType(iterableType) &&
             helper is _TypeHelperWithHelper) {
           entriesTypeDecoder = helper.helperName(iterableType);
+          if (customDecoder != null) {
+            entriesTypeDecoder =
+                '(e) => $entriesTypeDecoder($customDecoder(e))';
+          }
         }
       }
 
@@ -328,7 +430,7 @@ state.uri.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''
   }
 
   @override
-  String _encode(String fieldName, DartType type) {
+  String _encode(String fieldName, DartType type, String? customEncoder) {
     final String nullAwareAccess = type.isNullableType ? '?' : '';
     if (type is ParameterizedType) {
       final DartType iterableType = type.typeArguments.first;
@@ -338,7 +440,7 @@ state.uri.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType)) {
           entriesTypeEncoder = '''
-$nullAwareAccess.map((e) => ${helper._encode('e', iterableType)}).toList()''';
+$nullAwareAccess.map((e) => ${helper._encode('e', iterableType, customEncoder)}).toList()''';
         }
       }
       return '''
@@ -367,8 +469,13 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      'jsonEncode($fieldName${type.ensureNotNull}.toJson())';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    String encode = 'jsonEncode($fieldName${type.ensureNotNull}.toJson())';
+    if (customEncoder != null) {
+      encode = '$customEncoder($encode)';
+    }
+    return encode;
+  }
 
   @override
   bool _matchesType(DartType type) {
@@ -488,20 +595,28 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   String helperName(DartType paramType);
 
   @override
-  String _decode(
-      ParameterElement parameterElement, Set<String> pathParameters) {
+  String _decode(ParameterElement parameterElement, Set<String> pathParameters,
+      String? customDecoder) {
     final DartType paramType = parameterElement.type;
     final String parameterName = parameterElement.name;
 
+    String decode;
+
     if (!pathParameters.contains(parameterName) &&
         (paramType.isNullableType || parameterElement.hasDefaultValue)) {
-      return '$convertMapValueHelperName('
+      decode = 'state.${_stateValueAccess(parameterElement, pathParameters)}';
+      decode = '$convertMapValueHelperName('
           '${escapeDartString(parameterName.kebab)}, '
           'state.uri.queryParameters, '
           '${helperName(paramType)})';
+    } else {
+      decode = 'state.${_stateValueAccess(parameterElement, pathParameters)}';
+      if (customDecoder != null) {
+        decode = '$customDecoder($decode)';
+      }
+      decode = '${helperName(paramType)}($decode)';
     }
-    return '${helperName(paramType)}'
-        '(state.${_stateValueAccess(parameterElement, pathParameters)})';
+    return decode;
   }
 }
 
