@@ -60,15 +60,6 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     }
   }
 
-  private void sendInitializedPrivate() {
-    if (isInitialized) {
-      return;
-    }
-    isInitialized = true;
-
-    sendInitialized();
-  }
-
   protected abstract void sendInitialized();
 
   @Override
@@ -79,7 +70,11 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         events.onBufferingUpdate(exoPlayer.getBufferedPosition());
         break;
       case Player.STATE_READY:
-        sendInitializedPrivate();
+        if (isInitialized) {
+          return;
+        }
+        isInitialized = true;
+        sendInitialized();
         break;
       case Player.STATE_ENDED:
         events.onCompleted();
@@ -96,7 +91,8 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   public void onPlayerError(@NonNull final PlaybackException error) {
     setBuffering(false);
     if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
-      // See https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
+      // See
+      // https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
       exoPlayer.seekToDefaultPosition();
       exoPlayer.prepare();
     } else {
