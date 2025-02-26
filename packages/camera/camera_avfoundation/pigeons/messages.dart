@@ -39,7 +39,7 @@ enum PlatformCameraLensType {
 
   /// A built-in camera device type with a longer focal length than a wide-angle camera.
   ultraWide,
- 
+
   /// Unknown camera device type.
   unknown,
 }
