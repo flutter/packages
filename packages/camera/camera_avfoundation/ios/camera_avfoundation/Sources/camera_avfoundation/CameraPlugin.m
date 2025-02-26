@@ -181,18 +181,8 @@ static void getLensDirectionAndType(AVCaptureDevice *device,
   } else if (@available(iOS 13.0, *)) {
     if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInUltraWideCamera]) {
       *lensType = FCPPlatformCameraLensTypeUltraWide;
-    } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualCamera]) {
-      *lensType = FCPPlatformCameraLensTypeDual;
     } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInDualWideCamera]) {
-      *lensType = FCPPlatformCameraLensTypeDualWide;
-    } else if ([device.deviceType isEqualToString:AVCaptureDeviceTypeBuiltInTripleCamera]) {
-      *lensType = FCPPlatformCameraLensTypeTriple;
-    } else {
-      *lensType = FCPPlatformCameraLensTypeUnknown;
-    }
-  } else if (@available(iOS 17.0, *)) {
-    if ([device.deviceType isEqualToString:AVCaptureDeviceTypeContinuityCamera]) {
-      *lensType = FCPPlatformCameraLensTypeContinuity;
+      *lensType = FCPPlatformCameraLensTypeWide;
     } else {
       *lensType = FCPPlatformCameraLensTypeUnknown;
     }
@@ -200,7 +190,6 @@ static void getLensDirectionAndType(AVCaptureDevice *device,
     *lensType = FCPPlatformCameraLensTypeUnknown;
   }
 }
-
 
 - (void)createCameraWithName:(nonnull NSString *)cameraName
                     settings:(nonnull FCPPlatformMediaSettings *)settings
