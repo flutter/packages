@@ -23,10 +23,10 @@ enum CameraLensType {
   /// A built-in wide-angle camera device type.
   wide,
 
-  /// A built-in camera device type with a shorter focal length than a wide-angle camera.
+  /// A built-in camera device type with a longer focal length than a wide-angle camera.
   telephoto,
 
-  /// A built-in camera device type with a longer focal length than a wide-angle camera.
+  /// A built-in camera device type with a shorter focal length than a wide-angle camera.
   ultraWide,
 
   /// Unknown camera device type.
