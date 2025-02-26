@@ -63,7 +63,7 @@ public final class TextureVideoPlayerTest {
 
   private TextureVideoPlayer createVideoPlayer(VideoPlayerOptions options) {
     return new TextureVideoPlayer(
-        () -> mockExoPlayer, mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options);
+        mockEvents, mockProducer, fakeVideoAsset.getMediaItem(), options, () -> mockExoPlayer);
   }
 
   @Test

@@ -54,15 +54,16 @@ public final class VideoPlayerTest {
   /** A test subclass of {@link VideoPlayer} that exposes the abstract class for testing. */
   private final class TestVideoPlayer extends VideoPlayer {
     private TestVideoPlayer(
-        @NonNull ExoPlayerProvider exoPlayerProvider,
         @NonNull VideoPlayerCallbacks events,
         @NonNull MediaItem mediaItem,
-        @NonNull VideoPlayerOptions options) {
-      super(exoPlayerProvider, events, mediaItem, options);
+        @NonNull VideoPlayerOptions options,
+        @NonNull ExoPlayerProvider exoPlayerProvider) {
+      super(events, mediaItem, options, exoPlayerProvider);
     }
 
+    @NonNull
     @Override
-    protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer) {
+    protected ExoPlayerEventListener createExoPlayerEventListener(@NonNull ExoPlayer exoPlayer) {
       // Use platform view implementation for testing.
       return new PlatformViewExoPlayerEventListener(exoPlayer, mockEvents);
     }
@@ -79,7 +80,7 @@ public final class VideoPlayerTest {
 
   private VideoPlayer createVideoPlayer(VideoPlayerOptions options) {
     return new TestVideoPlayer(
-        () -> mockExoPlayer, mockEvents, fakeVideoAsset.getMediaItem(), options);
+        mockEvents, fakeVideoAsset.getMediaItem(), options, () -> mockExoPlayer);
   }
 
   @Test

@@ -49,26 +49,26 @@ public final class TextureVideoPlayer extends VideoPlayer
       @NonNull VideoAsset asset,
       @NonNull VideoPlayerOptions options) {
     return new TextureVideoPlayer(
+        events,
+        surfaceProducer,
+        asset.getMediaItem(),
+        options,
         () -> {
           ExoPlayer.Builder builder =
               new ExoPlayer.Builder(context)
                   .setMediaSourceFactory(asset.getMediaSourceFactory(context));
           return builder.build();
-        },
-        events,
-        surfaceProducer,
-        asset.getMediaItem(),
-        options);
+        });
   }
 
   @VisibleForTesting
   public TextureVideoPlayer(
-      @NonNull ExoPlayerProvider exoPlayerProvider,
       @NonNull VideoPlayerCallbacks events,
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
       @NonNull MediaItem mediaItem,
-      @NonNull VideoPlayerOptions options) {
-    super(exoPlayerProvider, events, mediaItem, options);
+      @NonNull VideoPlayerOptions options,
+      @NonNull ExoPlayerProvider exoPlayerProvider) {
+    super(events, mediaItem, options, exoPlayerProvider);
 
     this.surfaceProducer = surfaceProducer;
     surfaceProducer.setCallback(this);
@@ -76,8 +76,9 @@ public final class TextureVideoPlayer extends VideoPlayer
     this.exoPlayer.setVideoSurface(surfaceProducer.getSurface());
   }
 
+  @NonNull
   @Override
-  protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer) {
+  protected ExoPlayerEventListener createExoPlayerEventListener(@NonNull ExoPlayer exoPlayer) {
     return new TextureExoPlayerEventListener(
         exoPlayer, videoPlayerEvents, playerHasBeenSuspended());
   }

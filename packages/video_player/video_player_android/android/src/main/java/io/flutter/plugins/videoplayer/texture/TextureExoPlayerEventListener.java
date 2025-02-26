@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer.texture;
 
 import android.os.Build;
+import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.Format;
@@ -16,12 +17,13 @@ import java.util.Objects;
 
 public final class TextureExoPlayerEventListener extends ExoPlayerEventListener {
   @VisibleForTesting
-  public TextureExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
+  public TextureExoPlayerEventListener(
+      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events) {
     this(exoPlayer, events, false);
   }
 
   public TextureExoPlayerEventListener(
-      ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean initialized) {
+      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean initialized) {
     super(exoPlayer, events, initialized);
   }
 

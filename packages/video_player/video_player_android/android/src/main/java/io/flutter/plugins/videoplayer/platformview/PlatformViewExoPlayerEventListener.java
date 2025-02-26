@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.videoplayer.platformview;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.Format;
@@ -15,12 +16,13 @@ import java.util.Objects;
 
 public final class PlatformViewExoPlayerEventListener extends ExoPlayerEventListener {
   @VisibleForTesting
-  public PlatformViewExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events) {
+  public PlatformViewExoPlayerEventListener(
+      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events) {
     this(exoPlayer, events, false);
   }
 
   public PlatformViewExoPlayerEventListener(
-      ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean initialized) {
+      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean initialized) {
     super(exoPlayer, events, initialized);
   }
 

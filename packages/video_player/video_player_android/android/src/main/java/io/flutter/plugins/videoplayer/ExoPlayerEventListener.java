@@ -42,7 +42,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   }
 
   public ExoPlayerEventListener(
-      ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean initialized) {
+      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean initialized) {
     this.exoPlayer = exoPlayer;
     this.events = events;
     this.isInitialized = initialized;

@@ -33,21 +33,23 @@ public abstract class VideoPlayer {
      *
      * @return new instance.
      */
+    @NonNull
     ExoPlayer get();
   }
 
   public VideoPlayer(
-      @NonNull ExoPlayerProvider exoPlayerProvider,
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,
-      @NonNull VideoPlayerOptions options) {
-    this.exoPlayerProvider = exoPlayerProvider;
+      @NonNull VideoPlayerOptions options,
+      @NonNull ExoPlayerProvider exoPlayerProvider) {
     this.videoPlayerEvents = events;
     this.mediaItem = mediaItem;
     this.options = options;
+    this.exoPlayerProvider = exoPlayerProvider;
     this.exoPlayer = createVideoPlayer();
   }
 
+  @NonNull
   protected ExoPlayer createVideoPlayer() {
     ExoPlayer exoPlayer = exoPlayerProvider.get();
     exoPlayer.setMediaItem(mediaItem);
@@ -59,7 +61,9 @@ public abstract class VideoPlayer {
     return exoPlayer;
   }
 
-  protected abstract ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer);
+  @NonNull
+  protected abstract ExoPlayerEventListener createExoPlayerEventListener(
+      @NonNull ExoPlayer exoPlayer);
 
   void sendBufferingUpdate() {
     videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());

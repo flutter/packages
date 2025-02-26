@@ -22,11 +22,11 @@ import io.flutter.plugins.videoplayer.VideoPlayerOptions;
 public class PlatformViewVideoPlayer extends VideoPlayer {
   @VisibleForTesting
   public PlatformViewVideoPlayer(
-      @NonNull ExoPlayerProvider exoPlayerProvider,
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,
-      @NonNull VideoPlayerOptions options) {
-    super(exoPlayerProvider, events, mediaItem, options);
+      @NonNull VideoPlayerOptions options,
+      @NonNull ExoPlayerProvider exoPlayerProvider) {
+    super(events, mediaItem, options, exoPlayerProvider);
   }
 
   /**
@@ -45,19 +45,20 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
       @NonNull VideoAsset asset,
       @NonNull VideoPlayerOptions options) {
     return new PlatformViewVideoPlayer(
+        events,
+        asset.getMediaItem(),
+        options,
         () -> {
           ExoPlayer.Builder builder =
               new ExoPlayer.Builder(context)
                   .setMediaSourceFactory(asset.getMediaSourceFactory(context));
           return builder.build();
-        },
-        events,
-        asset.getMediaItem(),
-        options);
+        });
   }
 
+  @NonNull
   @Override
-  protected ExoPlayerEventListener createExoPlayerEventListener(ExoPlayer exoPlayer) {
+  protected ExoPlayerEventListener createExoPlayerEventListener(@NonNull ExoPlayer exoPlayer) {
     // Platform view video player does not suspend and re-create the exoPlayer, hence initialized
     // is always false.
     return new PlatformViewExoPlayerEventListener(exoPlayer, videoPlayerEvents, false);

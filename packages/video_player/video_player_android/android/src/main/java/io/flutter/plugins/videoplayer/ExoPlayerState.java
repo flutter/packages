@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.videoplayer;
 
+import androidx.annotation.NonNull;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
 
@@ -24,7 +25,7 @@ public final class ExoPlayerState {
    * @param exoPlayer the active player instance.
    * @return an opaque object representing the state.
    */
-  public static ExoPlayerState save(ExoPlayer exoPlayer) {
+ @NonNull public static ExoPlayerState save(@NonNull ExoPlayer exoPlayer) {
     return new ExoPlayerState(
         /*position=*/ exoPlayer.getCurrentPosition(),
         /*repeatMode=*/ exoPlayer.getRepeatMode(),
@@ -60,7 +61,7 @@ public final class ExoPlayerState {
    *
    * @param exoPlayer the new player instance to reflect the state back to.
    */
-  public void restore(ExoPlayer exoPlayer) {
+  public void restore(@NonNull ExoPlayer exoPlayer) {
     exoPlayer.seekTo(position);
     exoPlayer.setRepeatMode(repeatMode);
     exoPlayer.setVolume(volume);
