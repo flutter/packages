@@ -26,6 +26,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   private FlutterState flutterState;
   private final VideoPlayerOptions options = new VideoPlayerOptions();
 
+  // TODO(stuartmorgan): Decouple identifiers for platform views and texture views.
   /**
    * The next non-texture player ID, initialized to a high number to avoid collisions with texture
    * IDs (which are generated separately).
