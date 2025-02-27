@@ -231,8 +231,9 @@ class GoRouteConfig extends RouteBaseConfig {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
+
         final String value =
-            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${type?.isEnum ?? false ? '!' : ''})}';
+            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${(type?.isEnum ?? false) ? '!' : (type?.isNullableType ?? false) ? "?? ''" : ''})}';
         return MapEntry<String, String>(pathParameter, value);
       }),
     );
@@ -752,7 +753,7 @@ const String _convertMapValueHelper = '''
 T? $convertMapValueHelperName<T>(
   String key,
   Map<String, String> map,
-  T Function(String) converter,
+  T? Function(String) converter,
 ) {
   final value = map[key];
   return value == null ? null : converter(value);
@@ -774,8 +775,8 @@ bool $boolConverterHelperName(String value) {
 
 const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
-  T $enumExtensionHelperName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? $enumExtensionHelperName(String value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }''';
 
 const String _iterableEqualsHelper = '''
