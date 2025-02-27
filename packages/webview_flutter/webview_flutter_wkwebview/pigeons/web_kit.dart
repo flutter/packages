@@ -750,8 +750,15 @@ abstract class WKNavigationDelegate extends NSObject {
   // https://github.com/flutter/flutter/issues/162437 can be found and fixed.
   /// Asks the delegate to respond to an authentication challenge.
   ///
-  /// This return value expects a List with a
-  /// `UrlSessionAuthChallengeDisposition` and a nullable `URLCredential`.
+  /// This return value expects a List with:
+  ///
+  /// 1. `UrlSessionAuthChallengeDisposition`
+  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
+  /// [
+  ///   "user": "<nonnull String username>",
+  ///   "password": "<nonnull String user password>",
+  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
+  /// ]
   @async
   late List<Object?> Function(
     WKWebView webView,
