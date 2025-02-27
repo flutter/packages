@@ -13,6 +13,7 @@ class FixCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   });
 
   @override
