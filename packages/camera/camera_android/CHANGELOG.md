@@ -1,3 +1,7 @@
+## 0.10.10+1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 0.10.10
 
 * Adds API support query for image streaming.
