@@ -27,6 +27,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addFlag(platformAndroid,
         help: 'Runs the Android implementation of the examples',

@@ -6,16 +6,14 @@ import 'dart:convert';
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/version_check_command.dart';
+import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import 'package:mockito/mockito.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
@@ -42,33 +40,20 @@ void testAllowedVersion(
 void main() {
   const String indentation = '  ';
   group('VersionCheckCommand', () {
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
-    late RecordingProcessRunner processRunner;
-    late MockGitDir gitDir;
+    late RecordingProcessRunner gitProcessRunner;
     // Ignored if mockHttpResponse is set.
     int mockHttpStatus;
     Map<String, dynamic>? mockHttpResponse;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-
-      gitDir = MockGitDir();
-      when(gitDir.path).thenReturn(packagesDir.parent.path);
-      when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
-          .thenAnswer((Invocation invocation) {
-        final List<String> arguments =
-            invocation.positionalArguments[0]! as List<String>;
-        // Route git calls through the process runner, to make mock output
-        // consistent with other processes. Attach the first argument to the
-        // command to make targeting the mock results easier.
-        final String gitCommand = arguments.removeAt(0);
-        return processRunner.run('git-$gitCommand', arguments);
-      });
+      final RecordingProcessRunner processRunner;
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
 
       // Default to simulating the plugin never having been published.
       mockHttpStatus = 404;
@@ -78,7 +63,6 @@ void main() {
             mockHttpResponse == null ? mockHttpStatus : 200);
       });
 
-      processRunner = RecordingProcessRunner();
       final VersionCheckCommand command = VersionCheckCommand(packagesDir,
           processRunner: processRunner,
           platform: mockPlatform,
@@ -92,7 +76,8 @@ void main() {
 
     test('allows valid version', () async {
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output = await runCapturingPrint(
@@ -106,7 +91,7 @@ void main() {
         ]),
       );
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show', <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -115,7 +100,8 @@ void main() {
 
     test('denies invalid version', () async {
       createFakePlugin('plugin', packagesDir, version: '0.2.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1')),
       ];
       Error? commandError;
@@ -132,7 +118,7 @@ void main() {
             contains('Incorrectly updated version.'),
           ]));
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show', <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -141,12 +127,13 @@ void main() {
 
     test('uses merge-base without explicit base-sha', () async {
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-merge-base'] =
+      gitProcessRunner.mockProcessesForExecutable['git-merge-base'] =
           <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'abc123')),
         FakeProcessInfo(MockProcess(stdout: 'abc123')),
       ];
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output =
@@ -160,7 +147,7 @@ void main() {
         ]),
       );
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall('git-merge-base',
                 <String>['--fork-point', 'FETCH_HEAD', 'HEAD'], null),
@@ -185,7 +172,8 @@ void main() {
 
     test('allows likely reverts.', () async {
       createFakePlugin('plugin', packagesDir, version: '0.6.1');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 0.6.2')),
       ];
       final List<String> output = await runCapturingPrint(
@@ -199,7 +187,7 @@ void main() {
         ]),
       );
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show', <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -208,7 +196,8 @@ void main() {
 
     test('denies lower version that could not be a simple revert', () async {
       createFakePlugin('plugin', packagesDir, version: '0.5.1');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 0.6.2')),
       ];
 
@@ -226,7 +215,7 @@ void main() {
             contains('Incorrectly updated version.'),
           ]));
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show', <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -236,7 +225,8 @@ void main() {
     test('allows minor changes to platform interfaces', () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '1.1.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output = await runCapturingPrint(
@@ -249,7 +239,7 @@ void main() {
         ]),
       );
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show',
@@ -264,7 +254,8 @@ void main() {
         () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       Error? commandError;
@@ -285,7 +276,7 @@ void main() {
                 'for more information.'),
           ]));
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show',
@@ -300,7 +291,8 @@ void main() {
         () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
@@ -319,7 +311,7 @@ void main() {
         ]),
       );
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show',
@@ -334,7 +326,8 @@ void main() {
         () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
           version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -352,7 +345,7 @@ void main() {
         ]),
       );
       expect(
-          processRunner.recordedCalls,
+          gitProcessRunner.recordedCalls,
           containsAllInOrder(const <ProcessCall>[
             ProcessCall(
                 'git-show',
@@ -471,7 +464,8 @@ void main() {
 * Some other changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
@@ -523,7 +517,8 @@ void main() {
       const String version = '1.0.1';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
@@ -560,7 +555,8 @@ void main() {
     test('fails if the version increases without replacing NEXT', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
@@ -602,7 +598,8 @@ void main() {
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.1')),
       ];
 
@@ -652,7 +649,8 @@ void main() {
 * Some earlier changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
@@ -689,7 +687,8 @@ void main() {
 * Some other changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
@@ -722,7 +721,8 @@ void main() {
 * Some changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
@@ -766,11 +766,11 @@ void main() {
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '')),
         ];
@@ -797,11 +797,11 @@ void main() {
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
@@ -834,11 +834,11 @@ packages/plugin/lib/plugin.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
@@ -867,11 +867,11 @@ packages/plugin/pubspec.yaml
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin_a/lib/plugin.dart
@@ -899,11 +899,11 @@ tool/plugin/lib/plugin.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/android/.pluginToolsConfig.yaml
@@ -937,11 +937,11 @@ packages/plugin/CHANGELOG.md
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
@@ -973,11 +973,11 @@ packages/plugin/pubspec.yaml
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
@@ -1010,11 +1010,11 @@ packages/plugin/example/lib/foo.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
@@ -1043,11 +1043,11 @@ packages/plugin/CHANGELOG.md
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
@@ -1079,11 +1079,11 @@ packages/another_plugin/CHANGELOG.md
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/example/lib/foo.dart
@@ -1117,11 +1117,11 @@ packages/plugin/example/lib/foo.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           // File list.
           FakeProcessInfo(MockProcess(stdout: '''
@@ -1158,11 +1158,11 @@ packages/plugin/android/build.gradle
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           // File list.
           FakeProcessInfo(MockProcess(stdout: '''
@@ -1193,11 +1193,11 @@ packages/plugin/run_tests.sh
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           // File list.
           FakeProcessInfo(MockProcess(stdout: '''
@@ -1230,11 +1230,11 @@ packages/plugin/lib/plugin.dart
 * Some changes.
 ''';
         plugin.changelogFile.writeAsStringSync(changelog);
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
-        processRunner.mockProcessesForExecutable['git-diff'] =
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
@@ -1351,7 +1351,8 @@ ${indentation}HTTP response: null
       mockHttpStatus = 404;
 
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
       final List<String> result = await runCapturingPrint(runner,
@@ -1370,7 +1371,7 @@ ${indentation}HTTP response: null
           'allow an otherwise-valid transition that also adds a pre-release component',
           () async {
         createFakePlugin('plugin', packagesDir, version: '2.0.0-dev');
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
         ];
@@ -1385,7 +1386,7 @@ ${indentation}HTTP response: null
           ]),
         );
         expect(
-            processRunner.recordedCalls,
+            gitProcessRunner.recordedCalls,
             containsAllInOrder(const <ProcessCall>[
               ProcessCall('git-show',
                   <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -1394,7 +1395,7 @@ ${indentation}HTTP response: null
 
       test('allow releasing a pre-release', () async {
         createFakePlugin('plugin', packagesDir, version: '1.2.0');
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev')),
         ];
@@ -1409,7 +1410,7 @@ ${indentation}HTTP response: null
           ]),
         );
         expect(
-            processRunner.recordedCalls,
+            gitProcessRunner.recordedCalls,
             containsAllInOrder(const <ProcessCall>[
               ProcessCall('git-show',
                   <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -1422,7 +1423,7 @@ ${indentation}HTTP response: null
           'allow an otherwise-valid transition that also removes a pre-release component',
           () async {
         createFakePlugin('plugin', packagesDir, version: '2.0.0');
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev')),
         ];
@@ -1437,7 +1438,7 @@ ${indentation}HTTP response: null
           ]),
         );
         expect(
-            processRunner.recordedCalls,
+            gitProcessRunner.recordedCalls,
             containsAllInOrder(const <ProcessCall>[
               ProcessCall('git-show',
                   <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -1446,7 +1447,7 @@ ${indentation}HTTP response: null
 
       test('allow changing only the pre-release version', () async {
         createFakePlugin('plugin', packagesDir, version: '1.2.0-dev.2');
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 1.2.0-dev.1')),
         ];
@@ -1461,7 +1462,7 @@ ${indentation}HTTP response: null
           ]),
         );
         expect(
-            processRunner.recordedCalls,
+            gitProcessRunner.recordedCalls,
             containsAllInOrder(const <ProcessCall>[
               ProcessCall('git-show',
                   <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -1471,7 +1472,7 @@ ${indentation}HTTP response: null
       test('denies invalid version change that also adds a pre-release',
           () async {
         createFakePlugin('plugin', packagesDir, version: '0.2.0-dev');
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1')),
         ];
@@ -1489,7 +1490,7 @@ ${indentation}HTTP response: null
               contains('Incorrectly updated version.'),
             ]));
         expect(
-            processRunner.recordedCalls,
+            gitProcessRunner.recordedCalls,
             containsAllInOrder(const <ProcessCall>[
               ProcessCall('git-show',
                   <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -1499,7 +1500,7 @@ ${indentation}HTTP response: null
       test('denies invalid version change that also removes a pre-release',
           () async {
         createFakePlugin('plugin', packagesDir, version: '0.2.0');
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1-dev')),
         ];
@@ -1517,7 +1518,7 @@ ${indentation}HTTP response: null
               contains('Incorrectly updated version.'),
             ]));
         expect(
-            processRunner.recordedCalls,
+            gitProcessRunner.recordedCalls,
             containsAllInOrder(const <ProcessCall>[
               ProcessCall('git-show',
                   <String>['main:packages/plugin/pubspec.yaml'], null)
@@ -1526,7 +1527,7 @@ ${indentation}HTTP response: null
 
       test('denies invalid version change between pre-releases', () async {
         createFakePlugin('plugin', packagesDir, version: '0.2.0-dev');
-        processRunner.mockProcessesForExecutable['git-show'] =
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1-dev')),
         ];
@@ -1544,7 +1545,7 @@ ${indentation}HTTP response: null
               contains('Incorrectly updated version.'),
             ]));
         expect(
-            processRunner.recordedCalls,
+            gitProcessRunner.recordedCalls,
             containsAllInOrder(const <ProcessCall>[
               ProcessCall('git-show',
                   <String>['main:packages/plugin/pubspec.yaml'], null)

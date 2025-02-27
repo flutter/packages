@@ -8,42 +8,44 @@ import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/publish_command.dart';
+import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
   late MockPlatform platform;
   late Directory packagesDir;
-  late MockGitDir gitDir;
   late TestProcessRunner processRunner;
   late PublishCommand command;
   late CommandRunner<void> commandRunner;
   late MockStdin mockStdin;
-  late FileSystem fileSystem;
   // Map of package name to mock response.
   late Map<String, Map<String, dynamic>> mockHttpResponses;
 
   void createMockCredentialFile() {
-    fileSystem.file(command.credentialsPath)
+    packagesDir.fileSystem.file(command.credentialsPath)
       ..createSync(recursive: true)
       ..writeAsStringSync('some credential');
   }
 
   setUp(() async {
     platform = MockPlatform(isLinux: true);
-    platform.environment['HOME'] = '/home';
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     processRunner = TestProcessRunner();
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks(
+      platform: platform,
+      customProcessRunner: processRunner,
+      customGitProcessRunner: processRunner,
+    );
+    platform.environment['HOME'] = '/home';
 
     mockHttpResponses = <String, Map<String, dynamic>>{};
     final MockClient mockClient = MockClient((http.Request request) async {
@@ -55,19 +57,6 @@ void main() {
       }
       // Default to simulating the plugin never having been published.
       return http.Response('', 404);
-    });
-
-    gitDir = MockGitDir();
-    when(gitDir.path).thenReturn(packagesDir.parent.path);
-    when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
-        .thenAnswer((Invocation invocation) {
-      final List<String> arguments =
-          invocation.positionalArguments[0]! as List<String>;
-      // Route git calls through the process runner, to make mock output
-      // consistent with outer processes. Attach the first argument to the
-      // command to make targeting the mock results easier.
-      final String gitCommand = arguments.removeAt(0);
-      return processRunner.run('git-$gitCommand', arguments);
     });
 
     mockStdin = MockStdin();
@@ -358,7 +347,8 @@ void main() {
         '--server=bar'
       ]);
 
-      final File credentialFile = fileSystem.file(command.credentialsPath);
+      final File credentialFile =
+          packagesDir.fileSystem.file(command.credentialsPath);
       expect(credentialFile.existsSync(), true);
       expect(credentialFile.readAsStringSync(), credentials);
     });

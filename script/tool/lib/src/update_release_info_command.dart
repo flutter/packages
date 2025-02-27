@@ -7,7 +7,6 @@ import 'package:file/file.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
-import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/package_state_utils.dart';
@@ -76,11 +75,6 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
   // If null, either there is no version change, or it is dynamic (`minimal`).
   _VersionIncrementType? _versionChange;
 
-  // The cache of changed files, for dynamic version change determination.
-  //
-  // Only set for `minimal` version change.
-  late final List<String> _changedFiles;
-
   @override
   final String name = 'update-release-info';
 
@@ -103,12 +97,6 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       case _versionBugfix:
         _versionChange = _VersionIncrementType.bugfix;
       case _versionMinimal:
-        final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
-        // If the line below fails with "Not a valid object name FETCH_HEAD"
-        // run "git fetch", FETCH_HEAD is a temporary reference that only exists
-        // after a fetch. This can happen when a branch is made locally and
-        // pushed but never fetched.
-        _changedFiles = await gitVersionFinder.getChangedFiles();
         // Anothing other than a fixed change is null.
         _versionChange = null;
       case _versionNext:
@@ -133,8 +121,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       final String relativePackagePath =
           getRelativePosixPath(package.directory, from: gitRoot);
       final PackageChangeState state = await checkPackageChangeState(package,
-          changedPaths: _changedFiles,
-          relativePackagePath: relativePackagePath);
+          changedPaths: changedFiles, relativePackagePath: relativePackagePath);
 
       if (!state.hasChanges) {
         return PackageResult.skip('No changes to package');
