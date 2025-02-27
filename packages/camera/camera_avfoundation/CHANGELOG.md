@@ -1,3 +1,7 @@
+## 0.9.18+9
+
+* Fix race condition when starting image stream
+
 ## 0.9.18+8
 
 * Migrates unit tests to Swift.
