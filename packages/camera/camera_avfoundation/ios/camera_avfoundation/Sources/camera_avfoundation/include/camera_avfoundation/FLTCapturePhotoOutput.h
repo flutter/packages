@@ -20,7 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) BOOL highResolutionCaptureEnabled;
 @property(nonatomic, readonly) NSArray<NSNumber *> *supportedFlashModes;
 
-// TODO(RobertOdrowaz): Verify if settings and delegate need to be nullable when migrating to Swift.
 - (void)capturePhotoWithSettings:(AVCapturePhotoSettings *)settings
                         delegate:(NSObject<AVCapturePhotoCaptureDelegate> *)delegate;
 - (nullable AVCaptureConnection *)connectionWithMediaType:(AVMediaType)mediaType;
