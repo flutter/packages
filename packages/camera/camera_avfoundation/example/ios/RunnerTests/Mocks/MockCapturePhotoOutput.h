@@ -15,6 +15,7 @@
 @property(nonatomic, assign) BOOL highResolutionCaptureEnabled;
 @property(nonatomic, strong) NSArray<NSNumber *> *supportedFlashModes;
 
+// TODO(RobertOdrowaz): Verify if settings and delegate need to be nullable when migrating to Swift.
 // Stub that is called when the corresponding public method is called.
 @property(nonatomic, copy) void (^capturePhotoWithSettingsStub)
     (AVCapturePhotoSettings *, NSObject<AVCapturePhotoCaptureDelegate> *);
