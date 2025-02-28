@@ -38,6 +38,7 @@ class InitParams {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
+    this.forceAccountName,
   });
 
   List<String> scopes;
@@ -52,6 +53,8 @@ class InitParams {
 
   bool forceCodeForRefreshToken;
 
+  String? forceAccountName;
+
   Object encode() {
     return <Object?>[
       scopes,
@@ -60,6 +63,7 @@ class InitParams {
       clientId,
       serverClientId,
       forceCodeForRefreshToken,
+      forceAccountName,
     ];
   }
 
@@ -72,6 +76,7 @@ class InitParams {
       clientId: result[3] as String?,
       serverClientId: result[4] as String?,
       forceCodeForRefreshToken: result[5]! as bool,
+      forceAccountName: result[6] as String?,
     );
   }
 }

@@ -36,6 +36,7 @@ class SignInInitParameters {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
+    this.forceAccountName,
   });
 
   /// The list of OAuth scope codes to request when signing in.
@@ -78,6 +79,11 @@ class SignInInitParameters {
   ///
   /// This is only used on Android.
   final bool forceCodeForRefreshToken;
+
+  /// Can be used to explicitly set an account name on the underlying platform sign-in API.
+  ///
+  /// This should only be set on Android; other platforms may throw.
+  final String? forceAccountName;
 }
 
 /// Holds information about the signed in user.
