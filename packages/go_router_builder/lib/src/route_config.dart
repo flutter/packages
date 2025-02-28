@@ -19,7 +19,10 @@ import 'type_helpers.dart';
 
 /// Custom [Iterable] implementation with extra info.
 class InfoIterable extends IterableBase<String> {
-  InfoIterable._({required this.members, required this.routeGetterName});
+  InfoIterable._({
+    required this.members,
+    required this.routeGetterName,
+  });
 
   /// Name of the getter associated with `this`.
   final String routeGetterName;
@@ -70,7 +73,7 @@ class ShellRouteConfig extends RouteBaseConfig {
   extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) =>${isConst ? ' const' : ''} $_className();
   }
-  ''',
+  '''
     ];
   }
 
@@ -117,7 +120,7 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) =>${routeDataClass.unnamedConstructor!.isConst ? ' const' : ''}   $_className();
 }
-''',
+'''
       ];
 
   @override
@@ -203,9 +206,8 @@ class GoRouteConfig extends RouteBaseConfig {
   /// The parent navigator key.
   final String? parentNavigatorKey;
 
-  late final Set<String> _pathParams = pathParametersFromPattern(
-    _rawJoinedPath,
-  );
+  late final Set<String> _pathParams =
+      pathParametersFromPattern(_rawJoinedPath);
 
   String get _rawJoinedPath {
     final List<String> pathSegments = <String>[];
@@ -239,9 +241,8 @@ class GoRouteConfig extends RouteBaseConfig {
     return "'$location'";
   }
 
-  ParameterElement? get _extraParam => _ctor.parameters.singleWhereOrNull(
-        (ParameterElement element) => element.isExtraField,
-      );
+  ParameterElement? get _extraParam => _ctor.parameters
+      .singleWhereOrNull((ParameterElement element) => element.isExtraField);
 
   String get _fromStateConstructor {
     final StringBuffer buffer = StringBuffer('=>');
@@ -348,10 +349,8 @@ class GoRouteConfig extends RouteBaseConfig {
   }).toList();
 
   late final List<ParameterElement> _ctorQueryParams = _ctor.parameters
-      .where(
-        (ParameterElement element) =>
-            !_pathParams.contains(element.name) && !element.isExtraField,
-      )
+      .where((ParameterElement element) =>
+          !_pathParams.contains(element.name) && !element.isExtraField)
       .toList();
 
   ConstructorElement get _ctor {
@@ -435,18 +434,18 @@ extension $_extensionName on $_className {
 
 /// Represents a `TypedGoRoute` annotation to the builder.
 abstract class RouteBaseConfig {
-  RouteBaseConfig._({required this.routeDataClass, required this.parent});
+  RouteBaseConfig._({
+    required this.routeDataClass,
+    required this.parent,
+  });
 
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
   factory RouteBaseConfig.fromAnnotation(
     ConstantReader reader,
     InterfaceElement element,
   ) {
-    final RouteBaseConfig definition = RouteBaseConfig._fromAnnotation(
-      reader,
-      element,
-      null,
-    );
+    final RouteBaseConfig definition =
+        RouteBaseConfig._fromAnnotation(reader, element, null);
 
     if (element != definition.routeDataClass) {
       throw InvalidGenerationSourceError(
@@ -567,18 +566,11 @@ abstract class RouteBaseConfig {
         throw UnsupportedError('Unrecognized type $typeName');
     }
 
-    value._children.addAll(
-      reader
-          .read(_generateChildrenGetterName(typeName))
-          .listValue
-          .map<RouteBaseConfig>(
-            (DartObject e) => RouteBaseConfig._fromAnnotation(
-              ConstantReader(e),
-              element,
-              value,
-            ),
-          ),
-    );
+    value._children.addAll(reader
+        .read(_generateChildrenGetterName(typeName))
+        .listValue
+        .map<RouteBaseConfig>((DartObject e) => RouteBaseConfig._fromAnnotation(
+            ConstantReader(e), element, value)));
 
     return value;
   }
@@ -598,18 +590,16 @@ abstract class RouteBaseConfig {
         : 'routes';
   }
 
-  static String? _generateParameterGetterCode(
-    InterfaceElement classElement, {
-    required String parameterName,
-  }) {
+  static String? _generateParameterGetterCode(InterfaceElement classElement,
+      {required String parameterName}) {
     final String? fieldDisplayName = classElement.fields
         .where((FieldElement element) {
           if (!element.isStatic || element.name != parameterName) {
             return false;
           }
-          if (parameterName.toLowerCase().contains(
-                RegExp('navigatorKey | observers'),
-              )) {
+          if (parameterName
+              .toLowerCase()
+              .contains(RegExp('navigatorKey | observers'))) {
             final DartType type = element.type;
             if (type is! ParameterizedType) {
               return false;
@@ -652,7 +642,9 @@ abstract class RouteBaseConfig {
       );
 
   Iterable<String> _generateMembers() sync* {
-    final List<String> items = <String>[_rootDefinition()];
+    final List<String> items = <String>[
+      _rootDefinition(),
+    ];
 
     for (final RouteBaseConfig def in _flatten()) {
       items.addAll(def.classDeclarations());
@@ -664,8 +656,7 @@ abstract class RouteBaseConfig {
         .expand(
           (String e) => helperNames.entries
               .where(
-                (MapEntry<String, String> element) => e.contains(element.key),
-              )
+                  (MapEntry<String, String> element) => e.contains(element.key))
               .map((MapEntry<String, String> e) => e.value),
         )
         .toSet();
@@ -738,9 +729,8 @@ String _enumMapConst(InterfaceType type) {
 
   final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  for (final FieldElement enumField in type.element.fields.where(
-    (FieldElement element) => element.isEnumConstant,
-  )) {
+  for (final FieldElement enumField in type.element.fields
+      .where((FieldElement element) => element.isEnumConstant)) {
     buffer.writeln(
       '$enumName.${enumField.name}: ${escapeDartString(enumField.name.kebab)},',
     );
