@@ -842,7 +842,8 @@ static void selectBestFormatForRequestedFrameRate(
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
-      [self startImageStreamWithMessenger:messenger];
+      [self startImageStreamWithMessenger:messenger
+                           withCompletion:completion];
     }
 
     NSError *error;
@@ -1168,14 +1169,19 @@ static void selectBestFormatForRequestedFrameRate(
   [_captureDevice unlockForConfiguration];
 }
 
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger {
+- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                       withCompletion:(nonnull void (^)(FlutterError *_Nullable))completion
+    {
   [self startImageStreamWithMessenger:messenger
                    imageStreamHandler:[[FLTImageStreamHandler alloc]
-                                          initWithCaptureSessionQueue:_captureSessionQueue]];
+                                       initWithCaptureSessionQueue:_captureSessionQueue]
+                   withCompletion:completion];
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler {
+                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
+                   withCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
+    
   if (!_isStreamingImages) {
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
@@ -1187,6 +1193,8 @@ static void selectBestFormatForRequestedFrameRate(
     __weak typeof(self) weakSelf = self;
     [threadSafeEventChannel setStreamHandler:_imageStreamHandler
                                   completion:^{
+                                    completion(nil);
+        
                                     typeof(self) strongSelf = weakSelf;
                                     if (!strongSelf) return;
 
