@@ -1,3 +1,12 @@
+## 2.11.1
+
+* Updates READMEs and API docs.
+
+## 2.11.0
+
+* Adds support for animating the camera with a duration.
+* Updates READMEs and API docs.
+
 ## 2.10.0
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

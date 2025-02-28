@@ -57,7 +57,6 @@ android {
 
 dependencies {
     implementation 'com.google.android.gms:play-services-auth:21.0.0'
-    implementation 'com.google.guava:guava:33.3.1-android'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-inline:5.0.0'
 }

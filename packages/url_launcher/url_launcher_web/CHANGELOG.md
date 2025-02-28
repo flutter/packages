@@ -1,3 +1,7 @@
+## 2.4.1
+
+* Fixes a bug that triggers Links when they are not supposed to.
+
 ## 2.4.0
 
 * Enhances handling of out-of-order events.

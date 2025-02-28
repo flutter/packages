@@ -167,7 +167,13 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('class Api'));
     expect(code, contains('Future<int> add(int x, int y)'));
-    expect(code, contains('await pigeonVar_channel.send(<Object?>[x, y])'));
+    expect(
+      code,
+      contains(
+        'pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[x, y])',
+      ),
+    );
+    expect(code, contains('await pigeonVar_sendFuture'));
   });
 
   test('flutter multiple args', () {
@@ -573,7 +579,11 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('enum Foo {'));
     expect(code, contains('Future<void> bar(Foo? foo) async'));
-    expect(code, contains('pigeonVar_channel.send(<Object?>[foo])'));
+    expect(
+      code,
+      contains('pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[foo])'),
+    );
+    expect(code, contains('await pigeonVar_sendFuture'));
   });
 
   test('flutter non-nullable enum argument with enum class', () {
@@ -664,7 +674,10 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final String code = sink.toString();
-    expect(code, matches('pigeonVar_channel.send[(]null[)]'));
+    expect(
+      code,
+      matches('pigeonVar_sendFuture = pigeonVar_channel.send[(]null[)]'),
+    );
   });
 
   test('mock Dart handler', () {

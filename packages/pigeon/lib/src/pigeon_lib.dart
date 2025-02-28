@@ -36,6 +36,9 @@ import 'java/java_generator.dart';
 import 'kotlin/kotlin_generator.dart';
 import 'objc/objc_generator.dart';
 import 'swift/swift_generator.dart';
+import 'types/task_queue.dart';
+
+export 'types/task_queue.dart' show TaskQueueType;
 
 class _Asynchronous {
   const _Asynchronous();
@@ -169,7 +172,13 @@ class ProxyApi {
 /// defined return type of the method definition.
 class EventChannelApi {
   /// Constructor.
-  const EventChannelApi();
+  const EventChannelApi({this.kotlinOptions, this.swiftOptions});
+
+  /// Options for Kotlin generated code for Event Channels.
+  final KotlinEventChannelOptions? kotlinOptions;
+
+  /// Options for Swift generated code for Event Channels.
+  final SwiftEventChannelOptions? swiftOptions;
 }
 
 /// Metadata to annotation methods to control the selector used for objc output.
@@ -203,21 +212,6 @@ class SwiftFunction {
 class SwiftClass {
   /// Constructor.
   const SwiftClass();
-}
-
-/// Type of TaskQueue which determines how handlers are dispatched for
-/// HostApi's.
-enum TaskQueueType {
-  /// Handlers are invoked serially on the default thread. This is the value if
-  /// unspecified.
-  serial,
-
-  /// Handlers are invoked serially on a background thread.
-  serialBackgroundThread,
-
-  // TODO(gaaclarke): Add support for concurrent task queues.
-  // /// Handlers are invoked concurrently on a background thread.
-  // concurrentBackgroundThread,
 }
 
 /// Metadata annotation to control how handlers are dispatched for HostApi's.
@@ -1082,6 +1076,8 @@ List<Error> _validateAst(Root root, String source) {
     }
   }
 
+  bool containsEventChannelApi = false;
+
   for (final Api api in root.apis) {
     final String? matchingPrefix = _findMatchingPrefixOrNull(
       api.name,
@@ -1092,6 +1088,15 @@ List<Error> _validateAst(Root root, String source) {
         message:
             'API name must not begin with "$matchingPrefix" in API "${api.name}"',
       ));
+    }
+    if (api is AstEventChannelApi) {
+      if (containsEventChannelApi) {
+        result.add(Error(
+          message:
+              'Event Channel methods must all be included in a single EventChannelApi',
+        ));
+      }
+      containsEventChannelApi = true;
     }
     if (api is AstProxyApi) {
       result.addAll(_validateProxyApi(
@@ -1380,11 +1385,22 @@ List<Error> _validateProxyApi(
       }
     }
 
-    if (method.location == ApiLocation.flutter && method.isStatic) {
-      result.add(Error(
-        message: 'Static callback methods are not supported: ${method.name}.',
-        lineNumber: _calculateLineNumberNullable(source, method.offset),
-      ));
+    if (method.location == ApiLocation.flutter) {
+      if (!method.returnType.isVoid &&
+          !method.returnType.isNullable &&
+          !method.isRequired) {
+        result.add(Error(
+          message:
+              'Callback methods that return a non-null value must be non-null: ${method.name}.',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
+      if (method.isStatic) {
+        result.add(Error(
+          message: 'Static callback methods are not supported: ${method.name}.',
+          lineNumber: _calculateLineNumberNullable(source, method.offset),
+        ));
+      }
     }
   }
 
@@ -1885,9 +1901,43 @@ class _RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               _documentationCommentsParser(node.documentationComment?.tokens),
         );
       } else if (_hasMetadata(node.metadata, 'EventChannelApi')) {
+        final dart_ast.Annotation annotation = node.metadata.firstWhere(
+          (dart_ast.Annotation element) =>
+              element.name.name == 'EventChannelApi',
+        );
+
+        final Map<String, Object?> annotationMap = <String, Object?>{};
+        for (final dart_ast.Expression expression
+            in annotation.arguments!.arguments) {
+          if (expression is dart_ast.NamedExpression) {
+            annotationMap[expression.name.label.name] =
+                _expressionToMap(expression.expression);
+          }
+        }
+
+        SwiftEventChannelOptions? swiftOptions;
+        KotlinEventChannelOptions? kotlinOptions;
+        final Map<String, Object?>? swiftOptionsMap =
+            annotationMap['swiftOptions'] as Map<String, Object?>?;
+        if (swiftOptionsMap != null) {
+          swiftOptions = SwiftEventChannelOptions(
+            includeSharedClasses:
+                swiftOptionsMap['includeSharedClasses'] as bool? ?? true,
+          );
+        }
+        final Map<String, Object?>? kotlinOptionsMap =
+            annotationMap['kotlinOptions'] as Map<String, Object?>?;
+        if (kotlinOptionsMap != null) {
+          kotlinOptions = KotlinEventChannelOptions(
+            includeSharedClasses:
+                kotlinOptionsMap['includeSharedClasses'] as bool? ?? true,
+          );
+        }
         _currentApi = AstEventChannelApi(
           name: node.name.lexeme,
           methods: <Method>[],
+          swiftOptions: swiftOptions,
+          kotlinOptions: kotlinOptions,
           documentationComments:
               _documentationCommentsParser(node.documentationComment?.tokens),
         );

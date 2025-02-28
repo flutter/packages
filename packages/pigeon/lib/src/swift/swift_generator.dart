@@ -9,6 +9,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
+import '../types/task_queue.dart';
 import 'templates.dart';
 
 /// Documentation comment open symbol.
@@ -123,6 +124,18 @@ class SwiftProxyApiOptions {
   ///
   /// Defaults to true.
   final bool supportsMacos;
+}
+
+/// Options for Swift implementation of Event Channels.
+class SwiftEventChannelOptions {
+  /// Constructs a [SwiftEventChannelOptions].
+  const SwiftEventChannelOptions({this.includeSharedClasses = true});
+
+  /// Whether to include the error class in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Swift file with Event Channels in the same directory.
+  final bool includeSharedClasses;
 }
 
 /// Class that manages all Swift code generation.
@@ -724,6 +737,21 @@ if (wrapped == nil) {
       indent.addScoped('{', '}', () {
         indent.writeln(
             r'let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""');
+        String? serialBackgroundQueue;
+        if (api.methods.any((Method m) =>
+            m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+          serialBackgroundQueue = 'taskQueue';
+          // TODO(stuartmorgan): Remove the ? once macOS supports task queues
+          // and this is no longer an optional protocol method.
+          // See https://github.com/flutter/flutter/issues/162613 for why this
+          // is an ifdef instead of just relying on the optionality check.
+          indent.format('''
+#if os(iOS)
+  let $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue?()
+#else
+  let $serialBackgroundQueue: FlutterTaskQueue? = nil
+#endif''');
+        }
         for (final Method method in api.methods) {
           _writeHostMethodMessageHandler(
             indent,
@@ -735,6 +763,10 @@ if (wrapped == nil) {
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,
             documentationComments: method.documentationComments,
+            serialBackgroundQueue:
+                method.taskQueueType == TaskQueueType.serialBackgroundThread
+                    ? serialBackgroundQueue
+                    : null,
           );
         }
       });
@@ -937,6 +969,9 @@ if (wrapped == nil) {
                     let identifier = self.readValue()
                     let instance: AnyObject? = pigeonRegistrar.instanceManager.instance(
                       forIdentifier: identifier is Int64 ? identifier as! Int64 : Int64(identifier as! Int32))
+                    if instance == nil {
+                      print("Failed to find instance with identifier: \\(identifier!)")
+                    }
                     return instance
                   default:
                     return super.readValue(ofType: type)
@@ -1362,7 +1397,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
           wrapper.onCancel(withArguments: arguments)
           return nil
         }
-      }
+      }''');
+    if (api.swiftOptions?.includeSharedClasses ?? true) {
+      indent.format('''
 
       class PigeonEventChannelWrapper<ReturnType> {
         func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
@@ -1387,15 +1424,16 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
         func endOfStream() {
           sink(FlutterEndOfEventStream)
         }
-      
+
       }
       ''');
+    }
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
         class ${toUpperCamelCase(func.name)}StreamHandler: PigeonEventChannelWrapper<${_swiftTypeForDartType(func.returnType)}> {
-          static func register(with messenger: FlutterBinaryMessenger, 
+          static func register(with messenger: FlutterBinaryMessenger,
                               instanceName: String = "",
                               streamHandler: ${toUpperCamelCase(func.name)}StreamHandler) {
             var channelName = "${makeChannelName(api, func, dartPackageName)}"
@@ -1487,7 +1525,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       }
       indent.addScoped('else {', '}', () {
         if (returnType.isVoid) {
-          indent.writeln('completion(.success(Void()))');
+          indent.writeln('completion(.success(()))');
         } else {
           final String fieldType = _swiftTypeForDartType(returnType);
           _writeGenericCasting(
@@ -1517,6 +1555,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
     required TypeDeclaration returnType,
     required bool isAsynchronous,
     required String? swiftFunction,
+    String? serialBackgroundQueue,
     String setHandlerCondition = 'let api = api',
     List<String> documentationComments = const <String>[],
     String Function(List<String> safeArgNames, {required String apiVarName})?
@@ -1531,8 +1570,30 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     final String varChannelName = '${name}Channel';
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
-    indent.writeln(
-        'let $varChannelName = FlutterBasicMessageChannel(name: "$channelName", binaryMessenger: binaryMessenger, codec: codec)');
+    final String baseArgs = 'name: "$channelName", '
+        'binaryMessenger: binaryMessenger, codec: codec';
+    // The version with taskQueue: is an optional protocol method that isn't
+    // implemented on macOS yet, so the call has to be conditionalized even
+    // though the taskQueue argument is nullable. The runtime branching can be
+    // removed once macOS supports task queues. The condition is on the task
+    // queue variable not being nil because the earlier code to set it will
+    // return nil on macOS where the optional parts of the protocol are not
+    // implemented.
+    final String channelCreationWithoutTaskQueue =
+        'FlutterBasicMessageChannel($baseArgs)';
+    if (serialBackgroundQueue == null) {
+      indent.writeln('let $varChannelName = $channelCreationWithoutTaskQueue');
+    } else {
+      final String channelCreationWithTaskQueue =
+          'FlutterBasicMessageChannel($baseArgs, taskQueue: $serialBackgroundQueue)';
+
+      indent.write('let $varChannelName = $serialBackgroundQueue == nil');
+      indent.addScoped('', '', () {
+        indent.writeln('? $channelCreationWithoutTaskQueue');
+        indent.writeln(': $channelCreationWithTaskQueue');
+      });
+    }
+
     indent.write('if $setHandlerCondition ');
     indent.addScoped('{', '}', () {
       indent.write('$varChannelName.setMessageHandler ');
@@ -2303,63 +2364,70 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
               .failure(
                 ${_getErrorClassName(generatorOptions)}(
                   code: "ignore-calls-error",
-                  message: "Calls to Dart are being ignored.", details: "")))
-            return''',
+                  message: "Calls to Dart are being ignored.", details: "")))''',
           );
         },
+        addTrailingNewline: false,
       );
 
       indent.writeScoped(
-        'if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
+        ' else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {',
         '}',
         () {
-          indent.writeln('completion(.success(Void()))');
-          indent.writeln('return');
+          indent.writeln('completion(.success(()))');
         },
+        addTrailingNewline: false,
       );
-      if (api.hasCallbackConstructor()) {
-        indent.writeln(
-          'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
-        );
-        enumerate(api.unattachedFields, (int index, ApiField field) {
-          final String argName = _getSafeArgumentName(index, field);
+      indent.writeScoped(' else {', '}', () {
+        if (api.hasCallbackConstructor()) {
           indent.writeln(
-            'let $argName = try! pigeonDelegate.${field.name}(pigeonApi: self, pigeonInstance: pigeonInstance)',
+            'let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)',
           );
-        });
-        indent.writeln(
-          'let binaryMessenger = pigeonRegistrar.binaryMessenger',
-        );
-        indent.writeln('let codec = pigeonRegistrar.codec');
-        _writeFlutterMethodMessageCall(
-          indent,
-          generatorOptions: generatorOptions,
-          parameters: <Parameter>[
-            Parameter(
-              name: 'pigeonIdentifier',
-              type: const TypeDeclaration(
-                baseName: 'int',
-                isNullable: false,
+          enumerate(api.unattachedFields, (int index, ApiField field) {
+            final String argName = _getSafeArgumentName(index, field);
+            indent.writeln(
+              'let $argName = try! pigeonDelegate.${field.name}(pigeonApi: self, pigeonInstance: pigeonInstance)',
+            );
+          });
+          indent.writeln(
+            'let binaryMessenger = pigeonRegistrar.binaryMessenger',
+          );
+          indent.writeln('let codec = pigeonRegistrar.codec');
+          _writeFlutterMethodMessageCall(
+            indent,
+            generatorOptions: generatorOptions,
+            parameters: <Parameter>[
+              Parameter(
+                name: 'pigeonIdentifier',
+                type: const TypeDeclaration(
+                  baseName: 'int',
+                  isNullable: false,
+                ),
               ),
+              ...api.unattachedFields.map(
+                (ApiField field) {
+                  return Parameter(name: field.name, type: field.type);
+                },
+              ),
+            ],
+            returnType: const TypeDeclaration.voidDeclaration(),
+            channelName: makeChannelNameWithStrings(
+              apiName: api.name,
+              methodName: newInstanceMethodName,
+              dartPackageName: dartPackageName,
             ),
-            ...api.unattachedFields.map(
-              (ApiField field) {
-                return Parameter(name: field.name, type: field.type);
-              },
-            ),
-          ],
-          returnType: const TypeDeclaration.voidDeclaration(),
-          channelName: makeChannelNameWithStrings(
-            apiName: api.name,
-            methodName: newInstanceMethodName,
-            dartPackageName: dartPackageName,
-          ),
-        );
-      } else {
-        indent.writeln(
-          'print("Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
-        );
-      }
+          );
+        } else {
+          indent.format(
+            '''
+            completion(
+              .failure(
+                ${_getErrorClassName(generatorOptions)}(
+                  code: "new-instance-error",
+                  message: "Error: Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", details: "")))''',
+          );
+        }
+      });
     });
 
     if (unsupportedPlatforms != null) {
