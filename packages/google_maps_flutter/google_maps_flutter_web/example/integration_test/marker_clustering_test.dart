@@ -63,10 +63,6 @@ void main() {
 
       addTearDown(() => plugin.dispose(mapId: mapId));
 
-      final LatLng latlon = await plugin
-          .getLatLng(const ScreenCoordinate(x: 0, y: 0), mapId: mapId);
-      debugPrint(latlon.toString());
-
       final List<Cluster> clusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
                   tester,
