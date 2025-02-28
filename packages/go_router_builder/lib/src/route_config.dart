@@ -113,12 +113,12 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
 
   @override
   Iterable<String> classDeclarations() => <String>[
-    '''
+        '''
 extension $_extensionName on $_className {
   static $_className _fromState(GoRouterState state) =>${routeDataClass.unnamedConstructor!.isConst ? ' const' : ''}   $_className();
 }
 ''',
-  ];
+      ];
 
   @override
   String get routeConstructorParameters =>
@@ -231,11 +231,7 @@ class GoRouteConfig extends RouteBaseConfig {
         final DartType? type = _field(pathParameter)?.returnType;
 
         final String value =
-            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${(type?.isEnum ?? false)
-                ? '!'
-                : (type?.isNullableType ?? false)
-                ? "?? ''"
-                : ''})}';
+            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${(type?.isEnum ?? false) ? '!' : (type?.isNullableType ?? false) ? "?? ''" : ''})}';
         return MapEntry<String, String>(pathParameter, value);
       }),
     );
@@ -244,8 +240,8 @@ class GoRouteConfig extends RouteBaseConfig {
   }
 
   ParameterElement? get _extraParam => _ctor.parameters.singleWhereOrNull(
-    (ParameterElement element) => element.isExtraField,
-  );
+        (ParameterElement element) => element.isExtraField,
+      );
 
   String get _fromStateConstructor {
     final StringBuffer buffer = StringBuffer('=>');
@@ -332,8 +328,7 @@ class GoRouteConfig extends RouteBaseConfig {
       if (conditions.isNotEmpty) {
         line = 'if (${conditions.join(' && ')}) ';
       }
-      line +=
-          '${escapeDartString(parameterName.kebab)}: '
+      line += '${escapeDartString(parameterName.kebab)}: '
           '${_encodeFor(parameterName)},';
 
       buffer.writeln(line);
@@ -346,19 +341,18 @@ class GoRouteConfig extends RouteBaseConfig {
 
   late final List<ParameterElement> _ctorParams =
       _ctor.parameters.where((ParameterElement element) {
-        if (_pathParams.contains(element.name)) {
-          return true;
-        }
-        return false;
-      }).toList();
+    if (_pathParams.contains(element.name)) {
+      return true;
+    }
+    return false;
+  }).toList();
 
-  late final List<ParameterElement> _ctorQueryParams =
-      _ctor.parameters
-          .where(
-            (ParameterElement element) =>
-                !_pathParams.contains(element.name) && !element.isExtraField,
-          )
-          .toList();
+  late final List<ParameterElement> _ctorQueryParams = _ctor.parameters
+      .where(
+        (ParameterElement element) =>
+            !_pathParams.contains(element.name) && !element.isExtraField,
+      )
+      .toList();
 
   ConstructorElement get _ctor {
     final ConstructorElement? ctor = routeDataClass.unnamedConstructor;
@@ -374,9 +368,9 @@ class GoRouteConfig extends RouteBaseConfig {
 
   @override
   Iterable<String> classDeclarations() => <String>[
-    _extensionDefinition,
-    ..._enumDeclarations(),
-  ];
+        _extensionDefinition,
+        ..._enumDeclarations(),
+      ];
 
   String get _extensionDefinition => '''
 extension $_extensionName on $_className {
@@ -608,44 +602,42 @@ abstract class RouteBaseConfig {
     InterfaceElement classElement, {
     required String parameterName,
   }) {
-    final String? fieldDisplayName =
-        classElement.fields
-            .where((FieldElement element) {
-              if (!element.isStatic || element.name != parameterName) {
-                return false;
-              }
-              if (parameterName.toLowerCase().contains(
+    final String? fieldDisplayName = classElement.fields
+        .where((FieldElement element) {
+          if (!element.isStatic || element.name != parameterName) {
+            return false;
+          }
+          if (parameterName.toLowerCase().contains(
                 RegExp('navigatorKey | observers'),
               )) {
-                final DartType type = element.type;
-                if (type is! ParameterizedType) {
-                  return false;
-                }
-                final List<DartType> typeArguments = type.typeArguments;
-                if (typeArguments.length != 1) {
-                  return false;
-                }
-                final DartType typeArgument = typeArguments.single;
-                if (typeArgument.getDisplayString(withNullability: false) !=
-                    'NavigatorState') {
-                  return false;
-                }
-              }
-              return true;
-            })
-            .map<String>((FieldElement e) => e.displayName)
-            .firstOrNull;
+            final DartType type = element.type;
+            if (type is! ParameterizedType) {
+              return false;
+            }
+            final List<DartType> typeArguments = type.typeArguments;
+            if (typeArguments.length != 1) {
+              return false;
+            }
+            final DartType typeArgument = typeArguments.single;
+            if (typeArgument.getDisplayString(withNullability: false) !=
+                'NavigatorState') {
+              return false;
+            }
+          }
+          return true;
+        })
+        .map<String>((FieldElement e) => e.displayName)
+        .firstOrNull;
 
     if (fieldDisplayName != null) {
       return '${classElement.name}.$fieldDisplayName';
     }
-    final String? methodDisplayName =
-        classElement.methods
-            .where((MethodElement element) {
-              return element.isStatic && element.name == parameterName;
-            })
-            .map<String>((MethodElement e) => e.displayName)
-            .firstOrNull;
+    final String? methodDisplayName = classElement.methods
+        .where((MethodElement element) {
+          return element.isStatic && element.name == parameterName;
+        })
+        .map<String>((MethodElement e) => e.displayName)
+        .firstOrNull;
 
     if (methodDisplayName != null) {
       return '${classElement.name}.$methodDisplayName';
@@ -655,9 +647,9 @@ abstract class RouteBaseConfig {
 
   /// Generates all of the members that correspond to `this`.
   InfoIterable generateMembers() => InfoIterable._(
-    members: _generateMembers().toList(),
-    routeGetterName: _routeGetterName,
-  );
+        members: _generateMembers().toList(),
+        routeGetterName: _routeGetterName,
+      );
 
   Iterable<String> _generateMembers() sync* {
     final List<String> items = <String>[_rootDefinition()];
@@ -700,10 +692,9 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
   String get _extensionName => '\$${_className}Extension';
 
   String _invokesRouteConstructor() {
-    final String routesBit =
-        _children.isEmpty
-            ? ''
-            : '''
+    final String routesBit = _children.isEmpty
+        ? ''
+        : '''
 ${_generateChildrenGetterName(routeDataClassName)}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
 ''';
 
