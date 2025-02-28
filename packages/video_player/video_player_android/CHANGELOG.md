@@ -1,7 +1,9 @@
-## NEXT
+## 2.7.18
 
 * Suppresses deprecation and removal warnings for
   `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
+* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation`
+  to detect the backend used to provide `Surface`s.
 
 ## 2.7.17
 
