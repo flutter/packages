@@ -79,7 +79,7 @@ public class DeviceOrientationManager {
             handleUIOrientationChange();
           }
         };
-    activity.registerReceiver(broadcastReceiver, orientationIntentFilter);
+    activity.registerReceiver(broadcastReceiver, orientationIntentFilter, Context.RECEIVER_NOT_EXPORTED);
     broadcastReceiver.onReceive(activity, null);
   }
 
@@ -90,7 +90,7 @@ public class DeviceOrientationManager {
     }
     activity.unregisterReceiver(broadcastReceiver);
     broadcastReceiver = null;
-  }
+  } // TODO(camsim99): Add test for start, stop.
 
   /**
    * Returns the device's photo orientation in degrees based on the sensor orientation and the last
