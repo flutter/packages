@@ -103,7 +103,7 @@ For more details, see [Getting started with Google Maps Platform](https://develo
    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
    ```
 
-2. Read about iOS-specific features and limitations in the
+2. Read about web-specific features and limitations in the
    [`google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web).
 
 ### All
