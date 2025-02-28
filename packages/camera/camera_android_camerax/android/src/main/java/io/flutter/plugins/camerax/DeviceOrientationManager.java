@@ -70,7 +70,7 @@ public class DeviceOrientationManager {
             handleUIOrientationChange();
           }
         };
-    activity.registerReceiver(broadcastReceiver, orientationIntentFilter);
+    activity.registerReceiver(broadcastReceiver, orientationIntentFilter, Context.RECEIVER_NOT_EXPORTED);
     broadcastReceiver.onReceive(activity, null);
   }
 
