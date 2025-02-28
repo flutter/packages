@@ -50,6 +50,33 @@ class _TableElement {
   final List<TableRow> rows = <TableRow>[];
 }
 
+/// Holds configuration data for an image in a Markdown document.
+class MarkdownImageConfig {
+  /// Creates a new [MarkdownImageConfig] instance.
+  MarkdownImageConfig({
+    required this.uri,
+    this.title,
+    this.alt,
+    this.width,
+    this.height,
+  });
+
+  /// The URI of the image.
+  final Uri uri;
+
+  /// The title of the image, displayed on hover.
+  final String? title;
+
+  /// The alternative text for the image, displayed if the image cannot be loaded.
+  final String? alt;
+
+  /// The desired width of the image.
+  final double? width;
+
+  /// The desired height of the image.
+  final double? height;
+}
+
 /// A collection of widgets that should be placed adjacent to (inline with)
 /// other inline elements in the same parent block.
 ///
@@ -106,6 +133,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.styleSheet,
     required this.imageDirectory,
     required this.imageBuilder,
+    required this.sizedImageBuilder,
     required this.checkboxBuilder,
     required this.bulletBuilder,
     required this.builders,
@@ -115,7 +143,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.onSelectionChanged,
     this.onTapText,
     this.softLineBreak = false,
-  });
+  }) : assert(imageBuilder == null || sizedImageBuilder == null,
+            'Only one of imageBuilder or sizedImageBuilder may be specified.');
 
   /// A delegate that controls how link and `pre` elements behave.
   final MarkdownBuilderDelegate delegate;
@@ -131,8 +160,11 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// The base directory holding images referenced by Img tags with local or network file paths.
   final String? imageDirectory;
 
-  /// Call when build an image widget.
+  /// Call when building an image widget when no sizing information is available.
   final MarkdownImageBuilder? imageBuilder;
+
+  /// Call when building an image widget with sizing information available.
+  final MarkdownSizedImageBuilder? sizedImageBuilder;
 
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder? checkboxBuilder;
@@ -619,8 +651,12 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     Widget child;
-    if (imageBuilder != null) {
-      child = imageBuilder!(uri, title, alt);
+    if (sizedImageBuilder != null) {
+      final MarkdownImageConfig config = MarkdownImageConfig(
+          uri: uri, alt: alt, title: title, height: height, width: width);
+      child = sizedImageBuilder!(config);
+    } else if (imageBuilder != null) {
+      child = imageBuilder!(uri, alt, title);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }
