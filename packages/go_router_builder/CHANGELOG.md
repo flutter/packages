@@ -1,3 +1,7 @@
+## 2.8.2
+
+- Fixes issue when using query parameters that caused a nullable error
+
 ## 2.8.1
 
 - Fixes an issue when navigate to router with invalid params 
