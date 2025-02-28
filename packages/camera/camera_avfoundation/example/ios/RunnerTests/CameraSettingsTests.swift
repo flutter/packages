@@ -156,6 +156,7 @@ final class CameraSettingsTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
+      permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { mockSession },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory()

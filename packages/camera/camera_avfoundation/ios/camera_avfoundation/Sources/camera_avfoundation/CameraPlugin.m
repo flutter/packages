@@ -43,10 +43,14 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 
 - (instancetype)initWithRegistry:(NSObject<FlutterTextureRegistry> *)registry
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger {
+  id<FLTPermissionServicing> permissionService = [[FLTDefaultPermissionService alloc] init];
+
   return [self initWithRegistry:registry
       messenger:messenger
       globalAPI:[[FCPCameraGlobalEventApi alloc] initWithBinaryMessenger:messenger]
       deviceDiscoverer:[[FLTDefaultCameraDeviceDiscoverer alloc] init]
+      permissionManager:[[FLTCameraPermissionManager alloc]
+                            initWithPermissionService:permissionService]
       deviceFactory:^NSObject<FLTCaptureDevice> *(NSString *name) {
         return [[FLTDefaultCaptureDevice alloc]
             initWithDevice:[AVCaptureDevice deviceWithUniqueID:name]];
@@ -62,6 +66,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                        messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                        globalAPI:(FCPCameraGlobalEventApi *)globalAPI
                 deviceDiscoverer:(NSObject<FLTCameraDeviceDiscovering> *)deviceDiscoverer
+               permissionManager:(FLTCameraPermissionManager *)permissionManager
                    deviceFactory:(CaptureNamedDeviceFactory)deviceFactory
            captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
        captureDeviceInputFactory:
@@ -73,13 +78,10 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
   _globalEventAPI = globalAPI;
   _captureSessionQueue = dispatch_queue_create("io.flutter.camera.captureSessionQueue", NULL);
   _deviceDiscoverer = deviceDiscoverer;
+  _permissionManager = permissionManager;
   _captureDeviceFactory = deviceFactory;
   _captureSessionFactory = captureSessionFactory;
   _captureDeviceInputFactory = captureDeviceInputFactory;
-
-  id<FLTPermissionServicing> permissionService = [[FLTDefaultPermissionService alloc] init];
-  _permissionManager =
-      [[FLTCameraPermissionManager alloc] initWithPermissionService:permissionService];
 
   dispatch_queue_set_specific(_captureSessionQueue, FLTCaptureSessionQueueSpecific,
                               (void *)FLTCaptureSessionQueueSpecific, NULL);
@@ -349,7 +351,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                                                    FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
-    completion(@(weakSelf.camera.captureDevice.minExposureTargetBias), nil);
+    completion(@(weakSelf.camera.minimumExposureOffset), nil);
   });
 }
 
@@ -357,7 +359,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                                                    FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
-    completion(@(weakSelf.camera.captureDevice.maxExposureTargetBias), nil);
+    completion(@(weakSelf.camera.maximumExposureOffset), nil);
   });
 }
 
