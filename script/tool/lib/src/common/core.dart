@@ -140,3 +140,24 @@ Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
   }
   return logsDirectory;
 }
+
+/// Full repo-relative paths to files that do not affect *any* code-related
+/// commands (example builds, Dart analysis, native code analysis, native tests,
+/// Dart tests, etc.) for use in command-ignored files lists for commands that
+/// are only affected by package code.
+const List<String> repoLevelNonCodeImpactingFiles = <String>[
+  'AUTHORS',
+  'CODEOWNERS',
+  'CONTRIBUTING.md',
+  'LICENSE',
+  'README.md',
+  // This deliberate lists specific files rather than excluding the whole
+  // .github directory since it's better to have false negatives than to
+  // accidentally skip tests if something is added here that could affect
+  // packages.
+  '.github/PULL_REQUEST_TEMPLATE.md',
+  '.github/dependabot.yml',
+  '.github/labeler.yml',
+  '.github/post_merge_labeler.yml',
+  '.github/workflows/pull_request_label.yml',
+];

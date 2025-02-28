@@ -135,6 +135,14 @@ class BuildExamplesCommand extends PackageLoopingCommand {
   }
 
   @override
+  bool shouldIgnoreFile(String path) {
+    return repoLevelNonCodeImpactingFiles.contains(path) ||
+        path.endsWith('/AUTHORS') ||
+        path.endsWith('/CHANGELOG.md') ||
+        path.endsWith('/README.md');
+  }
+
+  @override
   Future<void> initializeRun() async {
     final List<String> platformFlags = _platforms.keys.toList();
     platformFlags.sort();
