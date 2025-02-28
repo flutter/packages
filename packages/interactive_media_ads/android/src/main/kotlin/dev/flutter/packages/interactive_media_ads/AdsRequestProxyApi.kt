@@ -21,7 +21,7 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
      *
      * This must match the version in pubspec.yaml.
      */
-    const val pluginVersion = "0.2.3+7"
+    const val pluginVersion = "0.2.3+8"
   }
 
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {

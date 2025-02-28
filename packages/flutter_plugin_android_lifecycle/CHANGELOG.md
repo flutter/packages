@@ -4,7 +4,7 @@
 
 ## 2.0.25
 
-* Updates compileSdk 34 to flutter.compileSdkVersion.
+* Updates compileSdk 35 to flutter.compileSdkVersion.
 
 ## 2.0.24
 
