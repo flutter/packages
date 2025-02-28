@@ -82,7 +82,7 @@ class SignInInitParameters {
 
   /// Can be used to explicitly set an account name on the underlying platform sign-in API.
   ///
-  /// This should only be set on Android; other platforms may assert.
+  /// This should only be set on Android; other platforms may throw.
   final String? forceAccountName;
 }
 

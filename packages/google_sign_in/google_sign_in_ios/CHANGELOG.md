@@ -1,4 +1,4 @@
-## 5.8.0+1
+## 5.8.1
 
 * Asserts that new `forceAccountName` parameter is null (not used in iOS).
 
