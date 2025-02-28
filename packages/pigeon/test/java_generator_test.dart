@@ -40,7 +40,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -71,7 +72,8 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -107,8 +109,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions =
-        JavaOptions(className: 'Messages', package: 'com.google.foobar');
+    const InternalJavaOptions javaOptions = InternalJavaOptions(
+        className: 'Messages', package: 'com.google.foobar', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -166,7 +168,8 @@ void main() {
       containsHostApi: true,
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -248,7 +251,8 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -308,7 +312,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -350,7 +355,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -392,7 +398,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -433,7 +440,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -471,7 +479,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -497,7 +506,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -522,7 +532,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -565,7 +576,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -623,7 +635,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -685,7 +698,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -725,7 +739,8 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -771,7 +786,8 @@ void main() {
       ])
     ]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -799,9 +815,10 @@ void main() {
   test('header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    final JavaOptions javaOptions = JavaOptions(
+    final InternalJavaOptions javaOptions = InternalJavaOptions(
       className: 'Messages',
       copyrightHeader: makeIterable('hello world'),
+      javaOut: '',
     );
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
@@ -834,7 +851,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -868,7 +886,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -905,7 +924,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -941,7 +961,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -973,7 +994,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1006,7 +1028,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1037,7 +1060,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1071,7 +1095,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1106,7 +1131,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Api');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Api', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1139,7 +1165,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1178,7 +1205,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1211,7 +1239,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1242,7 +1271,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1277,7 +1307,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1311,7 +1342,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1349,7 +1381,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1379,8 +1412,11 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions =
-        JavaOptions(className: 'Messages', useGeneratedAnnotation: true);
+    const InternalJavaOptions javaOptions = InternalJavaOptions(
+      className: 'Messages',
+      useGeneratedAnnotation: true,
+      javaOut: '',
+    );
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1403,7 +1439,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1491,7 +1528,8 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1552,7 +1590,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1573,7 +1612,8 @@ void main() {
       containsHostApi: true,
     );
     final StringBuffer sink = StringBuffer();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     const JavaGenerator generator = JavaGenerator();
     generator.generate(
       javaOptions,
@@ -1614,7 +1654,8 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const JavaGenerator generator = JavaGenerator();
-    const JavaOptions javaOptions = JavaOptions(className: 'Messages');
+    const InternalJavaOptions javaOptions =
+        InternalJavaOptions(className: 'Messages', javaOut: '');
     generator.generate(
       javaOptions,
       root,
