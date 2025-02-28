@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -125,6 +126,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
       succeeded = false;
     }
     if (!_validateGradleDrivenLintConfig(package, lines)) {
+      succeeded = false;
+    }
+    if (!_validateCompileSdkUsage(package, lines)) {
       succeeded = false;
     }
     return succeeded;
@@ -411,6 +415,47 @@ for more details.''';
         warningsAsErrors true
 ''');
       return false;
+    }
+    return true;
+  }
+
+  bool _validateCompileSdkUsage(
+      RepositoryPackage package, List<String> gradleLines) {
+    final RegExp linePattern = RegExp(r'^\s*compileSdk');
+    final RegExp legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
+    final String? compileSdkLine = gradleLines
+        .firstWhereOrNull((String line) => linePattern.hasMatch(line));
+    if (compileSdkLine == null) {
+      printError('${indentation}No compileSdk or compileSdkVersion found.');
+      return false;
+    }
+    if (legacySettingPattern.hasMatch(compileSdkLine)) {
+      printError('${indentation}Please replace the deprecated '
+          '"compileSdkVersion" setting with the newer "compileSdk"');
+      return false;
+    }
+    if (compileSdkLine.contains('flutter.compileSdkVersion')) {
+      final Pubspec pubspec = package.parsePubspec();
+      final VersionConstraint? flutterConstraint =
+          pubspec.environment['flutter'];
+      final Version? minFlutterVersion =
+          flutterConstraint != null && flutterConstraint is VersionRange
+              ? flutterConstraint.min
+              : null;
+      if (minFlutterVersion == null) {
+        printError('${indentation}Unable to find a Flutter SDK version '
+            'constraint. Use of flutter.compileSdkVersion requires a minimum '
+            'Flutter version of 3.27');
+        return false;
+      }
+      if (minFlutterVersion < Version(3, 27, 0)) {
+        printError('${indentation}Use of flutter.compileSdkVersion requires a '
+            'minimum Flutter version of 3.27, but this package currently '
+            'supports $minFlutterVersion.\n'
+            "${indentation}Please update the package's minimum Flutter SDK "
+            'version to at least 3.27.');
+        return false;
+      }
     }
     return true;
   }
