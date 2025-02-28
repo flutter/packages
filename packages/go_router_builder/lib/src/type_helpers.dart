@@ -119,7 +119,8 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
     access =
         'pathParameters[${escapeDartString(element.name)}]${element.isRequired ? '!' : ''}';
   } else {
-    access = 'uri.queryParameters[${escapeDartString(element.name.kebab)}]';
+    access =
+        'uri.queryParameters[${escapeDartString(element.name.kebab)}]${element.isRequired ? '!' : ''}';
   }
 
   return access;
