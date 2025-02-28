@@ -1,3 +1,7 @@
+## 2.0.26
+
+* Removes flutter.compileSdkVersion for 35 to support flutter versions prior to 3.27.
+
 ## 2.0.25
 
 * Updates compileSdk 35 to flutter.compileSdkVersion.
