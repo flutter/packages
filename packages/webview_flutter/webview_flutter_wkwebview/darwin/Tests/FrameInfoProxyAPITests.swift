@@ -51,7 +51,4 @@ class TestFrameInfo: WKFrameInfo {
 }
 
 class TestFrameInfoWithNilRequest: WKFrameInfo {
-  override var isMainFrame: Bool {
-    return true
-  }
 }
