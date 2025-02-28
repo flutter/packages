@@ -155,7 +155,7 @@ extension $HotdogRouteWithEverythingExtension on HotdogRouteWithEverything {
   static HotdogRouteWithEverything _fromState(GoRouterState state) =>
       HotdogRouteWithEverything(
         _$boolConverter(state.pathParameters['ketchup']!)!,
-        state.uri.queryParameters['mustard'],
+        state.uri.queryParameters['mustard']!,
         state.extra as Sauce,
       );
 
