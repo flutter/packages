@@ -2125,7 +2125,7 @@ protocol PigeonApiDelegateWKFrameInfo {
   func isMainFrame(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> Bool
   /// The frame’s current request.
   func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws
-    -> URLRequestWrapper
+    -> URLRequestWrapper?
 }
 
 protocol PigeonApiProtocolWKFrameInfo {
@@ -3993,8 +3993,15 @@ protocol PigeonApiProtocolWKNavigationDelegate {
     completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Asks the delegate to respond to an authentication challenge.
   ///
-  /// Returns a List with a `UrlSessionAuthChallengeDisposition` and a nullable
-  /// `URLCredential`.
+  /// This return value expects a List with:
+  ///
+  /// 1. `UrlSessionAuthChallengeDisposition`
+  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
+  /// [
+  ///   "user": "<nonnull String username>",
+  ///   "password": "<nonnull String user password>",
+  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
+  /// ]
   func didReceiveAuthenticationChallenge(
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     challenge challengeArg: URLAuthenticationChallenge,
@@ -4337,8 +4344,15 @@ final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate
 
   /// Asks the delegate to respond to an authentication challenge.
   ///
-  /// Returns a List with a `UrlSessionAuthChallengeDisposition` and a nullable
-  /// `URLCredential`.
+  /// This return value expects a List with:
+  ///
+  /// 1. `UrlSessionAuthChallengeDisposition`
+  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
+  /// [
+  ///   "user": "<nonnull String username>",
+  ///   "password": "<nonnull String user password>",
+  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
+  /// ]
   func didReceiveAuthenticationChallenge(
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     challenge challengeArg: URLAuthenticationChallenge,

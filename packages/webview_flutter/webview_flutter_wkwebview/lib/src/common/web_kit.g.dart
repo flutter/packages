@@ -1756,7 +1756,7 @@ class WKFrameInfo extends NSObject {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.isMainFrame,
-    required this.request,
+    this.request,
     super.observeValue,
   }) : super.pigeon_detached();
 
@@ -1765,7 +1765,7 @@ class WKFrameInfo extends NSObject {
   final bool isMainFrame;
 
   /// The frame’s current request.
-  final URLRequest request;
+  final URLRequest? request;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
@@ -1773,7 +1773,7 @@ class WKFrameInfo extends NSObject {
     PigeonInstanceManager? pigeon_instanceManager,
     WKFrameInfo Function(
       bool isMainFrame,
-      URLRequest request,
+      URLRequest? request,
     )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -1801,17 +1801,15 @@ class WKFrameInfo extends NSObject {
           assert(arg_isMainFrame != null,
               'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKFrameInfo.pigeon_newInstance was null, expected non-null bool.');
           final URLRequest? arg_request = (args[2] as URLRequest?);
-          assert(arg_request != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.WKFrameInfo.pigeon_newInstance was null, expected non-null URLRequest.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_isMainFrame!, arg_request!) ??
+              pigeon_newInstance?.call(arg_isMainFrame!, arg_request) ??
                   WKFrameInfo.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     isMainFrame: arg_isMainFrame!,
-                    request: arg_request!,
+                    request: arg_request,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -4326,8 +4324,15 @@ class WKNavigationDelegate extends NSObject {
 
   /// Asks the delegate to respond to an authentication challenge.
   ///
-  /// Returns a List with a `UrlSessionAuthChallengeDisposition` and a nullable
-  /// `URLCredential`.
+  /// This return value expects a List with:
+  ///
+  /// 1. `UrlSessionAuthChallengeDisposition`
+  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
+  /// [
+  ///   "user": "<nonnull String username>",
+  ///   "password": "<nonnull String user password>",
+  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
+  /// ]
   ///
   /// For the associated Native object to be automatically garbage collected,
   /// it is required that the implementation of this `Function` doesn't have a

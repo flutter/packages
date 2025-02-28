@@ -1,3 +1,7 @@
+## 3.18.4
+
+* Fixes crash when native `WKFrameInfo.request` is nil.
+
 ## 3.18.3
 
 * Fixes crash where the native `AuthenticationChallengeResponse` could not be found for auth
