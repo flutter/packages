@@ -3,6 +3,15 @@
 * Updates README to indicate that this package will be discontinued.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
+
+## 5.0.0
+
+* **Breaking change**: Adds memory usage limit (50MB) to prevent excessive memory allocation in `_Uint8ListBuilder`. Images larger than 50MB will throw an exception.
+* Adds `dispose()` method to properly clean up HTTP client resources.
+* Improves null safety handling in HTTP request headers.
+* Improves error messages for empty responses and failed requests.
+* Updates documentation to reference latest HTTP RFC.
+
 ## 4.1.11
 
 * Replaces deprecated loadBuffer API usage.
