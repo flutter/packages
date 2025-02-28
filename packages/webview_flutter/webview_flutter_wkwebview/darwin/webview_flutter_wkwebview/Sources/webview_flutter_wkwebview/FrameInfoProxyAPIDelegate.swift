@@ -11,7 +11,8 @@ extension WKFrameInfo {
   //
   // See https://github.com/flutter/flutter/issues/163549 and https://developer.apple.com/forums/thread/77888.
   var maybeRequest: URLRequest? {
-    return self.perform(#selector(getter: WKFrameInfo.request))?.takeUnretainedValue() as! URLRequest?
+    return self.perform(#selector(getter: WKFrameInfo.request))?.takeUnretainedValue()
+      as! URLRequest?
   }
 }
 
