@@ -1027,6 +1027,21 @@ public class CameraTest {
   }
 
   @Test
+  public void stopVideoRecording_shouldCatchRuntimeException() throws RuntimeException {
+    MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
+    File mockFile = mock(File.class);
+    camera.recordingVideo = true;
+    camera.mediaRecorder = mockMediaRecorder;
+    camera.captureFile = mockFile;
+
+    doThrow(new RuntimeException("Some RuntimeException")).when(mockMediaRecorder).stop();
+
+    camera.stopVideoRecording();
+
+    verify(mockMediaRecorder, times(1)).reset();
+  }
+
+  @Test
   public void resumePreview_shouldSendErrorEventOnCameraAccessException()
       throws CameraAccessException {
     when(mockCaptureSession.setRepeatingRequest(any(), any(), any()))
