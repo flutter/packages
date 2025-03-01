@@ -59,7 +59,7 @@
   };
 
   MockFlutterBinaryMessenger *messenger = [[MockFlutterBinaryMessenger alloc] init];
-  [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock];
+  [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock withCompletion: ^(FlutterError *error) {}];
 
   XCTKVOExpectation *expectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isStreamingImages"
                                                                        object:_camera
@@ -86,7 +86,7 @@
   };
 
   MockFlutterBinaryMessenger *messenger = [[MockFlutterBinaryMessenger alloc] init];
-  [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock];
+  [_camera startImageStreamWithMessenger:messenger imageStreamHandler:handlerMock withCompletion: ^(FlutterError *error) {}];
 
   XCTKVOExpectation *expectation = [[XCTKVOExpectation alloc] initWithKeyPath:@"isStreamingImages"
                                                                        object:_camera

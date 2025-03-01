@@ -47,9 +47,10 @@
 - (void)captureOutput:(AVCaptureOutput *)output
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
            fromConnection:(NSObject<FLTCaptureConnection> *)connection;
-
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler;
+                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
+                   withCompletion:(void (^)(FlutterError *))completion;
 
 @end
+

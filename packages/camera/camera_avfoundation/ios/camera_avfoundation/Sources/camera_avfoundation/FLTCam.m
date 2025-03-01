@@ -1170,18 +1170,18 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       withCompletion:(nonnull void (^)(FlutterError *_Nullable))completion
+                       withCompletion:(void (^)(FlutterError *))completion
     {
   [self startImageStreamWithMessenger:messenger
-                   imageStreamHandler:[[FLTImageStreamHandler alloc]
+                        imageStreamHandler:[[FLTImageStreamHandler alloc]
                                        initWithCaptureSessionQueue:_captureSessionQueue]
                    withCompletion:completion];
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                    imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
-                   withCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
-    
+                       withCompletion:(void (^)(FlutterError *))completion {
+
   if (!_isStreamingImages) {
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
@@ -1193,18 +1193,20 @@ static void selectBestFormatForRequestedFrameRate(
     __weak typeof(self) weakSelf = self;
     [threadSafeEventChannel setStreamHandler:_imageStreamHandler
                                   completion:^{
-                                    completion(nil);
-        
                                     typeof(self) strongSelf = weakSelf;
                                     if (!strongSelf) return;
+                                    NSLog(@"Can't pass here?");
 
                                     dispatch_async(strongSelf.captureSessionQueue, ^{
                                       // cannot use the outter strongSelf
                                       typeof(self) strongSelf = weakSelf;
                                       if (!strongSelf) return;
+                                      NSLog(@"Can't pass here 2?");
 
                                       strongSelf.isStreamingImages = YES;
                                       strongSelf.streamingPendingFramesCount = 0;
+                                      completion(nil);
+
                                     });
                                   }];
   } else {
