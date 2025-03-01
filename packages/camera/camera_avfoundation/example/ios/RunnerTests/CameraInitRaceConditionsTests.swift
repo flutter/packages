@@ -52,7 +52,7 @@ final class CameraInitRaceConditionsTests: XCTestCase {
       cameraPlugin.captureSessionQueue, "captureSessionQueue must not be nil after create method.")
   }
   
-  func testFlutterChannelInitializedWhenStartingImageStream() async throws {
+  func testFlutterChannelInitializedWhenStartingImageStream() {
     let cameraPlugin = createCameraPlugin()
     let configuration = FLTCreateTestCameraConfiguration()
     cameraPlugin.camera = FLTCreateCamWithConfiguration(configuration)
@@ -77,17 +77,11 @@ final class CameraInitRaceConditionsTests: XCTestCase {
     // Start stream and wait for its completion
     let startStreamExpectation = expectation(description: "startImageStream's result block must be called");
     cameraPlugin.startImageStream(completion: {
-      _ in startStreamExpectation.fulfill()
+      _ in
+      startStreamExpectation.fulfill()
     })
-    waitForExpectations(timeout: 30, handler: nil)
     
-//        let expectation = XCTestExpectation(description: "Wait for delay")
-//        DispatchQueue.global().asyncAfter(deadline: .now() + 5.0) { // 2-second delay
-//                   expectation.fulfill() // Fulfill the expectation after the delay
-//               }
-//    
-//               // Wait for the expectation to be fulfilled
-//        wait(for: [expectation], timeout: 6.0) // Timeout should be longer than the delay
+    waitForExpectations(timeout: 30, handler: nil)
     
     XCTAssertEqual(cameraPlugin.camera?.isStreamingImages, true)
     

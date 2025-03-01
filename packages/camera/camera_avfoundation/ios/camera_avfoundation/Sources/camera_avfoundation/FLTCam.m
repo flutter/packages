@@ -1195,13 +1195,11 @@ static void selectBestFormatForRequestedFrameRate(
                                   completion:^{
                                     typeof(self) strongSelf = weakSelf;
                                     if (!strongSelf) return;
-                                    NSLog(@"Can't pass here?");
 
                                     dispatch_async(strongSelf.captureSessionQueue, ^{
                                       // cannot use the outter strongSelf
                                       typeof(self) strongSelf = weakSelf;
                                       if (!strongSelf) return;
-                                      NSLog(@"Can't pass here 2?");
 
                                       strongSelf.isStreamingImages = YES;
                                       strongSelf.streamingPendingFramesCount = 0;
