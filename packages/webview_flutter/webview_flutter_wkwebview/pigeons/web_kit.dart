@@ -745,9 +745,22 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Tells the delegate that the web view’s content process was terminated.
   void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
+  // TODO(bparrishMines): This method should return an
+  // `AuthenticationChallengeResponse` once the cause of
+  // https://github.com/flutter/flutter/issues/162437 can be found and fixed.
   /// Asks the delegate to respond to an authentication challenge.
+  ///
+  /// This return value expects a List with:
+  ///
+  /// 1. `UrlSessionAuthChallengeDisposition`
+  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
+  /// [
+  ///   "user": "<nonnull String username>",
+  ///   "password": "<nonnull String user password>",
+  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
+  /// ]
   @async
-  late AuthenticationChallengeResponse Function(
+  late List<Object?> Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
   ) didReceiveAuthenticationChallenge;

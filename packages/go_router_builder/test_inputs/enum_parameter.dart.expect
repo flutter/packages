@@ -5,7 +5,7 @@ RouteBase get $enumParam => GoRouteData.$route(
 
 extension $EnumParamExtension on EnumParam {
   static EnumParam _fromState(GoRouterState state) => EnumParam(
-        y: _$EnumTestEnumMap._$fromName(state.pathParameters['y']!),
+        y: _$EnumTestEnumMap._$fromName(state.pathParameters['y']!)!,
       );
 
   String get location => GoRouteData.$location(
@@ -29,6 +29,6 @@ const _$EnumTestEnumMap = {
 };
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? _$fromName(String value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }

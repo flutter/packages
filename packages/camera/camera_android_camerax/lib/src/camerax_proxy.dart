@@ -70,6 +70,8 @@ class CameraXProxy {
     this.getCamera2CameraInfo = _getCamera2CameraInfo,
     this.getUiOrientation = _getUiOrientation,
     this.getSensorOrientation = _getSensorOrientation,
+    this.previewSurfaceProducerHandlesCropAndRotation =
+        _previewSurfaceProducerHandlesCropAndRotation,
   });
 
   /// Returns a [ProcessCameraProvider] instance.
@@ -199,6 +201,11 @@ class CameraXProxy {
   /// Gets camera sensor orientation from [camera2CameraInfo].
   Future<int> Function(Camera2CameraInfo camera2CameraInfo)
       getSensorOrientation;
+
+  /// Returns whether or not the preview's surface producer handles correctly
+  /// rotating the camera preview automatically.
+  Future<bool> Function(Preview preview)
+      previewSurfaceProducerHandlesCropAndRotation;
 
   static Future<ProcessCameraProvider> _getProcessCameraProvider() {
     return ProcessCameraProvider.getInstance();
@@ -354,5 +361,10 @@ class CameraXProxy {
   static Future<int> _getSensorOrientation(
       Camera2CameraInfo camera2CameraInfo) async {
     return camera2CameraInfo.getSensorOrientation();
+  }
+
+  static Future<bool> _previewSurfaceProducerHandlesCropAndRotation(
+      Preview preview) async {
+    return preview.surfaceProducerHandlesCropAndRotation();
   }
 }
