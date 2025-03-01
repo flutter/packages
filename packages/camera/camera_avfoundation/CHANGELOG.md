@@ -1,3 +1,7 @@
+## 0.9.19
+
+- Adds lensType in the PlatformCameraDescription
+
 ## 0.9.18+8
 
 * Migrates unit tests to Swift.
