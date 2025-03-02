@@ -842,8 +842,7 @@ static void selectBestFormatForRequestedFrameRate(
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
-      [self startImageStreamWithMessenger:messenger
-                           withCompletion:completion];
+      [self startImageStreamWithMessenger:messenger withCompletion:completion];
     }
 
     NSError *error;
@@ -1170,18 +1169,16 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       withCompletion:(void (^)(FlutterError *))completion
-    {
+                       withCompletion:(void (^)(FlutterError *))completion {
   [self startImageStreamWithMessenger:messenger
-                        imageStreamHandler:[[FLTImageStreamHandler alloc]
-                                       initWithCaptureSessionQueue:_captureSessionQueue]
-                   withCompletion:completion];
+                   imageStreamHandler:[[FLTImageStreamHandler alloc]
+                                          initWithCaptureSessionQueue:_captureSessionQueue]
+                       withCompletion:completion];
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                    imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
                        withCompletion:(void (^)(FlutterError *))completion {
-
   if (!_isStreamingImages) {
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
@@ -1204,7 +1201,6 @@ static void selectBestFormatForRequestedFrameRate(
                                       strongSelf.isStreamingImages = YES;
                                       strongSelf.streamingPendingFramesCount = 0;
                                       completion(nil);
-
                                     });
                                   }];
   } else {

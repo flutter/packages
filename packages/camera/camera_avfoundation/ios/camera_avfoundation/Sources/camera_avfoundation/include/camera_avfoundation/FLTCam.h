@@ -105,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
     NS_SWIFT_NAME(setFocusPoint(_:completion:));
 - (void)setExposureOffset:(double)offset;
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                                        withCompletion:(nonnull void (^)(FlutterError *_Nullable))completion;
+                       withCompletion:(nonnull void (^)(FlutterError *_Nullable))completion;
 - (void)stopImageStream;
 - (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)setUpCaptureSessionForAudioIfNeeded;

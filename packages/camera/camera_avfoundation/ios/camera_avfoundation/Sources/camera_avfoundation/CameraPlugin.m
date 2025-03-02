@@ -222,8 +222,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 - (void)startImageStreamWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
   __weak typeof(self) weakSelf = self;
   dispatch_async(self.captureSessionQueue, ^{
-    [weakSelf.camera startImageStreamWithMessenger:weakSelf.messenger
-                                    withCompletion:completion];
+    [weakSelf.camera startImageStreamWithMessenger:weakSelf.messenger withCompletion:completion];
   });
 }
 

@@ -38,7 +38,7 @@ final class StreamingTests: XCTestCase {
     return (camera, sampleBuffer)
   }
 
-  func testExceedMaxStreamingPendingFramesCount() {
+  func testExceedMaxStreamingPendingFramesCount() async {
     let (camera, sampleBuffer) = createCamera()
     let streamingExpectation = expectation(
       description: "Must not call handler over maxStreamingPendingFramesCount")
@@ -47,7 +47,7 @@ final class StreamingTests: XCTestCase {
       streamingExpectation.fulfill()
     }
     let messenger = MockFlutterBinaryMessenger()
-    camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
+    await camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
 
     let expectation = XCTKVOExpectation(
       keyPath: "isStreamingImages", object: camera, expectedValue: true)
@@ -62,7 +62,7 @@ final class StreamingTests: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
   }
 
-  func testReceivedImageStreamData() {
+  func testReceivedImageStreamData() async {
     let (camera, sampleBuffer) = createCamera()
     let streamingExpectation = expectation(
       description: "Must be able to call the handler again when receivedImageStreamData is called")
@@ -71,7 +71,7 @@ final class StreamingTests: XCTestCase {
       streamingExpectation.fulfill()
     }
     let messenger = MockFlutterBinaryMessenger()
-    camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
+    await camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
 
     let expectation = XCTKVOExpectation(
       keyPath: "isStreamingImages", object: camera, expectedValue: true)
